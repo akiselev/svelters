@@ -1,3 +1,7 @@
+use qmetaobject::{
+    connections::{connect, Signal, SignalInner},
+    *,
+};
 use std::ffi::CString;
 use std::os::raw::c_char;
 
@@ -8,14 +12,42 @@ use crate::{QWidget, Widget};
 cpp! {{
     #include <memory>
     #include <QtWidgets/QPushButton>
+    #include <QtWidgets/QAbstractButton>
     #include <QtCore/QPointer>
+    #include <QtCore/QStringList>
+    #include <QtCore/QString>
+    #include <QtCore/QMetaObject>
+    #include <QtCore/QDebug>
+    #include <QtCore/QMetaMethod>
+    #include <qmetaobject_rust.hpp>
+
+    #include <string>
+    #include <iostream>
 }}
+
+#[derive(QObject)]
+struct QPushButton {
+    base: qt_base_class!(trait QObject),
+}
 
 pub fn qpushbutton_new() -> Widget {
     let result = cpp!(unsafe [] -> QWidget as "QPointer<QWidget>" {
-        return new QPushButton("testing button");
+        QPointer<QWidget> btn = new QPushButton("testing button");
+        // const QMetaObject* metaObject = btn->metaObject()->superClass();
+        // qWarning() << "TEST +======";
+        // for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
+        // qWarning() << QString::fromLatin1(metaObject->method(i).methodSignature());
+        return btn;
     });
 
     // run destructor
     Widget::new(result)
+}
+
+pub fn qpushbutton_clicked() -> Signal<fn(bool)> {
+    unsafe {
+        Signal::new(cpp!([] -> SignalInner as "SignalInner"  {
+            return &QAbstractButton::clicked;
+        }))
+    }
 }

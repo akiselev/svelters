@@ -19,6 +19,7 @@ fn main() {
 
     config
         .include(&qt_include_path)
+        .include(std::fs::canonicalize(format!("./src")).unwrap().as_os_str())
         // .include(format!("{}/QtQuick", qt_include_path))
         .include(format!("{}/QtGui", qt_include_path))
         .include(format!("{}/QtCore", qt_include_path))

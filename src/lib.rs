@@ -3,7 +3,11 @@
 #[macro_use]
 extern crate napi_derive;
 
-use napi::{CallContext, Env, JsObject, JsUndefined, Property, Result};
+use napi::{
+    threadsafe_function::{ThreadSafeCallContext, ThreadsafeFunctionCallMode},
+    CallContext, Env, JsFunction, JsNumber, JsObject, JsUndefined, Property, Result,
+};
+use qmetaobject::connections::connect;
 
 #[cfg(all(
     unix,
@@ -21,6 +25,8 @@ static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 mod application;
 mod button;
+mod events;
+mod logging;
 mod main_window;
 mod widget;
 
@@ -71,6 +77,33 @@ fn qpushbutton_constructor(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
+#[js_function(1)]
+fn qpushbutton_on_clicked(ctx: CallContext) -> Result<JsUndefined> {
+    let this: JsObject = ctx.this_unchecked();
+    let node: &mut Widget = ctx.env.unwrap(&this)?;
+    let func = ctx.get::<JsFunction>(0)?;
+    let tsfn =
+        ctx.env
+            .create_threadsafe_function(&func, 0, |ctx: ThreadSafeCallContext<bool>| {
+                let mut res = vec![];
+                if let Ok(val) = ctx.env.get_boolean(ctx.value) {
+                    res.push(val)
+                }
+                Ok(res)
+            })?;
+    let handle = unsafe {
+        connect(
+            node.as_sender(),
+            button::qpushbutton_clicked(),
+            move |result: &bool| {
+                tsfn.call(Ok(*result), ThreadsafeFunctionCallMode::Blocking);
+            },
+        )
+    };
+    node.add_handle("clicked", handle);
+    ctx.env.get_undefined()
+}
+
 #[js_function]
 fn qapplication_exec(ctx: CallContext) -> Result<JsUndefined> {
     let this: JsObject = ctx.this_unchecked();
@@ -81,6 +114,12 @@ fn qapplication_exec(ctx: CallContext) -> Result<JsUndefined> {
 
 #[module_exports]
 pub fn init(mut exports: JsObject, env: Env) -> Result<()> {
+    logging::init();
+
+    tracing::warn!(x = "asd", "Testing logging");
+    log::warn!("an example trace log");
+    println!("============");
+
     let qmainwindow = env.define_class(
         "QMainWindow",
         qmainwindow_constructor,
@@ -94,7 +133,11 @@ pub fn init(mut exports: JsObject, env: Env) -> Result<()> {
         qapplication_constructor,
         &[Property::new(&env, "exec")?.with_method(qapplication_exec)],
     )?;
-    let qpushbutton = env.define_class("QPushButton", qpushbutton_constructor, &[])?;
+    let qpushbutton = env.define_class(
+        "QPushButton",
+        qpushbutton_constructor,
+        &[Property::new(&env, "onClicked")?.with_method(qpushbutton_on_clicked)],
+    )?;
     exports.set_named_property("QMainWindow", qmainwindow)?;
     exports.set_named_property("QApplication", qapplication)?;
     exports.set_named_property("QPushButton", qpushbutton)?;
