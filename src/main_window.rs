@@ -3,6 +3,8 @@ use std::os::raw::c_char;
 
 use cpp::{cpp, cpp_class};
 
+use crate::Widget;
+
 cpp! {{
     #include <memory>
     #include <QtWidgets/QMainWindow>
@@ -33,6 +35,14 @@ impl QMainWindow {
             (*self)->resize(250, 150);
             (*self)->setWindowTitle("Simple example");
             (*self)->show();
+        })
+    }
+
+    /// Set Central Widget
+    pub fn set_central_widget(&self, widget: &Widget) {
+        let ptr = &widget.ptr;
+        cpp!(unsafe [self as "QPointer<QMainWindow> *", ptr as "QPointer<QWidget> *"] {
+            (*self)->setCentralWidget(*ptr);
         })
     }
 }

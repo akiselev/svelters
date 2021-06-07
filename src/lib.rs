@@ -3,9 +3,7 @@
 #[macro_use]
 extern crate napi_derive;
 
-use std::convert::TryInto;
-
-use napi::{CallContext, Env, JsNumber, JsObject, JsUndefined, Property, Result};
+use napi::{CallContext, Env, JsObject, JsUndefined, Property, Result};
 
 #[cfg(all(
     unix,
@@ -22,12 +20,16 @@ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 mod application;
+mod button;
 mod main_window;
+mod widget;
+
+pub use widget::{QWidget, Widget};
 
 use application::QApplication;
 use main_window::QMainWindow;
 
-#[js_function(1)]
+#[js_function]
 fn qmainwindow_constructor(ctx: CallContext) -> Result<JsUndefined> {
     let mut this: JsObject = ctx.this_unchecked();
     ctx.env.wrap(&mut this, QMainWindow::new())?;
@@ -35,7 +37,7 @@ fn qmainwindow_constructor(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
-#[js_function(1)]
+#[js_function]
 fn qmainwindow_show(ctx: CallContext) -> Result<JsUndefined> {
     let this: JsObject = ctx.this_unchecked();
     let node: &mut QMainWindow = ctx.env.unwrap(&this)?;
@@ -44,6 +46,16 @@ fn qmainwindow_show(ctx: CallContext) -> Result<JsUndefined> {
 }
 
 #[js_function(1)]
+fn qmainwindow_set_central_widget(ctx: CallContext) -> Result<JsUndefined> {
+    let widget = ctx.get::<JsObject>(0)?;
+    let widget: &mut Widget = ctx.env.unwrap(&widget)?;
+    let this: JsObject = ctx.this_unchecked();
+    let node: &mut QMainWindow = ctx.env.unwrap(&this)?;
+    node.set_central_widget(widget);
+    ctx.env.get_undefined()
+}
+
+#[js_function]
 fn qapplication_constructor(ctx: CallContext) -> Result<JsUndefined> {
     let mut this: JsObject = ctx.this_unchecked();
     ctx.env.wrap(&mut this, QApplication::new())?;
@@ -51,7 +63,15 @@ fn qapplication_constructor(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
-#[js_function(1)]
+#[js_function]
+fn qpushbutton_constructor(ctx: CallContext) -> Result<JsUndefined> {
+    let mut this: JsObject = ctx.this_unchecked();
+    ctx.env.wrap(&mut this, button::qpushbutton_new())?;
+
+    ctx.env.get_undefined()
+}
+
+#[js_function]
 fn qapplication_exec(ctx: CallContext) -> Result<JsUndefined> {
     let this: JsObject = ctx.this_unchecked();
     let node: &mut QApplication = ctx.env.unwrap(&this)?;
@@ -64,15 +84,20 @@ pub fn init(mut exports: JsObject, env: Env) -> Result<()> {
     let qmainwindow = env.define_class(
         "QMainWindow",
         qmainwindow_constructor,
-        &[Property::new(&env, "show")?.with_method(qmainwindow_show)],
+        &[
+            Property::new(&env, "show")?.with_method(qmainwindow_show),
+            Property::new(&env, "setCentralWidget")?.with_method(qmainwindow_set_central_widget),
+        ],
     )?;
     let qapplication = env.define_class(
         "QApplication",
         qapplication_constructor,
         &[Property::new(&env, "exec")?.with_method(qapplication_exec)],
     )?;
+    let qpushbutton = env.define_class("QPushButton", qpushbutton_constructor, &[])?;
     exports.set_named_property("QMainWindow", qmainwindow)?;
     exports.set_named_property("QApplication", qapplication)?;
+    exports.set_named_property("QPushButton", qpushbutton)?;
 
     Ok(())
 }
