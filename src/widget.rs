@@ -5,6 +5,8 @@ use std::os::raw::c_char;
 
 use cpp::{cpp, cpp_class};
 use qmetaobject::connections::ConnectionHandle;
+use qmetaobject::QString;
+use qmetaobject::QVariant;
 
 pub struct Widget {
     pub(crate) ptr: QWidget,
@@ -14,6 +16,7 @@ pub struct Widget {
 cpp! {{
     #include <memory>
     #include <QtCore/QPointer>
+    #include <QtCore/QDebug>
     #include <QtCore/QObject>
     #include <QtWidgets/QWidget>
 }}
@@ -37,6 +40,23 @@ impl Widget {
 
     pub fn add_handle(&mut self, name: &'static str, handle: ConnectionHandle) {
         self.handles.insert(name, handle);
+    }
+
+    pub fn set_attribute(&self, name: *const c_char, value: QString) {
+        let var: QVariant = value.into();
+        cpp!(unsafe [self as "QPointer<QWidget> *", name as "const char*", var as "QVariant"] {
+            qDebug() << "Setting property " << name << " to " << var << " on " << *self;
+            (*self)->setProperty(name, var);
+        })
+    }
+
+    pub fn get_attribute(&self, name: *const c_char) -> Option<QVariant> {
+        let res = cpp!(unsafe [self as "QPointer<QWidget> *", name as "const char*"] -> QVariant as "QVariant" {
+            QVariant res = (*self)->property(name);
+            qDebug() << "Getting property " << name << " as " << res << " on " << *self;
+            return res;
+        });
+        Some(res)
     }
 
     // pub fn exec(&self) {

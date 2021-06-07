@@ -3,11 +3,14 @@
 #[macro_use]
 extern crate napi_derive;
 
+use std::{ffi::CString, os::raw::c_char};
+
 use napi::{
     threadsafe_function::{ThreadSafeCallContext, ThreadsafeFunctionCallMode},
-    CallContext, Env, JsFunction, JsNumber, JsObject, JsUndefined, Property, Result,
+    CallContext, Env, JsFunction, JsNumber, JsObject, JsString, JsStringUtf8, JsUndefined,
+    JsUnknown, Property, Result,
 };
-use qmetaobject::connections::connect;
+use qmetaobject::{connections::connect, QString};
 
 #[cfg(all(
     unix,
@@ -87,11 +90,37 @@ fn qpushbutton_constructor(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
-#[js_function(1)]
-fn qpushbutton_on_clicked(ctx: CallContext) -> Result<JsUndefined> {
+#[js_function(2)]
+fn qpushbutton_set_attribute(ctx: CallContext) -> Result<JsUndefined> {
     let this: JsObject = ctx.this_unchecked();
     let node: &mut Widget = ctx.env.unwrap(&this)?;
-    let func = ctx.get::<JsFunction>(0)?;
+    let name_str = ctx.get::<JsString>(0)?.into_utf8()?;
+    let name = name_str.as_slice();
+    let prop: *const c_char = CString::new(name).unwrap().into_raw();
+    let value = QString::from(ctx.get::<JsString>(1)?.into_utf8()?.as_str()?);
+    node.set_attribute(prop, value);
+    // let _ = CString::from_raw(prop);
+    ctx.env.get_undefined()
+}
+
+#[js_function(2)]
+fn qpushbutton_get_attribute(ctx: CallContext) -> Result<JsUnknown> {
+    let this: JsObject = ctx.this_unchecked();
+    let node: &mut Widget = ctx.env.unwrap(&this)?;
+    let name_str = ctx.get::<JsString>(0)?.into_utf8()?;
+    let name = name_str.as_slice();
+    let prop: *const c_char = CString::new(name).unwrap().into_raw();
+    node.get_attribute(prop);
+    // let _ = CString::from_raw(prop);
+    Ok(ctx.env.get_undefined()?.into_unknown())
+}
+
+#[js_function(2)]
+fn qpushbutton_add_event_listener(ctx: CallContext) -> Result<JsUndefined> {
+    let this: JsObject = ctx.this_unchecked();
+    let node: &mut Widget = ctx.env.unwrap(&this)?;
+    let event = ctx.get::<JsString>(0)?;
+    let func = ctx.get::<JsFunction>(1)?;
     let tsfn =
         ctx.env
             .create_threadsafe_function(&func, 0, |ctx: ThreadSafeCallContext<bool>| {
@@ -147,7 +176,11 @@ pub fn init(mut exports: JsObject, env: Env) -> Result<()> {
     let qpushbutton = env.define_class(
         "QPushButton",
         qpushbutton_constructor,
-        &[Property::new(&env, "onClicked")?.with_method(qpushbutton_on_clicked)],
+        &[
+            Property::new(&env, "addEventListener")?.with_method(qpushbutton_add_event_listener),
+            Property::new(&env, "getAttribute")?.with_method(qpushbutton_get_attribute),
+            Property::new(&env, "setAttribute")?.with_method(qpushbutton_set_attribute),
+        ],
     )?;
     exports.set_named_property("QMainWindow", qmainwindow)?;
     exports.set_named_property("QApplication", qapplication)?;

@@ -23,5 +23,8 @@ export declare class QMainWindow extends QWidget {
 export declare class QPushButton extends QWidget {
     constructor();
     show(): void;
-    onClicked(fn: (val: boolean | null) => void): void;
+    addEventListener(name: string, fn: (val: any) => void): void;
+    removeEventListener(name: string, fn: any): void;
+    setAttribute(attr: string, val: any): void;
+    getAttribute(attr: string): any;
 }
