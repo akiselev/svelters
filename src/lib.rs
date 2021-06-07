@@ -21,9 +21,11 @@ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
+mod application;
 mod main_window;
 
-use main_window::{QApplication, QMainWindow};
+use application::QApplication;
+use main_window::QMainWindow;
 
 #[js_function(1)]
 fn qmainwindow_constructor(ctx: CallContext) -> Result<JsUndefined> {
