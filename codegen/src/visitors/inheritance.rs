@@ -7,7 +7,7 @@ lazy_static! {
     static ref IGNORE_PARENT: Vec<&'static str> = vec!["QAccessibleObject", "QColorMap"];
 }
 
-pub fn get_inheritance_chain(prefix: &str, doc: &Html, result: &mut Vec<ClassDef>) -> Result<()> {
+pub fn get_inheritance_chain(prefix: &str, doc: &Html, result: &mut Vec<String>) -> Result<()> {
     let first_summary_sel = Selector::parse(".alignedsummary:nth-of-type(1) tr").unwrap();
     let rows = doc.select(&first_summary_sel);
     for row in rows {
@@ -29,14 +29,12 @@ pub fn get_inheritance_chain(prefix: &str, doc: &Html, result: &mut Vec<ClassDef
                 }
                 .to_string_lossy()
                 .to_string();
-                let class = ClassDef { name, path };
-                result.push(class.clone());
-                let doc = match open(class.path.clone()) {
+                result.push(name.clone());
+                let doc = match open(path.clone()) {
                     Ok(doc) => doc,
-                    Err(err) => panic!("ERROR {}: {}", err, class.path),
+                    Err(err) => panic!("ERROR {}: {}", err, path),
                 };
-                println!(">>>>> {} {}", class.name, &class.path);
-                if !IGNORE_PARENT.contains(&class.name.as_str()) {
+                if !IGNORE_PARENT.contains(&name.as_str()) {
                     get_inheritance_chain(prefix, &doc, result)?;
                 }
             }

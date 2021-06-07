@@ -32,11 +32,12 @@ fn get_qfn(row: ElementRef) -> Option<QFn> {
         let mut is_ptr = false;
         let mut is_ref = false;
         let mut has_default = false;
+        let mut has_template = false;
         let mut _type: Option<String> = None;
         let mut return_type: Option<String> = None;
         for node in next_siblings {
             let res = (node.value().is_text(), node.value().as_text());
-            if started {
+            if started && !has_template {
                 let element = node.value().as_element();
                 if let (Some(element), Some(true)) = (
                     ElementRef::wrap(node),
@@ -64,30 +65,14 @@ fn get_qfn(row: ElementRef) -> Option<QFn> {
             if let (true, Some(text)) = res {
                 let token = text.to_string();
                 match token.as_str() {
-                    "(" => started = true,
-                    ")" => {
+                    " , " | " ," | "," | ", " if started => {
                         if let Some(_type) = _type.take() {
                             args.push(QArg {
                                 is_const,
                                 is_ptr,
                                 is_ref,
                                 has_default,
-                                _type,
-                            });
-                        }
-                        return Some(QFn {
-                            name,
-                            args,
-                            return_type,
-                        });
-                    }
-                    "," if started => {
-                        if let Some(_type) = _type.take() {
-                            args.push(QArg {
-                                is_const,
-                                is_ptr,
-                                is_ref,
-                                has_default,
+                                has_template,
                                 _type,
                             });
                         }
@@ -95,8 +80,10 @@ fn get_qfn(row: ElementRef) -> Option<QFn> {
                         is_ptr = false;
                         is_ref = false;
                         has_default = false;
+                        has_template = false;
+                        _type = None;
                     }
-                    val if started && (val.starts_with(" =") || val.starts_with("=")) => {
+                    val if started && val.contains("=") => {
                         has_default = true;
                         if let (true, Some(_type)) = (val.ends_with(")"), _type.take()) {
                             args.push(QArg {
@@ -104,6 +91,7 @@ fn get_qfn(row: ElementRef) -> Option<QFn> {
                                 is_ptr,
                                 is_ref,
                                 has_default,
+                                has_template,
                                 _type,
                             });
                         }
@@ -114,11 +102,70 @@ fn get_qfn(row: ElementRef) -> Option<QFn> {
                         });
                     }
                     val => {
-                        println!("=-= :{}", val)
+                        let mut cleared = false;
+                        if val.contains("(") {
+                            started = true;
+                            cleared = true;
+                        }
+                        if started && val.contains("*") {
+                            is_ptr = true;
+                            cleared = true;
+                        }
+                        if started && val.contains("<") {
+                            has_template = true;
+                            cleared = true;
+                        }
+                        if started && val.contains("*") {
+                            is_ptr = true;
+                            cleared = true;
+                        }
+                        if started && val.contains("&") {
+                            is_ref = true;
+                            cleared = true;
+                        }
+                        if started && val.contains("const") {
+                            is_const = true;
+                            cleared = true;
+                        }
+                        if !cleared {
+                            println!("=-= :{}", val)
+                        }
                     }
+                }
+                if token.contains(")") {
+                    if let Some(_type) = _type.take() {
+                        args.push(QArg {
+                            is_const,
+                            is_ptr,
+                            is_ref,
+                            has_default,
+                            has_template,
+                            _type,
+                        });
+                    }
+                    return Some(QFn {
+                        name,
+                        args,
+                        return_type,
+                    });
                 }
             }
         }
+        if let Some(_type) = _type.take() {
+            args.push(QArg {
+                is_const,
+                is_ptr,
+                is_ref,
+                has_default,
+                has_template,
+                _type,
+            });
+        }
+        return Some(QFn {
+            name,
+            args,
+            return_type,
+        });
     }
 
     None

@@ -9,7 +9,7 @@ pub struct ClassDef {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct QClass {
     pub class: ClassDef,
-    pub inherits: Vec<ClassDef>,
+    pub inherits: Vec<String>,
     pub signals: Vec<QFn>,
 }
 
@@ -26,5 +26,6 @@ pub struct QArg {
     pub is_ptr: bool,
     pub is_ref: bool,
     pub has_default: bool,
+    pub has_template: bool,
     pub _type: String,
 }

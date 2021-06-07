@@ -30,6 +30,11 @@ pub fn qtwidgets<T: AsRef<str>>(path: T) -> Result<PathBuf> {
     } else {
         path
     };
+    let path = if path == "qabstracttransition.html" {
+        "../qtcore/qabstractanimation.html".to_string()
+    } else {
+        path
+    };
     let path = if path == "qaccessibleinterface.html" {
         "../qtgui/qaccessibleinterface.html".to_string()
     } else {

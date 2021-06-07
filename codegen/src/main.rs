@@ -34,13 +34,11 @@ fn main() {
             let file = node.value().attr("href").unwrap();
             let name = node.text().collect::<Vec<_>>().join("");
             let path = qtwidgets(file).unwrap().to_string_lossy().to_string();
-            println!("{} => {}", name, path);
             ClassDef { name, path }
         })
         .collect();
     let result: Vec<_> = iter
         .par_iter()
-        .take(20)
         .map(move |class| -> Result<QClass> {
             let doc = match open(class.path.clone()) {
                 Ok(doc) => doc,
