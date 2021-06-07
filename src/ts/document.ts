@@ -1,11 +1,10 @@
-import { loadBinding } from "@node-rs/helper";
-import { SvelteQt } from "./types";
+import { QMainWindow, QPushButton } from "./widgets";
 
-const { QMainWindow, QPushButton, QWidget } = loadBinding(
-    __dirname,
-    "svelte-qt",
-    "svelte-qt",
-) as SvelteQt;
+// const { QMainWindow, QPushButton, QWidget } = loadBinding(
+//     __dirname,
+//     "svelte-qt",
+//     "svelte-qt",
+// ) as SvelteQt;
 
 export default class SvelteQtDocument {
     document: this = this;
