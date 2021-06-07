@@ -61,6 +61,16 @@ fn qmainwindow_set_central_widget(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
+#[js_function(1)]
+fn qmainwindow_insert_before(ctx: CallContext) -> Result<JsUndefined> {
+    let child = ctx.get::<JsObject>(0)?;
+    let child: &mut Widget = ctx.env.unwrap(&child)?;
+    let this: JsObject = ctx.this_unchecked();
+    let node: &mut QMainWindow = ctx.env.unwrap(&this)?;
+    node.set_central_widget(child);
+    ctx.env.get_undefined()
+}
+
 #[js_function]
 fn qapplication_constructor(ctx: CallContext) -> Result<JsUndefined> {
     let mut this: JsObject = ctx.this_unchecked();
@@ -126,6 +136,7 @@ pub fn init(mut exports: JsObject, env: Env) -> Result<()> {
         &[
             Property::new(&env, "show")?.with_method(qmainwindow_show),
             Property::new(&env, "setCentralWidget")?.with_method(qmainwindow_set_central_widget),
+            Property::new(&env, "insertBefore")?.with_method(qmainwindow_set_central_widget),
         ],
     )?;
     let qapplication = env.define_class(
