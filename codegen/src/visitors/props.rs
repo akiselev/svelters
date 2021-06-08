@@ -36,8 +36,14 @@ fn get_prop(table: ElementRef) -> Option<Property> {
 
     let _type = lgetter.inner_html().replace(" ", "");
     let selector = Selector::parse(".name b").unwrap();
-    let mut name = rgetter.select(&selector);
-    let name = name.next().unwrap().inner_html();
+    let selector_anchor = Selector::parse(".name a").unwrap();
+    let mut name = rgetter.select(&selector_anchor);
+    let name = if let Some(name) = name.next() {
+        name.inner_html()
+    } else {
+        let mut name = rgetter.select(&selector);
+        name.next().unwrap().inner_html()
+    };
     let text = rgetter
         .text()
         .map(|t| t.to_string())
@@ -50,8 +56,13 @@ fn get_prop(table: ElementRef) -> Option<Property> {
         is_ptr: text.contains("*"),
     };
 
-    let mut name = rsetter.select(&selector);
-    let name = name.next().unwrap().inner_html();
+    let mut name = rsetter.select(&selector_anchor);
+    let name = if let Some(name) = name.next() {
+        name.inner_html()
+    } else {
+        let mut name = rsetter.select(&selector);
+        name.next().unwrap().inner_html()
+    };
     let text = rsetter
         .text()
         .map(|t| t.to_string())
@@ -60,13 +71,13 @@ fn get_prop(table: ElementRef) -> Option<Property> {
     let setter = Accessor {
         name,
         is_const: text.contains("const"),
-        is_ref: text.contains("&"),
-        is_ptr: text.contains("*"),
+        is_ref: text.contains("&") || _type.contains("&"),
+        is_ptr: text.contains("*") || _type.contains("*"),
     };
 
     Some(Property {
         getter,
         setter,
-        _type,
+        _type: _type.replace("*", "").replace("&", ""),
     })
 }

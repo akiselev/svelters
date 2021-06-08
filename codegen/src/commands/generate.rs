@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 
-use crate::{code::traits::codegen, helpers::read_schema, opts};
+use crate::{code::codegen, helpers::read_schema, opts};
 
 pub fn generate(cmd: &opts::Generate) -> Result<()> {
     let schema = read_schema()?;

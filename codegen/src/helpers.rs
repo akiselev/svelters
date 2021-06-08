@@ -2,6 +2,7 @@ use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Result;
 use scraper::Html;
+use syn::{self as s, parse_str as p};
 
 use crate::types::{Class, ClassDef};
 
@@ -73,4 +74,16 @@ pub fn get_namespace(path: &str) -> &'static str {
 pub fn read_schema() -> Result<HashMap<String, Class>> {
     let state = std::fs::read_to_string(&crate::opts::OPTS.schema)?;
     Ok(serde_json::from_str(&state)?)
+}
+
+pub(crate) fn id<T: AsRef<str>>(name: T) -> Result<s::Ident> {
+    Ok(p::<s::Ident>(name.as_ref())?)
+}
+
+pub(crate) fn ty<T: AsRef<str>>(name: T) -> Result<s::Type> {
+    Ok(p::<s::Type>(name.as_ref())?)
+}
+
+pub(crate) fn litstr<T: AsRef<str>>(name: T) -> Result<s::Lit> {
+    Ok(p::<s::Lit>(&format!("\"{}\"", name.as_ref()))?)
 }

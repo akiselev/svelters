@@ -28,10 +28,6 @@ cpp! {{
 pub fn qpushbutton_new() -> Widget {
     let result = cpp!(unsafe [] -> QWidgetPtr as "QPointer<QWidget>" {
         QPointer<QWidget> btn = new QPushButton("testing button");
-        // const QMetaObject* metaObject = btn->metaObject()->superClass();
-        // qWarning() << "TEST +======";
-        // for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i)
-        // qWarning() << QString::fromLatin1(metaObject->method(i).methodSignature());
         return btn;
     });
 

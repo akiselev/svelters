@@ -31,6 +31,7 @@ mod application;
 mod button;
 mod logging;
 mod main_window;
+pub mod types;
 mod widget;
 pub mod widgets;
 

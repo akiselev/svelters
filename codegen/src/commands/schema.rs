@@ -31,8 +31,8 @@ pub fn run_codegen(cmd: &Schema) -> Result<()> {
         })
         .collect();
     let result: Vec<_> = iter
-        .iter()
-        // .par_iter()
+        // .iter()
+        .par_iter()
         .map(move |class| -> Result<Class> {
             let doc = match open(class.path.clone()) {
                 Ok(doc) => doc,

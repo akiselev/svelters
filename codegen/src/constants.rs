@@ -11,7 +11,7 @@ lazy_static! {
         "QImage",
         "QMargins",
         "QModelIndex",
-        "QPixmap",
+        // "QPixmap",
         "QPoint",
         "QPointF",
         "QRectF",
@@ -22,7 +22,6 @@ lazy_static! {
         "QUrl",
         "QVariant",
         "QVariantList",
-        "QWidget",
     ];
     pub static ref CODEGEN_IGNORE_CONSTRUCTOR: Vec<&'static str> =
         vec!["QSizeGrip", "QHeaderView", "QRubberBand", "QSplitterHandle",];

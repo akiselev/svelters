@@ -193,6 +193,9 @@ pub trait Visitor {
 
     fn on_class(&mut self, node: &Class) {
         self.visit_class(node);
+        node.props.iter().for_each(|prop| {
+            self.on_prop(prop);
+        });
         node.methods.iter().for_each(|method| {
             self.on_method(method);
         });
