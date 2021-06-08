@@ -7,7 +7,7 @@ use std::os::raw::c_char;
 
 use cpp::{cpp, cpp_class};
 
-use crate::{QWidget, Widget};
+use crate::{QWidgetPtr, Widget};
 
 cpp! {{
     #include <memory>
@@ -25,13 +25,8 @@ cpp! {{
     #include <iostream>
 }}
 
-#[derive(QObject)]
-struct QPushButton {
-    base: qt_base_class!(trait QObject),
-}
-
 pub fn qpushbutton_new() -> Widget {
-    let result = cpp!(unsafe [] -> QWidget as "QPointer<QWidget>" {
+    let result = cpp!(unsafe [] -> QWidgetPtr as "QPointer<QWidget>" {
         QPointer<QWidget> btn = new QPushButton("testing button");
         // const QMetaObject* metaObject = btn->metaObject()->superClass();
         // qWarning() << "TEST +======";

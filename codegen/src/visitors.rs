@@ -1,5 +1,4 @@
-mod inheritance;
-mod signals;
-
-pub use inheritance::*;
-pub use signals::*;
+pub mod inheritance;
+pub mod methods;
+pub mod print;
+pub mod signals;

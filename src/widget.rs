@@ -9,7 +9,7 @@ use qmetaobject::QString;
 use qmetaobject::QVariant;
 
 pub struct Widget {
-    pub(crate) ptr: QWidget,
+    pub(crate) ptr: QWidgetPtr,
     pub(crate) handles: HashMap<&'static str, ConnectionHandle>,
 }
 
@@ -22,12 +22,23 @@ cpp! {{
 }}
 
 cpp_class!(
-    /// Wrap a Qt QWidget
-    pub unsafe struct QWidget as "QPointer<QWidget>"
+    pub unsafe struct QWidgetPtr as "QPointer<QWidget>"
+);
+
+cpp_class!(
+    pub unsafe struct QWidget as "QWidget *"
+);
+
+cpp_class!(
+    pub unsafe struct QObjectPtr as "QPointer<QObject>"
+);
+
+cpp_class!(
+    pub unsafe struct QObject as "QObject *"
 );
 
 impl Widget {
-    pub fn new(ptr: QWidget) -> Widget {
+    pub fn new(ptr: QWidgetPtr) -> Widget {
         let handles = HashMap::new();
         Widget { ptr, handles }
     }

@@ -1,11 +1,7 @@
 use anyhow::Result;
 use scraper::{Html, Selector};
 
-use crate::{helpers::*, types::*};
-
-lazy_static! {
-    static ref IGNORE_PARENT: Vec<&'static str> = vec!["QAccessibleObject", "QColorMap"];
-}
+use crate::{constants::INHERITANCE_IGNORE_PARENT, helpers::*, types::*};
 
 pub fn get_inheritance_chain(prefix: &str, doc: &Html, result: &mut Vec<String>) -> Result<()> {
     let first_summary_sel = Selector::parse(".alignedsummary:nth-of-type(1) tr").unwrap();
@@ -34,7 +30,7 @@ pub fn get_inheritance_chain(prefix: &str, doc: &Html, result: &mut Vec<String>)
                     Ok(doc) => doc,
                     Err(err) => panic!("ERROR {}: {}", err, path),
                 };
-                if !IGNORE_PARENT.contains(&name.as_str()) {
+                if !INHERITANCE_IGNORE_PARENT.contains(&name.as_str()) {
                     get_inheritance_chain(prefix, &doc, result)?;
                 }
             }

@@ -15,11 +15,11 @@ console.log("Loading rust library....", _path);
  * If failed to load addon, it will fallback to load from `svelte-qt-[PLATFORM]`
  */
 
-const { QMainWindow, QApplication, QPushButton } = loadBinding(
-    _path,
-    "svelte-qt",
-    "svelte-qt",
-) as SvelteQt;
+const {
+    QMainWindow: MainWindow,
+    QApplication,
+    QPushButton,
+} = loadBinding(_path, "svelte-qt", "svelte-qt") as SvelteQt;
 
 export class PushButton extends QPushButton {
     private _index = 0;
@@ -32,4 +32,16 @@ export class PushButton extends QPushButton {
     removeEventListener = (name: string, fn: (val: any) => void) => void {};
 }
 
-export { QMainWindow, QApplication, QPushButton };
+export class QMainWindow extends MainWindow {
+    insertBefore(node: any, anchor: any) {
+        if (typeof node === "string") return;
+        console.log(
+            "QMainWindow insertBefore",
+            JSON.stringify(node, null, 4),
+            JSON.stringify(anchor, null, 4),
+        );
+        super.insertBefore(node, anchor);
+    }
+}
+
+export { MainWindow, QApplication, QPushButton };

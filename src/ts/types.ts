@@ -18,6 +18,7 @@ export declare class QMainWindow extends QWidget {
     constructor();
     show(): void;
     setCentralWidget(widget: QWidget): void;
+    insertBefore(widget: QWidget, anchor: QWidget | null): void;
 }
 
 export declare class QPushButton extends QWidget {

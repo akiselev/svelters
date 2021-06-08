@@ -1,3 +1,4 @@
+#![recursion_limit = "1024"]
 #![deny(clippy::all)]
 
 #[macro_use]
@@ -31,9 +32,11 @@ mod button;
 mod events;
 mod logging;
 mod main_window;
+pub mod traits;
 mod widget;
+pub mod widgets;
 
-pub use widget::{QWidget, Widget};
+pub use widget::*;
 
 use application::QApplication;
 use main_window::QMainWindow;
@@ -64,8 +67,11 @@ fn qmainwindow_set_central_widget(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
-#[js_function(1)]
+#[js_function]
 fn qmainwindow_insert_before(ctx: CallContext) -> Result<JsUndefined> {
+    if let Ok(_) = ctx.get::<JsString>(0) {
+        return ctx.env.get_undefined();
+    }
     let child = ctx.get::<JsObject>(0)?;
     let child: &mut Widget = ctx.env.unwrap(&child)?;
     let this: JsObject = ctx.this_unchecked();
@@ -87,6 +93,11 @@ fn qpushbutton_constructor(ctx: CallContext) -> Result<JsUndefined> {
     let mut this: JsObject = ctx.this_unchecked();
     ctx.env.wrap(&mut this, button::qpushbutton_new())?;
 
+    ctx.env.get_undefined()
+}
+
+#[js_function]
+fn qpushbutton_insert_before(ctx: CallContext) -> Result<JsUndefined> {
     ctx.env.get_undefined()
 }
 
@@ -179,6 +190,7 @@ pub fn init(mut exports: JsObject, env: Env) -> Result<()> {
         &[
             Property::new(&env, "addEventListener")?.with_method(qpushbutton_add_event_listener),
             Property::new(&env, "getAttribute")?.with_method(qpushbutton_get_attribute),
+            Property::new(&env, "insertBefore")?.with_method(qpushbutton_insert_before),
             Property::new(&env, "setAttribute")?.with_method(qpushbutton_set_attribute),
         ],
     )?;

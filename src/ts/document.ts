@@ -55,9 +55,9 @@ export default class SvelteQtDocument {
                 ele = new QPushButton();
             }
         }
-        if (tagName !== "document") {
-            ele.ownerDocument = this;
-        }
+        // if (tagName !== "document") {
+        //     ele.ownerDocument = this;
+        // }
         return ele;
     }
 
@@ -65,9 +65,10 @@ export default class SvelteQtDocument {
         return this.createElement(tagName);
     }
 
-    createTextNode(data: string): { data: string } {
+    createTextNode(data: string): string {
         console.log(`[Document] createTextNode("${data}")`);
-        return { data };
+        // return { data };
+        return " ";
     }
 
     getElementById(id: string): any | null {

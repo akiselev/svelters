@@ -4,4 +4,6 @@ docs/qt/
 target/
 
 # Debug output for codegen
-output.txt
+schema.json
+
+/_*.txt
