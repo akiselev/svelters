@@ -28,6 +28,7 @@ impl Visitor for GetSimpleSignals {
             def: cls.def.clone(),
             methods: inner.methods,
             inherits: cls.inherits.clone(),
+            props: cls.props.clone(),
         };
         self.signals.push(cls);
     }

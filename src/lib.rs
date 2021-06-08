@@ -29,10 +29,8 @@ static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 mod application;
 mod button;
-mod events;
 mod logging;
 mod main_window;
-pub mod traits;
 mod widget;
 pub mod widgets;
 
@@ -40,6 +38,20 @@ pub use widget::*;
 
 use application::QApplication;
 use main_window::QMainWindow;
+
+pub struct QRef<'a, T> {
+    ptr: T,
+    _marker: std::marker::PhantomData<&'a T>,
+}
+
+impl<'a, T> QRef<'a, T> {
+    pub unsafe fn new<'inner>(ptr: T) -> QRef<'inner, T> {
+        QRef {
+            ptr,
+            _marker: std::marker::PhantomData,
+        }
+    }
+}
 
 #[js_function]
 fn qmainwindow_constructor(ctx: CallContext) -> Result<JsUndefined> {

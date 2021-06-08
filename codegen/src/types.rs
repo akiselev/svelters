@@ -25,6 +25,7 @@ pub struct Class {
     pub def: ClassDef,
     pub inherits: Vec<String>,
     pub methods: Vec<Method>,
+    pub props: Vec<Property>,
 }
 
 impl fmt::Display for Class {
@@ -41,6 +42,28 @@ impl Class {
     pub fn namespace(&self) -> &'static str {
         self.def.namespace()
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Property {
+    pub getter: Accessor,
+    pub setter: Accessor,
+    pub _type: String,
+}
+
+impl fmt::Display for Property {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}: {}", self.getter.name, self._type)?;
+        Ok(())
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Accessor {
+    pub name: String,
+    pub is_const: bool,
+    pub is_ptr: bool,
+    pub is_ref: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -123,11 +146,13 @@ impl fmt::Display for MethodArg {
 pub trait Visitor {
     fn visit_class_def(&mut self, _: &ClassDef) {}
     fn visit_class(&mut self, _: &Class) {}
+    fn visit_prop(&mut self, _: &Property) {}
     fn visit_method(&mut self, _: &Method) {}
     fn visit_signal(&mut self, _: &Method) {}
     fn visit_method_arg(&mut self, _: &MethodArg) {}
     fn after_class_defs(&mut self) {}
     fn after_classes(&mut self) {}
+    fn after_props(&mut self) {}
     fn after_methods(&mut self) {}
     fn after_method_args(&mut self) {}
 
@@ -140,6 +165,12 @@ pub trait Visitor {
     fn iter_class<'a, T: Iterator<Item = &'a Class>>(&mut self, iter: T) {
         for item in iter {
             self.on_class(item);
+        }
+    }
+
+    fn iter_props<'a, T: Iterator<Item = &'a Property>>(&mut self, iter: T) {
+        for item in iter {
+            self.on_prop(item);
         }
     }
 
@@ -168,6 +199,11 @@ pub trait Visitor {
         self.after_classes();
     }
 
+    fn on_prop(&mut self, node: &Property) {
+        self.visit_prop(node);
+        self.after_props();
+    }
+
     fn on_method(&mut self, node: &Method) {
         self.visit_method(node);
         if node.has_tag("signal") {
@@ -189,14 +225,42 @@ pub struct VisitClass<F: FnMut(&Class)> {
     func: F,
 }
 
+impl<F: FnMut(&Class)> VisitClass<F> {
+    pub fn new(func: F) -> Self {
+        VisitClass { func }
+    }
+}
+
 impl<F: FnMut(&Class)> Visitor for VisitClass<F> {
     fn visit_class(&mut self, class: &Class) {
         (self.func)(class);
     }
 }
 
+pub struct VisitProp<F: FnMut(&Property)> {
+    func: F,
+}
+
+impl<F: FnMut(&Property)> VisitProp<F> {
+    pub fn new(func: F) -> Self {
+        VisitProp { func }
+    }
+}
+
+impl<F: FnMut(&Property)> Visitor for VisitProp<F> {
+    fn visit_prop(&mut self, prop: &Property) {
+        (self.func)(prop);
+    }
+}
+
 pub struct VisitMethod<F: FnMut(&Method)> {
     func: F,
+}
+
+impl<F: FnMut(&Method)> VisitMethod<F> {
+    pub fn new(func: F) -> Self {
+        VisitMethod { func }
+    }
 }
 
 impl<F: FnMut(&Method)> Visitor for VisitMethod<F> {
@@ -207,6 +271,12 @@ impl<F: FnMut(&Method)> Visitor for VisitMethod<F> {
 
 pub struct VisitMethodArg<F: FnMut(&MethodArg)> {
     func: F,
+}
+
+impl<F: FnMut(&MethodArg)> VisitMethodArg<F> {
+    pub fn new(func: F) -> Self {
+        VisitMethodArg { func }
+    }
 }
 
 impl<F: FnMut(&MethodArg)> Visitor for VisitMethodArg<F> {

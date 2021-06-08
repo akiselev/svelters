@@ -130,7 +130,7 @@ fn get_qfn(row: ElementRef) -> Option<Method> {
                             cleared = true;
                         }
                         if !cleared {
-                            println!("=-= :{}", val)
+                            // println!("=-= :{}", val)
                         }
                     }
                 }

@@ -8,7 +8,7 @@ use crate::{
     helpers::*,
     opts::Schema,
     types::*,
-    visitors::{inheritance::get_inheritance_chain, methods::get_methods},
+    visitors::{inheritance::get_inheritance_chain, methods::get_methods, props::get_props},
 };
 
 pub fn run_codegen(cmd: &Schema) -> Result<()> {
@@ -31,7 +31,8 @@ pub fn run_codegen(cmd: &Schema) -> Result<()> {
         })
         .collect();
     let result: Vec<_> = iter
-        .par_iter()
+        .iter()
+        // .par_iter()
         .map(move |class| -> Result<Class> {
             let doc = match open(class.path.clone()) {
                 Ok(doc) => doc,
@@ -39,12 +40,15 @@ pub fn run_codegen(cmd: &Schema) -> Result<()> {
             };
             let mut inherits = vec![];
             get_inheritance_chain("docs/qt/qtwidgets/", &doc, &mut inherits)?;
-            let methods = get_methods(&doc).unwrap();
             let class = class.to_owned().clone();
+            println!("==== {}", class.name);
+            let methods = get_methods(&doc).unwrap();
+            let props = get_props(&doc).unwrap();
             Ok(Class {
                 def: class,
                 inherits,
                 methods,
+                props,
             })
         })
         .collect();

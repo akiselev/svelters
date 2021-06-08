@@ -24,6 +24,8 @@ lazy_static! {
         "QVariantList",
         "QWidget",
     ];
+    pub static ref CODEGEN_IGNORE_CONSTRUCTOR: Vec<&'static str> =
+        vec!["QSizeGrip", "QHeaderView", "QRubberBand", "QSplitterHandle",];
     pub static ref INHERITANCE_IGNORE_PARENT: Vec<&'static str> =
         vec!["QAccessibleObject", "QColorMap"];
 }

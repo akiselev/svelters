@@ -5,7 +5,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{self as s, parse_str as p};
 
-use crate::types::*;
+use crate::{constants::*, types::*};
 
 pub fn codegen<'a>(classes: &HashMap<String, Class>) -> Result<String> {
     let output: HashSet<&str> = classes
@@ -65,11 +65,18 @@ pub fn codegen<'a>(classes: &HashMap<String, Class>) -> Result<String> {
             cls.inherits.get(0).map(|c| c.as_str()),
         )?;
         let obj_impl = codegen_root(cls.def.name.as_str(), &children)?;
+        let constructor =
+            if !cls.is_abstract() && !CODEGEN_IGNORE_CONSTRUCTOR.contains(&cls.def.name.as_str()) {
+                codegen_constructor(cls.def.name.as_str())?
+            } else {
+                quote! {}
+            };
         let types = codegen_types(cls)?;
         code.push(quote! {
             #types
             #obj_impl
             #interface
+            #constructor
         });
     }
     for (name, parents) in parents.into_iter() {
@@ -107,7 +114,7 @@ pub fn codegen<'a>(classes: &HashMap<String, Class>) -> Result<String> {
         #(#code)*
     };
     Ok(format!(
-        "use cast_trait_object::{{dyn_cast, dyn_upcast, DynCastExt}};\nuse cpp::{{cpp, cpp_class}};\nuse qttypes::*;\nuse crate::{{QObject, QWidget,QObjectPtr, QWidgetPtr}};\n\n{}\n",
+        "use cast_trait_object::{{dyn_cast, dyn_upcast, DynCastExt}};\nuse cpp::{{cpp, cpp_class}};\nuse qttypes::*;\nuse crate::{{QObject, QWidget,QObjectPtr, QWidgetPtr, QRef}};\n\n{}\n",
         codegen_headers(
             classes
                 .values()
@@ -152,21 +159,43 @@ fn codegen_cast<'a>(name: &str, dest: &str) -> Result<TokenStream> {
     let self_type = litstr(&format!("QPointer<{}>*", name))?;
     let return_type = litstr(&format!("std::tuple<bool, {}*>", dest))?;
 
-    println!("==== {} inherits {}", name, dest);
     let dest = ty(&dest)?;
     let code = quote! {
         impl #trait_name for #ptr_name {
-            unsafe fn as_qt_ref(&self) -> Option<#dest> {
-                let (is_safe, ptr) = cpp!([self as #self_type] -> (bool, #dest) as #return_type {
-                    if (self->isNull()) {
-                        return std::make_tuple(false, (#dest*) NULL);
-                    } else {
-                        return std::make_tuple(true, qobject_cast<#dest*>(*self));
+            fn as_qt_ref<'a>(&'a self) -> Option<QRef<'a, #dest>> {
+                unsafe {
+                    let (is_safe, ptr) = cpp!([self as #self_type] -> (bool, #dest) as #return_type {
+                        if (self->isNull()) {
+                            return std::make_tuple(false, (#dest*) NULL);
+                        } else {
+                            return std::make_tuple(true, qobject_cast<#dest*>(*self));
+                        }
+                    });
+                    match is_safe {
+                        true => Some(QRef::new::<'a>(ptr)),
+                        false => None,
                     }
-                });
-                match is_safe {
-                    true => Some(ptr),
-                    false => None,
+                }
+            }
+        }
+    };
+    Ok(code)
+}
+
+fn codegen_constructor<'a>(name: &str) -> Result<TokenStream> {
+    let _type = ty(&format!("{}", name))?;
+    let ptr_type = ty(&format!("{}Ptr", name))?;
+    let return_type = litstr(&format!("std::tuple<bool, QPointer<{}>>", name))?;
+
+    let code = quote! {
+        impl #_type {
+            pub fn new() -> Option<#ptr_type> {
+                unsafe {
+                    let (is_safe, ptr) = cpp!([] -> (bool, #ptr_type) as #return_type {
+                        QPointer<#_type> btn = new #_type();
+                        return std::make_tuple(!btn.isNull(), btn);
+                    });
+                    if is_safe { Some(ptr) }  else { None }
                 }
             }
         }
@@ -185,7 +214,7 @@ fn codegen_interface<'a>(name: &str, supertrait: Option<&str>) -> Result<TokenSt
 
     let code = quote! {
         pub trait #trait_name #supertrait {
-            unsafe fn as_qt_ref(&self) -> Option<#wrapper_name>;
+            fn as_qt_ref<'a>(&'a self) -> Option<QRef<'a, #wrapper_name>>;
         }
     };
     Ok(code)
