@@ -7,7 +7,7 @@ use std::os::raw::c_char;
 
 use cpp::{cpp, cpp_class};
 
-use crate::{QWidgetPtr, Widget};
+use crate::{Component, QWidgetPtr};
 
 cpp! {{
     #include <memory>
@@ -25,14 +25,14 @@ cpp! {{
     #include <iostream>
 }}
 
-pub fn qpushbutton_new() -> Widget {
+pub fn qpushbutton_new() -> Component {
     let result = cpp!(unsafe [] -> QWidgetPtr as "QPointer<QWidget>" {
         QPointer<QWidget> btn = new QPushButton("testing button");
         return btn;
     });
 
     // run destructor
-    Widget::new(result)
+    Component::new(result)
 }
 
 pub fn qpushbutton_clicked() -> Signal<fn(bool)> {

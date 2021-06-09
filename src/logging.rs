@@ -4,7 +4,7 @@ use tracing_log::LogTracer;
 use tracing_subscriber::{fmt, layer::SubscriberExt, EnvFilter, Registry};
 
 pub fn init() {
-    qmetaobject::log::init_qt_to_rust();
+    // qmetaobject::log::init_qt_to_rust();
 
     let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
     // let formatting_filter = BunyanFormattingLayer::new("svelte-qt".to_string(), std::io::stdout);

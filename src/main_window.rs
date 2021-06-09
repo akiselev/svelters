@@ -3,7 +3,7 @@ use std::os::raw::c_char;
 
 use cpp::{cpp, cpp_class};
 
-use crate::Widget;
+use crate::Component;
 
 cpp! {{
     #include <memory>
@@ -39,7 +39,7 @@ impl QMainWindow {
     }
 
     /// Set Central Widget
-    pub fn set_central_widget(&self, widget: &Widget) {
+    pub fn set_central_widget(&self, widget: &Component) {
         let ptr = &widget.ptr;
         cpp!(unsafe [self as "QPointer<QMainWindow> *", ptr as "QPointer<QWidget> *"] {
             (*self)->setCentralWidget(*ptr);

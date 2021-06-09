@@ -1,97 +1,27 @@
-# `svelte-qt`
+# svelte-rs
 
-![https://github.com/akiselev/svelte-qt/actions](https://github.com/akiselev/svelte-qt/workflows/CI/badge.svg)
+## Desktop Rust apps powered by Svelte... the Javascript framework? It's 2021, just roll with it. 
 
-> Template project for writing node package with napi-rs.
+### What `svelte-rs` is NOT
 
-## Install this test package
+* **It is not a Javascript framework.** If you're more familiar with transient dependencies breaking your Webpack build than linker errors, `svelte-rs` is probably not for you.
+* **It will not rid your world of electron.** Sorry, I can't move tides or convinces product managers that usability is important to users.
+* **It is not the end-all-be-all of Rust frontend frameworks.** Despite what I'm going to write in my resume, `svelte-rs` is meant to be a shortcut to put decades of technical debt to good use until we are blessed with The One framework.
+* **Well tested.** The vast majority of the code in this library is automatically generated from structured API schemas/documentation with a small layer of helper code to bring the gap between C++ (mostly function overloading and serialize/deserialization) and Rust. The API surface is gargantuan - please help!
+* **It is not SAFE!** `svelte-rs` overcompensates for Rust's static safety by combining it with the wildest, most dynamic language in UI development this side of a lisp machine. Figuring out the safety of this library is probably best left to the core Rust team once they have enough experience with fixing `specialization`.
 
-```
-yarn add svelte-qt
-```
 
-## Support matrix
+### What `svelte-rs` IS
 
-### Operating Systems
+* **UNSAFE** Each of the frameworks has its own ownership model that might have impedance mismatches with Rust. `svelte-rs` attempts to provide a sane interface using safety checks provided by each UI library but it's a WORK IN PROGRESS.
+* **Ownership bypass** 
+* **Framework agnostic** `svelte-rs` is a thin bridge between Rust, Svelte, and native UI frameworks.
+* **A serious attempt at a Rust GUI library** 
 
-|                  | node12 | node14 | node16 |
-| ---------------- | ------ | ------ | ------ |
-| Windows x64      | ✓      | ✓      | ✓      |
-| Windows x32      | ✓      | ✓      | ✓      |
-| Windows arm64    | ✓      | ✓      | ✓      |
-| macOS x64        | ✓      | ✓      | ✓      |
-| macOS arm64      | ✓      | ✓      | ✓      |
-| Linux x64 gnu    | ✓      | ✓      | ✓      |
-| Linux x64 musl   | ✓      | ✓      | ✓      |
-| Linux arm gnu    | ✓      | ✓      | ✓      |
-| Linux arm64 gnu  | ✓      | ✓      | ✓      |
-| Linux arm64 musl | ✓      | ✓      | ✓      |
-| Android arm64    | ✓      | ✓      | ✓      |
-| FreeBSD x64      | ✓      | ✓      | ✓      |
+### How does it work
 
-## Ability
-
-### Build
-
-After `yarn build/npm run build` command, you can see `svelte-qt.[darwin|win32|linux].node` file in project root. This is the native addon built from [lib.rs](./src/lib.rs).
-
-### Test
-
-With [ava](https://github.com/avajs/ava), run `yarn test/npm run test` to testing native addon. You can also switch to another testing framework if you want.
-
-### CI
-
-With github actions, every commits and pull request will be built and tested automatically in [`node@12`, `node@14`, `@node16`] x [`macOS`, `Linux`, `Windows`] matrix. You will never be afraid of the native addon broken in these platforms.
-
-### Release
-
-Release native package is very difficult in old days. Native packages may ask developers who use its to install `build toolchain` like `gcc/llvm` , `node-gyp` or something more.
-
-With `Github actions`, we can easily prebuild `binary` for major platforms. And with `N-API`, we should never afraid of **ABI Compatible**.
-
-The other problem is how to deliver prebuild `binary` to users. Download it in `postinstall` script is a common way which most packages do it right now. The problem of this solution is it introduced many other packages to download binary which has not been used by `runtime codes`. The other problem is some user may not easily download the binary from `github/CDN` if they are behind private network (But in most case, they have a private NPM mirror).
-
-In this package we choose a better way to solve this problem. We release different `npm packages` for different platform. And add it to `optionalDependencies` before release the `Major` package to npm.
-
-`NPM` will choose which native package should download from `registry` automatically. You can see [npm](./npm) dir for details. And you can also run `yarn add svelte-qt` to see how it works.
-
-## Develop requirements
-
-- Install latest `Rust`
-- Install `Node.js@10+` which fully supported `Node-API`
-- Install `yarn@1.x`
-
-## Test in local
-
-- yarn
-- yarn build
-- yarn test
-
-And you will see:
-
-```bash
-$ ava --verbose
-
-  ✔ sync function from native code
-  ✔ sleep function from native code (201ms)
-  ─
-
-  2 tests passed
-✨  Done in 1.12s.
-```
-
-## Release package
-
-Ensure you have set you **NPM_TOKEN** in `Github` project setting.
-
-In `Settings -> Secrets`, add **NPM_TOKEN** into it.
-
-When you want release package:
-
-```
-yarn version [xxx]
-
-git push --follow-tags
-```
-
-Github actions will do the rest job for you.
+1. `svelte-rs` creates shim `Window` and `Document` objects
+1. The compiled Svelte components call `document.createElement`
+2. `svelte-rs` maps element names to constructors and returns a wrapper that implements a subset of the DOM Element api like `setAttribute`/`addEventListener`/etc. This wrapper also handles marshalling the types between languages and abstracts over ownership
+3. The Svelte components create the elements as if they were in a browser and then mounts them with `insertBefore`/`appendChild`/etc.
+4. `svelte-rs` checks the type of 

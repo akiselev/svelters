@@ -1,0 +1,1 @@
+svelte.compile(source).js.code

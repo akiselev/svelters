@@ -3,13 +3,13 @@ import { onMount } from "svelte";
 
     import Button from "./Button.svelte";
     let count = 0;
-    let comp: Button;
+    let comp;
     const onClick = () => {
         count += 1;
     }
 
     onMount(() => {
-        (global as any).comp = comp;
+        global.comp = comp;
     });
 </script>
 
