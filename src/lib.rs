@@ -35,7 +35,8 @@ impl<'a, T> QRef<'a, T> {
     }
 }
 
-pub fn run() -> Result<()> {
-    compile_svelte("src/ts/index.ts").unwrap();
-    Ok(())
+pub fn compile() -> Result<String> {
+    let res = compile_svelte("src/ts/index.ts")?;
+    println!("{}", res);
+    Ok(res)
 }

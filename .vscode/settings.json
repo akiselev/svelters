@@ -15,5 +15,6 @@
         "schemagen/": true,
         "yarn-error.log": true,
         "yarn.lock": true
-    }
+    },
+    "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
 }

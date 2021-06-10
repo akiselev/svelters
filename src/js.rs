@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     fs::{canonicalize, read_to_string},
-    io::stdout,
+    io::{stdout, BufWriter},
     path::{Path, PathBuf},
     sync::mpsc,
     sync::Arc,
@@ -64,7 +64,6 @@ impl Loader {
             global.set("source", contents).unwrap();
             ctx.eval_file::<String, _>("./src/js/compile.js")
         });
-        println!("{:?}", res);
         Ok(res?)
     }
 }
@@ -88,7 +87,9 @@ impl FileLoader for Loader {
 
     fn read_file(&self, path: &Path) -> std::io::Result<String> {
         let (tx, rx) = mpsc::sync_channel::<Response>(0);
-        self.tx.send((path.to_string_lossy().to_string(), tx));
+        self.tx
+            .send((path.to_string_lossy().to_string(), tx))
+            .unwrap();
         match rx.recv() {
             Ok(Ok(contents)) => Ok(contents),
             _ => Err(std::io::ErrorKind::InvalidData.into()),
@@ -96,13 +97,15 @@ impl FileLoader for Loader {
     }
 }
 
-pub fn compile_svelte(path: &str) -> Result<()> {
+pub fn compile_svelte(path: &str) -> Result<String> {
     let file_loader: Box<dyn FileLoader + Send + Sync + 'static> = Box::new(Loader::new()?);
     let path_mapping = FilePathMapping::empty();
     let globals = Globals::new();
     let cm = Lrc::new(SourceMap::with_file_loader(file_loader, path_mapping));
     // This example does not use core modules.
     let external_modules = vec![];
+    // let external_modules = vec!["svelte/internal".into()];
+    // let external_modules = vec!["svelte".into(), "svelte/internal".into()];
     let bundler = Bundler::new(
         &globals,
         cm.clone(),
@@ -132,17 +135,19 @@ pub fn compile_svelte(path: &str) -> Result<()> {
         },
         "We provided it"
     );
+    let mut wr = Vec::new();
+    {
+        let mut emitter = Emitter {
+            cfg: swc_ecma_codegen::Config { minify: false },
+            cm: cm.clone(),
+            comments: None,
+            wr: Box::new(JsWriter::new(cm.clone(), "\n", &mut wr, None)),
+        };
 
-    let wr = stdout();
-    let mut emitter = Emitter {
-        cfg: swc_ecma_codegen::Config { minify: false },
-        cm: cm.clone(),
-        comments: None,
-        wr: Box::new(JsWriter::new(cm.clone(), "\n", wr.lock(), None)),
-    };
-
-    emitter.emit_module(&bundle.module)?;
-    Ok(())
+        emitter.emit_module(&bundle.module)?;
+    }
+    // Safe because Javascript can be invalid utf8
+    Ok(unsafe { String::from_utf8_unchecked(wr) })
 }
 
 struct PathLoader {
@@ -151,10 +156,14 @@ struct PathLoader {
 
 impl Load for PathLoader {
     fn load(&self, file: &FileName) -> Result<ModuleData> {
+        println!("{:?}", file);
         let file = match file {
-            FileName::Real(v) => v.clone(),
+            FileName::Real(v) => canonicalize(v).unwrap(),
             FileName::Custom(name) if name == "svelte/internal" => {
                 canonicalize("./node_modules/svelte/internal/index.mjs").unwrap()
+            }
+            FileName::Custom(name) if name == "svelte" => {
+                canonicalize("./node_modules/svelte/index.mjs").unwrap()
             }
             _ => unreachable!(),
         };
@@ -195,11 +204,17 @@ struct PathResolver;
 
 impl Resolve for PathResolver {
     fn resolve(&self, base: &FileName, module_specifier: &str) -> Result<FileName> {
+        println!("{:?}", module_specifier);
         if module_specifier.starts_with(".") {
             let base = match base {
                 FileName::Real(v) => v,
                 _ => unreachable!(),
             };
+            if module_specifier.starts_with("./internal/index") {
+                return Ok(FileName::Real(
+                    canonicalize("./node_modules/svelte/internal/index.mjs").unwrap(),
+                ));
+            }
             let path = base
                 .parent()
                 .unwrap()
