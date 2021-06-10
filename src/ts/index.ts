@@ -39,5 +39,5 @@ import App from "./App.svelte";
 
 // console.log("Showing window....");
 // mainWindow.show();
-
+new App({ target: this });
 setTimeout(() => console.log("Finished"), 5000);
