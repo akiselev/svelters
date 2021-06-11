@@ -1,6 +1,8 @@
 //// <reference path="./types.d.ts" />
 
 import App from "./App.svelte";
+
+this.setTimeout = (ms, fn) => this.sleep(ms).then(fn); 
 // import SvelteQtDocument from "./document";
 // import { QMainWindow, QApplication, QPushButton } from "./widgets";
 
