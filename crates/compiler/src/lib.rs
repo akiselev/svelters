@@ -1,0 +1,30 @@
+pub mod compiler;
+pub mod loader;
+pub mod resolver;
+pub mod task;
+pub mod typescript;
+
+pub(in crate) mod inner;
+
+use inner::*;
+
+pub use compiler::*;
+
+pub fn compile<P: AsRef<Path>>(compiler: &SvelteCompiler, path: P) -> Result<String> {
+    let path_str = path.as_ref().to_str().unwrap();
+    if path_str.ends_with(".ts") {
+        let path_mapping = FilePathMapping::empty();
+        let cm = Arc::new(SourceMap::with_file_loader(
+            Box::new(FsLoader),
+            path_mapping,
+        ));
+        let input = cm.load_file(path.as_ref()).map_err(Error::from)?;
+        transpile_typescript(&cm, path_str, (&*input).into())
+    } else if path_str.ends_with(".svelte") {
+        let source = std::fs::read_to_string(path.as_ref())?;
+        compiler.compile(path_str, source)
+    } else {
+        let source = std::fs::read_to_string(path.as_ref())?;
+        Ok(source)
+    }
+}

@@ -1,0 +1,26 @@
+[package]
+name = "svelters-compiler"
+version = "0.1.0"
+authors = ["Alexander Kiselev <git@akiselev.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+swc_common = { version="0.10.20", features=["sourcemap", "tty-emitter", "concurrent"] }
+swc_ecma_codegen = "0.56.0"
+swc_ecma_visit = "0.32.0"
+swc_ecma_parser = "0.58.0"
+swc_atoms = "0.2.6"
+swc_ecma_ast = "0.46.0"
+swc_ecma_transforms_base = "0.16.0"
+swc_ecma_utils = "0.37.0"
+fxhash = "0.2.1"
+quickjs_runtime = "0.4.2"
+parking_lot = "0.11.1"
+node-resolve = "2.2.0"
+anyhow = "1.0.41"
+tracing = "0.1.26"
+tracing-macros = "0.0.0"
+thiserror = "1.0.25"
+rquickjs = { version="0.1.1", path="../rquickjs" }
