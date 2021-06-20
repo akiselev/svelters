@@ -1,0 +1,3 @@
+[submodule "crates/rquickjs"]
+	path = crates/rquickjs
+	url = git@github.com:akiselev/rquickjs.git

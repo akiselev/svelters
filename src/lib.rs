@@ -14,7 +14,7 @@ pub mod runtime {
 use js::compile_svelte;
 
 pub fn compile() -> Result<String> {
-    let res = compile_svelte("src/ts/index.ts")?;
+    let res = compile_svelte("./src/ts/index.ts")?;
     println!("{}", res);
     Ok(res)
 }
