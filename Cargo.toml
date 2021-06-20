@@ -32,6 +32,7 @@ tree-sitter-svelte = "0.8.1"
 tree-sitter-cpp = "0.19.0"
 # rquickjs = { path = "./libs/rquickjs", features = ["full", "tokio", "bindgen"] }
 rquickjs = { version="0.1.1", path="./crates/rquickjs", features=["full", "tokio"] }
+svelters-compiler = { version="0.1.0", path="./crates/compiler" }
 swc_common = { version="0.10.20", features=["tty-emitter"] }
 swc_ecmascript = "0.36.3"
 swc_bundler = "0.37.4"
@@ -50,12 +51,6 @@ swc_ecma_visit = "0.31.0"
 common-path = "1.0.0"
 quickjs_runtime = "0.4.2"
 
-# [target.'cfg(all(unix, not(target_env = "musl"), not(target_arch = "aarch64"), not(target_arch = "arm")))'.dependencies]
-# jemallocator = { version = "0.3", features = ["disable_initial_exec_tls"] }
-
-# [target.'cfg(all(windows, target_arch = "x86_64"))'.dependencies]
-# mimalloc = { version = "0.1" }
-
 [build-dependencies]
 cpp_build = "0.5.6"
 npm_rs = "0.1.1"
@@ -65,3 +60,11 @@ lto = true
 
 [dev-dependencies]
 cpp_build = "0.5.6"
+
+[workspace]
+members = [
+    "crates/compiler",
+    "crates/rquickjs",
+    "crates/rquickjs/rquickjs-core",
+    "crates/rquickjs/rquickjs-macro",
+]

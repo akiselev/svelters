@@ -1,14 +1,12 @@
-pub(in crate) use std::{
-    path::Path,
-    sync::mpsc::{self, Receiver, SyncSender},
-    sync::Arc,
-};
+pub(in crate) use std::{path::Path, sync::Arc};
 
+pub(in crate) use flume::{Receiver, Sender};
+pub(in crate) use futures::future::Future;
 pub(in crate) use node_resolve::Resolver as NodeResolver;
 pub(in crate) use parking_lot::RwLock;
 pub(in crate) use rquickjs::{
     bind, BuiltinLoader, BuiltinResolver, Context, Ctx, Error, FileResolver, FromJs, Function,
-    IntoJs, NativeLoader, Result, Runtime, ScriptLoader, Value,
+    IntoJs, NativeLoader, Promise, Result, Runtime, ScriptLoader, Value,
 };
 pub(in crate) use swc_common::{
     errors::{ColorConfig, Handler},

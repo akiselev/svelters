@@ -1,10 +1,10 @@
-this.core.compile = (filename, src) =>
+this.compile = (filename, src) =>
     this.svelte
         .preprocess(
             src,
             {
                 script: ({ content, filename }) => {
-                    const code = this.core.transpile(filename, content);
+                    const code = this.transpile(filename, content);
                     return { code };
                 },
             },

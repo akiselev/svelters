@@ -39,10 +39,14 @@ impl Loader {
         {
             let cm = cm.clone();
             ctx.with(|ctx| {
-                let _: () = ctx.eval_file("./src/js/polyfills/node.URL.js").unwrap();
-                let _: () = ctx.eval_file("./src/js/polyfills/self.js").unwrap();
-                let _: () = ctx.eval_file("./src/js/compiler.js").unwrap();
-                let _: () = ctx.eval_file("./node_modules/svelte/compiler.js").unwrap();
+                let _: () = ctx
+                    .eval_global_file("./src/js/polyfills/node.URL.js")
+                    .unwrap();
+                let _: () = ctx.eval_global_file("./src/js/polyfills/self.js").unwrap();
+                let _: () = ctx.eval_global_file("./src/js/compiler.js").unwrap();
+                let _: () = ctx
+                    .eval_global_file("./node_modules/svelte/compiler.js")
+                    .unwrap();
 
                 let globals = ctx.globals();
                 globals.init_def::<Transpiler>().unwrap();

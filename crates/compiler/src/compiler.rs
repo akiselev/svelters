@@ -12,29 +12,37 @@ use crate::{task::task_loop, typescript};
 
 #[derive(Clone)]
 pub struct SvelteCompiler {
-    tx: mpsc::SyncSender<(String, String, mpsc::SyncSender<Result<String>>)>,
+    tx: Sender<(String, String, Sender<Result<String>>)>,
     node: NodeResolver,
 }
 
 impl SvelteCompiler {
     pub fn new() -> SvelteCompiler {
-        let (tx, rx) = mpsc::sync_channel::<(String, String, mpsc::SyncSender<Result<String>>)>(0);
+        let (tx, rx) = flume::bounded::<(String, String, Sender<Result<String>>)>(0);
         let node = NodeResolver::new()
             .with_extensions(&["svelte", "ts", "mjs", "js"])
             .with_main_fields(&["svelte", "module"]);
-        {
-            std::thread::spawn(move || {
-                task_loop(rx);
-            });
-        }
+
+        std::thread::spawn(move || {
+            use tokio::runtime;
+
+            let rt = runtime::Builder::new_current_thread().build().unwrap();
+            let local = tokio::task::LocalSet::new();
+
+            rt.block_on(local.run_until(task_loop(rx)));
+        });
         SvelteCompiler { tx, node }
     }
 
     #[tracing::instrument(skip(self))]
-    pub fn compile(&self, path: &str, source: String) -> Result<String> {
-        let (tx, rx) = mpsc::sync_channel(0);
-        self.tx.send((path.to_string(), source, tx)).unwrap();
-        let res = rx.recv().unwrap()?;
+    pub async fn compile(&self, path: &str, source: String) -> Result<String> {
+        let (tx, rx) = flume::bounded(0);
+        self.tx
+            .send_async((path.to_string(), source, tx))
+            .await
+            .unwrap();
+        tracing::info!("Awaiting compiler response...");
+        let res = rx.recv_async().await.unwrap()?;
         tracing::debug!(res=%res, "Compiled");
         Ok(res)
     }

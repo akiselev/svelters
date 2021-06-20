@@ -1,14 +1,26 @@
 use std::convert::TryInto;
 
+use futures::FutureExt;
 use rquickjs::TypedMapKey;
 
 use crate::{inner::*, transpile_typescript, FsLoader};
 
-pub(in crate) fn task_loop(rx: Receiver<(String, String, SyncSender<Result<String>>)>) {
+pub(in crate) async fn task_loop(rx: Receiver<(String, String, Sender<Result<String>>)>) {
     let span = tracing::debug_span!("Svelte Compiler");
     let _ = span.enter();
 
+    tracing::info!("Starting compiler task");
     let rt = Runtime::new().unwrap();
+    let executor = rt.spawn_executor(rquickjs::Tokio);
+    // let local = tokio::task::LocalSet::new();
+    // local
+    //     .spawn_local({
+    //         let rt = rt.clone();
+    //         async move {  }
+    //     })
+    //     .await
+    //     .unwrap();
+
     rt.set_max_stack_size(10 * 1024 * 1024);
     let resolver = (
         BuiltinResolver::default()
@@ -23,22 +35,15 @@ pub(in crate) fn task_loop(rx: Receiver<(String, String, SyncSender<Result<Strin
         BuiltinLoader::default()
             .with_module(
                 "svelte/internal",
-                std::fs::read_to_string(include_str!(
-                    "../../../node_modules/svelte/internal/index.mjs"
-                ))
-                .unwrap(),
+                std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
             )
             .with_module(
                 "./internal/index.mjs",
-                std::fs::read_to_string(include_str!(
-                    "../../../node_modules/svelte/internal/index.mjs"
-                ))
-                .unwrap(),
+                std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
             )
             .with_module(
                 "svelte",
-                std::fs::read_to_string(include_str!("../../../node_modules/svelte/index.mjs"))
-                    .unwrap(),
+                std::fs::read_to_string("./node_modules/svelte/index.mjs").unwrap(),
             ),
         ScriptLoader::default(),
         NativeLoader::default(),
@@ -47,28 +52,46 @@ pub(in crate) fn task_loop(rx: Receiver<(String, String, SyncSender<Result<Strin
 
     let ctx = Context::full(&rt).unwrap();
     ctx.with(|ctx| {
-        ctx.eval_global::<(), _>(include_str!("../js/self.js"))
+        ctx.eval_global_file::<(), _>("./crates/compiler/js/self.js")
             .unwrap();
-        ctx.eval_global::<(), _>(include_str!("../js/compiler.js"))
+        ctx.eval_global_file::<(), _>("./crates/compiler/js/compiler.js")
             .unwrap();
-        ctx.eval_global::<(), _>(include_str!("../js/polyfill/index.js"))
+        ctx.eval_global_file::<(), _>("./crates/compiler/js/polyfill/index.js")
             .unwrap();
-        ctx.eval_global::<(), _>(include_str!("../../../node_modules/svelte/compiler.js"))
+        ctx.eval_global_file::<(), _>("./node_modules/svelte/compiler.js")
             .unwrap();
 
         ctx.globals().init_def::<Transpile>().unwrap();
-
-        while let Ok((path, src, tx)) = rx.recv() {
-            tracing::info!("Compiling component");
-            let res = call_compiler(ctx, &path, src);
-            tx.send(res).unwrap();
-        }
     });
+
+    while let Ok((path, src, tx)) = rx.recv_async().await {
+        tracing::info!("Received component");
+        ctx.with(|ctx| {
+            ctx.spawn(
+                call_compiler(ctx, path, src)
+                    .unwrap()
+                    .then(|res| async move {
+                        tracing::info!("Sending response");
+                        tx.send_async(res.unwrap()).await.unwrap();
+                    }),
+            )
+        });
+        tracing::info!("Compiling component");
+    }
+
+    executor.await.unwrap();
+    tracing::info!("Task finished");
 }
 
-fn call_compiler<'js>(ctx: Ctx<'js>, path: &str, source: String) -> Result<String> {
+fn call_compiler<'js>(
+    ctx: Ctx<'js>,
+    path: String,
+    source: String,
+) -> Result<Promise<Result<String>>> {
     let compile_fn: Function<'js> = ctx.globals().get("compile")?;
-    compile_fn.call((path.to_string(), source))
+    let res = compile_fn.call((path, source));
+    tracing::info!("Compile called");
+    res
 }
 
 #[bind(object)]

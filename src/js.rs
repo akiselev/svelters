@@ -36,9 +36,13 @@ impl Loader {
             rt.set_max_stack_size(100 * 1024 * 1024);
             let ctx = Context::full(&rt).unwrap();
             ctx.with(|ctx| {
-                let _: () = ctx.eval_file("./src/js/polyfills/node.URL.js").unwrap();
-                let _: () = ctx.eval_file("./src/js/polyfills/self.js").unwrap();
-                let _: () = ctx.eval_file("./node_modules/svelte/compiler.js").unwrap();
+                let _: () = ctx
+                    .eval_global_file("./src/js/polyfills/node.URL.js")
+                    .unwrap();
+                let _: () = ctx.eval_global_file("./src/js/polyfills/self.js").unwrap();
+                let _: () = ctx
+                    .eval_global_file("./node_modules/svelte/compiler.js")
+                    .unwrap();
             });
             while let Ok((path, tx)) = rx.recv() {
                 tracing::info!("Loading {}", path);
