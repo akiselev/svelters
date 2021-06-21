@@ -21,3 +21,4 @@ tracing-macros = "0.0.0"
 rquickjs = { version="0.1.1", path="../rquickjs" }
 linkme = "0.2.6"
 phf = { version="0.9.0", features=["macros"] }
+tokio = { version="1", features=["full"] }
