@@ -9,7 +9,7 @@
     };
 
     onMount(() => {
-        global.comp = comp;
+        // global.comp = comp;
     });
 </script>
 

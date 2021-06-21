@@ -1,81 +1,91 @@
-use anyhow::{anyhow, Result};
 use phf::phf_map;
+use rquickjs::{
+    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, Error, FileResolver, Func, Function,
+    IntoJs, Module, NativeLoader, Opt, Persistent, RegisteryKey, Rest, Result, Runtime,
+    ScriptLoader, Value,
+};
+
+use crate::Framework;
 
 #[derive(Clone, Copy)]
-pub struct Event {
+pub struct Event<F: Framework> {
     pub name: &'static str,
-    pub connect: &'static ConnectFn,
-}
-
-#[derive(Clone, Copy)]
-pub struct Prop {
-    pub name: &'static str,
-    pub setter: Option<&'static SetterFn>,
-    pub getter: &'static GetterFn,
-    // pub binder: Option<&'static BinderFn>,
-}
-
-impl Default for Prop {
-    fn default() -> Prop {
-        Prop {
-            name: "",
-            getter: &() as &GetterFn,
-            setter: None,
-            // binder: None,
-        }
-    }
+    pub connect: &'static ConnectFn<F>,
 }
 
 #[derive(Clone, Copy)]
-pub struct Method {
+pub struct Prop<F: Framework> {
     pub name: &'static str,
-    pub func: &'static MethodFn,
+    pub setter: Option<&'static SetterFn<F>>,
+    pub getter: &'static GetterFn<F>,
 }
 
-pub type PropMap = phf::Map<&'static str, Prop>;
-pub type EventMap = phf::Map<&'static str, Event>;
-pub type MethodMap = phf::Map<&'static str, Method>;
-pub type WidgetMap = phf::Map<&'static str, &'static Widget>;
-
-pub type Constructor = ();
-pub type ConnectFn = ();
-pub type GetterFn = ();
-pub type SetterFn = ();
-pub type MethodFn = ();
-pub type BinderFn = ();
-
-pub struct FrameworkSchema {
-    widgets: WidgetMap,
-}
-
-pub struct Widget {
+#[derive(Clone, Copy)]
+pub struct Method<F: Framework> {
     pub name: &'static str,
-    pub constructor: Option<&'static Constructor>,
-    pub superclasses: &'static [&'static Widget],
-    pub props: PropMap,
-    pub events: EventMap,
-    pub methods: MethodMap,
+    pub func: &'static MethodFn<F>,
 }
 
-impl Default for Widget {
-    fn default() -> Widget {
-        Widget {
-            name: "",
-            constructor: None,
-            superclasses: &[],
-            props: phf_map! {},
-            events: phf_map! {},
-            methods: phf_map! {},
-        }
+pub type PropMap<F> = phf::Map<&'static str, Prop<F>>;
+pub type EventMap<F> = phf::Map<&'static str, Event<F>>;
+pub type MethodMap<F> = phf::Map<&'static str, Method<F>>;
+pub type ClassMap<F> = phf::Map<&'static str, &'static Class<F>>;
+
+pub type Constructor<F> =
+    dyn for<'a> Fn(Ctx<'a>, Vec<Value<'a>>) -> Result<<F as Framework>::Object> + Send + Sync;
+pub type ConnectFn<F> = dyn for<'a> Fn(
+        Context,
+        &'a mut <F as Framework>::Object,
+        RegisteryKey,
+    ) -> Result<<F as Framework>::Handler>
+    + Send
+    + Sync;
+pub type GetterFn<F> =
+    dyn for<'a> Fn(Ctx<'a>, &'a <F as Framework>::Object) -> Result<Value<'a>> + Send + Sync;
+pub type SetterFn<F> = dyn for<'a> Fn(Ctx<'a>, &'a mut <F as Framework>::Object, Value<'a>) -> Result<()>
+    + Send
+    + Sync;
+pub type MethodFn<F> = dyn for<'a> Fn(Ctx<'a>, &'a mut <F as Framework>::Object, Vec<Value<'a>>) -> Result<Value<'a>>
+    + Send
+    + Sync;
+pub type InsertFn<F> = dyn for<'a> Fn(
+        Ctx<'a>,
+        &'a mut <F as Framework>::Object,
+        &'a mut <F as Framework>::Object,
+        Opt<&'a mut <F as Framework>::Object>,
+    ) -> Result<bool>
+    + Send
+    + Sync;
+
+pub struct FrameworkSchema<F: Framework> {
+    pub classes: &'static ClassMap<F>,
+}
+
+impl<F: Framework> FrameworkSchema<F> {
+    pub fn new(classes: &'static ClassMap<F>) -> Self {
+        Self { classes }
     }
 }
 
-impl Widget {
-    pub fn get<T: AsRef<str>>(elements: WidgetMap, name: T) -> Option<&'static Widget> {
-        elements.get(name.as_ref()).map(|res| *res)
+pub struct Class<F: Framework> {
+    pub name: &'static str,
+    pub constructor: Option<&'static Constructor<F>>,
+    pub superclasses: &'static [&'static Class<F>],
+    pub props: PropMap<F>,
+    pub events: EventMap<F>,
+    pub methods: MethodMap<F>,
+    pub insert: Option<&'static InsertFn<F>>,
+}
+
+impl<F: Framework> Class<F> {
+    pub fn get<T: AsRef<str>>(
+        schema: &'static FrameworkSchema<F>,
+        name: T,
+    ) -> Option<&'static Class<F>> {
+        schema.classes.get(name.as_ref()).map(|res| *res)
     }
 
-    pub fn event<T: AsRef<str>>(&self, name: T) -> Option<&'static ConnectFn> {
+    pub fn event<T: AsRef<str>>(&self, name: T) -> Option<&'static ConnectFn<F>> {
         self.events
             .get(name.as_ref())
             .cloned()
@@ -90,7 +100,7 @@ impl Widget {
             })
     }
 
-    pub fn method<T: AsRef<str>>(&self, name: T) -> Option<&'static MethodFn> {
+    pub fn method<T: AsRef<str>>(&self, name: T) -> Option<&'static MethodFn<F>> {
         self.methods
             .get(name.as_ref())
             .cloned()
@@ -105,7 +115,7 @@ impl Widget {
             })
     }
 
-    pub fn getter<T: AsRef<str>>(&self, name: T) -> Option<&'static GetterFn> {
+    pub fn getter<T: AsRef<str>>(&self, name: T) -> Option<&'static GetterFn<F>> {
         self.props
             .get(name.as_ref())
             .cloned()
@@ -120,7 +130,7 @@ impl Widget {
             })
     }
 
-    pub fn setter<T: AsRef<str>>(&self, name: T) -> Option<&'static SetterFn> {
+    pub fn setter<T: AsRef<str>>(&self, name: T) -> Option<&'static SetterFn<F>> {
         self.props
             .get(name.as_ref())
             .cloned()
@@ -145,49 +155,90 @@ impl Widget {
         return name == self.name;
     }
 
-    pub fn parents(&self) -> impl Iterator<Item = &'static Widget> {
+    pub fn parents(&self) -> impl Iterator<Item = &'static Class<F>> {
         self.superclasses.clone().into_iter().map(unref)
     }
 }
 
-pub fn get_class<'a>(elements: WidgetMap, tag: &'a str) -> Result<&'static Widget> {
-    Widget::get(elements, tag).ok_or_else(|| anyhow!("not_found(tag)"))
+pub fn get_class<'a, F: Framework>(
+    schema: &'static FrameworkSchema<F>,
+    tag: &'a str,
+) -> Result<&'static Class<F>> {
+    Class::get(schema, tag).ok_or_else(|| Error::Exception {
+        message: format!("Element named {} does not exist", tag),
+        file: "".to_string(),
+        line: -1,
+        stack: "".to_string(),
+    })
 }
 
-pub fn get_getter<'a>(
-    elements: WidgetMap,
+pub fn get_getter<'a, F: Framework>(
+    schema: &'static FrameworkSchema<F>,
     tag: &'a str,
     name: &'a str,
-) -> Result<&'static GetterFn> {
-    let cls = get_class(elements, tag)?;
-    cls.getter(name).ok_or_else(|| anyhow!("prop(tag, name)"))
+) -> Result<&'static GetterFn<F>> {
+    let cls = get_class(schema, tag)?;
+    cls.getter(name).ok_or_else(|| Error::Exception {
+        message: format!("Getter for prop {} on element {} not found", name, tag),
+        file: "".to_string(),
+        line: -1,
+        stack: "".to_string(),
+    })
 }
 
-pub fn get_setter<'a>(
-    elements: WidgetMap,
+pub fn get_setter<'a, F: Framework>(
+    schema: &'static FrameworkSchema<F>,
     tag: &'a str,
     name: &'a str,
-) -> Result<&'static SetterFn> {
-    let cls = get_class(elements, tag)?;
-    cls.setter(name).ok_or_else(|| anyhow!("setter(tag, name)"))
+) -> Result<&'static SetterFn<F>> {
+    let cls = get_class(schema, tag)?;
+    cls.setter(name).ok_or_else(|| Error::Exception {
+        message: format!("Setter for prop {} on element {} not found", name, tag),
+        file: "".to_string(),
+        line: -1,
+        stack: "".to_string(),
+    })
 }
 
-pub fn get_method<'a>(
-    elements: WidgetMap,
+pub fn get_method<'a, F: Framework>(
+    schema: &'static FrameworkSchema<F>,
     tag: &'a str,
     name: &'a str,
-) -> Result<&'static MethodFn> {
-    let cls = get_class(elements, tag)?;
-    cls.method(name).ok_or_else(|| anyhow!("method(tag, name)"))
+) -> Result<&'static MethodFn<F>> {
+    let cls = get_class(schema, tag)?;
+    cls.method(name).ok_or_else(|| Error::Exception {
+        message: format!("Method {} on element {} not found", name, tag),
+        file: "".to_string(),
+        line: -1,
+        stack: "".to_string(),
+    })
 }
 
-pub fn get_event<'a>(
-    elements: WidgetMap,
+pub fn get_event<'a, F: Framework>(
+    schema: &'static FrameworkSchema<F>,
     tag: &'a str,
     name: &'a str,
-) -> Result<&'static ConnectFn> {
-    let cls = get_class(elements, tag)?;
-    cls.event(name).ok_or_else(|| anyhow!("event(tag, name)"))
+) -> Result<&'static ConnectFn<F>> {
+    let cls = get_class(schema, tag)?;
+    cls.event(name).ok_or_else(|| Error::Exception {
+        message: format!("Eventt {} on element {} not found", name, tag),
+        file: "".to_string(),
+        line: -1,
+        stack: "".to_string(),
+    })
+}
+
+pub fn get_insert<'a, F: Framework>(
+    schema: &'static FrameworkSchema<F>,
+    tag: &'a str,
+) -> Result<&'static InsertFn<F>> {
+    let cls = get_class(schema, tag)?;
+    cls.insert.ok_or_else(|| Error::Exception {
+        message: format!("Element {} does not support widgets", tag),
+        file: "".to_string(),
+        line: -1,
+        stack: "".to_string(),
+    })
 }
 
 fn unref<'a, T>(ptr: &'a &'static T) -> &'static T {

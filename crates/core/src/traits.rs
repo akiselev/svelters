@@ -1,29 +1,33 @@
 use anyhow::{anyhow, Result};
 use std::borrow::Cow;
+use std::future::Future;
+use std::pin::Pin;
 
 use crate::def::FrameworkSchema;
 use crate::inner::*;
 
-pub trait Framework: Clone + 'static {
-    // type App: Application;
-    // type Object: ObjectKind;
+pub trait Framework: Sized + Clone + 'static {
+    type App: Application;
+    type Object: ObjectKind;
+    type Handler: EventHandler;
 
-    // fn init_app(&self) -> Result<Self::App>;
-    // fn get_schema(&self) -> FrameworkSchema;
+    fn init_app<'js>(&self, ctx: Ctx<'js>) -> Result<Self::App>;
+    fn get_schema() -> &'static FrameworkSchema<Self>;
 }
 
 pub trait Application {
-    fn has_events(&self) -> bool;
-    fn process_system_events(&self, timeout_ms: u32) -> bool;
-    fn process_framework_events(&self, timeout_ms: u32) -> bool;
+    fn start(self) -> Pin<Box<dyn Future<Output = Result<()>>>>;
+    // fn has_events(&self) -> bool;
+    // fn process_system_events(&self, timeout_ms: u32) -> bool;
+    // fn process_framework_events(&self, timeout_ms: u32) -> bool;
 }
 
 pub trait ObjectKind {
-    fn get_tab(&self) -> Cow<'static, str>;
-    fn is_live(&self) -> bool;
+    fn get_tag(&self) -> Cow<'static, str>;
+    // fn is_live(&self) -> bool;
 
-    fn get_id(&self) -> String;
-    fn set_id(&mut self, id: &str);
+    // fn get_id(&self) -> String;
+    // fn set_id(&mut self, id: &str);
 
     // fn add_event_listener(
     //     &self,
@@ -35,4 +39,8 @@ pub trait ObjectKind {
     // fn remove_event_listener(&self, name: String, func_id: SavedFunction);
 
     // fn get_attribute(&self, name: String, func_id: SavedFunction);
+}
+
+pub trait EventHandler {
+    fn disconnect(&mut self) -> Result<bool>;
 }

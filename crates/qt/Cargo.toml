@@ -15,6 +15,7 @@ cstr = "0.2.8"
 log = "0.4.14"
 qmetaobject = "0.2.1"
 qttypes = "0.2.1"
+either = "1.6.1"
 tracing = "0.1.26"
 tracing-bunyan-formatter = "0.2.4"
 tracing-log = "0.1.2"
@@ -25,13 +26,15 @@ anyhow = "1.0.40"
 parking_lot = "0.11.1"
 thiserror = "1.0.25"
 tracing-macros = "0.0.0"
-phf = { version="0.8", features=["macros"] }
+phf = { version="0.9", features=["macros"] }
 smartstring = "0.2.6"
-rquickjs = { version="0.1.1", path="../rquickjs", features=["full"] }
+rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
 svelters-core = { version="0.1.0", path="../core" }
+flume = "0.10.7"
 
 [build-dependencies]
 cpp_build = "0.5.6"
+semver = "1.0.3"
 
 [dev-dependencies]
 cpp_build = "0.5.6"

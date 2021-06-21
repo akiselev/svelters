@@ -23,6 +23,6 @@ tracing = "0.1.26"
 tracing-macros = "0.0.0"
 thiserror = "1.0.25"
 tokio = { version="1", features=["full"] }
-rquickjs = { version="0.1.1", path="../rquickjs" }
+rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
 futures = "0.3.15"
 flume = "0.10.7"

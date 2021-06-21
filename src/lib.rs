@@ -9,7 +9,7 @@ use rquickjs::{
 };
 
 use svelters_compiler::{compile, SvelteCompiler};
-use svelters_core::Framework;
+use svelters_core::{Application, Framework};
 
 pub mod logging;
 
@@ -40,14 +40,16 @@ impl<T: Framework> Runtime<T> {
         rt.set_loader(compiler.clone(), compiler.clone());
         let ctx = Context::full(&rt)?;
 
-        let res: Result<()> = ctx.with(|ctx| {
+        let res: Result<_> = ctx.with(|ctx| {
             svelters_core::console::init(ctx)?;
             svelters_core::timing::init(ctx)?;
+            let app = self.framework.init_app(ctx)?;
+            let app = tokio::task::spawn_local(app.start());
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();
-            Ok(())
+            Ok(app)
         });
         ctx.runtime().execute_pending_job()?;
-        Ok(res?)
+        Ok(res?.await??)
     }
 }
