@@ -24,53 +24,7 @@ async fn main() -> Result<()> {
     tracing::info!("Starting...");
 
     // Run the local task set.
-    let local = LocalSet::new();
-    let _ = local.spawn_local(main_task());
-    local.await;
-    Ok(())
-}
-
-#[tracing::instrument()]
-async fn main_task() -> Result<()> {
-    let compiler = SvelteCompiler::new();
-    let src = compile(&compiler, "./src/ts/index.ts").await?;
-
-    let rt = Runtime::new()?;
-    rt.spawn_executor(rquickjs::Tokio);
-    rt.set_loader(compiler.clone(), compiler.clone());
-    let ctx = Context::full(&rt)?;
-
-    let res: Result<()> = ctx.with(|ctx| {
-        svelters::runtime::console::init(ctx)?;
-        let global = ctx.globals();
-        global.set("this", global.clone())?;
-        global.init_def::<SetTimeout>()?;
-        ctx.eval_global_module::<(), _>("./src/ts/index.ts", Some(src.into_bytes()))
-            .unwrap();
-        Ok(())
-    });
-    ctx.runtime().execute_pending_job()?;
-    tokio::time::sleep(Duration::from_millis(10000)).await;
-    Ok(res?)
-}
-
-#[bind(object)]
-#[quickjs(rename = "setTimeout")]
-pub fn set_timeout<'js>(ctx: Ctx<'js>, func: Function<'js>, ms: u64) -> JsResult<()> {
-    if ms > 0 {
-        let func = Persistent::save(ctx, func);
-        let context = Context::from_ctx(ctx)?;
-        ctx.spawn(async move {
-            sleep(Duration::from_millis(ms)).await;
-            context
-                .with(move |ctx| {
-                    let func = func.restore(ctx).unwrap();
-                    func.call::<_, ()>(())
-                })
-                .unwrap();
-        });
-    } else {
-        func.call(())?;
-    }
+    let rt = svelters::Runtime::new(svelters_qt::Qt::new());
+    rt.start("./app/index.ts").await?;
     Ok(())
 }

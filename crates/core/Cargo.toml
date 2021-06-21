@@ -1,0 +1,23 @@
+[package]
+authors = ["Alexander Kiselev <svelters@akiselev.com>"]
+edition = "2018"
+name = "svelters-core"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+log = "0.4.14"
+tracing = "0.1.26"
+tracing-log = "0.1.2"
+tracing-subscriber = "0.2.18"
+lazy_static = "1.4.0"
+anyhow = "1.0.40"
+thiserror = "1.0.25"
+tracing-macros = "0.0.0"
+rquickjs = { version="0.1.1", path="../rquickjs" }
+linkme = "0.2.6"
+phf = { version="0.9.0", features=["macros"] }
