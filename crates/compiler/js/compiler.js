@@ -1,17 +1,17 @@
 this.compile = (filename, src) =>
-    this.svelte
+    svelte
         .preprocess(
             src,
             {
                 script: ({ content, filename }) => {
-                    const code = this.transpile(filename, content);
+                    const code = transpile(filename, content);
                     return { code };
                 },
             },
             { filename },
         )
         .then(({ code }) => {
-            const res = this.svelte.compile(code, {
+            const res = svelte.compile(code, {
                 namespace: "foreign",
                 accessors: true,
                 filename: filename,

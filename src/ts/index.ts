@@ -1,6 +1,7 @@
 //// <reference path="./types.d.ts" />
 
 import App from "./App.svelte";
-
-setTimeout(() => console.log("Finished"), 10);
-new App({  });
+console.log(".....");
+setTimeout(() => console.log("Finished"), 8000);
+new App({ });
+// new App({ target: {} });

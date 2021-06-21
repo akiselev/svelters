@@ -17,3 +17,13 @@ pub fn init() {
     LogTracer::init().expect("Failed to set logger");
     set_global_default(subscriber).expect("Failed to set subscriber");
 }
+
+fn init_logging() {
+    // qmetaobject::log::init_qt_to_rust();
+
+    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
+    let fmt_layer = fmt::layer().with_target(false);
+    let subscriber = Registry::default().with(env_filter).with(fmt_layer);
+    LogTracer::init().expect("Failed to set logger");
+    set_global_default(subscriber).expect("Failed to set subscriber");
+}

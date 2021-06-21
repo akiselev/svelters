@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 
 use futures::FutureExt;
-use rquickjs::TypedMapKey;
+use rquickjs::{Object, TypedMapKey};
 
 use crate::{inner::*, transpile_typescript, FsLoader};
 
@@ -12,53 +12,20 @@ pub(in crate) async fn task_loop(rx: Receiver<(String, String, Sender<Result<Str
     tracing::info!("Starting compiler task");
     let rt = Runtime::new().unwrap();
     let executor = rt.spawn_executor(rquickjs::Tokio);
-    // let local = tokio::task::LocalSet::new();
-    // local
-    //     .spawn_local({
-    //         let rt = rt.clone();
-    //         async move {  }
-    //     })
-    //     .await
-    //     .unwrap();
 
     rt.set_max_stack_size(10 * 1024 * 1024);
-    let resolver = (
-        BuiltinResolver::default()
-            .with_module("svelte/internal")
-            .with_module("./internal/index.mjs")
-            .with_module("svelte"),
-        FileResolver::default()
-            .with_path("./")
-            .with_path("./node_modules/svelte/"),
-    );
-    let loader = (
-        BuiltinLoader::default()
-            .with_module(
-                "svelte/internal",
-                std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
-            )
-            .with_module(
-                "./internal/index.mjs",
-                std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
-            )
-            .with_module(
-                "svelte",
-                std::fs::read_to_string("./node_modules/svelte/index.mjs").unwrap(),
-            ),
-        ScriptLoader::default(),
-        NativeLoader::default(),
-    );
+    let (resolver, loader) = get_dev_dependencies();
     rt.set_loader(resolver, loader);
 
     let ctx = Context::full(&rt).unwrap();
     ctx.with(|ctx| {
-        ctx.eval_global_file::<(), _>("./crates/compiler/js/self.js")
+        ctx.eval_global_file::<(), _>("./crates/compiler/js/self.js", None)
             .unwrap();
-        ctx.eval_global_file::<(), _>("./crates/compiler/js/compiler.js")
+        ctx.eval_global_file::<(), _>("./crates/compiler/js/compiler.js", None)
             .unwrap();
-        ctx.eval_global_file::<(), _>("./crates/compiler/js/polyfill/index.js")
+        ctx.eval_global_file::<(), _>("./crates/compiler/js/polyfill/index.js", None)
             .unwrap();
-        ctx.eval_global_file::<(), _>("./node_modules/svelte/compiler.js")
+        ctx.eval_global_file::<(), _>("./node_modules/svelte/compiler.js", None)
             .unwrap();
 
         ctx.globals().init_def::<Transpile>().unwrap();
@@ -67,14 +34,10 @@ pub(in crate) async fn task_loop(rx: Receiver<(String, String, Sender<Result<Str
     while let Ok((path, src, tx)) = rx.recv_async().await {
         tracing::info!("Received component");
         ctx.with(|ctx| {
-            ctx.spawn(
-                call_compiler(ctx, path, src)
-                    .unwrap()
-                    .then(|res| async move {
-                        tracing::info!("Sending response");
-                        tx.send_async(res.unwrap()).await.unwrap();
-                    }),
-            )
+            ctx.spawn(call_compiler(ctx, path, src).then(|res| async move {
+                tracing::info!("Sending response");
+                tx.send_async(res.unwrap()).await.unwrap();
+            }))
         });
         tracing::info!("Compiling component");
     }
@@ -83,15 +46,25 @@ pub(in crate) async fn task_loop(rx: Receiver<(String, String, Sender<Result<Str
     tracing::info!("Task finished");
 }
 
-fn call_compiler<'js>(
-    ctx: Ctx<'js>,
-    path: String,
-    source: String,
-) -> Result<Promise<Result<String>>> {
-    let compile_fn: Function<'js> = ctx.globals().get("compile")?;
-    let res = compile_fn.call((path, source));
-    tracing::info!("Compile called");
-    res
+fn call_compiler<'js>(ctx: Ctx<'js>, path: String, source: String) -> Promise<Result<String>> {
+    match ctx.globals().get::<_, Function<'js>>("compile") {
+        Ok(compile_fn) => {
+            tracing::info!("Compile called");
+            match compile_fn.call((path, source)) {
+                Ok(res) => res,
+                Err(err) => {
+                    let (prom, _, reject) = ctx.promise().unwrap();
+                    reject.call::<_, ()>((err.into_js(ctx),)).unwrap();
+                    Promise::from_js(ctx, prom.into_value()).unwrap()
+                }
+            }
+        }
+        Err(err) => {
+            let (prom, _, reject) = ctx.promise().unwrap();
+            reject.call::<_, ()>((err.into_js(ctx),)).unwrap();
+            Promise::from_js(ctx, prom.into_value()).unwrap()
+        }
+    }
 }
 
 #[bind(object)]

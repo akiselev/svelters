@@ -13,13 +13,13 @@ use crate::{task::task_loop, typescript};
 #[derive(Clone)]
 pub struct SvelteCompiler {
     tx: Sender<(String, String, Sender<Result<String>>)>,
-    node: NodeResolver,
+    pub(in crate) resolver: NodeResolver,
 }
 
 impl SvelteCompiler {
     pub fn new() -> SvelteCompiler {
         let (tx, rx) = flume::bounded::<(String, String, Sender<Result<String>>)>(0);
-        let node = NodeResolver::new()
+        let resolver = NodeResolver::new()
             .with_extensions(&["svelte", "ts", "mjs", "js"])
             .with_main_fields(&["svelte", "module"]);
 
@@ -31,7 +31,7 @@ impl SvelteCompiler {
 
             rt.block_on(local.run_until(task_loop(rx)));
         });
-        SvelteCompiler { tx, node }
+        SvelteCompiler { tx, resolver }
     }
 
     #[tracing::instrument(skip(self))]
@@ -41,10 +41,20 @@ impl SvelteCompiler {
             .send_async((path.to_string(), source, tx))
             .await
             .unwrap();
-        tracing::info!("Awaiting compiler response...");
+        tracing::info!("Awaiting compiler response (async)...");
         let res = rx.recv_async().await.unwrap()?;
         tracing::debug!(res=%res, "Compiled");
         Ok(res)
+    }
+
+    #[tracing::instrument(skip(self))]
+    pub fn compile_sync(&self, path: &str, source: String) -> Result<String> {
+        let (tx, rx) = flume::bounded(0);
+        self.tx
+            .send((path.to_string(), source, tx))
+            .map_err(|_| Error::Unknown)?;
+        tracing::info!("Awaiting compiler response (sync)...");
+        rx.recv().map_err(|_| Error::Unknown)?
     }
 }
 

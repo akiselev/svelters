@@ -16,3 +16,6 @@ pub(in crate) use swc_common::{
 pub(in crate) use swc_ecma_codegen::{text_writer::JsWriter, Config, Emitter};
 pub(in crate) use swc_ecma_parser::{lexer::Lexer, Parser as JsParser, Syntax, TsConfig};
 pub(in crate) use swc_ecma_visit::FoldWith;
+
+pub(in crate) use crate::dependencies::{get_dev_dependencies, get_prod_dependencies};
+pub(in crate) use crate::SvelteCompiler;
