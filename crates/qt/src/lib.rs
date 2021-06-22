@@ -1,3 +1,4 @@
+#![feature(generic_associated_types)]
 #![recursion_limit = "1024"]
 #![allow(unused)]
 
