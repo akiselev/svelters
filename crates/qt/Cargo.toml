@@ -31,6 +31,7 @@ smartstring = "0.2.6"
 rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
 svelters-core = { version="0.1.0", path="../core" }
 flume = "0.10.7"
+tokio = { version="1", features=["time"] }
 
 [build-dependencies]
 cpp_build = "0.5.6"

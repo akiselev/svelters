@@ -2,8 +2,11 @@ use std::ffi::{c_void, CString};
 use std::os::raw::c_char;
 use std::pin::Pin;
 use std::sync::Arc;
+use std::time::Duration;
 
 use cpp::{cpp, cpp_class};
+use rquickjs::Context;
+use tokio::time;
 
 cpp! {{
     #include <memory>
@@ -13,33 +16,39 @@ cpp! {{
     #include <QtCore/QAbstractNativeEventFilter>
     #include <QtWidgets/QApplication>
 
-    class EventFilter : public QAbstractNativeEventFilter
-    {
-        void* ptr;
-        public:
-            EventFilter(void* ptr) : QAbstractNativeEventFilter(), ptr(ptr) {}
+    // class EventFilter : public QAbstractNativeEventFilter
+    // {
+    //     void* ptr;
+    //     public:
+    //         EventFilter(void* ptr) : QAbstractNativeEventFilter(), ptr(ptr) {
+    //             rust!(application_filter_init [] {
+    //                 tracing::info!("Event filter constructed");
+    //             });
+    //         }
 
-            bool nativeEventFilter(const QByteArray &eventType, void *message, long *) override
-            {
-                rust!(application_filter_events [ptr : *mut flume::Sender<usize> as "void *"] {
-                    tracing::info!("Event received");
-                    let ptr = Arc::from_raw(ptr);
-                    if let Err(err) = ptr.send(0) {
-                        tracing::error!("Failed to send QApplication event notification");
-                    }
-                    let _ = Arc::into_raw(ptr);
-                });
-                return true;
-            }
+    //         bool nativeEventFilter(const QByteArray &eventType, void *message, long *) override
+    //         {
+    //             rust!(application_filter_events [ptr : *mut flume::Sender<usize> as "void *"] {
+    //                 println!("loaded ptr {}", ptr as usize);
+    //                 // tracing::info!("Event received");
+    //                 // let ptr = Box::from_raw(ptr);
+    //                 let ptr: &flume::Sender<usize> = unsafe { std::mem::transmute(ptr) };
+    //                 if let Err(err) = ptr.send(0) {
+    //                     // tracing::error!("Failed to send QApplication event notification");
+    //                 }
+    //                 std::mem::forget(ptr);
+    //             });
+    //             return false;
+    //         }
 
-            ~EventFilter() {
-                rust!(application_drop_event_filter [ptr : *mut flume::Sender<usize> as "void *"] {
-                    let arc = Arc::from_raw(ptr);
-                    drop(arc);
-                    tracing::warn!("Dropping event filter");
-                });
-            }
-    };
+    //         ~EventFilter() {
+    //             rust!(application_drop_event_filter [ptr : *mut flume::Sender<usize> as "void *"] {
+    //                 let arc = Arc::from_raw(ptr);
+    //                 drop(arc);
+    //                 tracing::warn!("Dropping event filter");
+    //             });
+    //         }
+    // };
 }}
 
 cpp_class!(
@@ -52,14 +61,16 @@ cpp_class!(
 
 pub struct Application {
     qapp: Pin<Box<QApplication>>,
-    rx: flume::Receiver<()>,
+    // rx: flume::Receiver<usize>,
 }
 
 impl Application {
     /// Create a new QApplication
     pub fn new() -> Application {
-        let (tx, rx) = flume::unbounded();
-        let tx = Arc::into_raw(Arc::new(tx));
+        // let (tx, rx) = flume::unbounded();
+        // let tx = Box::into_raw(Box::new(tx));
+        // println!("created ptr {}", tx as usize);
+
         let mut arguments: Vec<*mut c_char> = std::env::args()
             .map(|arg| CString::new(arg.into_bytes()).expect("argument contains invalid c-string!"))
             .map(|arg| arg.into_raw())
@@ -69,8 +80,7 @@ impl Application {
 
         let qapp = cpp!(unsafe [
             argc as "int",
-            argv as "char **",
-            tx as "void *"
+            argv as "char **"
         ] -> Pin<Box<QApplication>> as "QPointer<QApplication>*" {
             // Static variables when used inside function are initialized only once
             static int _argc  = argc;
@@ -88,7 +98,7 @@ impl Application {
             }
             QPointer<QApplication>* ptr = new QPointer<QApplication>();
             *ptr = new QApplication(_argc, _argv);
-            (*ptr)->installNativeEventFilter(new EventFilter(tx));
+            // (*ptr)->installNativeEventFilter(new EventFilter(tx));
             return ptr;
         });
 
@@ -97,18 +107,27 @@ impl Application {
             let _ = unsafe { CString::from_raw(arg) };
         }
 
-        Application { qapp, rx }
+        Application { qapp }
     }
 
-    #[tracing::instrument(skip(self))]
-    pub async fn exec(self) -> anyhow::Result<()> {
+    #[tracing::instrument(skip(self, ctx))]
+    pub async fn exec(self, ctx: Context) -> anyhow::Result<()> {
         tracing::info!("Starting app task");
-        while let Ok(msg) = self.rx.recv_async().await {
-            tracing::info!("Event notifiation received");
+        let mut interval = time::interval(Duration::from_millis(10));
+        loop {
             self.process_events();
             self.set_posted_events();
             self.process_events();
+            let rt = ctx.runtime();
+            if rt.is_job_pending() {
+                tracing::info!("job pending");
+                while let Ok(true) = rt.execute_pending_job() {
+                    tracing::info!("another job pending");
+                }
+            }
+            interval.tick().await;
         }
+        tracing::info!("Exiting app task");
         Ok(())
     }
 
@@ -135,7 +154,7 @@ impl Application {
 }
 
 impl svelters_core::Application for Application {
-    fn start(self) -> Pin<Box<dyn std::future::Future<Output = anyhow::Result<()>>>> {
-        Box::pin(self.exec())
+    fn start(self, ctx: Context) -> Pin<Box<dyn std::future::Future<Output = anyhow::Result<()>>>> {
+        Box::pin(self.exec(ctx))
     }
 }

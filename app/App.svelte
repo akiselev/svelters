@@ -6,6 +6,7 @@
     let comp;
     const onClick = () => {
         count2 += 1;
+        console.log("Count ", count2);
     };
 
     onMount(() => {

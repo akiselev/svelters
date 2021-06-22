@@ -44,12 +44,12 @@ impl<T: Framework> Runtime<T> {
             svelters_core::console::init(ctx)?;
             svelters_core::timing::init(ctx)?;
             let app = self.framework.init_app(ctx)?;
-            let app = tokio::task::spawn_local(app.start());
+            let app = tokio::task::spawn_local(app.start(Context::from_ctx(ctx).unwrap()));
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();
             Ok(app)
         });
-        ctx.runtime().execute_pending_job()?;
+        while let Ok(true) = ctx.runtime().execute_pending_job() {}
         Ok(res?.await??)
     }
 }

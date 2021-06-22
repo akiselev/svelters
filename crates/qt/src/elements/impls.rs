@@ -9,7 +9,9 @@ use cpp::{cpp, cpp_class};
 use phf::phf_map;
 use qmetaobject::{connect, Signal, SignalInner};
 use qttypes::*;
-use rquickjs::{Context, Error, FromJs, IntoJs, Opt, RegisteryKey, Result, Value};
+use rquickjs::{
+    get_error, Context, Error, FromJs, IntoJs, Object, Opt, RegisteryKey, Result, Value,
+};
 use svelters_core::FrameworkSchema;
 
 use super::*;
@@ -145,10 +147,29 @@ pub fn qpushbutton_on_clicked<'a, 'b>(
         ctx.with(|ctx| {
             tracing::info!("Calling `clicked` event handler");
             let func = ctx.get_register(key).unwrap();
+            tracing::info!("Getting func handler");
             let func = func.as_function().unwrap();
-            func.call::<_, ()>((val,)).unwrap();
-        })
+
+            match func.call::<_, Value>((create_event(ctx, "clicked", val).unwrap(),)) {
+                Ok(val) => tracing::info!("Calling 'clicked' handler in JS success! {:?}", val),
+                Err(err) => tracing::error!(?err, "Calling 'clicked' handler in JS error!"),
+            }
+            if let Some(err) = get_error(ctx) {
+                tracing::error!("Error DID occur! {:?}", err);
+            }
+        });
     };
     let conn = unsafe { connect(this.raw_ptr(), signal, callback) };
     Ok(EventHandle(conn))
+}
+
+pub fn create_event<'js, N: Into<String>, T: IntoJs<'js>>(
+    ctx: Ctx<'js>,
+    name: N,
+    val: T,
+) -> Result<Object<'js>> {
+    let obj = Object::new(ctx)?;
+    obj.set("type", name.into().into_js(ctx))?;
+    obj.set("detail", val.into_js(ctx)?)?;
+    Ok(obj)
 }

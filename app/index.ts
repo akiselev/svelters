@@ -7,6 +7,6 @@ window = document.createElement("qMainWindow");
 console.log(".....");
 setTimeout(() => console.log("Timeout 8sec"), 8000);
 
-new App({ target: window });
+window.app = new App({ target: window });
 
 window.callMethod("show");

@@ -16,7 +16,7 @@ pub trait Framework: Sized + Clone + 'static {
 }
 
 pub trait Application {
-    fn start(self) -> Pin<Box<dyn Future<Output = Result<()>>>>;
+    fn start(self, ctx: Context) -> Pin<Box<dyn Future<Output = Result<()>>>>;
     // fn has_events(&self) -> bool;
     // fn process_system_events(&self, timeout_ms: u32) -> bool;
     // fn process_framework_events(&self, timeout_ms: u32) -> bool;
