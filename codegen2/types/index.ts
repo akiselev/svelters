@@ -9,7 +9,7 @@ export interface ItemSummary {
     kind: ItemKind;
 }
 
-export interface Item {
+export type ItemBase = {
     id: Id;
     crate_id: number;
     name: string | null;
@@ -19,8 +19,9 @@ export interface Item {
     links: { [key: string]: Id };
     attrs: string[];
     deprecation: Deprecation | null;
-    inner: ItemEnum;
-}
+};
+
+export type Item = ItemEnum & ItemBase;
 
 export interface Span {
     filename: string;
@@ -365,3 +366,108 @@ export interface Crate {
     external_crates: { [key: number]: ExternalCrate };
     format_version: number;
 }
+
+export const isExternCrate = (
+    val: any,
+): val is {
+    kind: "extern_crate";
+    inner: {
+        name: string;
+        rename: string | null;
+    };
+} & ItemBase => typeof val === "object" && val?.kind === "extern_crate";
+export const isAssocConst = (
+    val: any,
+): val is {
+    kind: "assoc_const";
+    inner: {
+        type: Type;
+        default: string | null;
+    };
+} & ItemBase => typeof val === "object" && val?.kind === "assoc_const";
+export const isAssocType = (
+    val: any,
+): val is {
+    kind: "assoc_type";
+    inner: {
+        bounds: GenericBound[];
+        default: Type | null;
+    };
+} & ItemBase => typeof val === "object" && val?.kind === "assoc_type";
+
+export const isModule = (
+    val: any,
+): val is { kind: "module"; inner: Module } & ItemBase =>
+    typeof val === "object" && val?.kind === "module";
+export const isImport = (
+    val: any,
+): val is { kind: "import"; inner: Import } & ItemBase =>
+    typeof val === "object" && val?.kind === "import";
+export const isUnion = (
+    val: any,
+): val is { kind: "union"; inner: Union } & ItemBase =>
+    typeof val === "object" && val?.kind === "union";
+export const isStruct = (
+    val: any,
+): val is { kind: "struct"; inner: Struct } & ItemBase =>
+    typeof val === "object" && val?.kind === "struct";
+export const isStructField = (
+    val: any,
+): val is { kind: "struct_field"; inner: Type } & ItemBase =>
+    typeof val === "object" && val?.kind === "struct_field";
+export const isEnum = (
+    val: any,
+): val is { kind: "enum"; inner: Enum } & ItemBase =>
+    typeof val === "object" && val?.kind === "enum";
+export const isVariant = (
+    val: any,
+): val is { kind: "variant"; inner: Variant } & ItemBase =>
+    typeof val === "object" && val?.kind === "variant";
+export const isFunction = (
+    val: any,
+): val is { kind: "function"; inner: Function } & ItemBase =>
+    typeof val === "object" && val?.kind === "function";
+export const isTrait = (
+    val: any,
+): val is { kind: "trait"; inner: Trait } & ItemBase =>
+    typeof val === "object" && val?.kind === "trait";
+export const isTraitAlias = (
+    val: any,
+): val is { kind: "trait_alias"; inner: TraitAlias } & ItemBase =>
+    typeof val === "object" && val?.kind === "trait_alias";
+export const isMethod = (
+    val: any,
+): val is { kind: "method"; inner: Method } & ItemBase =>
+    typeof val === "object" && val?.kind === "method";
+export const isImpl = (
+    val: any,
+): val is { kind: "impl"; inner: Impl } & ItemBase =>
+    typeof val === "object" && val?.kind === "impl";
+export const isTypedef = (
+    val: any,
+): val is { kind: "typedef"; inner: Typedef } & ItemBase =>
+    typeof val === "object" && val?.kind === "typedef";
+export const isOpaqueTy = (
+    val: any,
+): val is { kind: "opaque_ty"; inner: OpaqueTy } & ItemBase =>
+    typeof val === "object" && val?.kind === "opaque_ty";
+export const isConstant = (
+    val: any,
+): val is { kind: "constant"; inner: Constant } & ItemBase =>
+    typeof val === "object" && val?.kind === "constant";
+export const isStatic = (
+    val: any,
+): val is { kind: "static"; inner: Static } & ItemBase =>
+    typeof val === "object" && val?.kind === "static";
+export const isForeignType = (
+    val: any,
+): val is { kind: "foreign_type"; inner: null } & ItemBase =>
+    typeof val === "object" && val?.kind === "foreign_type";
+export const isMacro = (
+    val: any,
+): val is { kind: "macro"; inner: string } & ItemBase =>
+    typeof val === "object" && val?.kind === "macro";
+export const isProcMacro = (
+    val: any,
+): val is { kind: "proc_macro"; inner: ProcMacro } & ItemBase =>
+    typeof val === "object" && val?.kind === "proc_macro";
