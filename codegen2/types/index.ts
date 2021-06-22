@@ -355,6 +355,80 @@ export type Type =
           };
       };
 
+export const isResolvedPath = (
+    val: any,
+): val is {
+    kind: "resolved_path";
+    inner: {
+        name: string;
+        id: Id;
+        args: GenericArgs | null;
+        param_names: GenericBound[];
+    };
+} => typeof val === "object" && val?.kind === "resolved_path";
+export const isArray = (
+    val: any,
+): val is {
+    kind: "array";
+    inner: {
+        type: Type;
+        len: string;
+    };
+} => typeof val === "object" && val?.kind === "array";
+export const isRawPointer = (
+    val: any,
+): val is {
+    kind: "raw_pointer";
+    inner: {
+        mutable: boolean;
+        type: Type;
+    };
+} => typeof val === "object" && val?.kind === "raw_pointer";
+export const isBorrowedRef = (
+    val: any,
+): val is {
+    kind: "borrowed_ref";
+    inner: {
+        lifetime: string | null;
+        mutable: boolean;
+        type: Type;
+    };
+} => typeof val === "object" && val?.kind === "borrowed_ref";
+export const isQualifiedPath = (
+    val: any,
+): val is {
+    kind: "qualified_path";
+    inner: {
+        name: string;
+        self_type: Type;
+        trait: Type;
+    };
+} => typeof val === "object" && val?.kind === "qualified_path";
+export const isGeneric = (
+    val: any,
+): val is { kind: "generic"; inner: string } =>
+    typeof val === "object" && val?.kind === "generic";
+export const isPrimitive = (
+    val: any,
+): val is { kind: "primitive"; inner: string } =>
+    typeof val === "object" && val?.kind === "primitive";
+export const isFunction_pointer = (
+    val: any,
+): val is { kind: "function_pointer"; inner: FunctionPointer } =>
+    typeof val === "object" && val?.kind === "function_pointer";
+export const isTuple = (val: any): val is { kind: "tuple"; inner: Type[] } =>
+    typeof val === "object" && val?.kind === "tuple";
+export const isSlice = (val: any): val is { kind: "slice"; inner: Type } =>
+    typeof val === "object" && val?.kind === "slice";
+export const isImpl_trait = (
+    val: any,
+): val is { kind: "impl_trait"; inner: GenericBound[] } =>
+    typeof val === "object" && val?.kind === "impl_trait";
+export const isNever = (val: any): val is { kind: "never"; inner: null } =>
+    typeof val === "object" && val?.kind === "never";
+export const isInfer = (val: any): val is { kind: "infer"; inner: null } =>
+    typeof val === "object" && val?.kind === "infer";
+
 export type MacroKind = "bang" | "attr" | "derive";
 
 export interface Crate {
