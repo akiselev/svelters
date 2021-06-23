@@ -8,5 +8,5 @@ use svelters_qt::*;
 
 fn main() {}
 
-#[derive(Debug, Copy, Clone)]
-pub struct Qt(impl Upcaster<String>);
+// #[derive(Debug, Copy, Clone)]
+// pub struct Qt(impl Upcaster<String>);

@@ -20,7 +20,7 @@ use std::ops::{Add, Deref};
 
 use frunk::hlist::Selector;
 use frunk::{HCons, HNil};
-use qt_core::cpp_core::{DynamicCast, Ptr};
+use qt_core::cpp_core::{DynamicCast, Ptr, StaticUpcast};
 use qt_core::{QObject, QPtr};
 use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
 
@@ -43,9 +43,10 @@ pub use crate::node::*;
 pub trait Cast<T> {
     type Output<'a, U: 'a>: AsRef<U>
     where
-        Self: 'a;
+        Self: 'a,
+        T: 'a;
 
-    fn downcast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
     where
         T: 'a;
 }
@@ -54,9 +55,10 @@ default impl<T, V> Cast<T> for V {
     type Output<'a, U: 'a>
     where
         V: 'a,
+        T: 'a,
     = DefaultCast<'a, U>;
 
-    fn downcast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
     where
         T: 'a,
     {
@@ -64,20 +66,22 @@ default impl<T, V> Cast<T> for V {
     }
 }
 
-impl<T> Cast<T> for QPtr<QObject>
+impl<T, Q> Cast<T> for QPtr<Q>
 where
     QObject: DynamicCast<T>,
+    Q: StaticUpcast<QObject>,
 {
     type Output<'a, U: 'a>
     where
         Self: 'a,
+        T: 'a,
     = PtrRef<'a, U>;
 
-    fn downcast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
     where
         T: 'a,
     {
-        let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.as_ptr()) };
+        let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.static_upcast().as_ptr()) };
         if !ptr.is_null() {
             Some(PtrRef(ptr, PhantomData))
         } else {
@@ -85,6 +89,29 @@ where
         }
     }
 }
+
+// impl<T> Cast<T> for QPtr<QObject>
+// where
+//     QObject: DynamicCast<T>,
+// {
+//     type Output<'a, U: 'a>
+//     where
+//         Self: 'a,
+//         T: 'a,
+//     = PtrRef<'a, U>;
+
+//     fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+//     where
+//         T: 'a,
+//     {
+//         let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.as_ptr()) };
+//         if !ptr.is_null() {
+//             Some(PtrRef(ptr, PhantomData))
+//         } else {
+//             None
+//         }
+//     }
+// }
 
 // pub trait Upcaster {
 //     type Output<'a, U>: AsRef<T>;
