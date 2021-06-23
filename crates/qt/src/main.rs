@@ -9,6 +9,8 @@ use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{Ctx, Error, Result, Value};
 use svelters_qt::prelude::*;
 
+types! {}
+
 fn main() {
     unsafe {
         let mut args = QCoreApplicationArgs::new();

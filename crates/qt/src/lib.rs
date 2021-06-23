@@ -37,3 +37,14 @@ pub struct Type<T, F: Framework> {
 pub trait Framework: Copy + Clone + 'static {
     type Container: Container;
 }
+
+macro_rules! type_match {
+    (class $name:ident {  })
+}
+
+#[macro_export]
+macro_rules! types {
+    ($($id:ident $name:ident { $tokens:tt })*) => {
+        $(type_match! { $id:ident $name:ident { $token } })*
+    }
+}
