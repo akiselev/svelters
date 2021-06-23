@@ -1,3 +1,5 @@
+use frunk::{hlist, Hlist};
+
 use crate::inner::*;
 
 pub struct Builder<T, D> {
@@ -6,9 +8,9 @@ pub struct Builder<T, D> {
     list: D,
 }
 
-pub fn class<V>(name: &'static str) -> Builder<V, HNil> {
+pub const fn class<V>() -> Builder<V, HNil> {
     Builder {
-        name: name.into(),
+        name: Cow::Borrowed(std::any::type_name::<V>()),
         _type: PhantomData,
         list: HNil,
     }
@@ -18,14 +20,14 @@ impl<T, D> Builder<T, D> {
     pub fn with_constructor<U, M: Func<U, Output = T>>(
         self,
         other: M,
-    ) -> Builder<T, <D as Add<Constructor<T, U, M>>>::Output>
-    where
-        D: Add<Constructor<T, U, M>>,
-    {
+    ) -> Builder<T, HCons<Constructor<T, U, M>, D>> {
         Builder {
             name: self.name,
             _type: self._type,
-            list: self.list + Constructor::new(other),
+            list: HCons {
+                head: Constructor::new(other),
+                tail: self.list,
+            },
         }
     }
 

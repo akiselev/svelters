@@ -6,9 +6,12 @@
 // Features for evaluating expressions in const generics
 // #![feature(const_evaluatable_checked)]
 // Allows const str from utf8 bytes
-#![feature(const_str_from_utf8_unchecked)]
+// #![feature(const_str_from_utf8_unchecked)]
+#![feature(const_generics)]
 #![feature(const_fn_trait_bound)]
+#![feature(const_type_name)]
 #![feature(specialization)]
+#![feature(impl_trait_in_bindings)]
 #![allow(incomplete_features)]
 #![recursion_limit = "1024"]
 #![allow(unused)]
@@ -28,23 +31,39 @@ pub mod prelude;
 
 use crate::inner::*;
 
-pub struct Type<T, F: Framework> {
+pub struct Type<const N: &'static str, T, F: Framework> {
     name: Cow<'static, str>,
     framework: F,
     marker: PhantomData<T>,
 }
 
 pub trait Framework: Copy + Clone + 'static {
-    type Container: Container;
+    // type Container: Container;
 }
 
-macro_rules! type_match {
-    (class $name:ident {  })
+pub trait InFramework<const T: &'static str> {
+    type Definition: TypeDef;
+
+    fn def() -> Self::Definition;
 }
 
-#[macro_export]
-macro_rules! types {
-    ($($id:ident $name:ident { $tokens:tt })*) => {
-        $(type_match! { $id:ident $name:ident { $token } })*
-    }
-}
+// #[macro_export]
+// macro_rules! type_member {
+//     ($name:ident { $($member:ident: $tokens:tt),* }) => {
+//         // type_member!($name { $tokens })
+//     };
+// }
+
+// #[macro_export]
+// macro_rules! type_class {
+//     ($name:ty { $($member:ident: $expr:expr),* }) => {
+//         type_member!($($member: $expr),*)
+//     }
+// }
+
+// #[macro_export]
+// macro_rules! typed {
+//     (class $name:ty { $($member:ident: $expr:expr),* }) => {
+//         type_class!(::svelters_qt::class(stringify!($name)) => $name { $($member: $expr),* });
+//     };
+// }

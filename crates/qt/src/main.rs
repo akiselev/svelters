@@ -1,3 +1,4 @@
+#![feature(impl_trait_in_bindings)]
 use std::borrow::Cow;
 
 use frunk::hlist;
@@ -9,7 +10,13 @@ use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{Ctx, Error, Result, Value};
 use svelters_qt::prelude::*;
 
-types! {}
+#[derive(Debug, Clone, Copy)]
+pub struct Qt;
+
+static QOBJECT: Type<"qObject", impl TypeDef, Qt> =
+    class::<QObject>().with_constructor(QObject::new_0a);
+
+impl Framework for Qt {}
 
 fn main() {
     unsafe {
