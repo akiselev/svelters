@@ -7,7 +7,7 @@ use qt_core::{
 };
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{Ctx, Error, Result, Value};
-use svelters_qt::*;
+use svelters_qt::prelude::*;
 
 fn main() {
     unsafe {
@@ -32,7 +32,7 @@ unsafe fn add_widget<'a, W: 'a, T: 'a>(win: &'a W, wid: &'a T) -> Option<()>
 where
     W: Cast<Ptr<QMainWindow>>,
     T: Cast<Ptr<QWidget>>,
-    Ptr<QWidget>: CastFrom<<T as svelters_qt::Cast<Ptr<QWidget>>>::Output<'a, Ptr<QWidget>>>, // Ptr<QWidget>: CastFrom<<T as svelters_qt::Cast<QWidget>>::Output<'a, QWidget>>,
+    Ptr<QWidget>: CastFrom<<T as Cast<Ptr<QWidget>>>::Output<'a, Ptr<QWidget>>>, // Ptr<QWidget>: CastFrom<<T as svelters_qt::Cast<QWidget>>::Output<'a, QWidget>>,
 {
     let w = win.cast::<'a>()?;
     let w2 = wid.cast::<'a>()?;

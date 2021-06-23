@@ -13,136 +13,26 @@
 #![recursion_limit = "1024"]
 #![allow(unused)]
 
-use std::borrow::Cow;
-use std::cell::Cell;
-use std::marker::PhantomData;
-use std::ops::{Add, Deref};
-
-use frunk::hlist::Selector;
-use frunk::{HCons, HNil};
-use qt_core::cpp_core::{CppDeletable, DynamicCast, Ptr, StaticUpcast};
-use qt_core::{QBox, QObject, QPtr};
-use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
-
 #[macro_export]
 mod macros;
 
-mod builder_types;
-mod class;
-mod containers;
-mod core;
-mod func;
-mod node;
-pub use crate::builder_types::*;
-pub use crate::class::*;
-pub use crate::containers::*;
-pub use crate::core::*;
-pub use crate::func::*;
-pub use crate::node::*;
+pub(in crate) mod builder_types;
+pub(in crate) mod cast;
+pub(in crate) mod class;
+pub(in crate) mod containers;
+pub(in crate) mod core;
+pub(in crate) mod func;
+pub(in crate) mod inner;
+pub(in crate) mod node;
+pub mod prelude;
 
-pub trait Cast<T> {
-    type Output<'a, U: 'a>: AsRef<U>
-    where
-        Self: 'a,
-        T: 'a;
+use crate::inner::*;
 
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
-    where
-        T: 'a;
+pub struct Type<T, F: Framework> {
+    name: Cow<'static, str>,
+    framework: F,
+    marker: PhantomData<T>,
 }
-
-default impl<T, V> Cast<T> for V {
-    type Output<'a, U: 'a>
-    where
-        V: 'a,
-        T: 'a,
-    = DefaultCast<'a, U>;
-
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
-    where
-        T: 'a,
-    {
-        None
-    }
-}
-
-impl<T, Q> Cast<Ptr<T>> for QPtr<Q>
-where
-    QObject: DynamicCast<T>,
-    Q: StaticUpcast<QObject>,
-{
-    type Output<'a, U: 'a>
-    where
-        Self: 'a,
-        T: 'a,
-    = PtrRef<'a, U>;
-
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, Ptr<T>>>
-    where
-        T: 'a,
-    {
-        let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.static_upcast().as_ptr()) };
-        if !ptr.is_null() {
-            Some(PtrRef(ptr, PhantomData))
-        } else {
-            None
-        }
-    }
-}
-
-impl<T, Q> Cast<Ptr<T>> for QBox<Q>
-where
-    QObject: DynamicCast<T>,
-    Q: StaticUpcast<QObject>,
-    Q: CppDeletable,
-{
-    type Output<'a, U: 'a>
-    where
-        Self: 'a,
-        T: 'a,
-    = PtrRef<'a, U>;
-
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, Ptr<T>>>
-    where
-        T: 'a,
-    {
-        let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.static_upcast().as_ptr()) };
-        if !ptr.is_null() {
-            Some(PtrRef(ptr, PhantomData))
-        } else {
-            None
-        }
-    }
-}
-
-// impl<T> Cast<T> for QPtr<QObject>
-// where
-//     QObject: DynamicCast<T>,
-// {
-//     type Output<'a, U: 'a>
-//     where
-//         Self: 'a,
-//         T: 'a,
-//     = PtrRef<'a, U>;
-
-//     fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
-//     where
-//         T: 'a,
-//     {
-//         let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.as_ptr()) };
-//         if !ptr.is_null() {
-//             Some(PtrRef(ptr, PhantomData))
-//         } else {
-//             None
-//         }
-//     }
-// }
-
-// pub trait Upcaster {
-//     type Output<'a, U>: AsRef<T>;
-
-//     fn upcast<'a, V>(&'a self) -> Option<Self::Output<'a, V>>;
-// }
 
 pub trait Framework: Copy + Clone + 'static {
     type Container: Container;

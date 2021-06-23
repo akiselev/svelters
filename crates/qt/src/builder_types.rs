@@ -1,14 +1,4 @@
-use std::borrow::Cow;
-use std::marker::PhantomData;
-use std::ops::Add;
-
-use frunk::hlist::Selector;
-// use rquickjs::{Ctx, Value};
-// use svelters_core::{EventHandler, Framework};
-use frunk::{HCons, HNil};
-use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
-
-use crate::Func;
+use crate::inner::*;
 
 pub struct Superclass<T, R, F: Fn(&T) -> Option<&R>> {
     func: F,
@@ -33,7 +23,7 @@ pub struct Constructor<T, A, F: Func<A, Output = T>> {
 }
 
 impl<T, A, F: Func<A, Output = T>> Constructor<T, A, F> {
-    pub fn new(method: F) -> Self {
+    pub const fn new(method: F) -> Self {
         Self {
             method,
             _type: PhantomData,
@@ -48,7 +38,7 @@ pub struct Function<A, F: Func<A>> {
 }
 
 impl<A, F: Func<A>> Function<A, F> {
-    pub fn new(method: F) -> Self {
+    pub const fn new(method: F) -> Self {
         Self {
             method,
             args: PhantomData,
@@ -64,7 +54,7 @@ pub struct Getter<T, R, F: Fn(&T) -> R> {
 }
 
 impl<T, R, F: Fn(&T) -> R> Getter<T, R, F> {
-    pub fn new(name: Cow<'static, str>, func: F) -> Self {
+    pub const fn new(name: Cow<'static, str>, func: F) -> Self {
         Self {
             name,
             func,
@@ -82,7 +72,7 @@ pub struct Setter<T, R, F: Fn(&T) -> R> {
 }
 
 impl<T, R, F: Fn(&T) -> R> Setter<T, R, F> {
-    pub fn new(name: Cow<'static, str>, func: F) -> Self {
+    pub const fn new(name: Cow<'static, str>, func: F) -> Self {
         Self {
             name,
             func,

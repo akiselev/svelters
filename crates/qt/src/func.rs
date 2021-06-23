@@ -1,4 +1,5 @@
-use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
+use crate::inner::*;
+
 pub trait Func<A> {
     type Args;
     type Output;

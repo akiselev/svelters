@@ -1,12 +1,4 @@
-use std::borrow::Cow;
-use std::marker::PhantomData;
-use std::ops::Add;
-
-use frunk::hlist::Selector;
-use frunk::{HCons, HNil};
-use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
-
-use crate::{Constructor, Func};
+use crate::inner::*;
 
 pub struct Builder<T, D> {
     name: Cow<'static, str>,

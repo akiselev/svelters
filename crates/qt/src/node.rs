@@ -1,11 +1,4 @@
-use std::borrow::Cow;
-use std::marker::PhantomData;
-use std::ops::Add;
-
-use frunk::{HCons, HNil};
-use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
-
-use crate::TypeDef;
+use crate::inner::*;
 
 pub struct NodeType<T> {
     name: Cow<'static, str>,
