@@ -5,7 +5,7 @@ use std::ops::{Add, Deref};
 
 use frunk::hlist::Selector;
 use frunk::{HCons, HNil};
-use qt_core::cpp_core::{DynamicCast, Ptr};
+use qt_core::cpp_core::{CastFrom, DynamicCast, Ptr, StaticUpcast};
 use qt_core::{QObject, QPtr};
 use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
 
@@ -27,12 +27,18 @@ impl<'a, T: 'a> AsRef<T> for Stack<'a, T> {
     }
 }
 
-pub struct PtrRef<'a, T: 'a>(
-    pub(in crate) Ptr<T>,
-    pub(in crate) PhantomData<Cell<&'a ()>>,
-);
+pub struct PtrRef<'a, T: 'a>(pub(in crate) T, pub(in crate) PhantomData<Cell<&'a ()>>);
 impl<'a, T: 'a> AsRef<T> for PtrRef<'a, T> {
     fn as_ref(&self) -> &T {
         &self.0
+    }
+}
+
+impl<'a, T, U> CastFrom<PtrRef<'a, Ptr<U>>> for Ptr<T>
+where
+    U: StaticUpcast<T>,
+{
+    unsafe fn cast_from(value: PtrRef<'a, Ptr<U>>) -> Self {
+        StaticUpcast::static_upcast(value.0)
     }
 }

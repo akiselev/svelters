@@ -20,8 +20,8 @@ use std::ops::{Add, Deref};
 
 use frunk::hlist::Selector;
 use frunk::{HCons, HNil};
-use qt_core::cpp_core::{DynamicCast, Ptr, StaticUpcast};
-use qt_core::{QObject, QPtr};
+use qt_core::cpp_core::{CppDeletable, DynamicCast, Ptr, StaticUpcast};
+use qt_core::{QBox, QObject, QPtr};
 use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
 
 #[macro_export]
@@ -66,7 +66,7 @@ default impl<T, V> Cast<T> for V {
     }
 }
 
-impl<T, Q> Cast<T> for QPtr<Q>
+impl<T, Q> Cast<Ptr<T>> for QPtr<Q>
 where
     QObject: DynamicCast<T>,
     Q: StaticUpcast<QObject>,
@@ -77,7 +77,32 @@ where
         T: 'a,
     = PtrRef<'a, U>;
 
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, Ptr<T>>>
+    where
+        T: 'a,
+    {
+        let ptr: Ptr<T> = unsafe { DynamicCast::dynamic_cast(self.static_upcast().as_ptr()) };
+        if !ptr.is_null() {
+            Some(PtrRef(ptr, PhantomData))
+        } else {
+            None
+        }
+    }
+}
+
+impl<T, Q> Cast<Ptr<T>> for QBox<Q>
+where
+    QObject: DynamicCast<T>,
+    Q: StaticUpcast<QObject>,
+    Q: CppDeletable,
+{
+    type Output<'a, U: 'a>
+    where
+        Self: 'a,
+        T: 'a,
+    = PtrRef<'a, U>;
+
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, Ptr<T>>>
     where
         T: 'a,
     {
