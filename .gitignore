@@ -117,6 +117,8 @@ dist
 #Added by cargo
 
 target/
+# rust anaylzer target fodler
+target2/
 Cargo.lock
 
 *.node

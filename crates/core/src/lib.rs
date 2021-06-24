@@ -66,8 +66,8 @@ pub(in crate) mod impls {
 mod legacy;
 
 pub use crate::legacy::console;
-pub use crate::legacy::def::*;
+// pub use crate::legacy::def::*;
 pub use crate::legacy::document;
 pub use crate::legacy::timing;
-pub use crate::legacy::traits::*;
+// pub use crate::legacy::traits::*;
 // ------------------ LEGACY ------------------

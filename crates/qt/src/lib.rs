@@ -1,41 +1,47 @@
 #![feature(generic_associated_types)]
 #![feature(impl_trait_in_bindings)]
+#![feature(min_type_alias_impl_trait)]
 #![feature(in_band_lifetimes)]
-use std::borrow::Cow;
+#![recursion_limit = "1024"]
+use std::{borrow::Cow, future::Future, time::Duration};
 
 use frunk::hlist;
 use qt_core::{
     cpp_core::{CastFrom, CppBox, CppDeletable, Ptr, StaticUpcast},
-    QBox, QCoreApplicationArgs, QObject, QPtr, QString,
+    QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString,
 };
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
-use rquickjs::{Ctx, Error, Result, Value};
+use rquickjs::{Context, Ctx, Error, Result, Value};
 use static_assertions::assert_impl_all;
 use svelters_core::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct QT;
 
-#[derive(Debug, Clone, Copy)]
-pub struct AsRefWrapper<T>(T);
+impl Framework for QT {
+    type AppTask = impl Future<Output = anyhow::Result<()>>;
 
-impl<T> std::ops::Deref for AsRefWrapper<T> {
-    type Target = T;
+    fn init_app<'js>(&self, ctx: Context) -> Result<Self::AppTask> {
+        Ok(Box::pin(async move {
+            let mut interval = tokio::time::interval(Duration::from_millis(10));
+            let app = unsafe {
+                let mut args = QCoreApplicationArgs::new();
+                let (argc, argv) = args.get();
+                // This prevents a segfault
+                std::mem::forget(args);
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<T: CppDeletable> AsRef<T> for AsRefWrapper<CppBox<T>> {
-    fn as_ref(&self) -> &T {
-        &*self
-    }
-}
-
-impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for AsRefWrapper<QBox<T>> {
-    fn as_ref(&self) -> &T {
-        &*self
+                QApplication::new_2a(argc, argv)
+            };
+            loop {
+                unsafe {
+                    QCoreApplication::process_events_0a();
+                    QCoreApplication::send_posted_events_0a();
+                    QCoreApplication::process_events_0a();
+                }
+                interval.tick().await;
+            }
+            Ok(())
+        }))
     }
 }
 
@@ -50,58 +56,29 @@ static QMAINWINDOW: impl Instantiate =
 static QPUSHBUTTOn: impl Instantiate =
     qt.class::<QPushButton, _>(hlist![qt.init(|| unsafe { QPushButton::new() })]);
 
-impl Framework for QT {}
-
-impl<T> Container<QT, T> for CppBox<T>
-where
-    T: CppDeletable,
-    AsRefWrapper<CppBox<T>>: AsRef<T>,
-{
-    type Output<X> = AsRefWrapper<CppBox<T>>;
-
-    fn wrap(self) -> Self::Output<Self> {
-        AsRefWrapper(self)
-    }
+mod impls {
+    mod cast;
+    mod containers;
 }
 
-impl<T> Container<QT, T> for QBox<T>
-where
-    T: CppDeletable + StaticUpcast<QObject>,
-{
-    type Output<X> = AsRefWrapper<QBox<T>>;
+pub(in crate) mod inner {
+    pub(in crate) use std::borrow::Cow;
+    pub(in crate) use std::cell::Cell;
+    pub(in crate) use std::marker::PhantomData;
+    pub(in crate) use std::ops::{Add, Deref, DerefMut};
 
-    fn wrap(self) -> Self::Output<Self> {
-        AsRefWrapper(self)
-    }
-}
+    pub(in crate) use frunk::hlist::Selector;
+    pub(in crate) use frunk::{HCons, HNil};
+    pub(in crate) use parking_lot::{const_rwlock, RwLock};
+    pub(in crate) use qt_core::cpp_core::{
+        CastFrom, CppBox, CppDeletable, DynamicCast, Ptr, StaticUpcast,
+    };
+    pub(in crate) use qt_core::{QBox, QObject, QPtr};
+    pub(in crate) use rquickjs::{
+        ClassDef, ClassId, Context, Ctx, Error, FromJs, IntoJs, Object, RefsMarker, Result, Value,
+    };
 
-fn main() {
-    unsafe {
-        let mut args = QCoreApplicationArgs::new();
-        let (argc, argv) = args.get();
-        let app = {
-            let app = QApplication::new_2a(argc, argv);
-            app
-        };
-        let win = QMainWindow::new_0a();
-        let btn = QPushButton::new();
-        let text = QString::from_std_str("Test");
-        add_widget(&win, &btn);
-        btn.set_text(&text);
-        win.show();
-        QApplication::exec();
-        // let
-    }
-}
+    pub(in crate) use svelters_core::prelude::*;
 
-unsafe fn add_widget<'a, W: 'a, T: 'a>(win: &'a W, wid: &'a T) -> Option<()>
-where
-    W: Cast<Ptr<QMainWindow>>,
-    T: Cast<Ptr<QWidget>>,
-    Ptr<QWidget>: CastFrom<<T as Cast<Ptr<QWidget>>>::Output<'a, Ptr<QWidget>>>, // Ptr<QWidget>: CastFrom<<T as svelters_qt::Cast<QWidget>>::Output<'a, QWidget>>,
-{
-    let w = win.cast::<'a>()?;
-    let w2 = wid.cast::<'a>()?;
-    QMainWindow::set_central_widget(w.as_ref(), w2);
-    None
+    pub(in crate) use crate::QT;
 }

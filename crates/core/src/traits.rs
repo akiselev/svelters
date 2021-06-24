@@ -1,6 +1,16 @@
+use std::future::Future;
+
 use crate::inner::*;
 
-pub trait Framework: Copy + Clone + 'static {}
+pub trait Framework: Copy + Clone + 'static {
+    type AppTask: Future<Output = anyhow::Result<()>>;
+    // type Object<T>;
+    // type Handler<T>;
+
+    fn init_app(&self, ctx: Context) -> Result<Self::AppTask>;
+}
+
+pub trait FrameworkModule<const N: &'static str> {}
 
 pub trait Container<F: Framework, T>: Sized {
     type Output<X>: AsRef<T>;

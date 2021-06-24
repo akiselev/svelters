@@ -5,7 +5,7 @@ use rquickjs::{
     ScriptLoader, Value,
 };
 
-use crate::Framework;
+use crate::legacy::traits::Framework;
 
 #[derive(Clone, Copy)]
 pub struct Event<F: Framework> {

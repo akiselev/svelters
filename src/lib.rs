@@ -1,3 +1,18 @@
+#![feature(generic_associated_types)]
+// Allows impl Trait in associated type
+#![feature(min_type_alias_impl_trait)]
+//
+#![feature(const_impl_trait)]
+// Features for evaluating expressions in const generics
+// #![feature(const_evaluatable_checked)]
+// Allows const str from utf8 bytes
+// #![feature(const_str_from_utf8_unchecked)]
+#![feature(const_generics)]
+#![feature(const_fn_trait_bound)]
+#![feature(const_type_name)]
+#![feature(specialization)]
+#![feature(impl_trait_in_bindings)]
+#![allow(incomplete_features)]
 #![recursion_limit = "1024"]
 #![deny(clippy::all)]
 use std::{ffi::CString, os::raw::c_char, time::Duration};
@@ -9,17 +24,26 @@ use rquickjs::{
 };
 
 use svelters_compiler::{compile, SvelteCompiler};
-use svelters_core::{Application, Framework};
+use svelters_core::prelude::*;
 
 pub mod logging;
 
 pub struct Runtime<T: Framework> {
     framework: T,
+    rt: JsRuntime,
+    ctx: Context,
 }
 
 impl<T: Framework> Runtime<T> {
-    pub fn new(framework: T) -> Self {
-        Self { framework }
+    pub fn new(framework: T) -> Result<Self> {
+        let rt = JsRuntime::new()?;
+        let ctx = Context::full(&rt)?;
+        ctx.with(|ctx| {
+            svelters_core::console::init(ctx)?;
+            svelters_core::timing::init(ctx)?;
+            Result::<()>::Ok(())
+        })?;
+        Ok(Self { rt, ctx, framework })
     }
 
     pub async fn start<P: AsRef<str>>(self, path: P) -> Result<()> {
@@ -35,21 +59,18 @@ impl<T: Framework> Runtime<T> {
         let compiler = SvelteCompiler::new();
         let src = compile(&compiler, "./app/index.ts").await?;
 
-        let rt = JsRuntime::new()?;
-        rt.spawn_executor(rquickjs::Tokio);
-        rt.set_loader(compiler.clone(), compiler.clone());
-        let ctx = Context::full(&rt)?;
+        self.rt.spawn_executor(rquickjs::Tokio);
+        self.rt.set_loader(compiler.clone(), compiler.clone());
 
-        let res: Result<_> = ctx.with(|ctx| {
-            svelters_core::console::init(ctx)?;
-            svelters_core::timing::init(ctx)?;
-            let app = self.framework.init_app(ctx)?;
-            let app = tokio::task::spawn_local(app.start(Context::from_ctx(ctx).unwrap()));
+        let res: Result<_> = self.ctx.with(|ctx| {
+            let app = self.framework.init_app(self.ctx.clone())?;
+            let app = tokio::task::spawn_local(app);
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();
+            // Ok(())
             Ok(app)
         });
-        while let Ok(true) = ctx.runtime().execute_pending_job() {}
+        while let Ok(true) = self.ctx.runtime().execute_pending_job() {}
         Ok(res?.await??)
     }
 }
