@@ -1,11 +1,26 @@
+use rquickjs::ClassId;
+
 use crate::inner::*;
 
-pub trait JsInto {
-    type Output<'js, T>: IntoJs<'js>;
+pub struct Id(ClassId);
 
-    fn 
+pub trait JsClass<FW: Framework>: Sized {
+    const CLASS_NAME: &'static str;
+
+    type Def: ClassDef;
+    type Instance<T>: Convert<Self, FW>;
+
+    fn class_id() -> &'static mut ClassId;
+    fn definition() -> Self::Def;
 }
 
+pub trait Convert<T, FW: Framework> {
+    type Into<'js, X>: IntoJs<'js>;
+    type From<'js, X>: FromJs<'js>;
+
+    fn into_converter<'js>() -> Self::Into<'js, T>;
+    fn from_converter<'js>() -> Self::From<'js, T>;
+}
 
 #[allow(non_upper_case_globals)]
 pub mod native_module {
@@ -63,67 +78,7 @@ impl rquickjs::ModuleDef for NativeModule {
         exports.set("n", native_module::n)?;
         exports.set("s", native_module::s)?;
         exports.set("f", rquickjs::Func::new("f", native_module::f))?;
-        impl<'this> rquickjs::ClassDef for native_module::Test<'this> {
-            const CLASS_NAME: &'static str = "Test";
-            unsafe fn class_id() -> &'static mut rquickjs::ClassId {
-                static mut CLASS_ID: rquickjs::ClassId = rquickjs::ClassId::new();
-                &mut CLASS_ID
-            }
-            const HAS_PROTO: bool = true;
-            fn init_proto<'js>(
-                _ctx: rquickjs::Ctx<'js>,
-                exports: &rquickjs::Object<'js>,
-            ) -> rquickjs::Result<()> {
-                exports.set(
-                    "format",
-                    rquickjs::Func::new("format", rquickjs::Method(native_module::Test::format)),
-                )?;
-                exports.prop(
-                    "x",
-                    rquickjs::Accessor::new(
-                        rquickjs::Method(native_module::Test::get),
-                        rquickjs::Method(native_module::Test::set),
-                    ),
-                )?;
-                Ok(())
-            }
-            const HAS_STATIC: bool = true;
-            fn init_static<'js>(
-                _ctx: rquickjs::Ctx<'js>,
-                exports: &rquickjs::Object<'js>,
-            ) -> rquickjs::Result<()> {
-                exports.set(
-                    "new_static",
-                    rquickjs::Func::new("new_static", native_module::Test::new_static),
-                )?;
-                Ok(())
-            }
-            const HAS_REFS: bool = true;
-            fn mark_refs(&self, marker: &rquickjs::RefsMarker) {
-                rquickjs::HasRefs::mark_refs(self, marker);
-            }
-        }
-        impl<'js> rquickjs::IntoJs<'js> for native_module::Test<'js> {
-            fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
-                <native_module::Test as rquickjs::ClassDef>::into_js_obj(self, ctx)
-            }
-        }
-        impl<'js> rquickjs::FromJs<'js> for &'js native_module::Test<'js> {
-            fn from_js(
-                ctx: rquickjs::Ctx<'js>,
-                value: rquickjs::Value<'js>,
-            ) -> rquickjs::Result<Self> {
-                <native_module::Test as rquickjs::ClassDef>::from_js_ref(ctx, value)
-            }
-        }
-        impl<'js> rquickjs::FromJs<'js> for &'js mut native_module::Test<'js> {
-            fn from_js(
-                ctx: rquickjs::Ctx<'js>,
-                value: rquickjs::Value<'js>,
-            ) -> rquickjs::Result<Self> {
-                <native_module::Test as rquickjs::ClassDef>::from_js_mut(ctx, value)
-            }
-        }
+
         rquickjs::Class::<native_module::Test>::register(_ctx)?;
         exports.set(
             "Test",
@@ -133,5 +88,71 @@ impl rquickjs::ModuleDef for NativeModule {
             ),
         )?;
         Ok(())
+    }
+}
+
+impl<'this> rquickjs::ClassDef for native_module::Test<'this> {
+    const CLASS_NAME: &'static str = "Test";
+    unsafe fn class_id() -> &'static mut rquickjs::ClassId {
+        static mut CLASS_ID: rquickjs::ClassId = rquickjs::ClassId::new();
+        &mut CLASS_ID
+    }
+    const HAS_PROTO: bool = true;
+    fn init_proto<'js>(
+        _ctx: rquickjs::Ctx<'js>,
+        exports: &rquickjs::Object<'js>,
+    ) -> rquickjs::Result<()> {
+        exports.set(
+            "format",
+            rquickjs::Func::new("format", rquickjs::Method(native_module::Test::format)),
+        )?;
+        exports.prop(
+            "x",
+            rquickjs::Accessor::new(
+                rquickjs::Method(native_module::Test::get),
+                rquickjs::Method(native_module::Test::set),
+            ),
+        )?;
+        Ok(())
+    }
+    const HAS_STATIC: bool = true;
+    fn init_static<'js>(
+        _ctx: rquickjs::Ctx<'js>,
+        exports: &rquickjs::Object<'js>,
+    ) -> rquickjs::Result<()> {
+        exports.set(
+            "new_static",
+            rquickjs::Func::new("new_static", native_module::Test::new_static),
+        )?;
+        exports.set(
+            "new_static",
+            rquickjs::Func::new(
+                "new_static",
+                (
+                    native_module::Test::new_static,
+                    native_module::Test::new_static,
+                ),
+            ),
+        )?;
+        Ok(())
+    }
+    const HAS_REFS: bool = true;
+    fn mark_refs(&self, marker: &rquickjs::RefsMarker) {
+        rquickjs::HasRefs::mark_refs(self, marker);
+    }
+}
+impl<'js> rquickjs::IntoJs<'js> for native_module::Test<'js> {
+    fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+        <native_module::Test as rquickjs::ClassDef>::into_js_obj(self, ctx)
+    }
+}
+impl<'js> rquickjs::FromJs<'js> for &'js native_module::Test<'js> {
+    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+        <native_module::Test as rquickjs::ClassDef>::from_js_ref(ctx, value)
+    }
+}
+impl<'js> rquickjs::FromJs<'js> for &'js mut native_module::Test<'js> {
+    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+        <native_module::Test as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

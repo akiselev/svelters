@@ -26,8 +26,10 @@ pub(in crate) mod containers;
 pub(in crate) mod core;
 pub(in crate) mod func;
 pub(in crate) mod inner;
-pub mod js;
 pub(in crate) mod node;
+pub(in crate) mod obj;
+
+pub mod js;
 pub mod prelude;
 
 use crate::inner::*;

@@ -106,15 +106,6 @@ where
     None
 }
 
-unsafe fn create_app() -> qt_core::QBox<QApplication> {
-    let mut args = QCoreApplicationArgs::new();
-    let (argc, argv) = args.get();
-    let app = QApplication::new_2a(argc, argv);
-    app
-}
-
-// static ELEMENTS: qt
-
 #[rquickjs::bind(module, public)]
 #[quickjs(bare)]
 #[allow(non_upper_case_globals)]
@@ -158,7 +149,12 @@ pub mod native_module {
         }
 
         #[quickjs(rename = "x", set)]
-        pub fn set<'js>(&'js mut self, ctx: Ctx<'js>, x: Value<'js>) {
+        pub fn set<'js>(&'js mut self, ctx: Ctx<'js>, x: u64) {
+            panic!("....")
+        }
+
+        #[quickjs(rename = "new_static")]
+        pub fn new_static2<'js>(x: String) {
             panic!("....")
         }
     }

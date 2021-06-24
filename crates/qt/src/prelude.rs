@@ -7,6 +7,7 @@ pub use crate::Framework;
 
 pub use crate::core::{Core, TypeDef};
 
+pub use crate::js::*;
 pub use crate::*;
 
 pub use rquickjs::{
