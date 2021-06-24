@@ -1,5 +1,6 @@
 #![feature(generic_associated_types)]
 #![feature(impl_trait_in_bindings)]
+#![feature(in_band_lifetimes)]
 use std::borrow::Cow;
 
 use frunk::hlist;
@@ -113,3 +114,52 @@ unsafe fn create_app() -> qt_core::QBox<QApplication> {
 }
 
 // static ELEMENTS: qt
+
+#[rquickjs::bind(module, public)]
+#[quickjs(bare)]
+#[allow(non_upper_case_globals)]
+pub mod native_module {
+    use svelters_qt::prelude::*;
+    pub const n: i32 = 123;
+    pub const s: &str = "abc";
+    pub fn f(a: f64, b: f64) -> f64 {
+        (a + b) * 0.5
+    }
+
+    #[derive(HasRefs)]
+    #[quickjs(has_refs)]
+    pub struct Test {
+        #[quickjs(has_refs)]
+        x: Persistent<Value<'static>>,
+        y: String,
+    }
+
+    impl Test {
+        #[quickjs(constructor)]
+        pub fn new<'js>(x: Persistent<Value<'static>>, y: String) -> Result<Test> {
+            Ok(Test { x, y })
+        }
+
+        pub fn format<'js>(&'js self, ctx: Ctx<'js>, index: u64) -> Result<String> {
+            let x = Persistent::restore(self.x.clone(), ctx)?
+                .as_string()
+                .unwrap()
+                .to_string()?;
+            Ok(format!("{}: {}", x.as_str(), index))
+        }
+
+        pub fn new_static(index: u64) -> Result<String> {
+            Ok(format!("{}: ", index))
+        }
+
+        #[quickjs(rename = "x", get)]
+        pub fn get<'js>(&'js self, ctx: Ctx<'js>) -> Result<Value<'js>> {
+            Ok(Persistent::restore(self.x.clone(), ctx)?)
+        }
+
+        #[quickjs(rename = "x", set)]
+        pub fn set<'js>(&'js mut self, ctx: Ctx<'js>, x: Value<'js>) {
+            panic!("....")
+        }
+    }
+}

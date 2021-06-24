@@ -26,6 +26,7 @@ pub(in crate) mod containers;
 pub(in crate) mod core;
 pub(in crate) mod func;
 pub(in crate) mod inner;
+pub mod js;
 pub(in crate) mod node;
 pub mod prelude;
 

@@ -8,3 +8,7 @@ pub use crate::Framework;
 pub use crate::core::{Core, TypeDef};
 
 pub use crate::*;
+
+pub use rquickjs::{
+    Ctx, Error, FromJs, HasRefs, IntoJs, IntoJsByRef, Outlive, Persistent, Result, Value,
+};
