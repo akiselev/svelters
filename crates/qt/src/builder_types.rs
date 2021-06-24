@@ -18,10 +18,10 @@ impl<T, R, F: Fn(&T) -> Option<&R>> Superclass<T, R, F> {
 
 #[derive(Clone, Copy)]
 pub struct Constructor<T, FW, A, FN>
-// where
-//     FW: Framework,
-//     FN: Func<A>,
-//     <FN as Func<A>>::Output: Container<FW, T>,
+where
+    FW: Framework,
+    FN: Func<A>,
+    <FN as Func<A>>::Output: Container<FW, T>,
 {
     fw: FW,
     method: FN,
@@ -51,20 +51,6 @@ where
     FN: Func<A>,
     <FN as Func<A>>::Output: Container<FW, T>,
 {
-}
-
-pub struct Function<A, F: Func<A>> {
-    method: F,
-    args: PhantomData<A>,
-}
-
-impl<A, F: Func<A>> Function<A, F> {
-    pub const fn new(method: F) -> Self {
-        Self {
-            method,
-            args: PhantomData,
-        }
-    }
 }
 
 pub struct Getter<T, R, F: Fn(&T) -> R> {

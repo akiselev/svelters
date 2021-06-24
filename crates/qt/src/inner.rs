@@ -5,6 +5,7 @@ pub(in crate) use std::ops::{Add, Deref};
 
 pub(in crate) use frunk::hlist::Selector;
 pub(in crate) use frunk::{HCons, HNil};
+pub(in crate) use parking_lot::{const_rwlock, RwLock};
 pub(in crate) use qt_core::cpp_core::{CastFrom, CppDeletable, DynamicCast, Ptr, StaticUpcast};
 pub(in crate) use qt_core::{QBox, QObject, QPtr};
 pub(in crate) use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};

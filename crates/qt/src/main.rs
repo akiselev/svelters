@@ -40,10 +40,14 @@ impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for AsRefWrapper<QBox<T>>
 
 static qt: Core<QT> = Core::new(QT);
 
-// assert_impl_all!(&(unsafe fn() -> QBox<QObject>): Func<(QBox<QObject>,)>);
-// assert_impl_all!(qt_core::QObject::new_0a: Func<(QBox<QObject>,)>);
 static QOBJECT: impl Instantiate =
-    qt.cls::<QObject, _>(hlist![qt.init(|| unsafe { QObject::new_0a() })]);
+    qt.class::<QObject, _>(hlist![qt.init(|| unsafe { QObject::new_0a() })]);
+static QWIDGET: impl Instantiate =
+    qt.class::<QWidget, _>(hlist![qt.init(|| unsafe { QWidget::new_0a() })]);
+static QMAINWINDOW: impl Instantiate =
+    qt.class::<QMainWindow, _>(hlist![qt.init(|| unsafe { QMainWindow::new_0a() })]);
+static QPUSHBUTTOn: impl Instantiate =
+    qt.class::<QPushButton, _>(hlist![qt.init(|| unsafe { QPushButton::new() })]);
 
 impl Framework for QT {}
 
@@ -107,3 +111,5 @@ unsafe fn create_app() -> qt_core::QBox<QApplication> {
     let app = QApplication::new_2a(argc, argv);
     app
 }
+
+// static ELEMENTS: qt

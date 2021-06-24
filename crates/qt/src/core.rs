@@ -17,7 +17,7 @@ impl<FW: Framework> Core<FW> {
         Constructor::new(self.0, method)
     }
 
-    pub const fn cls<V, D: Member<V>>(self, _type: D) -> Class<V, D, FW> {
+    pub const fn class<V, D: Member<V>>(self, _type: D) -> Class<V, D, FW> {
         Class {
             name: Cow::Borrowed(std::any::type_name::<V>()),
             _type: PhantomData,

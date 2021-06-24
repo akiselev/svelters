@@ -39,3 +39,5 @@ where
     D: Member<T>,
 {
 }
+
+impl<A> Instantiate for RwLock<A> where A: Instantiate {}
