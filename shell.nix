@@ -17,7 +17,8 @@ in
   pkgs.mkShell {
     buildInputs = with pkgs; [
         # rust-bin.stable.latest.default
-        (rust-bin.stable.latest.rust.override {
+        (rust-bin.nightly.latest.rust.override {
+        # (rust-bin.stable.latest.rust.override {
           extensions = ["rust-src"];
         })
 
@@ -49,7 +50,7 @@ in
     pkgs.gcc
   ];
 
-  RUSTC_WRAPPER = "sccache";
+  # RUSTC_WRAPPER = "sccache";
   PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
 
 

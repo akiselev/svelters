@@ -9,7 +9,7 @@ pub(in crate) use parking_lot::{const_rwlock, RwLock};
 pub(in crate) use qt_core::cpp_core::{CastFrom, CppDeletable, DynamicCast, Ptr, StaticUpcast};
 pub(in crate) use qt_core::{QBox, QObject, QPtr};
 pub(in crate) use rquickjs::{
-    ClassDef, ClassId, Ctx, Error, FromJs, IntoJs, Object, RefsMarker, Result, Value,
+    ClassDef, ClassId, Context, Ctx, Error, FromJs, IntoJs, Object, RefsMarker, Result, Value,
 };
 
 pub(in crate) use crate::builder_types::*;

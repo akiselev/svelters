@@ -35,8 +35,9 @@ lto = true
 members = [
     "crates/core",
     "crates/compiler",
-    # "crates/qt",
+    "crates/qt",
     "crates/rquickjs",
     "crates/rquickjs/rquickjs-core",
     "crates/rquickjs/rquickjs-macro",
 ]
+exclude = ["codegen", "crates/oldqt"]

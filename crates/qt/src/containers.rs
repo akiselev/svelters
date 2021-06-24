@@ -1,18 +1,5 @@
 use crate::inner::*;
 
-pub struct Type<const N: &'static str, T, F: Framework> {
-    name: Cow<'static, str>,
-    framework: F,
-    marker: PhantomData<T>,
-}
-
-pub struct DefaultCast<'a, T: 'a>(pub(in crate) PhantomData<&'a T>);
-impl<'a, T: 'a> AsRef<T> for DefaultCast<'a, T> {
-    fn as_ref(&self) -> &T {
-        panic!("This shouldn't have happened")
-    }
-}
-
 pub struct Stack<'a, T: 'a>(pub(in crate) T, pub(in crate) PhantomData<&'a ()>);
 impl<'a, T: 'a> AsRef<T> for Stack<'a, T> {
     fn as_ref(&self) -> &T {

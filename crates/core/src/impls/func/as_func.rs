@@ -1,11 +1,5 @@
 use crate::inner::*;
 
-pub trait AsFunc<A> {
-    type Output;
-
-    fn as_func(self) -> Self::Output;
-}
-
 macro_rules! define_as_func {
     ($( $(($argn:ident $arg:ident))* => $res:ident ),+) => (
         $(

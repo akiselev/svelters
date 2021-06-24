@@ -1,46 +1,55 @@
-use anyhow::{anyhow, Result};
-use std::borrow::Cow;
-use std::future::Future;
-use std::pin::Pin;
-
-use crate::def::FrameworkSchema;
 use crate::inner::*;
 
-pub trait Framework: Sized + Clone + 'static {
-    type App: Application;
-    type Object: ObjectKind;
-    type Handler: EventHandler;
+pub trait Framework: Copy + Clone + 'static {}
 
-    fn init_app<'js>(&self, ctx: Ctx<'js>) -> Result<Self::App>;
-    fn get_schema() -> &'static FrameworkSchema<Self>;
+pub trait Container<F: Framework, T>: Sized {
+    type Output<X>: AsRef<T>;
+
+    fn wrap(self) -> Self::Output<Self>;
 }
 
-pub trait Application {
-    fn start(self, ctx: Context) -> Pin<Box<dyn Future<Output = Result<()>>>>;
-    // fn has_events(&self) -> bool;
-    // fn process_system_events(&self, timeout_ms: u32) -> bool;
-    // fn process_framework_events(&self, timeout_ms: u32) -> bool;
+pub trait Cast<T> {
+    type Output<'a, U: 'a>: AsRef<U>
+    where
+        Self: 'a,
+        T: 'a;
+
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+    where
+        T: 'a;
 }
 
-pub trait ObjectKind {
-    fn get_tag(&self) -> Cow<'static, str>;
-    // fn is_live(&self) -> bool;
+pub trait JsClass<FW: Framework>: Sized {
+    const CLASS_NAME: &'static str;
 
-    // fn get_id(&self) -> String;
-    // fn set_id(&mut self, id: &str);
+    type Def: ClassDef;
+    type Instance<T>: Convert<Self, FW>;
 
-    // fn add_event_listener(
-    //     &self,
-    //     name: String,
-    //     func_id: SavedFunction,
-    //     func: Box<dyn for<'js> Fn(Ctx<'js>, Vec<Value<'js>>)>,
-    // );
-
-    // fn remove_event_listener(&self, name: String, func_id: SavedFunction);
-
-    // fn get_attribute(&self, name: String, func_id: SavedFunction);
+    fn class_id() -> &'static mut ClassId;
+    fn definition() -> Self::Def;
 }
 
-pub trait EventHandler {
-    fn disconnect(&mut self) -> Result<bool>;
+pub trait Convert<T, FW: Framework> {
+    type Into<'js, X>: IntoJs<'js>;
+    type From<'js, X>: FromJs<'js>;
+
+    fn into_converter<'js>() -> Self::Into<'js, T>;
+    fn from_converter<'js>() -> Self::From<'js, T>;
+}
+
+pub trait Member<T> {}
+
+pub trait Instantiate {}
+
+pub trait Func<A> {
+    type Args;
+    type Output;
+
+    fn try_call<'js>(&self, args: Self::Args) -> Self::Output;
+}
+
+pub trait AsFunc<A> {
+    type Output;
+
+    fn as_func(self) -> Self::Output;
 }

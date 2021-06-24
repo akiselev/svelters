@@ -4,15 +4,6 @@ use static_assertions::assert_impl_all;
 
 use crate::inner::*;
 
-pub use as_func::{extfn, AsFunc};
-
-pub trait Func<A> {
-    type Args;
-    type Output;
-
-    fn try_call<'js>(&self, args: Self::Args) -> Self::Output;
-}
-
 // // implement the above for functions of varying arities
 macro_rules! define_ext_fn {
     ($( $(($argn:ident $arg:ident))* => $res:ident ),+) => (

@@ -26,14 +26,3 @@ impl<FW: Framework> Core<FW> {
         }
     }
 }
-
-pub enum TypeKind {
-    Primitive,
-    Struct,
-    ForeignStruct,
-    Class,
-}
-
-pub trait TypeDef {
-    fn type_name(&self) -> Cow<'static, str>;
-}

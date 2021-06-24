@@ -2,25 +2,7 @@ use rquickjs::ClassId;
 
 use crate::inner::*;
 
-pub struct Id(ClassId);
-
-pub trait JsClass<FW: Framework>: Sized {
-    const CLASS_NAME: &'static str;
-
-    type Def: ClassDef;
-    type Instance<T>: Convert<Self, FW>;
-
-    fn class_id() -> &'static mut ClassId;
-    fn definition() -> Self::Def;
-}
-
-pub trait Convert<T, FW: Framework> {
-    type Into<'js, X>: IntoJs<'js>;
-    type From<'js, X>: FromJs<'js>;
-
-    fn into_converter<'js>() -> Self::Into<'js, T>;
-    fn from_converter<'js>() -> Self::From<'js, T>;
-}
+// -------------------------------------------------------
 
 #[allow(non_upper_case_globals)]
 pub mod native_module {
