@@ -42,7 +42,8 @@ static qt: Core<QT> = Core::new(QT);
 
 // assert_impl_all!(&(unsafe fn() -> QBox<QObject>): Func<(QBox<QObject>,)>);
 // assert_impl_all!(qt_core::QObject::new_0a: Func<(QBox<QObject>,)>);
-static QOBJECT: impl Instantiate = qt.class::<QObject, _>(hlist![]);
+static QOBJECT: impl Instantiate =
+    qt.cls::<QObject, _>(hlist![qt.init(|| unsafe { QObject::new_0a() })]);
 
 impl Framework for QT {}
 

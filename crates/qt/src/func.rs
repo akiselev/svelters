@@ -1,6 +1,10 @@
+mod as_func;
+
 use static_assertions::assert_impl_all;
 
 use crate::inner::*;
+
+pub use as_func::{extfn, AsFunc};
 
 pub trait Func<A> {
     type Args;
