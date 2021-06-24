@@ -2,50 +2,15 @@ use frunk::{hlist, Hlist};
 
 use crate::inner::*;
 
-pub struct Builder<T, D> {
-    name: Cow<'static, str>,
-    _type: PhantomData<T>,
-    list: D,
+pub struct Class<T, D, F: Framework> {
+    pub(in crate) name: Cow<'static, str>,
+    pub(in crate) _type: PhantomData<T>,
+    pub(in crate) list: D,
+    pub(in crate) fw: F,
 }
 
-pub const fn class<V>() -> Builder<V, HNil> {
-    Builder {
-        name: Cow::Borrowed(std::any::type_name::<V>()),
-        _type: PhantomData,
-        list: HNil,
-    }
-}
+unsafe impl<T, D, F: Framework> Sync for Class<T, D, F> {}
 
-impl<T, D> Builder<T, D> {
-    pub fn with_constructor<U, M: Func<U, Output = T>>(
-        self,
-        other: M,
-    ) -> Builder<T, HCons<Constructor<T, U, M>, D>> {
-        Builder {
-            name: self.name,
-            _type: self._type,
-            list: HCons {
-                head: Constructor::new(other),
-                tail: self.list,
-            },
-        }
-    }
+pub trait Instantiate {}
 
-    pub fn with<U>(self, other: U) -> Builder<T, <D as Add<U>>::Output>
-    where
-        D: Add<U>,
-    {
-        Builder {
-            name: self.name,
-            _type: self._type,
-            list: self.list + other,
-        }
-    }
-
-    // pub fn build(&self) -> impl TypeDef
-    // where
-    //     D: BuildClass,
-    // {
-    //     self.list.build(&self.name)
-    // }
-}
+impl<T, D, F: Framework> Instantiate for Class<T, D, F> {}

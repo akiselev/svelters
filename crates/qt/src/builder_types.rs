@@ -16,18 +16,31 @@ impl<T, R, F: Fn(&T) -> Option<&R>> Superclass<T, R, F> {
     }
 }
 
-pub struct Constructor<T, A, F: Func<A, Output = T>> {
-    method: F,
-    _type: PhantomData<T>,
+#[derive(Clone, Copy)]
+pub struct Constructor<T, FW, A, FN>
+where
+    FW: Framework,
+    FN: Func<A>,
+    <FN as Func<A>>::Output: Container<FW, T>,
+{
+    fw: FW,
+    method: FN,
     args: PhantomData<A>,
+    _type: PhantomData<T>,
 }
 
-impl<T, A, F: Func<A, Output = T>> Constructor<T, A, F> {
-    pub const fn new(method: F) -> Self {
+impl<T, A, FW, FN> Constructor<T, FW, A, FN>
+where
+    FW: Framework,
+    FN: Func<A>,
+    <FN as Func<A>>::Output: Container<FW, T>,
+{
+    pub(in crate) const fn new(fw: FW, method: FN) -> Self {
         Self {
+            fw,
             method,
-            _type: PhantomData,
             args: PhantomData,
+            _type: PhantomData,
         }
     }
 }

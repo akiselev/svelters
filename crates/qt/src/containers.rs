@@ -1,16 +1,9 @@
-use std::borrow::Cow;
-use std::cell::Cell;
-use std::marker::PhantomData;
-use std::ops::{Add, Deref};
+use crate::inner::*;
 
-use frunk::hlist::Selector;
-use frunk::{HCons, HNil};
-use qt_core::cpp_core::{CastFrom, DynamicCast, Ptr, StaticUpcast};
-use qt_core::{QObject, QPtr};
-use rquickjs::{Ctx, Error, FromJs, IntoJs, Result, Value};
-
-pub trait Container {
-    type Output<T>: Deref<Target = T>;
+pub struct Type<const N: &'static str, T, F: Framework> {
+    name: Cow<'static, str>,
+    framework: F,
+    marker: PhantomData<T>,
 }
 
 pub struct DefaultCast<'a, T: 'a>(pub(in crate) PhantomData<&'a T>);

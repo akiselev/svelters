@@ -35,3 +35,4 @@ serde = "1.0.126"
 spez = "0.1.1"
 rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
 frunk = "0.3.2"
+static_assertions = "1.1.0"

@@ -1,22 +1,73 @@
+#![feature(generic_associated_types)]
 #![feature(impl_trait_in_bindings)]
 use std::borrow::Cow;
 
 use frunk::hlist;
 use qt_core::{
-    cpp_core::{CastFrom, Ptr},
-    QCoreApplicationArgs, QObject, QPtr, QString,
+    cpp_core::{CastFrom, CppBox, CppDeletable, Ptr, StaticUpcast},
+    QBox, QCoreApplicationArgs, QObject, QPtr, QString,
 };
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{Ctx, Error, Result, Value};
+use static_assertions::assert_impl_all;
 use svelters_qt::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
-pub struct Qt;
+pub struct QT;
 
-static QOBJECT: Type<"qObject", impl TypeDef, Qt> =
-    class::<QObject>().with_constructor(QObject::new_0a);
+#[derive(Debug, Clone, Copy)]
+pub struct AsRefWrapper<T>(T);
 
-impl Framework for Qt {}
+impl<T> std::ops::Deref for AsRefWrapper<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<T: CppDeletable> AsRef<T> for AsRefWrapper<CppBox<T>> {
+    fn as_ref(&self) -> &T {
+        &*self
+    }
+}
+
+impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for AsRefWrapper<QBox<T>> {
+    fn as_ref(&self) -> &T {
+        &*self
+    }
+}
+
+static qt: Core<QT> = Core::new(QT);
+
+// assert_impl_all!(&(unsafe fn() -> QBox<QObject>): Func<(QBox<QObject>,)>);
+// assert_impl_all!(qt_core::QObject::new_0a: Func<(QBox<QObject>,)>);
+static QOBJECT: impl Instantiate = qt.class::<QObject, _>(hlist![]);
+
+impl Framework for QT {}
+
+impl<T> Container<QT, T> for CppBox<T>
+where
+    T: CppDeletable,
+    AsRefWrapper<CppBox<T>>: AsRef<T>,
+{
+    type Output<X> = AsRefWrapper<CppBox<T>>;
+
+    fn wrap(self) -> Self::Output<Self> {
+        AsRefWrapper(self)
+    }
+}
+
+impl<T> Container<QT, T> for QBox<T>
+where
+    T: CppDeletable + StaticUpcast<QObject>,
+{
+    type Output<X> = AsRefWrapper<QBox<T>>;
+
+    fn wrap(self) -> Self::Output<Self> {
+        AsRefWrapper(self)
+    }
+}
 
 fn main() {
     unsafe {
@@ -55,6 +106,3 @@ unsafe fn create_app() -> qt_core::QBox<QApplication> {
     let app = QApplication::new_2a(argc, argv);
     app
 }
-
-// #[derive(Debug, Copy, Clone)]
-// pub struct Qt(impl Upcaster<String>);

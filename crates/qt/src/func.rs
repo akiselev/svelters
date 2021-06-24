@@ -1,3 +1,5 @@
+use static_assertions::assert_impl_all;
+
 use crate::inner::*;
 
 pub trait Func<A> {
@@ -7,11 +9,11 @@ pub trait Func<A> {
     fn try_call<'js>(&self, args: Self::Args) -> Self::Output;
 }
 
-// implement the above for functions of varying arities
+// // implement the above for functions of varying arities
 macro_rules! define_ext_fn {
     ($( $(($argn:ident $arg:ident))* => $res:ident ),+) => (
         $(
-            impl <F,$res,$($arg),*> Func<($($res, $arg),*)> for F
+            impl <F,$res,$($arg),*> Func<($res, $($arg),*)> for F
             where
               F: Fn($($arg),*) -> $res,
             {
@@ -29,7 +31,27 @@ macro_rules! define_ext_fn {
 macro_rules! define_unsafe_fn {
     ($( $(($argn:ident $arg:ident))* => $res:ident ),+) => (
         $(
-            impl <$res,$($arg),*> Func<($($res, $arg),*)> for &unsafe fn($($arg),*) -> $res
+            impl <$res,$($arg),*> Func<($res, $($arg),*)> for unsafe fn($($arg),*) -> $res
+            {
+                type Args = ($($arg),*);
+                type Output = $res;
+
+                fn try_call(&self, ($($argn),*): Self::Args) -> Self::Output {
+                    unsafe { (*self)($($argn),*) }
+                }
+            }
+
+            impl <$res,$($arg),*> Func<($res, $($arg),*)> for &unsafe fn($($arg),*) -> $res
+            {
+                type Args = ($($arg),*);
+                type Output = $res;
+
+                fn try_call(&self, ($($argn),*): Self::Args) -> Self::Output {
+                    unsafe { (*self)($($argn),*) }
+                }
+            }
+
+            impl <$res,$($arg),*> Func<($res, $($arg),*)> for &mut unsafe fn($($arg),*) -> $res
             {
                 type Args = ($($arg),*);
                 type Output = $res;

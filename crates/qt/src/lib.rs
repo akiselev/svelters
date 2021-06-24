@@ -31,39 +31,16 @@ pub mod prelude;
 
 use crate::inner::*;
 
-pub struct Type<const N: &'static str, T, F: Framework> {
-    name: Cow<'static, str>,
-    framework: F,
-    marker: PhantomData<T>,
+pub trait Container<F: Framework, T>: Sized {
+    type Output<X>: AsRef<T>;
+
+    fn wrap(self) -> Self::Output<Self>;
 }
 
-pub trait Framework: Copy + Clone + 'static {
-    // type Container: Container;
-}
+pub trait Framework: Copy + Clone + 'static {}
 
 pub trait InFramework<const T: &'static str> {
     type Definition: TypeDef;
 
     fn def() -> Self::Definition;
 }
-
-// #[macro_export]
-// macro_rules! type_member {
-//     ($name:ident { $($member:ident: $tokens:tt),* }) => {
-//         // type_member!($name { $tokens })
-//     };
-// }
-
-// #[macro_export]
-// macro_rules! type_class {
-//     ($name:ty { $($member:ident: $expr:expr),* }) => {
-//         type_member!($($member: $expr),*)
-//     }
-// }
-
-// #[macro_export]
-// macro_rules! typed {
-//     (class $name:ty { $($member:ident: $expr:expr),* }) => {
-//         type_class!(::svelters_qt::class(stringify!($name)) => $name { $($member: $expr),* });
-//     };
-// }
