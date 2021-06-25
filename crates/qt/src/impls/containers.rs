@@ -1,9 +1,9 @@
 use crate::inner::*;
 
 #[derive(Debug, Clone, Copy)]
-pub struct AsRefWrapper<T>(T);
+pub struct Wrapper<T>(T);
 
-impl<T> std::ops::Deref for AsRefWrapper<T> {
+impl<T> std::ops::Deref for Wrapper<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -11,13 +11,19 @@ impl<T> std::ops::Deref for AsRefWrapper<T> {
     }
 }
 
-impl<T: CppDeletable> AsRef<T> for AsRefWrapper<CppBox<T>> {
+impl<T: CppDeletable> AsRef<T> for Wrapper<CppBox<T>> {
     fn as_ref(&self) -> &T {
         &*self
     }
 }
 
-impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for AsRefWrapper<QBox<T>> {
+impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for Wrapper<QBox<T>> {
+    fn as_ref(&self) -> &T {
+        &*self
+    }
+}
+
+impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for Wrapper<QPtr<T>> {
     fn as_ref(&self) -> &T {
         &*self
     }
@@ -26,12 +32,12 @@ impl<T: CppDeletable + StaticUpcast<QObject>> AsRef<T> for AsRefWrapper<QBox<T>>
 impl<T> Container<QT, T> for CppBox<T>
 where
     T: CppDeletable,
-    AsRefWrapper<CppBox<T>>: AsRef<T>,
+    Wrapper<CppBox<T>>: AsRef<T>,
 {
-    type Output<X> = AsRefWrapper<CppBox<T>>;
+    type Output<X> = Wrapper<CppBox<T>>;
 
     fn wrap(self) -> Self::Output<Self> {
-        AsRefWrapper(self)
+        Wrapper(self)
     }
 }
 
@@ -39,10 +45,21 @@ impl<T> Container<QT, T> for QBox<T>
 where
     T: CppDeletable + StaticUpcast<QObject>,
 {
-    type Output<X> = AsRefWrapper<QBox<T>>;
+    type Output<X> = Wrapper<QBox<T>>;
 
     fn wrap(self) -> Self::Output<Self> {
-        AsRefWrapper(self)
+        Wrapper(self)
+    }
+}
+
+impl<T> Container<QT, T> for QPtr<T>
+where
+    T: CppDeletable + StaticUpcast<QObject>,
+{
+    type Output<X> = Wrapper<QPtr<T>>;
+
+    fn wrap(self) -> Self::Output<Self> {
+        Wrapper(self)
     }
 }
 

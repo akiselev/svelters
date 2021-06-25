@@ -1,5 +1,18 @@
 use crate::inner::*;
 
+impl<FW: Framework, const NAME: &'static str> JsClass<FW, NAME>
+where
+    FW: FrameworkClass<NAME>,
+{
+    pub const fn constructor<A, FN>(self, method: FN) -> Constructor<NAME, FW, A, FN>
+    where
+        FN: Func<A>,
+        <FN as Func<A>>::Output: Cast<<FW as FrameworkClass<NAME>>::Wrapper>,
+    {
+        Constructor::new(method)
+    }
+}
+
 pub struct Superclass<T, R, F: Fn(&T) -> Option<&R>> {
     func: F,
     source: PhantomData<T>,
@@ -17,39 +30,45 @@ impl<T, R, F: Fn(&T) -> Option<&R>> Superclass<T, R, F> {
 }
 
 #[derive(Clone, Copy)]
-pub struct Constructor<T, FW, A, FN>
+pub struct Constructor<const T: &'static str, FW, A, FN>
 where
-    FW: Framework,
+    FW: Framework + FrameworkClass<T>,
     FN: Func<A>,
-    <FN as Func<A>>::Output: Container<FW, T>,
+    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
 {
-    fw: FW,
+    fw: PhantomData<FW>,
     method: FN,
     args: PhantomData<A>,
-    _type: PhantomData<T>,
 }
 
-impl<T, A, FW, FN> Constructor<T, FW, A, FN>
+impl<const T: &'static str, A, FW, FN> Constructor<T, FW, A, FN>
 where
-    FW: Framework,
+    FW: Framework + FrameworkClass<T>,
     FN: Func<A>,
-    <FN as Func<A>>::Output: Container<FW, T>,
+    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
 {
-    pub(in crate) const fn new(fw: FW, method: FN) -> Self {
+    pub(in crate) const fn new(method: FN) -> Self {
         Self {
-            fw,
             method,
+            fw: PhantomData,
             args: PhantomData,
-            _type: PhantomData,
         }
     }
 }
 
-impl<T, A, FW, FN> Member<T> for Constructor<T, FW, A, FN>
+impl<const T: &'static str, A, FW, FN> JsClassDef for Constructor<T, FW, A, FN>
 where
-    FW: Framework,
+    FW: Framework + FrameworkClass<T>,
     FN: Func<A>,
-    <FN as Func<A>>::Output: Container<FW, T>,
+    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
+{
+}
+
+impl<const T: &'static str, A, FW, FN> Member<T> for Constructor<T, FW, A, FN>
+where
+    FW: Framework + FrameworkClass<T>,
+    FN: Func<A>,
+    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
 {
 }
 

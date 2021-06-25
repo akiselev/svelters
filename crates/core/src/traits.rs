@@ -1,39 +1,72 @@
 use std::future::Future;
 
+use rquickjs::{Constructor, Loader, Resolver};
+
 use crate::inner::*;
 
 pub trait Framework: Copy + Clone + 'static {
+    type Loader: Loader;
+    type Resolver: Resolver;
     type AppTask: Future<Output = anyhow::Result<()>>;
-    // type Object<T>;
-    // type Handler<T>;
 
-    fn init_app(self, ctx: Context) -> Result<Self::AppTask>;
+    fn init_app(ctx: Context) -> Result<Self::AppTask>;
+    fn get_loader() -> (Self::Resolver, Self::Loader);
 
-    fn module<const NAME: &'static str>(self) -> <Self as FrameworkModule<NAME>>::Output
+    fn module<const NAME: &'static str>() -> JsModule<Self, NAME>
     where
         Self: FrameworkModule<NAME>,
     {
-        <Self as FrameworkModule<NAME>>::get_module(self)
+        JsModule(PhantomData)
     }
 
-    fn class<const NAME: &'static str>(self) -> <Self as FrameworkClass<NAME>>::Output
+    fn class<const NAME: &'static str>() -> JsClass<Self, NAME>
     where
         Self: FrameworkClass<NAME>,
     {
-        <Self as FrameworkClass<NAME>>::get_class(self)
+        JsClass(PhantomData)
     }
 }
 
-pub trait FrameworkModule<const N: &'static str> {
-    type Output: ModuleDef;
+pub trait FrameworkModule<const N: &'static str>: Framework {
+    type Output: JsModuleDef;
 
-    fn get_module(self) -> Self::Output;
+    fn get_module() -> Self::Output;
 }
 
-pub trait FrameworkClass<const N: &'static str> {
-    type Output: ClassDef;
+pub trait FrameworkClass<const N: &'static str>: Framework {
+    type Type;
+    type Wrapper: Container<Self, Self::Type>;
+    type Definition: JsClassDef;
 
-    fn get_class(self) -> Self::Output;
+    unsafe fn get_id() -> &'static mut ClassId;
+
+    fn register<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()>;
+
+    fn get_definition() -> Self::Definition;
+
+    fn get_name() -> &'static str {
+        N
+    }
+}
+
+pub trait JsModuleDef {
+    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
+        Ok(())
+    }
+
+    fn eval<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Loaded<Native>>) -> Result<()> {
+        Ok(())
+    }
+}
+
+pub trait JsClassDef {
+    fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
+        Ok(())
+    }
+
+    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+        Ok(())
+    }
 }
 
 pub trait Container<F: Framework, T>: Sized {
@@ -42,25 +75,16 @@ pub trait Container<F: Framework, T>: Sized {
     fn wrap(self) -> Self::Output<Self>;
 }
 
-pub trait Cast<T> {
-    type Output<'a, U: 'a>: AsRef<U>
+pub trait Cast<FW, const NAME: &'static str> {
+    type Output<'a>: AsRef<<FW as FrameworkClass<NAME>>::Type>
     where
         Self: 'a,
-        T: 'a;
+        FW: FrameworkClass<NAME>,
+        <FW as FrameworkClass<NAME>>::Type: 'a;
 
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, T>>
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a>>
     where
-        T: 'a;
-}
-
-pub trait JsClass<FW: Framework>: Sized {
-    const CLASS_NAME: &'static str;
-
-    type Def: ClassDef;
-    type Instance<T>: Convert<Self, FW>;
-
-    fn class_id() -> &'static mut ClassId;
-    fn definition() -> Self::Def;
+        <FW as FrameworkClass<NAME>>::Type: 'a;
 }
 
 pub trait Convert<T, FW: Framework> {
@@ -71,7 +95,7 @@ pub trait Convert<T, FW: Framework> {
     fn from_converter<'js>() -> Self::From<'js, T>;
 }
 
-pub trait Member<T> {}
+pub trait Member<const T: &'static str> {}
 
 pub trait Instantiate {}
 

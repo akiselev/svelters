@@ -1,32 +1,73 @@
+use std::collections::HashMap;
+
 use crate::inner::*;
 
-pub struct Obj<FW: Framework, T: JsClass<FW>> {
+pub struct Obj<FW, const T: &'static str>
+where
+    FW: FrameworkClass<T> + Framework,
+{
     fw: FW,
-    inner: T,
+    inner: <FW as FrameworkClass<T>>::Type,
 }
 
-impl<FW: Framework, T: JsClass<FW>> ClassDef for Obj<FW, T> {
-    const CLASS_NAME: &'static str = <T as JsClass<FW>>::CLASS_NAME;
+impl<FW, const T: &'static str> ClassDef for Obj<FW, T>
+where
+    FW: Framework + FrameworkClass<T>,
+    <FW as FrameworkClass<T>>::Definition: JsClassDef,
+{
+    const CLASS_NAME: &'static str = T;
 
     unsafe fn class_id() -> &'static mut ClassId {
-        <T as JsClass<FW>>::class_id()
+        <FW as FrameworkClass<T>>::get_id()
     }
 
-    // With prototype
     const HAS_PROTO: bool = true;
-    fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        <T as JsClass<FW>>::Def::init_proto(ctx, proto)
-    }
 
-    // With statics
     const HAS_STATIC: bool = true;
-    fn init_static<'js>(ctx: Ctx<'js>, ctor: &Object<'js>) -> Result<()> {
-        <T as JsClass<FW>>::Def::init_static(ctx, ctor)
+
+    const HAS_REFS: bool = true;
+
+    fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+        <<FW as FrameworkClass<T>>::Definition as JsClassDef>::init_proto(ctx, proto)?;
+        Ok(())
     }
 
-    // With internal references
-    const HAS_REFS: bool = true;
-    fn mark_refs(&self, marker: &RefsMarker) {
-        // marker.mark(&self.some_persistent_value);
+    fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+        <<FW as FrameworkClass<T>>::Definition as JsClassDef>::init_static(ctx, _static)?;
+        Ok(())
+    }
+
+    fn mark_refs(&self, _marker: &RefsMarker) {}
+
+    fn into_js_obj<'js>(self, ctx: Ctx<'js>) -> Result<Value<'js>>
+    where
+        Self: Sized,
+    {
+        rquickjs::Class::<Self>::instance(ctx, self).map(|cls| cls.into_value())
+    }
+
+    fn from_js_ref<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<&'js Self>
+    where
+        Self: Sized,
+    {
+        let value = Object::from_js(ctx, value)?;
+        rquickjs::Class::<Self>::try_ref(ctx, &value)
+    }
+
+    fn from_js_mut<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<&'js mut Self>
+    where
+        Self: Sized,
+    {
+        let value = Object::from_js(ctx, value)?;
+        rquickjs::Class::<Self>::try_mut(ctx, &value)
+    }
+
+    fn from_js_obj<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self>
+    where
+        Self: Clone + Sized,
+    {
+        let value = Object::from_js(ctx, value)?;
+        let instance = rquickjs::Class::<Self>::try_ref(ctx, &value)?;
+        Ok(instance.clone())
     }
 }

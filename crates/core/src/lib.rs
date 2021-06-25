@@ -15,10 +15,8 @@
 #![allow(incomplete_features)]
 
 pub mod prelude {
-    pub use crate::class::Class;
-
-    pub use crate::core::Core;
     pub use crate::initializers::*;
+    pub use crate::obj::Obj;
     pub use crate::traits::*;
 
     pub use rquickjs::{
@@ -27,8 +25,6 @@ pub mod prelude {
 }
 
 pub(in crate) mod builder_types;
-pub(in crate) mod class;
-pub(in crate) mod core;
 pub(in crate) mod initializers;
 pub(in crate) mod obj;
 pub(in crate) mod traits;
@@ -47,13 +43,11 @@ pub(in crate) mod inner {
     };
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{
-        ClassDef, ClassId, Context, Created, Ctx, Error, FromJs, IntoJs, Loaded, Module, ModuleDef,
-        Native, Object, RefsMarker, Result, Value,
+        AsFunction, ClassDef, ClassId, Context, Created, Ctx, Error, FromJs, IntoJs, Loaded,
+        Module, ModuleDef, Native, Object, RefsMarker, Result, Value,
     };
 
     pub(in crate) use crate::builder_types::*;
-    pub(in crate) use crate::class::*;
-    pub(in crate) use crate::core::*;
     pub(in crate) use crate::initializers::*;
     pub(in crate) use crate::obj::*;
     pub(in crate) use crate::traits::*;
@@ -62,10 +56,8 @@ pub(in crate) mod inner {
 pub(in crate) mod impls {
     mod cast;
     mod func;
-    mod members;
     pub(in crate) use cast::*;
     pub(in crate) use func::*;
-    pub(in crate) use members::*;
 }
 
 // ------------------ LEGACY ------------------

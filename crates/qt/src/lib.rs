@@ -12,7 +12,9 @@ use qt_core::{
     QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString,
 };
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
-use rquickjs::{Context, Ctx, Error, Result, Value};
+use rquickjs::{
+    BuiltinResolver, Context, Ctx, Error, Loader, ModuleLoader, Resolver, Result, Value,
+};
 use static_assertions::assert_impl_all;
 use svelters_core::prelude::*;
 
@@ -20,9 +22,11 @@ use svelters_core::prelude::*;
 pub struct QT;
 
 impl Framework for QT {
+    type Loader = impl Loader;
+    type Resolver = impl Resolver;
     type AppTask = impl Future<Output = anyhow::Result<()>>;
 
-    fn init_app<'js>(self, ctx: Context) -> Result<Self::AppTask> {
+    fn init_app(ctx: Context) -> Result<Self::AppTask> {
         Ok(Box::pin(async move {
             let mut interval = tokio::time::interval(Duration::from_millis(10));
             let app = unsafe {
@@ -43,6 +47,12 @@ impl Framework for QT {
             }
             Ok(())
         }))
+    }
+
+    fn get_loader() -> (Self::Resolver, Self::Loader) {
+        let resolver = BuiltinResolver::default().with_module("QtCore");
+        let loader = ModuleLoader::default().with_module("QtCore", Self::module::<"QtCore">());
+        (resolver, loader)
     }
 }
 

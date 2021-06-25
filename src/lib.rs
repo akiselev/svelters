@@ -46,17 +46,6 @@ impl<FW: Framework> Runtime<FW> {
         Ok(Self { rt, ctx, framework })
     }
 
-    pub fn load_module<const N: &'static str>(&mut self) -> Result<&mut Self>
-    where
-        FW: FrameworkModule<N>,
-    {
-        self.ctx.with(|ctx| {
-            Module::new_def::<<FW as FrameworkModule<N>>::Output, _>(ctx, N)?;
-            JsResult::Ok(())
-        })?;
-        Ok(self)
-    }
-
     pub async fn start<P: AsRef<str>>(self, path: P) -> Result<()> {
         let path = path.as_ref().to_string();
         let local = tokio::task::LocalSet::new();
