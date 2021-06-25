@@ -28,14 +28,14 @@ use svelters_core::prelude::*;
 
 pub mod logging;
 
-pub struct Runtime<T: Framework> {
-    framework: T,
+pub struct Runtime<FW: Framework> {
+    framework: FW,
     rt: JsRuntime,
     ctx: Context,
 }
 
-impl<T: Framework> Runtime<T> {
-    pub fn new(framework: T) -> Result<Self> {
+impl<FW: Framework> Runtime<FW> {
+    pub fn new(framework: FW) -> Result<Self> {
         let rt = JsRuntime::new()?;
         let ctx = Context::full(&rt)?;
         ctx.with(|ctx| {
@@ -44,6 +44,17 @@ impl<T: Framework> Runtime<T> {
             Result::<()>::Ok(())
         })?;
         Ok(Self { rt, ctx, framework })
+    }
+
+    pub fn load_module<const N: &'static str>(&mut self) -> Result<&mut Self>
+    where
+        FW: FrameworkModule<N>,
+    {
+        self.ctx.with(|ctx| {
+            Module::new_def::<<FW as FrameworkModule<N>>::Output, _>(ctx, N)?;
+            JsResult::Ok(())
+        })?;
+        Ok(self)
     }
 
     pub async fn start<P: AsRef<str>>(self, path: P) -> Result<()> {

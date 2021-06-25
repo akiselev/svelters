@@ -3,6 +3,7 @@
 #![feature(min_type_alias_impl_trait)]
 #![feature(in_band_lifetimes)]
 #![recursion_limit = "1024"]
+
 use std::{borrow::Cow, future::Future, time::Duration};
 
 use frunk::hlist;
@@ -21,7 +22,7 @@ pub struct QT;
 impl Framework for QT {
     type AppTask = impl Future<Output = anyhow::Result<()>>;
 
-    fn init_app<'js>(&self, ctx: Context) -> Result<Self::AppTask> {
+    fn init_app<'js>(self, ctx: Context) -> Result<Self::AppTask> {
         Ok(Box::pin(async move {
             let mut interval = tokio::time::interval(Duration::from_millis(10));
             let app = unsafe {
@@ -45,17 +46,7 @@ impl Framework for QT {
     }
 }
 
-static qt: Core<QT> = Core::new(QT);
-
-static QOBJECT: impl Instantiate =
-    qt.class::<QObject, _>(hlist![qt.init(|| unsafe { QObject::new_0a() })]);
-static QWIDGET: impl Instantiate =
-    qt.class::<QWidget, _>(hlist![qt.init(|| unsafe { QWidget::new_0a() })]);
-static QMAINWINDOW: impl Instantiate =
-    qt.class::<QMainWindow, _>(hlist![qt.init(|| unsafe { QMainWindow::new_0a() })]);
-static QPUSHBUTTOn: impl Instantiate =
-    qt.class::<QPushButton, _>(hlist![qt.init(|| unsafe { QPushButton::new() })]);
-
+mod modules;
 mod impls {
     mod cast;
     mod containers;
@@ -67,15 +58,15 @@ pub(in crate) mod inner {
     pub(in crate) use std::marker::PhantomData;
     pub(in crate) use std::ops::{Add, Deref, DerefMut};
 
-    pub(in crate) use frunk::hlist::Selector;
-    pub(in crate) use frunk::{HCons, HNil};
+    pub(in crate) use frunk::{hlist, hlist::Selector, HCons, HNil, Hlist};
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use qt_core::cpp_core::{
         CastFrom, CppBox, CppDeletable, DynamicCast, Ptr, StaticUpcast,
     };
     pub(in crate) use qt_core::{QBox, QObject, QPtr};
     pub(in crate) use rquickjs::{
-        ClassDef, ClassId, Context, Ctx, Error, FromJs, IntoJs, Object, RefsMarker, Result, Value,
+        ClassDef, ClassId, Context, Ctx, Error, FromJs, IntoJs, ModuleDef, Object, RefsMarker,
+        Result, Value,
     };
 
     pub(in crate) use svelters_core::prelude::*;

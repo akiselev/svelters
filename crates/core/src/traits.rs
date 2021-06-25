@@ -7,10 +7,34 @@ pub trait Framework: Copy + Clone + 'static {
     // type Object<T>;
     // type Handler<T>;
 
-    fn init_app(&self, ctx: Context) -> Result<Self::AppTask>;
+    fn init_app(self, ctx: Context) -> Result<Self::AppTask>;
+
+    fn module<const NAME: &'static str>(self) -> <Self as FrameworkModule<NAME>>::Output
+    where
+        Self: FrameworkModule<NAME>,
+    {
+        <Self as FrameworkModule<NAME>>::get_module(self)
+    }
+
+    fn class<const NAME: &'static str>(self) -> <Self as FrameworkClass<NAME>>::Output
+    where
+        Self: FrameworkClass<NAME>,
+    {
+        <Self as FrameworkClass<NAME>>::get_class(self)
+    }
 }
 
-pub trait FrameworkModule<const N: &'static str> {}
+pub trait FrameworkModule<const N: &'static str> {
+    type Output: ModuleDef;
+
+    fn get_module(self) -> Self::Output;
+}
+
+pub trait FrameworkClass<const N: &'static str> {
+    type Output: ClassDef;
+
+    fn get_class(self) -> Self::Output;
+}
 
 pub trait Container<F: Framework, T>: Sized {
     type Output<X>: AsRef<T>;

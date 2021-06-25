@@ -36,6 +36,7 @@ members = [
     "crates/core",
     "crates/compiler",
     "crates/qt",
+    "crates/macros",
     "crates/rquickjs",
     "crates/rquickjs/rquickjs-core",
     "crates/rquickjs/rquickjs-macro",

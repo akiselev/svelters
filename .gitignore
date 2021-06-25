@@ -121,8 +121,11 @@ target/
 target2/
 Cargo.lock
 
-*.node
-
+# JS build files
 dist/
 
+# macos
 .DS_Store
+
+# valgrind
+vgcore.*
