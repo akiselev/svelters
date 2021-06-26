@@ -34,7 +34,12 @@ impl FrameworkClass<"QObject"> for QT {
     }
 
     fn get_proto() -> &'static Self::Proto {
-        static PROTO: impl ClassProto = hlist![];
+        static PROTO: impl ClassProto = {
+            let cls = include::<QT, "QObject">();
+            hlist![cls.method("className", |this: &QObject| unsafe {
+                this.meta_object().class_name()
+            }),]
+        };
         &PROTO
     }
 

@@ -1,5 +1,14 @@
 use crate::inner::*;
 
+pub(in crate) mod constructor;
+pub(in crate) mod method;
+pub(in crate) mod static_fn;
+pub(in crate) mod impls {
+    pub(in crate) mod constructor;
+    pub(in crate) mod method;
+    pub(in crate) mod static_fn;
+}
+
 pub struct JsClass<FW: Framework, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
 
 impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS> {
