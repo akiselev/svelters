@@ -7,12 +7,19 @@ where
     FW: Container<CLS>,
     T: Constructor<FW, CLS, A, R>;
 
+unsafe impl<FW, T, A, R, const CLS: &'static str> Sync for ClassConstructor<FW, CLS, A, R, T>
+where
+    FW: Container<CLS>,
+    T: Constructor<FW, CLS, A, R>,
+{
+}
+
 impl<FW, T, A, R, const CLS: &'static str> ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: Constructor<FW, CLS, A, R>,
 {
-    pub(in crate) fn new(func: T) -> Self {
+    pub(in crate) const fn new(func: T) -> Self {
         ClassConstructor(func, PhantomData)
     }
 }
@@ -20,9 +27,10 @@ where
 impl<FW, T, A, R, const CLS: &'static str> JsModuleDef for ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
-    T: Constructor<FW, CLS, A, R>,
+    T: 'static + Constructor<FW, CLS, A, R>,
+    R: 'static,
+    A: 'static,
     <T as Constructor<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
-    Obj<FW, CLS>: ClassDef + 'static,
 {
     fn load<'js>(ctx: Ctx<'js>, exports: &Module<'js, Created>) -> Result<()> {
         exports.add(CLS)?;

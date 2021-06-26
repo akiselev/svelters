@@ -18,13 +18,13 @@ pub trait Framework: Copy + Clone + 'static {
     {
         JsModule(PhantomData)
     }
+}
 
-    fn class<const CLS: &'static str>() -> JsClass<Self, CLS>
-    where
-        Self: FrameworkClass<CLS>,
-    {
-        JsClass(PhantomData)
-    }
+pub const fn include<FW, const CLS: &'static str>() -> JsClass<FW, CLS>
+where
+    FW: FrameworkClass<CLS>,
+{
+    JsClass(PhantomData)
 }
 
 pub trait Cast<FW: Framework + FrameworkClass<CLS>, const CLS: &'static str> {
@@ -49,7 +49,7 @@ where
 }
 
 pub trait FrameworkModule<const N: &'static str>: Framework {
-    type Output: ModuleDef;
+    type Output: JsModuleDef;
 
     fn get_module<'a>() -> &'static Self::Output;
 }
@@ -58,9 +58,9 @@ pub type ClsTy<FW, const CLS: &'static str> = <FW as FrameworkClass<CLS>>::Type;
 
 pub trait FrameworkClass<const N: &'static str>: Framework {
     type Type;
-    type Constructor;
     type Proto: ClassProto;
     type Static: ClassStatic;
+    type Constructor: JsModuleDef;
 
     unsafe fn get_id() -> &'static mut ClassId;
 
@@ -73,7 +73,7 @@ pub trait FrameworkClass<const N: &'static str>: Framework {
     }
 }
 
-pub trait JsModuleDef: Sized {
+pub trait JsModuleDef: Sized + 'static {
     fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
         Ok(())
     }

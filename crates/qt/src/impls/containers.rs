@@ -12,20 +12,6 @@ where
     Ref(Ptr<ClsTy<QT, CLS>>),
 }
 
-impl<const CLS: &'static str> AsRef<ClsTy<QT, CLS>> for QtWrapper<CLS>
-where
-    QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
-{
-    fn as_ref(&self) -> &ClsTy<QT, CLS> {
-        match self {
-            QtWrapper::Owned(val) => &*val,
-            QtWrapper::Shared(val) => &*val,
-            QtWrapper::Ref(val) => &*val,
-        }
-    }
-}
-
 impl<const CLS: &'static str> IntoContainer<QT, CLS> for QBox<ClsTy<QT, CLS>>
 where
     QT: FrameworkClass<CLS>,

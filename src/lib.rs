@@ -60,10 +60,12 @@ impl<FW: Framework> Runtime<FW> {
         let src = compile(&compiler, "./app/index.ts").await?;
 
         self.rt.spawn_executor(rquickjs::Tokio);
-        self.rt.set_loader(compiler.clone(), compiler.clone());
+        let (resolver, loader) = FW::get_loader();
+        self.rt
+            .set_loader((resolver, compiler.clone()), (loader, compiler.clone()));
 
         let res: Result<_> = self.ctx.with(|ctx| {
-            let app = self.framework.init_app(self.ctx.clone())?;
+            let app = FW::init_app(self.ctx.clone())?;
             let app = tokio::task::spawn_local(app);
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();

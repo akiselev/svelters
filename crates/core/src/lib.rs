@@ -16,7 +16,7 @@
 
 pub mod prelude {
     pub use crate::constructor::*;
-    pub use crate::initializers::*;
+    pub use crate::module::*;
     pub use crate::obj::Obj;
     pub use crate::traits::*;
 
@@ -26,8 +26,9 @@ pub mod prelude {
 }
 
 pub(in crate) mod builder_types;
+pub(in crate) mod class;
 pub(in crate) mod constructor;
-pub(in crate) mod initializers;
+pub(in crate) mod module;
 pub(in crate) mod obj;
 pub(in crate) mod traits;
 
@@ -50,8 +51,9 @@ pub(in crate) mod inner {
     };
 
     pub(in crate) use crate::builder_types::*;
+    pub(in crate) use crate::class::*;
     pub(in crate) use crate::constructor::*;
-    pub(in crate) use crate::initializers::*;
+    pub(in crate) use crate::module::*;
     pub(in crate) use crate::obj::*;
     pub(in crate) use crate::traits::*;
 }

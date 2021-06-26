@@ -1,12 +1,20 @@
 //// <reference path="./types.d.ts" />
 
-import App from "./App.svelte";
+import * as mod from "QtCore";
 
-window = document.createElement("qMainWindow");
+console.log(">>>>>", mod);
+console.log(">>>>>", mod.QObject);
+let obj = new mod.QObject();
+console.log(">>>>>", obj);
+console.log(">>>>>", JSON.stringify(Object.getOwnPropertyNames(obj)));
 
-console.log(".....");
-setTimeout(() => console.log("Timeout 8sec"), 8000);
+// import App from "./App.svelte";
 
-window.app = new App({ target: window });
+// window = document.createElement("qMainWindow");
 
-window.callMethod("show");
+// console.log(".....");
+// setTimeout(() => console.log("Timeout 8sec"), 8000);
+
+// window.app = new App({ target: window });
+
+// window.callMethod("show");

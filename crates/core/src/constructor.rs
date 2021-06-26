@@ -6,18 +6,18 @@ use crate::inner::*;
 pub trait Constructor<FW, const CLS: &'static str, A, R>
 where
     FW: Container<CLS>,
+    Self::Args: for<'js> FromJs<'js>,
+    Self::Return: ClassDef,
 {
     const NUM_ARGS: usize;
     type Args;
-    type Return: ClassDef;
+    type Return;
 
     fn try_constructor<'js>(
         &'static self,
         ctx: Ctx<'js>,
         args: &Vec<Value<'js>>,
-    ) -> Result<Self::Return>
-    where
-        Self::Args: FromJs<'js>;
+    ) -> Result<Self::Return>;
 }
 
 impl<T, FW, const CLS: &'static str, R> Constructor<FW, CLS, (), R> for T
@@ -25,57 +25,22 @@ where
     FW: Container<CLS>,
     T: 'static + Fn() -> R,
     R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
-    ClsBox<FW, CLS>: ClassDef,
 {
     const NUM_ARGS: usize = 0;
 
     type Args = ();
-    type Return = ClsBox<FW, CLS>;
+    type Return = Obj<FW, CLS>;
 
     fn try_constructor<'js>(
         &'static self,
         ctx: Ctx<'js>,
         args: &Vec<Value<'js>>,
-    ) -> Result<Self::Return>
-    where
-        Self::Args: FromJs<'js>,
-    {
+    ) -> Result<Self::Return> {
         let args_len = args.len();
         tuple_match_size(args_len, 0)?;
 
         let result = (*self)();
-        Ok(result.into_framework_type())
-    }
-}
-
-trait FromJs2<'a>: Sized {
-    fn from_js_2<'js>(ctx: Ctx<'js>, val: Value<'js>) -> Result<Self>
-    where
-        'js: 'a;
-}
-
-default impl<'a, T: Sized> FromJs2<'a> for T {
-    fn from_js_2<'js>(ctx: Ctx<'js>, val: Value<'js>) -> Result<Self>
-    where
-        'js: 'a,
-    {
-        let type_ = val.type_of();
-        Err(Error::new_from_js(
-            type_.as_str(),
-            std::any::type_name::<Self>(),
-        ))
-    }
-}
-impl<'a, T: FromJs<'a> + Sized> FromJs2<'a> for T {
-    fn from_js_2<'js>(ctx: Ctx<'js>, val: Value<'js>) -> Result<Self>
-    where
-        'js: 'a,
-    {
-        let type_ = val.type_of();
-        Err(Error::new_from_js(
-            type_.as_str(),
-            std::any::type_name::<Self>(),
-        ))
+        Ok(Obj::new(result.into_framework_type()))
     }
 }
 
@@ -88,24 +53,22 @@ macro_rules! tup {
                 T: Fn($($type,)*) -> R,
                 $($type: for<'x> FromJs<'x>,)*
                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
-                ClsBox<FW, CLS>: ClassDef,
+                Obj<FW, CLS>: ClassDef,
             {
                 const NUM_ARGS: usize = 0 $(+ tup!(@one $type))*;
 
                 type Args = ($($type,)*);
 
-                type Return = ClsBox<FW, CLS>;
+                type Return = Obj<FW, CLS>;
 
                 fn try_constructor<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Self::Return>
-                where
-                    Self::Args: FromJs<'js>,
                 {
                     let args_len = args.len();
                     tuple_match_size(args_len, Self::NUM_ARGS)?;
                     let result = (*self)(
                         $({ let arg: $type = FromJs::from_js(ctx, args.get(tup!(@idx $type)).cloned().unwrap())?; arg },)*
                     );
-                    Ok(result.into_framework_type())
+                    Ok(Obj::new(result.into_framework_type()))
                 }
             }
         )*

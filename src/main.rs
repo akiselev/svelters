@@ -7,7 +7,6 @@ async fn main() -> Result<()> {
 
     // Run the local task set.
     let mut rt = svelters::Runtime::new(svelters_qt::QT)?;
-    rt.with_module::<"QtCore">()?;
     rt.start("./app/index.ts").await?;
     Ok(())
 }
