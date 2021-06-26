@@ -1,20 +1,30 @@
 use crate::inner::*;
 
-pub struct JsModule<FW: Framework, const T: &'static str>(pub(in crate) PhantomData<FW>);
-pub struct JsClass<FW: Framework, const T: &'static str>(pub(in crate) PhantomData<FW>);
+pub struct JsModule<FW: Framework, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
+pub struct JsClass<FW: Framework, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
 
-impl<FW, const T: &'static str> ModuleDef for JsModule<FW, T>
+impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS> {
+    pub fn constructor<A, R, F>(&self, func: F) -> ClassConstructor<FW, CLS, A, R, F>
+    where
+        FW: Container<CLS>,
+        F: Constructor<FW, CLS, A, R>,
+    {
+        ClassConstructor::new(func)
+    }
+}
+
+impl<'a, FW, const MOD: &'static str> ModuleDef for JsModule<FW, MOD>
 where
-    FW: Framework + FrameworkModule<T>,
-    <FW as FrameworkModule<T>>::Output: JsModuleDef,
+    FW: Framework + FrameworkModule<MOD>,
+    <FW as FrameworkModule<MOD>>::Output: JsModuleDef,
 {
     fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
-        <<FW as FrameworkModule<T>>::Output as JsModuleDef>::load(ctx, module)?;
+        <<FW as FrameworkModule<MOD>>::Output as JsModuleDef>::load(ctx, module)?;
         Ok(())
     }
 
     fn eval<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
-        <<FW as FrameworkModule<T>>::Output as JsModuleDef>::eval(ctx, module)?;
+        JsModule::<FW, MOD>::eval(ctx, module)?;
         Ok(())
     }
 }
@@ -30,9 +40,9 @@ where
         Ok(())
     }
 
-    fn eval<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
-        <T as JsModuleDef>::eval(ctx, module)?;
-        <H as JsModuleDef>::eval(ctx, module)?;
+    fn eval<'js>(&'static self, ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
+        <T as JsModuleDef>::eval(&self.tail, ctx, module)?;
+        <H as JsModuleDef>::eval(&self.head, ctx, module)?;
         Ok(())
     }
 }
@@ -42,47 +52,38 @@ impl JsModuleDef for HNil {
         Ok(())
     }
 
-    fn eval<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
+    fn eval<'js>(&'static self, ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
         Ok(())
     }
 }
 
-impl<H, T> JsClassDef for HCons<H, T>
+impl<H, T> ClassProto for HCons<H, T>
 where
-    H: JsClassDef,
-    T: JsClassDef,
+    H: ClassProto,
+    T: ClassProto,
 {
-    fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-
-    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
         Ok(())
     }
 }
-
-impl JsClassDef for HNil {
-    fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-
-    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-}
-
-impl<FW, const T: &'static str> JsModuleDef for JsClass<FW, T>
+impl<H, T> ClassStatic for HCons<H, T>
 where
-    FW: Framework + FrameworkClass<T>,
-    Obj<FW, T>: ClassDef,
+    H: ClassStatic,
+    T: ClassStatic,
 {
-    fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
-        module.add(T)?;
+    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
         Ok(())
     }
+}
 
-    fn eval<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
-        <FW as FrameworkClass<T>>::register(ctx, module)?;
+impl ClassProto for HNil {
+    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
+        Ok(())
+    }
+}
+
+impl ClassStatic for HNil {
+    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
         Ok(())
     }
 }

@@ -2,23 +2,37 @@ use std::collections::HashMap;
 
 use crate::inner::*;
 
-pub struct Obj<FW, const T: &'static str>
+pub struct Obj<FW, const CLS: &'static str>
 where
-    FW: FrameworkClass<T> + Framework,
+    FW: FrameworkClass<CLS> + Container<CLS> + Framework,
 {
-    fw: FW,
-    inner: <FW as FrameworkClass<T>>::Type,
+    fw: PhantomData<FW>,
+    inner: ClsBox<FW, CLS>,
 }
 
-impl<FW, const T: &'static str> ClassDef for Obj<FW, T>
+impl<FW, const CLS: &'static str> Obj<FW, CLS>
 where
-    FW: Framework + FrameworkClass<T>,
-    <FW as FrameworkClass<T>>::Definition: JsClassDef,
+    FW: FrameworkClass<CLS> + Container<CLS> + Framework,
 {
-    const CLASS_NAME: &'static str = T;
+    pub fn new(inner: ClsBox<FW, CLS>) -> Self {
+        Self {
+            fw: PhantomData,
+            inner,
+        }
+    }
+}
+
+impl<'a, FW, const CLS: &'static str> ClassDef for Obj<FW, CLS>
+where
+    FW: Framework + Container<CLS> + FrameworkClass<CLS>,
+    <FW as FrameworkClass<CLS>>::Proto: ClassProto,
+    <FW as FrameworkClass<CLS>>::Static: ClassStatic,
+    <FW as FrameworkClass<CLS>>::Constructor: JsModuleDef,
+{
+    const CLASS_NAME: &'static str = CLS;
 
     unsafe fn class_id() -> &'static mut ClassId {
-        <FW as FrameworkClass<T>>::get_id()
+        <FW as FrameworkClass<CLS>>::get_id()
     }
 
     const HAS_PROTO: bool = true;
@@ -28,12 +42,14 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        <<FW as FrameworkClass<T>>::Definition as JsClassDef>::init_proto(ctx, proto)?;
+        let def = <FW as FrameworkClass<CLS>>::get_proto();
+        def.init_proto(ctx, proto)?;
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        <<FW as FrameworkClass<T>>::Definition as JsClassDef>::init_static(ctx, _static)?;
+        let def = <FW as FrameworkClass<CLS>>::get_static();
+        def.init_static(ctx, _static)?;
         Ok(())
     }
 

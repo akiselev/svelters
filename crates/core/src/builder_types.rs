@@ -1,109 +1,67 @@
+use rquickjs::{Class, Rest};
+
 use crate::inner::*;
 
-impl<FW: Framework, const NAME: &'static str> JsClass<FW, NAME>
+pub struct ClassConstructor<FW, const CLS: &'static str, A, R, T>(T, PhantomData<(A, R, FW)>)
 where
-    FW: FrameworkClass<NAME>,
+    FW: Container<CLS>,
+    T: Constructor<FW, CLS, A, R>;
+
+impl<FW, T, A, R, const CLS: &'static str> ClassConstructor<FW, CLS, A, R, T>
+where
+    FW: Container<CLS>,
+    T: Constructor<FW, CLS, A, R>,
 {
-    pub const fn constructor<A, FN>(self, method: FN) -> Constructor<NAME, FW, A, FN>
-    where
-        FN: Func<A>,
-        <FN as Func<A>>::Output: Cast<<FW as FrameworkClass<NAME>>::Wrapper>,
-    {
-        Constructor::new(method)
+    pub(in crate) fn new(func: T) -> Self {
+        ClassConstructor(func, PhantomData)
     }
 }
 
-pub struct Superclass<T, R, F: Fn(&T) -> Option<&R>> {
-    func: F,
-    source: PhantomData<T>,
-    target: PhantomData<R>,
-}
+impl<FW, T, A, R, const CLS: &'static str> JsModuleDef for ClassConstructor<FW, CLS, A, R, T>
+where
+    FW: Container<CLS>,
+    T: Constructor<FW, CLS, A, R>,
+    <T as Constructor<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
+    Obj<FW, CLS>: ClassDef + 'static,
+{
+    fn load<'js>(ctx: Ctx<'js>, exports: &Module<'js, Created>) -> Result<()> {
+        exports.add(CLS)?;
+        Ok(())
+    }
 
-impl<T, R, F: Fn(&T) -> Option<&R>> Superclass<T, R, F> {
-    pub const fn new(func: F) -> Self {
-        Self {
-            func,
-            source: PhantomData,
-            target: PhantomData,
-        }
+    fn eval<'js>(
+        &'static self,
+        ctx: Ctx<'js>,
+        exports: &Module<'js, Loaded<Native>>,
+    ) -> Result<()> {
+        exports.set(
+            CLS,
+            rquickjs::Func::new(
+                CLS,
+                rquickjs::Class::<Obj<FW, CLS>>::constructor(
+                    move |ctx: Ctx<'js>, args: Rest<Value<'js>>| {
+                        let args = args.into_inner();
+                        let res = self.0.try_constructor(ctx, &args)?;
+                        Class::instance(ctx, res)
+                    },
+                ),
+            ),
+        )?;
+        Ok(())
     }
 }
 
-#[derive(Clone, Copy)]
-pub struct Constructor<const T: &'static str, FW, A, FN>
-where
-    FW: Framework + FrameworkClass<T>,
-    FN: Func<A>,
-    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
-{
-    fw: PhantomData<FW>,
-    method: FN,
-    args: PhantomData<A>,
-}
-
-impl<const T: &'static str, A, FW, FN> Constructor<T, FW, A, FN>
-where
-    FW: Framework + FrameworkClass<T>,
-    FN: Func<A>,
-    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
-{
-    pub(in crate) const fn new(method: FN) -> Self {
-        Self {
-            method,
-            fw: PhantomData,
-            args: PhantomData,
-        }
-    }
-}
-
-impl<const T: &'static str, A, FW, FN> JsClassDef for Constructor<T, FW, A, FN>
-where
-    FW: Framework + FrameworkClass<T>,
-    FN: Func<A>,
-    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
-{
-}
-
-impl<const T: &'static str, A, FW, FN> Member<T> for Constructor<T, FW, A, FN>
-where
-    FW: Framework + FrameworkClass<T>,
-    FN: Func<A>,
-    <FN as Func<A>>::Output: Convert<<FW as FrameworkClass<T>::Wrapper>>,
-{
-}
-
-pub struct Getter<T, R, F: Fn(&T) -> R> {
-    name: Cow<'static, str>,
-    func: F,
-    _class: PhantomData<T>,
-    _type: PhantomData<R>,
-}
-
-impl<T, R, F: Fn(&T) -> R> Getter<T, R, F> {
-    pub const fn new(name: Cow<'static, str>, func: F) -> Self {
-        Self {
-            name,
-            func,
-            _class: PhantomData,
-            _type: PhantomData,
-        }
-    }
-}
-
-pub struct Setter<T, R, F: Fn(&T) -> R> {
-    name: Cow<'static, str>,
-    func: F,
-    _class: PhantomData<T>,
-    _type: PhantomData<R>,
-}
-
-impl<T, R, F: Fn(&T) -> R> Setter<T, R, F> {
-    pub const fn new(name: Cow<'static, str>, func: F) -> Self {
-        Self {
-            name,
-            func,
-            _class: PhantomData,
-            _type: PhantomData,
-        }
-    }
-}
+// fn transform<'a: 'c, 'c, FW, T, A, R, const CLS: &'static str>(
+//     cls: ClassConstructor<'a, FW, CLS, A, R, T>,
+//     func: impl for<'b> FnOnce(
+//         ClassConstructor<'b, FW, CLS, A, R, T>,
+//     ) -> ClassConstructor<'b, FW, CLS, A, R, T>,
+// ) -> ClassConstructor<'a, FW, CLS, A, R, T>
+// where
+//     FW: Container<CLS>,
+//     T: Constructor<'a, FW, CLS, A, R>,
+//     <T as Constructor<'a, FW, CLS, A, R>>::Args: FromJs<'a>,
+//     Obj<FW, CLS>: 'static,
+// {
+//     func(cls)
+// }

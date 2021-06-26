@@ -12,92 +12,92 @@ pub trait Framework: Copy + Clone + 'static {
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
     fn get_loader() -> (Self::Resolver, Self::Loader);
 
-    fn module<const NAME: &'static str>() -> JsModule<Self, NAME>
+    fn module<const CLS: &'static str>() -> JsModule<Self, CLS>
     where
-        Self: FrameworkModule<NAME>,
+        Self: FrameworkModule<CLS>,
     {
         JsModule(PhantomData)
     }
 
-    fn class<const NAME: &'static str>() -> JsClass<Self, NAME>
+    fn class<const CLS: &'static str>() -> JsClass<Self, CLS>
     where
-        Self: FrameworkClass<NAME>,
+        Self: FrameworkClass<CLS>,
     {
         JsClass(PhantomData)
     }
 }
 
-pub trait FrameworkModule<const N: &'static str>: Framework {
-    type Output: JsModuleDef;
+pub trait Cast<FW: Framework + FrameworkClass<CLS>, const CLS: &'static str> {
+    type Output<'a, T>;
 
-    fn get_module() -> Self::Output;
+    fn cast<'a>(&'a self) -> Option<Self::Output<'a, ClsTy<FW, CLS>>>;
 }
+
+pub type ClsBox<FW, const CLS: &'static str> = <FW as Container<CLS>>::Type;
+
+pub trait Container<const CLS: &'static str>: Framework + FrameworkClass<CLS> {
+    type Type;
+}
+
+pub trait IntoContainer<FW, const CLS: &'static str>
+where
+    FW: Container<CLS>,
+{
+    type Type;
+
+    fn into_framework_type(self) -> Self::Type;
+}
+
+pub trait FrameworkModule<const N: &'static str>: Framework {
+    type Output: ModuleDef;
+
+    fn get_module<'a>() -> &'static Self::Output;
+}
+
+pub type ClsTy<FW, const CLS: &'static str> = <FW as FrameworkClass<CLS>>::Type;
 
 pub trait FrameworkClass<const N: &'static str>: Framework {
     type Type;
-    type Wrapper: Container<Self, Self::Type>;
-    type Definition: JsClassDef;
+    type Constructor;
+    type Proto: ClassProto;
+    type Static: ClassStatic;
 
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn register<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()>;
-
-    fn get_definition() -> Self::Definition;
+    fn get_proto() -> &'static Self::Proto;
+    fn get_static() -> &'static Self::Static;
+    fn get_constructor<'a>() -> &'static Self::Constructor;
 
     fn get_name() -> &'static str {
         N
     }
 }
 
-pub trait JsModuleDef {
+pub trait JsModuleDef: Sized {
     fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
         Ok(())
     }
 
-    fn eval<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Loaded<Native>>) -> Result<()> {
+    fn eval<'js>(
+        &'static self,
+        _ctx: Ctx<'js>,
+        _module: &Module<'js, Loaded<Native>>,
+    ) -> Result<()> {
         Ok(())
     }
 }
 
-pub trait JsClassDef {
-    fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-
-    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+pub trait ClassProto: Sized {
+    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
         Ok(())
     }
 }
 
-pub trait Container<F: Framework, T>: Sized {
-    type Output<X>: AsRef<T>;
-
-    fn wrap(self) -> Self::Output<Self>;
+pub trait ClassStatic: Sized {
+    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+        Ok(())
+    }
 }
-
-pub trait Cast<FW, const NAME: &'static str> {
-    type Output<'a>: AsRef<<FW as FrameworkClass<NAME>>::Type>
-    where
-        Self: 'a,
-        FW: FrameworkClass<NAME>,
-        <FW as FrameworkClass<NAME>>::Type: 'a;
-
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a>>
-    where
-        <FW as FrameworkClass<NAME>>::Type: 'a;
-}
-
-pub trait Convert<T, FW: Framework> {
-    type Into<'js, X>: IntoJs<'js>;
-    type From<'js, X>: FromJs<'js>;
-
-    fn into_converter<'js>() -> Self::Into<'js, T>;
-    fn from_converter<'js>() -> Self::From<'js, T>;
-}
-
-pub trait Member<const T: &'static str> {}
-
-pub trait Instantiate {}
 
 pub trait Func<A> {
     type Args;
@@ -111,3 +111,5 @@ pub trait AsFunc<A> {
 
     fn as_func(self) -> Self::Output;
 }
+
+pub trait FromJs {}

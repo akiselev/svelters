@@ -1,4 +1,5 @@
 #![feature(generic_associated_types)]
+#![feature(const_generics)]
 #![feature(impl_trait_in_bindings)]
 #![feature(min_type_alias_impl_trait)]
 #![feature(in_band_lifetimes)]
@@ -17,6 +18,8 @@ use rquickjs::{
 };
 use static_assertions::assert_impl_all;
 use svelters_core::prelude::*;
+
+use crate::impls::containers::QtWrapper;
 
 #[derive(Debug, Clone, Copy)]
 pub struct QT;
@@ -56,10 +59,18 @@ impl Framework for QT {
     }
 }
 
+impl<const CLS: &'static str> Container<CLS> for QT
+where
+    QT: FrameworkClass<CLS>,
+    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+{
+    type Type = QtWrapper<CLS>;
+}
+
 mod modules;
 mod impls {
     mod cast;
-    mod containers;
+    pub mod containers;
 }
 
 pub(in crate) mod inner {

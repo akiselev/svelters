@@ -9,7 +9,7 @@ use rquickjs::{AsFunction, Loaded, Module, Native};
 use crate::inner::*;
 
 impl FrameworkModule<"QtCore"> for QT {
-    type Output = impl JsModuleDef;
+    type Output = impl ModuleDef;
 
     fn get_module() -> Self::Output {
         hlist![QT::class::<"QObject">(), QT::class::<"QObject">()]
@@ -17,36 +17,26 @@ impl FrameworkModule<"QtCore"> for QT {
 }
 
 impl FrameworkClass<"QObject"> for QT {
+    type Proto;
+    type Static;
+    type Constructor<'a>;
     type Type = QObject;
-    type Wrapper = QPtr<QObject>;
-    type Definition = impl JsClassDef;
 
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn get_definition() -> Self::Definition {
-        let c = QT::class::<"QObject">();
-        HNil
+    fn get_proto() -> &'static Self::Proto {
+        todo!()
     }
 
-    fn register<'js>(ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
-        let c = QT::class::<"QObject">();
-        // let funcs = hlist![c.constructor(|| unsafe { QObject::new_0a() })];
-        rquickjs::Class::<Obj<QT, "QObject">>::register(ctx)?;
-        let constructor = rquickjs::Class::<Obj<QT, "QObject">>::constructor(
-            c.constructor(|| unsafe { QObject::new_0a() }),
-        );
-        module.set(
-            "QObject",
-            rquickjs::Func::new(
-                "QObject",
-                constructor;
-            ),
-        )?;
+    fn get_static() -> &'static Self::Static {
+        todo!()
+    }
 
-        Ok(())
+    fn get_constructor<'a>() -> &'static Self::Constructor<'a> {
+        todo!()
     }
 }
 
