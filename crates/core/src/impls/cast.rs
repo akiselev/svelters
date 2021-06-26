@@ -1,6 +1,6 @@
 use crate::inner::*;
 
-// default impl<FW: Framework + FrameworkClass<NAME>, const CLS: &'static str> Cast<FW, NAME> for V {
+// default impl<FW: Framework + FrameworkClass<NAME>, const NAME: &'static str> Cast<FW, NAME> for V {
 //     type Output<'a, U: 'a>
 //     where
 //         V: 'a,

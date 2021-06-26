@@ -20,7 +20,8 @@ use std::{ffi::CString, os::raw::c_char, time::Duration};
 use anyhow::Result;
 use rquickjs::{
     bind, BuiltinLoader, BuiltinResolver, Context, Ctx, FileResolver, Func, Function, IntoJs,
-    Module, NativeLoader, Persistent, Result as JsResult, Runtime as JsRuntime, ScriptLoader,
+    Module, NativeLoader, Object, Persistent, Result as JsResult, Runtime as JsRuntime,
+    ScriptLoader,
 };
 
 use svelters_compiler::{compile, SvelteCompiler};
@@ -64,9 +65,12 @@ impl<FW: Framework> Runtime<FW> {
         self.rt
             .set_loader((resolver, compiler.clone()), (loader, compiler.clone()));
 
+        let app = FW::init_app(self.ctx.clone())?;
+        let app = tokio::task::spawn_local(app);
+        tokio::time::sleep(Duration::from_millis(1)).await;
         let res: Result<_> = self.ctx.with(|ctx| {
-            let app = FW::init_app(self.ctx.clone())?;
-            let app = tokio::task::spawn_local(app);
+            let obj = Object::new(ctx)?;
+            ctx.globals().set("window", obj)?;
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();
             // Ok(())

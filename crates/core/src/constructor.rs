@@ -23,6 +23,7 @@ where
 impl<T, FW, const CLS: &'static str, R> Constructor<FW, CLS, (), R> for T
 where
     FW: Container<CLS>,
+    ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
     T: 'static + Fn() -> R,
     R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
 {
@@ -52,6 +53,7 @@ macro_rules! tup {
                 FW: Container<CLS>,
                 T: Fn($($type,)*) -> R,
                 $($type: for<'x> FromJs<'x>,)*
+                ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
                 Obj<FW, CLS>: ClassDef,
             {

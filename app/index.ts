@@ -2,11 +2,14 @@
 
 import * as mod from "QtCore";
 
-console.log(">>>>>", mod);
-console.log(">>>>>", mod.QObject);
+console.log(">>>>>1", mod);
+console.log(">>>>>2", mod.QObject);
 let obj = new mod.QObject();
-console.log(">>>>>", obj);
-console.log(">>>>>", JSON.stringify(Object.getOwnPropertyNames(obj)));
+window.main = new mod.QMainWindow();
+console.log(">>>>>3", window.main);
+console.log(">>>>>4", window.main.show);
+console.log(">>>>>5", typeof window.main);
+window.main.show();
 
 // import App from "./App.svelte";
 

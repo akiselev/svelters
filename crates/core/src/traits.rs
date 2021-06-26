@@ -27,10 +27,10 @@ where
     JsClass(PhantomData)
 }
 
-pub trait Cast<FW: Framework + FrameworkClass<CLS>, const CLS: &'static str> {
-    type Output<'a, T>;
+pub trait Cast<T> {
+    type Output<'a>: Deref<Target = T>;
 
-    fn cast<'a>(&'a self) -> Option<Self::Output<'a, ClsTy<FW, CLS>>>;
+    fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
 pub type ClsBox<FW, const CLS: &'static str> = <FW as Container<CLS>>::Type;
@@ -57,7 +57,7 @@ pub trait FrameworkModule<const N: &'static str>: Framework {
 pub type ClsTy<FW, const CLS: &'static str> = <FW as FrameworkClass<CLS>>::Type;
 
 pub trait FrameworkClass<const N: &'static str>: Framework {
-    type Type;
+    type Type: 'static;
     type Proto: ClassProto;
     type Static: ClassStatic;
     type Constructor: JsModuleDef;
@@ -74,42 +74,25 @@ pub trait FrameworkClass<const N: &'static str>: Framework {
 }
 
 pub trait JsModuleDef: Sized + 'static {
-    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
-        Ok(())
-    }
+    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()>;
 
     fn eval<'js>(
         &'static self,
         _ctx: Ctx<'js>,
         _module: &Module<'js, Loaded<Native>>,
-    ) -> Result<()> {
-        Ok(())
-    }
+    ) -> Result<()>;
 }
 
 pub trait ClassProto: Sized {
-    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
+    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()>;
 }
 
 pub trait ClassStatic: Sized {
-    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
+    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()>;
 }
 
-pub trait Func<A> {
-    type Args;
-    type Output;
-
-    fn try_call<'js>(&self, args: Self::Args) -> Self::Output;
+pub trait GetRef<'a, T> {
+    type Pointer;
+    fn get_ref(&'a self) -> &'a T;
+    fn get_ptr(&'a self) -> Self::Pointer;
 }
-
-pub trait AsFunc<A> {
-    type Output;
-
-    fn as_func(self) -> Self::Output;
-}
-
-pub trait FromJs {}

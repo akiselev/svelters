@@ -10,6 +10,30 @@ impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS> {
     {
         ClassConstructor::new(func)
     }
+
+    pub const fn method<A, R, F>(
+        &self,
+        name: &'static str,
+        func: F,
+    ) -> ClassMethod<FW, CLS, A, R, F>
+    where
+        FW: Container<CLS>,
+        F: Method<FW, CLS, A, R>,
+    {
+        ClassMethod::new(name, func)
+    }
+
+    pub const fn static_fn<A, R, F>(
+        &self,
+        name: &'static str,
+        func: F,
+    ) -> ClassStaticFunc<FW, CLS, A, R, F>
+    where
+        FW: Container<CLS>,
+        F: StaticFunc<FW, CLS, A, R>,
+    {
+        ClassStaticFunc::new(name, func)
+    }
 }
 
 impl<FW: Framework, const CLS: &'static str> JsModuleDef for JsClass<FW, CLS>
@@ -27,6 +51,7 @@ where
         ctx: Ctx<'js>,
         exports: &Module<'js, Loaded<Native>>,
     ) -> Result<()> {
+        println!("Initializing {}", CLS);
         rquickjs::Class::<Obj<FW, CLS>>::register(ctx)?;
         let def = <FW as FrameworkClass<CLS>>::get_constructor();
         def.eval(ctx, exports)?;
@@ -39,7 +64,9 @@ where
     H: ClassProto,
     T: ClassProto,
 {
-    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
+    fn init_proto<'js>(&'static self, ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+        self.tail.init_proto(ctx, proto)?;
+        self.head.init_proto(ctx, proto)?;
         Ok(())
     }
 }
@@ -48,7 +75,9 @@ where
     H: ClassStatic,
     T: ClassStatic,
 {
-    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+    fn init_static<'js>(&'static self, ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+        self.tail.init_static(ctx, proto)?;
+        self.head.init_static(ctx, proto)?;
         Ok(())
     }
 }

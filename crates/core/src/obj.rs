@@ -10,15 +10,31 @@ where
     inner: ClsBox<FW, CLS>,
 }
 
-impl<FW, const CLS: &'static str> Obj<FW, CLS>
+impl<'a, FW, const CLS: &'static str> Obj<FW, CLS>
 where
-    FW: FrameworkClass<CLS> + Container<CLS> + Framework,
+    FW: FrameworkClass<CLS> + Container<CLS>,
+    ClsBox<FW, CLS>: GetRef<'a, ClsTy<FW, CLS>>,
+    ClsTy<FW, CLS>: 'static,
 {
     pub fn new(inner: ClsBox<FW, CLS>) -> Self {
         Self {
             fw: PhantomData,
             inner,
         }
+    }
+
+    pub fn as_box<'b>(&'a self) -> &'b ClsBox<FW, CLS>
+    where
+        'a: 'b,
+    {
+        &self.inner
+    }
+
+    pub fn as_inner<'b>(&'a self) -> &'b ClsTy<FW, CLS>
+    where
+        'a: 'b,
+    {
+        self.inner.get_ref()
     }
 }
 
@@ -42,12 +58,22 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+        println!(
+            "Initializing {}::{} proto",
+            std::any::type_name::<FW>(),
+            CLS
+        );
         let def = <FW as FrameworkClass<CLS>>::get_proto();
         def.init_proto(ctx, proto)?;
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+        println!(
+            "Initializing {}::{} static",
+            std::any::type_name::<FW>(),
+            CLS
+        );
         let def = <FW as FrameworkClass<CLS>>::get_static();
         def.init_static(ctx, _static)?;
         Ok(())
