@@ -25,7 +25,7 @@ where
     }
 }
 
-impl<FW, T, A, R, const CLS: &'static str> JsModuleDef for ClassConstructor<FW, CLS, A, R, T>
+impl<FW, T, A, R, const CLS: &'static str> TypeDef for ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: 'static + Constructor<FW, CLS, A, R>,

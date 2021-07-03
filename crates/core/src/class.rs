@@ -88,7 +88,7 @@ where
     Obj<FW, CLS>: ClassDef,
 {
     fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
-        <<FW as FrameworkClass<CLS>>::Constructor>::load(_ctx, _module)?;
+        <FW as FrameworkClass<CLS>>::Definition::load(_ctx, _module)?;
         Ok(())
     }
 
@@ -99,28 +99,34 @@ where
     ) -> Result<()> {
         println!("Initializing {}", CLS);
         rquickjs::Class::<Obj<FW, CLS>>::register(ctx)?;
-        let def = <FW as FrameworkClass<CLS>>::get_constructor();
-        def.eval(ctx, exports)?;
+        <FW as FrameworkClass<CLS>>::define().eval(ctx, exports)?;
         Ok(())
     }
 }
 
-impl<H, T> ClassProto for HCons<H, T>
+impl<H, T> TypeDef for HCons<H, T>
 where
-    H: ClassProto,
-    T: ClassProto,
+    H: TypeDef,
+    T: TypeDef,
 {
+    fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
+        T::load(ctx, module)?;
+        H::load(ctx, module)?;
+        Ok(())
+    }
+
+    fn eval<'js>(&'static self, ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
+        self.tail.eval(ctx, module)?;
+        self.head.eval(ctx, module)?;
+        Ok(())
+    }
+
     fn init_proto<'js>(&'static self, ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
         self.tail.init_proto(ctx, proto)?;
         self.head.init_proto(ctx, proto)?;
         Ok(())
     }
-}
-impl<H, T> ClassStatic for HCons<H, T>
-where
-    H: ClassStatic,
-    T: ClassStatic,
-{
+
     fn init_static<'js>(&'static self, ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
         self.tail.init_static(ctx, proto)?;
         self.head.init_static(ctx, proto)?;
@@ -128,17 +134,7 @@ where
     }
 }
 
-impl ClassProto for HNil {
-    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-}
-
-impl ClassStatic for HNil {
-    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-}
+impl TypeDef for HNil {}
 
 macro_rules! tup {
     ($($static_fn:ident $method:ident $constructor:ident $($type:ident)*,)*) => {

@@ -28,7 +28,7 @@ where
     }
 }
 
-impl<FW, T, A, R, const CLS: &'static str> ClassProto for ClassMethod<FW, CLS, A, R, T>
+impl<FW, T, A, R, const CLS: &'static str> TypeDef for ClassMethod<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: 'static + Method<FW, CLS, A, R>,

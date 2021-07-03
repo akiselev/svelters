@@ -39,9 +39,6 @@ where
 impl<'a, FW, const CLS: &'static str> ClassDef for Obj<FW, CLS>
 where
     FW: Framework + Container<CLS> + FrameworkClass<CLS>,
-    <FW as FrameworkClass<CLS>>::Proto: ClassProto,
-    <FW as FrameworkClass<CLS>>::Static: ClassStatic,
-    <FW as FrameworkClass<CLS>>::Constructor: JsModuleDef,
 {
     const CLASS_NAME: &'static str = CLS;
 
@@ -61,8 +58,7 @@ where
             std::any::type_name::<FW>(),
             CLS
         );
-        let def = <FW as FrameworkClass<CLS>>::get_proto();
-        def.init_proto(ctx, proto)?;
+        <FW as FrameworkClass<CLS>>::define().init_proto(ctx, proto)?;
         Ok(())
     }
 
@@ -72,8 +68,7 @@ where
             std::any::type_name::<FW>(),
             CLS
         );
-        let def = <FW as FrameworkClass<CLS>>::get_static();
-        def.init_static(ctx, _static)?;
+        <FW as FrameworkClass<CLS>>::define().init_static(ctx, _static)?;
         Ok(())
     }
 

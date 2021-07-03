@@ -28,7 +28,7 @@ where
     }
 }
 
-impl<FW, T, A, R, const CLS: &'static str> ClassStatic for ClassStaticFunc<FW, CLS, A, R, T>
+impl<FW, T, A, R, const CLS: &'static str> TypeDef for ClassStaticFunc<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: 'static + StaticFunc<FW, CLS, A, R>,

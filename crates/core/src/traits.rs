@@ -58,16 +58,11 @@ pub type ClsTy<FW, const CLS: &'static str> = <FW as FrameworkClass<CLS>>::Type;
 
 pub trait FrameworkClass<const N: &'static str>: Framework {
     type Type: 'static;
-    type Proto: ClassProto;
-    type Static: ClassStatic;
-    type Constructor: JsModuleDef;
+    type Definition: TypeDef;
 
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn get_proto() -> &'static Self::Proto;
-    fn get_static() -> &'static Self::Static;
-    fn get_constructor<'a>() -> &'static Self::Constructor;
-
+    fn define() -> &'static Self::Definition;
     fn get_name() -> &'static str {
         N
     }
@@ -83,12 +78,26 @@ pub trait JsModuleDef: Sized + 'static {
     ) -> Result<()>;
 }
 
-pub trait ClassProto: Sized {
-    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()>;
-}
+pub trait TypeDef: Sized {
+    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
+        Ok(())
+    }
 
-pub trait ClassStatic: Sized {
-    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()>;
+    fn eval<'js>(
+        &'static self,
+        _ctx: Ctx<'js>,
+        _module: &Module<'js, Loaded<Native>>,
+    ) -> Result<()> {
+        Ok(())
+    }
+
+    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
+        Ok(())
+    }
+
+    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+        Ok(())
+    }
 }
 
 pub trait GetRef<'a, T> {

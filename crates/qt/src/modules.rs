@@ -23,35 +23,16 @@ impl FrameworkModule<"QtCore"> for QT {
 }
 
 impl FrameworkClass<"QObject"> for QT {
-    type Proto = impl ClassProto;
-    type Static = impl ClassStatic;
-    type Constructor = impl JsModuleDef;
     type Type = QObject;
+    type Definition = impl TypeDef;
 
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn get_proto() -> &'static Self::Proto {
-        static PROTO: impl ClassProto = {
-            let cls = include::<QT, "QObject">();
-            hlist![
-            //     cls.method("className", |this: &QObject| unsafe {
-            //     this.meta_object().class_name()
-            // }),
-            ]
-        };
-        &PROTO
-    }
-
-    fn get_static() -> &'static Self::Static {
-        static STATIC: impl ClassStatic = hlist![];
-        &STATIC
-    }
-
-    fn get_constructor() -> &'static Self::Constructor {
-        static CONSTRUCTOR: impl JsModuleDef = {
+    fn define() -> &'static Self::Definition {
+        static TYPEDEF: impl TypeDef = {
             let cls = include::<QT, "QObject">();
             hlist![
                 cls.constructor0(|| {
@@ -65,63 +46,49 @@ impl FrameworkClass<"QObject"> for QT {
                 // ////
             ]
         };
-        &CONSTRUCTOR
+        &TYPEDEF
     }
 }
 
 impl FrameworkClass<"QApplication"> for QT {
-    type Proto = impl ClassProto;
-    type Static = impl ClassStatic;
-    type Constructor = impl JsModuleDef;
     type Type = QApplication;
+    type Definition = impl TypeDef;
 
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn get_proto() -> &'static Self::Proto {
-        static PROTO: impl ClassProto = hlist![];
-        &PROTO
-    }
-
-    fn get_static() -> &'static Self::Static {
-        static STATIC: impl ClassStatic = {
+    fn define() -> &'static Self::Definition {
+        static TYPEDEF: impl TypeDef = {
             let cls = include::<QT, "QApplication">();
-            hlist![cls.static_fn0("exec", || unsafe {
-                QCoreApplication::exec();
-            })]
+            hlist![
+                cls.static_fn0("exec", || unsafe {
+                    QCoreApplication::exec();
+                }),
+                cls.constructor0(|| unsafe {
+                    let mut args = QCoreApplicationArgs::new();
+                    let (argc, argv) = args.get();
+                    std::mem::forget(args);
+                    QApplication::new_2a(argc, argv)
+                })
+            ]
         };
-        &STATIC
-    }
-
-    fn get_constructor() -> &'static Self::Constructor {
-        static CONSTRUCTOR: impl JsModuleDef = {
-            let cls = include::<QT, "QApplication">();
-            hlist![cls.constructor0(|| unsafe {
-                let mut args = QCoreApplicationArgs::new();
-                let (argc, argv) = args.get();
-                std::mem::forget(args);
-                QApplication::new_2a(argc, argv)
-            })]
-        };
-        &CONSTRUCTOR
+        &TYPEDEF
     }
 }
 
 impl FrameworkClass<"QMainWindow"> for QT {
-    type Proto = impl ClassProto;
-    type Static = impl ClassStatic;
-    type Constructor = impl JsModuleDef;
     type Type = QMainWindow;
+    type Definition = impl TypeDef;
 
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn get_proto() -> &'static Self::Proto {
-        static PROTO: impl ClassProto = {
+    fn define() -> &'static Self::Definition {
+        static TYPEDEF: impl TypeDef = {
             let cls = include::<QT, "QMainWindow">();
             hlist![
                 cls.method0("show", |this: &QWidget| unsafe {
@@ -129,28 +96,14 @@ impl FrameworkClass<"QMainWindow"> for QT {
                 }),
                 cls.method("hide", |this: &QMainWindow| unsafe {
                     this.hide();
-                })
+                }),
+                cls.static_fn("exec", || unsafe {
+                    QCoreApplication::exec();
+                }),
+                cls.constructor0(|| unsafe { QMainWindow::new_0a() })
             ]
         };
-        &PROTO
-    }
-
-    fn get_static() -> &'static Self::Static {
-        static STATIC: impl ClassStatic = {
-            let cls = include::<QT, "QMainWindow">();
-            hlist![cls.static_fn("exec", || unsafe {
-                QCoreApplication::exec();
-            })]
-        };
-        &STATIC
-    }
-
-    fn get_constructor() -> &'static Self::Constructor {
-        static CONSTRUCTOR: impl JsModuleDef = {
-            let cls = include::<QT, "QMainWindow">();
-            hlist![cls.constructor0(|| unsafe { QMainWindow::new_0a() })]
-        };
-        &CONSTRUCTOR
+        &TYPEDEF
     }
 }
 

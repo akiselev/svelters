@@ -46,7 +46,7 @@ macro_rules! tup {
             impl<T, FW, const CLS: &'static str, R, $($type,)*> Constructor<FW, CLS, ($($type,)*), R> for T
             where
                 FW: Container<CLS>,
-                T: Fn($($type,)*) -> R,
+                T: 'static + Fn($($type,)*) -> R,
                 $($type: for<'x> FromJs<'x>,)*
                 ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
