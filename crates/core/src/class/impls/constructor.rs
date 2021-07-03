@@ -2,35 +2,30 @@ use rquickjs::{Class, Rest};
 
 use crate::inner::*;
 
-pub struct ClassConstructor<FW, const CLS: &'static str, A, R, T>(T, PhantomData<(A, R, FW)>)
+pub struct ClassConstructor<FW, const CLS: &'static str, F>(F, PhantomData<FW>)
 where
-    FW: Container<CLS>,
-    T: Constructor<FW, CLS, A, R>;
+    FW: Container<CLS>;
 
-unsafe impl<FW, T, A, R, const CLS: &'static str> Sync for ClassConstructor<FW, CLS, A, R, T>
-where
-    FW: Container<CLS>,
-    T: Constructor<FW, CLS, A, R>,
+unsafe impl<FW, F, const CLS: &'static str> Sync for ClassConstructor<FW, CLS, F> where
+    FW: Container<CLS>
 {
 }
 
-impl<FW, T, A, R, const CLS: &'static str> ClassConstructor<FW, CLS, A, R, T>
+impl<FW, F, const CLS: &'static str> ClassConstructor<FW, CLS, F>
 where
     FW: Container<CLS>,
-    T: Constructor<FW, CLS, A, R>,
 {
-    pub(in crate) const fn new(func: T) -> Self {
+    pub(in crate) const fn new(func: F) -> Self {
         ClassConstructor(func, PhantomData)
     }
 }
 
-impl<FW, T, A, R, const CLS: &'static str> JsModuleDef for ClassConstructor<FW, CLS, A, R, T>
+impl<FW, F, R, const CLS: &'static str> JsModuleDef for ClassConstructor<FW, CLS, F>
 where
     FW: Container<CLS>,
-    T: 'static + Constructor<FW, CLS, A, R>,
-    R: 'static,
-    A: 'static,
-    <T as Constructor<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
+    ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+    F: 'static + Fn() -> R,
+    R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
 {
     fn load<'js>(ctx: Ctx<'js>, exports: &Module<'js, Created>) -> Result<()> {
         exports.add(CLS)?;
@@ -49,8 +44,11 @@ where
                 rquickjs::Class::<Obj<FW, CLS>>::constructor(
                     move |ctx: Ctx<'js>, args: Rest<Value<'js>>| {
                         let args = args.into_inner();
-                        let res = self.0.try_constructor(ctx, &args)?;
-                        Class::instance(ctx, res)
+                        let args_len = args.len();
+                        tuple_match_size(args_len, 0)?;
+                        let result = self.0();
+                        let wrapped: Obj<FW, CLS> = Obj::new(result.into_framework_type());
+                        Result::Ok(Class::instance(ctx, wrapped))
                     },
                 ),
             ),
@@ -73,3 +71,19 @@ where
 // {
 //     func(cls)
 // }
+
+fn tuple_match_size(actual: usize, expected: usize) -> Result<()> {
+    if actual == expected {
+        Ok(())
+    } else {
+        Err(Error::new_from_js_message(
+            "array",
+            "tuple",
+            if actual < expected {
+                "Not enough values"
+            } else {
+                "Too many values"
+            },
+        ))
+    }
+}

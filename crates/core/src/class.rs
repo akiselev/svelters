@@ -11,12 +11,16 @@ pub(in crate) mod impls {
 
 pub struct JsClass<FW: Framework, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
 
-impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS> {
-    pub const fn constructor<A, R, F>(&self, func: F) -> ClassConstructor<FW, CLS, A, R, F>
-    where
-        FW: Container<CLS>,
-        F: Constructor<FW, CLS, A, R>,
-    {
+impl<FW: Container<CLS>, const CLS: &'static str> JsClass<FW, CLS> {
+    pub const fn constructor<F>(&self, func: F) -> ClassConstructor<FW, CLS, F> {
+        ClassConstructor::new(func)
+    }
+
+    pub const fn constructor0<F>(&self, func: F) -> ClassConstructor<FW, CLS, F> {
+        ClassConstructor::new(func)
+    }
+
+    pub const fn constructor1<F>(&self, func: F) -> ClassConstructor<FW, CLS, F> {
         ClassConstructor::new(func)
     }
 
@@ -31,6 +35,37 @@ impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS> {
     {
         ClassMethod::new(name, func)
     }
+
+    // pub const fn method0<A, R, X, F>(
+    //     &self,
+    //     name: &'static str,
+    //     func: F,
+    // ) -> ClassMethod<FW, CLS, A, R, F>
+    // where
+    //     FW: Container<CLS>,
+    //     ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+    //     ClsBox<FW, CLS>: Cast<X>,
+    //     F: Fn(&X) -> R,
+    //     R: for<'js> IntoJs<'js>,
+    // {
+    //     ClassMethod::new(name, func)
+    // }
+
+    // pub const fn method1<A, R, X, F>(
+    //     &self,
+    //     name: &'static str,
+    //     func: F,
+    // ) -> ClassMethod<FW, CLS, A, R, F>
+    // where
+    //     FW: Container<CLS>,
+    //     ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+    //     ClsBox<FW, CLS>: Cast<X>,
+    //     F: Fn(&X, A) -> R,
+    //     A: for<'a> FromJs<'a>,
+    //     R: for<'js> IntoJs<'js>,
+    // {
+    //     ClassMethod::new(name, func)
+    // }
 
     pub const fn static_fn<A, R, F>(
         &self,

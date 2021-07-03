@@ -17,7 +17,7 @@ in
   pkgs.mkShell {
     buildInputs = with pkgs; [
         # rust-bin.stable.latest.default
-        (rust-bin.nightly.latest.rust.override {
+        (rust-bin.nightly."2021-07-01".rust.override {
         # (rust-bin.stable.latest.rust.override {
           extensions = ["rust-src"];
         })

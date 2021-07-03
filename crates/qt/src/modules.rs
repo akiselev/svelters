@@ -36,9 +36,11 @@ impl FrameworkClass<"QObject"> for QT {
     fn get_proto() -> &'static Self::Proto {
         static PROTO: impl ClassProto = {
             let cls = include::<QT, "QObject">();
-            hlist![cls.method("className", |this: &QObject| unsafe {
-                this.meta_object().class_name()
-            }),]
+            hlist![
+            //     cls.method("className", |this: &QObject| unsafe {
+            //     this.meta_object().class_name()
+            // }),
+            ]
         };
         &PROTO
     }
@@ -86,7 +88,7 @@ impl FrameworkClass<"QApplication"> for QT {
     fn get_constructor() -> &'static Self::Constructor {
         static CONSTRUCTOR: impl JsModuleDef = {
             let cls = include::<QT, "QApplication">();
-            hlist![cls.constructor(|| unsafe {
+            hlist![cls.constructor0(|| unsafe {
                 let mut args = QCoreApplicationArgs::new();
                 let (argc, argv) = args.get();
                 std::mem::forget(args);
@@ -115,9 +117,9 @@ impl FrameworkClass<"QMainWindow"> for QT {
                 cls.method("show", |this: &QMainWindow| unsafe {
                     this.show();
                 }),
-                cls.method("hide", |this: &QMainWindow| unsafe {
-                    this.hide();
-                })
+                // cls.method0("hide", |this: &QMainWindow| unsafe {
+                //     this.hide();
+                // })
             ]
         };
         &PROTO
@@ -136,7 +138,7 @@ impl FrameworkClass<"QMainWindow"> for QT {
     fn get_constructor() -> &'static Self::Constructor {
         static CONSTRUCTOR: impl JsModuleDef = {
             let cls = include::<QT, "QMainWindow">();
-            hlist![cls.constructor(|| unsafe { QMainWindow::new_0a() })]
+            hlist![cls.constructor0(|| unsafe { QMainWindow::new_0a() })]
         };
         &CONSTRUCTOR
     }
