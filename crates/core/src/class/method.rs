@@ -1,5 +1,4 @@
-use rquickjs::{Array, Class, Method as JsMethod, Rest};
-use static_assertions::assert_impl_all;
+use rquickjs::Class;
 
 use crate::inner::*;
 
@@ -37,7 +36,7 @@ where
     fn try_call<'js>(
         &'static self,
         this: &Class<'js, Obj<FW, CLS>>,
-        ctx: Ctx<'js>,
+        _ctx: Ctx<'js>,
         args: &Vec<Value<'js>>,
     ) -> Result<Self::Return> {
         let args_len = args.len();

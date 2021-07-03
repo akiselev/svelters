@@ -36,7 +36,7 @@ where
     A: 'static,
     <T as Method<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
 {
-    fn init_proto<'js>(&'static self, ctx: Ctx<'js>, exports: &Object<'js>) -> Result<()> {
+    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, exports: &Object<'js>) -> Result<()> {
         println!("Initializing {}::{}", CLS, self.0);
         exports.set(
             self.0,
@@ -54,18 +54,3 @@ where
         Ok(())
     }
 }
-
-// fn transform<'a: 'c, 'c, FW, T, A, R, const CLS: &'static str>(
-//     cls: ClassMethod<'a, FW, CLS, A, R, T>,
-//     func: impl for<'b> FnOnce(
-//         ClassMethod<'b, FW, CLS, A, R, T>,
-//     ) -> ClassMethod<'b, FW, CLS, A, R, T>,
-// ) -> ClassMethod<'a, FW, CLS, A, R, T>
-// where
-//     FW: Container<CLS>,
-//     T: Method<'a, FW, CLS, A, R>,
-//     <T as Method<'a, FW, CLS, A, R>>::Args: FromJs<'a>,
-//     Obj<FW, CLS>: 'static,
-// {
-//     func(cls)
-// }

@@ -1,9 +1,4 @@
-use phf::phf_map;
-use rquickjs::{
-    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, Error, FileResolver, Func, Function,
-    IntoJs, Module, NativeLoader, Opt, Persistent, RegisteryKey, Rest, Result, Runtime,
-    ScriptLoader, Value,
-};
+use rquickjs::{Context, Ctx, Error, Opt, RegisteryKey, Result, Value};
 
 use crate::legacy::traits::Framework;
 

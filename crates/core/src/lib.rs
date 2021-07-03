@@ -15,6 +15,7 @@
 #![allow(incomplete_features)]
 
 pub mod prelude {
+    pub use crate::class::constructor::*;
     pub use crate::module::*;
     pub use crate::obj::Obj;
     pub use crate::traits::*;
@@ -31,6 +32,7 @@ pub(in crate) mod traits;
 
 // ----------------- INTERNAL -----------------
 
+#[allow(unused_imports)]
 pub(in crate) mod inner {
     pub(in crate) use std::borrow::Cow;
     pub(in crate) use std::cell::Cell;

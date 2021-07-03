@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::inner::*;
 
 pub struct Obj<FW, const CLS: &'static str>

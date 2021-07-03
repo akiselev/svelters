@@ -38,11 +38,15 @@ where
 }
 
 impl JsModuleDef for HNil {
-    fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
+    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
         Ok(())
     }
 
-    fn eval<'js>(&'static self, ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
+    fn eval<'js>(
+        &'static self,
+        _ctx: Ctx<'js>,
+        _module: &Module<'js, Loaded<Native>>,
+    ) -> Result<()> {
         Ok(())
     }
 }

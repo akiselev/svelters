@@ -1,17 +1,12 @@
-use rquickjs::{Array, Class, Constructor as JsConstructor, Rest};
-use static_assertions::assert_impl_all;
-
 use crate::inner::*;
 
 pub trait Constructor<FW, const CLS: &'static str, A, R>
 where
     FW: Container<CLS>,
-    Self::Args: for<'js> FromJs<'js>,
-    Self::Return: ClassDef,
 {
     const NUM_ARGS: usize;
-    type Args;
-    type Return;
+    type Args: for<'js> FromJs<'js>;
+    type Return: ClassDef;
 
     fn try_constructor<'js>(
         &'static self,
@@ -34,7 +29,7 @@ where
 
     fn try_constructor<'js>(
         &'static self,
-        ctx: Ctx<'js>,
+        _ctx: Ctx<'js>,
         args: &Vec<Value<'js>>,
     ) -> Result<Self::Return> {
         let args_len = args.len();

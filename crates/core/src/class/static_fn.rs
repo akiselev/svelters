@@ -1,6 +1,3 @@
-use rquickjs::{Array, Class, Rest};
-use static_assertions::assert_impl_all;
-
 use crate::inner::*;
 
 pub trait StaticFunc<FW, const CLS: &'static str, A, R>
@@ -27,7 +24,11 @@ where
     type Args = ();
     type Return = R;
 
-    fn try_call<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Self::Return> {
+    fn try_call<'js>(
+        &'static self,
+        _ctx: Ctx<'js>,
+        args: &Vec<Value<'js>>,
+    ) -> Result<Self::Return> {
         let args_len = args.len();
         tuple_match_size(args_len, 0)?;
         let result = (*self)();

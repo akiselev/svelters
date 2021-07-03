@@ -1,4 +1,4 @@
-use rquickjs::{Class, Rest};
+use rquickjs::Rest;
 
 use crate::inner::*;
 
@@ -36,7 +36,7 @@ where
     A: 'static,
     <T as StaticFunc<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
 {
-    fn init_static<'js>(&'static self, ctx: Ctx<'js>, exports: &Object<'js>) -> Result<()> {
+    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, exports: &Object<'js>) -> Result<()> {
         exports.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'js>, args: Rest<Value<'js>>| {
@@ -48,18 +48,3 @@ where
         Ok(())
     }
 }
-
-// fn transform<'a: 'c, 'c, FW, T, A, R, const CLS: &'static str>(
-//     cls: ClassStaticFunc<'a, FW, CLS, A, R, T>,
-//     func: impl for<'b> FnOnce(
-//         ClassStaticFunc<'b, FW, CLS, A, R, T>,
-//     ) -> ClassStaticFunc<'b, FW, CLS, A, R, T>,
-// ) -> ClassStatic<'a, FW, CLS, A, R, T>
-// where
-//     FW: Container<CLS>,
-//     T: Static<'a, FW, CLS, A, R>,
-//     <T as Static<'a, FW, CLS, A, R>>::Args: FromJs<'a>,
-//     Obj<FW, CLS>: 'static,
-// {
-//     func(cls)
-// }

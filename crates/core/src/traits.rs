@@ -1,6 +1,6 @@
 use std::future::Future;
 
-use rquickjs::{Constructor, Loader, Resolver};
+use rquickjs::{Loader, Resolver};
 
 use crate::inner::*;
 
