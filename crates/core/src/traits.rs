@@ -97,14 +97,24 @@ pub trait GetRef<'a, T> {
 }
 
 pub trait Phase {
+    type Input<'a, 'b: 'a>: Copy;
     type Error: std::fmt::Debug;
 }
 
-pub trait Implements<P: Phase> {
-    fn build(self, phase: &P) -> Result<()>;
+pub trait Implements<P: 'static + Phase>: 'static {
+    fn build<'a, 'b: 'a>(self, input: P::Input<'a, 'b>) -> Result<()>;
 }
 
-// default impl<T, P: Phase> Implements<P> for T {
+impl<T: 'static, P: 'static + Phase> Implements<P> for T {
+    default fn build(self, phase: &P) -> Result<()> {
+        Ok(())
+    }
+}
+
+// default impl<FW, const MOD: &'static str, P: Phase> Implements<P> for JsModuleLoader<FW, MOD>
+// where
+//     FW: FrameworkModule<MOD>,
+// {
 //     fn build(self, phase: &P) -> Result<()> {
 //         Ok(())
 //     }

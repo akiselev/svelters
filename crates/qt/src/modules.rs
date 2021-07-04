@@ -72,10 +72,10 @@ impl FrameworkClass<"QMainWindow"> for QT {
         cls.method0("show", |this: &QWidget| unsafe {
             this.show();
         })?;
-        cls.method("hide", |this: &QMainWindow| unsafe {
+        cls.method0("hide", |this: &QMainWindow| unsafe {
             this.hide();
         })?;
-        cls.static_fn("exec", || unsafe {
+        cls.static_fn0("exec", || unsafe {
             QCoreApplication::exec();
         })?;
         cls.constructor0(|| unsafe { QMainWindow::new_0a() })?;
