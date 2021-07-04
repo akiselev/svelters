@@ -1,4 +1,4 @@
-use rquickjs::Rest;
+use rquickjs::{Class, Rest};
 
 use crate::inner::*;
 
@@ -21,5 +21,29 @@ where
 {
     pub(in crate) fn new(name: &'static str, func: T) -> Self {
         ClassStaticFunc(name, func, PhantomData)
+    }
+}
+
+impl<'a, 'b: 'a, T, FW, CLS, R> Implements<InitStatic<'a, 'b, FW, CLS>>
+    for ClassStaticFunc<FW, CLS, (), R, T>
+where
+    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
+    T: 'static + Fn() -> R,
+    R: 'static + for<'js> IntoJs<'js>,
+    CLS: 'static,
+{
+    fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
+        input.obj.set(
+            self.0,
+            rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                let args = args.into_inner();
+                let args_len = args.len();
+                tuple_match_size(args_len, 0)?;
+
+                let res = self.1();
+                Result::<_>::Ok(res.into_js(ctx))
+            }),
+        )?;
+        Ok(())
     }
 }

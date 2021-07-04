@@ -35,28 +35,29 @@ where
         Ok(())
     }
 
-    // pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
-    // where
-    //     X: Fn(&T) -> R,
-    //     ClsBox<FW, CLS>: Cast<T>,
-    //     R: for<'js> IntoJs<'js>,
-    //
-    //     ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
-    //     ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
-    // {
-    //     // ClassMethod::new(name, func).build(self.phase)
-    //     Ok(())
-    // }
+    pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
+    where
+        FW: Framework + FrameworkClass<CLS> + Container<CLS>,
+        X: Fn(&T) -> R,
+        ClsBox<FW, CLS>: Cast<T>,
+        R: for<'js> IntoJs<'js>,
+        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
+        ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
+        CLS: 'static,
+    {
+        ClassMethod::new(name, func).build(&self.phase)?;
+        Ok(())
+    }
 
-    // pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
-    // where
-    //     X: Fn() -> R,
-    //     R: for<'a> IntoJs<'a>,
-    //     ClassStaticFunc<FW, CLS, (), R, X>: Implements<P>,
-    // {
-    //     // ClassStaticFunc::new(name, func).build(self.phase)
-    //     Ok(())
-    // }
+    pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
+    where
+        X: Fn() -> R,
+        R: for<'a> IntoJs<'a>,
+        ClassStaticFunc<FW, CLS, (), R, X>: Implements<P>,
+    {
+        ClassStaticFunc::new(name, func).build(&self.phase)?;
+        Ok(())
+    }
 }
 
 // macro_rules! tup {
@@ -157,7 +158,8 @@ where
     FW: FrameworkClass<CLS> + Container<CLS>,
 {
     fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
-        let cls: JsClass<FW, CLS, ModuleEval<'a, 'b>> = JsClass::new(*phase);
+        let cls: JsClass<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
+            JsClass::new(ConstructorEval::new(phase.ctx, phase.module));
         <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }
@@ -168,7 +170,8 @@ where
     FW: FrameworkClass<CLS> + Container<CLS>,
 {
     fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
-        let cls: JsClass<FW, CLS, ModuleLoad<'a, 'b>> = JsClass::new(*phase);
+        let cls: JsClass<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =
+            JsClass::new(ConstructorLoad::new(phase.ctx, phase.module));
         <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }

@@ -23,3 +23,35 @@ where
         ClassMethod(name, func, PhantomData)
     }
 }
+
+impl<'a, 'b: 'a, T, X, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
+    for ClassMethod<FW, CLS, (X,), R, T>
+where
+    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
+    ClsBox<FW, CLS>: for<'c> GetRef<'c, CLS>,
+    ClsBox<FW, CLS>: Cast<X>,
+    X: 'static,
+    T: 'static + Fn(&X) -> R,
+    R: 'static + for<'js> IntoJs<'js>,
+    CLS: 'static,
+{
+    fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+        input.obj.set(
+            self.0,
+            rquickjs::Func::new(
+                self.0,
+                rquickjs::Method(
+                    move |this: Class<'b, Obj<FW, CLS>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                        let args = args.into_inner();
+                        let args_len = args.len();
+                        tuple_match_size(args_len, 0)?;
+                        let obj: &Obj<FW, CLS> = this.as_ref();
+                        let res = self.1(&*obj.as_box().cast());
+                        Result::<_>::Ok(res.into_js(ctx))
+                    },
+                ),
+            ),
+        )?;
+        Ok(())
+    }
+}

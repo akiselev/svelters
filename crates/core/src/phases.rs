@@ -1,8 +1,8 @@
 use crate::inner::*;
 pub struct ConstructorLoad<'a, 'js, FW: Container<CLS>, CLS> {
-    ctx: Ctx<'js>,
-    module: &'a Module<'js, Created>,
-    framework: PhantomData<(FW, CLS)>,
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) module: &'a Module<'js, Created>,
+    pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
 impl<'a, 'js, FW: Container<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
@@ -18,9 +18,9 @@ impl<'a, 'js, FW: Container<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
 impl<'a, 'js, FW: Container<CLS>, CLS> Phase for ConstructorLoad<'a, 'js, FW, CLS> {}
 
 pub struct ConstructorEval<'a, 'js, FW, CLS> {
-    ctx: Ctx<'js>,
-    module: &'a Module<'js, Loaded<Native>>,
-    framework: PhantomData<(FW, CLS)>,
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) module: &'a Module<'js, Loaded<Native>>,
+    pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
 impl<'a, 'js, FW: Container<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
@@ -36,9 +36,9 @@ impl<'a, 'js, FW: Container<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
 impl<'a, 'js, FW: Container<CLS>, CLS> Phase for ConstructorEval<'a, 'js, FW, CLS> {}
 
 pub struct InitProto<'a, 'js, FW, CLS> {
-    ctx: Ctx<'js>,
-    obj: &'a Object<'js>,
-    framework: PhantomData<(FW, CLS)>,
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) obj: &'a Object<'js>,
+    pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
 impl<'a, 'js, FW: Container<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
@@ -54,9 +54,9 @@ impl<'a, 'js, FW: Container<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
 impl<'a, 'js, FW: Container<CLS>, CLS> Phase for InitProto<'a, 'js, FW, CLS> {}
 
 pub struct InitStatic<'a, 'js, FW, CLS> {
-    ctx: Ctx<'js>,
-    obj: &'a Object<'js>,
-    framework: PhantomData<(FW, CLS)>,
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) obj: &'a Object<'js>,
+    pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
 impl<'a, 'js, FW: Container<CLS>, CLS> InitStatic<'a, 'js, FW, CLS> {

@@ -25,16 +25,16 @@ where
     }
 }
 
-impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ModuleLoad<'a, 'b>>
+impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorLoad<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
     FW: Framework + FrameworkClass<CLS> + Container<CLS>,
     ClsBox<FW, CLS>: for<'x> GetRef<'x, CLS>,
     T: Fn() -> R,
 {
-    fn build(self, input: &ModuleLoad<'a, 'b>) -> Result<()> {
+    fn build(self, input: &ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Setting {}::{} in ModuleEval",
+            "Setting {}::{} in ConstructorLoad",
             std::any::type_name::<FW>(),
             std::any::type_name::<CLS>()
         );
@@ -43,29 +43,7 @@ where
     }
 }
 
-// impl<T, FW, CLS, R> Constructor<FW, CLS, (), R> for T
-// where
-//     FW: Container<CLS>,
-//     ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
-//     T: Fn() -> R,
-//     R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
-// {
-//     const NUM_ARGS: usize = 0;
-
-//     fn try_constructor<'js>(
-//         &'static self,
-//         _ctx: Ctx<'js>,
-//         args: &Vec<Value<'js>>,
-//     ) -> Result<Obj<FW, CLS>> {
-//         let args_len = args.len();
-//         tuple_match_size(args_len, 0)?;
-
-//         let result = (*self)();
-//         Ok(Obj::new(result.into_framework_type()))
-//     }
-// }
-
-impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ModuleEval<'a, 'b>>
+impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
     FW: Framework + FrameworkClass<CLS> + Container<CLS>,
@@ -75,9 +53,9 @@ where
     T: 'static,
     R: 'static + IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
 {
-    fn build(self, input: &ModuleEval<'a, 'b>) -> Result<()> {
+    fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Setting {}::{} in ModuleEval",
+            "Setting {}::{} in ConstructorEval",
             std::any::type_name::<FW>(),
             <FW as FrameworkClass<CLS>>::CLASS_NAME
         );
@@ -109,7 +87,7 @@ where
 // macro_rules! tup {
 //     ($($($type:ident)*,)*) => {
 //         $(
-//             impl<'a, 'b: 'a, T, FW, CLS, R, $($type,)*> Implements<ModuleLoad<'a, 'b>> for ClassConstructor<FW, CLS, ($($type,)*), R, T>
+//             impl<'a, 'b: 'a, T, FW, CLS, R, $($type,)*> Implements<ConstructorLoad<'a, 'b>> for ClassConstructor<FW, CLS, ($($type,)*), R, T>
 //             where
 //                 FW: Framework + FrameworkClass<CLS> + Container<CLS>,
 //                 T:  Fn($($type,)*) -> R,
@@ -170,19 +148,3 @@ where
 //     A B C D E F G H I J K L M N O,
 //     A B C D E F G H I J K L M N O P,
 // }
-
-fn tuple_match_size(actual: usize, expected: usize) -> Result<()> {
-    if actual == expected {
-        Ok(())
-    } else {
-        Err(Error::new_from_js_message(
-            "array",
-            "tuple",
-            if actual < expected {
-                "Not enough values"
-            } else {
-                "Too many values"
-            },
-        ))
-    }
-}

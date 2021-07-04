@@ -54,12 +54,12 @@ impl FrameworkClass<QApplication> for QT {
         // cls.static_fn0("exec", || unsafe {
         //     QCoreApplication::exec();
         // })?;
-        // cls.constructor0(|| unsafe {
-        //     let mut args = QCoreApplicationArgs::new();
-        //     let (argc, argv) = args.get();
-        //     std::mem::forget(args);
-        //     QApplication::new_2a(argc, argv)
-        // })?;
+        cls.constructor0(|| unsafe {
+            let mut args = QCoreApplicationArgs::new();
+            let (argc, argv) = args.get();
+            std::mem::forget(args);
+            QApplication::new_2a(argc, argv)
+        })?;
         Ok(())
     }
 }
@@ -73,16 +73,16 @@ impl FrameworkClass<QMainWindow> for QT {
     }
 
     fn define<P>(cls: JsClass<Self, QMainWindow, P>) -> Result<()> {
-        // cls.method0("show", |this: &QWidget| unsafe {
-        //     this.show();
-        // })?;
-        // cls.method0("hide", |this: &QMainWindow| unsafe {
-        //     this.hide();
-        // })?;
-        // cls.static_fn0("exec", || unsafe {
-        //     QCoreApplication::exec();
-        // })?;
-        // cls.constructor0(|| unsafe { QMainWindow::new_0a() })?;
+        cls.method0("show", |this: &QWidget| unsafe {
+            this.show();
+        })?;
+        cls.method0("hide", |this: &QMainWindow| unsafe {
+            this.hide();
+        })?;
+        cls.static_fn0("exec", || unsafe {
+            QCoreApplication::exec();
+        })?;
+        cls.constructor0(|| unsafe { QMainWindow::new_0a() })?;
         Ok(())
     }
 }

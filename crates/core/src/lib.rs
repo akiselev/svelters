@@ -29,6 +29,7 @@ pub(in crate) mod module;
 pub(in crate) mod obj;
 pub(in crate) mod phases;
 pub(in crate) mod traits;
+pub(in crate) mod utils;
 
 // ----------------- INTERNAL -----------------
 
@@ -60,6 +61,7 @@ pub(in crate) mod inner {
     pub(in crate) use crate::obj::*;
     pub(in crate) use crate::phases::*;
     pub(in crate) use crate::traits::*;
+    pub(in crate) use crate::utils::*;
 }
 
 // ------------------ LEGACY ------------------
