@@ -14,7 +14,7 @@ pub struct JsClass<FW, CLS, P> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<FW: Framework, CLS, P: Phase> JsClass<FW, CLS, P>
+impl<FW, CLS, P> JsClass<FW, CLS, P>
 where
     FW: Container<CLS>,
 {
@@ -27,11 +27,11 @@ where
 
     pub fn constructor0<'a, 'js: 'a, R, X>(&self, func: X) -> Result<()>
     where
+        FW: Framework + FrameworkClass<CLS> + Container<CLS>,
         X: Fn() -> R,
-        R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
         ClassConstructor<FW, CLS, (), R, X>: Implements<P>,
     {
-        // ClassConstructor::new(func).build(self.phase)
+        ClassConstructor::new(func).build(&self.phase)?;
         Ok(())
     }
 
@@ -152,10 +152,24 @@ impl<FW: FrameworkClass<CLS>, CLS> JsClassLoader<FW, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, FW: FrameworkClass<CLS>, CLS> Implements<ModuleEval<'a, 'b>>
-    for JsClassLoader<FW, CLS>
+impl<'a, 'b: 'a, FW, CLS> Implements<ModuleEval<'a, 'b>> for JsClassLoader<FW, CLS>
+where
+    FW: FrameworkClass<CLS> + Container<CLS>,
 {
-    fn build(self, phase: ModuleEval<'a, 'b>) -> Result<()> {
+    fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
+        let cls: JsClass<FW, CLS, ModuleEval<'a, 'b>> = JsClass::new(*phase);
+        <FW as FrameworkClass<CLS>>::define(cls)?;
+        Ok(())
+    }
+}
+
+impl<'a, 'b: 'a, FW, CLS> Implements<ModuleLoad<'a, 'b>> for JsClassLoader<FW, CLS>
+where
+    FW: FrameworkClass<CLS> + Container<CLS>,
+{
+    fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
+        let cls: JsClass<FW, CLS, ModuleLoad<'a, 'b>> = JsClass::new(*phase);
+        <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }
 }

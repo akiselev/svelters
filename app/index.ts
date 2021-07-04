@@ -5,10 +5,11 @@ import * as mod from "QtCore";
 console.log(">>>>>1", mod);
 console.log(">>>>>2", mod.QObject);
 let obj = new mod.QObject();
+console.log(">>>>>3", obj);
 window.main = new mod.QMainWindow();
-console.log(">>>>>3", window.main);
-console.log(">>>>>4", window.main.show);
-console.log(">>>>>5", typeof window.main);
+console.log(">>>>>4", window.main);
+console.log(">>>>>5", window.main.show);
+console.log(">>>>>6", typeof window.main);
 window.main.show();
 
 // import App from "./App.svelte";

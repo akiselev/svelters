@@ -23,24 +23,3 @@ where
         ClassStaticFunc(name, func, PhantomData)
     }
 }
-
-impl<FW, T, A, R, CLS> TypeDef for ClassStaticFunc<FW, CLS, A, R, T>
-where
-    FW: Container<CLS>,
-    T: StaticFunc<FW, CLS, A, R>,
-    R: for<'js> IntoJs<'js>,
-    A: 'static,
-    <T as StaticFunc<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
-{
-    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, exports: &Object<'js>) -> Result<()> {
-        exports.set(
-            self.0,
-            rquickjs::Func::new(self.0, move |ctx: Ctx<'js>, args: Rest<Value<'js>>| {
-                let args = args.into_inner();
-                let res = self.1.try_call(ctx, &args)?;
-                Result::<_>::Ok(res.into_js(ctx))
-            }),
-        )?;
-        Ok(())
-    }
-}

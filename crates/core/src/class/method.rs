@@ -4,7 +4,7 @@ use crate::inner::*;
 
 pub trait Method<FW, CLS, A, R>
 where
-    FW: Container<CLS>,
+    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
     Self::Args: for<'js> FromJs<'js>,
     Self::Return: for<'js> IntoJs<'js>,
 {
@@ -22,7 +22,7 @@ where
 
 impl<T, X, FW, CLS, R> Method<FW, CLS, (X,), R> for T
 where
-    FW: Container<CLS>,
+    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
     ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
     ClsBox<FW, CLS>: Cast<X>,
     T: Fn(&X) -> R,
@@ -53,7 +53,7 @@ macro_rules! tup {
         $(
             impl<T, X, FW, CLS, R, $($type,)*> Method<FW, CLS, (X, $($type,)*), R> for T
             where
-                FW: Container<CLS>,
+                FW: Framework + FrameworkClass<CLS> + Container<CLS>,
                 ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
                 ClsBox<FW, CLS>: Cast<X>,
                 T: Fn(&X, $($type,)*) -> R,

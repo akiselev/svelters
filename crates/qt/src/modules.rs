@@ -9,38 +9,42 @@ use rquickjs::{AsFunction, Class, Loaded, Module, Native};
 
 use crate::{inner::*, QtCore};
 
-impl FrameworkModule<QtCore> for QT {
-    fn define<P>(module: JsModule<Self, QtCore, P>) -> Result<()>
+impl FrameworkModule<QT> for QtCore {
+    fn define<P>(module: JsModule<QT, Self, P>) -> Result<()>
     where
-        JsModule<Self, QtCore, P>: Implements<P>,
+        QT: Framework,
     {
         module.class::<QObject>()?;
-        // module.class::<QApplication>()?;
-        // module.class::<QMainWindow>()
+        module.class::<QApplication>()?;
+        module.class::<QMainWindow>()?;
         Ok(())
     }
 }
 
 impl FrameworkClass<QObject> for QT {
+    const CLASS_NAME: &'static str = "QObject";
+
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
     fn define<P>(cls: JsClass<Self, QObject, P>) -> Result<()> {
-        // cls.constructor0(|| {
-        //     unsafe { QObject::new_0a() }
-        //     // cls.constructor1(|var: QString| {
-        //     // let mut args = QCoreApplicationArgs::new();
-        //     // let (argc, argv) = args.get();
-        //     // std::mem::forget(args);
-        //     // QApplication::new_2a(argc, argv)
-        // })?;
+        cls.constructor0(|| {
+            unsafe { QObject::new_0a() }
+            // cls.constructor1(|var: QString| {
+            // let mut args = QCoreApplicationArgs::new();
+            // let (argc, argv) = args.get();
+            // std::mem::forget(args);
+            // QApplication::new_2a(argc, argv)
+        })?;
         Ok(())
     }
 }
 
 impl FrameworkClass<QApplication> for QT {
+    const CLASS_NAME: &'static str = "QApplication";
+
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
@@ -61,6 +65,8 @@ impl FrameworkClass<QApplication> for QT {
 }
 
 impl FrameworkClass<QMainWindow> for QT {
+    const CLASS_NAME: &'static str = "QMainWindow";
+
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID

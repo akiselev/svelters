@@ -71,9 +71,10 @@ impl<'a, 'js, FW: Container<CLS>, CLS> InitStatic<'a, 'js, FW, CLS> {
 
 impl<'a, 'js, FW: Container<CLS>, CLS> Phase for InitStatic<'a, 'js, FW, CLS> {}
 
+#[derive(Clone, Copy)]
 pub struct ModuleLoad<'a, 'js: 'a> {
-    ctx: Ctx<'js>,
-    module: &'a Module<'js, Created>,
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) module: &'a Module<'js, Created>,
 }
 
 impl<'a, 'js> ModuleLoad<'a, 'js> {
@@ -84,9 +85,10 @@ impl<'a, 'js> ModuleLoad<'a, 'js> {
 
 impl<'a, 'js> Phase for ModuleLoad<'a, 'js> {}
 
+#[derive(Clone, Copy)]
 pub struct ModuleEval<'a, 'b: 'a> {
-    ctx: Ctx<'b>,
-    module: &'a Module<'b, Loaded<Native>>,
+    pub(in crate) ctx: Ctx<'b>,
+    pub(in crate) module: &'a Module<'b, Loaded<Native>>,
 }
 
 impl<'a, 'js> ModuleEval<'a, 'js> {

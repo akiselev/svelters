@@ -4,7 +4,7 @@ use rquickjs::{Loader, Resolver};
 
 use crate::inner::*;
 
-pub trait Framework: Copy + Clone + 'static {
+pub trait Framework: Sized + 'static {
     type Loader: Loader;
     type Resolver: Resolver;
     type AppTask: Future<Output = anyhow::Result<()>>;
@@ -12,11 +12,11 @@ pub trait Framework: Copy + Clone + 'static {
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
     fn get_loader() -> (Self::Resolver, Self::Loader);
 
-    fn module<MOD>() -> JsModuleLoader<Self, MOD, ()>
+    fn module<MOD>(module: MOD) -> JsModuleLoader<Self, MOD>
     where
-        Self: FrameworkModule<MOD>,
+        MOD: FrameworkModule<Self>,
     {
-        JsModuleLoader::new()
+        JsModuleLoader::new(module)
     }
 }
 
@@ -28,7 +28,7 @@ pub trait Cast<T> {
 
 pub type ClsBox<FW, CLS> = <FW as Container<CLS>>::Type;
 
-pub trait Container<CLS>: Framework + FrameworkClass<CLS> {
+pub trait Container<CLS> {
     type Type;
 }
 
@@ -41,21 +41,20 @@ where
     fn into_framework_type(self) -> Self::Type;
 }
 
-pub trait FrameworkModule<CLS> {
-    fn define<P>(module: JsModule<Self, CLS, P>) -> Result<()>
+pub trait FrameworkModule<FW>: Sized {
+    fn define<P>(module: JsModule<FW, Self, P>) -> Result<()>
     where
-        Self: Framework,
-        JsModule<Self, CLS, P>: Implements<P>;
+        FW: Framework;
 }
 
-pub trait FrameworkClass<CLS> {
+pub trait FrameworkClass<CLS>: Sized {
+    const CLASS_NAME: &'static str;
+
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn define<P: Phase>(cls: JsClass<Self, CLS, P>) -> Result<()>
-    where
-        Self: Framework;
+    fn define<P>(cls: JsClass<Self, CLS, P>) -> Result<()>;
     fn get_name() -> &'static str {
-        std::any::type_name::<CLS>()
+        Self::CLASS_NAME
     }
 }
 
@@ -69,28 +68,6 @@ pub trait JsModuleDef: Sized + 'static {
     ) -> Result<()>;
 }
 
-pub trait TypeDef: Sized {
-    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
-        Ok(())
-    }
-
-    fn eval<'js>(
-        &'static self,
-        _ctx: Ctx<'js>,
-        _module: &Module<'js, Loaded<Native>>,
-    ) -> Result<()> {
-        Ok(())
-    }
-
-    fn init_proto<'js>(&'static self, _ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-
-    fn init_static<'js>(&'static self, _ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        Ok(())
-    }
-}
-
 pub trait GetRef<'a, T> {
     type Pointer;
     fn get_ref(&'a self) -> &'a T;
@@ -100,11 +77,11 @@ pub trait GetRef<'a, T> {
 pub trait Phase {}
 
 pub trait Implements<P> {
-    fn build(self, input: P) -> Result<()>;
+    fn build(self, input: &P) -> Result<()>;
 }
 
-default impl<T, P> Implements<P> for T {
-    default fn build(self, phase: P) -> Result<()> {
+impl<T, P> Implements<P> for T {
+    default fn build(self, phase: &P) -> Result<()> {
         Ok(())
     }
 }

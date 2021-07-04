@@ -56,7 +56,7 @@ impl Framework for QT {
 
     fn get_loader() -> (Self::Resolver, Self::Loader) {
         let resolver = BuiltinResolver::default().with_module("QtCore");
-        let loader = ModuleLoader::default().with_module("QtCore", Self::module::<QtCore>());
+        let loader = ModuleLoader::default().with_module("QtCore", QT::module(QtCore));
         (resolver, loader)
     }
 }
