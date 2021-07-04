@@ -24,10 +24,34 @@ pub mod prelude {
     };
 }
 
+pub(in crate) mod phases {
+    mod class {
+        mod constructor;
+        mod init_proto;
+        mod init_static;
+        mod super_proto;
+        mod super_static;
+
+        pub(in crate) use self::constructor::*;
+        pub(in crate) use self::init_proto::*;
+        pub(in crate) use self::init_static::*;
+        pub(in crate) use self::super_proto::*;
+        pub(in crate) use self::super_static::*;
+    }
+
+    mod module {
+        mod loader;
+
+        pub(in crate) use self::loader::*;
+    }
+
+    pub(in crate) use self::class::*;
+    pub(in crate) use self::module::*;
+}
+
 pub(in crate) mod class;
 pub(in crate) mod module;
 pub(in crate) mod obj;
-pub(in crate) mod phases;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
 

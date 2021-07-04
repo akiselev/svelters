@@ -76,8 +76,6 @@ pub trait GetRef<'a, T> {
     fn get_ptr(&'a self) -> Self::Pointer;
 }
 
-pub trait Phase {}
-
 pub trait Implements<P> {
     fn build(self, input: &P) -> Result<()>;
 }
@@ -87,26 +85,3 @@ impl<T, P> Implements<P> for T {
         Ok(())
     }
 }
-
-// default impl<FW: 'static, CLS: 'static, P: Phase> Implements<P> for JsClassLoader<FW, CLS>
-// where
-//     FW: FrameworkClass<CLS>,
-// {
-//     fn build<'a, 'b: 'a>(self, phase: P::Input<'a, 'b>) -> Result<()> {
-//         Ok(())
-//     }
-// }
-
-// trait Trait<T> {
-//     fn build();
-// }
-
-// default impl<T, U> Trait<T> for U {
-//     fn build() {}
-// }
-
-// struct Type<const T: &'static str>;
-
-// impl Trait<usize> for Type<"string"> {
-//     fn build() {}
-// }
