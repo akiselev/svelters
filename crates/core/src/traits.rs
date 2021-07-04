@@ -12,19 +12,12 @@ pub trait Framework: Copy + Clone + 'static {
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
     fn get_loader() -> (Self::Resolver, Self::Loader);
 
-    fn module<const CLS: &'static str>() -> JsModule<Self, CLS>
+    fn module<const MOD: &'static str>() -> JsModuleLoader<Self, MOD>
     where
-        Self: FrameworkModule<CLS>,
+        Self: FrameworkModule<MOD>,
     {
-        JsModule(PhantomData)
+        JsModuleLoader::new()
     }
-}
-
-pub const fn include<FW, const CLS: &'static str>() -> JsClass<FW, CLS>
-where
-    FW: FrameworkClass<CLS>,
-{
-    JsClass(PhantomData)
 }
 
 pub trait Cast<T> {
@@ -49,20 +42,17 @@ where
 }
 
 pub trait FrameworkModule<const N: &'static str>: Framework {
-    type Output: JsModuleDef;
-
-    fn get_module<'a>() -> &'static Self::Output;
+    fn define<P: Phase>(module: JsModule<Self, N, P>) -> Result<()>;
 }
 
 pub type ClsTy<FW, const CLS: &'static str> = <FW as FrameworkClass<CLS>>::Type;
 
 pub trait FrameworkClass<const N: &'static str>: Framework {
     type Type: 'static;
-    type Definition: TypeDef;
 
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn define() -> &'static Self::Definition;
+    fn define<P: Phase>(cls: JsClass<Self, N, P>) -> Result<()>;
     fn get_name() -> &'static str {
         N
     }
@@ -105,3 +95,17 @@ pub trait GetRef<'a, T> {
     fn get_ref(&'a self) -> &'a T;
     fn get_ptr(&'a self) -> Self::Pointer;
 }
+
+pub trait Phase {
+    type Error: std::fmt::Debug;
+}
+
+pub trait Implements<P: Phase> {
+    fn build(self, phase: &P) -> Result<()>;
+}
+
+// default impl<T, P: Phase> Implements<P> for T {
+//     fn build(self, phase: &P) -> Result<()> {
+//         Ok(())
+//     }
+// }

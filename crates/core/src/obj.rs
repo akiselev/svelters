@@ -58,7 +58,9 @@ where
             std::any::type_name::<FW>(),
             CLS
         );
-        <FW as FrameworkClass<CLS>>::define().init_proto(ctx, proto)?;
+        let phase = InitProto::<'_, '_, FW, CLS>::new(ctx, proto);
+        let cls = JsClass::new(phase);
+        <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }
 
@@ -68,7 +70,9 @@ where
             std::any::type_name::<FW>(),
             CLS
         );
-        <FW as FrameworkClass<CLS>>::define().init_static(ctx, _static)?;
+        let phase = InitStatic::<'_, '_, FW, CLS>::new(ctx, _static);
+        let cls = JsClass::new(phase);
+        <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }
 

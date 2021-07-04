@@ -1,52 +1,49 @@
 use crate::inner::*;
 
-pub struct JsModule<FW: Framework, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
+pub struct JsModule<FW: FrameworkModule<MOD>, const MOD: &'static str, P: Phase>(
+    P,
+    pub(in crate) PhantomData<FW>,
+);
 
-impl<'a, FW, const MOD: &'static str> ModuleDef for JsModule<FW, MOD>
+impl<FW: FrameworkModule<MOD>, P: Phase, const MOD: &'static str> JsModule<FW, MOD, P> {
+    pub fn class<const CLS: &'static str>(&self) -> Result<()>
+    where
+        FW: FrameworkClass<CLS>,
+        JsClassLoader<FW, CLS>: Implements<P>,
+    {
+        JsClassLoader(PhantomData).build(&self.0)
+    }
+}
+
+pub struct JsModuleLoader<FW: FrameworkModule<MOD>, const MOD: &'static str>(
+    pub(in crate) PhantomData<FW>,
+);
+default impl<FW, const MOD: &'static str, P: Phase> Implements<P> for JsModuleLoader<FW, MOD>
 where
-    FW: Framework + FrameworkModule<MOD>,
-    <FW as FrameworkModule<MOD>>::Output: JsModuleDef,
+    FW: FrameworkModule<MOD>,
+{
+    fn build(self, phase: &P) -> Result<()> {
+        Ok(())
+    }
+}
+
+impl<FW, const MOD: &'static str> ModuleDef for JsModuleLoader<FW, MOD>
+where
+    FW: FrameworkModule<MOD>,
 {
     fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
-        <<FW as FrameworkModule<MOD>>::Output as JsModuleDef>::load(ctx, module)?;
-        Ok(())
+        let _mod = JsModule(ModuleLoad::new(ctx, module), PhantomData);
+        <FW as FrameworkModule<MOD>>::define(_mod)
     }
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &Module<'js, Loaded<Native>>) -> Result<()> {
-        let module = <FW as FrameworkModule<MOD>>::get_module();
-        module.eval(ctx, exports)?;
-        Ok(())
+        let _mod = JsModule(ModuleEval::new(ctx, exports), PhantomData);
+        <FW as FrameworkModule<MOD>>::define(_mod)
     }
 }
 
-impl<H, T> JsModuleDef for HCons<H, T>
-where
-    H: JsModuleDef,
-    T: JsModuleDef,
-{
-    fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
-        <T as JsModuleDef>::load(ctx, module)?;
-        <H as JsModuleDef>::load(ctx, module)?;
-        Ok(())
-    }
-
-    fn eval<'js>(&'static self, ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
-        <T as JsModuleDef>::eval(&self.tail, ctx, module)?;
-        <H as JsModuleDef>::eval(&self.head, ctx, module)?;
-        Ok(())
-    }
-}
-
-impl JsModuleDef for HNil {
-    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
-        Ok(())
-    }
-
-    fn eval<'js>(
-        &'static self,
-        _ctx: Ctx<'js>,
-        _module: &Module<'js, Loaded<Native>>,
-    ) -> Result<()> {
-        Ok(())
+impl<FW: FrameworkModule<MOD>, const MOD: &'static str> JsModuleLoader<FW, MOD> {
+    pub fn new() -> Self {
+        Self(PhantomData)
     }
 }

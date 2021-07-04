@@ -9,132 +9,51 @@ pub(in crate) mod impls {
     pub(in crate) mod static_fn;
 }
 
-pub struct JsClass<FW: Framework, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
+pub struct JsClass<FW: Framework, const CLS: &'static str, P: Phase> {
+    phase: P,
+    pub(in crate) framework: PhantomData<FW>,
+}
 
-impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS>
+impl<FW: Framework, const CLS: &'static str, P: Phase> JsClass<FW, CLS, P>
 where
     FW: Container<CLS>,
 {
-    pub const fn constructor<A, R, X>(&self, func: X) -> ClassConstructor<FW, CLS, A, R, X>
-    where
-        X: Constructor<FW, CLS, A, R>,
-    {
-        ClassConstructor::new(func)
+    pub fn new(phase: P) -> Self {
+        Self {
+            phase,
+            framework: PhantomData,
+        }
     }
 
-    pub const fn constructor0<R, X>(&self, func: X) -> ClassConstructor<FW, CLS, (), R, X>
+    pub fn constructor0<'a, 'js: 'a, R, X>(&self, func: X) -> Result<()>
     where
-        X: Constructor<FW, CLS, (), R>, // + ConstructorNum<0, A, R>,
         X: 'static + Fn() -> R,
         R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
+        ClassConstructor<FW, CLS, (), R, X>: Implements<P>,
     {
-        ClassConstructor::new(func)
+        ClassConstructor::new(func).build(&self.phase)
     }
 
-    pub const fn method<A, R, X>(
-        &self,
-        name: &'static str,
-        func: X,
-    ) -> ClassMethod<FW, CLS, A, R, X>
+    pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
-        X: Method<FW, CLS, A, R>,
-    {
-        ClassMethod::new(name, func)
-    }
-
-    pub const fn method0<T, R, X>(
-        &self,
-        name: &'static str,
-        func: X,
-    ) -> ClassMethod<FW, CLS, (T,), R, X>
-    where
-        X: 'static + Method<FW, CLS, (T,), R> + Fn(&T) -> R,
-        ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+        X: 'static + Fn(&T) -> R,
         ClsBox<FW, CLS>: Cast<T>,
         R: for<'js> IntoJs<'js>,
+        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
+        ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
     {
-        ClassMethod::new(name, func)
+        ClassMethod::new(name, func).build(&self.phase)
     }
 
-    pub const fn static_fn<A, R, X>(
-        &self,
-        name: &'static str,
-        func: X,
-    ) -> ClassStaticFunc<FW, CLS, A, R, X>
+    pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
-        FW: Container<CLS>,
-        X: StaticFunc<FW, CLS, A, R>,
-    {
-        ClassStaticFunc::new(name, func)
-    }
-
-    pub const fn static_fn0<R, X>(
-        &self,
-        name: &'static str,
-        func: X,
-    ) -> ClassStaticFunc<FW, CLS, (), R, X>
-    where
-        FW: Container<CLS>,
-        X: StaticFunc<FW, CLS, (), R> + Fn() -> R,
+        X: 'static + Fn() -> R,
         R: for<'a> IntoJs<'a>,
+        ClassStaticFunc<FW, CLS, (), R, X>: Implements<P>,
     {
-        ClassStaticFunc::new(name, func)
+        ClassStaticFunc::new(name, func).build(&self.phase)
     }
 }
-
-impl<FW: Framework, const CLS: &'static str> JsModuleDef for JsClass<FW, CLS>
-where
-    FW: Container<CLS>,
-    Obj<FW, CLS>: ClassDef,
-{
-    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()> {
-        <FW as FrameworkClass<CLS>>::Definition::load(_ctx, _module)?;
-        Ok(())
-    }
-
-    fn eval<'js>(
-        &'static self,
-        ctx: Ctx<'js>,
-        exports: &Module<'js, Loaded<Native>>,
-    ) -> Result<()> {
-        println!("Initializing {}", CLS);
-        rquickjs::Class::<Obj<FW, CLS>>::register(ctx)?;
-        <FW as FrameworkClass<CLS>>::define().eval(ctx, exports)?;
-        Ok(())
-    }
-}
-
-impl<H, T> TypeDef for HCons<H, T>
-where
-    H: TypeDef,
-    T: TypeDef,
-{
-    fn load<'js>(ctx: Ctx<'js>, module: &Module<'js, Created>) -> Result<()> {
-        T::load(ctx, module)?;
-        H::load(ctx, module)?;
-        Ok(())
-    }
-
-    fn eval<'js>(&'static self, ctx: Ctx<'js>, module: &Module<'js, Loaded<Native>>) -> Result<()> {
-        self.tail.eval(ctx, module)?;
-        self.head.eval(ctx, module)?;
-        Ok(())
-    }
-
-    fn init_proto<'js>(&'static self, ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        self.tail.init_proto(ctx, proto)?;
-        self.head.init_proto(ctx, proto)?;
-        Ok(())
-    }
-
-    fn init_static<'js>(&'static self, ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        self.tail.init_static(ctx, proto)?;
-        self.head.init_static(ctx, proto)?;
-        Ok(())
-    }
-}
-
-impl TypeDef for HNil {}
 
 macro_rules! tup {
     ($($static_fn:ident $method:ident $constructor:ident $($type:ident)*,)*) => {
@@ -197,7 +116,7 @@ macro_rules! tup {
     (@idx P) => { 15 };
 }
 
-impl<FW: Framework, const CLS: &'static str> JsClass<FW, CLS>
+impl<Z: Phase, FW: Framework, const CLS: &'static str> JsClass<FW, CLS, Z>
 where
     FW: Container<CLS>,
 {
@@ -218,5 +137,39 @@ where
         static_fn14 method14 constructor14 A B C D E F G H I J K L M N,
         static_fn15 method15 constructor15 A B C D E F G H I J K L M N O,
         static_fn16 method16 constructor16 A B C D E F G H I J K L M N O P,
+    }
+}
+
+pub struct JsClassLoader<FW: FrameworkClass<CLS>, const CLS: &'static str>(
+    pub(in crate) PhantomData<FW>,
+);
+
+impl<FW: FrameworkClass<CLS>, const CLS: &'static str> JsClassLoader<FW, CLS> {
+    pub fn new() -> Self {
+        Self(PhantomData)
+    }
+}
+
+default impl<'a, 'b, T> Implements<ModuleLoad<'a, 'b>> for T {
+    fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
+        Ok(())
+    }
+}
+
+impl<'a, 'b, FW, const CLS: &'static str> Implements<ModuleLoad<'a, 'b>> for JsClassLoader<FW, CLS>
+where
+    FW: FrameworkClass<CLS>,
+{
+    fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
+        todo!()
+    }
+}
+
+impl<'a, 'b, FW, const CLS: &'static str> Implements<ModuleEval<'a, 'b>> for JsClassLoader<FW, CLS>
+where
+    FW: FrameworkClass<CLS>,
+{
+    fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
+        todo!()
     }
 }
