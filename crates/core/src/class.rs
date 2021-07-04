@@ -21,7 +21,20 @@ where
         }
     }
 
-    pub fn constructor0<'a, 'js: 'a, R, X>(&self, func: X) -> Result<()>
+    pub fn superclass<SUPER>(&self) -> Result<()>
+    where
+        FW: Framework
+            + FrameworkClass<CLS>
+            + FrameworkClass<SUPER>
+            + Container<CLS>
+            + Container<SUPER>,
+        ClassSuper<FW, CLS, SUPER>: Implements<P>,
+    {
+        ClassSuper::<FW, CLS, SUPER>::new().build(&self.phase)?;
+        Ok(())
+    }
+
+    pub fn constructor0<R, X>(&self, func: X) -> Result<()>
     where
         FW: Framework + FrameworkClass<CLS> + Container<CLS>,
         X: Fn() -> R,

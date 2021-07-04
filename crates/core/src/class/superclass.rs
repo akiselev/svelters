@@ -18,12 +18,13 @@ where
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitStatic<'a, 'b, FW, CLS>>
     for ClassSuper<FW, CLS, SUPER>
 where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
+    FW: Framework + FrameworkClass<CLS> + Container<CLS> + Container<SUPER> + FrameworkClass<SUPER>,
     CLS: 'static,
 {
     fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
-        let cls: JsClass<FW, CLS, _> = JsClass::new(input);
-        <FW as FrameworkClass<CLS>>::define(cls)?;
+        let phase = InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
+        let cls: JsClass<FW, SUPER, _> = JsClass::new(phase);
+        <FW as FrameworkClass<SUPER>>::define(cls)?;
         Ok(())
     }
 }

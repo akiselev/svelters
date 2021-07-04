@@ -45,7 +45,10 @@ impl FrameworkClass<QObject> for QT {
             // std::mem::forget(args);
             // QApplication::new_2a(argc, argv)
         })?;
-        cls.static_fn0("test", || {
+        cls.method0("test", |this: &QObject| {
+            println!("REAL >>>>>>>>>>>>>>>>>>");
+        })?;
+        cls.static_fn0("staticTest", || {
             println!("STATIC >>>>>>>>>>>>>>>>>>");
         })?;
         Ok(())
@@ -69,9 +72,7 @@ impl FrameworkClass<QWidget> for QT {
             // std::mem::forget(args);
             // QApplication::new_2a(argc, argv)
         })?;
-        cls.static_fn0("test", || {
-            println!("STATIC >>>>>>>>>>>>>>>>>>");
-        })?;
+        cls.superclass::<QObject>()?;
         Ok(())
     }
 }

@@ -26,9 +26,55 @@ where
     CLS: 'static,
 {
     fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
+        println!(
+            "Implementing static {}::{} ",
+            <FW as FrameworkClass<CLS>>::get_name(),
+            self.0,
+        );
         input.obj.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                println!(
+                    "CALLING STATIC {}::{} ",
+                    <FW as FrameworkClass<CLS>>::get_name(),
+                    self.0,
+                );
+                let args = args.into_inner();
+                let args_len = args.len();
+                tuple_match_size(args_len, 0)?;
+
+                let res = self.1();
+                Result::<_>::Ok(res.into_js(ctx))
+            }),
+        )?;
+        Ok(())
+    }
+}
+
+impl<'a, 'b: 'a, T, FW, CLS, SUPER, R> Implements<InitSuperStatic<'a, 'b, FW, CLS, SUPER>>
+    for ClassStaticFunc<FW, SUPER, (), R, T>
+where
+    FW: Framework + FrameworkClass<CLS> + Container<CLS> + FrameworkClass<SUPER> + Container<SUPER>,
+    T: 'static + Fn() -> R,
+    R: 'static + for<'js> IntoJs<'js>,
+    CLS: 'static,
+    SUPER: 'static,
+{
+    fn build(self, input: &InitSuperStatic<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        println!(
+            "Implementing super static {}::{} on {}",
+            <FW as FrameworkClass<SUPER>>::get_name(),
+            self.0,
+            <FW as FrameworkClass<CLS>>::get_name(),
+        );
+        input.obj.set(
+            self.0,
+            rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                println!(
+                    "CALLING SUPER STATIC {}::{} ",
+                    <FW as FrameworkClass<CLS>>::get_name(),
+                    self.0,
+                );
                 let args = args.into_inner();
                 let args_len = args.len();
                 tuple_match_size(args_len, 0)?;

@@ -23,7 +23,7 @@ where
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Implementing {}::{}",
+            "Implementing method {}::{}",
             <FW as FrameworkClass<CLS>>::get_name(),
             self.0
         );
@@ -51,7 +51,7 @@ where
 impl<'a, 'b: 'a, T, FW, CLS, R, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, SUPER>>
     for ClassMethod<FW, CLS, SUPER, (SUPER,), R, T>
 where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
+    FW: Framework + FrameworkClass<CLS> + FrameworkClass<SUPER> + Container<CLS>,
     ClsBox<FW, CLS>: for<'c> GetRef<'c, CLS>,
     ClsBox<FW, CLS>: Cast<SUPER>,
     SUPER: 'static,
@@ -60,6 +60,12 @@ where
     CLS: 'static,
 {
     fn build(self, input: &InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        println!(
+            "Implementing super method {}::{} on {}",
+            <FW as FrameworkClass<SUPER>>::get_name(),
+            self.0,
+            <FW as FrameworkClass<CLS>>::get_name(),
+        );
         input.obj.set(
             self.0,
             rquickjs::Func::new(
