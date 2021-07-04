@@ -23,7 +23,7 @@ where
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Implementing method {}::{}",
+            "Implementing {}::{}",
             <FW as FrameworkClass<CLS>>::get_name(),
             self.0
         );
@@ -49,9 +49,9 @@ where
 }
 
 impl<'a, 'b: 'a, T, FW, CLS, R, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, SUPER>>
-    for ClassMethod<FW, CLS, SUPER, (SUPER,), R, T>
+    for ClassMethod<FW, SUPER, SUPER, (SUPER,), R, T>
 where
-    FW: Framework + FrameworkClass<CLS> + FrameworkClass<SUPER> + Container<CLS>,
+    FW: Framework + FrameworkClass<CLS> + Container<CLS> + Container<SUPER> + FrameworkClass<SUPER>,
     ClsBox<FW, CLS>: for<'c> GetRef<'c, CLS>,
     ClsBox<FW, CLS>: Cast<SUPER>,
     SUPER: 'static,
@@ -61,7 +61,7 @@ where
 {
     fn build(self, input: &InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
         println!(
-            "Implementing super method {}::{} on {}",
+            "Implementing super {}::{} on {}",
             <FW as FrameworkClass<SUPER>>::get_name(),
             self.0,
             <FW as FrameworkClass<CLS>>::get_name(),
@@ -72,6 +72,12 @@ where
                 self.0,
                 rquickjs::Method(
                     move |this: Class<'b, Obj<FW, CLS>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                        println!(
+                            "CALLING SUPER METHOD {}::{} ON {}",
+                            <FW as FrameworkClass<SUPER>>::get_name(),
+                            self.0,
+                            <FW as FrameworkClass<CLS>>::get_name(),
+                        );
                         let args = args.into_inner();
                         let args_len = args.len();
                         tuple_match_size(args_len, 0)?;
