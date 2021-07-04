@@ -1,6 +1,6 @@
 use crate::inner::*;
 
-pub trait StaticFunc<FW, const CLS: &'static str, A, R>
+pub trait StaticFunc<FW, CLS, A, R>
 where
     FW: Container<CLS>,
     Self::Args: for<'js> FromJs<'js>,
@@ -13,7 +13,7 @@ where
     fn try_call<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Self::Return>;
 }
 
-impl<T, FW, const CLS: &'static str, R> StaticFunc<FW, CLS, (), R> for T
+impl<T, FW, CLS, R> StaticFunc<FW, CLS, (), R> for T
 where
     FW: Container<CLS>,
     T: Fn() -> R,
@@ -39,7 +39,7 @@ where
 macro_rules! tup {
     ($($($type:ident)*,)*) => {
         $(
-            impl<T, FW, const CLS: &'static str, R, $($type,)*> StaticFunc<FW, CLS, ($($type,)*), R> for T
+            impl<T, FW, CLS, R, $($type,)*> StaticFunc<FW, CLS, ($($type,)*), R> for T
             where
                 FW: Container<CLS>,
                 T: Fn($($type,)*) -> R,

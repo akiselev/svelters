@@ -12,7 +12,7 @@ pub trait Framework: Copy + Clone + 'static {
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
     fn get_loader() -> (Self::Resolver, Self::Loader);
 
-    fn module<const MOD: &'static str>() -> JsModuleLoader<Self, MOD>
+    fn module<MOD>() -> JsModuleLoader<Self, MOD>
     where
         Self: FrameworkModule<MOD>,
     {
@@ -26,13 +26,13 @@ pub trait Cast<T> {
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub type ClsBox<FW, const CLS: &'static str> = <FW as Container<CLS>>::Type;
+pub type ClsBox<FW, CLS> = <FW as Container<CLS>>::Type;
 
-pub trait Container<const CLS: &'static str>: Framework + FrameworkClass<CLS> {
+pub trait Container<CLS>: Framework + FrameworkClass<CLS> {
     type Type;
 }
 
-pub trait IntoContainer<FW, const CLS: &'static str>
+pub trait IntoContainer<FW, CLS>
 where
     FW: Container<CLS>,
 {
@@ -41,20 +41,18 @@ where
     fn into_framework_type(self) -> Self::Type;
 }
 
-pub trait FrameworkModule<const N: &'static str>: Framework {
-    fn define<P: Phase>(module: JsModule<Self, N, P>) -> Result<()>;
+pub trait FrameworkModule<CLS>: Framework {
+    fn define<P: Phase>(module: JsModule<Self, CLS, P>) -> Result<()>;
 }
 
-pub type ClsTy<FW, const CLS: &'static str> = <FW as FrameworkClass<CLS>>::Type;
-
-pub trait FrameworkClass<const N: &'static str>: Framework {
-    type Type: 'static;
-
+pub trait FrameworkClass<CLS> {
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn define<P: Phase>(cls: JsClass<Self, N, P>) -> Result<()>;
+    fn define<P: Phase>(cls: JsClass<Self, CLS, P>) -> Result<()>
+    where
+        Self: Framework;
     fn get_name() -> &'static str {
-        N
+        std::any::type_name::<CLS>()
     }
 }
 
@@ -96,27 +94,27 @@ pub trait GetRef<'a, T> {
     fn get_ptr(&'a self) -> Self::Pointer;
 }
 
-pub trait Phase {
-    type Input<'a, 'b: 'a>: Copy;
-    type Error: std::fmt::Debug;
+pub trait Phase {}
+
+pub trait Implements<P>
+where
+    P: Phase,
+{
+    fn build(self, input: P) -> Result<()>;
 }
 
-pub trait Implements<P: 'static> {
-    fn build<'a, 'b: 'a>(self, input: P::Input<'a, 'b>) -> Result<()>
-    where
-        P: Phase;
-}
-
-// default impl<T: 'static, P: 'static> Implements<P> for T {
+// default impl<T, P> Implements<P> for T
+// where
+//     P: Phase,
+// {
 //     default fn build(self, phase: &P) -> Result<()> {
 //         Ok(())
 //     }
 // }
 
-// default impl<FW: 'static, const MOD: &'static str, P: 'static + Phase> Implements<P>
-//     for JsModuleLoader<FW, MOD>
+// default impl<FW: 'static, CLS: 'static, P: Phase> Implements<P> for JsClassLoader<FW, CLS>
 // where
-//     FW: FrameworkModule<MOD>,
+//     FW: FrameworkClass<CLS>,
 // {
 //     fn build<'a, 'b: 'a>(self, phase: P::Input<'a, 'b>) -> Result<()> {
 //         Ok(())

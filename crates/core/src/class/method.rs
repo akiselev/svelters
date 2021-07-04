@@ -2,7 +2,7 @@ use rquickjs::Class;
 
 use crate::inner::*;
 
-pub trait Method<FW, const CLS: &'static str, A, R>
+pub trait Method<FW, CLS, A, R>
 where
     FW: Container<CLS>,
     Self::Args: for<'js> FromJs<'js>,
@@ -20,13 +20,14 @@ where
     ) -> Result<Self::Return>;
 }
 
-impl<T, X, FW, const CLS: &'static str, R> Method<FW, CLS, (X,), R> for T
+impl<T, X, FW, CLS, R> Method<FW, CLS, (X,), R> for T
 where
     FW: Container<CLS>,
-    ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+    ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
     ClsBox<FW, CLS>: Cast<X>,
     T: Fn(&X) -> R,
     R: for<'js> IntoJs<'js>,
+    CLS: 'static,
 {
     const NUM_ARGS: usize = 0;
 
@@ -50,15 +51,16 @@ where
 macro_rules! tup {
     ($($($type:ident)*,)*) => {
         $(
-            impl<T, X, FW, const CLS: &'static str, R, $($type,)*> Method<FW, CLS, (X, $($type,)*), R> for T
+            impl<T, X, FW, CLS, R, $($type,)*> Method<FW, CLS, (X, $($type,)*), R> for T
             where
                 FW: Container<CLS>,
-                ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+                ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
                 ClsBox<FW, CLS>: Cast<X>,
                 T: Fn(&X, $($type,)*) -> R,
-                ClsTy<FW, CLS>: Cast<X>,
+                CLS: Cast<X>,
                 $($type: for<'x> FromJs<'x>,)*
                 R: for<'js> IntoJs<'js>,
+                CLS: 'static,
             {
                 const NUM_ARGS: usize = 0 $(+ tup!(@one $type))*;
 

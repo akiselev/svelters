@@ -7,25 +7,23 @@ use qt_gui::QWindow;
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{AsFunction, Class, Loaded, Module, Native};
 
-use crate::inner::*;
+use crate::{inner::*, QtCore};
 
-impl FrameworkModule<"QtCore"> for QT {
-    fn define<P: Phase>(module: JsModule<Self, "QtCore", P>) -> Result<()> {
-        module.class::<"QObject">()?;
-        module.class::<"QApplication">()?;
-        module.class::<"QMainWindow">()
+impl FrameworkModule<QtCore> for QT {
+    fn define<P: Phase>(module: JsModule<Self, QtCore, P>) -> Result<()> {
+        module.class::<QObject>()?;
+        module.class::<QApplication>()?;
+        module.class::<QMainWindow>()
     }
 }
 
-impl FrameworkClass<"QObject"> for QT {
-    type Type = QObject;
-
+impl FrameworkClass<QObject> for QT {
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn define<P: Phase>(cls: JsClass<Self, "QObject", P>) -> Result<()> {
+    fn define<P: Phase>(cls: JsClass<Self, QObject, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QObject::new_0a() }
             // cls.constructor1(|var: QString| {
@@ -38,15 +36,13 @@ impl FrameworkClass<"QObject"> for QT {
     }
 }
 
-impl FrameworkClass<"QApplication"> for QT {
-    type Type = QApplication;
-
+impl FrameworkClass<QApplication> for QT {
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn define<P: Phase>(cls: JsClass<Self, "QApplication", P>) -> Result<()> {
+    fn define<P: Phase>(cls: JsClass<Self, QApplication, P>) -> Result<()> {
         cls.static_fn0("exec", || unsafe {
             QCoreApplication::exec();
         })?;
@@ -60,15 +56,13 @@ impl FrameworkClass<"QApplication"> for QT {
     }
 }
 
-impl FrameworkClass<"QMainWindow"> for QT {
-    type Type = QMainWindow;
-
+impl FrameworkClass<QMainWindow> for QT {
     unsafe fn get_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
         &mut CLASS_ID
     }
 
-    fn define<P: Phase>(cls: JsClass<Self, "QMainWindow", P>) -> Result<()> {
+    fn define<P: Phase>(cls: JsClass<Self, QMainWindow, P>) -> Result<()> {
         cls.method0("show", |this: &QWidget| unsafe {
             this.show();
         })?;

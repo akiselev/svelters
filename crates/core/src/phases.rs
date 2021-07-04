@@ -1,139 +1,140 @@
 use crate::inner::*;
-
-pub struct ConstructorLoad<FW: Container<CLS>, const CLS: &'static str> {
-    framework: PhantomData<FW>,
+pub struct ConstructorLoad<'a, 'js, FW: Container<CLS>, CLS> {
+    ctx: Ctx<'js>,
+    module: &'a Module<'js, Created>,
+    framework: PhantomData<(FW, CLS)>,
 }
 
-impl<FW: Container<CLS>, const CLS: &'static str> ConstructorLoad<FW, CLS> {
-    pub fn new() -> Self {
+impl<'a, 'js, FW: Container<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
+    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Created>) -> Self {
         Self {
+            ctx,
+            module,
             framework: PhantomData,
         }
     }
 }
 
-impl<FW: Container<CLS>, const CLS: &'static str> Phase for ConstructorLoad<FW, CLS> {
-    type Input<'a, 'b: 'a> = (Ctx<'b>, &'a Module<'b, Created>);
-    type Error = Error;
+impl<'a, 'js, FW: Container<CLS>, CLS> Phase for ConstructorLoad<'a, 'js, FW, CLS> {}
+
+pub struct ConstructorEval<'a, 'js, FW, CLS> {
+    ctx: Ctx<'js>,
+    module: &'a Module<'js, Loaded<Native>>,
+    framework: PhantomData<(FW, CLS)>,
 }
 
-pub struct ConstructorEval<FW, const CLS: &'static str> {
-    framework: PhantomData<FW>,
-}
-
-impl<FW: Container<CLS>, const CLS: &'static str> ConstructorEval<FW, CLS> {
-    pub fn new() -> Self {
+impl<'a, 'js, FW: Container<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
+    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Loaded<Native>>) -> Self {
         Self {
+            ctx,
+            module,
             framework: PhantomData,
         }
     }
 }
 
-impl<FW: Container<CLS>, const CLS: &'static str> Phase for ConstructorEval<FW, CLS> {
-    type Input<'a, 'b: 'a> = (Ctx<'b>, &'a Module<'b, Loaded<Native>>);
-    type Error = Error;
+impl<'a, 'js, FW: Container<CLS>, CLS> Phase for ConstructorEval<'a, 'js, FW, CLS> {}
+
+pub struct InitProto<'a, 'js, FW, CLS> {
+    ctx: Ctx<'js>,
+    obj: &'a Object<'js>,
+    framework: PhantomData<(FW, CLS)>,
 }
 
-pub struct InitProto<FW, const CLS: &'static str> {
-    framework: PhantomData<FW>,
-}
-
-impl<FW: Container<CLS>, const CLS: &'static str> InitProto<FW, CLS> {
-    pub fn new() -> Self {
+impl<'a, 'js, FW: Container<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
+            ctx,
+            obj,
             framework: PhantomData,
         }
     }
 }
 
-impl<FW: Container<CLS>, const CLS: &'static str> Phase for InitProto<FW, CLS> {
-    type Input<'a, 'b: 'a> = (Ctx<'b>, &'a Object<'b>);
-    type Error = Error;
+impl<'a, 'js, FW: Container<CLS>, CLS> Phase for InitProto<'a, 'js, FW, CLS> {}
+
+pub struct InitStatic<'a, 'js, FW, CLS> {
+    ctx: Ctx<'js>,
+    obj: &'a Object<'js>,
+    framework: PhantomData<(FW, CLS)>,
 }
 
-pub struct InitStatic<FW, const CLS: &'static str> {
-    framework: PhantomData<FW>,
-}
-
-impl<FW: Container<CLS>, const CLS: &'static str> InitStatic<FW, CLS> {
-    pub fn new() -> Self {
+impl<'a, 'js, FW: Container<CLS>, CLS> InitStatic<'a, 'js, FW, CLS> {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
+            ctx,
+            obj,
             framework: PhantomData,
         }
     }
 }
 
-impl<FW: Container<CLS>, const CLS: &'static str> Phase for InitStatic<FW, CLS> {
-    type Input<'a, 'b: 'a> = (Ctx<'b>, &'a Object<'b>);
-    type Error = Error;
+impl<'a, 'js, FW: Container<CLS>, CLS> Phase for InitStatic<'a, 'js, FW, CLS> {}
+
+pub struct ModuleLoad<'a, 'js: 'a> {
+    ctx: Ctx<'js>,
+    module: &'a Module<'js, Created>,
 }
 
-pub struct ModuleLoad;
-
-impl ModuleLoad {
-    pub fn new() -> Self {
-        Self
+impl<'a, 'js> ModuleLoad<'a, 'js> {
+    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Created>) -> Self {
+        Self { ctx, module }
     }
 }
 
-impl Phase for ModuleLoad {
-    type Input<'a, 'b: 'a> = (Ctx<'b>, &'a Module<'b, Created>);
-    type Error = Error;
+impl<'a, 'js> Phase for ModuleLoad<'a, 'js> {}
+
+pub struct ModuleEval<'a, 'b: 'a> {
+    ctx: Ctx<'b>,
+    module: &'a Module<'b, Loaded<Native>>,
 }
 
-pub struct ModuleEval;
-
-impl ModuleEval {
-    pub fn new() -> Self {
-        Self
+impl<'a, 'js> ModuleEval<'a, 'js> {
+    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Loaded<Native>>) -> Self {
+        Self { ctx, module }
     }
 }
 
-impl Phase for ModuleEval {
-    type Input<'a, 'b: 'a> = (Ctx<'b>, &'a Module<'b, Loaded<Native>>);
-    type Error = Error;
-}
+impl<'a, 'js> Phase for ModuleEval<'a, 'js> {}
 
-// impl<'a, 'b: 'a, T, FW: Container<CLS>, const CLS: &'static str>
-//     Implements<ConstructorLoad<FW, CLS>> for T
-// {
-//     fn build(self, phase: &ModuleLoad) -> Result<()> {
+// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<ConstructorLoad<FW, CLS>> for T {
+//     fn build<'a, 'b: 'a>(
+//         self,
+//         phase: <ConstructorLoad<FW, CLS> as Phase>::Input<'a, 'b>,
+//     ) -> Result<()> {
 //         todo!()
 //     }
 // }
 
-// impl<'a, 'b: 'a, T, FW: Container<CLS>, const CLS: &'static str>
-//     Implements<ConstructorEval<FW, CLS>> for T
-// {
-//     fn build(self, phase: &ModuleLoad) -> Result<()> {
+// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<ConstructorEval<FW, CLS>> for T {
+//     fn build<'a, 'b: 'a>(
+//         self,
+//         phase: <ConstructorEval<FW, CLS> as Phase>::Input<'a, 'b>,
+//     ) -> Result<()> {
 //         todo!()
 //     }
 // }
 
-// impl<'a, 'b: 'a, T, FW: Container<CLS>, const CLS: &'static str> Implements<InitProto<FW, CLS>>
-//     for T
-// {
-//     fn build(self, phase: &ModuleLoad) -> Result<()> {
+// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<InitProto<FW, CLS>> for T {
+//     fn build<'a, 'b: 'a>(self, phase: <InitProto<FW, CLS> as Phase>::Input<'a, 'b>) -> Result<()> {
 //         todo!()
 //     }
 // }
 
-// impl<'a, 'b: 'a, T, FW: Container<CLS>, const CLS: &'static str> Implements<InitStatic<FW, CLS>>
-//     for T
-// {
-//     fn build(self, phase: &ModuleLoad) -> Result<()> {
+// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<InitStatic<FW, CLS>> for T {
+//     fn build<'a, 'b: 'a>(self, phase: <InitStatic<FW, CLS> as Phase>::Input<'a, 'b>) -> Result<()> {
 //         todo!()
 //     }
 // }
 
-// impl<'a, 'b: 'a, T> Implements<ModuleLoad> for T {
-//     fn build(self, phase: &ModuleLoad) -> Result<()> {
+// default impl<T> Implements<ModuleLoad> for T {
+//     fn build<'a, 'b: 'a>(self, phase: <ModuleLoad as Phase>::Input<'a, 'b>) -> Result<()> {
 //         todo!()
 //     }
 // }
 
-// impl<'a, 'b: 'a, T> Implements<ModuleEval> for T {
-//     fn build(self, phase: &ModuleLoad) -> Result<()> {
+// default impl<T> Implements<ModuleEval> for T {
+//     fn build<'a, 'b: 'a>(self, phase: <ModuleEval as Phase>::Input<'a, 'b>) -> Result<()> {
 //         todo!()
 //     }
 // }

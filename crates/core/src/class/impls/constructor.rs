@@ -2,30 +2,30 @@ use rquickjs::{Class, Rest};
 
 use crate::inner::*;
 
-pub struct ClassConstructor<FW, const CLS: &'static str, A, R, T>(
+pub struct ClassConstructor<FW, CLS, A, R, T>(
     pub(crate) T,
-    pub(crate) PhantomData<(A, R, FW)>,
+    pub(crate) PhantomData<(CLS, A, R, FW)>,
 )
 where
     FW: Container<CLS>;
 
-unsafe impl<FW, T, A, R, const CLS: &'static str> Sync for ClassConstructor<FW, CLS, A, R, T>
+unsafe impl<FW, T, A, R, CLS> Sync for ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: Constructor<FW, CLS, A, R>,
 {
 }
 
-impl<FW, T, A, R, const CLS: &'static str> ClassConstructor<FW, CLS, A, R, T>
+impl<FW, T, A, R, CLS> ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
 {
-    pub(in crate) const fn new(func: T) -> Self {
+    pub(in crate) fn new(func: T) -> Self {
         ClassConstructor(func, PhantomData)
     }
 }
 
-impl<FW, T, A, R, const CLS: &'static str> TypeDef for ClassConstructor<FW, CLS, A, R, T>
+impl<FW, T, A, R, CLS> TypeDef for ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: 'static + Constructor<FW, CLS, A, R>,
@@ -33,7 +33,7 @@ where
     A: 'static,
 {
     fn load<'js>(_ctx: Ctx<'js>, exports: &Module<'js, Created>) -> Result<()> {
-        exports.add(CLS)?;
+        exports.add(std::any::type_name::<CLS>())?;
         Ok(())
     }
 
@@ -43,9 +43,9 @@ where
         exports: &Module<'js, Loaded<Native>>,
     ) -> Result<()> {
         exports.set(
-            CLS,
+            std::any::type_name::<CLS>(),
             rquickjs::Func::new(
-                CLS,
+                std::any::type_name::<CLS>(),
                 rquickjs::Class::<Obj<FW, CLS>>::constructor(
                     move |ctx: Ctx<'js>, args: Rest<Value<'js>>| {
                         let args = args.into_inner();

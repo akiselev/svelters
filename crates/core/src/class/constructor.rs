@@ -1,6 +1,6 @@
 use crate::inner::*;
 
-pub trait Constructor<FW, const CLS: &'static str, A, R>
+pub trait Constructor<FW, CLS, A, R>
 where
     FW: Container<CLS>,
 {
@@ -15,12 +15,13 @@ where
     ) -> Result<Self::Return>;
 }
 
-impl<T, FW, const CLS: &'static str, R> Constructor<FW, CLS, (), R> for T
+impl<T, FW, CLS, R> Constructor<FW, CLS, (), R> for T
 where
     FW: Container<CLS>,
-    ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+    ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
     T: 'static + Fn() -> R,
     R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
+    CLS: 'static,
 {
     const NUM_ARGS: usize = 0;
 
@@ -43,14 +44,15 @@ where
 macro_rules! tup {
     ($($($type:ident)*,)*) => {
         $(
-            impl<T, FW, const CLS: &'static str, R, $($type,)*> Constructor<FW, CLS, ($($type,)*), R> for T
+            impl<T, FW, CLS, R, $($type,)*> Constructor<FW, CLS, ($($type,)*), R> for T
             where
                 FW: Container<CLS>,
                 T: 'static + Fn($($type,)*) -> R,
                 $($type: for<'x> FromJs<'x>,)*
-                ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+                ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
                 Obj<FW, CLS>: ClassDef,
+                CLS: 'static
             {
                 const NUM_ARGS: usize = 0 $(+ tup!(@one $type))*;
 

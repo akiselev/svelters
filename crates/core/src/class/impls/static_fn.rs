@@ -2,33 +2,29 @@ use rquickjs::Rest;
 
 use crate::inner::*;
 
-pub struct ClassStaticFunc<FW, const CLS: &'static str, A, R, T>(
-    &'static str,
-    T,
-    PhantomData<(A, R, FW)>,
-)
+pub struct ClassStaticFunc<FW, CLS, A, R, T>(&'static str, T, PhantomData<(CLS, A, R, FW)>)
 where
     FW: Container<CLS>,
     T: StaticFunc<FW, CLS, A, R>;
 
-unsafe impl<FW, T, A, R, const CLS: &'static str> Sync for ClassStaticFunc<FW, CLS, A, R, T>
+unsafe impl<FW, T, A, R, CLS> Sync for ClassStaticFunc<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: StaticFunc<FW, CLS, A, R>,
 {
 }
 
-impl<FW, T, A, R, const CLS: &'static str> ClassStaticFunc<FW, CLS, A, R, T>
+impl<FW, T, A, R, CLS> ClassStaticFunc<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: StaticFunc<FW, CLS, A, R>,
 {
-    pub(in crate) const fn new(name: &'static str, func: T) -> Self {
+    pub(in crate) fn new(name: &'static str, func: T) -> Self {
         ClassStaticFunc(name, func, PhantomData)
     }
 }
 
-impl<FW, T, A, R, const CLS: &'static str> TypeDef for ClassStaticFunc<FW, CLS, A, R, T>
+impl<FW, T, A, R, CLS> TypeDef for ClassStaticFunc<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
     T: 'static + StaticFunc<FW, CLS, A, R>,

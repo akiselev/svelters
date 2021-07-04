@@ -1,6 +1,6 @@
 use crate::inner::*;
 
-pub struct Obj<FW, const CLS: &'static str>
+pub struct Obj<FW, CLS>
 where
     FW: FrameworkClass<CLS> + Container<CLS> + Framework,
 {
@@ -8,11 +8,11 @@ where
     inner: ClsBox<FW, CLS>,
 }
 
-impl<'a, FW, const CLS: &'static str> Obj<FW, CLS>
+impl<'a, FW, CLS> Obj<FW, CLS>
 where
     FW: FrameworkClass<CLS> + Container<CLS>,
-    ClsBox<FW, CLS>: GetRef<'a, ClsTy<FW, CLS>>,
-    ClsTy<FW, CLS>: 'static,
+    ClsBox<FW, CLS>: GetRef<'a, CLS>,
+    CLS: 'static,
 {
     pub fn new(inner: ClsBox<FW, CLS>) -> Self {
         Self {
@@ -28,7 +28,7 @@ where
         &self.inner
     }
 
-    pub fn as_inner<'b>(&'a self) -> &'b ClsTy<FW, CLS>
+    pub fn as_inner<'b>(&'a self) -> &'b CLS
     where
         'a: 'b,
     {
@@ -36,11 +36,11 @@ where
     }
 }
 
-impl<'a, FW, const CLS: &'static str> ClassDef for Obj<FW, CLS>
+impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
 where
     FW: Framework + Container<CLS> + FrameworkClass<CLS>,
 {
-    const CLASS_NAME: &'static str = CLS;
+    const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
     unsafe fn class_id() -> &'static mut ClassId {
         <FW as FrameworkClass<CLS>>::get_id()
@@ -56,10 +56,9 @@ where
         println!(
             "Initializing {}::{} proto",
             std::any::type_name::<FW>(),
-            CLS
+            std::any::type_name::<CLS>()
         );
-        let phase = InitProto::<FW, CLS>::new();
-        let cls: JsClass<FW, CLS, InitProto<FW, CLS>> = JsClass::new((ctx, proto));
+        let cls: JsClass<FW, CLS, InitProto<FW, CLS>> = JsClass::new(InitProto::new(ctx, proto));
         <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }
@@ -68,10 +67,10 @@ where
         println!(
             "Initializing {}::{} static",
             std::any::type_name::<FW>(),
-            CLS
+            std::any::type_name::<CLS>()
         );
-        let phase = InitStatic::<FW, CLS>::new();
-        let cls: JsClass<FW, CLS, InitStatic<FW, CLS>> = JsClass::new((ctx, _static));
+        let cls: JsClass<FW, CLS, InitStatic<FW, CLS>> =
+            JsClass::new(InitStatic::new(ctx, _static));
         <FW as FrameworkClass<CLS>>::define(cls)?;
         Ok(())
     }

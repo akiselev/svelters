@@ -9,17 +9,16 @@ pub(in crate) mod impls {
     pub(in crate) mod static_fn;
 }
 
-pub struct JsClass<'a, 'b: 'a, FW: Framework, const CLS: &'static str, P: 'static + Phase> {
-    phase: P::Input<'a, 'b>,
-    pub(in crate) framework: PhantomData<FW>,
+pub struct JsClass<FW: Framework, CLS, P: Phase> {
+    phase: P,
+    pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'x, 'b: 'x, FW: Framework, const CLS: &'static str, P: 'static + Phase>
-    JsClass<'x, 'b, FW, CLS, P>
+impl<FW: Framework, CLS, P: Phase> JsClass<FW, CLS, P>
 where
     FW: Container<CLS>,
 {
-    pub fn new(phase: P::Input<'x, 'b>) -> Self {
+    pub fn new(phase: P) -> Self {
         Self {
             phase,
             framework: PhantomData,
@@ -32,7 +31,8 @@ where
         R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
         ClassConstructor<FW, CLS, (), R, X>: Implements<P>,
     {
-        ClassConstructor::new(func).build(self.phase)
+        // ClassConstructor::new(func).build(self.phase)
+        Ok(())
     }
 
     pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
@@ -40,10 +40,12 @@ where
         X: 'static + Fn(&T) -> R,
         ClsBox<FW, CLS>: Cast<T>,
         R: for<'js> IntoJs<'js>,
+        CLS: 'static,
         ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
-        ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+        ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
     {
-        ClassMethod::new(name, func).build(self.phase)
+        // ClassMethod::new(name, func).build(self.phase)
+        Ok(())
     }
 
     pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
@@ -52,14 +54,15 @@ where
         R: for<'a> IntoJs<'a>,
         ClassStaticFunc<FW, CLS, (), R, X>: Implements<P>,
     {
-        ClassStaticFunc::new(name, func).build(self.phase)
+        // ClassStaticFunc::new(name, func).build(self.phase)
+        Ok(())
     }
 }
 
 macro_rules! tup {
     ($($static_fn:ident $method:ident $constructor:ident $($type:ident)*,)*) => {
         $(
-            pub const fn $static_fn<$($type,)* R, X>(
+            pub fn $static_fn<$($type,)* R, X>(
                 &self,
                 name: &'static str,
                 func: X,
@@ -73,14 +76,14 @@ macro_rules! tup {
                 ClassStaticFunc::new(name, func)
             }
 
-            pub const fn $method<T, $($type,)* R, X>(
+            pub fn $method<T, $($type,)* R, X>(
                 &self,
                 name: &'static str,
                 func: X,
             ) -> ClassMethod<FW, CLS, (T, $($type,)*), R, X>
             where
                 X: 'static + Method<FW, CLS, (T, $($type,)*), R> + Fn($($type,)*) -> R,
-                ClsBox<FW, CLS>: for<'a> GetRef<'a, ClsTy<FW, CLS>>,
+                ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
                 ClsBox<FW, CLS>: Cast<T>,
                 R: for<'js> IntoJs<'js>,
                 $($type: for<'a> FromJs<'a>,)*
@@ -88,7 +91,7 @@ macro_rules! tup {
                 ClassMethod::new(name, func)
             }
 
-            pub const fn $constructor<$($type,)* R, X>(&self, func: X) -> ClassConstructor<FW, CLS, ($($type,)*), R, X>
+            pub fn $constructor<$($type,)* R, X>(&self, func: X) -> ClassConstructor<FW, CLS, ($($type,)*), R, X>
             where
                 X: 'static + Constructor<FW, CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
@@ -117,7 +120,7 @@ macro_rules! tup {
     (@idx P) => { 15 };
 }
 
-impl<'x, 'b: 'x, Z: Phase, FW: Framework, const CLS: &'static str> JsClass<'x, 'b, FW, CLS, Z>
+impl<Z: Phase, FW: Framework, CLS> JsClass<FW, CLS, Z>
 where
     FW: Container<CLS>,
 {
@@ -141,24 +144,24 @@ where
     }
 }
 
-pub struct JsClassLoader<FW: 'static, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
+pub struct JsClassLoader<FW: 'static, CLS>(pub(in crate) PhantomData<(FW, CLS)>);
 
-impl<FW: FrameworkClass<CLS>, const CLS: &'static str> JsClassLoader<FW, CLS> {
+impl<FW: FrameworkClass<CLS>, CLS> JsClassLoader<FW, CLS> {
     pub fn new() -> Self {
         Self(PhantomData)
     }
 }
 
-impl<FW: 'static, const CLS: &'static str> Implements<ModuleEval> for JsClassLoader<FW, CLS> {
-    fn build<'a, 'b: 'a>(self, (ctx, module): <ModuleEval as Phase>::Input<'a, 'b>) -> Result<()> {
+impl<'a, 'b: 'a, FW: FrameworkClass<CLS>, CLS> Implements<ModuleEval<'a, 'b>>
+    for JsClassLoader<FW, CLS>
+{
+    fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
         Ok(())
     }
 }
 
-// default impl<FW: 'static, const CLS: &'static str, P: 'static + Phase> Implements<P>
-//     for JsClassLoader<FW, CLS>
-// {
-//     fn build<'a, 'b: 'a>(self, phase: P::Input<'a, 'b>) -> Result<()> {
-//         Ok(())
-//     }
-// }
+default impl<FW, CLS, P: Phase> Implements<P> for JsClassLoader<FW, CLS> {
+    fn build<'a, 'b: 'a>(self, phase: P) -> Result<()> {
+        Ok(())
+    }
+}

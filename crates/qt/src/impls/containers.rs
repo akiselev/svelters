@@ -3,14 +3,14 @@ use svelters_core::prelude::*;
 
 use crate::inner::*;
 
-pub enum QtWrapper<const CLS: &'static str>
+pub enum QtWrapper<CLS>
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    Owned(QBox<ClsTy<QT, CLS>>),
-    Shared(QPtr<ClsTy<QT, CLS>>),
-    Ref(Ptr<ClsTy<QT, CLS>>),
+    Owned(QBox<CLS>),
+    Shared(QPtr<CLS>),
+    Ref(Ptr<CLS>),
 }
 
 pub struct DerefWrapper<'a, T>(Ptr<T>, PhantomData<&'a ()>);
@@ -23,10 +23,10 @@ impl<'a, T> Deref for DerefWrapper<'a, T> {
     }
 }
 
-impl<X, const CLS: &'static str> Cast<X> for QtWrapper<CLS>
+impl<X, CLS> Cast<X> for QtWrapper<CLS>
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
     QObject: StaticDowncast<X>,
 {
     type Output<'a> = DerefWrapper<'a, X>;
@@ -40,14 +40,14 @@ where
     }
 }
 
-impl<'a, const CLS: &'static str> GetRef<'a, ClsTy<QT, CLS>> for QtWrapper<CLS>
+impl<'a, CLS> GetRef<'a, CLS> for QtWrapper<CLS>
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    type Pointer = Ptr<ClsTy<QT, CLS>>;
+    type Pointer = Ptr<CLS>;
 
-    fn get_ref(&'a self) -> &'a ClsTy<QT, CLS> {
+    fn get_ref(&'a self) -> &'a CLS {
         match self {
             QtWrapper::Owned(ref val) => val.deref(),
             QtWrapper::Shared(ref val) => val.deref(),
@@ -64,10 +64,10 @@ where
     }
 }
 
-impl<const CLS: &'static str> IntoContainer<QT, CLS> for QBox<ClsTy<QT, CLS>>
+impl<CLS> IntoContainer<QT, CLS> for QBox<CLS>
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
 
@@ -76,10 +76,10 @@ where
     }
 }
 
-impl<const CLS: &'static str> IntoContainer<QT, CLS> for QPtr<ClsTy<QT, CLS>>
+impl<CLS> IntoContainer<QT, CLS> for QPtr<CLS>
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
 
@@ -88,10 +88,10 @@ where
     }
 }
 
-impl<const CLS: &'static str> IntoContainer<QT, CLS> for Ptr<ClsTy<QT, CLS>>
+impl<CLS> IntoContainer<QT, CLS> for Ptr<CLS>
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
 

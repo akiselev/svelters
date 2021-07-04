@@ -24,6 +24,7 @@ use crate::impls::containers::QtWrapper;
 
 #[derive(Debug, Clone, Copy)]
 pub struct QT;
+pub struct QtCore;
 
 impl Framework for QT {
     type Loader = impl Loader;
@@ -55,15 +56,15 @@ impl Framework for QT {
 
     fn get_loader() -> (Self::Resolver, Self::Loader) {
         let resolver = BuiltinResolver::default().with_module("QtCore");
-        let loader = ModuleLoader::default().with_module("QtCore", Self::module::<"QtCore">());
+        let loader = ModuleLoader::default().with_module("QtCore", Self::module::<QtCore>());
         (resolver, loader)
     }
 }
 
-impl<const CLS: &'static str> Container<CLS> for QT
+impl<CLS> Container<CLS> for QT
 where
     QT: FrameworkClass<CLS>,
-    ClsTy<QT, CLS>: StaticUpcast<QObject> + CppDeletable,
+    CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
 }
