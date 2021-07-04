@@ -101,21 +101,38 @@ pub trait Phase {
     type Error: std::fmt::Debug;
 }
 
-pub trait Implements<P: 'static + Phase>: 'static {
-    fn build<'a, 'b: 'a>(self, input: P::Input<'a, 'b>) -> Result<()>;
+pub trait Implements<P: 'static> {
+    fn build<'a, 'b: 'a>(self, input: P::Input<'a, 'b>) -> Result<()>
+    where
+        P: Phase;
 }
 
-impl<T: 'static, P: 'static + Phase> Implements<P> for T {
-    default fn build(self, phase: &P) -> Result<()> {
-        Ok(())
-    }
-}
+// default impl<T: 'static, P: 'static> Implements<P> for T {
+//     default fn build(self, phase: &P) -> Result<()> {
+//         Ok(())
+//     }
+// }
 
-// default impl<FW, const MOD: &'static str, P: Phase> Implements<P> for JsModuleLoader<FW, MOD>
+// default impl<FW: 'static, const MOD: &'static str, P: 'static + Phase> Implements<P>
+//     for JsModuleLoader<FW, MOD>
 // where
 //     FW: FrameworkModule<MOD>,
 // {
-//     fn build(self, phase: &P) -> Result<()> {
+//     fn build<'a, 'b: 'a>(self, phase: P::Input<'a, 'b>) -> Result<()> {
 //         Ok(())
 //     }
+// }
+
+// trait Trait<T> {
+//     fn build();
+// }
+
+// default impl<T, U> Trait<T> for U {
+//     fn build() {}
+// }
+
+// struct Type<const T: &'static str>;
+
+// impl Trait<usize> for Type<"string"> {
+//     fn build() {}
 // }

@@ -141,7 +141,7 @@ where
     }
 }
 
-pub struct JsClassLoader<FW, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
+pub struct JsClassLoader<FW: 'static, const CLS: &'static str>(pub(in crate) PhantomData<FW>);
 
 impl<FW: FrameworkClass<CLS>, const CLS: &'static str> JsClassLoader<FW, CLS> {
     pub fn new() -> Self {
@@ -154,3 +154,11 @@ impl<FW: 'static, const CLS: &'static str> Implements<ModuleEval> for JsClassLoa
         Ok(())
     }
 }
+
+// default impl<FW: 'static, const CLS: &'static str, P: 'static + Phase> Implements<P>
+//     for JsClassLoader<FW, CLS>
+// {
+//     fn build<'a, 'b: 'a>(self, phase: P::Input<'a, 'b>) -> Result<()> {
+//         Ok(())
+//     }
+// }
