@@ -27,8 +27,8 @@ where
 impl<FW, T, A, R, CLS> TypeDef for ClassMethod<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
-    T: 'static + Method<FW, CLS, A, R>,
-    R: 'static + for<'js> IntoJs<'js>,
+    T: Method<FW, CLS, A, R>,
+    R: for<'js> IntoJs<'js>,
     A: 'static,
     <T as Method<FW, CLS, A, R>>::Args: for<'a> FromJs<'a>,
 {

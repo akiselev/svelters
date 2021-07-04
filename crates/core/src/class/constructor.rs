@@ -5,34 +5,28 @@ where
     FW: Container<CLS>,
 {
     const NUM_ARGS: usize;
-    type Args: for<'js> FromJs<'js>;
-    type Return: ClassDef;
 
     fn try_constructor<'js>(
         &'static self,
         ctx: Ctx<'js>,
         args: &Vec<Value<'js>>,
-    ) -> Result<Self::Return>;
+    ) -> Result<Obj<FW, CLS>>;
 }
 
 impl<T, FW, CLS, R> Constructor<FW, CLS, (), R> for T
 where
     FW: Container<CLS>,
     ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
-    T: 'static + Fn() -> R,
+    T: Fn() -> R,
     R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
-    CLS: 'static,
 {
     const NUM_ARGS: usize = 0;
-
-    type Args = ();
-    type Return = Obj<FW, CLS>;
 
     fn try_constructor<'js>(
         &'static self,
         _ctx: Ctx<'js>,
         args: &Vec<Value<'js>>,
-    ) -> Result<Self::Return> {
+    ) -> Result<Obj<FW, CLS>> {
         let args_len = args.len();
         tuple_match_size(args_len, 0)?;
 
@@ -47,7 +41,7 @@ macro_rules! tup {
             impl<T, FW, CLS, R, $($type,)*> Constructor<FW, CLS, ($($type,)*), R> for T
             where
                 FW: Container<CLS>,
-                T: 'static + Fn($($type,)*) -> R,
+                T:  Fn($($type,)*) -> R,
                 $($type: for<'x> FromJs<'x>,)*
                 ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
@@ -56,11 +50,7 @@ macro_rules! tup {
             {
                 const NUM_ARGS: usize = 0 $(+ tup!(@one $type))*;
 
-                type Args = ($($type,)*);
-
-                type Return = Obj<FW, CLS>;
-
-                fn try_constructor<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Self::Return>
+                fn try_constructor<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Obj<FW, CLS>>
                 {
                     let args_len = args.len();
                     tuple_match_size(args_len, Self::NUM_ARGS)?;

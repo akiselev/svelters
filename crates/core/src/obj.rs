@@ -12,7 +12,6 @@ impl<'a, FW, CLS> Obj<FW, CLS>
 where
     FW: FrameworkClass<CLS> + Container<CLS>,
     ClsBox<FW, CLS>: GetRef<'a, CLS>,
-    CLS: 'static,
 {
     pub fn new(inner: ClsBox<FW, CLS>) -> Self {
         Self {

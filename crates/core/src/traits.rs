@@ -12,7 +12,7 @@ pub trait Framework: Copy + Clone + 'static {
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
     fn get_loader() -> (Self::Resolver, Self::Loader);
 
-    fn module<MOD>() -> JsModuleLoader<Self, MOD>
+    fn module<MOD>() -> JsModuleLoader<Self, MOD, ()>
     where
         Self: FrameworkModule<MOD>,
     {
@@ -41,8 +41,11 @@ where
     fn into_framework_type(self) -> Self::Type;
 }
 
-pub trait FrameworkModule<CLS>: Framework {
-    fn define<P: Phase>(module: JsModule<Self, CLS, P>) -> Result<()>;
+pub trait FrameworkModule<CLS> {
+    fn define<P>(module: JsModule<Self, CLS, P>) -> Result<()>
+    where
+        Self: Framework,
+        JsModule<Self, CLS, P>: Implements<P>;
 }
 
 pub trait FrameworkClass<CLS> {
@@ -96,21 +99,15 @@ pub trait GetRef<'a, T> {
 
 pub trait Phase {}
 
-pub trait Implements<P>
-where
-    P: Phase,
-{
+pub trait Implements<P> {
     fn build(self, input: P) -> Result<()>;
 }
 
-// default impl<T, P> Implements<P> for T
-// where
-//     P: Phase,
-// {
-//     default fn build(self, phase: &P) -> Result<()> {
-//         Ok(())
-//     }
-// }
+default impl<T, P> Implements<P> for T {
+    default fn build(self, phase: P) -> Result<()> {
+        Ok(())
+    }
+}
 
 // default impl<FW: 'static, CLS: 'static, P: Phase> Implements<P> for JsClassLoader<FW, CLS>
 // where

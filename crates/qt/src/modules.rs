@@ -10,10 +10,14 @@ use rquickjs::{AsFunction, Class, Loaded, Module, Native};
 use crate::{inner::*, QtCore};
 
 impl FrameworkModule<QtCore> for QT {
-    fn define<P: Phase>(module: JsModule<Self, QtCore, P>) -> Result<()> {
+    fn define<P>(module: JsModule<Self, QtCore, P>) -> Result<()>
+    where
+        JsModule<Self, QtCore, P>: Implements<P>,
+    {
         module.class::<QObject>()?;
-        module.class::<QApplication>()?;
-        module.class::<QMainWindow>()
+        // module.class::<QApplication>()?;
+        // module.class::<QMainWindow>()
+        Ok(())
     }
 }
 
@@ -23,15 +27,15 @@ impl FrameworkClass<QObject> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P: Phase>(cls: JsClass<Self, QObject, P>) -> Result<()> {
-        cls.constructor0(|| {
-            unsafe { QObject::new_0a() }
-            // cls.constructor1(|var: QString| {
-            // let mut args = QCoreApplicationArgs::new();
-            // let (argc, argv) = args.get();
-            // std::mem::forget(args);
-            // QApplication::new_2a(argc, argv)
-        })?;
+    fn define<P>(cls: JsClass<Self, QObject, P>) -> Result<()> {
+        // cls.constructor0(|| {
+        //     unsafe { QObject::new_0a() }
+        //     // cls.constructor1(|var: QString| {
+        //     // let mut args = QCoreApplicationArgs::new();
+        //     // let (argc, argv) = args.get();
+        //     // std::mem::forget(args);
+        //     // QApplication::new_2a(argc, argv)
+        // })?;
         Ok(())
     }
 }
@@ -42,16 +46,16 @@ impl FrameworkClass<QApplication> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P: Phase>(cls: JsClass<Self, QApplication, P>) -> Result<()> {
-        cls.static_fn0("exec", || unsafe {
-            QCoreApplication::exec();
-        })?;
-        cls.constructor0(|| unsafe {
-            let mut args = QCoreApplicationArgs::new();
-            let (argc, argv) = args.get();
-            std::mem::forget(args);
-            QApplication::new_2a(argc, argv)
-        })?;
+    fn define<P>(cls: JsClass<Self, QApplication, P>) -> Result<()> {
+        // cls.static_fn0("exec", || unsafe {
+        //     QCoreApplication::exec();
+        // })?;
+        // cls.constructor0(|| unsafe {
+        //     let mut args = QCoreApplicationArgs::new();
+        //     let (argc, argv) = args.get();
+        //     std::mem::forget(args);
+        //     QApplication::new_2a(argc, argv)
+        // })?;
         Ok(())
     }
 }
@@ -62,17 +66,17 @@ impl FrameworkClass<QMainWindow> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P: Phase>(cls: JsClass<Self, QMainWindow, P>) -> Result<()> {
-        cls.method0("show", |this: &QWidget| unsafe {
-            this.show();
-        })?;
-        cls.method0("hide", |this: &QMainWindow| unsafe {
-            this.hide();
-        })?;
-        cls.static_fn0("exec", || unsafe {
-            QCoreApplication::exec();
-        })?;
-        cls.constructor0(|| unsafe { QMainWindow::new_0a() })?;
+    fn define<P>(cls: JsClass<Self, QMainWindow, P>) -> Result<()> {
+        // cls.method0("show", |this: &QWidget| unsafe {
+        //     this.show();
+        // })?;
+        // cls.method0("hide", |this: &QMainWindow| unsafe {
+        //     this.hide();
+        // })?;
+        // cls.static_fn0("exec", || unsafe {
+        //     QCoreApplication::exec();
+        // })?;
+        // cls.constructor0(|| unsafe { QMainWindow::new_0a() })?;
         Ok(())
     }
 }

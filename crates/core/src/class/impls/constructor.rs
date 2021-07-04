@@ -28,7 +28,7 @@ where
 impl<FW, T, A, R, CLS> TypeDef for ClassConstructor<FW, CLS, A, R, T>
 where
     FW: Container<CLS>,
-    T: 'static + Constructor<FW, CLS, A, R>,
+    T: Constructor<FW, CLS, A, R>,
     R: 'static,
     A: 'static,
 {
