@@ -99,44 +99,20 @@ impl<'a, 'js> ModuleEval<'a, 'js> {
 
 impl<'a, 'js> Phase for ModuleEval<'a, 'js> {}
 
-// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<ConstructorLoad<FW, CLS>> for T {
-//     fn build<'a, 'b: 'a>(
-//         self,
-//         phase: <ConstructorLoad<FW, CLS> as Phase>::Input<'a, 'b>,
-//     ) -> Result<()> {
-//         todo!()
-//     }
-// }
+pub struct InitSuperProto<'a, 'js, FW, CLS, SUPER> {
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) obj: &'a Object<'js>,
+    pub(in crate) framework: PhantomData<(FW, CLS, SUPER)>,
+}
 
-// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<ConstructorEval<FW, CLS>> for T {
-//     fn build<'a, 'b: 'a>(
-//         self,
-//         phase: <ConstructorEval<FW, CLS> as Phase>::Input<'a, 'b>,
-//     ) -> Result<()> {
-//         todo!()
-//     }
-// }
+impl<'a, 'js, FW: Container<CLS>, CLS, SUPER> InitSuperProto<'a, 'js, FW, CLS, SUPER> {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
+        Self {
+            ctx,
+            obj,
+            framework: PhantomData,
+        }
+    }
+}
 
-// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<InitProto<FW, CLS>> for T {
-//     fn build<'a, 'b: 'a>(self, phase: <InitProto<FW, CLS> as Phase>::Input<'a, 'b>) -> Result<()> {
-//         todo!()
-//     }
-// }
-
-// default impl<T, FW: Container<CLS>, CLS: 'static> Implements<InitStatic<FW, CLS>> for T {
-//     fn build<'a, 'b: 'a>(self, phase: <InitStatic<FW, CLS> as Phase>::Input<'a, 'b>) -> Result<()> {
-//         todo!()
-//     }
-// }
-
-// default impl<T> Implements<ModuleLoad> for T {
-//     fn build<'a, 'b: 'a>(self, phase: <ModuleLoad as Phase>::Input<'a, 'b>) -> Result<()> {
-//         todo!()
-//     }
-// }
-
-// default impl<T> Implements<ModuleEval> for T {
-//     fn build<'a, 'b: 'a>(self, phase: <ModuleEval as Phase>::Input<'a, 'b>) -> Result<()> {
-//         todo!()
-//     }
-// }
+impl<'a, 'js, FW: Container<CLS>, CLS, SUPER> Phase for InitSuperProto<'a, 'js, FW, CLS, SUPER> {}

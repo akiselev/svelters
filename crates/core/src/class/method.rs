@@ -1,140 +1,81 @@
-use rquickjs::Class;
+use rquickjs::{Class, Rest};
 
 use crate::inner::*;
 
-pub trait Method<FW, CLS, A, R>
-where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-    Self::Args: for<'js> FromJs<'js>,
-    Self::Return: for<'js> IntoJs<'js>,
-{
-    const NUM_ARGS: usize;
-    type Args;
-    type Return;
+pub struct ClassMethod<FW, CLS, TG, A, R, T>(&'static str, T, PhantomData<(CLS, TG, A, R, FW)>);
 
-    fn try_call<'js>(
-        &'static self,
-        this: &Class<'js, Obj<FW, CLS>>,
-        ctx: Ctx<'js>,
-        args: &Vec<Value<'js>>,
-    ) -> Result<Self::Return>;
-}
-
-impl<T, X, FW, CLS, R> Method<FW, CLS, (X,), R> for T
-where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-    ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
-    ClsBox<FW, CLS>: Cast<X>,
-    T: Fn(&X) -> R,
-    R: for<'js> IntoJs<'js>,
-    CLS: 'static,
-{
-    const NUM_ARGS: usize = 0;
-
-    type Args = ();
-    type Return = R;
-
-    fn try_call<'js>(
-        &'static self,
-        this: &Class<'js, Obj<FW, CLS>>,
-        _ctx: Ctx<'js>,
-        args: &Vec<Value<'js>>,
-    ) -> Result<Self::Return> {
-        let args_len = args.len();
-        tuple_match_size(args_len, 0)?;
-        let obj: &Obj<FW, CLS> = this.as_ref();
-        let result = (*self)(&*obj.as_box().cast());
-        Ok(result)
+impl<FW, T, A, R, CLS> ClassMethod<FW, CLS, CLS, A, R, T> {
+    pub(in crate) fn new(name: &'static str, func: T) -> Self {
+        ClassMethod(name, func, PhantomData)
     }
 }
 
-macro_rules! tup {
-    ($($($type:ident)*,)*) => {
-        $(
-            impl<T, X, FW, CLS, R, $($type,)*> Method<FW, CLS, (X, $($type,)*), R> for T
-            where
-                FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-                ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
-                ClsBox<FW, CLS>: Cast<X>,
-                T: Fn(&X, $($type,)*) -> R,
-                CLS: Cast<X>,
-                $($type: for<'x> FromJs<'x>,)*
-                R: for<'js> IntoJs<'js>,
-                CLS: 'static,
-            {
-                const NUM_ARGS: usize = 0 $(+ tup!(@one $type))*;
-
-                type Args = ($($type,)*);
-
-                type Return = R;
-
-                fn try_call<'js>(&'static self, this: &Class<'js, Obj<FW, CLS>>, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Self::Return>
-                {
-                    let args_len = args.len();
-                    tuple_match_size(args_len, <Self as Method<FW, CLS, (X, $($type,)*), R>>::NUM_ARGS)?;
-                    let obj: &Obj<FW, CLS> = this.as_ref();
-                    let result = (*self)(
-                        &*obj.as_box().cast(),
-                        $({
-                            let arg: $type = FromJs::from_js(ctx, args.get(tup!(@idx $type)).cloned().unwrap())?;
-                            arg
-                        },)*
-                    );
-                    Ok(result)
-                }
-            }
-        )*
-    };
-    (@one $($t:tt)*) => { 1 };
-    (@idx A) => { 0 };
-    (@idx B) => { 1 };
-    (@idx C) => { 2 };
-    (@idx D) => { 3 };
-    (@idx E) => { 4 };
-    (@idx F) => { 5 };
-    (@idx G) => { 6 };
-    (@idx H) => { 7 };
-    (@idx I) => { 8 };
-    (@idx J) => { 9 };
-    (@idx K) => { 10 };
-    (@idx L) => { 11 };
-    (@idx M) => { 12 };
-    (@idx N) => { 13 };
-    (@idx O) => { 14 };
-    (@idx P) => { 15 };
-}
-
-tup! {
-    A,
-    A B,
-    A B C,
-    A B C D,
-    A B C D E,
-    A B C D E F,
-    A B C D E F G,
-    A B C D E F G H,
-    A B C D E F G H I,
-    A B C D E F G H I J,
-    A B C D E F G H I J K,
-    A B C D E F G H I J K L,
-    A B C D E F G H I J K L M,
-    A B C D E F G H I J K L M N,
-    A B C D E F G H I J K L M N O,
-    A B C D E F G H I J K L M N O P,
-}
-
-fn tuple_match_size(actual: usize, expected: usize) -> Result<()> {
-    if actual == expected {
+impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
+    for ClassMethod<FW, CLS, CLS, (T,), R, X>
+where
+    FW: Framework + FrameworkClass<CLS> + Container<CLS> + Container<T>,
+    X: 'static + for<'x> Fn(&'x T) -> R,
+    ClsBox<FW, CLS>: Cast<T>,
+    R: 'static + for<'js> IntoJs<'js>,
+    <FW as Container<CLS>>::Type: for<'x> GetRef<'x, CLS>,
+    CLS: 'static,
+    T: 'static,
+{
+    fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+        println!(
+            "Implementing {}::{}",
+            <FW as FrameworkClass<CLS>>::get_name(),
+            self.0
+        );
+        input.obj.set(
+            self.0,
+            rquickjs::Func::new(
+                self.0,
+                rquickjs::Method(
+                    move |this: Class<'b, Obj<FW, CLS>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                        let args = args.into_inner();
+                        let args_len = args.len();
+                        tuple_match_size(args_len, 0)?;
+                        let obj: &Obj<FW, CLS> = this.as_ref();
+                        let data = obj.inner.cast();
+                        let res = self.1(&*data);
+                        Result::<_>::Ok(res.into_js(ctx))
+                    },
+                ),
+            ),
+        )?;
         Ok(())
-    } else {
-        Err(Error::new_from_js_message(
-            "array",
-            "tuple",
-            if actual < expected {
-                "Not enough values"
-            } else {
-                "Too many values"
-            },
-        ))
+    }
+}
+
+impl<'a, 'b: 'a, T, FW, CLS, R, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, SUPER>>
+    for ClassMethod<FW, CLS, SUPER, (SUPER,), R, T>
+where
+    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
+    ClsBox<FW, CLS>: for<'c> GetRef<'c, CLS>,
+    ClsBox<FW, CLS>: Cast<SUPER>,
+    SUPER: 'static,
+    T: 'static + Fn(&SUPER) -> R,
+    R: 'static + for<'js> IntoJs<'js>,
+    CLS: 'static,
+{
+    fn build(self, input: &InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        input.obj.set(
+            self.0,
+            rquickjs::Func::new(
+                self.0,
+                rquickjs::Method(
+                    move |this: Class<'b, Obj<FW, CLS>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                        let args = args.into_inner();
+                        let args_len = args.len();
+                        tuple_match_size(args_len, 0)?;
+                        let obj: &Obj<FW, CLS> = this.as_ref();
+                        let res = self.1(&*obj.as_box().cast());
+                        Result::<_>::Ok(res.into_js(ctx))
+                    },
+                ),
+            ),
+        )?;
+        Ok(())
     }
 }

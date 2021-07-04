@@ -4,8 +4,8 @@ pub struct Obj<FW, CLS>
 where
     FW: FrameworkClass<CLS> + Container<CLS> + Framework,
 {
-    fw: PhantomData<FW>,
-    inner: ClsBox<FW, CLS>,
+    pub(in crate) fw: PhantomData<FW>,
+    pub(in crate) inner: ClsBox<FW, CLS>,
 }
 
 impl<'a, FW, CLS> Obj<FW, CLS>

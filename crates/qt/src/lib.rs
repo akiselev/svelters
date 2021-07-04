@@ -2,7 +2,7 @@
 #![feature(const_generics)]
 #![feature(impl_trait_in_bindings)]
 #![feature(min_type_alias_impl_trait)]
-#![feature(const_evaluatable_checked)]
+#![feature(specialization)]
 #![feature(in_band_lifetimes)]
 #![recursion_limit = "1024"]
 
@@ -67,6 +67,10 @@ where
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
+
+    // fn into_container_type(data: CLS) -> Self::Type {
+    //     QtWrapper::new
+    // }
 }
 
 mod modules;

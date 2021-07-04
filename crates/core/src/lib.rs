@@ -51,11 +51,9 @@ pub(in crate) mod inner {
     };
 
     pub(in crate) use crate::class::constructor::*;
-    pub(in crate) use crate::class::impls::constructor::*;
-    pub(in crate) use crate::class::impls::method::*;
-    pub(in crate) use crate::class::impls::static_fn::*;
     pub(in crate) use crate::class::method::*;
     pub(in crate) use crate::class::static_fn::*;
+    pub(in crate) use crate::class::superclass::*;
     pub(in crate) use crate::class::*;
     pub(in crate) use crate::module::*;
     pub(in crate) use crate::obj::*;

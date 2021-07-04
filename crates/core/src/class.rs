@@ -3,11 +3,7 @@ use crate::inner::*;
 pub(in crate) mod constructor;
 pub(in crate) mod method;
 pub(in crate) mod static_fn;
-pub(in crate) mod impls {
-    pub(in crate) mod constructor;
-    pub(in crate) mod method;
-    pub(in crate) mod static_fn;
-}
+pub(in crate) mod superclass;
 
 pub struct JsClass<FW, CLS, P> {
     phase: P,
@@ -37,12 +33,11 @@ where
 
     pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
-        FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-        X: Fn(&T) -> R,
+        FW: Framework + FrameworkClass<CLS> + Container<CLS> + Container<T>,
+        X: for<'a> Fn(&T) -> R,
         ClsBox<FW, CLS>: Cast<T>,
         R: for<'js> IntoJs<'js>,
-        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
-        ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
+        ClassMethod<FW, CLS, CLS, (T,), R, X>: Implements<P>,
         CLS: 'static,
     {
         ClassMethod::new(name, func).build(&self.phase)?;

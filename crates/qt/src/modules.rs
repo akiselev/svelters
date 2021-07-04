@@ -1,13 +1,19 @@
+use std::ops::Deref;
+
 use frunk::hlist::IntoTuple2;
 use qt_core::{
-    cpp_core::{CastFrom, CppBox, CppDeletable, Ptr, StaticDowncast, StaticUpcast},
+    cpp_core::{CastFrom, CppBox, CppDeletable, Ptr, Ref, StaticDowncast, StaticUpcast},
     QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString,
 };
 use qt_gui::QWindow;
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{AsFunction, Class, Loaded, Module, Native};
 
-use crate::{inner::*, QtCore};
+use crate::{
+    impls::containers::{DerefWrapper, QtWrapper},
+    inner::*,
+    QtCore,
+};
 
 impl FrameworkModule<QT> for QtCore {
     fn define<P>(module: JsModule<QT, Self, P>) -> Result<()>
@@ -15,6 +21,7 @@ impl FrameworkModule<QT> for QtCore {
         QT: Framework,
     {
         module.class::<QObject>()?;
+        module.class::<QWidget>()?;
         module.class::<QApplication>()?;
         module.class::<QMainWindow>()?;
         Ok(())
@@ -37,6 +44,33 @@ impl FrameworkClass<QObject> for QT {
             // let (argc, argv) = args.get();
             // std::mem::forget(args);
             // QApplication::new_2a(argc, argv)
+        })?;
+        cls.static_fn0("test", || {
+            println!("STATIC >>>>>>>>>>>>>>>>>>");
+        })?;
+        Ok(())
+    }
+}
+
+impl FrameworkClass<QWidget> for QT {
+    const CLASS_NAME: &'static str = "QWidget";
+
+    unsafe fn get_id() -> &'static mut ClassId {
+        static mut CLASS_ID: ClassId = ClassId::new();
+        &mut CLASS_ID
+    }
+
+    fn define<P>(cls: JsClass<Self, QWidget, P>) -> Result<()> {
+        cls.constructor0(|| {
+            unsafe { QWidget::new_0a() }
+            // cls.constructor1(|var: QString| {
+            // let mut args = QCoreApplicationArgs::new();
+            // let (argc, argv) = args.get();
+            // std::mem::forget(args);
+            // QApplication::new_2a(argc, argv)
+        })?;
+        cls.static_fn0("test", || {
+            println!("STATIC >>>>>>>>>>>>>>>>>>");
         })?;
         Ok(())
     }

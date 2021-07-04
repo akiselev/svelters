@@ -30,6 +30,8 @@ pub type ClsBox<FW, CLS> = <FW as Container<CLS>>::Type;
 
 pub trait Container<CLS> {
     type Type;
+
+    // fn into_container_type(data: CLS) -> Self::Type;
 }
 
 pub trait IntoContainer<FW, CLS>
