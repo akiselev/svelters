@@ -1,0 +1,50 @@
+import * as core from "Core";
+import * as widgets from "Widgets";
+
+import { Object, Application } from "Core";
+import { Widget, MainWindow, BoxLayout, PushButton } from "Widgets";
+
+const classes = {
+    Object,
+    Application,
+    Widget,
+    MainWindow,
+    BoxLayout,
+    PushButton,
+};
+
+export const constructClass = (cls = "Object", ...args) => {
+    let Constructor = classes[cls];
+    if (typeof Constructor !== "function") {
+        throw new Error(`Type ${cls} has no constructor`);
+    }
+    return new Constructor(...args);
+};
+
+export const getClassName = (cls = "Object") => {
+    return constructClass(cls).className();
+};
+
+export const getTypeOf = (cls = "Object", ...args) => {
+    let target = classes[cls];
+    if (args.length > 0) {
+        target = new target();
+    }
+    for (const arg in args) {
+        if (typeof target[arg] === "undefined") {
+            return "undefined";
+        }
+        target = target[arg];
+    }
+    return typeof target;
+};
+
+export const callMethod = (cls = "Object", name = "className", ...args) => {
+    let inst = constructClass(cls);
+    return inst[name](...args);
+};
+
+export const hasMethod = (cls = "Object", name = "className") => {
+    let inst = constructClass(cls);
+    return typeof inst[name] === "function";
+};

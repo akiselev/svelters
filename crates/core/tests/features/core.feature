@@ -14,20 +14,35 @@ Feature: Core
         When calling function "testArgs" with args ("One", "Two", "Three", "Four", "Five")
         Then return value is "One Two Three Four Five"
 
+    Scenario: check that Object constructor is a function
+        Given module at "core.js"
+        When calling function "getTypeOf" with args ("Object")
+        Then return value is "function"
+
+    Scenario: check that fake prop is undefined
+        Given module at "core.js"
+        When calling function "getTypeOf" with args ("Object", "notReal")
+        Then return value is "undefined"
+
     Scenario: get class name
-        Given module at "test.js"
+        Given module at "core.js"
         When calling function "getClassName"
         Then return value is "Object"
 
     Scenario: call basic method
-        Given module at "test.js"
+        Given module at "core.js"
         When calling function "callMethod" with args ("Object", "className")
-        Then return value is "Ob"
+        Then return value is "Object"
+
+    Scenario: check has method
+        Given module at "core.js"
+        When calling function "hasMethod" with args ("Object", "className")
+        Then return value is true
 
     Scenario: construct class
-        Given module at "test.js"
-        When calling function "constructClass"
-        Then return value is ()
+        Given module at "core.js"
+        When calling function "constructClass" with args ("Object")
+        Then return value is object
 
 # Then that string is now equal to "something interesting"
 
