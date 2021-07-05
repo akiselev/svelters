@@ -6,7 +6,7 @@ pub struct InitStatic<'a, 'js, FW, CLS> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'js, FW: Wraps<CLS>, CLS> InitStatic<'a, 'js, FW, CLS> {
+impl<'a, 'js, FW: Repr<CLS>, CLS> InitStatic<'a, 'js, FW, CLS> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -19,7 +19,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS> InitStatic<'a, 'js, FW, CLS> {
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<InitStatic<'a, 'b, FW, CLS>>
     for ClassStaticFunc<FW, CLS, (), R, T>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS>,
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
     CLS: 'static,
@@ -53,7 +53,7 @@ where
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitStatic<'a, 'b, FW, CLS>>
     for ClassSuper<FW, CLS, SUPER>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<SUPER> + TypeDef<SUPER>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<SUPER> + TypeDef<SUPER>,
     CLS: 'static,
 {
     fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {

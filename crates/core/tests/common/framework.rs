@@ -32,7 +32,7 @@ impl Framework for Fw {
     }
 }
 
-impl<CLS> Wraps<CLS> for Fw
+impl<CLS> Repr<CLS> for Fw
 where
     Fw: TypeDef<CLS>,
     CLS: StaticUpcast<Object>,

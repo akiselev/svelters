@@ -33,17 +33,17 @@ pub trait CastMut<T> {
     fn cast_mut<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub type Wrapped<FW, CLS> = <FW as Wraps<CLS>>::Type;
-pub type Casted<'a, FW, CLS, T> = <<FW as Wraps<CLS>>::Type as Cast<T>>::Output<'a>;
-pub type CastedMut<'a, FW, CLS, T> = <<FW as Wraps<CLS>>::Type as CastMut<T>>::Output<'a>;
+pub type Wrapped<FW, CLS> = <FW as Repr<CLS>>::Type;
+pub type Casted<'a, FW, CLS, T> = <<FW as Repr<CLS>>::Type as Cast<T>>::Output<'a>;
+pub type CastedMut<'a, FW, CLS, T> = <<FW as Repr<CLS>>::Type as CastMut<T>>::Output<'a>;
 
-pub trait Wraps<CLS> {
+pub trait Repr<CLS> {
     type Type;
 }
 
-pub trait IntoContainer<FW, CLS>
+pub trait IntoType<FW, CLS>
 where
-    FW: Wraps<CLS>,
+    FW: Repr<CLS>,
 {
     type Type;
 
@@ -56,7 +56,7 @@ pub trait Module<FW>: Sized {
         FW: Framework;
 }
 
-pub trait TypeDef<CLS>: Sized + Framework + Wraps<CLS> {
+pub trait TypeDef<CLS>: Sized + Framework + Repr<CLS> {
     const CLASS_NAME: &'static str;
 
     unsafe fn get_id() -> &'static mut ClassId;

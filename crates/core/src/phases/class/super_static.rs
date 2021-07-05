@@ -6,7 +6,7 @@ pub struct InitSuperStatic<'a, 'js, FW, CLS, SUPER> {
     pub(in crate) framework: PhantomData<(FW, CLS, SUPER)>,
 }
 
-impl<'a, 'js, FW: Wraps<CLS>, CLS, SUPER> InitSuperStatic<'a, 'js, FW, CLS, SUPER> {
+impl<'a, 'js, FW: Repr<CLS>, CLS, SUPER> InitSuperStatic<'a, 'js, FW, CLS, SUPER> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -19,7 +19,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS, SUPER> InitSuperStatic<'a, 'js, FW, CLS, SUPE
 impl<'a, 'b: 'a, T, FW, CLS, SUPER, R> Implements<InitSuperStatic<'a, 'b, FW, CLS, SUPER>>
     for ClassStaticFunc<FW, SUPER, (), R, T>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS> + TypeDef<SUPER> + Wraps<SUPER>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS> + TypeDef<SUPER> + Repr<SUPER>,
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
     CLS: 'static,

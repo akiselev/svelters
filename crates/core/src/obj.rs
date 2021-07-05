@@ -2,7 +2,7 @@ use crate::inner::*;
 
 pub struct Obj<FW, CLS>
 where
-    FW: TypeDef<CLS> + Wraps<CLS> + Framework,
+    FW: TypeDef<CLS> + Repr<CLS> + Framework,
 {
     pub(in crate) fw: PhantomData<FW>,
     pub(in crate) inner: Wrapped<FW, CLS>,
@@ -10,7 +10,7 @@ where
 
 impl<'a, FW, CLS> Obj<FW, CLS>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS>,
 {
     pub fn new(inner: Wrapped<FW, CLS>) -> Self {
         Self {
@@ -29,7 +29,7 @@ where
 
 impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
 where
-    FW: Framework + Wraps<CLS> + TypeDef<CLS>,
+    FW: Framework + Repr<CLS> + TypeDef<CLS>,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 

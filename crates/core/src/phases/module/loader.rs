@@ -64,7 +64,7 @@ impl<FW: TypeDef<CLS>, CLS> JsClassLoader<FW, CLS> {
 
 impl<'a, 'b: 'a, FW, CLS> Implements<ModuleEval<'a, 'b>> for JsClassLoader<FW, CLS>
 where
-    FW: TypeDef<CLS> + Wraps<CLS>,
+    FW: TypeDef<CLS> + Repr<CLS>,
 {
     fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
         let cls: Type<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
@@ -76,7 +76,7 @@ where
 
 impl<'a, 'b: 'a, FW, CLS> Implements<ModuleLoad<'a, 'b>> for JsClassLoader<FW, CLS>
 where
-    FW: TypeDef<CLS> + Wraps<CLS>,
+    FW: TypeDef<CLS> + Repr<CLS>,
 {
     fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
         let cls: Type<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =

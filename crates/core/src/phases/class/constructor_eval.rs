@@ -6,7 +6,7 @@ pub struct ConstructorEval<'a, 'js, FW, CLS> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
+impl<'a, 'js, FW: Repr<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
         Self {
             ctx,
@@ -19,11 +19,11 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS>,
     T: Fn() -> R,
     CLS: 'static,
     T: 'static,
-    R: 'static + IntoContainer<FW, CLS, Type = Wrapped<FW, CLS>>,
+    R: 'static + IntoType<FW, CLS, Type = Wrapped<FW, CLS>>,
 {
     fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         println!(

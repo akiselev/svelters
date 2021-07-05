@@ -65,7 +65,7 @@ impl Framework for QT {
     }
 }
 
-impl<CLS> Wraps<CLS> for QT
+impl<CLS> Repr<CLS> for QT
 where
     QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,

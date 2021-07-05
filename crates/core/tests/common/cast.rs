@@ -130,7 +130,7 @@ where
     }
 }
 
-impl<T> IntoContainer<Fw, T> for Temp<T>
+impl<T> IntoType<Fw, T> for Temp<T>
 where
     Fw: TypeDef<T>,
 {

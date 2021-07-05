@@ -33,11 +33,11 @@ mod constructor {
         pub(crate) PhantomData<(CLS, A, R, FW)>,
     )
     where
-        FW: Framework + TypeDef<CLS> + Wraps<CLS>;
+        FW: Framework + TypeDef<CLS> + Repr<CLS>;
 
     impl<FW, T, A, R, CLS> ClassConstructor<FW, CLS, A, R, T>
     where
-        FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+        FW: Framework + TypeDef<CLS> + Repr<CLS>,
     {
         pub(in crate) fn new(func: T) -> Self {
             ClassConstructor(func, PhantomData)
@@ -112,11 +112,11 @@ mod staticfn {
         PhantomData<(CLS, A, R, FW)>,
     )
     where
-        FW: Wraps<CLS>;
+        FW: Repr<CLS>;
 
     impl<FW, T, A, R, CLS> ClassStaticFunc<FW, CLS, A, R, T>
     where
-        FW: Wraps<CLS>,
+        FW: Repr<CLS>,
     {
         pub(in crate) fn new(name: &'static str, func: T) -> Self {
             ClassStaticFunc(name, func, PhantomData)
@@ -129,11 +129,11 @@ mod superclass {
 
     pub struct ClassSuper<FW, CLS, SUPER>(PhantomData<(CLS, SUPER, FW)>)
     where
-        FW: Wraps<CLS>;
+        FW: Repr<CLS>;
 
     impl<FW, SUPER, CLS> ClassSuper<FW, CLS, SUPER>
     where
-        FW: Wraps<CLS>,
+        FW: Repr<CLS>,
     {
         pub(in crate) fn new() -> Self {
             ClassSuper(PhantomData)

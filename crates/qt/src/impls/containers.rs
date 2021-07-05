@@ -79,7 +79,7 @@ where
     }
 }
 
-impl<CLS> IntoContainer<QT, CLS> for QBox<CLS>
+impl<CLS> IntoType<QT, CLS> for QBox<CLS>
 where
     QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
@@ -91,7 +91,7 @@ where
     }
 }
 
-impl<CLS> IntoContainer<QT, CLS> for QPtr<CLS>
+impl<CLS> IntoType<QT, CLS> for QPtr<CLS>
 where
     QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
@@ -103,7 +103,7 @@ where
     }
 }
 
-impl<CLS> IntoContainer<QT, CLS> for Ptr<CLS>
+impl<CLS> IntoType<QT, CLS> for Ptr<CLS>
 where
     QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,

@@ -7,7 +7,7 @@ pub struct Type<FW, CLS, P> {
 
 impl<FW, CLS, P> Type<FW, CLS, P>
 where
-    FW: Wraps<CLS>,
+    FW: Repr<CLS>,
 {
     pub fn new(phase: P) -> Self {
         Self {
@@ -23,7 +23,7 @@ where
         setter: SET,
     ) -> Result<()>
     where
-        FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<THIS>,
+        FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<THIS>,
         GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
         SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
         Wrapped<FW, CLS>: Cast<THIS>,
@@ -38,7 +38,7 @@ where
     pub fn superclass<SUPER>(&self) -> Result<()>
     where
         ClassSuper<FW, CLS, SUPER>: Implements<P>,
-        FW: Framework + TypeDef<CLS> + TypeDef<SUPER> + Wraps<CLS> + Wraps<SUPER>,
+        FW: Framework + TypeDef<CLS> + TypeDef<SUPER> + Repr<CLS> + Repr<SUPER>,
     {
         ClassSuper::<FW, CLS, SUPER>::new().build(&self.phase)?;
         Ok(())
@@ -46,10 +46,10 @@ where
 
     pub fn constructor0<R, X>(&self, func: X) -> Result<()>
     where
-        FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+        FW: Framework + TypeDef<CLS> + Repr<CLS>,
         X: 'static + Fn() -> R,
         CLS: 'static,
-        R: 'static + IntoContainer<FW, CLS, Type = Wrapped<FW, CLS>>,
+        R: 'static + IntoType<FW, CLS, Type = Wrapped<FW, CLS>>,
         ClassConstructor<FW, CLS, (), R, X>: Implements<P>,
     {
         ClassConstructor::new(func).build(&self.phase)?;
@@ -58,7 +58,7 @@ where
 
     pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
-        FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<T>,
+        FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<T>,
         X: 'static + for<'x> Fn(&'x T) -> R,
         Wrapped<FW, CLS>: Cast<T>,
         R: 'static + for<'js> IntoJs<'js>,
@@ -72,7 +72,7 @@ where
 
     pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
-        FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+        FW: Framework + TypeDef<CLS> + Repr<CLS>,
         X: 'static + Fn() -> R,
         R: 'static + for<'js> IntoJs<'js>,
         CLS: 'static,

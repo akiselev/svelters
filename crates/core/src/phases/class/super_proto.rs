@@ -6,7 +6,7 @@ pub struct InitSuperProto<'a, 'js, FW, CLS, SUPER> {
     pub(in crate) framework: PhantomData<(FW, CLS, SUPER)>,
 }
 
-impl<'a, 'js, FW: Wraps<CLS>, CLS, SUPER> InitSuperProto<'a, 'js, FW, CLS, SUPER> {
+impl<'a, 'js, FW: Repr<CLS>, CLS, SUPER> InitSuperProto<'a, 'js, FW, CLS, SUPER> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -19,7 +19,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS, SUPER> InitSuperProto<'a, 'js, FW, CLS, SUPER
 impl<'a, 'b: 'a, T, FW, CLS, R, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, SUPER>>
     for ClassMethod<FW, SUPER, (SUPER,), R, T>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<SUPER> + TypeDef<SUPER>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<SUPER> + TypeDef<SUPER>,
     Wrapped<FW, CLS>: Cast<SUPER>,
     SUPER: 'static,
     T: 'static + Fn(&SUPER) -> R,

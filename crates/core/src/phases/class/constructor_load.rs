@@ -1,12 +1,12 @@
 use crate::inner::*;
 
-pub struct ConstructorLoad<'a, 'js, FW: Wraps<CLS>, CLS> {
+pub struct ConstructorLoad<'a, 'js, FW: Repr<CLS>, CLS> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) module: &'a QJsModule<'js, Created>,
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
+impl<'a, 'js, FW: Repr<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Created>) -> Self {
         Self {
             ctx,
@@ -19,7 +19,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorLoad<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS>,
     T: Fn() -> R,
 {
     fn build(self, input: &ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {

@@ -6,7 +6,7 @@ pub struct InitProto<'a, 'js, FW, CLS> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'js, FW: Wraps<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
+impl<'a, 'js, FW: Repr<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -19,7 +19,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
 impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassMethod<FW, CLS, (T,), R, X>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<T>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<T>,
     X: 'static + for<'x> Fn(&'x T) -> R,
     Wrapped<FW, CLS>: Cast<T>,
     R: 'static + for<'js> IntoJs<'js>,
@@ -56,7 +56,7 @@ where
 impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassProp<FW, CLS, THIS, PROP, GET, SET>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS>,
     Wrapped<FW, CLS>: Cast<THIS>,
     PROP: for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: for<'x> Fn(&'x THIS) -> Result<PROP>,
@@ -66,7 +66,7 @@ where
     PROP: 'static,
     GET: 'static,
     SET: 'static,
-    for<'x> <<FW as Wraps<CLS>>::Type as Cast<THIS>>::Output<'x>: DerefMut<Target = THIS>,
+    for<'x> <<FW as Repr<CLS>>::Type as Cast<THIS>>::Output<'x>: DerefMut<Target = THIS>,
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
@@ -103,7 +103,7 @@ where
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassSuper<FW, CLS, SUPER>
 where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<SUPER> + TypeDef<SUPER>,
+    FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<SUPER> + TypeDef<SUPER>,
     CLS: 'static,
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
