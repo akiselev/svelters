@@ -2,7 +2,8 @@ use crate::inner::*;
 
 pub struct Obj<FW, CLS>
 where
-    FW: TypeDef<CLS> + Repr<CLS> + Framework,
+    FW: Framework,
+    CLS: Repr<FW> + TypeDef<FW>,
 {
     pub(in crate) fw: PhantomData<FW>,
     pub(in crate) inner: Wrapped<FW, CLS>,
@@ -10,7 +11,9 @@ where
 
 impl<'a, FW, CLS> Obj<FW, CLS>
 where
-    FW: Framework + TypeDef<CLS> + Repr<CLS>,
+    FW: Framework,
+    CLS: TypeDef<FW>,
+    CLS: Repr<FW>,
 {
     pub fn new(inner: Wrapped<FW, CLS>) -> Self {
         Self {
@@ -29,12 +32,14 @@ where
 
 impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
 where
-    FW: Framework + Repr<CLS> + TypeDef<CLS>,
+    FW: Framework,
+    CLS: TypeDef<FW>,
+    CLS: Repr<FW>,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
     unsafe fn class_id() -> &'static mut ClassId {
-        <FW as TypeDef<CLS>>::get_id()
+        <CLS as TypeDef<FW>>::get_id()
     }
 
     const HAS_PROTO: bool = true;
@@ -47,10 +52,10 @@ where
         println!(
             "------ PROTO {}::{}",
             FW::name(),
-            <FW as TypeDef<CLS>>::typename()
+            <CLS as TypeDef<FW>>::typename()
         );
         let cls: Type<FW, CLS, InitProto<FW, CLS>> = Type::new(InitProto::new(ctx, proto));
-        <FW as TypeDef<CLS>>::define(cls)?;
+        <CLS as TypeDef<FW>>::define(cls)?;
         Ok(())
     }
 
@@ -58,10 +63,10 @@ where
         println!(
             "------ STATIC {}::{}",
             FW::name(),
-            <FW as TypeDef<CLS>>::typename()
+            <CLS as TypeDef<FW>>::typename()
         );
         let cls: Type<FW, CLS, InitStatic<FW, CLS>> = Type::new(InitStatic::new(ctx, _static));
-        <FW as TypeDef<CLS>>::define(cls)?;
+        <CLS as TypeDef<FW>>::define(cls)?;
         Ok(())
     }
 

@@ -5,7 +5,7 @@ use crate::inner::*;
 
 pub enum QtWrapper<CLS>
 where
-    QT: TypeDef<CLS>,
+    CLS: TypeDef<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     Owned(QBox<CLS>),
@@ -15,7 +15,7 @@ where
 
 impl<'a, T> Deref for QtWrapper<T>
 where
-    QT: TypeDef<T>,
+    T: TypeDef<QT>,
     T: StaticUpcast<QObject> + CppDeletable,
 {
     type Target = T;
@@ -42,7 +42,7 @@ impl<'a, T> Deref for DerefWrapper<'a, T> {
 impl<T, CLS> CastFrom<T> for QtWrapper<CLS>
 where
     T: CastFrom<CLS>,
-    QT: TypeDef<CLS>,
+    CLS: TypeDef<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     unsafe fn cast_from(value: T) -> Self {
@@ -52,7 +52,7 @@ where
 
 impl<X, CLS> Cast<X> for QtWrapper<CLS>
 where
-    QT: TypeDef<CLS>,
+    CLS: TypeDef<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
     // Ref<CLS>: CastFrom<Ref<X>> + StaticUpcast<Ref<X>> + CppDeletable,
@@ -79,38 +79,32 @@ where
     }
 }
 
-impl<CLS> IntoType<QT, CLS> for QBox<CLS>
+impl<CLS> IntoRepr<QT, CLS> for QBox<CLS>
 where
-    QT: TypeDef<CLS>,
+    CLS: TypeDef<QT> + Repr<QT, Type = QtWrapper<CLS>>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    type Type = QtWrapper<CLS>;
-
-    fn into_framework_type(self) -> Self::Type {
+    fn into_framework_type(self) -> QtWrapper<CLS> {
         QtWrapper::Owned(self)
     }
 }
 
-impl<CLS> IntoType<QT, CLS> for QPtr<CLS>
+impl<CLS> IntoRepr<QT, CLS> for QPtr<CLS>
 where
-    QT: TypeDef<CLS>,
+    CLS: TypeDef<QT> + Repr<QT, Type = QtWrapper<CLS>>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    type Type = QtWrapper<CLS>;
-
-    fn into_framework_type(self) -> Self::Type {
+    fn into_framework_type(self) -> QtWrapper<CLS> {
         QtWrapper::Shared(self)
     }
 }
 
-impl<CLS> IntoType<QT, CLS> for Ptr<CLS>
+impl<CLS> IntoRepr<QT, CLS> for Ptr<CLS>
 where
-    QT: TypeDef<CLS>,
+    CLS: TypeDef<QT> + Repr<QT, Type = QtWrapper<CLS>>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    type Type = QtWrapper<CLS>;
-
-    fn into_framework_type(self) -> Self::Type {
+    fn into_framework_type(self) -> QtWrapper<CLS> {
         QtWrapper::Ref(unsafe { self })
     }
 }

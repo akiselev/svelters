@@ -33,21 +33,27 @@ pub trait CastMut<T> {
     fn cast_mut<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub type Wrapped<FW, CLS> = <FW as Repr<CLS>>::Type;
-pub type Casted<'a, FW, CLS, T> = <<FW as Repr<CLS>>::Type as Cast<T>>::Output<'a>;
-pub type CastedMut<'a, FW, CLS, T> = <<FW as Repr<CLS>>::Type as CastMut<T>>::Output<'a>;
+pub type Wrapped<FW, CLS> = <CLS as Repr<FW>>::Type;
+pub type Casted<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as Cast<T>>::Output<'a>;
+pub type CastedMut<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as CastMut<T>>::Output<'a>;
 
-pub trait Repr<CLS> {
+/// The Representation of a type for a framework
+///
+/// Since `svelters` is a library that bridges Svelte
+/// and external types, users usually can't implement `svelters`
+/// traits for the types directly beacuse of Rust's orphan rule
+///
+/// This trait supplies a custom representation (wrapper) of external
+/// types so users can implement our traits
+pub trait Repr<FW> {
     type Type;
 }
 
-pub trait IntoType<FW, CLS>
+pub trait IntoRepr<FW, CLS>
 where
-    FW: Repr<CLS>,
+    CLS: Repr<FW>,
 {
-    type Type;
-
-    fn into_framework_type(self) -> Self::Type;
+    fn into_framework_type(self) -> <CLS as Repr<FW>>::Type;
 }
 
 pub trait Module<FW>: Sized {
@@ -56,12 +62,12 @@ pub trait Module<FW>: Sized {
         FW: Framework;
 }
 
-pub trait TypeDef<CLS>: Sized + Framework + Repr<CLS> {
+pub trait TypeDef<FW>: Sized + Repr<FW> {
     const CLASS_NAME: &'static str;
 
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn define<P>(cls: Type<Self, CLS, P>) -> Result<()>;
+    fn define<P>(cls: Type<FW, Self, P>) -> Result<()>;
     fn typename() -> &'static str {
         Self::CLASS_NAME
     }

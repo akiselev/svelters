@@ -6,7 +6,7 @@ pub struct InitProto<'a, 'js, FW, CLS> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'js, FW: Repr<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
+impl<'a, 'js, CLS: Repr<FW>, FW> InitProto<'a, 'js, FW, CLS> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -19,7 +19,10 @@ impl<'a, 'js, FW: Repr<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
 impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassMethod<FW, CLS, (T,), R, X>
 where
-    FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<T>,
+    FW: Framework,
+    CLS: TypeDef<FW>,
+    CLS: Repr<FW>,
+    T: Repr<FW>,
     X: 'static + for<'x> Fn(&'x T) -> R,
     Wrapped<FW, CLS>: Cast<T>,
     R: 'static + for<'js> IntoJs<'js>,
@@ -29,7 +32,7 @@ where
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "---------- IMPL {}::{}",
-            <FW as TypeDef<CLS>>::typename(),
+            <CLS as TypeDef<FW>>::typename(),
             self.0
         );
         input.obj.set(
@@ -56,7 +59,9 @@ where
 impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassProp<FW, CLS, THIS, PROP, GET, SET>
 where
-    FW: Framework + TypeDef<CLS> + Repr<CLS>,
+    FW: Framework,
+    CLS: TypeDef<FW>,
+    CLS: Repr<FW>,
     Wrapped<FW, CLS>: Cast<THIS>,
     PROP: for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: for<'x> Fn(&'x THIS) -> Result<PROP>,
@@ -66,12 +71,12 @@ where
     PROP: 'static,
     GET: 'static,
     SET: 'static,
-    for<'x> <<FW as Repr<CLS>>::Type as Cast<THIS>>::Output<'x>: DerefMut<Target = THIS>,
+    for<'x> <<CLS as Repr<FW>>::Type as Cast<THIS>>::Output<'x>: DerefMut<Target = THIS>,
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "---------- IMPL prop {}::{}",
-            <FW as TypeDef<CLS>>::typename(),
+            <CLS as TypeDef<FW>>::typename(),
             self.name
         );
         let ClassProp {
@@ -103,18 +108,22 @@ where
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassSuper<FW, CLS, SUPER>
 where
-    FW: Framework + TypeDef<CLS> + Repr<CLS> + Repr<SUPER> + TypeDef<SUPER>,
+    FW: Framework,
+    CLS: TypeDef<FW>,
+    SUPER: TypeDef<FW>,
+    CLS: Repr<FW>,
+    SUPER: Repr<FW>,
     CLS: 'static,
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "------ SUPER PROTO {} on {}",
-            <FW as TypeDef<SUPER>>::typename(),
-            <FW as TypeDef<CLS>>::typename(),
+            <SUPER as TypeDef<FW>>::typename(),
+            <CLS as TypeDef<FW>>::typename(),
         );
         let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
         let cls: Type<FW, SUPER, _> = Type::new(phase);
-        <FW as TypeDef<SUPER>>::define(cls)?;
+        <SUPER as TypeDef<FW>>::define(cls)?;
         Ok(())
     }
 }

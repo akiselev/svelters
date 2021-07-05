@@ -6,7 +6,8 @@ impl<FW, MOD, P> JsModule<FW, MOD, P> {
     pub fn class<CLS>(&self) -> Result<()>
     where
         CLS: 'static,
-        FW: TypeDef<CLS> + Repr<CLS>,
+        CLS: TypeDef<FW>,
+        CLS: Repr<FW>,
         JsClassLoader<FW, CLS>: Implements<P>,
     {
         println!(">>>>>>>>>>>>>>>xx");

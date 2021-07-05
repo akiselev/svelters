@@ -34,7 +34,7 @@ impl Framework for Fw {
 
 impl<CLS> Repr<CLS> for Fw
 where
-    Fw: TypeDef<CLS>,
+    CLS: TypeDef<Fw>,
     CLS: StaticUpcast<Object>,
 {
     type Type = FwWrapper<CLS>;

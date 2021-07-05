@@ -130,13 +130,12 @@ where
     }
 }
 
-impl<T> IntoType<Fw, T> for Temp<T>
+impl<T> IntoRepr<Fw, T> for Temp<T>
 where
-    Fw: TypeDef<T>,
+    T: TypeDef<Fw>,
+    T: Repr<Fw, Type = FwWrapper<T>>,
 {
-    type Type = FwWrapper<T>;
-
-    fn into_framework_type(self) -> Self::Type {
+    fn into_framework_type(self) -> FwWrapper<T> {
         FwWrapper(self.0)
     }
 }

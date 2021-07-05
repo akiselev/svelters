@@ -6,7 +6,7 @@ pub struct ConstructorEval<'a, 'js, FW, CLS> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'js, FW: Repr<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
+impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorEval<'a, 'js, FW, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
         Self {
             ctx,
@@ -19,23 +19,25 @@ impl<'a, 'js, FW: Repr<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
-    FW: Framework + TypeDef<CLS> + Repr<CLS>,
+    FW: Framework,
+    CLS: TypeDef<FW>,
+    CLS: Repr<FW>,
     T: Fn() -> R,
     CLS: 'static,
     T: 'static,
-    R: 'static + IntoType<FW, CLS, Type = Wrapped<FW, CLS>>,
+    R: 'static + IntoRepr<FW, CLS>,
 {
     fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "-- Setting {}::{} in ConstructorEval",
             std::any::type_name::<FW>(),
-            <FW as TypeDef<CLS>>::CLASS_NAME
+            <CLS as TypeDef<FW>>::CLASS_NAME
         );
         JsClass::<Obj<FW, CLS>>::register(input.ctx)?;
         input.module.set(
-            <FW as TypeDef<CLS>>::CLASS_NAME,
+            <CLS as TypeDef<FW>>::CLASS_NAME,
             rquickjs::Func::new(
-                <FW as TypeDef<CLS>>::CLASS_NAME,
+                <CLS as TypeDef<FW>>::CLASS_NAME,
                 JsClass::<Obj<FW, CLS>>::constructor(move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                     let args = args.into_inner();
                     let args_len = args.len();
@@ -44,7 +46,7 @@ where
                     let result = self.0();
                     println!(
                         "Calling constructor for {}",
-                        <FW as TypeDef<CLS>>::CLASS_NAME
+                        <CLS as TypeDef<FW>>::CLASS_NAME
                     );
                     JsClass::instance(ctx, Obj::<FW, CLS>::new(result.into_framework_type()))
                 }),
