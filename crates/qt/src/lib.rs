@@ -71,15 +71,10 @@ where
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
-
-    // fn into_container_type(data: CLS) -> Self::Type {
-    //     QtWrapper::new
-    // }
 }
 
 mod modules;
 mod impls {
-    mod cast;
     pub mod containers;
 }
 

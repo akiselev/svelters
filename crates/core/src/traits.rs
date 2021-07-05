@@ -15,7 +15,7 @@ pub trait Framework: Sized + 'static {
 
     fn module<MOD>(module: MOD) -> JsModuleLoader<Self, MOD>
     where
-        MOD: FrameworkModule<Self>,
+        MOD: Module<Self>,
     {
         JsModuleLoader::new(module)
     }
@@ -50,7 +50,7 @@ where
     fn into_framework_type(self) -> Self::Type;
 }
 
-pub trait FrameworkModule<FW>: Sized {
+pub trait Module<FW>: Sized {
     fn define<P>(module: JsModule<FW, Self, P>) -> Result<()>
     where
         FW: Framework;

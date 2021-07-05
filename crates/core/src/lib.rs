@@ -17,10 +17,6 @@ pub mod prelude {
     pub use crate::obj::Obj;
     pub use crate::traits::*;
     pub use crate::typedef::Type;
-
-    pub use rquickjs::{
-        Ctx, Error, FromJs, HasRefs, IntoJs, IntoJsByRef, Outlive, Persistent, Result, Value,
-    };
 }
 
 pub(in crate) mod module;
@@ -49,7 +45,8 @@ pub(in crate) mod inner {
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{
         Accessor, AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error,
-        FromJs, IntoJs, Loaded, Module, ModuleDef, Native, Object, RefsMarker, Rest, Result, Value,
+        FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, RefsMarker, Rest,
+        Result, Value,
     };
 
     pub(in crate) use crate::module::*;

@@ -2,12 +2,12 @@ use crate::inner::*;
 
 pub struct ConstructorEval<'a, 'js, FW, CLS> {
     pub(in crate) ctx: Ctx<'js>,
-    pub(in crate) module: &'a Module<'js, Loaded<Native>>,
+    pub(in crate) module: &'a QJsModule<'js, Loaded<Native>>,
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
 impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
-    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Loaded<Native>>) -> Self {
+    pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
         Self {
             ctx,
             module,

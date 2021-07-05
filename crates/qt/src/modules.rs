@@ -7,7 +7,7 @@ use qt_core::{
 };
 use qt_gui::QWindow;
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
-use rquickjs::{AsFunction, Class, Loaded, Module, Native};
+use rquickjs::{AsFunction, Class, Loaded, Module as QJsModule, Native};
 
 use crate::{
     impls::containers::{DerefWrapper, QtWrapper},
@@ -15,7 +15,7 @@ use crate::{
     QtCore,
 };
 
-impl FrameworkModule<QT> for QtCore {
+impl Module<QT> for QtCore {
     fn define<P>(module: JsModule<QT, Self, P>) -> Result<()>
     where
         QT: Framework,

@@ -2,12 +2,12 @@ use crate::inner::*;
 
 pub struct ConstructorLoad<'a, 'js, FW: Wraps<CLS>, CLS> {
     pub(in crate) ctx: Ctx<'js>,
-    pub(in crate) module: &'a Module<'js, Created>,
+    pub(in crate) module: &'a QJsModule<'js, Created>,
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
 impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorLoad<'a, 'js, FW, CLS> {
-    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Created>) -> Self {
+    pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Created>) -> Self {
         Self {
             ctx,
             module,

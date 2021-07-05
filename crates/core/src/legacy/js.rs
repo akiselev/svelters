@@ -2,11 +2,14 @@ use rquickjs::ClassId;
 
 use crate::inner::*;
 
+pub use rquickjs::{
+    Ctx, Error, FromJs, HasRefs, IntoJs, IntoJsByRef, Outlive, Persistent, Result, Value,
+};
 // -------------------------------------------------------
 
 #[allow(non_upper_case_globals)]
 pub mod native_module {
-    use crate::prelude::*;
+    use super::*;
     pub const n: i32 = 123;
     pub const s: &str = "abc";
     pub fn f(a: f64, b: f64) -> f64 {

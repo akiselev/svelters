@@ -23,10 +23,17 @@ tracing-macros = "0.0.0"
 phf = { version="0.9", features=["macros"] }
 smartstring = "0.2.6"
 flume = "0.10.7"
-tokio = { version="1", features=["time"] }
 serde_json = "1.0.64"
 serde = "1.0.126"
 spez = "0.1.1"
 rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
 frunk = "0.3.2"
 static_assertions = "1.1.0"
+
+[dev-dependencies]
+cucumber_rust = { git="https://github.com/bbqsrc/cucumber-rust", branch="main" }
+tokio = { version="1", features=["macros", "rt-multi-thread"] }
+
+[[test]]
+name = "runner"
+harness = false # Allows Cucumber to print output instead of libtest
