@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use cucumber_rust::{t, Steps};
 
 use crate::CoreWorld;
@@ -5,22 +7,74 @@ use crate::CoreWorld;
 pub fn steps() -> Steps<CoreWorld> {
     let mut steps: Steps<CoreWorld> = Steps::new();
 
-    steps.given_regex(r#"^module path "(.*)"$"#, |mut world, ctx| {
-        let source =
-            std::fs::read_to_string(std::fs::canonicalize(&ctx.matches[1]).unwrap()).unwrap();
-        let key = world
-            .ctx
-            .with(|ctx| {
-                let module = rquickjs::Module::new(ctx, "<module>", source)?;
-                let evaled = module.eval()?;
-                let value = rquickjs::IntoJs::into_js(evaled, ctx)?;
-                let key = ctx.register(value);
-                rquickjs::Result::Ok(key)
-            })
-            .unwrap();
-        world.module = key;
-        world
-    });
+    steps
+        .given_regex(r#"^module at "(.*)"$"#, |mut world, ctx| {
+            let mut path = PathBuf::new();
+            path.push(env!("CARGO_MANIFEST_DIR"));
+            path.push("tests/js");
+            path.push(&ctx.matches[1]);
+            let key = world
+                .ctx
+                .with(|ctx| {
+                    let source = std::fs::read_to_string(
+                        std::fs::canonicalize(path.clone())
+                            .map_err(|err| anyhow::anyhow!("Path {:?} error: {}", path, err))?,
+                    )
+                    .unwrap();
+                    let module = rquickjs::Module::new(ctx, "<module>", source)?;
+                    let evaled = module.eval()?;
+                    let value = rquickjs::IntoJs::into_js(evaled, ctx)?;
+                    let key = ctx.register(value);
+                    Result::<_, anyhow::Error>::Ok(key)
+                })
+                .unwrap();
+            world.module = key;
+            world
+        })
+        .when_regex(r#"^calling function "(.*)"$"#, |mut world, ctx| {
+            let func_name = &ctx.matches[1].to_string();
+            let key = world
+                .ctx
+                .with(|ctx| {
+                    let value = ctx
+                        .deregister(world.module)
+                        .ok_or_else(|| anyhow::anyhow!("key for module not found"))?;
+                    let module = value
+                        .as_module()
+                        .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                    let func: rquickjs::Function<'_> = module.get(func_name)?;
+                    let value = func.call(())?;
+                    let key = ctx.register(value);
+                    Result::<_, anyhow::Error>::Ok(key)
+                })
+                .unwrap();
+            world.module = key;
+            world
+        })
+        .when_regex(
+            r#"^calling function "(.*)" with string "(.*)"$"#,
+            |mut world, ctx| {
+                let func_name = &ctx.matches[1].to_owned();
+                let func_arg = &ctx.matches[2].to_owned();
+                let key = world
+                    .ctx
+                    .with(|ctx| {
+                        let value = ctx
+                            .deregister(world.module)
+                            .ok_or_else(|| anyhow::anyhow!("key for module not found"))?;
+                        let module = value
+                            .as_module()
+                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                        let func: rquickjs::Function<'_> = module.get(func_name)?;
+                        let value = func.call((func_arg,))?;
+                        let key = ctx.register(value);
+                        Result::<_, anyhow::Error>::Ok(key)
+                    })
+                    .unwrap();
+                world.module = key;
+                world
+            },
+        );
 
     // builder
     //     .given_regex_async(

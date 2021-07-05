@@ -1,8 +1,8 @@
 Feature: Core
 
-    Scenario: some nonsense with a string
-        Given module path "./test.js"
-# When I append a known suffix to the value
+    Scenario: testing test runner
+        Given module at "test.js"
+        When calling function "testConsole"
 # Then that string is now equal to "something interesting"
 
 # Scenario: async things

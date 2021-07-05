@@ -1,4 +1,4 @@
-use std::{future::Future, time::Duration};
+use std::future::Future;
 
 use super::*;
 
@@ -7,7 +7,7 @@ impl Framework for Fw {
     type Resolver = impl Resolver;
     type AppTask = impl Future<Output = anyhow::Result<()>>;
 
-    fn init_app(_ctx: Context) -> Result<Self::AppTask> {
+    fn init_app(_ctx: rquickjs::Context) -> Result<Self::AppTask> {
         Ok(Box::pin(async move {
             // let mut interval = tokio::time::interval(Duration::from_millis(10));
             // loop {

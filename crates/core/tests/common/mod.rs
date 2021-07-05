@@ -1,4 +1,9 @@
-use rquickjs::{Context, Ctx, Evaluated, Runtime};
+use cucumber_rust::{async_trait, criteria::feature, futures::FutureExt, Context, Cucumber, World};
+pub(crate) use rquickjs::{
+    BuiltinResolver, Error, Evaluated, Loader, Module as QJsModule, ModuleLoader, RegisteryKey,
+    Resolver, Result, Runtime, Value,
+};
+
 use svelters_core::prelude::Framework;
 
 pub(in crate) mod defs;
@@ -11,39 +16,42 @@ pub use framework::*;
 pub use modules::*;
 pub use types::*;
 
-pub use rquickjs::{
-    BuiltinResolver, Error, Loader, Module as QJsModule, ModuleLoader, Resolver, Result, Value,
-};
 pub use svelters_core::prelude::*;
 
-pub struct Runner {
-    src: &'static str,
+pub struct CoreWorld {
+    pub rt: rquickjs::Runtime,
+    pub ctx: rquickjs::Context,
+    /// Last loaded module
+    pub module: RegisteryKey,
+    /// Last Object created, which is target of tests
+    pub subject: RegisteryKey,
+    /// Result of last operation
+    pub result: RegisteryKey,
 }
 
-impl Runner {
-    pub const fn new(src: &'static str) -> Self {
-        Self { src }
-    }
+#[async_trait(?Send)]
+impl World for CoreWorld {
+    type Error = rquickjs::Error;
 
-    pub fn run<F: for<'js> FnOnce(Ctx<'js>, QJsModule<'js, Evaluated>) -> anyhow::Result<R>, R>(
-        &self,
-        name: &'static str,
-        func: F,
-    ) -> anyhow::Result<R> {
-        let rt = Runtime::new()?;
-        let ctx = Context::full(&rt)?;
-        let (resolver, loader) = types::Fw::get_loader();
+    async fn new() -> Result<Self> {
+        let rt = rquickjs::Runtime::new()?;
+        let ctx = rquickjs::Context::full(&rt)?;
+        let (resolver, loader) = Fw::get_loader();
         rt.set_loader(resolver, loader);
-        let res: anyhow::Result<R> = ctx.with(move |ctx| {
-            svelters_core::console::init(ctx)?;
-            svelters_core::timing::init(ctx)?;
-            let module = QJsModule::new(ctx, name, self.src)?;
-            let evaled = module.eval()?;
-            func(ctx, evaled)
-        });
-
-        while let true = ctx.runtime().execute_pending_job()? {}
-
-        res
+        let key = ctx
+            .with(move |ctx| {
+                svelters_core::console::init(ctx)?;
+                svelters_core::timing::init(ctx)?;
+                let key = ctx.register(rquickjs::Undefined.into_value(ctx));
+                Result::Ok(key)
+            })
+            .unwrap();
+        Ok(CoreWorld {
+            rt,
+            ctx,
+            module: key.clone(),
+            subject: key.clone(),
+            result: key.clone(),
+        })
     }
 }
