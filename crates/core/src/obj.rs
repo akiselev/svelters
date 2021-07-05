@@ -2,25 +2,25 @@ use crate::inner::*;
 
 pub struct Obj<FW, CLS>
 where
-    FW: FrameworkClass<CLS> + Container<CLS> + Framework,
+    FW: TypeDef<CLS> + Wraps<CLS> + Framework,
 {
     pub(in crate) fw: PhantomData<FW>,
-    pub(in crate) inner: ClsBox<FW, CLS>,
+    pub(in crate) inner: Wrapped<FW, CLS>,
 }
 
 impl<'a, FW, CLS> Obj<FW, CLS>
 where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-    ClsBox<FW, CLS>: GetRef<'a, CLS>,
+    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    Wrapped<FW, CLS>: GetRef<'a, CLS>,
 {
-    pub fn new(inner: ClsBox<FW, CLS>) -> Self {
+    pub fn new(inner: Wrapped<FW, CLS>) -> Self {
         Self {
             fw: PhantomData,
             inner,
         }
     }
 
-    pub fn as_box<'b>(&'a self) -> &'b ClsBox<FW, CLS>
+    pub fn as_box<'b>(&'a self) -> &'b Wrapped<FW, CLS>
     where
         'a: 'b,
     {
@@ -37,12 +37,12 @@ where
 
 impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
 where
-    FW: Framework + Container<CLS> + FrameworkClass<CLS>,
+    FW: Framework + Wraps<CLS> + TypeDef<CLS>,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
     unsafe fn class_id() -> &'static mut ClassId {
-        <FW as FrameworkClass<CLS>>::get_id()
+        <FW as TypeDef<CLS>>::get_id()
     }
 
     const HAS_PROTO: bool = true;
@@ -57,8 +57,8 @@ where
             std::any::type_name::<FW>(),
             std::any::type_name::<CLS>()
         );
-        let cls: JsClass<FW, CLS, InitProto<FW, CLS>> = JsClass::new(InitProto::new(ctx, proto));
-        <FW as FrameworkClass<CLS>>::define(cls)?;
+        let cls: Type<FW, CLS, InitProto<FW, CLS>> = Type::new(InitProto::new(ctx, proto));
+        <FW as TypeDef<CLS>>::define(cls)?;
         Ok(())
     }
 
@@ -68,9 +68,8 @@ where
             std::any::type_name::<FW>(),
             std::any::type_name::<CLS>()
         );
-        let cls: JsClass<FW, CLS, InitStatic<FW, CLS>> =
-            JsClass::new(InitStatic::new(ctx, _static));
-        <FW as FrameworkClass<CLS>>::define(cls)?;
+        let cls: Type<FW, CLS, InitStatic<FW, CLS>> = Type::new(InitStatic::new(ctx, _static));
+        <FW as TypeDef<CLS>>::define(cls)?;
         Ok(())
     }
 
@@ -80,7 +79,7 @@ where
     where
         Self: Sized,
     {
-        rquickjs::Class::<Self>::instance(ctx, self).map(|cls| cls.into_value())
+        JsClass::<Self>::instance(ctx, self).map(|cls| cls.into_value())
     }
 
     fn from_js_ref<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<&'js Self>
@@ -88,7 +87,7 @@ where
         Self: Sized,
     {
         let value = Object::from_js(ctx, value)?;
-        rquickjs::Class::<Self>::try_ref(ctx, &value)
+        JsClass::<Self>::try_ref(ctx, &value)
     }
 
     fn from_js_mut<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<&'js mut Self>
@@ -96,7 +95,7 @@ where
         Self: Sized,
     {
         let value = Object::from_js(ctx, value)?;
-        rquickjs::Class::<Self>::try_mut(ctx, &value)
+        JsClass::<Self>::try_mut(ctx, &value)
     }
 
     fn from_js_obj<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self>
@@ -104,7 +103,7 @@ where
         Self: Clone + Sized,
     {
         let value = Object::from_js(ctx, value)?;
-        let instance = rquickjs::Class::<Self>::try_ref(ctx, &value)?;
+        let instance = JsClass::<Self>::try_ref(ctx, &value)?;
         Ok(instance.clone())
     }
 }

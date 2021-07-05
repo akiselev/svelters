@@ -61,9 +61,9 @@ impl Framework for QT {
     }
 }
 
-impl<CLS> Container<CLS> for QT
+impl<CLS> Wraps<CLS> for QT
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;

@@ -5,7 +5,7 @@ use crate::inner::*;
 
 pub enum QtWrapper<CLS>
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     Owned(QBox<CLS>),
@@ -15,7 +15,7 @@ where
 
 impl<'a, T> Deref for QtWrapper<T>
 where
-    QT: FrameworkClass<T>,
+    QT: TypeDef<T>,
     T: StaticUpcast<QObject> + CppDeletable,
 {
     type Target = T;
@@ -42,7 +42,7 @@ impl<'a, T> Deref for DerefWrapper<'a, T> {
 impl<T, CLS> CastFrom<T> for QtWrapper<CLS>
 where
     T: CastFrom<CLS>,
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     unsafe fn cast_from(value: T) -> Self {
@@ -52,7 +52,7 @@ where
 
 impl<X, CLS> Cast<X> for QtWrapper<CLS>
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
     // Ref<CLS>: CastFrom<Ref<X>> + StaticUpcast<Ref<X>> + CppDeletable,
@@ -81,7 +81,7 @@ where
 
 impl<'a, CLS> GetRef<'a, CLS> for QtWrapper<CLS>
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Pointer = Ptr<CLS>;
@@ -107,7 +107,7 @@ where
 
 impl<CLS> IntoContainer<QT, CLS> for QBox<CLS>
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
@@ -119,7 +119,7 @@ where
 
 impl<CLS> IntoContainer<QT, CLS> for QPtr<CLS>
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;
@@ -131,7 +131,7 @@ where
 
 impl<CLS> IntoContainer<QT, CLS> for Ptr<CLS>
 where
-    QT: FrameworkClass<CLS>,
+    QT: TypeDef<CLS>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     type Type = QtWrapper<CLS>;

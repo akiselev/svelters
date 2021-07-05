@@ -13,46 +13,21 @@
 #![allow(incomplete_features)]
 
 pub mod prelude {
-    pub use crate::class::constructor::*;
-    pub use crate::class::JsClass;
-    pub use crate::module::{JsModule, JsModuleLoader};
+    pub use crate::module::JsModule;
     pub use crate::obj::Obj;
     pub use crate::traits::*;
+    pub use crate::typedef::Type;
 
     pub use rquickjs::{
         Ctx, Error, FromJs, HasRefs, IntoJs, IntoJsByRef, Outlive, Persistent, Result, Value,
     };
 }
 
-pub(in crate) mod phases {
-    mod class {
-        mod constructor;
-        mod init_proto;
-        mod init_static;
-        mod super_proto;
-        mod super_static;
-
-        pub(in crate) use self::constructor::*;
-        pub(in crate) use self::init_proto::*;
-        pub(in crate) use self::init_static::*;
-        pub(in crate) use self::super_proto::*;
-        pub(in crate) use self::super_static::*;
-    }
-
-    mod module {
-        mod loader;
-
-        pub(in crate) use self::loader::*;
-    }
-
-    pub(in crate) use self::class::*;
-    pub(in crate) use self::module::*;
-}
-
-pub(in crate) mod class;
 pub(in crate) mod module;
 pub(in crate) mod obj;
+pub(in crate) mod phases;
 pub(in crate) mod traits;
+pub(in crate) mod typedef;
 pub(in crate) mod utils;
 
 // ----------------- INTERNAL -----------------
@@ -70,19 +45,15 @@ pub(in crate) mod inner {
     };
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{
-        AsFunction, ClassDef, ClassId, Context, Created, Ctx, Error, FromJs, IntoJs, Loaded,
-        Module, ModuleDef, Native, Object, RefsMarker, Result, Value,
+        AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error, FromJs,
+        IntoJs, Loaded, Module, ModuleDef, Native, Object, RefsMarker, Rest, Result, Value,
     };
 
-    pub(in crate) use crate::class::constructor::*;
-    pub(in crate) use crate::class::method::*;
-    pub(in crate) use crate::class::static_fn::*;
-    pub(in crate) use crate::class::superclass::*;
-    pub(in crate) use crate::class::*;
     pub(in crate) use crate::module::*;
     pub(in crate) use crate::obj::*;
     pub(in crate) use crate::phases::*;
     pub(in crate) use crate::traits::*;
+    pub(in crate) use crate::typedef::*;
     pub(in crate) use crate::utils::*;
 }
 
@@ -90,8 +61,6 @@ pub(in crate) mod inner {
 mod legacy;
 
 pub use crate::legacy::console;
-// pub use crate::legacy::def::*;
 pub use crate::legacy::document;
 pub use crate::legacy::timing;
-// pub use crate::legacy::traits::*;
 // ------------------ LEGACY ------------------

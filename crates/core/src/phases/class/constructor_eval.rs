@@ -1,83 +1,54 @@
-use rquickjs::{Class, Rest};
-
 use crate::inner::*;
 
-pub struct ClassConstructor<FW, CLS, A, R, T>(
-    pub(crate) T,
-    pub(crate) PhantomData<(CLS, A, R, FW)>,
-)
-where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>;
-
-// unsafe impl<FW, T, A, CLS> Sync for ClassConstructor<FW, CLS, A, T>
-// where
-//     FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-//     T: Constructor<FW, CLS, A, R>,
-// {
-// }
-
-impl<FW, T, A, R, CLS> ClassConstructor<FW, CLS, A, R, T>
-where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-{
-    pub(in crate) fn new(func: T) -> Self {
-        ClassConstructor(func, PhantomData)
-    }
+pub struct ConstructorEval<'a, 'js, FW, CLS> {
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) module: &'a Module<'js, Loaded<Native>>,
+    pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorLoad<'a, 'b, FW, CLS>>
-    for ClassConstructor<FW, CLS, (), R, T>
-where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-    ClsBox<FW, CLS>: for<'x> GetRef<'x, CLS>,
-    T: Fn() -> R,
-{
-    fn build(self, input: &ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "Setting {}::{} in ConstructorLoad",
-            std::any::type_name::<FW>(),
-            std::any::type_name::<CLS>()
-        );
-        input.module.add(<FW as FrameworkClass<CLS>>::get_name())?;
-        Ok(())
+impl<'a, 'js, FW: Wraps<CLS>, CLS> ConstructorEval<'a, 'js, FW, CLS> {
+    pub fn new(ctx: Ctx<'js>, module: &'a Module<'js, Loaded<Native>>) -> Self {
+        Self {
+            ctx,
+            module,
+            framework: PhantomData,
+        }
     }
 }
 
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
-    FW: Framework + FrameworkClass<CLS> + Container<CLS>,
-    ClsBox<FW, CLS>: for<'x> GetRef<'x, CLS>,
+    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    Wrapped<FW, CLS>: for<'x> GetRef<'x, CLS>,
     T: Fn() -> R,
     CLS: 'static,
     T: 'static,
-    R: 'static + IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
+    R: 'static + IntoContainer<FW, CLS, Type = Wrapped<FW, CLS>>,
 {
     fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "Setting {}::{} in ConstructorEval",
             std::any::type_name::<FW>(),
-            <FW as FrameworkClass<CLS>>::CLASS_NAME
+            <FW as TypeDef<CLS>>::CLASS_NAME
         );
-        rquickjs::Class::<Obj<FW, CLS>>::register(input.ctx)?;
+        JsClass::<Obj<FW, CLS>>::register(input.ctx)?;
         input.module.set(
-            <FW as FrameworkClass<CLS>>::CLASS_NAME,
+            <FW as TypeDef<CLS>>::CLASS_NAME,
             rquickjs::Func::new(
-                <FW as FrameworkClass<CLS>>::CLASS_NAME,
-                rquickjs::Class::<Obj<FW, CLS>>::constructor(
-                    move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
-                        let args = args.into_inner();
-                        let args_len = args.len();
-                        tuple_match_size(args_len, 0)?;
+                <FW as TypeDef<CLS>>::CLASS_NAME,
+                JsClass::<Obj<FW, CLS>>::constructor(move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                    let args = args.into_inner();
+                    let args_len = args.len();
+                    tuple_match_size(args_len, 0)?;
 
-                        let result = self.0();
-                        println!(
-                            "Calling constructor for {}",
-                            <FW as FrameworkClass<CLS>>::CLASS_NAME
-                        );
-                        Class::instance(ctx, Obj::<FW, CLS>::new(result.into_framework_type()))
-                    },
-                ),
+                    let result = self.0();
+                    println!(
+                        "Calling constructor for {}",
+                        <FW as TypeDef<CLS>>::CLASS_NAME
+                    );
+                    JsClass::instance(ctx, Obj::<FW, CLS>::new(result.into_framework_type()))
+                }),
             ),
         )?;
         Ok(())

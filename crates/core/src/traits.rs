@@ -26,9 +26,9 @@ pub trait Cast<T> {
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub type ClsBox<FW, CLS> = <FW as Container<CLS>>::Type;
+pub type Wrapped<FW, CLS> = <FW as Wraps<CLS>>::Type;
 
-pub trait Container<CLS> {
+pub trait Wraps<CLS> {
     type Type;
 
     // fn into_container_type(data: CLS) -> Self::Type;
@@ -36,7 +36,7 @@ pub trait Container<CLS> {
 
 pub trait IntoContainer<FW, CLS>
 where
-    FW: Container<CLS>,
+    FW: Wraps<CLS>,
 {
     type Type;
 
@@ -49,25 +49,15 @@ pub trait FrameworkModule<FW>: Sized {
         FW: Framework;
 }
 
-pub trait FrameworkClass<CLS>: Sized {
+pub trait TypeDef<CLS>: Sized {
     const CLASS_NAME: &'static str;
 
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn define<P>(cls: JsClass<Self, CLS, P>) -> Result<()>;
-    fn get_name() -> &'static str {
+    fn define<P>(cls: Type<Self, CLS, P>) -> Result<()>;
+    fn typename() -> &'static str {
         Self::CLASS_NAME
     }
-}
-
-pub trait JsModuleDef: Sized + 'static {
-    fn load<'js>(_ctx: Ctx<'js>, _module: &Module<'js, Created>) -> Result<()>;
-
-    fn eval<'js>(
-        &'static self,
-        _ctx: Ctx<'js>,
-        _module: &Module<'js, Loaded<Native>>,
-    ) -> Result<()>;
 }
 
 pub trait GetRef<'a, T> {

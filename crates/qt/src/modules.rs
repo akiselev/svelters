@@ -28,7 +28,7 @@ impl FrameworkModule<QT> for QtCore {
     }
 }
 
-impl FrameworkClass<QObject> for QT {
+impl TypeDef<QObject> for QT {
     const CLASS_NAME: &'static str = "QObject";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -36,7 +36,7 @@ impl FrameworkClass<QObject> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: JsClass<Self, QObject, P>) -> Result<()> {
+    fn define<P>(cls: Type<Self, QObject, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QObject::new_0a() }
             // cls.constructor1(|var: QString| {
@@ -55,7 +55,7 @@ impl FrameworkClass<QObject> for QT {
     }
 }
 
-impl FrameworkClass<QWidget> for QT {
+impl TypeDef<QWidget> for QT {
     const CLASS_NAME: &'static str = "QWidget";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -63,7 +63,7 @@ impl FrameworkClass<QWidget> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: JsClass<Self, QWidget, P>) -> Result<()> {
+    fn define<P>(cls: Type<Self, QWidget, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QWidget::new_0a() }
             // cls.constructor1(|var: QString| {
@@ -83,7 +83,7 @@ impl FrameworkClass<QWidget> for QT {
     }
 }
 
-impl FrameworkClass<QApplication> for QT {
+impl TypeDef<QApplication> for QT {
     const CLASS_NAME: &'static str = "QApplication";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -91,7 +91,7 @@ impl FrameworkClass<QApplication> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: JsClass<Self, QApplication, P>) -> Result<()> {
+    fn define<P>(cls: Type<Self, QApplication, P>) -> Result<()> {
         // cls.static_fn0("exec", || unsafe {
         //     QCoreApplication::exec();
         // })?;
@@ -105,7 +105,7 @@ impl FrameworkClass<QApplication> for QT {
     }
 }
 
-impl FrameworkClass<QMainWindow> for QT {
+impl TypeDef<QMainWindow> for QT {
     const CLASS_NAME: &'static str = "QMainWindow";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -113,7 +113,7 @@ impl FrameworkClass<QMainWindow> for QT {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: JsClass<Self, QMainWindow, P>) -> Result<()> {
+    fn define<P>(cls: Type<Self, QMainWindow, P>) -> Result<()> {
         cls.static_fn0("exec", || unsafe {
             QCoreApplication::exec();
         })?;
