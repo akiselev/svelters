@@ -34,10 +34,13 @@ pub(in crate) mod utils;
 
 #[allow(unused_imports)]
 pub(in crate) mod inner {
-    pub(in crate) use std::borrow::Cow;
-    pub(in crate) use std::cell::Cell;
-    pub(in crate) use std::marker::PhantomData;
-    pub(in crate) use std::ops::{Add, Deref, DerefMut};
+    pub(in crate) use std::{
+        borrow::Cow,
+        cell::Cell,
+        convert::{TryFrom, TryInto},
+        marker::PhantomData,
+        ops::{Add, Deref, DerefMut},
+    };
 
     pub(in crate) use frunk::{
         hlist::{HList, Selector},
@@ -45,8 +48,8 @@ pub(in crate) mod inner {
     };
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{
-        AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error, FromJs,
-        IntoJs, Loaded, Module, ModuleDef, Native, Object, RefsMarker, Rest, Result, Value,
+        Accessor, AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error,
+        FromJs, IntoJs, Loaded, Module, ModuleDef, Native, Object, RefsMarker, Rest, Result, Value,
     };
 
     pub(in crate) use crate::module::*;

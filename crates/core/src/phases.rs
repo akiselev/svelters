@@ -45,21 +45,47 @@ mod constructor {
     }
 }
 
-// mod prop {
-//     use super::*;
+mod prop {
+    use super::*;
 
-//     pub struct ClassProp<FW, CLS, TG, GET, SET>(
-//         pub(crate) &'static str,
-//         pub(crate) T,
-//         PhantomData<(CLS, TG, A, R, FW)>,
-//     );
+    pub struct ClassProp<FW, CLS, THIS, PROP, GET, SET> {
+        pub(crate) name: &'static str,
+        pub(crate) getter: GET,
+        pub(crate) setter: SET,
+        marker: PhantomData<(FW, CLS, THIS, PROP)>,
+    }
 
-//     impl<FW, T, A, R, CLS> ClassMethod<FW, CLS, CLS, A, R, T> {
-//         pub(in crate) fn new(name: &'static str, func: T) -> Self {
-//             ClassMethod(name, func, PhantomData)
-//         }
-//     }
-// }
+    impl<FW, CLS, PROP, GET, SET, THIS> ClassProp<FW, CLS, THIS, PROP, GET, SET>
+    where
+        GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
+        SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
+    {
+        pub fn new(name: &'static str, getter: GET, setter: SET) -> Self {
+            Self {
+                name,
+                getter,
+                setter,
+                marker: PhantomData,
+            }
+        }
+    }
+
+    pub struct ClassReadOnly<FW, CLS, GET> {
+        pub(crate) name: &'static str,
+        pub(crate) getter: GET,
+        marker: PhantomData<(CLS, FW)>,
+    }
+
+    impl<FW, CLS, GET> ClassReadOnly<FW, CLS, GET> {
+        pub fn new(name: &'static str, getter: GET) -> Self {
+            Self {
+                name,
+                getter,
+                marker: PhantomData,
+            }
+        }
+    }
+}
 
 mod method {
     use super::*;
@@ -117,6 +143,6 @@ mod superclass {
 
 pub(in crate) use self::constructor::*;
 pub(in crate) use self::method::*;
-// pub(in crate) use self::prop::*;
+pub(in crate) use self::prop::*;
 pub(in crate) use self::staticfn::*;
 pub(in crate) use self::superclass::*;

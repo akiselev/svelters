@@ -80,10 +80,13 @@ mod impls {
 }
 
 pub(in crate) mod inner {
-    pub(in crate) use std::borrow::Cow;
-    pub(in crate) use std::cell::Cell;
-    pub(in crate) use std::marker::PhantomData;
-    pub(in crate) use std::ops::{Add, Deref, DerefMut};
+    pub(in crate) use std::{
+        borrow::Cow,
+        cell::Cell,
+        convert::{TryFrom, TryInto},
+        marker::PhantomData,
+        ops::{Add, Deref, DerefMut},
+    };
 
     pub(in crate) use frunk::{hlist, hlist::Selector, HCons, HNil, Hlist};
     pub(in crate) use parking_lot::{const_rwlock, RwLock};

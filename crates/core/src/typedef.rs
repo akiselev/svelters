@@ -16,24 +16,24 @@ where
         }
     }
 
-    // pub fn prop<THIS, PROP, GET, SET>(
-    //     &self,
-    //     name: &'static str,
-    //     getter: GET,
-    //     setter: SET,
-    // ) -> Result<()>
-    // where
-    //     FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<THIS>,
-    //     GET: for<'a> Fn(&THIS) -> PROP,
-    //     SET: for<'a> Fn(&mut THIS, PROP),
-    //     Wrapped<FW, CLS>: Cast<THIS>,
-    //     PROP: for<'js> IntoJs<'js>,
-    //     ClassMethod<FW, CLS, CLS, (THIS,), PROP, GET>: Implements<P>,
-    //     CLS: 'static,
-    // {
-    //     ClassProp::new(name, getter, setter).build(&self.phase)?;
-    //     Ok(())
-    // }
+    pub fn prop<THIS, PROP, GET, SET>(
+        &self,
+        name: &'static str,
+        getter: GET,
+        setter: SET,
+    ) -> Result<()>
+    where
+        FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<THIS>,
+        GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
+        SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
+        Wrapped<FW, CLS>: Cast<THIS>,
+        PROP: for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
+        ClassProp<FW, CLS, THIS, PROP, GET, SET>: Implements<P>,
+        CLS: 'static,
+    {
+        ClassProp::<FW, CLS, THIS, PROP, GET, SET>::new(name, getter, setter).build(&self.phase)?;
+        Ok(())
+    }
 
     pub fn superclass<SUPER>(&self) -> Result<()>
     where

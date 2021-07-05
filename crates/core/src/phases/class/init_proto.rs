@@ -54,6 +54,53 @@ where
     }
 }
 
+impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW, CLS>>
+    for ClassProp<FW, CLS, THIS, PROP, GET, SET>
+where
+    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    Wrapped<FW, CLS>: Cast<THIS>,
+    PROP: for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+    GET: for<'x> Fn(&'x THIS) -> Result<PROP>,
+    SET: for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
+    CLS: 'static,
+    THIS: 'static,
+    PROP: 'static,
+    GET: 'static,
+    SET: 'static,
+    for<'x> <<FW as Wraps<CLS>>::Type as Cast<THIS>>::Output<'x>: DerefMut<Target = THIS>,
+{
+    fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+        println!(
+            "Implementing prop {}::{}",
+            <FW as TypeDef<CLS>>::typename(),
+            self.name
+        );
+        let ClassProp {
+            name,
+            getter,
+            setter,
+            ..
+        } = self;
+        input.obj.prop(
+            name,
+            Accessor::new(
+                move |ctx: Ctx<'b>, this: JsClass<'b, Obj<FW, CLS>>| {
+                    let obj: &Obj<FW, CLS> = this.as_ref();
+                    let data = obj.inner.cast();
+                    let res = getter(&*data);
+                    Result::<_>::Ok(res.into_js(ctx))
+                },
+                move |ctx: Ctx<'b>, mut this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
+                    let obj: &mut Obj<FW, CLS> = this.as_mut();
+                    let mut data = obj.inner.cast();
+                    let res = setter(&mut *data, val);
+                    Result::<_>::Ok(res.into_js(ctx))
+                },
+            ),
+        )
+    }
+}
+
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassSuper<FW, CLS, SUPER>
 where

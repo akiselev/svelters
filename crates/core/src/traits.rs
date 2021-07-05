@@ -26,12 +26,18 @@ pub trait Cast<T> {
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
+pub trait CastMut<T> {
+    type Output<'a>: DerefMut<Target = T>;
+
+    fn cast_mut<'a>(&'a self) -> Self::Output<'a>;
+}
+
 pub type Wrapped<FW, CLS> = <FW as Wraps<CLS>>::Type;
+pub type Casted<'a, FW, CLS, T> = <<FW as Wraps<CLS>>::Type as Cast<T>>::Output<'a>;
+pub type CastedMut<'a, FW, CLS, T> = <<FW as Wraps<CLS>>::Type as CastMut<T>>::Output<'a>;
 
 pub trait Wraps<CLS> {
     type Type;
-
-    // fn into_container_type(data: CLS) -> Self::Type;
 }
 
 pub trait IntoContainer<FW, CLS>

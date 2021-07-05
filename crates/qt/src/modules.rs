@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{ffi::CStr, ops::Deref, os::raw::c_char};
 
 use frunk::hlist::IntoTuple2;
 use qt_core::{
@@ -44,6 +44,18 @@ impl TypeDef<QObject> for QT {
             // let (argc, argv) = args.get();
             // std::mem::forget(args);
             // QApplication::new_2a(argc, argv)
+        })?;
+        cls.method0("className", |this: &QObject| -> Result<String> {
+            let name = unsafe {
+                let obj = this.meta_object();
+                CStr::from_ptr(obj.class_name() as *const c_char).to_owned()
+            };
+            name.into_string().map_err(|err| Error::Exception {
+                message: err.to_string(),
+                file: file!().to_string(),
+                line: line!().try_into().unwrap(),
+                stack: "".to_string(),
+            })
         })?;
         cls.method0("test", |this: &QObject| {
             println!("REAL >>>>>>>>>>>>>>>>>>");
