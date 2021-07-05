@@ -17,35 +17,32 @@ impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorEval<'a, 'js, FW, CLS> {
 }
 
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
-    for ClassConstructor<FW, CLS, (), R, T>
+    for Constructor<FW, CLS, (), R, T>
 where
     FW: Framework,
-    CLS: 'static + TypeDef<FW>,
+    CLS: Type<FW>,
     T: 'static + Fn() -> R,
     R: 'static + IntoRepr<FW, CLS>,
 {
-    fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "-- Setting {}::{} in ConstructorEval",
             std::any::type_name::<FW>(),
-            <CLS as TypeDef<FW>>::CLASS_NAME
+            <CLS as Type<FW>>::CLASS_NAME
         );
         JsClass::<Obj<FW, CLS>>::register(input.ctx)?;
         input.module.set(
-            <CLS as TypeDef<FW>>::CLASS_NAME,
+            <CLS as Type<FW>>::CLASS_NAME,
             rquickjs::Func::new(
-                <CLS as TypeDef<FW>>::CLASS_NAME,
+                <CLS as Type<FW>>::CLASS_NAME,
                 JsClass::<Obj<FW, CLS>>::constructor(move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                     let args = args.into_inner();
                     let args_len = args.len();
                     tuple_match_size(args_len, 0)?;
 
                     let result = self.0();
-                    println!(
-                        "Calling constructor for {}",
-                        <CLS as TypeDef<FW>>::CLASS_NAME
-                    );
-                    JsClass::instance(ctx, Obj::<FW, CLS>::new(result.into_framework_type()))
+                    println!("Calling constructor for {}", <CLS as Type<FW>>::CLASS_NAME);
+                    JsClass::instance(ctx, Obj::<FW, CLS>::new(result.into_repr()))
                 }),
             ),
         )?;

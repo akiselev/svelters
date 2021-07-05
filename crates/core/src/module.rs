@@ -1,17 +1,14 @@
 use crate::inner::*;
 
-pub struct JsModule<FW, MOD, P>(pub(crate) P, pub(crate) PhantomData<(FW, MOD)>);
+pub struct ModuleBuilder<FW, MOD, P>(pub(crate) P, pub(crate) PhantomData<(FW, MOD)>);
 
-impl<FW, MOD, P> JsModule<FW, MOD, P> {
-    pub fn class<CLS>(&self) -> Result<()>
+impl<FW, MOD, P> ModuleBuilder<FW, MOD, P> {
+    pub fn class<CLS>(&mut self) -> Result<()>
     where
-        CLS: 'static,
-        CLS: TypeDef<FW>,
-        CLS: Repr<FW>,
+        CLS: Type<FW>,
         JsClassLoader<FW, CLS>: Implements<P>,
     {
-        println!(">>>>>>>>>>>>>>>xx");
-        JsClassLoader(PhantomData).build(&self.0)?;
+        JsClassLoader(PhantomData).build(&mut self.0)?;
         Ok(())
     }
 }

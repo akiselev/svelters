@@ -17,19 +17,19 @@ impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorLoad<'a, 'js, FW, CLS> {
 }
 
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorLoad<'a, 'b, FW, CLS>>
-    for ClassConstructor<FW, CLS, (), R, T>
+    for Constructor<FW, CLS, (), R, T>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
     T: Fn() -> R,
 {
-    fn build(self, input: &ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "-- Setting {}::{} in ConstructorLoad",
             std::any::type_name::<FW>(),
             std::any::type_name::<CLS>()
         );
-        input.module.add(<CLS as TypeDef<FW>>::typename())?;
+        input.module.add(<CLS as Type<FW>>::typename())?;
         Ok(())
     }
 }

@@ -132,10 +132,10 @@ where
 
 impl<T> IntoRepr<Fw, T> for Temp<T>
 where
-    T: TypeDef<Fw>,
+    T: Type<Fw>,
     T: Repr<Fw, Type = FwWrapper<T>>,
 {
-    fn into_framework_type(self) -> FwWrapper<T> {
+    fn into_repr(self) -> FwWrapper<T> {
         FwWrapper(self.0)
     }
 }

@@ -54,3 +54,9 @@ rquickjs = { version="0.1.1", path="../rquickjs", features=[
 [[test]]
 name = "runner"
 harness = false # Allows Cucumber to print output instead of libtest
+
+[features]
+default = []
+# Exposes internal builder types so users can create their own builder phases
+# NOTE: If you opt-in to this feature, you give up API stability guarantees!
+unstable = []

@@ -32,23 +32,27 @@ where
     MOD: Module<FW>,
 {
     fn load<'js>(ctx: Ctx<'js>, module: &QJsModule<'js, Created>) -> Result<()> {
-        let _mod = JsModule::<FW, MOD, ModuleLoad<'_, '_>>(
+        let mut _mod = ModuleBuilder::<FW, MOD, ModuleLoad<'_, '_>>(
             ModuleLoad::<'_, '_>::new(ctx, module),
             PhantomData,
         );
-        <MOD as Module<FW>>::define::<ModuleLoad<'_, '_>>(_mod)
+        <MOD as Module<FW>>::define::<ModuleLoad<'_, '_>>(&mut _mod)
     }
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &QJsModule<'js, Loaded<Native>>) -> Result<()> {
-        let _mod = JsModule::<FW, MOD, ModuleEval<'_, '_>>(
+        let mut _mod = ModuleBuilder::<FW, MOD, ModuleEval<'_, '_>>(
             ModuleEval::<'_, '_>::new(ctx, exports),
             PhantomData,
         );
-        <MOD as Module<FW>>::define::<ModuleEval<'_, '_>>(_mod)
+        <MOD as Module<FW>>::define::<ModuleEval<'_, '_>>(&mut _mod)
     }
 }
 
-impl<FW: Framework, MOD: Module<FW>> JsModuleLoader<FW, MOD> {
+impl<FW, MOD> JsModuleLoader<FW, MOD>
+where
+    FW: Framework,
+    MOD: Module<FW>,
+{
     pub fn new(module: MOD) -> Self {
         Self(module, PhantomData)
     }
@@ -58,7 +62,7 @@ pub struct JsClassLoader<FW, CLS>(pub(in crate) PhantomData<(FW, CLS)>);
 
 impl<FW, CLS> JsClassLoader<FW, CLS>
 where
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
 {
     pub fn new() -> Self {
         Self(PhantomData)
@@ -68,12 +72,12 @@ where
 impl<'a, 'b: 'a, FW, CLS> Implements<ModuleEval<'a, 'b>> for JsClassLoader<FW, CLS>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
 {
-    fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
-        let cls: TypeBuilder<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
+    fn build(self, phase: &mut ModuleEval<'a, 'b>) -> Result<()> {
+        let mut cls: TypeBuilder<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
             TypeBuilder::new(ConstructorEval::new(phase.ctx, phase.module));
-        <CLS as TypeDef<FW>>::define(cls)?;
+        <CLS as Type<FW>>::define(&mut cls)?;
         Ok(())
     }
 }
@@ -81,12 +85,12 @@ where
 impl<'a, 'b: 'a, FW, CLS> Implements<ModuleLoad<'a, 'b>> for JsClassLoader<FW, CLS>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
 {
-    fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
-        let cls: TypeBuilder<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =
+    fn build(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
+        let mut cls: TypeBuilder<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =
             TypeBuilder::new(ConstructorLoad::new(phase.ctx, phase.module));
-        <CLS as TypeDef<FW>>::define(cls)?;
+        <CLS as Type<FW>>::define(&mut cls)?;
         Ok(())
     }
 }

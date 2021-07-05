@@ -17,19 +17,19 @@ impl<'a, 'js, CLS: Repr<FW>, FW> InitProto<'a, 'js, FW, CLS> {
 }
 
 impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
-    for ClassMethod<FW, CLS, (T,), R, X>
+    for Method<FW, CLS, (T,), R, X>
 where
     FW: Framework,
-    CLS: 'static + TypeDef<FW>,
-    Type<FW, CLS>: Cast<T>,
+    CLS: Type<FW>,
+    ReprOf<FW, CLS>: Cast<T>,
     T: 'static + Repr<FW>,
     X: 'static + for<'x> Fn(&'x T) -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
-    fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "---------- IMPL {}::{}",
-            <CLS as TypeDef<FW>>::typename(),
+            <CLS as Type<FW>>::typename(),
             self.0
         );
         input.obj.set(
@@ -54,28 +54,24 @@ where
 }
 
 impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW, CLS>>
-    for ClassProp<FW, CLS, THIS, PROP, GET, SET>
+    for Property<FW, CLS, THIS, PROP, GET, SET>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
-    Type<FW, CLS>: Cast<THIS>,
-    PROP: for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
-    GET: for<'x> Fn(&'x THIS) -> Result<PROP>,
-    SET: for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
-    CLS: 'static,
     THIS: 'static,
-    PROP: 'static,
-    GET: 'static,
-    SET: 'static,
-    for<'x> <<CLS as Repr<FW>>::Type as Cast<THIS>>::Output<'x>: DerefMut<Target = THIS>,
+    CLS: Type<FW>,
+    ReprOf<FW, CLS>: CastMut<THIS>,
+    PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+    GET: 'static + for<'x> Fn(&'x THIS) -> Result<PROP>,
+    SET: 'static + for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
+    for<'x> CastedAsMut<'x, FW, CLS, THIS>: DerefMut<Target = THIS>,
 {
-    fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "---------- IMPL prop {}::{}",
-            <CLS as TypeDef<FW>>::typename(),
+            <CLS as Type<FW>>::typename(),
             self.name
         );
-        let ClassProp {
+        let Property {
             name,
             getter,
             setter,
@@ -84,15 +80,15 @@ where
         input.obj.prop(
             name,
             Accessor::new(
-                move |ctx: Ctx<'b>, this: JsClass<'b, Obj<FW, CLS>>| {
-                    let obj: &Obj<FW, CLS> = this.as_ref();
-                    let data = obj.inner.cast();
+                move |ctx: Ctx<'b>, mut this: JsClass<'b, Obj<FW, CLS>>| {
+                    let obj: &mut Obj<FW, CLS> = this.as_mut();
+                    let data = obj.inner.cast_mut();
                     let res = getter(&*data);
                     Result::<_>::Ok(res.into_js(ctx))
                 },
                 move |ctx: Ctx<'b>, mut this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
                     let obj: &mut Obj<FW, CLS> = this.as_mut();
-                    let mut data = obj.inner.cast();
+                    let mut data = obj.inner.cast_mut();
                     let res = setter(&mut *data, val);
                     Result::<_>::Ok(res.into_js(ctx))
                 },
@@ -102,24 +98,21 @@ where
 }
 
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitProto<'a, 'b, FW, CLS>>
-    for ClassSuper<FW, CLS, SUPER>
+    for Superclass<FW, CLS, SUPER>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
-    SUPER: TypeDef<FW>,
-    CLS: Repr<FW>,
-    SUPER: Repr<FW>,
-    CLS: 'static,
+    CLS: Type<FW>,
+    SUPER: Type<FW>,
 {
-    fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "------ SUPER PROTO {} on {}",
-            <SUPER as TypeDef<FW>>::typename(),
-            <CLS as TypeDef<FW>>::typename(),
+            <SUPER as Type<FW>>::typename(),
+            <CLS as Type<FW>>::typename(),
         );
         let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
-        <SUPER as TypeDef<FW>>::define(cls)?;
+        let mut cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
+        <SUPER as Type<FW>>::define(&mut cls)?;
         Ok(())
     }
 }

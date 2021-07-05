@@ -18,82 +18,79 @@ where
     }
 
     pub fn prop<THIS, PROP, GET, SET>(
-        &self,
+        &mut self,
         name: &'static str,
         getter: GET,
         setter: SET,
     ) -> Result<()>
     where
         FW: Framework,
-        CLS: TypeDef<FW>,
-        CLS: Repr<FW>,
-        THIS: Repr<FW>,
+        CLS: Type<FW>,
+        THIS: Type<FW>,
         GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
         SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
-        Type<FW, CLS>: Cast<THIS>,
+        ReprOf<FW, CLS>: Cast<THIS>,
         PROP: for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
-        ClassProp<FW, CLS, THIS, PROP, GET, SET>: Implements<P>,
-        CLS: 'static,
+        Property<FW, CLS, THIS, PROP, GET, SET>: Implements<P>,
     {
-        ClassProp::<FW, CLS, THIS, PROP, GET, SET>::new(name, getter, setter).build(&self.phase)?;
+        Property::<FW, CLS, THIS, PROP, GET, SET>::new(name, getter, setter)
+            .build(&mut self.phase)?;
         Ok(())
     }
 
-    pub fn superclass<SUPER>(&self) -> Result<()>
+    pub fn superclass<SUPER>(&mut self) -> Result<()>
     where
-        ClassSuper<FW, CLS, SUPER>: Implements<P>,
         FW: Framework,
-        CLS: TypeDef<FW>,
-        SUPER: TypeDef<FW>,
-        CLS: Repr<FW>,
-        SUPER: Repr<FW>,
+        CLS: Type<FW>,
+        SUPER: Type<FW>,
+        Superclass<FW, CLS, SUPER>: Implements<P>,
     {
-        ClassSuper::<FW, CLS, SUPER>::new().build(&self.phase)?;
+        Superclass::<FW, CLS, SUPER>::new().build(&mut self.phase)?;
         Ok(())
     }
 
-    pub fn constructor0<R, X>(&self, func: X) -> Result<()>
+    pub fn constructor0<R, X>(&mut self, func: X) -> Result<()>
     where
         FW: Framework,
-        CLS: TypeDef<FW>,
+        CLS: Type<FW>,
         CLS: Repr<FW>,
         X: 'static + Fn() -> R,
         CLS: 'static,
         R: 'static + IntoRepr<FW, CLS>,
-        ClassConstructor<FW, CLS, (), R, X>: Implements<P>,
+        Constructor<FW, CLS, (), R, X>: Implements<P>,
     {
-        ClassConstructor::new(func).build(&self.phase)?;
+        Constructor::new(func).build(&mut self.phase)?;
         Ok(())
     }
 
-    pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
+    pub fn method0<T, R, X>(&mut self, name: &'static str, func: X) -> Result<()>
     where
         FW: Framework,
-        CLS: TypeDef<FW>,
+        CLS: Type<FW>,
         CLS: Repr<FW>,
         T: Repr<FW>,
         X: 'static + for<'x> Fn(&'x T) -> R,
-        Type<FW, CLS>: Cast<T>,
+        ReprOf<FW, CLS>: Cast<T>,
         R: 'static + for<'js> IntoJs<'js>,
         CLS: 'static,
         T: 'static,
-        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
+        Method<FW, CLS, (T,), R, X>: Implements<P>,
     {
-        ClassMethod::new(name, func).build(&self.phase)?;
+        Method::new(name, func).build(&mut self.phase)?;
         Ok(())
     }
 
-    pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
+    pub fn static_fn0<R, X>(&mut self, name: &'static str, func: X) -> Result<()>
     where
         FW: Framework,
-        CLS: TypeDef<FW>,
+        CLS: Type<FW>,
         CLS: Repr<FW>,
         X: 'static + Fn() -> R,
         R: 'static + for<'js> IntoJs<'js>,
         CLS: 'static,
-        ClassStaticFunc<FW, CLS, (), R, X>: Implements<P>,
+        StaticFn<FW, CLS, (), R, X>: Implements<P>,
     {
-        ClassStaticFunc::new(name, func).build(&self.phase)?;
+        StaticFn::new(name, func).build(&mut self.phase)?;
         Ok(())
     }
 }
@@ -102,7 +99,7 @@ where
 //     ($($static_fn:ident $method:ident $constructor:ident $($type:ident)*,)*) => {
 //         $(
 //             pub fn $static_fn<$($type,)* R, X>(
-//                 &self,
+//                 &mut self,
 //                 name: &'static str,
 //                 func: X,
 //             ) -> ClassStaticFunc<FW, CLS, ($($type,)*), R, X>
@@ -116,7 +113,7 @@ where
 //             }
 
 //             pub fn $method<T, $($type,)* R, X>(
-//                 &self,
+//                 &mut self,
 //                 name: &'static str,
 //                 func: X,
 //             ) -> ClassMethod<FW, CLS, (T, $($type,)*), R, X>
@@ -130,7 +127,7 @@ where
 //                 ClassMethod::new(name, func)
 //             }
 
-//             pub fn $constructor<$($type,)* R, X>(&self, func: X) -> ClassConstructor<FW, CLS, ($($type,)*), R, X>
+//             pub fn $constructor<$($type,)* R, X>(&mut self, func: X) -> ClassConstructor<FW, CLS, ($($type,)*), R, X>
 //             where
 //                 X:  Constructor<FW, CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
 //                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,

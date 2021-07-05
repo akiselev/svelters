@@ -3,25 +3,25 @@ use crate::inner::*;
 pub struct Obj<FW, CLS>
 where
     FW: Framework,
-    CLS: Repr<FW> + TypeDef<FW>,
+    CLS: Repr<FW> + Type<FW>,
 {
     pub(in crate) fw: PhantomData<FW>,
-    pub(in crate) inner: Type<FW, CLS>,
+    pub(in crate) inner: ReprOf<FW, CLS>,
 }
 
 impl<'a, FW, CLS> Obj<FW, CLS>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
 {
-    pub fn new(inner: Type<FW, CLS>) -> Self {
+    pub fn new(inner: ReprOf<FW, CLS>) -> Self {
         Self {
             fw: PhantomData,
             inner,
         }
     }
 
-    pub fn as_inner<'b>(&'a self) -> &'b Type<FW, CLS>
+    pub fn as_inner<'b>(&'a self) -> &'b ReprOf<FW, CLS>
     where
         'a: 'b,
     {
@@ -32,12 +32,12 @@ where
 impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
     unsafe fn class_id() -> &'static mut ClassId {
-        <CLS as TypeDef<FW>>::get_id()
+        <CLS as Type<FW>>::get_id()
     }
 
     const HAS_PROTO: bool = true;
@@ -47,26 +47,16 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        println!(
-            "------ PROTO {}::{}",
-            FW::name(),
-            <CLS as TypeDef<FW>>::typename()
-        );
-        let cls: TypeBuilder<FW, CLS, InitProto<FW, CLS>> =
+        let mut cls: TypeBuilder<FW, CLS, InitProto<FW, CLS>> =
             TypeBuilder::new(InitProto::new(ctx, proto));
-        <CLS as TypeDef<FW>>::define(cls)?;
+        <CLS as Type<FW>>::define(&mut cls)?;
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        println!(
-            "------ STATIC {}::{}",
-            FW::name(),
-            <CLS as TypeDef<FW>>::typename()
-        );
-        let cls: TypeBuilder<FW, CLS, InitStatic<FW, CLS>> =
+        let mut cls: TypeBuilder<FW, CLS, InitStatic<FW, CLS>> =
             TypeBuilder::new(InitStatic::new(ctx, _static));
-        <CLS as TypeDef<FW>>::define(cls)?;
+        <CLS as Type<FW>>::define(&mut cls)?;
         Ok(())
     }
 

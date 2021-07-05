@@ -13,10 +13,15 @@
 #![allow(incomplete_features, dead_code)]
 
 pub mod prelude {
-    pub use crate::module::JsModule;
+    pub use crate::module::ModuleBuilder;
     pub use crate::obj::Obj;
     pub use crate::traits::*;
     pub use crate::typedef::TypeBuilder;
+}
+
+#[cfg(feature = "unstable")]
+pub mod types {
+    pub use phases::Constructor;
 }
 
 pub(in crate) mod module;

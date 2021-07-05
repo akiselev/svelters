@@ -16,7 +16,7 @@ use crate::{
 };
 
 impl Module<QT> for QtCore {
-    fn define<P>(module: JsModule<QT, Self, P>) -> Result<()>
+    fn define<P>(module: &mut ModuleBuilder<QT, Self, P>) -> Result<()>
     where
         QT: Framework,
     {
@@ -32,7 +32,7 @@ impl Repr<QT> for QObject {
     type Type = QtWrapper<QObject>;
 }
 
-impl TypeDef<QT> for QObject {
+impl Type<QT> for QObject {
     const CLASS_NAME: &'static str = "QObject";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -40,7 +40,7 @@ impl TypeDef<QT> for QObject {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: Type<QT, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QObject::new_0a() }
             // cls.constructor1(|var: QString| {
@@ -75,7 +75,7 @@ impl Repr<QT> for QWidget {
     type Type = QtWrapper<QWidget>;
 }
 
-impl TypeDef<QT> for QWidget {
+impl Type<QT> for QWidget {
     const CLASS_NAME: &'static str = "QWidget";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -83,7 +83,7 @@ impl TypeDef<QT> for QWidget {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: Type<QT, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QWidget::new_0a() }
             // cls.constructor1(|var: QString| {
@@ -107,7 +107,7 @@ impl Repr<QT> for QApplication {
     type Type = QtWrapper<QApplication>;
 }
 
-impl TypeDef<QT> for QApplication {
+impl Type<QT> for QApplication {
     const CLASS_NAME: &'static str = "QApplication";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -115,7 +115,7 @@ impl TypeDef<QT> for QApplication {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: Type<QT, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         // cls.static_fn0("exec", || unsafe {
         //     QCoreApplication::exec();
         // })?;
@@ -133,7 +133,7 @@ impl Repr<QT> for QMainWindow {
     type Type = QtWrapper<QMainWindow>;
 }
 
-impl TypeDef<QT> for QMainWindow {
+impl Type<QT> for QMainWindow {
     const CLASS_NAME: &'static str = "QMainWindow";
 
     unsafe fn get_id() -> &'static mut ClassId {
@@ -141,7 +141,7 @@ impl TypeDef<QT> for QMainWindow {
         &mut CLASS_ID
     }
 
-    fn define<P>(cls: Type<QT, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.static_fn0("exec", || unsafe {
             QCoreApplication::exec();
         })?;

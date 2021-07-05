@@ -5,7 +5,7 @@ use crate::inner::*;
 
 pub enum QtWrapper<CLS>
 where
-    CLS: TypeDef<QT>,
+    CLS: Type<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     Owned(QBox<CLS>),
@@ -15,7 +15,7 @@ where
 
 impl<'a, T> Deref for QtWrapper<T>
 where
-    T: TypeDef<QT>,
+    T: Type<QT>,
     T: StaticUpcast<QObject> + CppDeletable,
 {
     type Target = T;
@@ -42,7 +42,7 @@ impl<'a, T> Deref for DerefWrapper<'a, T> {
 impl<T, CLS> CastFrom<T> for QtWrapper<CLS>
 where
     T: CastFrom<CLS>,
-    CLS: TypeDef<QT>,
+    CLS: Type<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     unsafe fn cast_from(value: T) -> Self {
@@ -52,7 +52,7 @@ where
 
 impl<X, CLS> Cast<X> for QtWrapper<CLS>
 where
-    CLS: TypeDef<QT>,
+    CLS: Type<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
     // Ref<CLS>: CastFrom<Ref<X>> + StaticUpcast<Ref<X>> + CppDeletable,
@@ -81,30 +81,30 @@ where
 
 impl<CLS> IntoRepr<QT, CLS> for QBox<CLS>
 where
-    CLS: TypeDef<QT> + Repr<QT, Type = QtWrapper<CLS>>,
+    CLS: Type<QT> + Repr<QT, Type = QtWrapper<CLS>>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    fn into_framework_type(self) -> QtWrapper<CLS> {
+    fn into_repr(self) -> QtWrapper<CLS> {
         QtWrapper::Owned(self)
     }
 }
 
 impl<CLS> IntoRepr<QT, CLS> for QPtr<CLS>
 where
-    CLS: TypeDef<QT> + Repr<QT, Type = QtWrapper<CLS>>,
+    CLS: Type<QT> + Repr<QT, Type = QtWrapper<CLS>>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    fn into_framework_type(self) -> QtWrapper<CLS> {
+    fn into_repr(self) -> QtWrapper<CLS> {
         QtWrapper::Shared(self)
     }
 }
 
 impl<CLS> IntoRepr<QT, CLS> for Ptr<CLS>
 where
-    CLS: TypeDef<QT> + Repr<QT, Type = QtWrapper<CLS>>,
+    CLS: Type<QT> + Repr<QT, Type = QtWrapper<CLS>>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    fn into_framework_type(self) -> QtWrapper<CLS> {
+    fn into_repr(self) -> QtWrapper<CLS> {
         QtWrapper::Ref(unsafe { self })
     }
 }

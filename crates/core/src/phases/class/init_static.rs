@@ -17,18 +17,17 @@ impl<'a, 'js, CLS: Repr<FW>, FW> InitStatic<'a, 'js, FW, CLS> {
 }
 
 impl<'a, 'b: 'a, T, FW, CLS, R> Implements<InitStatic<'a, 'b, FW, CLS>>
-    for ClassStaticFunc<FW, CLS, (), R, T>
+    for StaticFn<FW, CLS, (), R, T>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
+    CLS: Type<FW>,
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
-    CLS: 'static,
 {
-    fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "---------- IMPL static {}::{} ",
-            <CLS as TypeDef<FW>>::typename(),
+            <CLS as Type<FW>>::typename(),
             self.0,
         );
         input.obj.set(
@@ -36,7 +35,7 @@ where
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                 println!(
                     "CALLING STATIC {}::{} ",
-                    <CLS as TypeDef<FW>>::typename(),
+                    <CLS as Type<FW>>::typename(),
                     self.0,
                 );
                 let args = args.into_inner();
@@ -52,24 +51,21 @@ where
 }
 
 impl<'a, 'b: 'a, FW, CLS, SUPER> Implements<InitStatic<'a, 'b, FW, CLS>>
-    for ClassSuper<FW, CLS, SUPER>
+    for Superclass<FW, CLS, SUPER>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
-    SUPER: TypeDef<FW>,
-    CLS: Repr<FW>,
-    SUPER: Repr<FW>,
-    CLS: 'static,
+    CLS: Type<FW>,
+    SUPER: Type<FW>,
 {
-    fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, input: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
             "------ SUPER STATIC {} on {}",
-            <SUPER as TypeDef<FW>>::typename(),
-            <CLS as TypeDef<FW>>::typename(),
+            <SUPER as Type<FW>>::typename(),
+            <CLS as Type<FW>>::typename(),
         );
         let phase = InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
-        <SUPER as TypeDef<FW>>::define(cls)?;
+        let mut cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
+        <SUPER as Type<FW>>::define(&mut cls)?;
         Ok(())
     }
 }
