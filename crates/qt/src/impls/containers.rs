@@ -79,32 +79,6 @@ where
     }
 }
 
-impl<'a, CLS> GetRef<'a, CLS> for QtWrapper<CLS>
-where
-    QT: TypeDef<CLS>,
-    CLS: StaticUpcast<QObject> + CppDeletable,
-{
-    type Pointer = Ptr<CLS>;
-
-    fn get_ref(&'a self) -> &'a CLS {
-        match self {
-            QtWrapper::Owned(ref val) => val.deref(),
-            QtWrapper::Shared(ref val) => val.deref(),
-            QtWrapper::Ref(ref val) => val.deref(),
-        }
-    }
-
-    fn get_ptr(&'a self) -> Self::Pointer {
-        unsafe {
-            match self {
-                QtWrapper::Owned(ref val) => val.as_ptr(),
-                QtWrapper::Shared(ref val) => val.as_ptr(),
-                QtWrapper::Ref(ref val) => val.clone(),
-            }
-        }
-    }
-}
-
 impl<CLS> IntoContainer<QT, CLS> for QBox<CLS>
 where
     QT: TypeDef<CLS>,
