@@ -4,6 +4,8 @@ use rquickjs::ClassId;
 
 use super::*;
 
+pub struct Temp<T>(pub T);
+
 impl TypeDef<Object> for Fw {
     const CLASS_NAME: &'static str = "Object";
 
@@ -13,10 +15,10 @@ impl TypeDef<Object> for Fw {
     }
 
     fn define<P>(cls: Type<Self, Object, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<Object> { Ok(Default::default()) })?;
+        cls.constructor0(|| -> Temp<Object> { Temp(Default::default()) })?;
 
-        cls.method0("className", |_this: &Object| -> rquickjs::Result<String> {
-            Ok("Object".to_string())
+        cls.method0("className", |_this: &Object| -> String {
+            "Object".to_string()
         })?;
         Ok(())
     }
@@ -31,11 +33,11 @@ impl TypeDef<Widget> for Fw {
     }
 
     fn define<P>(cls: Type<Self, Widget, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<Widget> { Ok(Default::default()) })?;
+        cls.constructor0(|| -> Temp<Widget> { Temp(Default::default()) })?;
 
         cls.superclass::<Object>()?;
-        cls.method0("className", |_this: &Widget| -> rquickjs::Result<String> {
-            Ok("Widget".to_string())
+        cls.method0("className", |_this: &Widget| -> String {
+            "Widget".to_string()
         })?;
         Ok(())
     }
@@ -50,14 +52,13 @@ impl TypeDef<Application> for Fw {
     }
 
     fn define<P>(cls: Type<Self, Application, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<Application> { Ok(Default::default()) })?;
+        cls.constructor0(|| -> Temp<Application> { Temp(Default::default()) })?;
         cls.method0("status", |this: &Application| -> String { this.1.clone() })?;
 
         cls.superclass::<Object>()?;
-        cls.method0(
-            "className",
-            |_this: &Application| -> rquickjs::Result<String> { Ok("Application".to_string()) },
-        )?;
+        cls.method0("className", |_this: &Application| -> String {
+            "Application".to_string()
+        })?;
         Ok(())
     }
 }
@@ -71,14 +72,13 @@ impl TypeDef<MainWindow> for Fw {
     }
 
     fn define<P>(cls: Type<Self, MainWindow, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<MainWindow> { Ok(Default::default()) })?;
+        cls.constructor0(|| -> Temp<MainWindow> { Temp(Default::default()) })?;
         cls.method0("title", |this: &MainWindow| -> String { this.1.clone() })?;
 
         cls.superclass::<Widget>()?;
-        cls.method0(
-            "className",
-            |_this: &MainWindow| -> rquickjs::Result<String> { Ok("MainWindow".to_string()) },
-        )?;
+        cls.method0("className", |_this: &MainWindow| -> String {
+            "MainWindow".to_string()
+        })?;
         Ok(())
     }
 }
@@ -92,16 +92,15 @@ impl TypeDef<BoxLayout> for Fw {
     }
 
     fn define<P>(cls: Type<Self, BoxLayout, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<BoxLayout> { Ok(Default::default()) })?;
+        cls.constructor0(|| -> Temp<BoxLayout> { Temp(Default::default()) })?;
         cls.method0("orientation", |this: &BoxLayout| -> String {
             this.1.clone()
         })?;
 
         cls.superclass::<Widget>()?;
-        cls.method0(
-            "className",
-            |_this: &BoxLayout| -> rquickjs::Result<String> { Ok("BoxLayout".to_string()) },
-        )?;
+        cls.method0("className", |_this: &BoxLayout| -> String {
+            "BoxLayout".to_string()
+        })?;
         Ok(())
     }
 }
@@ -118,12 +117,9 @@ impl TypeDef<AbstractButton> for Fw {
         cls.method0("text", |this: &AbstractButton| -> String { this.1.clone() })?;
 
         cls.superclass::<Widget>()?;
-        cls.method0(
-            "className",
-            |_this: &AbstractButton| -> rquickjs::Result<String> {
-                Ok("AbstractButton".to_string())
-            },
-        )?;
+        cls.method0("className", |_this: &AbstractButton| -> String {
+            "AbstractButton".to_string()
+        })?;
         Ok(())
     }
 }
@@ -137,14 +133,13 @@ impl TypeDef<PushButton> for Fw {
     }
 
     fn define<P>(cls: Type<Self, PushButton, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<PushButton> { Ok(Default::default()) })?;
+        cls.constructor0(|| -> Temp<PushButton> { Temp(Default::default()) })?;
         cls.method0("status", |this: &PushButton| -> String { this.1.clone() })?;
 
         cls.superclass::<AbstractButton>()?;
-        cls.method0(
-            "className",
-            |_this: &PushButton| -> rquickjs::Result<String> { Ok("PushButton".to_string()) },
-        )?;
+        cls.method0("className", |_this: &PushButton| -> String {
+            "PushButton".to_string()
+        })?;
         Ok(())
     }
 }

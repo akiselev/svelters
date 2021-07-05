@@ -4,14 +4,31 @@ Feature: Core
         Given module at "test.js"
         When calling function "testConsole"
 
-    Scenario: testing return values
+    Scenario: testing return value
         Given module at "test.js"
-        When calling function "testReturnValue" with string "Runner"
+        When calling function "testReturnValue" with args ("Runner")
         Then return value is "Hello Runner"
+
+    Scenario: testing args
+        Given module at "test.js"
+        When calling function "testArgs" with args ("One", "Two", "Three", "Four", "Five")
+        Then return value is "One Two Three Four Five"
+
+    Scenario: get class name
+        Given module at "test.js"
+        When calling function "getClassName"
+        Then return value is "Object"
+
+    Scenario: call basic method
+        Given module at "test.js"
+        When calling function "callMethod" with args ("Object", "className")
+        Then return value is "Ob"
 
     Scenario: construct class
         Given module at "test.js"
         When calling function "constructClass"
+        Then return value is ()
+
 # Then that string is now equal to "something interesting"
 
 # Scenario: async things

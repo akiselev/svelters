@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use cucumber_rust::{t, Steps};
-use pretty_assertions::{assert_eq, assert_ne};
+use cucumber_rust::Steps;
+use pretty_assertions::assert_eq;
 
 use crate::CoreWorld;
 
@@ -32,28 +32,119 @@ pub fn steps() -> Steps<CoreWorld> {
             world.module = key;
             world
         })
-        .when_regex(r#"^calling function "(.*)"$"#, |mut world, ctx| {
-            let func_name = &ctx.matches[1].to_string();
-            let key = world
-                .ctx
-                .with(|ctx| {
-                    let value = ctx
-                        .deregister(world.module)
-                        .ok_or_else(|| anyhow::anyhow!("key for module not found"))?;
-                    let module = value
-                        .as_module()
-                        .ok_or_else(|| anyhow::anyhow!("no module found"))?;
-                    let func: rquickjs::Function<'_> = module.get(func_name)?;
-                    let value = func.call(())?;
-                    let key = ctx.register(value);
-                    Result::<_, anyhow::Error>::Ok(key)
-                })
-                .unwrap();
-            world.module = key;
-            world
-        })
         .when_regex(
-            r#"^calling function "(.*)" with string "(.*)"$"#,
+            r#"^calling function "(.*)" with args \("(.*)", "(.*)", "(.*)", "(.*)", "(.*)"\)$"#,
+            |mut world, ctx| {
+                let func_name = ctx.matches[1].to_owned();
+                let args = (
+                    ctx.matches[2].to_owned(),
+                    ctx.matches[3].to_owned(),
+                    ctx.matches[4].to_owned(),
+                    ctx.matches[5].to_owned(),
+                    ctx.matches[6].to_owned(),
+                );
+                let key = world
+                    .ctx
+                    .with(|ctx| {
+                        let value = ctx
+                            .deregister(world.module)
+                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                        let module = value
+                            .as_module()
+                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let func: rquickjs::Function<'_> = module.get(func_name)?;
+                        let value = func.call(args)?;
+                        let key = ctx.register(value);
+                        Result::<_, anyhow::Error>::Ok(key)
+                    })
+                    .unwrap();
+                world.result = key;
+                world
+            },
+        )
+        .when_regex(
+            r#"^calling function "(.*)" with args \("(.*)", "(.*)", "(.*)", "(.*)"\)$"#,
+            |mut world, ctx| {
+                let func_name = ctx.matches[1].to_owned();
+                let args = (
+                    ctx.matches[2].to_owned(),
+                    ctx.matches[3].to_owned(),
+                    ctx.matches[4].to_owned(),
+                    ctx.matches[5].to_owned(),
+                );
+                let key = world
+                    .ctx
+                    .with(|ctx| {
+                        let value = ctx
+                            .deregister(world.module)
+                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                        let module = value
+                            .as_module()
+                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let func: rquickjs::Function<'_> = module.get(func_name)?;
+                        let value = func.call(args)?;
+                        let key = ctx.register(value);
+                        Result::<_, anyhow::Error>::Ok(key)
+                    })
+                    .unwrap();
+                world.result = key;
+                world
+            },
+        )
+        .when_regex(
+            r#"^calling function "(.*)" with args \("(.*)", "(.*)", "(.*)"\)$"#,
+            |mut world, ctx| {
+                let func_name = &ctx.matches[1].to_owned();
+                let args = (
+                    ctx.matches[2].to_owned(),
+                    ctx.matches[3].to_owned(),
+                    ctx.matches[4].to_owned(),
+                );
+                let key = world
+                    .ctx
+                    .with(|ctx| {
+                        let value = ctx
+                            .deregister(world.module)
+                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                        let module = value
+                            .as_module()
+                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let func: rquickjs::Function<'_> = module.get(func_name)?;
+                        let value = func.call(args)?;
+                        let key = ctx.register(value);
+                        Result::<_, anyhow::Error>::Ok(key)
+                    })
+                    .unwrap();
+                world.result = key;
+                world
+            },
+        )
+        .when_regex(
+            r#"^calling function "(.*)" with args \("(.*), "(.*)""\)$"#,
+            |mut world, ctx| {
+                let func_name = &ctx.matches[1].to_owned();
+                let args = (ctx.matches[2].to_owned(), ctx.matches[3].to_owned());
+                let key = world
+                    .ctx
+                    .with(|ctx| {
+                        let value = ctx
+                            .deregister(world.module)
+                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                        let module = value
+                            .as_module()
+                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let func: rquickjs::Function<'_> = module.get(func_name)?;
+                        let value = func.call(args)?;
+                        let key = ctx.register(value);
+                        Result::<_, anyhow::Error>::Ok(key)
+                    })
+                    .unwrap();
+                world.result = key;
+                world
+            },
+        )
+        .when_regex(
+            r#"^calling function "(.*)" with args \("(.*)"\)$"#,
             |mut world, ctx| {
                 let func_name = &ctx.matches[1].to_owned();
                 let func_arg = &ctx.matches[2].to_owned();
@@ -76,7 +167,27 @@ pub fn steps() -> Steps<CoreWorld> {
                 world
             },
         )
-        .then_regex(r#"^return value is "(.*)"$"#, |mut world, ctx| {
+        .when_regex(r#"^calling function "(.*)"$"#, |mut world, ctx| {
+            let func_name = &ctx.matches[1].to_string();
+            let key = world
+                .ctx
+                .with(|ctx| {
+                    let value = ctx
+                        .deregister(world.module)
+                        .ok_or_else(|| anyhow::anyhow!("key for module not found"))?;
+                    let module = value
+                        .as_module()
+                        .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                    let func: rquickjs::Function<'_> = module.get(func_name)?;
+                    let value = func.call(())?;
+                    let key = ctx.register(value);
+                    Result::<_, anyhow::Error>::Ok(key)
+                })
+                .unwrap();
+            world.module = key;
+            world
+        })
+        .then_regex(r#"^return value is "(.*)"$"#, |world, ctx| {
             let expected = &ctx.matches[1].to_owned();
             world
                 .ctx
@@ -94,6 +205,23 @@ pub fn steps() -> Steps<CoreWorld> {
                         })?
                         .to_string()?;
                     assert_eq!(expected, &result);
+                    Result::<_, anyhow::Error>::Ok(())
+                })
+                .unwrap();
+            world
+        })
+        .then_regex(r#"^return value is \(\)$"#, |world, _| {
+            world
+                .ctx
+                .with(|ctx| {
+                    let value = ctx
+                        .deregister(world.result)
+                        .ok_or_else(|| anyhow::anyhow!("no return value not found"))?;
+                    assert_eq!(
+                        rquickjs::Value::new_undefined(ctx),
+                        value,
+                        "Return value should be undefined"
+                    );
                     Result::<_, anyhow::Error>::Ok(())
                 })
                 .unwrap();
