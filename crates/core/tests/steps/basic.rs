@@ -30,7 +30,7 @@ pub fn steps() -> Steps<CoreWorld> {
                     Result::<_, anyhow::Error>::Ok(key)
                 })
                 .unwrap();
-            world.module = key;
+            world.set_module(key).unwrap();
             world
         })
         .when_regex(
@@ -41,19 +41,14 @@ pub fn steps() -> Steps<CoreWorld> {
                 let key = world
                     .ctx
                     .with(|ctx| {
-                        let value = ctx
-                            .get_register(world.module)
-                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
-                        let module = value
-                            .as_module()
-                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let module = world.get_module(ctx)?;
                         let func: rquickjs::Function<'_> = module.get(func_name)?;
                         let value = func.call::<_, rquickjs::Value<'_>>((func_arg,))?;
                         let key = ctx.register(value);
                         Result::<_, anyhow::Error>::Ok(key)
                     })
                     .unwrap();
-                world.result = key;
+                world.set_result(key).unwrap();
                 world
             },
         )
@@ -65,19 +60,14 @@ pub fn steps() -> Steps<CoreWorld> {
                 let key = world
                     .ctx
                     .with(|ctx| {
-                        let value = ctx
-                            .get_register(world.module)
-                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
-                        let module = value
-                            .as_module()
-                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let module = world.get_module(ctx)?;
                         let func: rquickjs::Function<'_> = module.get(func_name)?;
                         let value = func.call::<_, rquickjs::Value<'_>>(args)?;
                         let key = ctx.register(value);
                         Result::<_, anyhow::Error>::Ok(key)
                     })
                     .unwrap();
-                world.result = key;
+                world.set_result(key).unwrap();
                 world
             },
         )
@@ -93,19 +83,14 @@ pub fn steps() -> Steps<CoreWorld> {
                 let key = world
                     .ctx
                     .with(|ctx| {
-                        let value = ctx
-                            .get_register(world.module)
-                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
-                        let module = value
-                            .as_module()
-                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let module = world.get_module(ctx)?;
                         let func: rquickjs::Function<'_> = module.get(func_name)?;
                         let value = func.call::<_, rquickjs::Value<'_>>(args)?;
                         let key = ctx.register(value);
                         Result::<_, anyhow::Error>::Ok(key)
                     })
                     .unwrap();
-                world.result = key;
+                world.set_result(key).unwrap();
                 world
             },
         )
@@ -122,19 +107,14 @@ pub fn steps() -> Steps<CoreWorld> {
                 let key = world
                     .ctx
                     .with(|ctx| {
-                        let value = ctx
-                            .get_register(world.module)
-                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
-                        let module = value
-                            .as_module()
-                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let module = world.get_module(ctx)?;
                         let func: rquickjs::Function<'_> = module.get(func_name)?;
                         let value = func.call::<_, rquickjs::Value<'_>>(args)?;
                         let key = ctx.register(value);
                         Result::<_, anyhow::Error>::Ok(key)
                     })
                     .unwrap();
-                world.result = key;
+                world.set_result(key).unwrap();
                 world
             },
         )
@@ -152,19 +132,14 @@ pub fn steps() -> Steps<CoreWorld> {
                 let key = world
                     .ctx
                     .with(|ctx| {
-                        let value = ctx
-                            .get_register(world.module)
-                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
-                        let module = value
-                            .as_module()
-                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
+                        let module = world.get_module(ctx)?;
                         let func: rquickjs::Function<'_> = module.get(func_name)?;
                         let value = func.call::<_, rquickjs::Value<'_>>(args)?;
                         let key = ctx.register(value);
                         Result::<_, anyhow::Error>::Ok(key)
                     })
                     .unwrap();
-                world.result = key;
+                world.set_result(key).unwrap();
                 world
             },
         )
@@ -173,19 +148,14 @@ pub fn steps() -> Steps<CoreWorld> {
             let key = world
                 .ctx
                 .with(|ctx| {
-                    let value = ctx
-                        .get_register(world.module)
-                        .ok_or_else(|| anyhow::anyhow!("key for module not found"))?;
-                    let module = value
-                        .as_module()
-                        .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                    let module = world.get_module(ctx)?;
                     let func: rquickjs::Function<'_> = module.get(func_name)?;
                     let value = func.call::<_, rquickjs::Value<'_>>(())?;
                     let key = ctx.register(value);
                     Result::<_, anyhow::Error>::Ok(key)
                 })
                 .unwrap();
-            world.result = key;
+            world.set_result(key).unwrap();
             world
         })
         .then_regex(r#"^return value is "([^"]*)"$"#, |world, ctx| {
@@ -193,9 +163,7 @@ pub fn steps() -> Steps<CoreWorld> {
             world
                 .ctx
                 .with(|ctx| {
-                    let value = ctx
-                        .get_register(world.result)
-                        .ok_or_else(|| anyhow::anyhow!("return value not found"))?;
+                    let value = world.get_result(ctx)?;
                     let result = value
                         .as_string()
                         .ok_or_else(|| {
@@ -215,9 +183,7 @@ pub fn steps() -> Steps<CoreWorld> {
             world
                 .ctx
                 .with(|ctx| {
-                    let value = ctx
-                        .get_register(world.result)
-                        .ok_or_else(|| anyhow::anyhow!("return value not found"))?;
+                    let value = world.get_result(ctx)?;
                     assert_eq!(
                         value,
                         rquickjs::Value::new_bool(ctx, true),
@@ -232,9 +198,7 @@ pub fn steps() -> Steps<CoreWorld> {
             world
                 .ctx
                 .with(|ctx| {
-                    let value = ctx
-                        .get_register(world.result)
-                        .ok_or_else(|| anyhow::anyhow!("return value not found"))?;
+                    let value = world.get_result(ctx)?;
                     assert_eq!(
                         rquickjs::Value::new_bool(ctx, false),
                         value,
@@ -249,9 +213,7 @@ pub fn steps() -> Steps<CoreWorld> {
             world
                 .ctx
                 .with(|ctx| {
-                    let value = ctx
-                        .get_register(world.result)
-                        .ok_or_else(|| anyhow::anyhow!("no return value not found"))?;
+                    let value = world.get_result(ctx)?;
                     assert_eq!(
                         value,
                         rquickjs::Value::new_undefined(ctx),
@@ -266,9 +228,7 @@ pub fn steps() -> Steps<CoreWorld> {
             world
                 .ctx
                 .with(|ctx| {
-                    let value = ctx
-                        .get_register(world.result)
-                        .ok_or_else(|| anyhow::anyhow!("no return value not found"))?;
+                    let value = world.get_result(ctx)?;
                     assert_eq!(value.is_object(), true, "Return value should be an object");
                     Result::<_, anyhow::Error>::Ok(())
                 })

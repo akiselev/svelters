@@ -1,4 +1,5 @@
 use cucumber_rust::{async_trait, criteria::feature, futures::FutureExt, Context, Cucumber, World};
+use rquickjs::Ctx;
 pub(crate) use rquickjs::{
     BuiltinResolver, Error, Evaluated, Loader, Module as QJsModule, ModuleLoader, RegisteryKey,
     Resolver, Result, Runtime, Value,
@@ -23,12 +24,13 @@ pub use svelters_core::prelude::*;
 pub struct CoreWorld {
     pub rt: rquickjs::Runtime,
     pub ctx: rquickjs::Context,
+    undefined: RegisteryKey,
     /// Last loaded module
-    pub module: RegisteryKey,
+    module: RegisteryKey,
     /// Last Object created, which is target of tests
-    pub subject: RegisteryKey,
+    subject: RegisteryKey,
     /// Result of last operation
-    pub result: RegisteryKey,
+    result: RegisteryKey,
 }
 
 #[async_trait(?Send)]
@@ -51,9 +53,64 @@ impl World for CoreWorld {
         Ok(CoreWorld {
             rt,
             ctx,
+            undefined: key.clone(),
             module: key.clone(),
             subject: key.clone(),
             result: key.clone(),
         })
+    }
+}
+
+impl CoreWorld {
+    pub fn set_module(&mut self, key: RegisteryKey) -> Result<()> {
+        if self.module != self.undefined {
+            self.ctx.with(|ctx| {
+                let _ = ctx.deregister(self.module);
+            });
+        }
+        self.module = key;
+        Ok(())
+    }
+
+    pub fn set_result(&mut self, key: RegisteryKey) -> Result<()> {
+        if self.result != self.undefined {
+            self.ctx.with(|ctx| {
+                let _ = ctx.deregister(self.result);
+            });
+        }
+        self.result = key;
+        Ok(())
+    }
+
+    pub fn set_subject(&mut self, key: RegisteryKey) -> Result<()> {
+        if self.subject != self.undefined {
+            self.ctx.with(|ctx| {
+                let _ = ctx.deregister(self.subject);
+            });
+        }
+        self.subject = key;
+        Ok(())
+    }
+
+    pub fn get_module<'a, 'js>(
+        &'a self,
+        ctx: Ctx<'js>,
+    ) -> anyhow::Result<QJsModule<'js, Evaluated>> {
+        ctx.get_register(self.module)
+            .ok_or_else(|| anyhow::anyhow!("no module found"))?
+            .into_module()
+            .ok_or_else(|| anyhow::anyhow!("not a module"))
+    }
+
+    pub fn get_subject<'a, 'js>(&'a self, ctx: Ctx<'js>) -> anyhow::Result<rquickjs::Object<'js>> {
+        ctx.get_register(self.subject)
+            .ok_or_else(|| anyhow::anyhow!("no subject found"))?
+            .into_object()
+            .ok_or_else(|| anyhow::anyhow!("not a subject"))
+    }
+
+    pub fn get_result<'a, 'js>(&'a self, ctx: Ctx<'js>) -> anyhow::Result<Value<'js>> {
+        ctx.get_register(self.result)
+            .ok_or_else(|| anyhow::anyhow!("no result found"))
     }
 }
