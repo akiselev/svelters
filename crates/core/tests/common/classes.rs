@@ -1,5 +1,3 @@
-use std::marker::PhantomData;
-
 use rquickjs::ClassId;
 
 use super::*;
@@ -18,7 +16,7 @@ impl TypeDef<Fw> for Object {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<Object> { Temp(Default::default()) })?;
 
         cls.method0("className", |_this: &Object| -> String {
@@ -40,7 +38,7 @@ impl TypeDef<Fw> for Widget {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<Widget> { Temp(Default::default()) })?;
 
         cls.superclass::<Object>()?;
@@ -63,7 +61,7 @@ impl TypeDef<Fw> for Application {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<Application> { Temp(Default::default()) })?;
         cls.method0("status", |this: &Application| -> String { this.1.clone() })?;
 
@@ -87,7 +85,7 @@ impl TypeDef<Fw> for MainWindow {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<MainWindow> { Temp(Default::default()) })?;
         cls.method0("title", |this: &MainWindow| -> String { this.1.clone() })?;
 
@@ -111,7 +109,7 @@ impl TypeDef<Fw> for BoxLayout {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<BoxLayout> { Temp(Default::default()) })?;
         cls.method0("orientation", |this: &BoxLayout| -> String {
             this.1.clone()
@@ -137,7 +135,7 @@ impl TypeDef<Fw> for AbstractButton {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.method0("text", |this: &AbstractButton| -> String { this.1.clone() })?;
 
         cls.superclass::<Widget>()?;
@@ -160,7 +158,7 @@ impl TypeDef<Fw> for PushButton {
         &mut CLASSID
     }
 
-    fn define<P>(cls: Type<Fw, Self, P>) -> Result<()> {
+    fn define<P>(cls: TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<PushButton> { Temp(Default::default()) })?;
         cls.method0("status", |this: &PushButton| -> String { this.1.clone() })?;
 

@@ -33,7 +33,7 @@ pub trait CastMut<T> {
     fn cast_mut<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub type Wrapped<FW, CLS> = <CLS as Repr<FW>>::Type;
+pub type Type<FW, CLS> = <CLS as Repr<FW>>::Type;
 pub type Casted<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as Cast<T>>::Output<'a>;
 pub type CastedMut<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as CastMut<T>>::Output<'a>;
 
@@ -67,7 +67,7 @@ pub trait TypeDef<FW>: Sized + Repr<FW> {
 
     unsafe fn get_id() -> &'static mut ClassId;
 
-    fn define<P>(cls: Type<FW, Self, P>) -> Result<()>;
+    fn define<P>(cls: TypeBuilder<FW, Self, P>) -> Result<()>;
     fn typename() -> &'static str {
         Self::CLASS_NAME
     }
@@ -78,7 +78,7 @@ pub trait Implements<P> {
 }
 
 impl<T, P> Implements<P> for T {
-    default fn build(self, phase: &P) -> Result<()> {
+    default fn build(self, _phase: &P) -> Result<()> {
         Ok(())
     }
 }

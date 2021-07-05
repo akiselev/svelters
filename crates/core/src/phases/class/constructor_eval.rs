@@ -20,11 +20,8 @@ impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
-    T: Fn() -> R,
-    CLS: 'static,
-    T: 'static,
+    CLS: 'static + TypeDef<FW>,
+    T: 'static + Fn() -> R,
     R: 'static + IntoRepr<FW, CLS>,
 {
     fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {

@@ -6,23 +6,22 @@ where
     CLS: Repr<FW> + TypeDef<FW>,
 {
     pub(in crate) fw: PhantomData<FW>,
-    pub(in crate) inner: Wrapped<FW, CLS>,
+    pub(in crate) inner: Type<FW, CLS>,
 }
 
 impl<'a, FW, CLS> Obj<FW, CLS>
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
 {
-    pub fn new(inner: Wrapped<FW, CLS>) -> Self {
+    pub fn new(inner: Type<FW, CLS>) -> Self {
         Self {
             fw: PhantomData,
             inner,
         }
     }
 
-    pub fn as_inner<'b>(&'a self) -> &'b Wrapped<FW, CLS>
+    pub fn as_inner<'b>(&'a self) -> &'b Type<FW, CLS>
     where
         'a: 'b,
     {
@@ -34,7 +33,6 @@ impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
@@ -54,7 +52,8 @@ where
             FW::name(),
             <CLS as TypeDef<FW>>::typename()
         );
-        let cls: Type<FW, CLS, InitProto<FW, CLS>> = Type::new(InitProto::new(ctx, proto));
+        let cls: TypeBuilder<FW, CLS, InitProto<FW, CLS>> =
+            TypeBuilder::new(InitProto::new(ctx, proto));
         <CLS as TypeDef<FW>>::define(cls)?;
         Ok(())
     }
@@ -65,7 +64,8 @@ where
             FW::name(),
             <CLS as TypeDef<FW>>::typename()
         );
-        let cls: Type<FW, CLS, InitStatic<FW, CLS>> = Type::new(InitStatic::new(ctx, _static));
+        let cls: TypeBuilder<FW, CLS, InitStatic<FW, CLS>> =
+            TypeBuilder::new(InitStatic::new(ctx, _static));
         <CLS as TypeDef<FW>>::define(cls)?;
         Ok(())
     }

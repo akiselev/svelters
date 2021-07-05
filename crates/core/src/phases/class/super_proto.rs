@@ -24,7 +24,7 @@ where
     SUPER: TypeDef<FW>,
     CLS: Repr<FW>,
     SUPER: Repr<FW>,
-    Wrapped<FW, CLS>: Cast<SUPER>,
+    Type<FW, CLS>: Cast<SUPER>,
     SUPER: 'static,
     T: 'static + Fn(&SUPER) -> R,
     R: 'static + for<'js> IntoJs<'js>,
@@ -70,7 +70,7 @@ where
     CLS: 'static + TypeDef<FW>,
     INTER: 'static + TypeDef<FW>,
     SUPER: 'static + TypeDef<FW>,
-    Wrapped<FW, CLS>: Cast<SUPER>,
+    Type<FW, CLS>: Cast<SUPER>,
 {
     fn build(self, input: &InitSuperProto<'a, 'b, FW, CLS, INTER>) -> Result<()> {
         println!(
@@ -80,7 +80,7 @@ where
             <INTER as TypeDef<FW>>::typename(),
         );
         let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let cls: Type<FW, SUPER, _> = Type::new(phase);
+        let cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
         <SUPER as TypeDef<FW>>::define(cls)?;
         Ok(())
     }

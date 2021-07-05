@@ -21,7 +21,6 @@ impl<'a, 'b: 'a, T, FW, CLS, R> Implements<InitStatic<'a, 'b, FW, CLS>>
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
     CLS: 'static,
@@ -69,7 +68,7 @@ where
             <CLS as TypeDef<FW>>::typename(),
         );
         let phase = InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let cls: Type<FW, SUPER, _> = Type::new(phase);
+        let cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
         <SUPER as TypeDef<FW>>::define(cls)?;
         Ok(())
     }

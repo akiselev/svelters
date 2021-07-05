@@ -1,11 +1,11 @@
 use crate::inner::*;
 
-pub struct Type<FW, CLS, P> {
+pub struct TypeBuilder<FW, CLS, P> {
     phase: P,
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<FW, CLS, P> Type<FW, CLS, P>
+impl<FW, CLS, P> TypeBuilder<FW, CLS, P>
 where
     FW: Framework,
     CLS: Repr<FW>,
@@ -30,7 +30,7 @@ where
         THIS: Repr<FW>,
         GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
         SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
-        Wrapped<FW, CLS>: Cast<THIS>,
+        Type<FW, CLS>: Cast<THIS>,
         PROP: for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
         ClassProp<FW, CLS, THIS, PROP, GET, SET>: Implements<P>,
         CLS: 'static,
@@ -73,7 +73,7 @@ where
         CLS: Repr<FW>,
         T: Repr<FW>,
         X: 'static + for<'x> Fn(&'x T) -> R,
-        Wrapped<FW, CLS>: Cast<T>,
+        Type<FW, CLS>: Cast<T>,
         R: 'static + for<'js> IntoJs<'js>,
         CLS: 'static,
         T: 'static,

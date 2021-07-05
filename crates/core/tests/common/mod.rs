@@ -1,8 +1,8 @@
-use cucumber_rust::{async_trait, criteria::feature, futures::FutureExt, Context, Cucumber, World};
+use cucumber_rust::{async_trait, World};
 use rquickjs::Ctx;
 pub(crate) use rquickjs::{
-    BuiltinResolver, Error, Evaluated, Loader, Module as QJsModule, ModuleLoader, RegisteryKey,
-    Resolver, Result, Runtime, Value,
+    BuiltinResolver, Evaluated, Loader, Module as QJsModule, ModuleLoader, RegisteryKey, Resolver,
+    Result, Value,
 };
 
 use svelters_core::prelude::Framework;

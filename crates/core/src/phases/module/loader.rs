@@ -59,7 +59,6 @@ pub struct JsClassLoader<FW, CLS>(pub(in crate) PhantomData<(FW, CLS)>);
 impl<FW, CLS> JsClassLoader<FW, CLS>
 where
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
 {
     pub fn new() -> Self {
         Self(PhantomData)
@@ -70,11 +69,10 @@ impl<'a, 'b: 'a, FW, CLS> Implements<ModuleEval<'a, 'b>> for JsClassLoader<FW, C
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
 {
     fn build(self, phase: &ModuleEval<'a, 'b>) -> Result<()> {
-        let cls: Type<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
-            Type::new(ConstructorEval::new(phase.ctx, phase.module));
+        let cls: TypeBuilder<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
+            TypeBuilder::new(ConstructorEval::new(phase.ctx, phase.module));
         <CLS as TypeDef<FW>>::define(cls)?;
         Ok(())
     }
@@ -84,11 +82,10 @@ impl<'a, 'b: 'a, FW, CLS> Implements<ModuleLoad<'a, 'b>> for JsClassLoader<FW, C
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
 {
     fn build(self, phase: &ModuleLoad<'a, 'b>) -> Result<()> {
-        let cls: Type<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =
-            Type::new(ConstructorLoad::new(phase.ctx, phase.module));
+        let cls: TypeBuilder<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =
+            TypeBuilder::new(ConstructorLoad::new(phase.ctx, phase.module));
         <CLS as TypeDef<FW>>::define(cls)?;
         Ok(())
     }

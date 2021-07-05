@@ -20,14 +20,11 @@ impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
     for ClassMethod<FW, CLS, (T,), R, X>
 where
     FW: Framework,
-    CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
-    T: Repr<FW>,
+    CLS: 'static + TypeDef<FW>,
+    Type<FW, CLS>: Cast<T>,
+    T: 'static + Repr<FW>,
     X: 'static + for<'x> Fn(&'x T) -> R,
-    Wrapped<FW, CLS>: Cast<T>,
     R: 'static + for<'js> IntoJs<'js>,
-    CLS: 'static,
-    T: 'static,
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
@@ -61,8 +58,7 @@ impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW,
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
-    Wrapped<FW, CLS>: Cast<THIS>,
+    Type<FW, CLS>: Cast<THIS>,
     PROP: for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: for<'x> Fn(&'x THIS) -> Result<PROP>,
     SET: for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
@@ -122,7 +118,7 @@ where
             <CLS as TypeDef<FW>>::typename(),
         );
         let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let cls: Type<FW, SUPER, _> = Type::new(phase);
+        let cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
         <SUPER as TypeDef<FW>>::define(cls)?;
         Ok(())
     }

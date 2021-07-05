@@ -21,7 +21,6 @@ impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorLoad<'a, 'b, FW, CLS>>
 where
     FW: Framework,
     CLS: TypeDef<FW>,
-    CLS: Repr<FW>,
     T: Fn() -> R,
 {
     fn build(self, input: &ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
