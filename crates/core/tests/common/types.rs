@@ -9,23 +9,65 @@ pub struct FwWrapper<T>(pub T);
 #[derive(Debug, Clone)]
 pub struct Object(pub String);
 
-#[derive(Debug, Clone)]
-pub struct Widget(pub Object);
+impl Default for Object {
+    fn default() -> Self {
+        Object("Hello Object".to_string())
+    }
+}
 
 #[derive(Debug, Clone)]
-pub struct Application(pub Object);
+pub struct Widget(pub Object, pub String);
+
+impl Default for Widget {
+    fn default() -> Self {
+        Widget(Default::default(), "Hello Widget".to_string())
+    }
+}
 
 #[derive(Debug, Clone)]
-pub struct MainWindow(pub Widget);
+pub struct Application(pub Object, pub String);
+
+impl Default for Application {
+    fn default() -> Self {
+        Application(Default::default(), "Hello Application".to_string())
+    }
+}
 
 #[derive(Debug, Clone)]
-pub struct BoxLayout(pub Widget);
+pub struct MainWindow(pub Widget, pub String);
+
+impl Default for MainWindow {
+    fn default() -> Self {
+        MainWindow(Default::default(), "Hello MainWindow".to_string())
+    }
+}
 
 #[derive(Debug, Clone)]
-pub struct AbstractButton(pub Widget);
+pub struct BoxLayout(pub Widget, pub String);
+
+impl Default for BoxLayout {
+    fn default() -> Self {
+        BoxLayout(Default::default(), "Hello BoxLayout".to_string())
+    }
+}
 
 #[derive(Debug, Clone)]
-pub struct PushButton(pub AbstractButton);
+pub struct AbstractButton(pub Widget, pub String);
+
+impl Default for AbstractButton {
+    fn default() -> Self {
+        AbstractButton(Default::default(), "Hello AbstractButton".to_string())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PushButton(pub AbstractButton, pub String);
+
+impl Default for PushButton {
+    fn default() -> Self {
+        PushButton(Default::default(), "Hello PushButton".to_string())
+    }
+}
 
 pub trait StaticUpcast<T> {
     fn static_cast<'a>(&'a self) -> &'a T;

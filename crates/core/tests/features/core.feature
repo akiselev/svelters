@@ -1,8 +1,17 @@
 Feature: Core
 
-    Scenario: testing test runner
+    Scenario: testing runner
         Given module at "test.js"
         When calling function "testConsole"
+
+    Scenario: testing return values
+        Given module at "test.js"
+        When calling function "testReturnValue" with string "Runner"
+        Then return value is "Hello Runner"
+
+    Scenario: construct class
+        Given module at "test.js"
+        When calling function "constructClass"
 # Then that string is now equal to "something interesting"
 
 # Scenario: async things

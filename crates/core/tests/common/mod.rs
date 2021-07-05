@@ -6,12 +6,14 @@ pub(crate) use rquickjs::{
 
 use svelters_core::prelude::Framework;
 
-pub(in crate) mod defs;
+pub(in crate) mod cast;
+pub(in crate) mod classes;
 pub(in crate) mod framework;
 pub(in crate) mod modules;
 pub(in crate) mod types;
 
-pub use defs::*;
+pub use cast::*;
+pub use classes::*;
 pub use framework::*;
 pub use modules::*;
 pub use types::*;

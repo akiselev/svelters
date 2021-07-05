@@ -33,6 +33,7 @@ static_assertions = "1.1.0"
 [dev-dependencies]
 cucumber_rust = { git="https://github.com/bbqsrc/cucumber-rust", branch="main" }
 tokio = { version="1", features=["macros", "rt-multi-thread"] }
+pretty_assertions = "0.7"
 
 [[test]]
 name = "runner"

@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use cucumber_rust::{t, Steps};
+use pretty_assertions::{assert_eq, assert_ne};
 
 use crate::CoreWorld;
 
@@ -61,20 +62,43 @@ pub fn steps() -> Steps<CoreWorld> {
                     .with(|ctx| {
                         let value = ctx
                             .deregister(world.module)
-                            .ok_or_else(|| anyhow::anyhow!("key for module not found"))?;
+                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
                         let module = value
                             .as_module()
-                            .ok_or_else(|| anyhow::anyhow!("no module found"))?;
+                            .ok_or_else(|| anyhow::anyhow!("not a module"))?;
                         let func: rquickjs::Function<'_> = module.get(func_name)?;
                         let value = func.call((func_arg,))?;
                         let key = ctx.register(value);
                         Result::<_, anyhow::Error>::Ok(key)
                     })
                     .unwrap();
-                world.module = key;
+                world.result = key;
                 world
             },
-        );
+        )
+        .then_regex(r#"^return value is "(.*)"$"#, |mut world, ctx| {
+            let expected = &ctx.matches[1].to_owned();
+            world
+                .ctx
+                .with(|ctx| {
+                    let value = ctx
+                        .deregister(world.result)
+                        .ok_or_else(|| anyhow::anyhow!("no return value not found"))?;
+                    let result = value
+                        .as_string()
+                        .ok_or_else(|| {
+                            anyhow::anyhow!(
+                                "expected string return value, found type {}",
+                                value.type_name()
+                            )
+                        })?
+                        .to_string()?;
+                    assert_eq!(expected, &result);
+                    Result::<_, anyhow::Error>::Ok(())
+                })
+                .unwrap();
+            world
+        });
 
     // builder
     //     .given_regex_async(
