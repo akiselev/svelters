@@ -16,6 +16,7 @@
         // "app/": true,
         "codegen/": true,
         "codegen2/": true,
+        "crates/oldqt": true,
         "docs/": true,
         "schemagen/": true,
         "target2/": true,

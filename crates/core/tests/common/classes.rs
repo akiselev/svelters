@@ -18,7 +18,20 @@ impl Type<Fw> for Object {
 
     fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<Object> { Temp(Default::default()) })?;
-
+        cls.prop(
+            "type",
+            |this: &Object| {
+                println!("Getter for Object::type called");
+                Ok(this.0.clone())
+            },
+            |this: &mut Object, val: String| {
+                println!("Setter for Object::type called");
+                if val != "invalid" {
+                    this.0 = val;
+                }
+                Ok(())
+            },
+        )?;
         cls.method0("className", |_this: &Object| -> String {
             "Object".to_string()
         })?;

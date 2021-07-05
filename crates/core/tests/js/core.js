@@ -39,12 +39,28 @@ export const getTypeOf = (cls = "Object", ...args) => {
     return typeof target;
 };
 
-export const callMethod = (cls = "Object", name = "className", ...args) => {
+export const callMethod = (cls, name = "className", ...args) => {
     let inst = constructClass(cls);
     return inst[name](...args);
 };
 
-export const hasMethod = (cls = "Object", name = "className") => {
+export const hasMethod = (cls, name = "className") => {
     let inst = constructClass(cls);
     return typeof inst[name] === "function";
+};
+
+export const typeofProperty = (cls, name = "className") => {
+    let inst = constructClass(cls);
+    return typeof inst[name];
+};
+
+export const getProperty = (cls, name) => {
+    let inst = constructClass(cls);
+    return inst[name];
+};
+
+export const setProperty = (cls, name, value) => {
+    let inst = constructClass(cls);
+    inst[name] = value;
+    return inst[name];
 };

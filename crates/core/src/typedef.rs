@@ -27,9 +27,9 @@ where
         FW: Framework,
         CLS: Type<FW>,
         THIS: Type<FW>,
+        ReprOf<FW, CLS>: Cast<THIS>,
         GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
         SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
-        ReprOf<FW, CLS>: Cast<THIS>,
         PROP: for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
         Property<FW, CLS, THIS, PROP, GET, SET>: Implements<P>,
     {
@@ -52,10 +52,8 @@ where
     pub fn constructor0<R, X>(&mut self, func: X) -> Result<()>
     where
         FW: Framework,
-        CLS: Type<FW>,
-        CLS: Repr<FW>,
+        CLS: 'static + Type<FW>,
         X: 'static + Fn() -> R,
-        CLS: 'static,
         R: 'static + IntoRepr<FW, CLS>,
         Constructor<FW, CLS, (), R, X>: Implements<P>,
     {
@@ -66,14 +64,11 @@ where
     pub fn method0<T, R, X>(&mut self, name: &'static str, func: X) -> Result<()>
     where
         FW: Framework,
-        CLS: Type<FW>,
-        CLS: Repr<FW>,
-        T: Repr<FW>,
-        X: 'static + for<'x> Fn(&'x T) -> R,
+        CLS: 'static + Type<FW>,
         ReprOf<FW, CLS>: Cast<T>,
+        T: 'static + Repr<FW>,
         R: 'static + for<'js> IntoJs<'js>,
-        CLS: 'static,
-        T: 'static,
+        X: 'static + for<'x> Fn(&'x T) -> R,
         Method<FW, CLS, (T,), R, X>: Implements<P>,
     {
         Method::new(name, func).build(&mut self.phase)?;
@@ -83,11 +78,9 @@ where
     pub fn static_fn0<R, X>(&mut self, name: &'static str, func: X) -> Result<()>
     where
         FW: Framework,
-        CLS: Type<FW>,
-        CLS: Repr<FW>,
         X: 'static + Fn() -> R,
+        CLS: 'static + Type<FW>,
         R: 'static + for<'js> IntoJs<'js>,
-        CLS: 'static,
         StaticFn<FW, CLS, (), R, X>: Implements<P>,
     {
         StaticFn::new(name, func).build(&mut self.phase)?;

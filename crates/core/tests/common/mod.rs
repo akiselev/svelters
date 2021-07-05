@@ -114,3 +114,14 @@ impl CoreWorld {
             .ok_or_else(|| anyhow::anyhow!("no result found"))
     }
 }
+
+impl Drop for CoreWorld {
+    fn drop(&mut self) {
+        self.ctx.with(|ctx| {
+            ctx.deregister(self.undefined);
+            ctx.deregister(self.module);
+            ctx.deregister(self.subject);
+            ctx.deregister(self.result);
+        })
+    }
+}
