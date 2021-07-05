@@ -37,8 +37,8 @@ where
 
     pub fn superclass<SUPER>(&self) -> Result<()>
     where
-        FW: Framework + TypeDef<CLS> + TypeDef<SUPER> + Wraps<CLS> + Wraps<SUPER>,
         ClassSuper<FW, CLS, SUPER>: Implements<P>,
+        FW: Framework + TypeDef<CLS> + TypeDef<SUPER> + Wraps<CLS> + Wraps<SUPER>,
     {
         ClassSuper::<FW, CLS, SUPER>::new().build(&self.phase)?;
         Ok(())
@@ -47,7 +47,10 @@ where
     pub fn constructor0<R, X>(&self, func: X) -> Result<()>
     where
         FW: Framework + TypeDef<CLS> + Wraps<CLS>,
-        X: Fn() -> R,
+        Wrapped<FW, CLS>: for<'x> GetRef<'x, CLS>,
+        X: 'static + Fn() -> R,
+        CLS: 'static,
+        R: 'static + IntoContainer<FW, CLS, Type = Wrapped<FW, CLS>>,
         ClassConstructor<FW, CLS, (), R, X>: Implements<P>,
     {
         ClassConstructor::new(func).build(&self.phase)?;
@@ -57,11 +60,13 @@ where
     pub fn method0<T, R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
         FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<T>,
-        X: for<'a> Fn(&T) -> R,
+        X: 'static + for<'x> Fn(&'x T) -> R,
         Wrapped<FW, CLS>: Cast<T>,
-        R: for<'js> IntoJs<'js>,
-        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
+        R: 'static + for<'js> IntoJs<'js>,
+        <FW as Wraps<CLS>>::Type: for<'x> GetRef<'x, CLS>,
         CLS: 'static,
+        T: 'static,
+        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
     {
         ClassMethod::new(name, func).build(&self.phase)?;
         Ok(())
@@ -69,8 +74,10 @@ where
 
     pub fn static_fn0<R, X>(&self, name: &'static str, func: X) -> Result<()>
     where
-        X: Fn() -> R,
-        R: for<'a> IntoJs<'a>,
+        FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+        X: 'static + Fn() -> R,
+        R: 'static + for<'js> IntoJs<'js>,
+        CLS: 'static,
         ClassStaticFunc<FW, CLS, (), R, X>: Implements<P>,
     {
         ClassStaticFunc::new(name, func).build(&self.phase)?;

@@ -51,6 +51,7 @@ impl TypeDef<Application> for Fw {
 
     fn define<P>(cls: Type<Self, Application, P>) -> Result<()> {
         cls.constructor0(|| -> rquickjs::Result<Application> { Ok(Default::default()) })?;
+        cls.method0("status", |this: &Application| -> String { this.1.clone() })?;
 
         cls.superclass::<Object>()?;
         cls.method0(
@@ -71,6 +72,7 @@ impl TypeDef<MainWindow> for Fw {
 
     fn define<P>(cls: Type<Self, MainWindow, P>) -> Result<()> {
         cls.constructor0(|| -> rquickjs::Result<MainWindow> { Ok(Default::default()) })?;
+        cls.method0("title", |this: &MainWindow| -> String { this.1.clone() })?;
 
         cls.superclass::<Widget>()?;
         cls.method0(
@@ -91,6 +93,9 @@ impl TypeDef<BoxLayout> for Fw {
 
     fn define<P>(cls: Type<Self, BoxLayout, P>) -> Result<()> {
         cls.constructor0(|| -> rquickjs::Result<BoxLayout> { Ok(Default::default()) })?;
+        cls.method0("orientation", |this: &BoxLayout| -> String {
+            this.1.clone()
+        })?;
 
         cls.superclass::<Widget>()?;
         cls.method0(
@@ -110,7 +115,7 @@ impl TypeDef<AbstractButton> for Fw {
     }
 
     fn define<P>(cls: Type<Self, AbstractButton, P>) -> Result<()> {
-        cls.constructor0(|| -> rquickjs::Result<AbstractButton> { Ok(Default::default()) })?;
+        cls.method0("text", |this: &AbstractButton| -> String { this.1.clone() })?;
 
         cls.superclass::<Widget>()?;
         cls.method0(
@@ -133,6 +138,7 @@ impl TypeDef<PushButton> for Fw {
 
     fn define<P>(cls: Type<Self, PushButton, P>) -> Result<()> {
         cls.constructor0(|| -> rquickjs::Result<PushButton> { Ok(Default::default()) })?;
+        cls.method0("status", |this: &PushButton| -> String { this.1.clone() })?;
 
         cls.superclass::<AbstractButton>()?;
         cls.method0(
