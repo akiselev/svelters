@@ -20,7 +20,6 @@ impl<'a, 'b: 'a, T, FW, CLS, R, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS
     for ClassMethod<FW, SUPER, (SUPER,), R, T>
 where
     FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<SUPER> + TypeDef<SUPER>,
-    Wrapped<FW, CLS>: for<'c> GetRef<'c, CLS>,
     Wrapped<FW, CLS>: Cast<SUPER>,
     SUPER: 'static,
     T: 'static + Fn(&SUPER) -> R,
@@ -50,7 +49,7 @@ where
                         let args_len = args.len();
                         tuple_match_size(args_len, 0)?;
                         let obj: &Obj<FW, CLS> = this.as_ref();
-                        let res = self.1(&*obj.as_box().cast());
+                        let res = self.1(&*obj.as_inner().cast());
                         Result::<_>::Ok(res.into_js(ctx))
                     },
                 ),
@@ -64,7 +63,6 @@ impl<'a, 'b: 'a, FW, CLS, INTER, SUPER> Implements<InitSuperProto<'a, 'b, FW, CL
     for ClassSuper<FW, INTER, SUPER>
 where
     FW: TypeDef<CLS> + TypeDef<INTER> + TypeDef<SUPER>,
-    Wrapped<FW, CLS>: for<'c> GetRef<'c, CLS>,
     Wrapped<FW, CLS>: Cast<SUPER>,
     SUPER: 'static,
     CLS: 'static,

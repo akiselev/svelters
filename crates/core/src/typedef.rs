@@ -47,7 +47,6 @@ where
     pub fn constructor0<R, X>(&self, func: X) -> Result<()>
     where
         FW: Framework + TypeDef<CLS> + Wraps<CLS>,
-        Wrapped<FW, CLS>: for<'x> GetRef<'x, CLS>,
         X: 'static + Fn() -> R,
         CLS: 'static,
         R: 'static + IntoContainer<FW, CLS, Type = Wrapped<FW, CLS>>,
@@ -63,7 +62,6 @@ where
         X: 'static + for<'x> Fn(&'x T) -> R,
         Wrapped<FW, CLS>: Cast<T>,
         R: 'static + for<'js> IntoJs<'js>,
-        <FW as Wraps<CLS>>::Type: for<'x> GetRef<'x, CLS>,
         CLS: 'static,
         T: 'static,
         ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,

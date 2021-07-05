@@ -11,7 +11,6 @@ where
 impl<'a, FW, CLS> Obj<FW, CLS>
 where
     FW: Framework + TypeDef<CLS> + Wraps<CLS>,
-    Wrapped<FW, CLS>: GetRef<'a, CLS>,
 {
     pub fn new(inner: Wrapped<FW, CLS>) -> Self {
         Self {
@@ -20,18 +19,11 @@ where
         }
     }
 
-    pub fn as_box<'b>(&'a self) -> &'b Wrapped<FW, CLS>
+    pub fn as_inner<'b>(&'a self) -> &'b Wrapped<FW, CLS>
     where
         'a: 'b,
     {
         &self.inner
-    }
-
-    pub fn as_inner<'b>(&'a self) -> &'b CLS
-    where
-        'a: 'b,
-    {
-        self.inner.get_ref()
     }
 }
 

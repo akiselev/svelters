@@ -67,12 +67,6 @@ pub trait TypeDef<CLS>: Sized + Framework + Wraps<CLS> {
     }
 }
 
-pub trait GetRef<'a, T> {
-    type Pointer;
-    fn get_ref(&'a self) -> &'a T;
-    fn get_ptr(&'a self) -> Self::Pointer;
-}
-
 pub trait Implements<P> {
     fn build(self, input: &P) -> Result<()>;
 }

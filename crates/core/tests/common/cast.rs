@@ -130,22 +130,6 @@ where
     }
 }
 
-impl<'a, CLS, SUPER> GetRef<'a, SUPER> for FwWrapper<CLS>
-where
-    CLS: StaticUpcast<SUPER>,
-    SUPER: Clone,
-{
-    type Pointer = DerefWrapper<'a, SUPER>;
-
-    fn get_ref(&'a self) -> &'a SUPER {
-        self.0.static_cast()
-    }
-
-    fn get_ptr(&'a self) -> Self::Pointer {
-        todo!()
-    }
-}
-
 impl<T> IntoContainer<Fw, T> for Temp<T>
 where
     Fw: TypeDef<T>,

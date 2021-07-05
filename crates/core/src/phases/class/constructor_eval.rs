@@ -20,7 +20,6 @@ impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
     for ClassConstructor<FW, CLS, (), R, T>
 where
     FW: Framework + TypeDef<CLS> + Wraps<CLS>,
-    Wrapped<FW, CLS>: for<'x> GetRef<'x, CLS>,
     T: Fn() -> R,
     CLS: 'static,
     T: 'static,

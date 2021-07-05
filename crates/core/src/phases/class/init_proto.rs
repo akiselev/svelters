@@ -23,7 +23,6 @@ where
     X: 'static + for<'x> Fn(&'x T) -> R,
     Wrapped<FW, CLS>: Cast<T>,
     R: 'static + for<'js> IntoJs<'js>,
-    <FW as Wraps<CLS>>::Type: for<'x> GetRef<'x, CLS>,
     CLS: 'static,
     T: 'static,
 {
