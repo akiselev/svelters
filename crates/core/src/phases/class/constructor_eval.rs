@@ -28,7 +28,7 @@ where
 {
     fn build(self, input: &ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Setting {}::{} in ConstructorEval",
+            "-- Setting {}::{} in ConstructorEval",
             std::any::type_name::<FW>(),
             <FW as TypeDef<CLS>>::CLASS_NAME
         );

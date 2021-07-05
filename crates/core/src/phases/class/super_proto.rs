@@ -29,7 +29,7 @@ where
 {
     fn build(self, input: &InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
         println!(
-            "Implementing super {}::{} on {}",
+            "---------- >> SUPER {}::{} on {}",
             <FW as TypeDef<SUPER>>::typename(),
             self.0,
             <FW as TypeDef<CLS>>::typename(),
@@ -56,6 +56,29 @@ where
                 ),
             ),
         )?;
+        Ok(())
+    }
+}
+
+impl<'a, 'b: 'a, FW, CLS, INTER, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, INTER>>
+    for ClassSuper<FW, INTER, SUPER>
+where
+    FW: TypeDef<CLS> + TypeDef<INTER> + TypeDef<SUPER>,
+    Wrapped<FW, CLS>: for<'c> GetRef<'c, CLS>,
+    Wrapped<FW, CLS>: Cast<SUPER>,
+    SUPER: 'static,
+    CLS: 'static,
+{
+    fn build(self, input: &InitSuperProto<'a, 'b, FW, CLS, INTER>) -> Result<()> {
+        println!(
+            "------ >> SUPER PROTO {} on {} via {}",
+            <FW as TypeDef<SUPER>>::typename(),
+            <FW as TypeDef<CLS>>::typename(),
+            <FW as TypeDef<INTER>>::typename(),
+        );
+        let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
+        let cls: Type<FW, SUPER, _> = Type::new(phase);
+        <FW as TypeDef<SUPER>>::define(cls)?;
         Ok(())
     }
 }

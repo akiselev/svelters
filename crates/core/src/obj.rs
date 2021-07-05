@@ -53,9 +53,9 @@ where
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
         println!(
-            "Initializing {}::{} proto",
-            std::any::type_name::<FW>(),
-            std::any::type_name::<CLS>()
+            "------ PROTO {}::{}",
+            FW::name(),
+            <FW as TypeDef<CLS>>::typename()
         );
         let cls: Type<FW, CLS, InitProto<FW, CLS>> = Type::new(InitProto::new(ctx, proto));
         <FW as TypeDef<CLS>>::define(cls)?;
@@ -64,9 +64,9 @@ where
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
         println!(
-            "Initializing {}::{} static",
-            std::any::type_name::<FW>(),
-            std::any::type_name::<CLS>()
+            "------ STATIC {}::{}",
+            FW::name(),
+            <FW as TypeDef<CLS>>::typename()
         );
         let cls: Type<FW, CLS, InitStatic<FW, CLS>> = Type::new(InitStatic::new(ctx, _static));
         <FW as TypeDef<CLS>>::define(cls)?;

@@ -19,6 +19,7 @@ window.main = new mod.QMainWindow();
 console.log(">>>>>5", window.main.show);
 console.log(">>>>>6", typeof window.main);
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>7", obj.className());
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>7", window.main.className());
 window.main.show();
 
 // import App from "./App.svelte";

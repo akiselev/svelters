@@ -27,7 +27,7 @@ where
 {
     fn build(self, input: &InitSuperStatic<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
         println!(
-            "Implementing super static {}::{} on {}",
+            "---------- IMPL super static {}::{} on {}",
             <FW as TypeDef<SUPER>>::typename(),
             self.0,
             <FW as TypeDef<CLS>>::typename(),

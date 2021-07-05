@@ -29,7 +29,7 @@ where
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Implementing {}::{}",
+            "---------- IMPL {}::{}",
             <FW as TypeDef<CLS>>::typename(),
             self.0
         );
@@ -71,7 +71,7 @@ where
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Implementing prop {}::{}",
+            "---------- IMPL prop {}::{}",
             <FW as TypeDef<CLS>>::typename(),
             self.name
         );
@@ -109,8 +109,9 @@ where
 {
     fn build(self, input: &InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Building SUPER PROTO on {}",
-            <FW as TypeDef<CLS>>::typename()
+            "------ SUPER PROTO {} on {}",
+            <FW as TypeDef<SUPER>>::typename(),
+            <FW as TypeDef<CLS>>::typename(),
         );
         let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
         let cls: Type<FW, SUPER, _> = Type::new(phase);

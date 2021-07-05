@@ -11,6 +11,7 @@ pub trait Framework: Sized + 'static {
 
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
     fn get_loader() -> (Self::Resolver, Self::Loader);
+    fn name() -> &'static str;
 
     fn module<MOD>(module: MOD) -> JsModuleLoader<Self, MOD>
     where
@@ -55,7 +56,7 @@ pub trait FrameworkModule<FW>: Sized {
         FW: Framework;
 }
 
-pub trait TypeDef<CLS>: Sized {
+pub trait TypeDef<CLS>: Sized + Framework + Wraps<CLS> {
     const CLASS_NAME: &'static str;
 
     unsafe fn get_id() -> &'static mut ClassId;

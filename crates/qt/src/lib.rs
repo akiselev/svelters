@@ -59,6 +59,10 @@ impl Framework for QT {
         let loader = ModuleLoader::default().with_module("QtCore", QT::module(QtCore));
         (resolver, loader)
     }
+
+    fn name() -> &'static str {
+        "QT"
+    }
 }
 
 impl<CLS> Wraps<CLS> for QT

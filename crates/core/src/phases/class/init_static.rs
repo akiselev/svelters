@@ -26,7 +26,7 @@ where
 {
     fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Implementing static {}::{} ",
+            "---------- IMPL static {}::{} ",
             <FW as TypeDef<CLS>>::typename(),
             self.0,
         );
@@ -58,8 +58,9 @@ where
 {
     fn build(self, input: &InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Building SUPER STATIC on {}",
-            <FW as TypeDef<CLS>>::typename()
+            "------ SUPER STATIC {} on {}",
+            <FW as TypeDef<SUPER>>::typename(),
+            <FW as TypeDef<CLS>>::typename(),
         );
         let phase = InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
         let cls: Type<FW, SUPER, _> = Type::new(phase);

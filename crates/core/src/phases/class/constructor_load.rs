@@ -25,7 +25,7 @@ where
 {
     fn build(self, input: &ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
-            "Setting {}::{} in ConstructorLoad",
+            "-- Setting {}::{} in ConstructorLoad",
             std::any::type_name::<FW>(),
             std::any::type_name::<CLS>()
         );
