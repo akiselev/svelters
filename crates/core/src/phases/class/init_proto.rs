@@ -1,3 +1,5 @@
+use rquickjs::This;
+
 use crate::inner::*;
 
 pub struct InitProto<'a, 'js, FW, CLS> {
@@ -16,15 +18,15 @@ impl<'a, 'js, CLS: Repr<FW>, FW> InitProto<'a, 'js, FW, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
-    for Method<FW, CLS, (T,), R, X>
+impl<'a, 'b: 'a, FUNC, THIS, FW, CLS, RET> Implements<InitProto<'a, 'b, FW, CLS>>
+    for Method<FW, CLS, (THIS,), RET, FUNC>
 where
     FW: Framework,
     CLS: Type<FW>,
-    ReprOf<FW, CLS>: Cast<T>,
-    T: 'static + Repr<FW>,
-    X: 'static + for<'x> Fn(&'x T) -> R,
-    R: 'static + for<'js> IntoJs<'js>,
+    ReprOf<FW, CLS>: Cast<THIS>,
+    THIS: 'static + Repr<FW>,
+    RET: 'static + for<'js> IntoJs<'js>,
+    FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {
     fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         println!(
@@ -57,20 +59,13 @@ impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW,
     for Property<FW, CLS, THIS, PROP, GET, SET>
 where
     FW: Framework,
-    THIS: 'static,
     CLS: Type<FW>,
     ReprOf<FW, CLS>: CastMut<THIS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x THIS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
-    for<'x> CastedAsMut<'x, FW, CLS, THIS>: DerefMut<Target = THIS>,
 {
     fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "---------- IMPL prop {}::{}",
-            <CLS as Type<FW>>::typename(),
-            self.name
-        );
         let Property {
             name,
             getter,
@@ -79,20 +74,23 @@ where
         } = self;
         input.obj.prop(
             name,
-            Accessor::new(
-                move |ctx: Ctx<'b>, mut this: JsClass<'b, Obj<FW, CLS>>| {
+            Accessor::from(rquickjs::Method(
+                move |mut this: JsClass<'b, Obj<FW, CLS>>| {
+                    println!("Calling getter for {}", name);
                     let obj: &mut Obj<FW, CLS> = this.as_mut();
                     let data = obj.inner.cast_mut();
-                    let res = getter(&*data);
-                    Result::<_>::Ok(res.into_js(ctx))
+                    rquickjs::Result::Ok(getter(&*data))
                 },
-                move |ctx: Ctx<'b>, mut this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
+            ))
+            .set(rquickjs::Method(
+                move |mut this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
+                    println!("Calling setter for {}", name);
                     let obj: &mut Obj<FW, CLS> = this.as_mut();
                     let mut data = obj.inner.cast_mut();
-                    let res = setter(&mut *data, val);
-                    Result::<_>::Ok(res.into_js(ctx))
+                    setter(&mut *data, val)?;
+                    Result::<_>::Ok(())
                 },
-            ),
+            )),
         )
     }
 }

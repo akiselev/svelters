@@ -22,7 +22,7 @@ impl Type<Fw> for Object {
             "type",
             |this: &Object| {
                 println!("Getter for Object::type called");
-                Ok(this.0.clone())
+                Ok(format!("Getter {}", this.0))
             },
             |this: &mut Object, val: String| {
                 println!("Setter for Object::type called");

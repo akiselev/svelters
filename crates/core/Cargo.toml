@@ -37,18 +37,8 @@ pretty_assertions = "0.7"
 rquickjs = { version="0.1.1", path="../rquickjs", features=[
     "full",
     "tokio",
-    # "dump-bytecode",
-    # "dump-gc",
-    # "dump-gc-free",
-    # "dump-free",
-    "dump-leaks",
-    "dump-mem",
-    # "dump-objects",
-    # "dump-atoms",
-    # "dump-shapes",
-    # "dump-module-resolve",
-    # "dump-promise",
-    # "dump-read-object",
+    # "dump-leaks",
+    # "dump-mem",
 ] }
 
 [[test]]

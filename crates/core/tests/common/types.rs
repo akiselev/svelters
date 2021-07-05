@@ -1,4 +1,7 @@
-use std::{marker::PhantomData, ops::Deref};
+use std::{
+    marker::PhantomData,
+    ops::{Deref, DerefMut},
+};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Fw;
@@ -80,5 +83,11 @@ impl<'a, T> Deref for DerefWrapper<'a, T> {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl<'a, T> DerefMut for DerefWrapper<'a, T> {
+    fn deref_mut(&mut self) -> &mut T {
+        &mut self.0
     }
 }

@@ -57,11 +57,7 @@ mod prop {
         marker: PhantomData<(FW, CLS, THIS, PROP)>,
     }
 
-    impl<FW, CLS, PROP, GET, SET, THIS> Property<FW, CLS, THIS, PROP, GET, SET>
-    where
-        GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
-        SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
-    {
+    impl<FW, CLS, PROP, GET, SET, THIS> Property<FW, CLS, THIS, PROP, GET, SET> {
         pub fn new(name: &'static str, getter: GET, setter: SET) -> Self {
             Self {
                 name,

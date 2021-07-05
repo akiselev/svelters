@@ -5,12 +5,12 @@ pub struct TypeBuilder<FW, CLS, P> {
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<FW, CLS, P> TypeBuilder<FW, CLS, P>
+impl<FW, CLS, PHASE> TypeBuilder<FW, CLS, PHASE>
 where
     FW: Framework,
     CLS: Repr<FW>,
 {
-    pub fn new(phase: P) -> Self {
+    pub fn new(phase: PHASE) -> Self {
         Self {
             phase,
             framework: PhantomData,
@@ -26,12 +26,11 @@ where
     where
         FW: Framework,
         CLS: Type<FW>,
-        THIS: Type<FW>,
-        ReprOf<FW, CLS>: Cast<THIS>,
-        GET: for<'a> Fn(&'a THIS) -> Result<PROP>,
-        SET: for<'a> Fn(&'a mut THIS, PROP) -> Result<()>,
-        PROP: for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
-        Property<FW, CLS, THIS, PROP, GET, SET>: Implements<P>,
+        ReprOf<FW, CLS>: CastMut<THIS>,
+        PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+        GET: 'static + for<'x> Fn(&'x THIS) -> Result<PROP>,
+        SET: 'static + for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
+        Property<FW, CLS, THIS, PROP, GET, SET>: Implements<PHASE>,
     {
         Property::<FW, CLS, THIS, PROP, GET, SET>::new(name, getter, setter)
             .build(&mut self.phase)?;
@@ -43,7 +42,7 @@ where
         FW: Framework,
         CLS: Type<FW>,
         SUPER: Type<FW>,
-        Superclass<FW, CLS, SUPER>: Implements<P>,
+        Superclass<FW, CLS, SUPER>: Implements<PHASE>,
     {
         Superclass::<FW, CLS, SUPER>::new().build(&mut self.phase)?;
         Ok(())
@@ -55,33 +54,33 @@ where
         CLS: 'static + Type<FW>,
         X: 'static + Fn() -> R,
         R: 'static + IntoRepr<FW, CLS>,
-        Constructor<FW, CLS, (), R, X>: Implements<P>,
+        Constructor<FW, CLS, (), R, X>: Implements<PHASE>,
     {
         Constructor::new(func).build(&mut self.phase)?;
         Ok(())
     }
 
-    pub fn method0<T, R, X>(&mut self, name: &'static str, func: X) -> Result<()>
+    pub fn method0<THIS, RET, FN>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
         FW: Framework,
         CLS: 'static + Type<FW>,
-        ReprOf<FW, CLS>: Cast<T>,
-        T: 'static + Repr<FW>,
-        R: 'static + for<'js> IntoJs<'js>,
-        X: 'static + for<'x> Fn(&'x T) -> R,
-        Method<FW, CLS, (T,), R, X>: Implements<P>,
+        ReprOf<FW, CLS>: Cast<THIS>,
+        THIS: 'static + Repr<FW>,
+        RET: 'static + for<'js> IntoJs<'js>,
+        FN: 'static + for<'x> Fn(&'x THIS) -> RET,
+        Method<FW, CLS, (THIS,), RET, FN>: Implements<PHASE>,
     {
         Method::new(name, func).build(&mut self.phase)?;
         Ok(())
     }
 
-    pub fn static_fn0<R, X>(&mut self, name: &'static str, func: X) -> Result<()>
+    pub fn static_fn0<RET, FN>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
         FW: Framework,
-        X: 'static + Fn() -> R,
+        FN: 'static + Fn() -> RET,
         CLS: 'static + Type<FW>,
-        R: 'static + for<'js> IntoJs<'js>,
-        StaticFn<FW, CLS, (), R, X>: Implements<P>,
+        RET: 'static + for<'js> IntoJs<'js>,
+        StaticFn<FW, CLS, (), RET, FN>: Implements<PHASE>,
     {
         StaticFn::new(name, func).build(&mut self.phase)?;
         Ok(())

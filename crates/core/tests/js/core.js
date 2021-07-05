@@ -18,7 +18,8 @@ export const constructClass = (cls = "Object", ...args) => {
     if (typeof Constructor !== "function") {
         throw new Error(`Type ${cls} has no constructor`);
     }
-    return new Constructor(...args);
+    let obj = new Constructor(...args);
+    return obj;
 };
 
 export const getClassName = (cls = "Object") => {

@@ -130,6 +130,18 @@ where
     }
 }
 
+impl<T, O> CastMut<T> for FwWrapper<O>
+where
+    O: StaticUpcast<T>,
+    T: Clone,
+{
+    type Output<'a> = DerefWrapper<'a, T>;
+
+    fn cast_mut<'a>(&'a mut self) -> Self::Output<'a> {
+        DerefWrapper(self.0.static_cast().clone(), PhantomData)
+    }
+}
+
 impl<T> IntoRepr<Fw, T> for Temp<T>
 where
     T: Type<Fw>,
