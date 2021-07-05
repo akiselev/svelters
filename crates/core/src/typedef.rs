@@ -16,6 +16,25 @@ where
         }
     }
 
+    // pub fn prop<THIS, PROP, GET, SET>(
+    //     &self,
+    //     name: &'static str,
+    //     getter: GET,
+    //     setter: SET,
+    // ) -> Result<()>
+    // where
+    //     FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<THIS>,
+    //     GET: for<'a> Fn(&THIS) -> PROP,
+    //     SET: for<'a> Fn(&mut THIS, PROP),
+    //     Wrapped<FW, CLS>: Cast<THIS>,
+    //     PROP: for<'js> IntoJs<'js>,
+    //     ClassMethod<FW, CLS, CLS, (THIS,), PROP, GET>: Implements<P>,
+    //     CLS: 'static,
+    // {
+    //     ClassProp::new(name, getter, setter).build(&self.phase)?;
+    //     Ok(())
+    // }
+
     pub fn superclass<SUPER>(&self) -> Result<()>
     where
         FW: Framework + TypeDef<CLS> + TypeDef<SUPER> + Wraps<CLS> + Wraps<SUPER>,
@@ -41,7 +60,7 @@ where
         X: for<'a> Fn(&T) -> R,
         Wrapped<FW, CLS>: Cast<T>,
         R: for<'js> IntoJs<'js>,
-        ClassMethod<FW, CLS, CLS, (T,), R, X>: Implements<P>,
+        ClassMethod<FW, CLS, (T,), R, X>: Implements<P>,
         CLS: 'static,
     {
         ClassMethod::new(name, func).build(&self.phase)?;

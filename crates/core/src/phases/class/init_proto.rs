@@ -17,7 +17,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS> InitProto<'a, 'js, FW, CLS> {
 }
 
 impl<'a, 'b: 'a, X, T, FW, CLS, R> Implements<InitProto<'a, 'b, FW, CLS>>
-    for ClassMethod<FW, CLS, CLS, (T,), R, X>
+    for ClassMethod<FW, CLS, (T,), R, X>
 where
     FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<T>,
     X: 'static + for<'x> Fn(&'x T) -> R,

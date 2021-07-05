@@ -25,56 +25,98 @@ mod module {
 pub(in crate) use self::class::*;
 pub(in crate) use self::module::*;
 
-pub struct ClassConstructor<FW, CLS, A, R, T>(
-    pub(crate) T,
-    pub(crate) PhantomData<(CLS, A, R, FW)>,
-)
-where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>;
+mod constructor {
+    use super::*;
 
-impl<FW, T, A, R, CLS> ClassConstructor<FW, CLS, A, R, T>
-where
-    FW: Framework + TypeDef<CLS> + Wraps<CLS>,
-{
-    pub(in crate) fn new(func: T) -> Self {
-        ClassConstructor(func, PhantomData)
+    pub struct ClassConstructor<FW, CLS, A, R, T>(
+        pub(crate) T,
+        pub(crate) PhantomData<(CLS, A, R, FW)>,
+    )
+    where
+        FW: Framework + TypeDef<CLS> + Wraps<CLS>;
+
+    impl<FW, T, A, R, CLS> ClassConstructor<FW, CLS, A, R, T>
+    where
+        FW: Framework + TypeDef<CLS> + Wraps<CLS>,
+    {
+        pub(in crate) fn new(func: T) -> Self {
+            ClassConstructor(func, PhantomData)
+        }
     }
 }
 
-pub struct ClassMethod<FW, CLS, TG, A, R, T>(
-    pub(crate) &'static str,
-    pub(crate) T,
-    PhantomData<(CLS, TG, A, R, FW)>,
-);
+// mod prop {
+//     use super::*;
 
-pub struct ClassStaticFunc<FW, CLS, A, R, T>(&'static str, T, PhantomData<(CLS, A, R, FW)>)
-where
-    FW: Wraps<CLS>;
+//     pub struct ClassProp<FW, CLS, TG, GET, SET>(
+//         pub(crate) &'static str,
+//         pub(crate) T,
+//         PhantomData<(CLS, TG, A, R, FW)>,
+//     );
 
-pub struct ClassSuper<FW, CLS, SUPER>(PhantomData<(CLS, SUPER, FW)>)
-where
-    FW: Wraps<CLS>;
+//     impl<FW, T, A, R, CLS> ClassMethod<FW, CLS, CLS, A, R, T> {
+//         pub(in crate) fn new(name: &'static str, func: T) -> Self {
+//             ClassMethod(name, func, PhantomData)
+//         }
+//     }
+// }
 
-impl<FW, T, A, R, CLS> ClassMethod<FW, CLS, CLS, A, R, T> {
-    pub(in crate) fn new(name: &'static str, func: T) -> Self {
-        ClassMethod(name, func, PhantomData)
+mod method {
+    use super::*;
+
+    pub struct ClassMethod<FW, CLS, A, R, T>(
+        pub(crate) &'static str,
+        pub(crate) T,
+        PhantomData<(CLS, A, R, FW)>,
+    );
+
+    impl<FW, T, A, R, CLS> ClassMethod<FW, CLS, A, R, T> {
+        pub(in crate) fn new(name: &'static str, func: T) -> Self {
+            ClassMethod(name, func, PhantomData)
+        }
     }
 }
 
-impl<FW, T, A, R, CLS> ClassStaticFunc<FW, CLS, A, R, T>
-where
-    FW: Wraps<CLS>,
-{
-    pub(in crate) fn new(name: &'static str, func: T) -> Self {
-        ClassStaticFunc(name, func, PhantomData)
+mod staticfn {
+    use super::*;
+
+    pub struct ClassStaticFunc<FW, CLS, A, R, T>(
+        pub(crate) &'static str,
+        pub(crate) T,
+        PhantomData<(CLS, A, R, FW)>,
+    )
+    where
+        FW: Wraps<CLS>;
+
+    impl<FW, T, A, R, CLS> ClassStaticFunc<FW, CLS, A, R, T>
+    where
+        FW: Wraps<CLS>,
+    {
+        pub(in crate) fn new(name: &'static str, func: T) -> Self {
+            ClassStaticFunc(name, func, PhantomData)
+        }
     }
 }
 
-impl<FW, SUPER, CLS> ClassSuper<FW, CLS, SUPER>
-where
-    FW: Wraps<CLS>,
-{
-    pub(in crate) fn new() -> Self {
-        ClassSuper(PhantomData)
+mod superclass {
+    use super::*;
+
+    pub struct ClassSuper<FW, CLS, SUPER>(PhantomData<(CLS, SUPER, FW)>)
+    where
+        FW: Wraps<CLS>;
+
+    impl<FW, SUPER, CLS> ClassSuper<FW, CLS, SUPER>
+    where
+        FW: Wraps<CLS>,
+    {
+        pub(in crate) fn new() -> Self {
+            ClassSuper(PhantomData)
+        }
     }
 }
+
+pub(in crate) use self::constructor::*;
+pub(in crate) use self::method::*;
+// pub(in crate) use self::prop::*;
+pub(in crate) use self::staticfn::*;
+pub(in crate) use self::superclass::*;

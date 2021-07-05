@@ -17,7 +17,7 @@ impl<'a, 'js, FW: Wraps<CLS>, CLS, SUPER> InitSuperProto<'a, 'js, FW, CLS, SUPER
 }
 
 impl<'a, 'b: 'a, T, FW, CLS, R, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, SUPER>>
-    for ClassMethod<FW, SUPER, SUPER, (SUPER,), R, T>
+    for ClassMethod<FW, SUPER, (SUPER,), R, T>
 where
     FW: Framework + TypeDef<CLS> + Wraps<CLS> + Wraps<SUPER> + TypeDef<SUPER>,
     Wrapped<FW, CLS>: for<'c> GetRef<'c, CLS>,
