@@ -29,11 +29,6 @@ where
         input.obj.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
-                println!(
-                    "CALLING SUPER STATIC {}::{} ",
-                    <CLS as Type<FW>>::typename(),
-                    self.0,
-                );
                 let args = args.into_inner();
                 let args_len = args.len();
                 tuple_match_size(args_len, 0)?;

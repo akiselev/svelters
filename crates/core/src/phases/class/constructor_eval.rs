@@ -25,11 +25,6 @@ where
     R: 'static + IntoRepr<FW, CLS>,
 {
     fn build(self, input: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "-- Setting {}::{} in ConstructorEval",
-            std::any::type_name::<FW>(),
-            <CLS as Type<FW>>::CLASS_NAME
-        );
         JsClass::<Obj<FW, CLS>>::register(input.ctx)?;
         input.module.set(
             <CLS as Type<FW>>::CLASS_NAME,
@@ -41,7 +36,6 @@ where
                     tuple_match_size(args_len, 0)?;
 
                     let result = self.0();
-                    println!("Calling constructor for {}", <CLS as Type<FW>>::CLASS_NAME);
                     JsClass::instance(ctx, Obj::<FW, CLS>::new(result.into_repr()))
                 }),
             ),

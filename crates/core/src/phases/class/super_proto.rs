@@ -33,12 +33,6 @@ where
                 self.0,
                 rquickjs::Method(
                     move |this: JsClass<'b, Obj<FW, CLS>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
-                        println!(
-                            "CALLING SUPER METHOD {}::{} ON {}",
-                            <SUPER as Type<FW>>::typename(),
-                            self.0,
-                            <CLS as Type<FW>>::typename(),
-                        );
                         let args = args.into_inner();
                         let args_len = args.len();
                         tuple_match_size(args_len, 0)?;

@@ -24,11 +24,6 @@ where
     T: Fn() -> R,
 {
     fn build(self, input: &mut ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "-- Setting {}::{} in ConstructorLoad",
-            std::any::type_name::<FW>(),
-            std::any::type_name::<CLS>()
-        );
         input.module.add(<CLS as Type<FW>>::typename())?;
         Ok(())
     }

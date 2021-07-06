@@ -71,34 +71,12 @@ where
             name,
             Accessor::new(
                 rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>| {
-                    println!("Calling getter for {}::{}1", CLS::typename(), name);
                     let obj: &Obj<FW, CLS> = this.as_ref();
-                    println!("Calling getter for {}::{}2", CLS::typename(), name);
                     let data = obj.inner.cast();
-                    println!("Calling getter for {}::{}3", CLS::typename(), name);
                     let val = getter(data.as_ref())?;
-                    println!(
-                        "Calling getter for {}::{}4 = {:?}",
-                        CLS::typename(),
-                        name,
-                        val
-                    );
-                    println!(
-                        "Calling getter for {}::{}5 = {:?}",
-                        CLS::typename(),
-                        name,
-                        val
-                    );
-                    println!(
-                        "Calling getter for {}::{}6 = {:?}",
-                        CLS::typename(),
-                        name,
-                        val
-                    );
                     rquickjs::Result::Ok(val)
                 }),
                 rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
-                    println!("Calling setter for {}::{}", CLS::typename(), name);
                     let obj: &Obj<FW, CLS> = this.as_ref();
                     let data = obj.inner.cast();
                     setter(data.as_ref(), val)?;

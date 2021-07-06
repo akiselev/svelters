@@ -24,17 +24,13 @@ impl Type<FW> for Fw<Rc<Object>> {
             "type",
             |this: &Self| {
                 let val = this.0 .0.borrow();
-                println!("Getter for Object::type returning {}", val);
                 Ok(format!("Getter {}", val))
             },
             |this: &Self, val: String| {
-                println!("Setter for Object::type called");
                 if val != "invalid" {
-                    println!("Setting Object::type to {}", val);
                     let mut cell = this.0 .0.borrow_mut();
                     *cell = val;
                 }
-                println!("Now Object::type is {}", this.0 .0.borrow());
                 Ok(())
             },
         )?;
