@@ -26,13 +26,23 @@ where
     T: 'static + Fn(&SUPER) -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
-    fn build(self, input: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
-        input.obj.set(
+    fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        if build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
+            return Ok(());
+        }
+
+        phase.obj.set(
             self.name,
             rquickjs::Func::new(
                 self.name,
                 rquickjs::Method(
                     move |this: JsClass<'b, Obj<FW, CLS>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                        println!(
+                            "Calling method {}::{} for {}",
+                            SUPER::name(),
+                            self.name,
+                            CLS::name()
+                        );
                         let args = args.into_inner();
                         let args_len = args.len();
                         tuple_match_size(args_len, 0)?;
@@ -58,14 +68,18 @@ where
     GET: 'static + for<'x> Fn(&'x SUPER) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x SUPER, PROP) -> Result<()>,
 {
-    fn build(self, input: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+    fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        if build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
+            return Ok(());
+        }
+
         let Property {
             name,
             getter,
             setter,
             ..
         } = self;
-        let res = input.obj.prop(
+        let res = phase.obj.prop(
             name,
             Accessor::new(
                 rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>| {
@@ -85,12 +99,6 @@ where
             )
             .enumerable(),
         );
-        if let Err(ref err) = &res {
-            println!("Err3: {:?}", err);
-            println!("---");
-            println!("---");
-            println!("---");
-        }
         res
     }
 }
@@ -105,9 +113,12 @@ where
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x>,
     GET: 'static + for<'x> Fn(&'x SUPER) -> Result<PROP>,
 {
-    fn build(self, input: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+    fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        if build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
+            return Ok(());
+        }
         let ReadOnly { name, getter, .. } = self;
-        let res = input.obj.prop(
+        let res = phase.obj.prop(
             name,
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>| {
                 let obj: &Obj<FW, CLS> = this.as_ref();
@@ -118,27 +129,21 @@ where
             }))
             .enumerable(),
         );
-        if let Err(ref err) = &res {
-            println!("Err4: {:?}", err);
-            println!("---");
-            println!("---");
-            println!("---");
-        }
         res
     }
 }
 
-impl<'a, 'b: 'a, FW, CLS, INTER, SUPER> Implements<InitSuperProto<'a, 'b, FW, CLS, INTER>>
-    for Superclass<FW, INTER, SUPER>
+impl<'a, 'b: 'a, FW, CLS, SUPER, NESTED> Implements<InitSuperProto<'a, 'b, FW, CLS, SUPER>>
+    for Superclass<FW, SUPER, NESTED>
 where
     FW: Framework,
     CLS: Type<FW>,
-    INTER: Type<FW>,
     SUPER: Type<FW>,
-    ReprOf<FW, CLS>: Cast<SUPER>,
+    NESTED: Type<FW>,
+    ReprOf<FW, CLS>: Cast<NESTED>,
 {
-    fn build(self, input: &mut InitSuperProto<'a, 'b, FW, CLS, INTER>) -> Result<()> {
-        build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj));
+    fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        build_phase!(FW::NESTED with NestedSuperProto::<'_, '_, FW, CLS, SUPER, NESTED>::new(phase.ctx, phase.obj, 1));
 
         Ok(())
     }

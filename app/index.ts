@@ -20,7 +20,14 @@ console.log(">>>>>5", window.main.show);
 console.log(">>>>>6", typeof window.main);
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>7", obj.className());
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>7", window.main.className());
-window.main.show();
+try {
+    window.main.show();
+} catch (err) {
+    console.log(">>>1", err);
+    console.log(">>>1", err.message);
+    console.log(">>>1", err.stack);
+    console.log(">>>1", err.rustStack);
+}
 
 // import App from "./App.svelte";
 

@@ -2,7 +2,7 @@ use std::future::Future;
 
 use rquickjs::{Loader, Resolver};
 
-use crate::inner::*;
+use crate::{build_phase, inner::*};
 
 /// The framework that Svelters exposes to Javascript and Svelte
 pub trait Framework: Sized + 'static {
@@ -67,11 +67,11 @@ pub trait Module<FW>: Sized {
 pub trait Type<FW>: 'static + Sized + Repr<FW> {
     const CLASS_NAME: &'static str;
 
-    unsafe fn get_id() -> &'static mut ClassId;
+    unsafe fn metadata() -> &'static mut Metadata;
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()>;
 
-    fn typename() -> &'static str {
+    fn name() -> &'static str {
         Self::CLASS_NAME
     }
 }
@@ -107,11 +107,32 @@ pub trait Type<FW>: 'static + Sized + Repr<FW> {
 /// implementations can also pass information back to the caller to implement
 /// features like reflection and debuging.
 pub trait Implements<P> {
-    fn build(self, input: &mut P) -> Result<()>;
+    fn build(self, phase: &mut P) -> Result<()>;
 }
 
 impl<T, P> Implements<P> for T {
     default fn build(self, _phase: &mut P) -> Result<()> {
         Ok(())
     }
+}
+
+#[inline(always)]
+pub fn test_inline_has_member<'a, FW, CLS>(name: &'a str) -> anyhow::Result<bool>
+where
+    FW: Framework,
+    CLS: Type<FW>,
+{
+    Ok(build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(name)).is_set)
+}
+
+#[inline(always)]
+pub fn test_inline_inherits_member<'a, FW, CLS>(
+    name: &'a str,
+    max_depth: isize,
+) -> anyhow::Result<bool>
+where
+    FW: Framework,
+    CLS: Type<FW>,
+{
+    Ok(build_phase!(FW::CLS with InheritsMember::<'a, FW, CLS>::new(name, max_depth)).is_set)
 }

@@ -24,9 +24,9 @@ where
     T: 'static + Fn() -> R,
     R: 'static + IntoRepr<FW, CLS>,
 {
-    fn build(self, input: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
-        JsClass::<Obj<FW, CLS>>::register(input.ctx)?;
-        input.module.set(
+    fn build(self, phase: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
+        JsClass::<Obj<FW, CLS>>::register(phase.ctx)?;
+        phase.module.set(
             <CLS as Type<FW>>::CLASS_NAME,
             rquickjs::Func::new(
                 <CLS as Type<FW>>::CLASS_NAME,

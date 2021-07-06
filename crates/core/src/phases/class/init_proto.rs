@@ -28,8 +28,8 @@ where
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {
-    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
-        input.obj.set(
+    fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+        phase.obj.set(
             self.name,
             rquickjs::Func::new(
                 self.name,
@@ -60,7 +60,7 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
-    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         let Property {
             name,
             getter,
@@ -68,8 +68,8 @@ where
             ..
         } = self;
 
-        input.obj.remove(name).ok();
-        let res = input.obj.prop(
+        phase.obj.remove(name).ok();
+        let res = phase.obj.prop(
             name,
             Accessor::new(
                 rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>| {
@@ -88,11 +88,6 @@ where
             .enumerable()
             .configurable(),
         );
-        if let Err(ref err) = &res {
-            println!("Err1: {}::{} error: {:?}", CLS::typename(), self.name, err);
-            println!("---");
-            println!("---");
-        }
         res
     }
 }
@@ -106,11 +101,11 @@ where
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
-    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         let ReadOnly { name, getter, .. } = self;
 
-        input.obj.remove(name).ok();
-        let res = input.obj.prop(
+        phase.obj.remove(name).ok();
+        let res = phase.obj.prop(
             name,
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>| {
                 let obj: &Obj<FW, CLS> = this.as_ref();
@@ -120,11 +115,6 @@ where
             }))
             .enumerable(),
         );
-        if let Err(ref err) = &res {
-            println!("Err2: {:?}", err);
-            println!("---");
-            println!("---");
-        }
         res
     }
 }
@@ -137,8 +127,8 @@ where
     SUPER: Type<FW>,
     ReprOf<FW, CLS>: Cast<SUPER>,
 {
-    fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
-        build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj));
+    fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
+        build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
         Ok(())
     }
 }

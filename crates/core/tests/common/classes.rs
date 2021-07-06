@@ -13,9 +13,9 @@ impl Repr<FW> for Fw<Rc<Object>> {
 impl Type<FW> for Fw<Rc<Object>> {
     const CLASS_NAME: &'static str = "Object";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
@@ -37,6 +37,9 @@ impl Type<FW> for Fw<Rc<Object>> {
         cls.method0("className", |_this: &Self| -> String {
             "Object".to_string()
         })?;
+        cls.method0("className2", |_this: &Self| -> String {
+            "Object".to_string()
+        })?;
         Ok(())
     }
 }
@@ -48,9 +51,9 @@ impl Repr<FW> for Fw<Rc<Widget>> {
 impl Type<FW> for Fw<Rc<Widget>> {
     const CLASS_NAME: &'static str = "Widget";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
@@ -65,6 +68,9 @@ impl Type<FW> for Fw<Rc<Widget>> {
         cls.method0("className", |_this: &Self| -> String {
             "Widget".to_string()
         })?;
+        cls.method0("className2", |_this: &Self| -> String {
+            "Widget".to_string()
+        })?;
         Ok(())
     }
 }
@@ -76,9 +82,9 @@ impl Repr<FW> for Fw<Rc<Application>> {
 impl Type<FW> for Fw<Rc<Application>> {
     const CLASS_NAME: &'static str = "Application";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
@@ -96,6 +102,9 @@ impl Type<FW> for Fw<Rc<Application>> {
         cls.method0("className", |_this: &Self| -> String {
             "Application".to_string()
         })?;
+        cls.method0("className2", |_this: &Self| -> String {
+            "Application".to_string()
+        })?;
         Ok(())
     }
 }
@@ -107,9 +116,9 @@ impl Repr<FW> for Fw<Rc<MainWindow>> {
 impl Type<FW> for Fw<Rc<MainWindow>> {
     const CLASS_NAME: &'static str = "MainWindow";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
@@ -120,6 +129,9 @@ impl Type<FW> for Fw<Rc<MainWindow>> {
         })?;
 
         cls.method0("className", |_this: &Self| -> String {
+            "MainWindow".to_string()
+        })?;
+        cls.method0("className2", |_this: &Self| -> String {
             "MainWindow".to_string()
         })?;
         Ok(())
@@ -133,9 +145,9 @@ impl Repr<FW> for Fw<Rc<BoxLayout>> {
 impl Type<FW> for Fw<Rc<BoxLayout>> {
     const CLASS_NAME: &'static str = "BoxLayout";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
@@ -145,11 +157,11 @@ impl Type<FW> for Fw<Rc<BoxLayout>> {
             this.0 .1.borrow().clone()
         })?;
 
-        // cls.prop(
-        //     "type",
-        //     |this: &Self| Ok(format!("Overriden")),
-        //     |this: &Self, val: String| Ok(()),
-        // )?;
+        cls.prop(
+            "type",
+            |this: &Self| Ok(format!("Overriden")),
+            |this: &Self, val: String| Ok(()),
+        )?;
 
         cls.method0("className", |_this: &Self| -> String {
             "BoxLayout".to_string()
@@ -165,9 +177,9 @@ impl Repr<FW> for Fw<Rc<AbstractButton>> {
 impl Type<FW> for Fw<Rc<AbstractButton>> {
     const CLASS_NAME: &'static str = "AbstractButton";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
@@ -177,6 +189,9 @@ impl Type<FW> for Fw<Rc<AbstractButton>> {
         })?;
 
         cls.method0("className", |_this: &Self| -> String {
+            "AbstractButton".to_string()
+        })?;
+        cls.method0("className2", |_this: &Self| -> String {
             "AbstractButton".to_string()
         })?;
         Ok(())
@@ -190,9 +205,9 @@ impl Repr<FW> for Fw<Rc<PushButton>> {
 impl Type<FW> for Fw<Rc<PushButton>> {
     const CLASS_NAME: &'static str = "PushButton";
 
-    unsafe fn get_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASSID: ClassId = ClassId::new();
-        &mut CLASSID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {

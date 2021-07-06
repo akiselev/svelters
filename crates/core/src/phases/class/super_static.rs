@@ -25,8 +25,8 @@ where
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
-    fn build(self, input: &mut InitSuperStatic<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
-        input.obj.set(
+    fn build(self, phase: &mut InitSuperStatic<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+        phase.obj.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                 let args = args.into_inner();

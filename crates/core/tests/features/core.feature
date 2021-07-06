@@ -39,6 +39,20 @@ Feature: Core
             | "BoxLayout"   | "BoxLayout"   |
             | "PushButton"  | "PushButton"  |
 
+    Scenario: check that methods are overriden by each child class (generic)
+        Given module at "core.js"
+        When calling function "callMethod" with args (<class>, "className2")
+        Then return value is <result>
+
+        Examples:
+            | class         | result           |
+            | "Object"      | "Object"         |
+            | "Application" | "Application"    |
+            | "Widget"      | "Widget"         |
+            | "MainWindow"  | "MainWindow"     |
+            | "BoxLayout"   | "Widget"         |
+            | "PushButton"  | "AbstractButton" |
+
     Scenario: check Object constructor
         Given module at "core.js"
         When calling function "constructClass" with args ("Object")

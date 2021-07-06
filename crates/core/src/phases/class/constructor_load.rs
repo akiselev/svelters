@@ -23,8 +23,8 @@ where
     CLS: Type<FW>,
     T: Fn() -> R,
 {
-    fn build(self, input: &mut ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
-        input.module.add(<CLS as Type<FW>>::typename())?;
+    fn build(self, phase: &mut ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
+        phase.module.add(<CLS as Type<FW>>::name())?;
         Ok(())
     }
 }

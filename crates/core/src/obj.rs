@@ -37,7 +37,7 @@ where
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
     unsafe fn class_id() -> &'static mut ClassId {
-        <CLS as Type<FW>>::get_id()
+        &mut <CLS as Type<FW>>::metadata().obj_id
     }
 
     const HAS_PROTO: bool = true;

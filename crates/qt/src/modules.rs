@@ -35,9 +35,9 @@ impl Repr<QT> for QObject {
 impl Type<QT> for QObject {
     const CLASS_NAME: &'static str = "QObject";
 
-    unsafe fn get_id() -> &'static mut ClassId {
-        static mut CLASS_ID: ClassId = ClassId::new();
-        &mut CLASS_ID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
@@ -59,6 +59,7 @@ impl Type<QT> for QObject {
                 file: file!().to_string(),
                 line: line!().try_into().unwrap(),
                 stack: "".to_string(),
+                rust_stack: Some("place2".to_string()),
             })
         })?;
         cls.method0("test", |this: &QObject| {
@@ -78,9 +79,9 @@ impl Repr<QT> for QWidget {
 impl Type<QT> for QWidget {
     const CLASS_NAME: &'static str = "QWidget";
 
-    unsafe fn get_id() -> &'static mut ClassId {
-        static mut CLASS_ID: ClassId = ClassId::new();
-        &mut CLASS_ID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
@@ -110,9 +111,9 @@ impl Repr<QT> for QApplication {
 impl Type<QT> for QApplication {
     const CLASS_NAME: &'static str = "QApplication";
 
-    unsafe fn get_id() -> &'static mut ClassId {
-        static mut CLASS_ID: ClassId = ClassId::new();
-        &mut CLASS_ID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
@@ -136,9 +137,9 @@ impl Repr<QT> for QMainWindow {
 impl Type<QT> for QMainWindow {
     const CLASS_NAME: &'static str = "QMainWindow";
 
-    unsafe fn get_id() -> &'static mut ClassId {
-        static mut CLASS_ID: ClassId = ClassId::new();
-        &mut CLASS_ID
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
     }
 
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {

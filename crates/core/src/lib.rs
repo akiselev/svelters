@@ -13,6 +13,7 @@
 #![allow(incomplete_features, dead_code)]
 
 pub mod prelude {
+    pub use crate::metadata::Metadata;
     pub use crate::module::ModuleBuilder;
     pub use crate::obj::Obj;
     pub use crate::traits::*;
@@ -24,15 +25,49 @@ pub mod types {
     pub use phases::Constructor;
 }
 
+pub(in crate) mod builders;
 pub(in crate) mod macros;
+pub(in crate) mod metadata;
 pub(in crate) mod module;
 pub(in crate) mod obj;
-pub(in crate) mod phases;
 pub(in crate) mod traits;
 pub(in crate) mod typedef;
 pub(in crate) mod utils;
 
 // ----------------- INTERNAL -----------------
+
+pub(in crate) mod phases {
+    mod class {
+        mod constructor_eval;
+        mod constructor_load;
+        mod has_member;
+        mod inherits_member;
+        mod init_proto;
+        mod init_static;
+        mod nested_super_proto;
+        mod super_proto;
+        mod super_static;
+
+        pub(in crate) use self::constructor_eval::*;
+        pub(in crate) use self::constructor_load::*;
+        pub(in crate) use self::has_member::*;
+        pub(in crate) use self::inherits_member::*;
+        pub(in crate) use self::init_proto::*;
+        pub(in crate) use self::init_static::*;
+        pub(in crate) use self::nested_super_proto::*;
+        pub(in crate) use self::super_proto::*;
+        pub(in crate) use self::super_static::*;
+    }
+
+    mod module {
+        mod loader;
+
+        pub(in crate) use self::loader::*;
+    }
+
+    pub(in crate) use self::class::*;
+    pub(in crate) use self::module::*;
+}
 
 #[allow(unused_imports)]
 pub(in crate) mod inner {
@@ -55,6 +90,8 @@ pub(in crate) mod inner {
         Result, Value,
     };
 
+    pub(in crate) use crate::builders::*;
+    pub(in crate) use crate::metadata::*;
     pub(in crate) use crate::module::*;
     pub(in crate) use crate::obj::*;
     pub(in crate) use crate::phases::*;

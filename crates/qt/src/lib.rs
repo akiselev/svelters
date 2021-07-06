@@ -9,11 +9,11 @@
 use std::{borrow::Cow, future::Future, time::Duration};
 
 use frunk::hlist;
-use qt_core::{
+pub use qt_core::{
     cpp_core::{CastFrom, CppBox, CppDeletable, Ptr, StaticUpcast},
     QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString,
 };
-use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
+pub use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{
     BuiltinResolver, Context, Ctx, Error, Loader, ModuleLoader, Resolver, Result, Value,
 };

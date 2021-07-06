@@ -116,6 +116,7 @@ pub fn transpile_typescript(cm: &Arc<SourceMap>, path: &str, input: StringInput)
                 file: path.to_string(),
                 line: 0,
                 stack: "".to_string(),
+                rust_stack: Some("place1".to_string()),
             };
             let mut diag = err.into_diagnostic(&handler);
             diag.emit();
