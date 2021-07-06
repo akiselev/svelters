@@ -50,14 +50,14 @@ mod constructor {
 mod prop {
     use super::*;
 
-    pub struct Property<FW, CLS, THIS, PROP, GET, SET> {
+    pub struct Property<FW, CLS, PROP, GET, SET> {
         pub(crate) name: &'static str,
         pub(crate) getter: GET,
         pub(crate) setter: SET,
-        marker: PhantomData<(FW, CLS, THIS, PROP)>,
+        marker: PhantomData<(FW, CLS, PROP)>,
     }
 
-    impl<FW, CLS, PROP, GET, SET, THIS> Property<FW, CLS, THIS, PROP, GET, SET> {
+    impl<FW, CLS, PROP, GET, SET> Property<FW, CLS, PROP, GET, SET> {
         pub fn new(name: &'static str, getter: GET, setter: SET) -> Self {
             Self {
                 name,
@@ -68,13 +68,13 @@ mod prop {
         }
     }
 
-    pub struct ReadOnly<FW, CLS, GET> {
+    pub struct ReadOnly<FW, CLS, PROP, GET> {
         pub(crate) name: &'static str,
         pub(crate) getter: GET,
-        marker: PhantomData<(CLS, FW)>,
+        marker: PhantomData<(FW, CLS, PROP)>,
     }
 
-    impl<FW, CLS, GET> ReadOnly<FW, CLS, GET> {
+    impl<FW, CLS, PROP, GET> ReadOnly<FW, CLS, PROP, GET> {
         pub fn new(name: &'static str, getter: GET) -> Self {
             Self {
                 name,
@@ -88,15 +88,19 @@ mod prop {
 mod method {
     use super::*;
 
-    pub struct Method<FW, CLS, ARGS, RET, THIS>(
-        pub(crate) &'static str,
-        pub(crate) THIS,
-        PhantomData<(CLS, ARGS, RET, FW)>,
-    );
+    pub struct Method<FW, CLS, ARGS, RET, THIS> {
+        pub(crate) name: &'static str,
+        pub(crate) func: THIS,
+        marker: PhantomData<(CLS, ARGS, RET, FW)>,
+    }
 
     impl<FW, THIS, ARGS, RET, CLS> Method<FW, CLS, ARGS, RET, THIS> {
         pub(in crate) fn new(name: &'static str, func: THIS) -> Self {
-            Method(name, func, PhantomData)
+            Method {
+                name,
+                func,
+                marker: PhantomData,
+            }
         }
     }
 }

@@ -69,8 +69,8 @@ export const setProperty = (cls, name, value) => {
     return newValue;
 };
 
-export const setType = (cls, value) => {
-    let inst = constructClass(cls);
-    inst.type = value;
-    return inst.type;
-};
+// export const setType = (cls, value) => {
+//     let inst = constructClass(cls);
+//     inst.type = value;
+//     return inst.type;
+// };

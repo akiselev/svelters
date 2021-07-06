@@ -54,9 +54,14 @@ impl Type<FW> for Fw<Rc<Widget>> {
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.superclass::<Fw<Rc<Object>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
 
-        cls.superclass::<Fw<Rc<Object>>>()?;
+        cls.readonly("ro", |this: &Self| {
+            let val = this.0 .1.borrow();
+            Ok(format!("Readonly {}", val))
+        })?;
+
         cls.method0("className", |_this: &Self| -> String {
             "Widget".to_string()
         })?;
@@ -77,12 +82,17 @@ impl Type<FW> for Fw<Rc<Application>> {
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.superclass::<Fw<Rc<Object>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("status", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
 
-        cls.superclass::<Fw<Rc<Object>>>()?;
+        cls.readonly("ro", |this: &Self| {
+            let val = this.0 .1.borrow();
+            Ok(format!("Readonly2 {}", val))
+        })?;
+
         cls.method0("className", |_this: &Self| -> String {
             "Application".to_string()
         })?;
@@ -103,12 +113,12 @@ impl Type<FW> for Fw<Rc<MainWindow>> {
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("title", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
 
-        cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.method0("className", |_this: &Self| -> String {
             "MainWindow".to_string()
         })?;
@@ -129,12 +139,18 @@ impl Type<FW> for Fw<Rc<BoxLayout>> {
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("orientation", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
 
-        cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.prop(
+            "type",
+            |this: &Self| Ok(format!("Overriden")),
+            |this: &Self, val: String| Ok(()),
+        )?;
+
         cls.method0("className", |_this: &Self| -> String {
             "BoxLayout".to_string()
         })?;
@@ -155,11 +171,11 @@ impl Type<FW> for Fw<Rc<AbstractButton>> {
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.method0("text", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
 
-        cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.method0("className", |_this: &Self| -> String {
             "AbstractButton".to_string()
         })?;
@@ -180,12 +196,12 @@ impl Type<FW> for Fw<Rc<PushButton>> {
     }
 
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.superclass::<Fw<Rc<AbstractButton>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("status", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
 
-        cls.superclass::<Fw<Rc<AbstractButton>>>()?;
         cls.method0("className", |_this: &Self| -> String {
             "PushButton".to_string()
         })?;

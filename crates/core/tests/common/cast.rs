@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, rc::Rc};
+use std::{borrow::Borrow, marker::PhantomData, rc::Rc};
 
 use super::*;
 
@@ -10,37 +10,37 @@ impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<Object>> {
 
 impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<Widget>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Object>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<Application>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Object>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<MainWindow>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Object>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<BoxLayout>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Object>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<AbstractButton>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Object>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Object>>> for Fw<Rc<PushButton>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Object>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
@@ -52,25 +52,25 @@ impl StaticUpcast<Fw<Rc<Widget>>> for Fw<Rc<Widget>> {
 
 impl StaticUpcast<Fw<Rc<Widget>>> for Fw<Rc<MainWindow>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Widget>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Widget>>> for Fw<Rc<BoxLayout>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Widget>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Widget>>> for Fw<Rc<AbstractButton>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Widget>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
 impl StaticUpcast<Fw<Rc<Widget>>> for Fw<Rc<PushButton>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<Widget>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 
@@ -82,7 +82,7 @@ impl StaticUpcast<Fw<Rc<AbstractButton>>> for Fw<Rc<AbstractButton>> {
 
 impl StaticUpcast<Fw<Rc<AbstractButton>>> for Fw<Rc<PushButton>> {
     fn static_cast<'a>(&'a self) -> Fw<Rc<AbstractButton>> {
-        self.static_cast()
+        self.0 .0.static_cast()
     }
 }
 

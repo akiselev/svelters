@@ -30,10 +30,13 @@ async fn main() {
         //     let pool = ctx.get::<SqlitePool>().unwrap().clone();
         //     async move { create_tables(&pool).await }.boxed()
         // })
-        // .after(feature("Core"), |ctx| {
-        //     let pool = ctx.get::<SqlitePool>().unwrap().clone();
-        //     async move { drop_tables(&pool).await }.boxed()
-        // })
+        .after(feature("Core"), |ctx| {
+            async move {
+                println!(" ");
+                println!(" ");
+            }
+            .boxed()
+        })
         // Parses the command line arguments if passed
         .cli()
         // Runs the Cucumber tests and then exists

@@ -17,7 +17,7 @@ where
         }
     }
 
-    pub fn prop<THIS, PROP, GET, SET>(
+    pub fn prop<PROP, GET, SET>(
         &mut self,
         name: &'static str,
         getter: GET,
@@ -26,14 +26,26 @@ where
     where
         FW: Framework,
         CLS: Type<FW>,
-        ReprOf<FW, CLS>: Cast<THIS>,
+        ReprOf<FW, CLS>: Cast<CLS>,
         PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
-        GET: 'static + for<'x> Fn(&'x THIS) -> Result<PROP>,
-        SET: 'static + for<'x> Fn(&'x THIS, PROP) -> Result<()>,
-        Property<FW, CLS, THIS, PROP, GET, SET>: Implements<PHASE>,
+        GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
+        SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
+        Property<FW, CLS, PROP, GET, SET>: Implements<PHASE>,
     {
-        Property::<FW, CLS, THIS, PROP, GET, SET>::new(name, getter, setter)
-            .build(&mut self.phase)?;
+        Property::<FW, CLS, PROP, GET, SET>::new(name, getter, setter).build(&mut self.phase)?;
+        Ok(())
+    }
+
+    pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<()>
+    where
+        FW: Framework,
+        CLS: Type<FW>,
+        ReprOf<FW, CLS>: Cast<CLS>,
+        PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+        GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
+        ReadOnly<FW, CLS, PROP, GET>: Implements<PHASE>,
+    {
+        ReadOnly::<FW, CLS, PROP, GET>::new(name, getter).build(&mut self.phase)?;
         Ok(())
     }
 
@@ -42,6 +54,7 @@ where
         FW: Framework,
         CLS: Type<FW>,
         SUPER: Type<FW>,
+        ReprOf<FW, CLS>: Cast<SUPER>,
         Superclass<FW, CLS, SUPER>: Implements<PHASE>,
     {
         Superclass::<FW, CLS, SUPER>::new().build(&mut self.phase)?;
