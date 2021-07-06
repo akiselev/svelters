@@ -40,7 +40,7 @@ impl World for CoreWorld {
     async fn new() -> Result<Self> {
         let rt = rquickjs::Runtime::new()?;
         let ctx = rquickjs::Context::full(&rt)?;
-        let (resolver, loader) = Fw::get_loader();
+        let (resolver, loader) = FW::get_loader();
         rt.set_loader(resolver, loader);
         let key = ctx
             .with(move |ctx| {

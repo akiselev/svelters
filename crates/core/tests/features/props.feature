@@ -12,4 +12,5 @@ Feature: Core
     Scenario: setter sets the property
         Given module at "core.js"
         When calling function "setProperty" with args ("Object", "type", "newtype")
-        Then return value is "newtype"
+        Then return value is "Getter newtype"
+

@@ -1,8 +1,8 @@
-use std::future::Future;
+use std::{future::Future, rc::Rc};
 
 use super::*;
 
-impl Framework for Fw {
+impl Framework for FW {
     type Loader = impl Loader;
     type Resolver = impl Resolver;
     type AppTask = impl Future<Output = anyhow::Result<()>>;
@@ -22,8 +22,8 @@ impl Framework for Fw {
             .with_module("Core")
             .with_module("Widgets");
         let loader = ModuleLoader::default()
-            .with_module("Core", Fw::module(FwCore))
-            .with_module("Widgets", Fw::module(FwWidgets));
+            .with_module("Core", FW::module(FwCore))
+            .with_module("Widgets", FW::module(FwWidgets));
         (resolver, loader)
     }
 
@@ -32,10 +32,19 @@ impl Framework for Fw {
     }
 }
 
-impl<CLS> Repr<CLS> for Fw
+impl<T> Default for Fw<T>
 where
-    CLS: Type<Fw>,
-    CLS: StaticUpcast<Object>,
+    T: Default,
+{
+    fn default() -> Self {
+        Fw(Default::default())
+    }
+}
+
+impl<CLS> Repr<CLS> for FW
+where
+    CLS: Type<FW>,
+    CLS: StaticUpcast<Fw<Rc<Object>>>,
 {
     type Type = FwWrapper<CLS>;
 }

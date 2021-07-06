@@ -1,93 +1,110 @@
 use std::{
+    cell::RefCell,
     marker::PhantomData,
     ops::{Deref, DerefMut},
+    rc::Rc,
 };
 
-#[derive(Debug, Copy, Clone)]
-pub struct Fw;
+#[derive(Debug, Clone, Copy)]
+pub struct FW;
+#[derive(Debug, Clone, Copy)]
+pub struct Fw<T>(pub T);
 pub struct FwCore;
 pub struct FwWidgets;
 pub struct FwWrapper<T>(pub T);
 
-#[derive(Debug, Clone)]
-pub struct Object(pub String);
+#[derive(Debug)]
+pub struct Object(pub RefCell<String>);
 
 impl Default for Object {
     fn default() -> Self {
-        Object("Hello Object".to_string())
+        Object(RefCell::new("Hello Object".to_string()))
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Widget(pub Object, pub String);
+#[derive(Debug)]
+pub struct Widget(pub Fw<Rc<Object>>, pub RefCell<String>);
 
 impl Default for Widget {
     fn default() -> Self {
-        Widget(Default::default(), "Hello Widget".to_string())
+        Widget(Default::default(), RefCell::new("Hello Widget".to_string()))
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Application(pub Object, pub String);
+#[derive(Debug)]
+pub struct Application(pub Fw<Rc<Object>>, pub RefCell<String>);
 
 impl Default for Application {
     fn default() -> Self {
-        Application(Default::default(), "Hello Application".to_string())
+        Application(
+            Default::default(),
+            RefCell::new("Hello Application".to_string()),
+        )
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct MainWindow(pub Widget, pub String);
+#[derive(Debug)]
+pub struct MainWindow(pub Fw<Rc<Widget>>, pub RefCell<String>);
 
 impl Default for MainWindow {
     fn default() -> Self {
-        MainWindow(Default::default(), "Hello MainWindow".to_string())
+        MainWindow(
+            Default::default(),
+            RefCell::new("Hello MainWindow".to_string()),
+        )
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct BoxLayout(pub Widget, pub String);
+#[derive(Debug)]
+pub struct BoxLayout(pub Fw<Rc<Widget>>, pub RefCell<String>);
 
 impl Default for BoxLayout {
     fn default() -> Self {
-        BoxLayout(Default::default(), "Hello BoxLayout".to_string())
+        BoxLayout(
+            Default::default(),
+            RefCell::new("Hello BoxLayout".to_string()),
+        )
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct AbstractButton(pub Widget, pub String);
+#[derive(Debug)]
+pub struct AbstractButton(pub Fw<Rc<Widget>>, pub RefCell<String>);
 
 impl Default for AbstractButton {
     fn default() -> Self {
-        AbstractButton(Default::default(), "Hello AbstractButton".to_string())
+        AbstractButton(
+            Default::default(),
+            RefCell::new("Hello AbstractButton".to_string()),
+        )
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct PushButton(pub AbstractButton, pub String);
+#[derive(Debug)]
+pub struct PushButton(pub Fw<Rc<AbstractButton>>, pub RefCell<String>);
 
 impl Default for PushButton {
     fn default() -> Self {
-        PushButton(Default::default(), "Hello PushButton".to_string())
+        PushButton(
+            Default::default(),
+            RefCell::new("Hello PushButton".to_string()),
+        )
     }
 }
 
 pub trait StaticUpcast<T> {
-    fn static_cast<'a>(&'a self) -> &'a T;
+    fn static_cast<'a>(&'a self) -> T;
 }
 
-pub struct DerefWrapper<'a, T>(pub(crate) T, pub(crate) PhantomData<&'a ()>);
+pub struct RefWrapper<'a, T>(pub(crate) T, pub(crate) PhantomData<&'a ()>);
 
-impl<'a, T> Deref for DerefWrapper<'a, T> {
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
+impl<'a, T> AsRef<T> for RefWrapper<'a, T> {
+    fn as_ref(&self) -> &T {
         &self.0
     }
 }
 
-impl<'a, T> DerefMut for DerefWrapper<'a, T> {
-    fn deref_mut(&mut self) -> &mut T {
+impl<'a, T> AsMut<T> for RefWrapper<'a, T> {
+    fn as_mut(&mut self) -> &mut T {
         &mut self.0
     }
 }

@@ -1,14 +1,16 @@
+use std::rc::Rc;
+
 use rquickjs::ClassId;
 
 use super::*;
 
 pub struct Temp<T>(pub T);
 
-impl Repr<Fw> for Object {
-    type Type = FwWrapper<Object>;
+impl Repr<FW> for Fw<Rc<Object>> {
+    type Type = FwWrapper<Fw<Rc<Object>>>;
 }
 
-impl Type<Fw> for Object {
+impl Type<FW> for Fw<Rc<Object>> {
     const CLASS_NAME: &'static str = "Object";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -16,34 +18,38 @@ impl Type<Fw> for Object {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<Object> { Temp(Default::default()) })?;
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.prop(
             "type",
-            |this: &Object| {
-                println!("Getter for Object::type called");
-                Ok(format!("Getter {}", this.0))
+            |this: &Self| {
+                let val = this.0 .0.borrow();
+                println!("Getter for Object::type returning {}", val);
+                Ok(format!("Getter {}", val))
             },
-            |this: &mut Object, val: String| {
+            |this: &Self, val: String| {
                 println!("Setter for Object::type called");
                 if val != "invalid" {
-                    this.0 = val;
+                    println!("Setting Object::type to {}", val);
+                    let mut cell = this.0 .0.borrow_mut();
+                    *cell = val;
                 }
+                println!("Now Object::type is {}", this.0 .0.borrow());
                 Ok(())
             },
         )?;
-        cls.method0("className", |_this: &Object| -> String {
+        cls.method0("className", |_this: &Self| -> String {
             "Object".to_string()
         })?;
         Ok(())
     }
 }
 
-impl Repr<Fw> for Widget {
-    type Type = FwWrapper<Widget>;
+impl Repr<FW> for Fw<Rc<Widget>> {
+    type Type = FwWrapper<Fw<Rc<Widget>>>;
 }
 
-impl Type<Fw> for Widget {
+impl Type<FW> for Fw<Rc<Widget>> {
     const CLASS_NAME: &'static str = "Widget";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -51,22 +57,22 @@ impl Type<Fw> for Widget {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<Widget> { Temp(Default::default()) })?;
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
 
-        cls.superclass::<Object>()?;
-        cls.method0("className", |_this: &Widget| -> String {
+        cls.superclass::<Fw<Rc<Object>>>()?;
+        cls.method0("className", |_this: &Self| -> String {
             "Widget".to_string()
         })?;
         Ok(())
     }
 }
 
-impl Repr<Fw> for Application {
-    type Type = FwWrapper<Application>;
+impl Repr<FW> for Fw<Rc<Application>> {
+    type Type = FwWrapper<Fw<Rc<Application>>>;
 }
 
-impl Type<Fw> for Application {
+impl Type<FW> for Fw<Rc<Application>> {
     const CLASS_NAME: &'static str = "Application";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -74,23 +80,25 @@ impl Type<Fw> for Application {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<Application> { Temp(Default::default()) })?;
-        cls.method0("status", |this: &Application| -> String { this.1.clone() })?;
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.method0("status", |this: &Self| -> String {
+            this.0 .1.borrow().clone()
+        })?;
 
-        cls.superclass::<Object>()?;
-        cls.method0("className", |_this: &Application| -> String {
+        cls.superclass::<Fw<Rc<Object>>>()?;
+        cls.method0("className", |_this: &Self| -> String {
             "Application".to_string()
         })?;
         Ok(())
     }
 }
 
-impl Repr<Fw> for MainWindow {
-    type Type = FwWrapper<MainWindow>;
+impl Repr<FW> for Fw<Rc<MainWindow>> {
+    type Type = FwWrapper<Fw<Rc<MainWindow>>>;
 }
 
-impl Type<Fw> for MainWindow {
+impl Type<FW> for Fw<Rc<MainWindow>> {
     const CLASS_NAME: &'static str = "MainWindow";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -98,23 +106,25 @@ impl Type<Fw> for MainWindow {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<MainWindow> { Temp(Default::default()) })?;
-        cls.method0("title", |this: &MainWindow| -> String { this.1.clone() })?;
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.method0("title", |this: &Self| -> String {
+            this.0 .1.borrow().clone()
+        })?;
 
-        cls.superclass::<Widget>()?;
-        cls.method0("className", |_this: &MainWindow| -> String {
+        cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.method0("className", |_this: &Self| -> String {
             "MainWindow".to_string()
         })?;
         Ok(())
     }
 }
 
-impl Repr<Fw> for BoxLayout {
-    type Type = FwWrapper<BoxLayout>;
+impl Repr<FW> for Fw<Rc<BoxLayout>> {
+    type Type = FwWrapper<Fw<Rc<BoxLayout>>>;
 }
 
-impl Type<Fw> for BoxLayout {
+impl Type<FW> for Fw<Rc<BoxLayout>> {
     const CLASS_NAME: &'static str = "BoxLayout";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -122,25 +132,25 @@ impl Type<Fw> for BoxLayout {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<BoxLayout> { Temp(Default::default()) })?;
-        cls.method0("orientation", |this: &BoxLayout| -> String {
-            this.1.clone()
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.method0("orientation", |this: &Self| -> String {
+            this.0 .1.borrow().clone()
         })?;
 
-        cls.superclass::<Widget>()?;
-        cls.method0("className", |_this: &BoxLayout| -> String {
+        cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.method0("className", |_this: &Self| -> String {
             "BoxLayout".to_string()
         })?;
         Ok(())
     }
 }
 
-impl Repr<Fw> for AbstractButton {
-    type Type = FwWrapper<AbstractButton>;
+impl Repr<FW> for Fw<Rc<AbstractButton>> {
+    type Type = FwWrapper<Fw<Rc<AbstractButton>>>;
 }
 
-impl Type<Fw> for AbstractButton {
+impl Type<FW> for Fw<Rc<AbstractButton>> {
     const CLASS_NAME: &'static str = "AbstractButton";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -148,22 +158,24 @@ impl Type<Fw> for AbstractButton {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.method0("text", |this: &AbstractButton| -> String { this.1.clone() })?;
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.method0("text", |this: &Self| -> String {
+            this.0 .1.borrow().clone()
+        })?;
 
-        cls.superclass::<Widget>()?;
-        cls.method0("className", |_this: &AbstractButton| -> String {
+        cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.method0("className", |_this: &Self| -> String {
             "AbstractButton".to_string()
         })?;
         Ok(())
     }
 }
 
-impl Repr<Fw> for PushButton {
-    type Type = FwWrapper<PushButton>;
+impl Repr<FW> for Fw<Rc<PushButton>> {
+    type Type = FwWrapper<Fw<Rc<PushButton>>>;
 }
 
-impl Type<Fw> for PushButton {
+impl Type<FW> for Fw<Rc<PushButton>> {
     const CLASS_NAME: &'static str = "PushButton";
 
     unsafe fn get_id() -> &'static mut rquickjs::ClassId {
@@ -171,12 +183,14 @@ impl Type<Fw> for PushButton {
         &mut CLASSID
     }
 
-    fn define<P>(cls: &mut TypeBuilder<Fw, Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<PushButton> { Temp(Default::default()) })?;
-        cls.method0("status", |this: &PushButton| -> String { this.1.clone() })?;
+    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.method0("status", |this: &Self| -> String {
+            this.0 .1.borrow().clone()
+        })?;
 
-        cls.superclass::<AbstractButton>()?;
-        cls.method0("className", |_this: &PushButton| -> String {
+        cls.superclass::<Fw<Rc<AbstractButton>>>()?;
+        cls.method0("className", |_this: &Self| -> String {
             "PushButton".to_string()
         })?;
         Ok(())

@@ -62,6 +62,15 @@ export const getProperty = (cls, name) => {
 
 export const setProperty = (cls, name, value) => {
     let inst = constructClass(cls);
+    console.log(`>> set ${cls}::${name} = ${value}`);
     inst[name] = value;
-    return inst[name];
+    const newValue = inst[name];
+    console.log(`>> get ${cls}::${name} = ${newValue}`);
+    return newValue;
+};
+
+export const setType = (cls, value) => {
+    let inst = constructClass(cls);
+    inst.type = value;
+    return inst.type;
 };

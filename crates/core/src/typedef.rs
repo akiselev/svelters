@@ -26,10 +26,10 @@ where
     where
         FW: Framework,
         CLS: Type<FW>,
-        ReprOf<FW, CLS>: CastMut<THIS>,
-        PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+        ReprOf<FW, CLS>: Cast<THIS>,
+        PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x THIS) -> Result<PROP>,
-        SET: 'static + for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
+        SET: 'static + for<'x> Fn(&'x THIS, PROP) -> Result<()>,
         Property<FW, CLS, THIS, PROP, GET, SET>: Implements<PHASE>,
     {
         Property::<FW, CLS, THIS, PROP, GET, SET>::new(name, getter, setter)

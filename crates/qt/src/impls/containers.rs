@@ -31,11 +31,9 @@ where
 
 pub struct DerefWrapper<'a, T>(Ptr<T>, PhantomData<&'a ()>);
 
-impl<'a, T> Deref for DerefWrapper<'a, T> {
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
+impl<'a, T> AsRef<T> for DerefWrapper<'a, T> {
+    fn as_ref(&self) -> &T {
+        &self.0
     }
 }
 

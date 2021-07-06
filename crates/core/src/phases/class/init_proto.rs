@@ -29,11 +29,6 @@ where
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {
     fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "---------- IMPL {}::{}",
-            <CLS as Type<FW>>::typename(),
-            self.0
-        );
         input.obj.set(
             self.0,
             rquickjs::Func::new(
@@ -45,7 +40,7 @@ where
                         tuple_match_size(args_len, 0)?;
                         let obj: &Obj<FW, CLS> = this.as_ref();
                         let data = obj.inner.cast();
-                        let res = self.1(&*data);
+                        let res = self.1(data.as_ref());
                         Result::<_>::Ok(res.into_js(ctx))
                     },
                 ),
@@ -60,10 +55,10 @@ impl<'a, 'b: 'a, FW, CLS, THIS, PROP, GET, SET> Implements<InitProto<'a, 'b, FW,
 where
     FW: Framework,
     CLS: Type<FW>,
-    ReprOf<FW, CLS>: CastMut<THIS>,
-    PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+    ReprOf<FW, CLS>: Cast<THIS>,
+    PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x THIS) -> Result<PROP>,
-    SET: 'static + for<'x> Fn(&'x mut THIS, PROP) -> Result<()>,
+    SET: 'static + for<'x> Fn(&'x THIS, PROP) -> Result<()>,
 {
     fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         let Property {
@@ -74,23 +69,43 @@ where
         } = self;
         input.obj.prop(
             name,
-            Accessor::from(rquickjs::Method(
-                move |mut this: JsClass<'b, Obj<FW, CLS>>| {
-                    println!("Calling getter for {}", name);
-                    let obj: &mut Obj<FW, CLS> = this.as_mut();
-                    let data = obj.inner.cast_mut();
-                    rquickjs::Result::Ok(getter(&*data))
-                },
-            ))
-            .set(rquickjs::Method(
-                move |mut this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
-                    println!("Calling setter for {}", name);
-                    let obj: &mut Obj<FW, CLS> = this.as_mut();
-                    let mut data = obj.inner.cast_mut();
-                    setter(&mut *data, val)?;
+            Accessor::new(
+                rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>| {
+                    println!("Calling getter for {}::{}1", CLS::typename(), name);
+                    let obj: &Obj<FW, CLS> = this.as_ref();
+                    println!("Calling getter for {}::{}2", CLS::typename(), name);
+                    let data = obj.inner.cast();
+                    println!("Calling getter for {}::{}3", CLS::typename(), name);
+                    let val = getter(data.as_ref())?;
+                    println!(
+                        "Calling getter for {}::{}4 = {:?}",
+                        CLS::typename(),
+                        name,
+                        val
+                    );
+                    println!(
+                        "Calling getter for {}::{}5 = {:?}",
+                        CLS::typename(),
+                        name,
+                        val
+                    );
+                    println!(
+                        "Calling getter for {}::{}6 = {:?}",
+                        CLS::typename(),
+                        name,
+                        val
+                    );
+                    rquickjs::Result::Ok(val)
+                }),
+                rquickjs::Method(move |this: JsClass<'b, Obj<FW, CLS>>, val: PROP| {
+                    println!("Calling setter for {}::{}", CLS::typename(), name);
+                    let obj: &Obj<FW, CLS> = this.as_ref();
+                    let data = obj.inner.cast();
+                    setter(data.as_ref(), val)?;
                     Result::<_>::Ok(())
-                },
-            )),
+                }),
+            )
+            .enumerable(),
         )
     }
 }
@@ -103,11 +118,6 @@ where
     SUPER: Type<FW>,
 {
     fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "------ SUPER PROTO {} on {}",
-            <SUPER as Type<FW>>::typename(),
-            <CLS as Type<FW>>::typename(),
-        );
         let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
         let mut cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
         <SUPER as Type<FW>>::define(&mut cls)?;

@@ -25,11 +25,6 @@ where
     R: 'static + for<'js> IntoJs<'js>,
 {
     fn build(self, input: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "---------- IMPL static {}::{} ",
-            <CLS as Type<FW>>::typename(),
-            self.0,
-        );
         input.obj.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
@@ -58,11 +53,6 @@ where
     SUPER: Type<FW>,
 {
     fn build(self, input: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
-        println!(
-            "------ SUPER STATIC {} on {}",
-            <SUPER as Type<FW>>::typename(),
-            <CLS as Type<FW>>::typename(),
-        );
         let phase = InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
         let mut cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
         <SUPER as Type<FW>>::define(&mut cls)?;

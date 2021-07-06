@@ -24,21 +24,13 @@ pub trait Framework: Sized + 'static {
 
 /// Cast Self to type &T
 pub trait Cast<T> {
-    type Output<'a>: Deref<Target = T>;
+    type Output<'a>: AsRef<T>;
 
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
-/// Cast Self to type &mut T
-pub trait CastMut<T> {
-    type Output<'a>: DerefMut<Target = T>;
-
-    fn cast_mut<'a>(&'a mut self) -> Self::Output<'a>;
-}
-
 pub type ReprOf<FW, CLS> = <CLS as Repr<FW>>::Type;
 pub type CastedAs<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as Cast<T>>::Output<'a>;
-pub type CastedAsMut<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as CastMut<T>>::Output<'a>;
 
 /// The representation Svelters will use when storing a type
 ///
