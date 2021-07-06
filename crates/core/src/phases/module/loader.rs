@@ -1,4 +1,4 @@
-use crate::inner::*;
+use crate::{build_phase, inner::*};
 
 #[derive(Clone, Copy)]
 pub struct ModuleLoad<'a, 'js: 'a> {
@@ -75,9 +75,7 @@ where
     CLS: Type<FW>,
 {
     fn build(self, phase: &mut ModuleEval<'a, 'b>) -> Result<()> {
-        let mut cls: TypeBuilder<FW, CLS, ConstructorEval<'a, 'b, FW, CLS>> =
-            TypeBuilder::new(ConstructorEval::new(phase.ctx, phase.module));
-        <CLS as Type<FW>>::define(&mut cls)?;
+        build_phase!(FW::CLS with ConstructorEval::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
         Ok(())
     }
 }
@@ -88,9 +86,7 @@ where
     CLS: Type<FW>,
 {
     fn build(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
-        let mut cls: TypeBuilder<FW, CLS, ConstructorLoad<'a, 'b, FW, CLS>> =
-            TypeBuilder::new(ConstructorLoad::new(phase.ctx, phase.module));
-        <CLS as Type<FW>>::define(&mut cls)?;
+        build_phase!(FW::CLS with ConstructorLoad::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
         Ok(())
     }
 }

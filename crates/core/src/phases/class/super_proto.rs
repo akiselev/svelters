@@ -1,4 +1,4 @@
-use crate::inner::*;
+use crate::{build_phase, inner::*};
 
 pub struct InitSuperProto<'a, 'js, FW, CLS, SUPER> {
     pub(in crate) ctx: Ctx<'js>,
@@ -138,9 +138,8 @@ where
     ReprOf<FW, CLS>: Cast<SUPER>,
 {
     fn build(self, input: &mut InitSuperProto<'a, 'b, FW, CLS, INTER>) -> Result<()> {
-        let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let mut cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
-        <SUPER as Type<FW>>::define(&mut cls)?;
+        build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj));
+
         Ok(())
     }
 }

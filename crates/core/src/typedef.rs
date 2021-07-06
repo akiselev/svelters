@@ -1,16 +1,16 @@
 use crate::inner::*;
 
-pub struct TypeBuilder<FW, CLS, P> {
-    phase: P,
+pub struct TypeBuilder<'a, FW, CLS, PHASE> {
+    phase: &'a mut PHASE,
     pub(in crate) framework: PhantomData<(FW, CLS)>,
 }
 
-impl<FW, CLS, PHASE> TypeBuilder<FW, CLS, PHASE>
+impl<'a, FW, CLS, PHASE> TypeBuilder<'a, FW, CLS, PHASE>
 where
     FW: Framework,
     CLS: Repr<FW>,
 {
-    pub fn new(phase: PHASE) -> Self {
+    pub fn new(phase: &'a mut PHASE) -> Self {
         Self {
             phase,
             framework: PhantomData,

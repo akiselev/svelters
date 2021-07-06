@@ -3,6 +3,8 @@ use crate::inner::*;
 mod class {
     mod constructor_eval;
     mod constructor_load;
+    mod has_prop;
+    mod inherits_prop;
     mod init_proto;
     mod init_static;
     mod super_proto;
@@ -10,6 +12,8 @@ mod class {
 
     pub(in crate) use self::constructor_eval::*;
     pub(in crate) use self::constructor_load::*;
+    pub(in crate) use self::has_prop::*;
+    pub(in crate) use self::inherits_prop::*;
     pub(in crate) use self::init_proto::*;
     pub(in crate) use self::init_static::*;
     pub(in crate) use self::super_proto::*;

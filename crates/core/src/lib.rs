@@ -24,6 +24,7 @@ pub mod types {
     pub use phases::Constructor;
 }
 
+pub(in crate) mod macros;
 pub(in crate) mod module;
 pub(in crate) mod obj;
 pub(in crate) mod phases;
@@ -60,6 +61,9 @@ pub(in crate) mod inner {
     pub(in crate) use crate::traits::*;
     pub(in crate) use crate::typedef::*;
     pub(in crate) use crate::utils::*;
+
+    #[macro_use(crate)]
+    pub(in crate) use crate::macros::*;
 }
 
 // ------------------ LEGACY ------------------

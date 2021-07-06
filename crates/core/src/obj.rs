@@ -1,4 +1,4 @@
-use crate::inner::*;
+use crate::{build_phase, inner::*};
 
 pub struct Obj<FW, CLS>
 where
@@ -47,16 +47,12 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        let mut cls: TypeBuilder<FW, CLS, InitProto<FW, CLS>> =
-            TypeBuilder::new(InitProto::new(ctx, proto));
-        <CLS as Type<FW>>::define(&mut cls)?;
+        build_phase!(FW::CLS with InitProto::<FW, CLS>::new(ctx, proto));
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        let mut cls: TypeBuilder<FW, CLS, InitStatic<FW, CLS>> =
-            TypeBuilder::new(InitStatic::new(ctx, _static));
-        <CLS as Type<FW>>::define(&mut cls)?;
+        build_phase!(FW::CLS with InitStatic::<FW, CLS>::new(ctx, _static));
         Ok(())
     }
 

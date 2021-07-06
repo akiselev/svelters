@@ -1,6 +1,6 @@
 use rquickjs::This;
 
-use crate::inner::*;
+use crate::{build_phase, inner::*};
 
 pub struct InitProto<'a, 'js, FW, CLS> {
     pub(in crate) ctx: Ctx<'js>,
@@ -138,9 +138,7 @@ where
     ReprOf<FW, CLS>: Cast<SUPER>,
 {
     fn build(self, input: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
-        let phase = InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj);
-        let mut cls: TypeBuilder<FW, SUPER, _> = TypeBuilder::new(phase);
-        <SUPER as Type<FW>>::define(&mut cls)?;
+        build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(input.ctx, input.obj));
         Ok(())
     }
 }

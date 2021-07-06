@@ -145,11 +145,11 @@ impl Type<FW> for Fw<Rc<BoxLayout>> {
             this.0 .1.borrow().clone()
         })?;
 
-        cls.prop(
-            "type",
-            |this: &Self| Ok(format!("Overriden")),
-            |this: &Self, val: String| Ok(()),
-        )?;
+        // cls.prop(
+        //     "type",
+        //     |this: &Self| Ok(format!("Overriden")),
+        //     |this: &Self, val: String| Ok(()),
+        // )?;
 
         cls.method0("className", |_this: &Self| -> String {
             "BoxLayout".to_string()
