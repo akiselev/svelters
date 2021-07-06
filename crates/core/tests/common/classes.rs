@@ -18,6 +18,7 @@ impl Type<FW> for Fw<Rc<Object>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.prop(
@@ -56,6 +57,7 @@ impl Type<FW> for Fw<Rc<Widget>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
@@ -87,6 +89,7 @@ impl Type<FW> for Fw<Rc<Application>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
@@ -121,6 +124,7 @@ impl Type<FW> for Fw<Rc<MainWindow>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
@@ -150,6 +154,7 @@ impl Type<FW> for Fw<Rc<BoxLayout>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
@@ -182,6 +187,7 @@ impl Type<FW> for Fw<Rc<AbstractButton>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.method0("text", |this: &Self| -> String {
@@ -210,6 +216,7 @@ impl Type<FW> for Fw<Rc<PushButton>> {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<AbstractButton>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;

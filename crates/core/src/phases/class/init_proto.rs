@@ -28,6 +28,7 @@ where
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         phase.obj.set(
             self.name,
@@ -60,6 +61,7 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         let Property {
             name,
@@ -101,6 +103,7 @@ where
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         let ReadOnly { name, getter, .. } = self;
 
@@ -127,6 +130,7 @@ where
     SUPER: Type<FW>,
     ReprOf<FW, CLS>: Cast<SUPER>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, FW, CLS>) -> Result<()> {
         build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
         Ok(())

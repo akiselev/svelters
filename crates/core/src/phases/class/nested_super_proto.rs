@@ -29,7 +29,7 @@ where
     T: 'static + Fn(&SUPER) -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
-    fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
+    #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
         if build_phase!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
             
             return Ok(());
@@ -73,7 +73,7 @@ where
     GET: 'static + for<'x> Fn(&'x SUPER) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x SUPER, PROP) -> Result<()>,
 {
-    fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
+    #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
         if build_phase!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
             
             return Ok(());
@@ -126,7 +126,7 @@ where
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x>,
     GET: 'static + for<'x> Fn(&'x SUPER) -> Result<PROP>,
 {
-    fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
+    #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
         if build_phase!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
             
             return Ok(());
@@ -163,7 +163,7 @@ where
     SUPER: Type<FW>,
     ReprOf<FW, CLS>: Cast<SUPER>,
 {
-    fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, INTER>) -> Result<()> {
+    #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, INTER>) -> Result<()> {
         build_phase!(FW::SUPER with NestedSuperProto::<'_, '_, FW, ROOT, INTER, SUPER>::new(phase.ctx, phase.obj, phase.depth + 1));
 
         Ok(())

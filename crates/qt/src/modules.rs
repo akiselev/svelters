@@ -16,6 +16,7 @@ use crate::{
 };
 
 impl Module<QT> for QtCore {
+    #[inline(always)]
     fn define<P>(module: &mut ModuleBuilder<QT, Self, P>) -> Result<()>
     where
         QT: Framework,
@@ -40,6 +41,7 @@ impl Type<QT> for QObject {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QObject::new_0a() }
@@ -84,6 +86,7 @@ impl Type<QT> for QWidget {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QWidget::new_0a() }
@@ -116,6 +119,7 @@ impl Type<QT> for QApplication {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         // cls.static_fn0("exec", || unsafe {
         //     QCoreApplication::exec();
@@ -142,6 +146,7 @@ impl Type<QT> for QMainWindow {
         &mut META
     }
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.static_fn0("exec", || unsafe {
             QCoreApplication::exec();

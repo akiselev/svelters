@@ -24,6 +24,7 @@ where
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
         phase.obj.set(
             self.0,
@@ -47,6 +48,7 @@ where
     CLS: Type<FW>,
     SUPER: Type<FW>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
         build_phase!(FW::SUPER with InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
         Ok(())

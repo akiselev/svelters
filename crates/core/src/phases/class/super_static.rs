@@ -25,6 +25,7 @@ where
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut InitSuperStatic<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
         phase.obj.set(
             self.0,

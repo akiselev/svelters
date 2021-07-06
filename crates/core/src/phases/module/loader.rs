@@ -74,6 +74,7 @@ where
     FW: Framework,
     CLS: Type<FW>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut ModuleEval<'a, 'b>) -> Result<()> {
         build_phase!(FW::CLS with ConstructorEval::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
         Ok(())
@@ -85,6 +86,7 @@ where
     FW: Framework,
     CLS: Type<FW>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
         build_phase!(FW::CLS with ConstructorLoad::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
         Ok(())

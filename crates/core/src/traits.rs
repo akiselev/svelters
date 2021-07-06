@@ -58,6 +58,7 @@ where
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
 pub trait Module<FW>: Sized {
+    #[inline(always)]
     fn define<P>(module: &mut ModuleBuilder<FW, Self, P>) -> Result<()>
     where
         FW: Framework;
@@ -69,6 +70,7 @@ pub trait Type<FW>: 'static + Sized + Repr<FW> {
 
     unsafe fn metadata() -> &'static mut Metadata;
 
+    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()>;
 
     fn name() -> &'static str {
@@ -107,10 +109,12 @@ pub trait Type<FW>: 'static + Sized + Repr<FW> {
 /// implementations can also pass information back to the caller to implement
 /// features like reflection and debuging.
 pub trait Implements<P> {
+    #[inline(always)]
     fn build(self, phase: &mut P) -> Result<()>;
 }
 
 impl<T, P> Implements<P> for T {
+    #[inline(always)]
     default fn build(self, _phase: &mut P) -> Result<()> {
         Ok(())
     }

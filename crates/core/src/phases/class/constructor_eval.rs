@@ -24,6 +24,7 @@ where
     T: 'static + Fn() -> R,
     R: 'static + IntoRepr<FW, CLS>,
 {
+    #[inline(always)]
     fn build(self, phase: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         JsClass::<Obj<FW, CLS>>::register(phase.ctx)?;
         phase.module.set(

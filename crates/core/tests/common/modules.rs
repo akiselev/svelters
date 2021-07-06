@@ -3,6 +3,7 @@ use std::rc::Rc;
 use super::*;
 
 impl Module<FW> for FwCore {
+    #[inline(always)]
     fn define<P>(m: &mut ModuleBuilder<FW, Self, P>) -> std::result::Result<(), rquickjs::Error> {
         m.class::<Fw<Rc<Object>>>()?;
         m.class::<Fw<Rc<Application>>>()?;
@@ -11,6 +12,7 @@ impl Module<FW> for FwCore {
 }
 
 impl Module<FW> for FwWidgets {
+    #[inline(always)]
     fn define<P>(m: &mut ModuleBuilder<FW, Self, P>) -> std::result::Result<(), rquickjs::Error> {
         m.class::<Fw<Rc<Object>>>()?;
         m.class::<Fw<Rc<Application>>>()?;

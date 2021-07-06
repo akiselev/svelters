@@ -28,6 +28,7 @@ where
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {
+    #[inline(always)]
     fn build(self, phase: &mut HasMember<'a, FW, CLS>) -> Result<()> {
         if self.name == phase.name {
             phase.is_set = true;
