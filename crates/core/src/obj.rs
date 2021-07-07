@@ -29,10 +29,10 @@ where
     }
 }
 
-impl<'a, FW, CLS: 'static> ClassDef for Obj<FW, CLS>
+impl<'a, FW, CLS> ClassDef for Obj<FW, CLS>
 where
     FW: Framework,
-    CLS: Type<FW>,
+    CLS: 'static + Type<FW>,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
@@ -88,5 +88,35 @@ where
         let value = Object::from_js(ctx, value)?;
         let instance = JsClass::<Self>::try_ref(ctx, &value)?;
         Ok(instance.clone())
+    }
+}
+
+impl<'a, 'js, FW, CLS> rquickjs::IntoJs<'js> for Obj<FW, CLS>
+where
+    FW: Framework,
+    CLS: 'static + Type<FW>,
+{
+    fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+        <Obj<FW, CLS> as rquickjs::ClassDef>::into_js_obj(self, ctx)
+    }
+}
+
+impl<'a, 'js, FW, CLS> rquickjs::FromJs<'js> for &'js Obj<FW, CLS>
+where
+    FW: Framework,
+    CLS: 'static + Type<FW>,
+{
+    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+        <Obj<FW, CLS> as rquickjs::ClassDef>::from_js_ref(ctx, value)
+    }
+}
+
+impl<'a, 'js, FW, CLS> rquickjs::FromJs<'js> for &'js mut Obj<FW, CLS>
+where
+    FW: Framework,
+    CLS: 'static + Type<FW>,
+{
+    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+        <Obj<FW, CLS> as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

@@ -10,6 +10,7 @@ where
     FW: Framework,
     CLS: Repr<FW>,
 {
+    #[inline(always)]
     pub fn new(phase: &'a mut PHASE) -> Self {
         Self {
             phase,
@@ -17,6 +18,7 @@ where
         }
     }
 
+    #[inline(always)]
     pub fn prop<PROP, GET, SET>(
         &mut self,
         name: &'static str,
@@ -36,6 +38,7 @@ where
         Ok(())
     }
 
+    #[inline(always)]
     pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<()>
     where
         FW: Framework,
@@ -49,6 +52,7 @@ where
         Ok(())
     }
 
+    #[inline(always)]
     pub fn superclass<SUPER>(&mut self) -> Result<()>
     where
         FW: Framework,
@@ -61,6 +65,7 @@ where
         Ok(())
     }
 
+    #[inline(always)]
     pub fn constructor0<R, X>(&mut self, func: X) -> Result<()>
     where
         FW: Framework,
@@ -73,6 +78,7 @@ where
         Ok(())
     }
 
+    #[inline(always)]
     pub fn method0<THIS, RET, FN>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
         FW: Framework,
@@ -87,6 +93,7 @@ where
         Ok(())
     }
 
+    #[inline(always)]
     pub fn static_fn0<RET, FN>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
         FW: Framework,

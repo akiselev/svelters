@@ -18,11 +18,18 @@ pub mod prelude {
     pub use crate::obj::Obj;
     pub use crate::traits::*;
     pub use crate::typedef::TypeBuilder;
+    pub use crate::virt::Virt;
 }
 
 #[cfg(feature = "unstable")]
 pub mod types {
     pub use phases::Constructor;
+}
+
+pub mod v2 {
+    pub(in crate) mod traits;
+
+    pub use traits::*;
 }
 
 pub(in crate) mod builders;
@@ -33,6 +40,7 @@ pub(in crate) mod obj;
 pub(in crate) mod traits;
 pub(in crate) mod typedef;
 pub(in crate) mod utils;
+pub(in crate) mod virt;
 
 // ----------------- INTERNAL -----------------
 
@@ -59,6 +67,18 @@ pub(in crate) mod phases {
         pub(in crate) use self::super_static::*;
     }
 
+    mod slot {
+        mod init_caster;
+        mod init_nested_super;
+        mod init_proto;
+        mod init_super;
+
+        pub(in crate) use self::init_caster::*;
+        pub(in crate) use self::init_nested_super::*;
+        pub(in crate) use self::init_proto::*;
+        pub(in crate) use self::init_super::*;
+    }
+
     mod module {
         mod loader;
 
@@ -67,6 +87,7 @@ pub(in crate) mod phases {
 
     pub(in crate) use self::class::*;
     pub(in crate) use self::module::*;
+    pub(in crate) use self::slot::*;
 }
 
 #[allow(unused_imports)]
@@ -98,6 +119,7 @@ pub(in crate) mod inner {
     pub(in crate) use crate::traits::*;
     pub(in crate) use crate::typedef::*;
     pub(in crate) use crate::utils::*;
+    pub(in crate) use crate::virt::*;
 
     #[macro_use(crate)]
     pub(in crate) use crate::macros::*;
