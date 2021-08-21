@@ -53,4 +53,3 @@ Feature: Core
         Given module at "core.js"
         When calling function "getProperty" with args ("Application", "ro")
         Then return value is "Readonly2 Hello Application"
-# "Getter Hello Object"

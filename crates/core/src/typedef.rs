@@ -19,6 +19,19 @@ where
     }
 
     #[inline(always)]
+    pub fn class(
+        &mut self,
+    ) -> Result<()>
+    where
+        FW: Framework,
+        CLS: Type<FW>,
+        JsClassLoader<FW, CLS>: Implements<PHASE>,
+    {
+        JsClassLoader::<FW, CLS>::new().build(&mut self.phase)?;
+        Ok(())
+    }
+
+    #[inline(always)]
     pub fn prop<PROP, GET, SET>(
         &mut self,
         name: &'static str,

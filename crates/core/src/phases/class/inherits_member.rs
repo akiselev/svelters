@@ -1,6 +1,6 @@
 use rquickjs::This;
 
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 pub struct InheritsMember<'a, FW, CLS> {
     pub(in crate) name: &'a str,
@@ -41,12 +41,12 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InheritsMember<'a, FW, CLS>) -> Result<()> {
-        if build_phase!(FW::SUPER with HasMember::<'a, FW, SUPER>::new(phase.name)).is_set {
+        if build_class!(FW::SUPER with HasMember::<'a, FW, SUPER>::new(phase.name)).is_set {
             phase.is_set = true;
             return Ok(());
         }
         if phase.depth < phase.max || phase.max == -1 {
-            let child = build_phase!(FW::SUPER with InheritsMember::<'a, FW, SUPER>::inner(phase.name, phase.max, phase.depth + 1));
+            let child = build_class!(FW::SUPER with InheritsMember::<'a, FW, SUPER>::inner(phase.name, phase.max, phase.depth + 1));
             if child.is_set {
                 phase.is_set = true;
             }

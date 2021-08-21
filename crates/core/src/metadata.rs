@@ -1,28 +1,17 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, lazy::OnceCell};
 
 use lazy_static::lazy_static;
 use parking_lot::Once;
 
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 pub struct Metadata {
     pub(in crate) obj_id: ClassId,
     pub(in crate) virt_id: ClassId,
 }
 
-// lazy_static! {
-//     static ref METAMAP: MetaFuncMap = {
-//         let mut map = HashMap::new();
-//         map
-//     };
-// }
-
 impl Metadata {
     pub const fn new() -> Metadata {
-        // let mut phase = InitCaster::<FW, CLS>::new();
-        // let mut cls: TypeBuilder<FW, CLS, _> = TypeBuilder::new(&mut phase);
-        // cls.build(&mut phase).unwrap();
-        // <CLS as Type<FW>>::define(&mut cls).unwrap();
         Metadata {
             obj_id: ClassId::new(),
             virt_id: ClassId::new(),
@@ -30,6 +19,8 @@ impl Metadata {
     }
 
     pub(in crate) unsafe fn init(&mut self) -> Result<()> {
+        self.obj_id.init();
+        self.virt_id.init();
         Ok(())
     }
 }

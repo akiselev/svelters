@@ -53,10 +53,6 @@ where
     CLS: Type<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
-    // Ref<CLS>: CastFrom<Ref<X>> + StaticUpcast<Ref<X>> + CppDeletable,
-    // Ref<QObject>: CastFrom<Ptr<X>>,
-    // X: CastFrom<CLS>,
-    // QObject: qt_core::cpp_core::StaticUpcast<X>,
 {
     type Output<'a> = DerefWrapper<'a, X>;
 

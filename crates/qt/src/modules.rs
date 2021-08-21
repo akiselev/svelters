@@ -45,11 +45,6 @@ impl Type<QT> for QObject {
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QObject::new_0a() }
-            // cls.constructor1(|var: QString| {
-            // let mut args = QCoreApplicationArgs::new();
-            // let (argc, argv) = args.get();
-            // std::mem::forget(args);
-            // QApplication::new_2a(argc, argv)
         })?;
         cls.method0("className", |this: &QObject| -> Result<String> {
             let name = unsafe {
@@ -90,11 +85,6 @@ impl Type<QT> for QWidget {
     fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
         cls.constructor0(|| {
             unsafe { QWidget::new_0a() }
-            // cls.constructor1(|var: QString| {
-            // let mut args = QCoreApplicationArgs::new();
-            // let (argc, argv) = args.get();
-            // std::mem::forget(args);
-            // QApplication::new_2a(argc, argv)
         })?;
         cls.method0("show", |this: &QWidget| unsafe {
             this.show();
@@ -130,6 +120,7 @@ impl Type<QT> for QApplication {
             std::mem::forget(args);
             QApplication::new_2a(argc, argv)
         })?;
+        cls.superclass::<QObject>()?;
         Ok(())
     }
 }
@@ -156,12 +147,3 @@ impl Type<QT> for QMainWindow {
         Ok(())
     }
 }
-
-// static QOBJECT: impl Instantiate =
-//     qt.class::<QObject, _>(hlist![qt.init(|| unsafe { QObject::new_0a() })]);
-// static QWIDGET: impl Instantiate =
-//     qt.class::<QWidget, _>(hlist![qt.init(|| unsafe { QWidget::new_0a() })]);
-// static QMAINWINDOW: impl Instantiate =
-//     qt.class::<QMainWindow, _>(hlist![qt.init(|| unsafe { QMainWindow::new_0a() })]);
-// static QPUSHBUTTOn: impl Instantiate =
-//     qt.class::<QPushButton, _>(hlist![qt.init(|| unsafe { QPushButton::new() })]);

@@ -27,6 +27,7 @@ where
     #[inline(always)]
     fn build(self, phase: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
         JsClass::<Obj<FW, CLS>>::register(phase.ctx)?;
+        JsClass::<Virt<FW, CLS>>::register(phase.ctx)?;
         phase.module.set(
             <CLS as Type<FW>>::CLASS_NAME,
             rquickjs::Func::new(

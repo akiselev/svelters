@@ -1,4 +1,4 @@
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 pub struct NestedSuperProto<'a, 'js, FW, ROOT, CLS, SUPER> {
     pub(in crate) ctx: Ctx<'js>,
@@ -30,11 +30,11 @@ where
     R: 'static + for<'js> IntoJs<'js>,
 {
     #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
-        if build_phase!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
+        if build_class!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
             
             return Ok(());
         }
-        if build_phase!(FW::ROOT with InheritsMember::<'a, FW, ROOT>::new(self.name, phase.depth - 1))
+        if build_class!(FW::ROOT with InheritsMember::<'a, FW, ROOT>::new(self.name, phase.depth - 1))
             .is_set
         {
             
@@ -74,11 +74,11 @@ where
     SET: 'static + for<'x> Fn(&'x SUPER, PROP) -> Result<()>,
 {
     #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
-        if build_phase!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
+        if build_class!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
             
             return Ok(());
         }
-        if build_phase!(FW::ROOT with InheritsMember::<'a, FW, ROOT>::new(self.name, phase.depth - 1))
+        if build_class!(FW::ROOT with InheritsMember::<'a, FW, ROOT>::new(self.name, phase.depth - 1))
             .is_set
         {
             
@@ -127,11 +127,11 @@ where
     GET: 'static + for<'x> Fn(&'x SUPER) -> Result<PROP>,
 {
     #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, SUPER>) -> Result<()> {
-        if build_phase!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
+        if build_class!(FW::ROOT with HasMember::<'a, FW, ROOT>::new(self.name)).is_set {
             
             return Ok(());
         }
-        if build_phase!(FW::ROOT with InheritsMember::<'a, FW, ROOT>::new(self.name, phase.depth))
+        if build_class!(FW::ROOT with InheritsMember::<'a, FW, ROOT>::new(self.name, phase.depth))
             .is_set
         {
             
@@ -164,7 +164,7 @@ where
     ReprOf<FW, CLS>: Cast<SUPER>,
 {
     #[inline(always)] fn build(self, phase: &mut NestedSuperProto<'a, 'b, FW, ROOT, CLS, INTER>) -> Result<()> {
-        build_phase!(FW::SUPER with NestedSuperProto::<'_, '_, FW, ROOT, INTER, SUPER>::new(phase.ctx, phase.obj, phase.depth + 1));
+        build_class!(FW::SUPER with NestedSuperProto::<'_, '_, FW, ROOT, INTER, SUPER>::new(phase.ctx, phase.obj, phase.depth + 1));
 
         Ok(())
     }

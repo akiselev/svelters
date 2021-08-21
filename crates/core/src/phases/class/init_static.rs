@@ -1,4 +1,4 @@
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 pub struct InitStatic<'a, 'js, FW, CLS> {
     pub(in crate) ctx: Ctx<'js>,
@@ -50,7 +50,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitStatic<'a, 'b, FW, CLS>) -> Result<()> {
-        build_phase!(FW::SUPER with InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
+        build_class!(FW::SUPER with InitSuperStatic::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
         Ok(())
     }
 }

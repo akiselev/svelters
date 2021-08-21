@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use rquickjs::This;
 
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 pub struct InitCasterProto<'a, 'js, FW, CLS> {
     pub(in crate) ctx: Ctx<'js>,
@@ -136,7 +136,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitCasterProto<'a, 'b, FW, CLS>) -> Result<()> {
-        build_phase!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
+        build_class!(FW::SUPER with InitSuperProto::<'_, '_, FW, CLS, SUPER>::new(phase.ctx, phase.obj));
         Ok(())
     }
 }

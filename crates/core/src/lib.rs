@@ -7,8 +7,10 @@
 // #![feature(const_str_from_utf8_unchecked)]
 // #![feature(const_type_name)]
 // #![feature(min_specialization)]
+#![feature(const_fn_trait_bound)]
 #![feature(const_type_name)]
 #![feature(specialization)]
+#![feature(once_cell)]
 #![recursion_limit = "4096"]
 #![allow(incomplete_features, dead_code)]
 
@@ -24,12 +26,6 @@ pub mod prelude {
 #[cfg(feature = "unstable")]
 pub mod types {
     pub use phases::Constructor;
-}
-
-pub mod v2 {
-    pub(in crate) mod traits;
-
-    pub use traits::*;
 }
 
 pub(in crate) mod builders;

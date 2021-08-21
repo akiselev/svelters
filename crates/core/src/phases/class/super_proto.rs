@@ -1,4 +1,4 @@
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 pub struct InitSuperProto<'a, 'js, FW, CLS, SUPER> {
     pub(in crate) ctx: Ctx<'js>,
@@ -28,7 +28,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
-        if build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
+        if build_class!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
             return Ok(());
         }
 
@@ -71,7 +71,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
-        if build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
+        if build_class!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
             return Ok(());
         }
 
@@ -117,7 +117,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
-        if build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
+        if build_class!(FW::CLS with HasMember::<'a, FW, CLS>::new(self.name)).is_set {
             return Ok(());
         }
         let ReadOnly { name, getter, .. } = self;
@@ -147,7 +147,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitSuperProto<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
-        build_phase!(FW::NESTED with NestedSuperProto::<'_, '_, FW, CLS, SUPER, NESTED>::new(phase.ctx, phase.obj, 1));
+        build_class!(FW::NESTED with NestedSuperProto::<'_, '_, FW, CLS, SUPER, NESTED>::new(phase.ctx, phase.obj, 1));
 
         Ok(())
     }

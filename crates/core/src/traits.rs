@@ -2,7 +2,7 @@ use std::future::Future;
 
 use rquickjs::{Loader, Resolver};
 
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 /// The framework that Svelters exposes to Javascript and Svelte
 pub trait Framework: Sized + 'static {
@@ -126,7 +126,7 @@ where
     FW: Framework,
     CLS: Type<FW>,
 {
-    Ok(build_phase!(FW::CLS with HasMember::<'a, FW, CLS>::new(name)).is_set)
+    Ok(build_class!(FW::CLS with HasMember::<'a, FW, CLS>::new(name)).is_set)
 }
 
 #[inline(always)]
@@ -138,5 +138,5 @@ where
     FW: Framework,
     CLS: Type<FW>,
 {
-    Ok(build_phase!(FW::CLS with InheritsMember::<'a, FW, CLS>::new(name, max_depth)).is_set)
+    Ok(build_class!(FW::CLS with InheritsMember::<'a, FW, CLS>::new(name, max_depth)).is_set)
 }

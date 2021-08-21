@@ -1,4 +1,4 @@
-use crate::{build_phase, inner::*};
+use crate::{build_class, inner::*};
 
 #[derive(Clone, Copy)]
 pub struct ModuleLoad<'a, 'js: 'a> {
@@ -73,10 +73,12 @@ impl<'a, 'b: 'a, FW, CLS> Implements<ModuleEval<'a, 'b>> for JsClassLoader<FW, C
 where
     FW: Framework,
     CLS: Type<FW>,
+    
 {
     #[inline(always)]
     fn build(self, phase: &mut ModuleEval<'a, 'b>) -> Result<()> {
-        build_phase!(FW::CLS with ConstructorEval::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
+        unsafe { CLS::metadata().init()? };
+        build_class!(FW::CLS with ConstructorEval::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
         Ok(())
     }
 }
@@ -88,7 +90,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
-        build_phase!(FW::CLS with ConstructorLoad::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
+        build_class!(FW::CLS with ConstructorLoad::<'a, 'b, FW, CLS>::new(phase.ctx, phase.module));
         Ok(())
     }
 }
