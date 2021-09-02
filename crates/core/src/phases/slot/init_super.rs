@@ -28,6 +28,12 @@ where
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
+                println!(
+                    "Casting nested {} to {} via {}\n\n",
+                    CLS::CLASS_NAME,
+                    NESTED::CLASS_NAME,
+                    SUPER::CLASS_NAME
+                );
                 obj.inner.with_cast(|data| {
                     Result::<_>::Ok(
                         Virt::<'_, NESTED>::new(this.clone().into_js(ctx)?, (*data).clone())

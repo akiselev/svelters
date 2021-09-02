@@ -35,10 +35,20 @@ where
                         let map = cell.get_or_init(|| {
                             let mut map: MetaFuncMap<CLS> = HashMap::new();
                             println!("Initializing meta map for {}", CLS::CLASS_NAME);
-                            map.insert(CLS::CLASS_NAME, Box::new(|ctx, value| value.into_js(ctx)));
+                            map.insert(
+                                CLS::CLASS_NAME,
+                                Box::new(|ctx, value| {
+                                    println!("Casting self {} \n\n", CLS::CLASS_NAME);
+                                    println!("Casting self {} \n\n", CLS::CLASS_NAME);
+
+                                    value.into_js(ctx)
+                                }),
+                            );
                             {
                                 build_class!(CLS with InitCaster::<CLS>::new(&mut map))
                             };
+                            println!("{:?}", map.keys().collect::<Vec<_>>());
+                            println!("{:?}", map.keys().collect::<Vec<_>>());
                             Result::Ok(map)
                         });
                         let map = match map {
@@ -79,16 +89,43 @@ where
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
+                println!("Casting {} to {}\n\n", CLS::CLASS_NAME, SUPER::CLASS_NAME);
+                println!("Casting {} to {}\n\n", CLS::CLASS_NAME, SUPER::CLASS_NAME);
                 obj.inner.with_cast(|data| {
-                    Result::<_>::Ok(
-                        Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, (*data).clone())
-                            .into_js(ctx)?,
-                    )
+                    println!(
+                        "1. Casting {} to {}\n\n",
+                        CLS::CLASS_NAME,
+                        SUPER::CLASS_NAME
+                    );
+                    let value = this.clone().into_js(ctx)?;
+                    println!(
+                        "2. Casting {} to {}\n\n",
+                        CLS::CLASS_NAME,
+                        SUPER::CLASS_NAME
+                    );
+                    let virt = Virt::<'_, SUPER>::new(value, (*data).clone());
+                    println!(
+                        "3. Casting {} to {}\n\n",
+                        CLS::CLASS_NAME,
+                        std::any::type_name_of_val(&virt)
+                    );
+                    let value = virt.into_js(ctx)?;
+                    println!(
+                        "4. Casting {} to {}\n\n",
+                        CLS::CLASS_NAME,
+                        SUPER::CLASS_NAME
+                    );
+                    println!(
+                        "5. Casting {} to {}\n\n",
+                        CLS::CLASS_NAME,
+                        SUPER::CLASS_NAME
+                    );
+                    Result::<_>::Ok(value)
                 })
             }),
         );
 
-        build_class!(CLS with InitSuperCaster::<'_, CLS, SUPER>::new(phase.map));
+        build_class!(SUPER with InitSuperCaster::<'_, CLS, SUPER>::new(phase.map));
 
         Ok(())
     }

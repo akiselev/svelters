@@ -9,6 +9,7 @@
 // #![feature(min_specialization)]
 #![feature(const_fn_trait_bound)]
 #![feature(const_type_name)]
+#![feature(type_name_of_val)]
 #![feature(specialization)]
 #![feature(once_cell)]
 #![recursion_limit = "4096"]
