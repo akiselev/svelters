@@ -3,18 +3,16 @@ use crate::inner::*;
 mod constructor {
     use super::*;
 
-    pub struct Constructor<FW, CLS, ARGS, RET, THIS>(
+    pub struct Constructor<CLS, ARGS, RET, THIS>(
         pub(crate) THIS,
-        pub(crate) PhantomData<(CLS, ARGS, RET, FW)>,
+        pub(crate) PhantomData<(CLS, ARGS, RET)>,
     )
     where
-        FW: Framework,
-        CLS: Type<FW>;
+        CLS: Type;
 
-    impl<FW, THIS, ARGS, RET, CLS> Constructor<FW, CLS, ARGS, RET, THIS>
+    impl<THIS, ARGS, RET, CLS> Constructor<CLS, ARGS, RET, THIS>
     where
-        FW: Framework,
-        CLS: Type<FW>,
+        CLS: Type,
     {
         pub(in crate) fn new(func: THIS) -> Self {
             Constructor(func, PhantomData)
@@ -25,14 +23,14 @@ mod constructor {
 mod prop {
     use super::*;
 
-    pub struct Property<FW, CLS, PROP, GET, SET> {
+    pub struct Property<CLS, PROP, GET, SET> {
         pub(crate) name: &'static str,
         pub(crate) getter: GET,
         pub(crate) setter: SET,
-        marker: PhantomData<(FW, CLS, PROP)>,
+        marker: PhantomData<(CLS, PROP)>,
     }
 
-    impl<FW, CLS, PROP, GET, SET> Property<FW, CLS, PROP, GET, SET> {
+    impl<CLS, PROP, GET, SET> Property<CLS, PROP, GET, SET> {
         pub fn new(name: &'static str, getter: GET, setter: SET) -> Self {
             Self {
                 name,
@@ -43,13 +41,13 @@ mod prop {
         }
     }
 
-    pub struct ReadOnly<FW, CLS, PROP, GET> {
+    pub struct ReadOnly<CLS, PROP, GET> {
         pub(crate) name: &'static str,
         pub(crate) getter: GET,
-        marker: PhantomData<(FW, CLS, PROP)>,
+        marker: PhantomData<(CLS, PROP)>,
     }
 
-    impl<FW, CLS, PROP, GET> ReadOnly<FW, CLS, PROP, GET> {
+    impl<CLS, PROP, GET> ReadOnly<CLS, PROP, GET> {
         pub fn new(name: &'static str, getter: GET) -> Self {
             Self {
                 name,
@@ -63,13 +61,13 @@ mod prop {
 mod method {
     use super::*;
 
-    pub struct Method<FW, CLS, ARGS, RET, THIS> {
+    pub struct Method<CLS, ARGS, RET, THIS> {
         pub(crate) name: &'static str,
         pub(crate) func: THIS,
-        marker: PhantomData<(CLS, ARGS, RET, FW)>,
+        marker: PhantomData<(CLS, ARGS, RET)>,
     }
 
-    impl<FW, THIS, ARGS, RET, CLS> Method<FW, CLS, ARGS, RET, THIS> {
+    impl<THIS, ARGS, RET, CLS> Method<CLS, ARGS, RET, THIS> {
         pub(in crate) fn new(name: &'static str, func: THIS) -> Self {
             Method {
                 name,
@@ -83,17 +81,17 @@ mod method {
 mod staticfn {
     use super::*;
 
-    pub struct StaticFn<FW, CLS, ARGS, RET, THIS>(
+    pub struct StaticFn<CLS, ARGS, RET, THIS>(
         pub(crate) &'static str,
         pub(crate) THIS,
-        PhantomData<(CLS, ARGS, RET, FW)>,
+        PhantomData<(CLS, ARGS, RET)>,
     )
     where
-        CLS: Type<FW>;
+        CLS: Type;
 
-    impl<FW, THIS, ARGS, RET, CLS> StaticFn<FW, CLS, ARGS, RET, THIS>
+    impl<THIS, ARGS, RET, CLS> StaticFn<CLS, ARGS, RET, THIS>
     where
-        CLS: Type<FW>,
+        CLS: Type,
     {
         pub(in crate) fn new(name: &'static str, func: THIS) -> Self {
             StaticFn(name, func, PhantomData)
@@ -104,13 +102,13 @@ mod staticfn {
 mod superclass {
     use super::*;
 
-    pub struct Superclass<FW, CLS, SUPER>(PhantomData<(CLS, SUPER, FW)>)
+    pub struct Superclass<CLS, SUPER>(PhantomData<(CLS, SUPER)>)
     where
-        CLS: Repr<FW>;
+        CLS: Repr;
 
-    impl<FW, SUPER, CLS> Superclass<FW, CLS, SUPER>
+    impl<SUPER, CLS> Superclass<CLS, SUPER>
     where
-        CLS: Repr<FW>,
+        CLS: Repr,
     {
         pub(in crate) fn new() -> Self {
             Superclass(PhantomData)

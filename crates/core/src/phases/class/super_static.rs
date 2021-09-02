@@ -1,12 +1,12 @@
 use crate::inner::*;
 
-pub struct InitSuperStatic<'a, 'js, FW, CLS, SUPER> {
+pub struct InitSuperStatic<'a, 'js, CLS, SUPER> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) obj: &'a Object<'js>,
-    pub(in crate) framework: PhantomData<(FW, CLS, SUPER)>,
+    pub(in crate) framework: PhantomData<(CLS, SUPER)>,
 }
 
-impl<'a, 'js, CLS: Repr<FW>, FW, SUPER> InitSuperStatic<'a, 'js, FW, CLS, SUPER> {
+impl<'a, 'js, CLS: Repr, SUPER> InitSuperStatic<'a, 'js, CLS, SUPER> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -16,17 +16,16 @@ impl<'a, 'js, CLS: Repr<FW>, FW, SUPER> InitSuperStatic<'a, 'js, FW, CLS, SUPER>
     }
 }
 
-impl<'a, 'b: 'a, T, FW, CLS, SUPER, R> Implements<InitSuperStatic<'a, 'b, FW, CLS, SUPER>>
-    for StaticFn<FW, SUPER, (), R, T>
+impl<'a, 'b: 'a, T, CLS, SUPER, R> Implements<InitSuperStatic<'a, 'b, CLS, SUPER>>
+    for StaticFn<SUPER, (), R, T>
 where
-    FW: Framework,
-    CLS: Type<FW>,
-    SUPER: Type<FW>,
+    CLS: Type,
+    SUPER: Type,
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitSuperStatic<'a, 'b, FW, CLS, SUPER>) -> Result<()> {
+    fn build(self, phase: &mut InitSuperStatic<'a, 'b, CLS, SUPER>) -> Result<()> {
         phase.obj.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {

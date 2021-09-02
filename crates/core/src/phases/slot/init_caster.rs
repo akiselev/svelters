@@ -4,13 +4,13 @@ use rquickjs::This;
 
 use crate::{build_class, inner::*};
 
-pub struct InitCaster<'a, FW: Framework, CLS: Type<FW> + Repr<FW>> {
-    pub(in crate) map: &'a mut MetaFuncMap<FW, CLS>,
+pub struct InitCaster<'a, CLS: Type + Repr> {
+    pub(in crate) map: &'a mut MetaFuncMap<CLS>,
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, FW: Framework, CLS: Type<FW> + Repr<FW>> InitCaster<'a, FW, CLS> {
-    pub fn new(map: &'a mut MetaFuncMap<FW, CLS>) -> Self {
+impl<'a, CLS: Type + Repr> InitCaster<'a, CLS> {
+    pub fn new(map: &'a mut MetaFuncMap<CLS>) -> Self {
         Self {
             map,
             framework: PhantomData,
@@ -18,12 +18,12 @@ impl<'a, FW: Framework, CLS: Type<FW> + Repr<FW>> InitCaster<'a, FW, CLS> {
     }
 }
 
-impl<'a, 'js, FW: Framework, CLS> Implements<InitProto<'a, 'js, FW, CLS>> for JsClassLoader<FW, CLS>
+impl<'a, 'js, CLS> Implements<InitProto<'a, 'js, CLS>> for JsClassLoader<CLS>
 where
-    CLS: Type<FW> + Repr<FW>,
+    CLS: Type + Repr,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitProto<'a, 'js, FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut InitProto<'a, 'js, CLS>) -> Result<()> {
         println!("Calling InitCaster for {}", CLS::CLASS_NAME);
         let cell = OnceCell::new();
         phase.obj.set(
@@ -31,13 +31,13 @@ where
             rquickjs::Func::new(
                 "castAs",
                 rquickjs::Method(
-                    move |this: JsClass<'js, Obj<FW, CLS>>, ctx: Ctx<'js>, target: String| {
+                    move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
                         let map = cell.get_or_init(|| {
-                            let mut map: MetaFuncMap<FW, CLS> = HashMap::new();
+                            let mut map: MetaFuncMap<CLS> = HashMap::new();
                             println!("Initializing meta map for {}", CLS::CLASS_NAME);
                             map.insert(CLS::CLASS_NAME, Box::new(|ctx, value| value.into_js(ctx)));
                             {
-                                build_class!(FW::CLS with InitCaster::<FW, CLS>::new(&mut map))
+                                build_class!(CLS with InitCaster::<CLS>::new(&mut map))
                             };
                             Result::Ok(map)
                         });
@@ -61,16 +61,15 @@ where
     }
 }
 
-impl<'a, FW: Framework, CLS, SUPER> Implements<InitCaster<'a, FW, CLS>>
-    for Superclass<FW, CLS, SUPER>
+impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<CLS, SUPER>
 where
-    CLS: Type<FW> + Repr<FW>,
-    SUPER: Type<FW>,
-    ReprOf<FW, CLS>: Cast<SUPER>,
-    for<'x> CastedAs<'x, FW, CLS, SUPER>: IntoRepr<FW, SUPER>,
+    CLS: Type + Repr,
+    SUPER: Type,
+    ReprOf<CLS>: Cast<SUPER>,
+    for<'x> CastedAs<'x, CLS, SUPER>: IntoRepr<SUPER>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitCaster<FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut InitCaster<CLS>) -> Result<()> {
         println!(
             "Calling SUPERINITCASTER for {} of {}",
             CLS::CLASS_NAME,
@@ -80,16 +79,16 @@ where
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
-                let obj: &Obj<FW, CLS> = this.as_ref();
+                let obj: &Obj<CLS> = this.as_ref();
                 let data = obj.inner.cast();
                 Result::<_>::Ok(
-                    Virt::<'_, FW, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
+                    Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
                         .into_js(ctx)?,
                 )
             }),
         );
 
-        build_class!(FW::CLS with InitSuperCaster::<'_,  FW, CLS, SUPER>::new(phase.map));
+        build_class!(CLS with InitSuperCaster::<'_, CLS, SUPER>::new(phase.map));
 
         Ok(())
     }

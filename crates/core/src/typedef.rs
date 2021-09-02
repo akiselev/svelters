@@ -1,14 +1,13 @@
 use crate::inner::*;
 
-pub struct TypeBuilder<'a, FW, CLS, PHASE> {
+pub struct TypeBuilder<'a, CLS, PHASE> {
     phase: &'a mut PHASE,
-    pub(in crate) framework: PhantomData<(FW, CLS)>,
+    pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, FW, CLS, PHASE> TypeBuilder<'a, FW, CLS, PHASE>
+impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE>
 where
-    FW: Framework,
-    CLS: Repr<FW>,
+    CLS: Repr,
 {
     #[inline(always)]
     pub fn new(phase: &'a mut PHASE) -> Self {
@@ -19,15 +18,12 @@ where
     }
 
     #[inline(always)]
-    pub fn class(
-        &mut self,
-    ) -> Result<()>
+    pub fn class(&mut self) -> Result<()>
     where
-        FW: Framework,
-        CLS: Type<FW>,
-        JsClassLoader<FW, CLS>: Implements<PHASE>,
+        CLS: Type,
+        JsClassLoader<CLS>: Implements<PHASE>,
     {
-        JsClassLoader::<FW, CLS>::new().build(&mut self.phase)?;
+        JsClassLoader::<CLS>::new().build(&mut self.phase)?;
         Ok(())
     }
 
@@ -39,53 +35,49 @@ where
         setter: SET,
     ) -> Result<()>
     where
-        FW: Framework,
-        CLS: Type<FW>,
-        ReprOf<FW, CLS>: Cast<CLS>,
+        CLS: Type,
+        ReprOf<CLS>: Cast<CLS>,
         PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
-        Property<FW, CLS, PROP, GET, SET>: Implements<PHASE>,
+        Property<CLS, PROP, GET, SET>: Implements<PHASE>,
     {
-        Property::<FW, CLS, PROP, GET, SET>::new(name, getter, setter).build(&mut self.phase)?;
+        Property::<CLS, PROP, GET, SET>::new(name, getter, setter).build(&mut self.phase)?;
         Ok(())
     }
 
     #[inline(always)]
     pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<()>
     where
-        FW: Framework,
-        CLS: Type<FW>,
-        ReprOf<FW, CLS>: Cast<CLS>,
+        CLS: Type,
+        ReprOf<CLS>: Cast<CLS>,
         PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
-        ReadOnly<FW, CLS, PROP, GET>: Implements<PHASE>,
+        ReadOnly<CLS, PROP, GET>: Implements<PHASE>,
     {
-        ReadOnly::<FW, CLS, PROP, GET>::new(name, getter).build(&mut self.phase)?;
+        ReadOnly::<CLS, PROP, GET>::new(name, getter).build(&mut self.phase)?;
         Ok(())
     }
 
     #[inline(always)]
     pub fn superclass<SUPER>(&mut self) -> Result<()>
     where
-        FW: Framework,
-        CLS: Type<FW>,
-        SUPER: Type<FW>,
-        ReprOf<FW, CLS>: Cast<SUPER>,
-        Superclass<FW, CLS, SUPER>: Implements<PHASE>,
+        CLS: Type,
+        SUPER: Type,
+        ReprOf<CLS>: Cast<SUPER>,
+        Superclass<CLS, SUPER>: Implements<PHASE>,
     {
-        Superclass::<FW, CLS, SUPER>::new().build(&mut self.phase)?;
+        Superclass::<CLS, SUPER>::new().build(&mut self.phase)?;
         Ok(())
     }
 
     #[inline(always)]
     pub fn constructor0<R, X>(&mut self, func: X) -> Result<()>
     where
-        FW: Framework,
-        CLS: 'static + Type<FW>,
+        CLS: 'static + Type,
         X: 'static + Fn() -> R,
-        R: 'static + IntoRepr<FW, CLS>,
-        Constructor<FW, CLS, (), R, X>: Implements<PHASE>,
+        R: 'static + IntoRepr<CLS>,
+        Constructor<CLS, (), R, X>: Implements<PHASE>,
     {
         Constructor::new(func).build(&mut self.phase)?;
         Ok(())
@@ -94,13 +86,12 @@ where
     #[inline(always)]
     pub fn method0<THIS, RET, FN>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
-        FW: Framework,
-        CLS: 'static + Type<FW>,
-        ReprOf<FW, CLS>: Cast<THIS>,
-        THIS: 'static + Repr<FW>,
+        CLS: 'static + Type,
+        ReprOf<CLS>: Cast<THIS>,
+        THIS: 'static + Repr,
         RET: 'static + for<'js> IntoJs<'js>,
         FN: 'static + for<'x> Fn(&'x THIS) -> RET,
-        Method<FW, CLS, (THIS,), RET, FN>: Implements<PHASE>,
+        Method<CLS, (THIS,), RET, FN>: Implements<PHASE>,
     {
         Method::new(name, func).build(&mut self.phase)?;
         Ok(())
@@ -109,11 +100,10 @@ where
     #[inline(always)]
     pub fn static_fn0<RET, FN>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
-        FW: Framework,
         FN: 'static + Fn() -> RET,
-        CLS: 'static + Type<FW>,
+        CLS: 'static + Type,
         RET: 'static + for<'js> IntoJs<'js>,
-        StaticFn<FW, CLS, (), RET, FN>: Implements<PHASE>,
+        StaticFn<CLS, (), RET, FN>: Implements<PHASE>,
     {
         StaticFn::new(name, func).build(&mut self.phase)?;
         Ok(())
@@ -127,10 +117,10 @@ where
 //                 &mut self,
 //                 name: &'static str,
 //                 func: X,
-//             ) -> ClassStaticFunc<FW, CLS, ($($type,)*), R, X>
+//             ) -> ClassStaticFunc<CLS, ($($type,)*), R, X>
 //             where
 //                 FW: Container<CLS>,
-//                 X: StaticFunc<FW, CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
+//                 X: StaticFunc<CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
 //                 $($type: for<'a> FromJs<'a>,)*
 //                 R: for<'a> IntoJs<'a>,
 //             {
@@ -141,21 +131,21 @@ where
 //                 &mut self,
 //                 name: &'static str,
 //                 func: X,
-//             ) -> ClassMethod<FW, CLS, (T, $($type,)*), R, X>
+//             ) -> ClassMethod<CLS, (T, $($type,)*), R, X>
 //             where
-//                 X:  Method<FW, CLS, (T, $($type,)*), R> + Fn($($type,)*) -> R,
-//                 ClsBox<FW, CLS>: for<'a> GetRef<'a, CLS>,
-//                 ClsBox<FW, CLS>: Cast<T>,
+//                 X:  Method<CLS, (T, $($type,)*), R> + Fn($($type,)*) -> R,
+//                 ClsBox<CLS>: for<'a> GetRef<'a, CLS>,
+//                 ClsBox<CLS>: Cast<T>,
 //                 R: for<'js> IntoJs<'js>,
 //                 $($type: for<'a> FromJs<'a>,)*
 //             {
 //                 ClassMethod::new(name, func)
 //             }
 
-//             pub fn $constructor<$($type,)* R, X>(&mut self, func: X) -> ClassConstructor<FW, CLS, ($($type,)*), R, X>
+//             pub fn $constructor<$($type,)* R, X>(&mut self, func: X) -> ClassConstructor<CLS, ($($type,)*), R, X>
 //             where
-//                 X:  Constructor<FW, CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
-//                 R: IntoContainer<FW, CLS, Type = ClsBox<FW, CLS>>,
+//                 X:  Constructor<CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
+//                 R: IntoContainer<CLS, Type = ClsBox<CLS>>,
 //                 $($type: for<'a> FromJs<'a>,)*
 //             {
 //                 ClassConstructor::new(func)
@@ -181,7 +171,7 @@ where
 //     (@idx P) => { 15 };
 // }
 
-// impl<Z: Phase, FW: Framework, CLS> JsClass<FW, CLS, Z>
+// impl<Z: Phase,  CLS> JsClass<CLS, Z>
 // where
 //     FW: Container<CLS>,
 // {

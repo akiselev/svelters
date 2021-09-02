@@ -1,27 +1,21 @@
 use crate::{build_class, inner::*};
 
-pub struct Obj<FW, CLS>
+pub struct Obj<CLS>
 where
-    FW: Framework,
-    CLS: Repr<FW> + Type<FW>,
+    CLS: Repr + Type,
 {
-    pub(in crate) fw: PhantomData<FW>,
-    pub(in crate) inner: ReprOf<FW, CLS>,
+    pub(in crate) inner: ReprOf<CLS>,
 }
 
-impl<'a, FW, CLS> Obj<FW, CLS>
+impl<'a, CLS> Obj<CLS>
 where
-    FW: Framework,
-    CLS: Type<FW>,
+    CLS: Type,
 {
-    pub fn new(inner: ReprOf<FW, CLS>) -> Self {
-        Self {
-            fw: PhantomData,
-            inner,
-        }
+    pub fn new(inner: ReprOf<CLS>) -> Self {
+        Self { inner }
     }
 
-    pub fn as_inner<'b>(&'a self) -> &'b ReprOf<FW, CLS>
+    pub fn as_inner<'b>(&'a self) -> &'b ReprOf<CLS>
     where
         'a: 'b,
     {
@@ -29,15 +23,14 @@ where
     }
 }
 
-impl<'a, FW, CLS> ClassDef for Obj<FW, CLS>
+impl<'a, CLS> ClassDef for Obj<CLS>
 where
-    FW: Framework,
-    CLS: 'static + Type<FW>,
+    CLS: 'static + Type,
 {
     const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
 
     unsafe fn class_id() -> &'static mut ClassId {
-        &mut <CLS as Type<FW>>::metadata().obj_id
+        &mut <CLS as Type>::metadata().obj_id
     }
 
     const HAS_PROTO: bool = true;
@@ -47,12 +40,12 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        build_class!(FW::CLS with InitProto::<FW, CLS>::new(ctx, proto));
+        build_class!(CLS with InitProto::<CLS>::new(ctx, proto));
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        build_class!(FW::CLS with InitStatic::<FW, CLS>::new(ctx, _static));
+        build_class!(CLS with InitStatic::<CLS>::new(ctx, _static));
         Ok(())
     }
 
@@ -91,32 +84,29 @@ where
     }
 }
 
-impl<'a, 'js, FW, CLS> rquickjs::IntoJs<'js> for Obj<FW, CLS>
+impl<'a, 'js, CLS> rquickjs::IntoJs<'js> for Obj<CLS>
 where
-    FW: Framework,
-    CLS: 'static + Type<FW>,
+    CLS: 'static + Type,
 {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
-        <Obj<FW, CLS> as rquickjs::ClassDef>::into_js_obj(self, ctx)
+        <Obj<CLS> as rquickjs::ClassDef>::into_js_obj(self, ctx)
     }
 }
 
-impl<'a, 'js, FW, CLS> rquickjs::FromJs<'js> for &'js Obj<FW, CLS>
+impl<'a, 'js, CLS> rquickjs::FromJs<'js> for &'js Obj<CLS>
 where
-    FW: Framework,
-    CLS: 'static + Type<FW>,
+    CLS: 'static + Type,
 {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Obj<FW, CLS> as rquickjs::ClassDef>::from_js_ref(ctx, value)
+        <Obj<CLS> as rquickjs::ClassDef>::from_js_ref(ctx, value)
     }
 }
 
-impl<'a, 'js, FW, CLS> rquickjs::FromJs<'js> for &'js mut Obj<FW, CLS>
+impl<'a, 'js, CLS> rquickjs::FromJs<'js> for &'js mut Obj<CLS>
 where
-    FW: Framework,
-    CLS: 'static + Type<FW>,
+    CLS: 'static + Type,
 {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Obj<FW, CLS> as rquickjs::ClassDef>::from_js_mut(ctx, value)
+        <Obj<CLS> as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

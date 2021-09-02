@@ -2,13 +2,13 @@ use rquickjs::This;
 
 use crate::inner::*;
 
-pub struct HasMember<'a, FW, CLS> {
+pub struct HasMember<'a, CLS> {
     pub(in crate) name: &'a str,
     pub(in crate) is_set: bool,
-    pub(in crate) framework: PhantomData<(FW, CLS)>,
+    pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, CLS: Repr<FW>, FW> HasMember<'a, FW, CLS> {
+impl<'a, CLS: Repr> HasMember<'a, CLS> {
     pub fn new(name: &'a str) -> Self {
         Self {
             name,
@@ -18,18 +18,16 @@ impl<'a, CLS: Repr<FW>, FW> HasMember<'a, FW, CLS> {
     }
 }
 
-impl<'a, FUNC, THIS, FW, CLS, RET> Implements<HasMember<'a, FW, CLS>>
-    for Method<FW, CLS, (THIS,), RET, FUNC>
+impl<'a, FUNC, THIS, CLS, RET> Implements<HasMember<'a, CLS>> for Method<CLS, (THIS,), RET, FUNC>
 where
-    FW: Framework,
-    CLS: Type<FW>,
-    ReprOf<FW, CLS>: Cast<THIS>,
-    THIS: 'static + Repr<FW>,
+    CLS: Type,
+    ReprOf<CLS>: Cast<THIS>,
+    THIS: 'static + Repr,
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {
     #[inline(always)]
-    fn build(self, phase: &mut HasMember<'a, FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut HasMember<'a, CLS>) -> Result<()> {
         if self.name == phase.name {
             phase.is_set = true;
         }
@@ -37,18 +35,16 @@ where
     }
 }
 
-impl<'a, FW, CLS, PROP, GET, SET> Implements<HasMember<'a, FW, CLS>>
-    for Property<FW, CLS, PROP, GET, SET>
+impl<'a, CLS, PROP, GET, SET> Implements<HasMember<'a, CLS>> for Property<CLS, PROP, GET, SET>
 where
-    FW: Framework,
-    CLS: Type<FW>,
-    ReprOf<FW, CLS>: Cast<CLS>,
+    CLS: Type,
+    ReprOf<CLS>: Cast<CLS>,
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut HasMember<'a, FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut HasMember<'a, CLS>) -> Result<()> {
         if self.name == phase.name {
             phase.is_set = true;
         }
@@ -56,16 +52,15 @@ where
     }
 }
 
-impl<'a, FW, CLS, PROP, GET> Implements<HasMember<'a, FW, CLS>> for ReadOnly<FW, CLS, PROP, GET>
+impl<'a, CLS, PROP, GET> Implements<HasMember<'a, CLS>> for ReadOnly<CLS, PROP, GET>
 where
-    FW: Framework,
-    CLS: Type<FW>,
-    ReprOf<FW, CLS>: Cast<CLS>,
+    CLS: Type,
+    ReprOf<CLS>: Cast<CLS>,
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut HasMember<'a, FW, CLS>) -> Result<()> {
+    fn build(self, phase: &mut HasMember<'a, CLS>) -> Result<()> {
         if self.name == phase.name {
             phase.is_set = true;
         }

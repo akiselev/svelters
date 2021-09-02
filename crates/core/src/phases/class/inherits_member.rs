@@ -2,15 +2,15 @@ use rquickjs::This;
 
 use crate::{build_class, inner::*};
 
-pub struct InheritsMember<'a, FW, CLS> {
+pub struct InheritsMember<'a, CLS> {
     pub(in crate) name: &'a str,
     pub(in crate) is_set: bool,
     pub(in crate) depth: isize,
     pub(in crate) max: isize,
-    pub(in crate) framework: PhantomData<(FW, CLS)>,
+    pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, CLS: Repr<FW>, FW> InheritsMember<'a, FW, CLS> {
+impl<'a, CLS: Repr> InheritsMember<'a, CLS> {
     pub fn new(name: &'a str, max: isize) -> Self {
         Self {
             name,
@@ -32,21 +32,20 @@ impl<'a, CLS: Repr<FW>, FW> InheritsMember<'a, FW, CLS> {
     }
 }
 
-impl<'a, FW, CLS, SUPER> Implements<InheritsMember<'a, FW, CLS>> for Superclass<FW, CLS, SUPER>
+impl<'a, CLS, SUPER> Implements<InheritsMember<'a, CLS>> for Superclass<CLS, SUPER>
 where
-    FW: Framework,
-    CLS: Type<FW>,
-    SUPER: Type<FW>,
-    ReprOf<FW, CLS>: Cast<CLS>,
+    CLS: Type,
+    SUPER: Type,
+    ReprOf<CLS>: Cast<CLS>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InheritsMember<'a, FW, CLS>) -> Result<()> {
-        if build_class!(FW::SUPER with HasMember::<'a, FW, SUPER>::new(phase.name)).is_set {
+    fn build(self, phase: &mut InheritsMember<'a, CLS>) -> Result<()> {
+        if build_class!(SUPER with HasMember::<'a, SUPER>::new(phase.name)).is_set {
             phase.is_set = true;
             return Ok(());
         }
         if phase.depth < phase.max || phase.max == -1 {
-            let child = build_class!(FW::SUPER with InheritsMember::<'a, FW, SUPER>::inner(phase.name, phase.max, phase.depth + 1));
+            let child = build_class!(SUPER with InheritsMember::<'a, SUPER>::inner(phase.name, phase.max, phase.depth + 1));
             if child.is_set {
                 phase.is_set = true;
             }

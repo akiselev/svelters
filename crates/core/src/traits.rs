@@ -14,9 +14,9 @@ pub trait Framework: Sized + 'static {
     fn get_loader() -> (Self::Resolver, Self::Loader);
     fn init_app(ctx: Context) -> Result<Self::AppTask>;
 
-    fn module<MOD>(module: MOD) -> JsModuleLoader<Self, MOD>
+    fn module<MOD>(module: MOD) -> JsModuleLoader<MOD>
     where
-        MOD: Module<Self>,
+        MOD: Module,
     {
         JsModuleLoader::new(module)
     }
@@ -29,8 +29,8 @@ pub trait Cast<T> {
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub type ReprOf<FW, CLS> = <CLS as Repr<FW>>::Type;
-pub type CastedAs<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as Cast<T>>::Output<'a>;
+pub type ReprOf<CLS> = <CLS as Repr>::Type;
+pub type CastedAs<'a, CLS, T> = <<CLS as Repr>::Type as Cast<T>>::Output<'a>;
 
 /// The representation Svelters will use when storing a type
 ///
@@ -38,7 +38,7 @@ pub type CastedAs<'a, FW, CLS, T> = <<CLS as Repr<FW>>::Type as Cast<T>>::Output
 /// can't implement our traits for the types directly beacuse of Rust's orphan
 /// rule. This trait supplies a custom representation (wrapper) of external
 /// types so users can implement our traits
-pub trait Repr<FW> {
+pub trait Repr {
     type Type;
 }
 
@@ -49,29 +49,27 @@ pub trait Repr<FW> {
 ///
 /// For example, the Ritual QT libraries return QBox<T>, QShared<T>, etc to
 /// represent ownership
-pub trait IntoRepr<FW, CLS>
+pub trait IntoRepr<CLS>
 where
-    CLS: Repr<FW>,
+    CLS: Repr,
 {
-    fn into_repr(self) -> <CLS as Repr<FW>>::Type;
+    fn into_repr(self) -> <CLS as Repr>::Type;
 }
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
-pub trait Module<FW>: Sized {
+pub trait Module: Sized {
     #[inline(always)]
-    fn define<P>(module: &mut ModuleBuilder<FW, Self, P>) -> Result<()>
-    where
-        FW: Framework;
+    fn define<P>(module: &mut ModuleBuilder<Self, P>) -> Result<()>;
 }
 
 /// Defines a framework type that is exposed to Javascript using a [TypeBuilder]
-pub trait Type<FW>: 'static + Sized + Repr<FW> {
+pub trait Type: 'static + Sized + Repr {
     const CLASS_NAME: &'static str;
 
     unsafe fn metadata() -> &'static mut Metadata;
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()>;
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()>;
 
     fn name() -> &'static str {
         Self::CLASS_NAME
@@ -108,35 +106,32 @@ pub trait Type<FW>: 'static + Sized + Repr<FW> {
 /// on which phase it's called in. Since the reference to the phase is mutable,
 /// implementations can also pass information back to the caller to implement
 /// features like reflection and debuging.
-pub trait Implements<P> {
+pub trait Implements<P>: Sized {
     #[inline(always)]
-    fn build(self, phase: &mut P) -> Result<()>;
-}
-
-impl<T, P> Implements<P> for T {
-    #[inline(always)]
-    default fn build(self, _phase: &mut P) -> Result<()> {
+    fn build(self, phase: &mut P) -> Result<()> {
         Ok(())
     }
 }
 
+// impl<T, P> Implements<P> for T {
+//     #[inline(always)]
+//     default fn build(self, _phase: &mut P) -> Result<()> {
+//         Ok(())
+//     }
+// }
+
 #[inline(always)]
-pub fn test_inline_has_member<'a, FW, CLS>(name: &'a str) -> anyhow::Result<bool>
+pub fn test_inline_has_member<'a, CLS>(name: &'a str) -> anyhow::Result<bool>
 where
-    FW: Framework,
-    CLS: Type<FW>,
+    CLS: Type,
 {
-    Ok(build_class!(FW::CLS with HasMember::<'a, FW, CLS>::new(name)).is_set)
+    Ok(build_class!(CLS with HasMember::<'a, CLS>::new(name)).is_set)
 }
 
 #[inline(always)]
-pub fn test_inline_inherits_member<'a, FW, CLS>(
-    name: &'a str,
-    max_depth: isize,
-) -> anyhow::Result<bool>
+pub fn test_inline_inherits_member<'a, CLS>(name: &'a str, max_depth: isize) -> anyhow::Result<bool>
 where
-    FW: Framework,
-    CLS: Type<FW>,
+    CLS: Type,
 {
-    Ok(build_class!(FW::CLS with InheritsMember::<'a, FW, CLS>::new(name, max_depth)).is_set)
+    Ok(build_class!(CLS with InheritsMember::<'a, CLS>::new(name, max_depth)).is_set)
 }

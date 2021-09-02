@@ -1,12 +1,12 @@
 use crate::inner::*;
 
-pub struct ConstructorLoad<'a, 'js, FW, CLS> {
+pub struct ConstructorLoad<'a, 'js, CLS> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) module: &'a QJsModule<'js, Created>,
-    pub(in crate) framework: PhantomData<(FW, CLS)>,
+    pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorLoad<'a, 'js, FW, CLS> {
+impl<'a, 'js, CLS: Repr> ConstructorLoad<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Created>) -> Self {
         Self {
             ctx,
@@ -16,16 +16,14 @@ impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorLoad<'a, 'js, FW, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorLoad<'a, 'b, FW, CLS>>
-    for Constructor<FW, CLS, (), R, T>
+impl<'a, 'b: 'a, T, CLS, R> Implements<ConstructorLoad<'a, 'b, CLS>> for Constructor<CLS, (), R, T>
 where
-    FW: Framework,
-    CLS: Type<FW>,
+    CLS: Type,
     T: Fn() -> R,
 {
     #[inline(always)]
-    fn build(self, phase: &mut ConstructorLoad<'a, 'b, FW, CLS>) -> Result<()> {
-        phase.module.add(<CLS as Type<FW>>::name())?;
+    fn build(self, phase: &mut ConstructorLoad<'a, 'b, CLS>) -> Result<()> {
+        phase.module.add(<CLS as Type>::name())?;
         Ok(())
     }
 }

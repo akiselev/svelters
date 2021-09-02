@@ -1,12 +1,12 @@
 use crate::inner::*;
 
-pub struct ConstructorEval<'a, 'js, FW, CLS> {
+pub struct ConstructorEval<'a, 'js, CLS> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) module: &'a QJsModule<'js, Loaded<Native>>,
-    pub(in crate) framework: PhantomData<(FW, CLS)>,
+    pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorEval<'a, 'js, FW, CLS> {
+impl<'a, 'js, CLS: Repr> ConstructorEval<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
         Self {
             ctx,
@@ -16,29 +16,27 @@ impl<'a, 'js, CLS: Repr<FW>, FW> ConstructorEval<'a, 'js, FW, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, T, FW, CLS, R> Implements<ConstructorEval<'a, 'b, FW, CLS>>
-    for Constructor<FW, CLS, (), R, T>
+impl<'a, 'b: 'a, T, CLS, R> Implements<ConstructorEval<'a, 'b, CLS>> for Constructor<CLS, (), R, T>
 where
-    FW: Framework,
-    CLS: Type<FW>,
+    CLS: Type,
     T: 'static + Fn() -> R,
-    R: 'static + IntoRepr<FW, CLS>,
+    R: 'static + IntoRepr<CLS>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut ConstructorEval<'a, 'b, FW, CLS>) -> Result<()> {
-        JsClass::<Obj<FW, CLS>>::register(phase.ctx)?;
-        JsClass::<Virt<FW, CLS>>::register(phase.ctx)?;
+    fn build(self, phase: &mut ConstructorEval<'a, 'b, CLS>) -> Result<()> {
+        JsClass::<Obj<CLS>>::register(phase.ctx)?;
+        JsClass::<Virt<CLS>>::register(phase.ctx)?;
         phase.module.set(
-            <CLS as Type<FW>>::CLASS_NAME,
+            <CLS as Type>::CLASS_NAME,
             rquickjs::Func::new(
-                <CLS as Type<FW>>::CLASS_NAME,
-                JsClass::<Obj<FW, CLS>>::constructor(move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                <CLS as Type>::CLASS_NAME,
+                JsClass::<Obj<CLS>>::constructor(move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                     let args = args.into_inner();
                     let args_len = args.len();
                     tuple_match_size(args_len, 0)?;
 
                     let result = self.0();
-                    JsClass::instance(ctx, Obj::<FW, CLS>::new(result.into_repr()))
+                    JsClass::instance(ctx, Obj::<CLS>::new(result.into_repr()))
                 }),
             ),
         )?;
@@ -49,19 +47,19 @@ where
 // macro_rules! tup {
 //     ($($($type:ident)*,)*) => {
 //         $(
-//             impl<'a, 'b: 'a, T, FW, CLS, R, $($type,)*> Implements<ConstructorLoad<'a, 'b>> for ClassConstructor<FW, CLS, ($($type,)*), R, T>
+//             impl<'a, 'b: 'a, T, CLS, R, $($type,)*> Implements<ConstructorLoad<'a, 'b>> for ClassConstructor<CLS, ($($type,)*), R, T>
 //             where
 //                 FW: Framework + FrameworkClass<CLS> + Container<CLS>,
 //                 T:  Fn($($type,)*) -> R,
 //                 $($type: for<'x> FromJs<'x>,)*
-//                 ClsBox<FW, CLS>: for<'x> GetRef<'x, CLS>,
-//                 R: IntoContainer<FW, CLS>,
-//                 Obj<FW, CLS>: ClassDef,
+//                 ClsBox<CLS>: for<'x> GetRef<'x, CLS>,
+//                 R: IntoContainer<CLS>,
+//                 Obj<CLS>: ClassDef,
 //                 CLS: 'static
 //             {
 //                 const NUM_ARGS: usize = 0 $(+ tup!(@one $type))*;
 
-//                 fn try_constructor<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Obj<FW, CLS>>
+//                 fn try_constructor<'js>(&'static self, ctx: Ctx<'js>, args: &Vec<Value<'js>>) -> Result<Obj<CLS>>
 //                 {
 //                     let args_len = args.len();
 //                     tuple_match_size(args_len, Self::NUM_ARGS)?;
