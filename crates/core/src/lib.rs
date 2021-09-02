@@ -10,11 +10,15 @@
 
 pub mod prelude {
     pub use crate::traits::*;
+
+    pub use crate::runtime::document::Document;
+
+    pub use crate::typedef::obj::Obj;
+    pub use crate::typedef::virt::Virt;
+
     pub use crate::typedef::builder::TypeBuilder;
     pub use crate::typedef::metadata::Metadata;
     pub use crate::typedef::module::ModuleBuilder;
-    pub use crate::typedef::obj::Obj;
-    pub use crate::typedef::virt::Virt;
 }
 
 pub use crate::utils::console;
@@ -25,6 +29,14 @@ pub use crate::utils::timing;
 pub(in crate) mod macros;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
+
+pub(in crate) mod runtime {
+    pub(in crate) mod document;
+    pub(in crate) mod elements;
+
+    pub(in crate) use self::document::*;
+    pub(in crate) use self::elements::*;
+}
 
 pub(in crate) mod typedef {
     pub(in crate) mod builder;
@@ -63,9 +75,15 @@ pub(in crate) mod phases {
     }
 
     mod element {
+        mod element;
+        mod init_caster;
         mod init_element;
+        mod init_proto;
 
+        pub(in crate) use self::element::*;
+        pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_element::*;
+        pub(in crate) use self::init_proto::*;
     }
 
     mod module {
@@ -75,6 +93,7 @@ pub(in crate) mod phases {
     }
 
     pub(in crate) use self::class::*;
+    pub(in crate) use self::element::*;
     pub(in crate) use self::module::*;
     pub(in crate) use self::slot::*;
 }
@@ -96,8 +115,8 @@ pub(in crate) mod inner {
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{
         Accessor, AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error,
-        FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, RefsMarker, Rest,
-        Result, Value,
+        FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, Opt, RefsMarker,
+        Rest, Result, This, Value,
     };
 
     pub(in crate) use crate::phases::*;
@@ -106,5 +125,6 @@ pub(in crate) mod inner {
     pub(in crate) use crate::utils::*;
 
     pub(in crate) use crate::macros::*;
+    pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
 }

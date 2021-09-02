@@ -12,15 +12,19 @@ impl<'a, 'js> ModuleLoad<'a, 'js> {
     }
 }
 
-#[derive(Clone, Copy)]
-pub struct ModuleEval<'a, 'b: 'a> {
-    pub(in crate) ctx: Ctx<'b>,
-    pub(in crate) module: &'a QJsModule<'b, Loaded<Native>>,
+pub struct ModuleEval<'a, 'b, 'js> {
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) doc: &'b mut Document,
+    pub(in crate) module: &'a QJsModule<'js, Loaded<Native>>,
 }
 
-impl<'a, 'js> ModuleEval<'a, 'js> {
-    pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
-        Self { ctx, module }
+impl<'a, 'b, 'js> ModuleEval<'a, 'b, 'js> {
+    pub fn new(
+        ctx: Ctx<'js>,
+        module: &'a QJsModule<'js, Loaded<Native>>,
+        doc: &'b mut Document,
+    ) -> Self {
+        Self { ctx, doc, module }
     }
 }
 
@@ -39,11 +43,14 @@ where
     }
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &QJsModule<'js, Loaded<Native>>) -> Result<()> {
-        let mut _mod = ModuleBuilder::<MOD, ModuleEval<'_, '_>>(
-            ModuleEval::<'_, '_>::new(ctx, exports),
+        let globals = ctx.globals();
+        let value: Value<'js> = globals.get("document")?;
+        let document: &mut Document = Document::from_js_mut(ctx, value)?;
+        let mut _mod = ModuleBuilder::<MOD, ModuleEval<'_, '_, '_>>(
+            ModuleEval::<'_, '_, '_>::new(ctx, exports, document),
             PhantomData,
         );
-        <MOD as Module>::define::<ModuleEval<'_, '_>>(&mut _mod)
+        <MOD as Module>::define::<ModuleEval<'_, '_, '_>>(&mut _mod)
     }
 }
 
@@ -67,14 +74,14 @@ where
     }
 }
 
-impl<'a, 'b: 'a, CLS> Implements<ModuleEval<'a, 'b>> for JsClassLoader<CLS>
+impl<'a, 'b, 'c: 'a + 'b, CLS> Implements<ModuleEval<'a, 'b, 'c>> for JsClassLoader<CLS>
 where
     CLS: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut ModuleEval<'a, 'b>) -> Result<()> {
+    fn build(self, phase: &mut ModuleEval<'a, 'b, 'c>) -> Result<()> {
         unsafe { CLS::metadata().init()? };
-        build_class!(CLS with ConstructorEval::<'a, 'b, CLS>::new(phase.ctx, phase.module));
+        build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.ctx, phase.module, phase.doc));
         Ok(())
     }
 }

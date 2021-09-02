@@ -3,12 +3,12 @@ use std::{collections::HashMap, lazy::OnceCell};
 use crate::{build_class, inner::*};
 
 pub struct InitCaster<'a, CLS: Type> {
-    pub(in crate) map: &'a mut MetaFuncMap<CLS>,
+    pub(in crate) map: &'a mut ObjCasterMap<CLS>,
     pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, CLS: Type> InitCaster<'a, CLS> {
-    pub fn new(map: &'a mut MetaFuncMap<CLS>) -> Self {
+    pub fn new(map: &'a mut ObjCasterMap<CLS>) -> Self {
         Self {
             map,
             framework: PhantomData,
@@ -22,7 +22,6 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'js, CLS>) -> Result<()> {
-        println!("Calling InitCaster for {}", CLS::CLASS_NAME);
         let cell = OnceCell::new();
         phase.obj.set(
             "castAs",
@@ -31,22 +30,11 @@ where
                 rquickjs::Method(
                     move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
                         let map = cell.get_or_init(|| {
-                            let mut map: MetaFuncMap<CLS> = HashMap::new();
-                            println!("Initializing meta map for {}", CLS::CLASS_NAME);
-                            map.insert(
-                                CLS::CLASS_NAME,
-                                Box::new(|ctx, value| {
-                                    println!("Casting self {} \n\n", CLS::CLASS_NAME);
-                                    println!("Casting self {} \n\n", CLS::CLASS_NAME);
-
-                                    value.into_js(ctx)
-                                }),
-                            );
+                            let mut map: ObjCasterMap<CLS> = HashMap::new();
+                            map.insert(CLS::CLASS_NAME, Box::new(|ctx, value| value.into_js(ctx)));
                             {
                                 build_class!(CLS with InitCaster::<CLS>::new(&mut map))
                             };
-                            println!("{:?}", map.keys().collect::<Vec<_>>());
-                            println!("{:?}", map.keys().collect::<Vec<_>>());
                             Result::Ok(map)
                         });
                         let map = match map {

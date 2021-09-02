@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use cucumber_rust::Steps;
 use pretty_assertions::assert_eq;
+use svelters_core::prelude::Document;
 
 use crate::CoreWorld;
 
@@ -18,6 +19,9 @@ pub fn steps() -> Steps<CoreWorld> {
             let key = world
                 .ctx
                 .with(|ctx| {
+                    let doc = Document::new();
+                    rquickjs::Class::<Document>::register(ctx)?;
+                    ctx.globals().set("document", doc)?;
                     let source = std::fs::read_to_string(
                         std::fs::canonicalize(path.clone())
                             .map_err(|err| anyhow::anyhow!("Path {:?} error: {}", path, err))?,

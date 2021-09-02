@@ -149,21 +149,23 @@ mod superclass {
 mod element {
     use super::*;
 
-    pub struct Element<CLS> {
-        name: &'static str,
+    pub struct ElementMember<CLS, FUNC> {
+        pub(in crate) name: &'static str,
+        pub(in crate) func: FUNC,
         marker: PhantomData<CLS>,
     }
 
-    impl<CLS> Element<CLS> {
-        pub(in crate) fn new(name: &'static str) -> Self {
-            Element {
+    impl<CLS, FUNC> ElementMember<CLS, FUNC> {
+        pub(in crate) fn new(name: &'static str, func: FUNC) -> Self {
+            ElementMember {
                 name,
+                func,
                 marker: PhantomData,
             }
         }
     }
 
-    impl<CLS, P> Implements<P> for Element<CLS> {
+    impl<CLS, FUNC, P> Implements<P> for ElementMember<CLS, FUNC> {
         #[inline(always)]
         default fn build(self, _phase: &mut P) -> Result<()> {
             Ok(())
@@ -172,6 +174,7 @@ mod element {
 }
 
 pub use self::constructor::*;
+pub use self::element::*;
 pub use self::method::*;
 pub use self::prop::*;
 pub use self::staticfn::*;

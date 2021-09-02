@@ -1,12 +1,12 @@
 use crate::{build_class, inner::*};
 
 pub struct InitSuperCaster<'a, CLS: Type, SUPER> {
-    pub(in crate) map: &'a mut MetaFuncMap<CLS>,
+    pub(in crate) map: &'a mut ObjCasterMap<CLS>,
     pub(in crate) framework: PhantomData<(CLS, SUPER)>,
 }
 
 impl<'a, CLS: Type, SUPER> InitSuperCaster<'a, CLS, SUPER> {
-    pub fn new(map: &'a mut MetaFuncMap<CLS>) -> Self {
+    pub fn new(map: &'a mut ObjCasterMap<CLS>) -> Self {
         Self {
             map,
             framework: PhantomData,
@@ -28,12 +28,6 @@ where
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                println!(
-                    "Casting nested {} to {} via {}\n\n",
-                    CLS::CLASS_NAME,
-                    NESTED::CLASS_NAME,
-                    SUPER::CLASS_NAME
-                );
                 obj.inner.with_cast(|data| {
                     Result::<_>::Ok(Virt::<NESTED>::new((*data).clone()).into_js(ctx)?)
                 })

@@ -71,6 +71,11 @@ impl<FW: Framework> Runtime<FW> {
         let res: Result<_> = self.ctx.with(|ctx| {
             let obj = Object::new(ctx)?;
             ctx.globals().set("window", obj)?;
+
+            let doc = Document::new();
+            rquickjs::Class::<Document>::register(ctx)?;
+            ctx.globals().set("document", doc)?;
+
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();
             // Ok(())

@@ -1,15 +1,21 @@
-use crate::inner::*;
+use crate::{build_class, inner::*};
 
-pub struct ConstructorEval<'a, 'js, CLS> {
+pub struct ConstructorEval<'a, 'b, 'js, CLS> {
     pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) doc: &'b mut Document,
     pub(in crate) module: &'a QJsModule<'js, Loaded<Native>>,
     pub(in crate) framework: PhantomData<CLS>,
 }
 
-impl<'a, 'js, CLS> ConstructorEval<'a, 'js, CLS> {
-    pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
+impl<'a, 'b, 'js, CLS> ConstructorEval<'a, 'b, 'js, CLS> {
+    pub fn new(
+        ctx: Ctx<'js>,
+        module: &'a QJsModule<'js, Loaded<Native>>,
+        doc: &'b mut Document,
+    ) -> Self {
         Self {
             ctx,
+            doc,
             module,
             framework: PhantomData,
         }
@@ -22,7 +28,7 @@ pub struct ConstructorLoad<'a, 'js, CLS> {
     pub(in crate) framework: PhantomData<CLS>,
 }
 
-impl<'a, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {
+impl<'a, 'b, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Created>) -> Self {
         Self {
             ctx,
@@ -32,24 +38,44 @@ impl<'a, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {
     }
 }
 
+impl<'a, 'b, 'js: 'a, T, CLS> Implements<ConstructorEval<'a, 'b, 'js, CLS>>
+    for ElementMember<CLS, T>
+where
+    CLS: Type,
+    T: 'static + Fn() -> Result<CLS>,
+{
+    #[inline(always)]
+    fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
+        let ElementMember { name, func, .. } = self;
+        let mut eltype = ElementType::new(name, move |ctx| {
+            let el = Element::new((func)()?);
+            el.into_js(ctx)
+        });
+        build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
+        phase.doc.elements.borrow_mut().insert(name, eltype);
+        Ok(())
+    }
+}
+
 macro_rules! tup {
     ($($($arg:ident)*,)*) => {
         $(
-            impl<'a, 'b: 'a, T, CLS, $($arg,)*> Implements<ConstructorEval<'a, 'b, CLS>> for Constructor<CLS, ($($arg,)*), T>
+            impl<'a, 'b, 'js: 'a, T, CLS, $($arg,)*> Implements<ConstructorEval<'a, 'b, 'js, CLS>> for Constructor<CLS, ($($arg,)*), T>
             where
                 CLS: Type,
                 T: 'static + Fn($($arg,)*) -> Result<CLS>,
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
-                fn build(self, phase: &mut ConstructorEval<'a, 'b, CLS>) -> Result<()> {
+                fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
                     JsClass::<Obj<CLS>>::register(phase.ctx)?;
                     JsClass::<Virt<CLS>>::register(phase.ctx)?;
+                    JsClass::<Element<CLS>>::register(phase.ctx)?;
                     phase.module.set(
                         <CLS as Type>::CLASS_NAME,
                         rquickjs::Func::new(
                             <CLS as Type>::CLASS_NAME,
-                            JsClass::<Obj<CLS>>::constructor(move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                            JsClass::<Obj<CLS>>::constructor(move |ctx: Ctx<'js>, args: Rest<Value<'js>>| {
                                 let args = args.into_inner();
                                 let args_len = args.len();
                                 tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
@@ -65,13 +91,13 @@ macro_rules! tup {
                 }
             }
 
-            impl<'a, 'b: 'a, T, CLS, R, $($arg,)*> Implements<ConstructorLoad<'a, 'b, CLS>> for Constructor<CLS, ($($arg,)*), T>
+            impl<'a, 'js: 'a, T, CLS, R, $($arg,)*> Implements<ConstructorLoad<'a, 'js, CLS>> for Constructor<CLS, ($($arg,)*), T>
             where
                 CLS: Type,
                 T: Fn($($arg,)*) -> R,
             {
                 #[inline(always)]
-                fn build(self, phase: &mut ConstructorLoad<'a, 'b, CLS>) -> Result<()> {
+                fn build(self, phase: &mut ConstructorLoad<'a, 'js, CLS>) -> Result<()> {
                     phase.module.add(<CLS as Type>::name())?;
                     Ok(())
                 }

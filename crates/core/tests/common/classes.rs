@@ -146,6 +146,7 @@ impl Type for Fw<Rc<MainWindow>> {
         cls.method0("nestedFn", |_this: &Self| -> Result<String> {
             Ok("NESTED".to_string())
         })?;
+        cls.as_element("mainWindow", || -> Result<Self> { Ok(Default::default()) })?;
         Ok(())
     }
 }
@@ -179,6 +180,7 @@ impl Type for Fw<Rc<BoxLayout>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("BoxLayout".to_string())
         })?;
+        cls.as_element("boxLayout", || -> Result<Self> { Ok(Default::default()) })?;
         Ok(())
     }
 }
@@ -235,6 +237,7 @@ impl Type for Fw<Rc<PushButton>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("PushButton".to_string())
         })?;
+        cls.as_element("pushButton", || -> Result<Self> { Ok(Default::default()) })?;
         Ok(())
     }
 }

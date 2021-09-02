@@ -64,6 +64,17 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
         Superclass::<SUPER>::new().build(&mut self.phase)?;
         Ok(())
     }
+
+    #[inline(always)]
+    pub fn as_element<FUNC>(&mut self, name: &'static str, func: FUNC) -> Result<()>
+    where
+        CLS: Type,
+        FUNC: 'static + Fn() -> Result<CLS>,
+        ElementMember<CLS, FUNC>: Implements<PHASE>,
+    {
+        ElementMember::<CLS, FUNC>::new(name, func).build(&mut self.phase)?;
+        Ok(())
+    }
 }
 
 macro_rules! tup {

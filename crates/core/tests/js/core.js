@@ -90,8 +90,12 @@ export const callMethodAfterCast = (
     return inst[name](...args);
 };
 
-// export const setType = (cls, value) => {
-//     let inst = constructClass(cls);
-//     inst.type = value;
-//     return inst.type;
-// };
+export const callElementMethod = (el, name = "className", ...args) => {
+    let inst = document.createElement(el);
+    return inst[name](...args);
+};
+
+export const getElementProp = (el, name = "className") => {
+    let inst = document.createElement(el);
+    return inst[name];
+};
