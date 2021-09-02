@@ -10,7 +10,7 @@ pub struct InheritsMember<'a, CLS> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, CLS: Repr> InheritsMember<'a, CLS> {
+impl<'a, CLS> InheritsMember<'a, CLS> {
     pub fn new(name: &'a str, max: isize) -> Self {
         Self {
             name,

@@ -7,7 +7,7 @@ pub struct NestedSuperProto<'a, 'js, ROOT, CLS, SUPER> {
     pub(in crate) framework: PhantomData<(ROOT, CLS, SUPER)>,
 }
 
-impl<'a, 'js, CLS: Repr, ROOT, SUPER> NestedSuperProto<'a, 'js, ROOT, CLS, SUPER> {
+impl<'a, 'js, CLS, ROOT, SUPER> NestedSuperProto<'a, 'js, ROOT, CLS, SUPER> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>, depth: isize) -> Self {
         Self {
             ctx,

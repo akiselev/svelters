@@ -55,32 +55,8 @@ impl<T, U: Cast<T>> Caster<T> for U {
     }
 }
 
-pub type ReprOf<CLS> = <CLS as Repr>::Type;
-pub type CastedAs<'a, CLS, T> = <<CLS as Repr>::Type as Cast<T>>::Output<'a>;
-
-/// The representation Svelters will use when storing a type
-///
-/// Since `svelters` bridges Svelte with external GUI libraries, users usually
-/// can't implement our traits for the types directly beacuse of Rust's orphan
-/// rule. This trait supplies a custom representation (wrapper) of external
-/// types so users can implement our traits
-pub trait Repr {
-    type Type;
-}
-
-/// Converts a type into the internal representation used by Svelters
-///
-/// This is a separate trait from [Repr] because the framework Svelters wraps
-/// might wrap its types in Box<T>, Rc<T>, or custom framework types.
-///
-/// For example, the Ritual QT libraries return QBox<T>, QShared<T>, etc to
-/// represent ownership
-pub trait IntoRepr<CLS>
-where
-    CLS: Repr,
-{
-    fn into_repr(self) -> <CLS as Repr>::Type;
-}
+pub type ReprOf<CLS> = CLS;
+pub type CastedAs<'a, CLS, T> = <CLS as Cast<T>>::Output<'a>;
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
 pub trait Module: Sized {
@@ -89,7 +65,7 @@ pub trait Module: Sized {
 }
 
 /// Defines a framework type that is exposed to Javascript using a [TypeBuilder]
-pub trait Type: 'static + Sized + Repr {
+pub trait Type: 'static + Sized {
     const CLASS_NAME: &'static str;
 
     unsafe fn metadata() -> &'static mut Metadata;

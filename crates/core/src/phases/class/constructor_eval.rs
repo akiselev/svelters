@@ -6,7 +6,7 @@ pub struct ConstructorEval<'a, 'js, CLS> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, 'js, CLS: Repr> ConstructorEval<'a, 'js, CLS> {
+impl<'a, 'js, CLS> ConstructorEval<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Loaded<Native>>) -> Self {
         Self {
             ctx,
@@ -16,11 +16,10 @@ impl<'a, 'js, CLS: Repr> ConstructorEval<'a, 'js, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, T, CLS, R> Implements<ConstructorEval<'a, 'b, CLS>> for Constructor<CLS, (), R, T>
+impl<'a, 'b: 'a, T, CLS> Implements<ConstructorEval<'a, 'b, CLS>> for Constructor<CLS, (), T>
 where
     CLS: Type,
-    T: 'static + Fn() -> R,
-    R: 'static + IntoRepr<CLS>,
+    T: 'static + Fn() -> CLS,
 {
     #[inline(always)]
     fn build(self, phase: &mut ConstructorEval<'a, 'b, CLS>) -> Result<()> {
@@ -36,7 +35,7 @@ where
                     tuple_match_size(args_len, 0)?;
 
                     let result = self.0();
-                    JsClass::instance(ctx, Obj::<CLS>::new(result.into_repr()))
+                    JsClass::instance(ctx, Obj::<CLS>::new(result))
                 }),
             ),
         )?;

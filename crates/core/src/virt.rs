@@ -12,13 +12,12 @@ where
 
 impl<'js, CLS> Clone for Virt<'js, CLS>
 where
-    CLS: Type,
-    for<'x> &'x ReprOf<CLS>: IntoRepr<CLS>,
+    CLS: Type + Clone,
 {
     fn clone(&self) -> Self {
         Virt {
             value: self.value.clone(),
-            inner: self.inner.into_repr(),
+            inner: self.inner.clone(),
         }
     }
 }
@@ -113,7 +112,6 @@ impl<'a, 'js, CLS> rquickjs::FromJs<'js> for Virt<'js, CLS>
 where
     CLS: 'static + Type,
     Self: Clone,
-    for<'x> &'x ReprOf<CLS>: IntoRepr<CLS>,
 {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
         let mut_ref = <Virt<'js, CLS> as rquickjs::ClassDef>::from_js_mut(ctx, value.clone());

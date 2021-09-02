@@ -8,7 +8,7 @@ pub struct HasMember<'a, CLS> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, CLS: Repr> HasMember<'a, CLS> {
+impl<'a, CLS> HasMember<'a, CLS> {
     pub fn new(name: &'a str) -> Self {
         Self {
             name,
@@ -22,7 +22,7 @@ impl<'a, FUNC, THIS, CLS, RET> Implements<HasMember<'a, CLS>> for Method<CLS, (T
 where
     CLS: Type,
     ReprOf<CLS>: Cast<THIS>,
-    THIS: 'static + Repr,
+    THIS: 'static,
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {

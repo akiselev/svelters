@@ -5,10 +5,7 @@ pub struct TypeBuilder<'a, CLS, PHASE> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE>
-where
-    CLS: Repr,
-{
+impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
     #[inline(always)]
     pub fn new(phase: &'a mut PHASE) -> Self {
         Self {
@@ -72,12 +69,11 @@ where
     }
 
     #[inline(always)]
-    pub fn constructor0<R, X>(&mut self, func: X) -> Result<()>
+    pub fn constructor0<X>(&mut self, func: X) -> Result<()>
     where
         CLS: 'static + Type,
-        X: 'static + Fn() -> R,
-        R: 'static + IntoRepr<CLS>,
-        Constructor<CLS, (), R, X>: Implements<PHASE>,
+        X: 'static + Fn() -> CLS,
+        Constructor<CLS, (), X>: Implements<PHASE>,
     {
         Constructor::new(func).build(&mut self.phase)?;
         Ok(())
@@ -88,7 +84,7 @@ where
     where
         CLS: 'static + Type,
         ReprOf<CLS>: Cast<THIS>,
-        THIS: 'static + Repr,
+        THIS: 'static,
         RET: 'static + for<'js> IntoJs<'js>,
         FN: 'static + for<'x> Fn(&'x THIS) -> RET,
         Method<CLS, (THIS,), RET, FN>: Implements<PHASE>,
@@ -113,27 +109,27 @@ where
 // macro_rules! tup {
 //     ($($static_fn:ident $method:ident $constructor:ident $($type:ident)*,)*) => {
 //         $(
-//             pub fn $static_fn<$($type,)* R, X>(
+//             pub fn $static_fn<$($type,)* X>(
 //                 &mut self,
 //                 name: &'static str,
 //                 func: X,
-//             ) -> ClassStaticFunc<CLS, ($($type,)*), R, X>
+//             ) -> ClassStaticFunc<CLS, ($($type,)*), X>
 //             where
 //                 FW: Container<CLS>,
-//                 X: StaticFunc<CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
+//                 X: StaticFunc<CLS, ($($type,)*), R> + Fn($($type,)*) ->
 //                 $($type: for<'a> FromJs<'a>,)*
 //                 R: for<'a> IntoJs<'a>,
 //             {
 //                 ClassStaticFunc::new(name, func)
 //             }
 
-//             pub fn $method<T, $($type,)* R, X>(
+//             pub fn $method<T, $($type,)* X>(
 //                 &mut self,
 //                 name: &'static str,
 //                 func: X,
-//             ) -> ClassMethod<CLS, (T, $($type,)*), R, X>
+//             ) -> ClassMethod<CLS, (T, $($type,)*), X>
 //             where
-//                 X:  Method<CLS, (T, $($type,)*), R> + Fn($($type,)*) -> R,
+//                 X:  Method<CLS, (T, $($type,)*), R> + Fn($($type,)*) ->
 //                 ClsBox<CLS>: for<'a> GetRef<'a, CLS>,
 //                 ClsBox<CLS>: Cast<T>,
 //                 R: for<'js> IntoJs<'js>,
@@ -142,9 +138,9 @@ where
 //                 ClassMethod::new(name, func)
 //             }
 
-//             pub fn $constructor<$($type,)* R, X>(&mut self, func: X) -> ClassConstructor<CLS, ($($type,)*), R, X>
+//             pub fn $constructor<$($type,)* X>(&mut self, func: X) -> ClassConstructor<CLS, ($($type,)*), X>
 //             where
-//                 X:  Constructor<CLS, ($($type,)*), R> + Fn($($type,)*) -> R,
+//                 X:  Constructor<CLS, ($($type,)*), R> + Fn($($type,)*) ->
 //                 R: IntoContainer<CLS, Type = ClsBox<CLS>>,
 //                 $($type: for<'a> FromJs<'a>,)*
 //             {

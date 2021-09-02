@@ -6,7 +6,7 @@ pub struct InitSuperStatic<'a, 'js, CLS, SUPER> {
     pub(in crate) framework: PhantomData<(CLS, SUPER)>,
 }
 
-impl<'a, 'js, CLS: Repr, SUPER> InitSuperStatic<'a, 'js, CLS, SUPER> {
+impl<'a, 'js, CLS, SUPER> InitSuperStatic<'a, 'js, CLS, SUPER> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,

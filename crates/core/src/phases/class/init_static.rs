@@ -6,7 +6,7 @@ pub struct InitStatic<'a, 'js, CLS> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, 'js, CLS: Repr> InitStatic<'a, 'js, CLS> {
+impl<'a, 'js, CLS> InitStatic<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,

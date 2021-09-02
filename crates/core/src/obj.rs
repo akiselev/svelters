@@ -2,7 +2,7 @@ use crate::{build_class, inner::*};
 
 pub struct Obj<CLS>
 where
-    CLS: Repr + Type,
+    CLS: Type,
 {
     pub(in crate) inner: ReprOf<CLS>,
 }

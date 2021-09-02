@@ -1,11 +1,11 @@
 use crate::{build_class, inner::*};
 
-pub struct InitSuperCaster<'a, CLS: Type + Repr, SUPER> {
+pub struct InitSuperCaster<'a, CLS: Type, SUPER> {
     pub(in crate) map: &'a mut MetaFuncMap<CLS>,
     pub(in crate) framework: PhantomData<(CLS, SUPER)>,
 }
 
-impl<'a, CLS: Type + Repr, SUPER> InitSuperCaster<'a, CLS, SUPER> {
+impl<'a, CLS: Type, SUPER> InitSuperCaster<'a, CLS, SUPER> {
     pub fn new(map: &'a mut MetaFuncMap<CLS>) -> Self {
         Self {
             map,
@@ -17,11 +17,10 @@ impl<'a, CLS: Type + Repr, SUPER> InitSuperCaster<'a, CLS, SUPER> {
 impl<'a, 'b: 'a, CLS, SUPER, NESTED> Implements<InitSuperCaster<'a, CLS, SUPER>>
     for Superclass<NESTED>
 where
-    CLS: Type + Repr,
+    CLS: Type,
     SUPER: Type,
-    NESTED: Type,
-    ReprOf<CLS>: Cast<NESTED>,
-    for<'x> CastedAs<'x, CLS, NESTED>: IntoRepr<NESTED>,
+    NESTED: Clone + Type,
+    ReprOf<CLS>: Caster<NESTED>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitSuperCaster<'a, CLS, SUPER>) -> Result<()> {
@@ -29,11 +28,12 @@ where
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                let data = obj.inner.cast();
-                Result::<_>::Ok(
-                    Virt::<'_, NESTED>::new(this.clone().into_js(ctx)?, data.into_repr())
-                        .into_js(ctx)?,
-                )
+                obj.inner.with_cast(|data| {
+                    Result::<_>::Ok(
+                        Virt::<'_, NESTED>::new(this.clone().into_js(ctx)?, (*data).clone())
+                            .into_js(ctx)?,
+                    )
+                })
             }),
         );
 

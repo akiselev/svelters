@@ -3,14 +3,11 @@ use crate::inner::*;
 mod constructor {
     use super::*;
 
-    pub struct Constructor<CLS, ARGS, RET, THIS>(
-        pub(crate) THIS,
-        pub(crate) PhantomData<(CLS, ARGS, RET)>,
-    )
+    pub struct Constructor<CLS, ARGS, THIS>(pub(crate) THIS, pub(crate) PhantomData<(CLS, ARGS)>)
     where
         CLS: Type;
 
-    impl<THIS, ARGS, RET, CLS> Constructor<CLS, ARGS, RET, THIS>
+    impl<THIS, ARGS, CLS> Constructor<CLS, ARGS, THIS>
     where
         CLS: Type,
     {
@@ -19,7 +16,7 @@ mod constructor {
         }
     }
 
-    impl<CLS: Type, ARG, RET, FUNC, P> Implements<P> for Constructor<CLS, ARG, RET, FUNC> {
+    impl<CLS: Type, ARG, FUNC, P> Implements<P> for Constructor<CLS, ARG, FUNC> {
         #[inline(always)]
         default fn build(self, _phase: &mut P) -> Result<()> {
             Ok(())

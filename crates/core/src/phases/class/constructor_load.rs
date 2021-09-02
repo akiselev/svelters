@@ -6,7 +6,7 @@ pub struct ConstructorLoad<'a, 'js, CLS> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, 'js, CLS: Repr> ConstructorLoad<'a, 'js, CLS> {
+impl<'a, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Created>) -> Self {
         Self {
             ctx,
@@ -16,7 +16,7 @@ impl<'a, 'js, CLS: Repr> ConstructorLoad<'a, 'js, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, T, CLS, R> Implements<ConstructorLoad<'a, 'b, CLS>> for Constructor<CLS, (), R, T>
+impl<'a, 'b: 'a, T, CLS, R> Implements<ConstructorLoad<'a, 'b, CLS>> for Constructor<CLS, (), T>
 where
     CLS: Type,
     T: Fn() -> R,

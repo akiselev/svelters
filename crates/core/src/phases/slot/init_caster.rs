@@ -4,12 +4,12 @@ use rquickjs::This;
 
 use crate::{build_class, inner::*};
 
-pub struct InitCaster<'a, CLS: Type + Repr> {
+pub struct InitCaster<'a, CLS: Type> {
     pub(in crate) map: &'a mut MetaFuncMap<CLS>,
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, CLS: Type + Repr> InitCaster<'a, CLS> {
+impl<'a, CLS: Type> InitCaster<'a, CLS> {
     pub fn new(map: &'a mut MetaFuncMap<CLS>) -> Self {
         Self {
             map,
@@ -20,7 +20,7 @@ impl<'a, CLS: Type + Repr> InitCaster<'a, CLS> {
 
 impl<'a, 'js, CLS> Implements<InitProto<'a, 'js, CLS>> for JsClassLoader<CLS>
 where
-    CLS: Type + Repr,
+    CLS: Type,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'js, CLS>) -> Result<()> {
@@ -63,10 +63,9 @@ where
 
 impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<SUPER>
 where
-    CLS: Type + Repr,
-    SUPER: Type,
+    CLS: Type,
+    SUPER: Type + Clone,
     ReprOf<CLS>: Caster<SUPER>,
-    for<'x> &'x SUPER: IntoRepr<SUPER>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitCaster<CLS>) -> Result<()> {
@@ -82,7 +81,7 @@ where
                 let obj: &Obj<CLS> = this.as_ref();
                 obj.inner.with_cast(|data| {
                     Result::<_>::Ok(
-                        Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
+                        Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, (*data).clone())
                             .into_js(ctx)?,
                     )
                 })

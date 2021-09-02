@@ -8,7 +8,7 @@ pub struct InitProto<'a, 'js, CLS> {
     pub(in crate) framework: PhantomData<(CLS)>,
 }
 
-impl<'a, 'js, CLS: Repr> InitProto<'a, 'js, CLS> {
+impl<'a, 'js, CLS> InitProto<'a, 'js, CLS> {
     pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
         Self {
             ctx,
@@ -23,7 +23,7 @@ impl<'a, 'b: 'a, FUNC, THIS, CLS, RET> Implements<InitProto<'a, 'b, CLS>>
 where
     CLS: Type,
     ReprOf<CLS>: Cast<THIS>,
-    THIS: 'static + Repr,
+    THIS: 'static,
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
 {

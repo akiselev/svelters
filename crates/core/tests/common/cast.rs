@@ -110,32 +110,34 @@ impl StaticUpcast<Fw<Rc<Application>>> for Fw<Rc<Application>> {
     }
 }
 
-impl Cast<Fw<Rc<Object>>> for Fw<Rc<Object>> {
-    type Output<'a> = RefWrapper<'a, Fw<Rc<Object>>>;
+// impl Cast<Fw<Rc<Object>>> for Fw<Rc<Object>> {
+//     type Output<'a> = RefWrapper<'a, Fw<Rc<Object>>>;
 
-    fn cast<'a>(&'a self) -> Self::Output<'a> {
-        RefWrapper(self.clone(), PhantomData)
-    }
-}
+//     fn cast<'a>(&'a self) -> Self::Output<'a> {
+//         RefWrapper(self.clone(), PhantomData)
+//     }
+// }
 
-impl<T, O> Cast<T> for FwWrapper<O>
+// impl<T, O> Cast<T> for FwWrapper<O>
+// where
+//     O: StaticUpcast<T>,
+//     T: Clone,
+// {
+//     type Output<'a> = RefWrapper<'a, T>;
+
+//     fn cast<'a>(&'a self) -> Self::Output<'a> {
+//         RefWrapper(self.0.static_cast().clone(), PhantomData)
+//     }
+// }
+
+impl<T, O> Cast<Fw<T>> for Fw<O>
 where
-    O: StaticUpcast<T>,
+    Fw<O>: StaticUpcast<Fw<T>>,
     T: Clone,
 {
-    type Output<'a> = RefWrapper<'a, T>;
+    type Output<'a> = RefWrapper<'a, Fw<T>>;
 
     fn cast<'a>(&'a self) -> Self::Output<'a> {
-        RefWrapper(self.0.static_cast().clone(), PhantomData)
-    }
-}
-
-impl<T> IntoRepr<T> for Temp<T>
-where
-    T: Type,
-    T: Repr<Type = FwWrapper<T>>,
-{
-    fn into_repr(self) -> FwWrapper<T> {
-        FwWrapper(self.0)
+        RefWrapper(self.static_cast().clone(), PhantomData)
     }
 }

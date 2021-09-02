@@ -6,10 +6,6 @@ use super::*;
 
 pub struct Temp<T>(pub T);
 
-impl Repr for Fw<Rc<Object>> {
-    type Type = FwWrapper<Fw<Rc<Object>>>;
-}
-
 impl Type for Fw<Rc<Object>> {
     const CLASS_NAME: &'static str = "Object";
 
@@ -20,7 +16,7 @@ impl Type for Fw<Rc<Object>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.constructor0(|| -> Self { Default::default() })?;
         cls.prop(
             "type",
             |this: &Self| {
@@ -48,10 +44,6 @@ impl Type for Fw<Rc<Object>> {
     }
 }
 
-impl Repr for Fw<Rc<Widget>> {
-    type Type = FwWrapper<Fw<Rc<Widget>>>;
-}
-
 impl Type for Fw<Rc<Widget>> {
     const CLASS_NAME: &'static str = "Widget";
 
@@ -63,7 +55,7 @@ impl Type for Fw<Rc<Widget>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
-        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.constructor0(|| -> Self { Default::default() })?;
 
         cls.readonly("ro", |this: &Self| {
             let val = this.0 .1.borrow();
@@ -80,10 +72,6 @@ impl Type for Fw<Rc<Widget>> {
     }
 }
 
-impl Repr for Fw<Rc<Application>> {
-    type Type = FwWrapper<Fw<Rc<Application>>>;
-}
-
 impl Type for Fw<Rc<Application>> {
     const CLASS_NAME: &'static str = "Application";
 
@@ -95,7 +83,7 @@ impl Type for Fw<Rc<Application>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
-        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("status", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
@@ -115,10 +103,6 @@ impl Type for Fw<Rc<Application>> {
     }
 }
 
-impl Repr for Fw<Rc<MainWindow>> {
-    type Type = FwWrapper<Fw<Rc<MainWindow>>>;
-}
-
 impl Type for Fw<Rc<MainWindow>> {
     const CLASS_NAME: &'static str = "MainWindow";
 
@@ -130,7 +114,7 @@ impl Type for Fw<Rc<MainWindow>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
-        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("title", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
@@ -145,10 +129,6 @@ impl Type for Fw<Rc<MainWindow>> {
     }
 }
 
-impl Repr for Fw<Rc<BoxLayout>> {
-    type Type = FwWrapper<Fw<Rc<BoxLayout>>>;
-}
-
 impl Type for Fw<Rc<BoxLayout>> {
     const CLASS_NAME: &'static str = "BoxLayout";
 
@@ -160,7 +140,7 @@ impl Type for Fw<Rc<BoxLayout>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
-        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("orientation", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
@@ -176,10 +156,6 @@ impl Type for Fw<Rc<BoxLayout>> {
         })?;
         Ok(())
     }
-}
-
-impl Repr for Fw<Rc<AbstractButton>> {
-    type Type = FwWrapper<Fw<Rc<AbstractButton>>>;
 }
 
 impl Type for Fw<Rc<AbstractButton>> {
@@ -207,10 +183,6 @@ impl Type for Fw<Rc<AbstractButton>> {
     }
 }
 
-impl Repr for Fw<Rc<PushButton>> {
-    type Type = FwWrapper<Fw<Rc<PushButton>>>;
-}
-
 impl Type for Fw<Rc<PushButton>> {
     const CLASS_NAME: &'static str = "PushButton";
 
@@ -222,7 +194,7 @@ impl Type for Fw<Rc<PushButton>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<AbstractButton>>>()?;
-        cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
+        cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("status", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
