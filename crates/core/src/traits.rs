@@ -29,6 +29,32 @@ pub trait Cast<T> {
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
+pub trait Caster<T> {
+    fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
+        &'a self,
+        func: FUNC,
+    ) -> Result<R>;
+}
+
+impl<T, U> Caster<T> for U {
+    default fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
+        &'a self,
+        func: FUNC,
+    ) -> Result<R> {
+        Err(rquickjs::Error::Unknown)
+    }
+}
+
+impl<T, U: Cast<T>> Caster<T> for U {
+    fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
+        &'a self,
+        func: FUNC,
+    ) -> Result<R> {
+        let caster = self.cast();
+        func(caster.as_ref())
+    }
+}
+
 pub type ReprOf<CLS> = <CLS as Repr>::Type;
 pub type CastedAs<'a, CLS, T> = <<CLS as Repr>::Type as Cast<T>>::Output<'a>;
 

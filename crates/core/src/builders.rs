@@ -134,6 +134,13 @@ mod superclass {
             Superclass(PhantomData)
         }
     }
+
+    impl<SUPER, P> Implements<P> for Superclass<SUPER> {
+        #[inline(always)]
+        default fn build(self, _phase: &mut P) -> Result<()> {
+            Ok(())
+        }
+    }
 }
 
 pub use self::constructor::*;

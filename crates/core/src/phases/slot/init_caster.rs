@@ -65,8 +65,8 @@ impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<SUPER>
 where
     CLS: Type + Repr,
     SUPER: Type,
-    ReprOf<CLS>: Cast<SUPER>,
-    for<'x> CastedAs<'x, CLS, SUPER>: IntoRepr<SUPER>,
+    ReprOf<CLS>: Caster<SUPER>,
+    for<'x> &'x SUPER: IntoRepr<SUPER>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitCaster<CLS>) -> Result<()> {
@@ -80,11 +80,12 @@ where
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                let data = obj.inner.cast();
-                Result::<_>::Ok(
-                    Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
-                        .into_js(ctx)?,
-                )
+                obj.inner.with_cast(|data| {
+                    Result::<_>::Ok(
+                        Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
+                            .into_js(ctx)?,
+                    )
+                })
             }),
         );
 

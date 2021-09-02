@@ -19,8 +19,8 @@ impl<'a, CLS, INTER, ROOT, SUPER> Implements<NestedSuperCaster<'a, ROOT, CLS, IN
 where
     CLS: Type,
     ROOT: Type + Repr,
-    ReprOf<ROOT>: Cast<SUPER>,
-    for<'x> CastedAs<'x, ROOT, SUPER>: IntoRepr<SUPER>,
+    ReprOf<ROOT>: Caster<SUPER>,
+    for<'x> &'x SUPER: IntoRepr<SUPER>,
     INTER: Type,
     SUPER: Type,
 {
@@ -30,11 +30,12 @@ where
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<ROOT> = this.as_ref();
-                let data = obj.inner.cast();
-                Result::<_>::Ok(
-                    Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
-                        .into_js(ctx)?,
-                )
+                obj.inner.with_cast(|data| {
+                    Result::<_>::Ok(
+                        Virt::<'_, SUPER>::new(this.clone().into_js(ctx)?, data.into_repr())
+                            .into_js(ctx)?,
+                    )
+                })
             }),
         );
 
