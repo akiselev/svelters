@@ -1,0 +1,32 @@
+[package]
+authors = ["Alexander Kiselev <svelters@akiselev.com>"]
+edition = "2018"
+name = "svelters-gtk4"
+version = "0.1.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+log = "0.4.14"
+either = "1.6.1"
+tracing = "0.1.26"
+tracing-log = "0.1.2"
+lazy_static = "1.4.0"
+anyhow = "1.0.40"
+parking_lot = "0.11.1"
+tracing-subscriber = "0.2.18"
+thiserror = "1.0.25"
+tracing-macros = "0.0.0"
+smartstring = "0.2.6"
+flume = "0.10.7"
+tokio = { version="1", features=["time"] }
+serde_json = "1.0.64"
+serde = "1.0.126"
+rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
+svelters-core = { version="0.1.0", path="../core" }
+frunk = "0.3.2"
+static_assertions = "1.1.0"
+gtk4 = "0.2.0"
+gtk4-macros = "0.2.0"

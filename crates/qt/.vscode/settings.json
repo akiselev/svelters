@@ -1,7 +1,0 @@
-{
-    "rust-analyzer.updates.channel": "nightly",
-    "explorer.autoReveal": "focusNoScroll",
-    "search.quickOpen.includeHistory": false,
-    "search.quickOpen.history.filterSortOrder": "recency",
-    "workbench.editor.enablePreviewFromQuickOpen": true
-}

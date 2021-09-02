@@ -44,4 +44,8 @@ members = [
     "crates/rquickjs/rquickjs-core",
     "crates/rquickjs/rquickjs-macro",
 ]
-exclude = ["codegen", "crates/oldqt"]
+exclude = [
+    "codegen",
+    "crates/oldqt",
+    "crates/gtk4",
+]
