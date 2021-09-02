@@ -1,0 +1,56 @@
+Feature: Core
+    Scenario: Caster initializes correctly
+        Given module at "core.js"
+        When calling function "callMethodAfterCast" with args (<class>, "Object", "className2")
+        Then return value is <result>
+
+        Examples:
+            | class         | result           |
+            | "Object"      | "Object"         |
+            | "Application" | "Application"    |
+            | "Widget"      | "Widget"         |
+            | "MainWindow"  | "MainWindow"     |
+            | "BoxLayout"   | "Widget"         |
+            | "PushButton"  | "AbstractButton" |
+
+    Scenario: check that the Object method is inherited by each child class
+        Given module at "core.js"
+        When calling function "callMethod" with args (<class>, "testMethod")
+        Then return value is <result>
+
+        Examples:
+            | class         | result       |
+            | "Object"      | "__OBJECT__" |
+            | "Application" | "__OBJECT__" |
+            | "Widget"      | "__OBJECT__" |
+            | "MainWindow"  | "__OBJECT__" |
+            | "BoxLayout"   | "__OBJECT__" |
+            | "PushButton"  | "__OBJECT__" |
+
+    Scenario: check that the className getter is overriden by each child class
+        Given module at "core.js"
+        When calling function "getClassName" with args (<class>)
+        Then return value is <result>
+
+        Examples:
+            | class         | result        |
+            | "Object"      | "Object"      |
+            | "Application" | "Application" |
+            | "Widget"      | "Widget"      |
+            | "MainWindow"  | "MainWindow"  |
+            | "BoxLayout"   | "BoxLayout"   |
+            | "PushButton"  | "PushButton"  |
+
+    Scenario: check that methods are overriden by each child class (generic)
+        Given module at "core.js"
+        When calling function "callMethod" with args (<class>, "className2")
+        Then return value is <result>
+
+        Examples:
+            | class         | result           |
+            | "Object"      | "Object"         |
+            | "Application" | "Application"    |
+            | "Widget"      | "Widget"         |
+            | "MainWindow"  | "MainWindow"     |
+            | "BoxLayout"   | "Widget"         |
+            | "PushButton"  | "AbstractButton" |

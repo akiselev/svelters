@@ -69,6 +69,17 @@ export const setProperty = (cls, name, value) => {
     return newValue;
 };
 
+export const callMethodAfterCast = (
+    cls,
+    castTo = "Object",
+    name = "className",
+    ...args
+) => {
+    let inst = constructClass(cls);
+    inst = inst.castAs(castTo);
+    return inst[name](...args);
+};
+
 // export const setType = (cls, value) => {
 //     let inst = constructClass(cls);
 //     inst.type = value;
