@@ -6,11 +6,11 @@ use super::*;
 
 pub struct Temp<T>(pub T);
 
-impl Repr<FW> for Fw<Rc<Object>> {
+impl Repr for Fw<Rc<Object>> {
     type Type = FwWrapper<Fw<Rc<Object>>>;
 }
 
-impl Type<FW> for Fw<Rc<Object>> {
+impl Type for Fw<Rc<Object>> {
     const CLASS_NAME: &'static str = "Object";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -19,7 +19,7 @@ impl Type<FW> for Fw<Rc<Object>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.prop(
             "type",
@@ -48,11 +48,11 @@ impl Type<FW> for Fw<Rc<Object>> {
     }
 }
 
-impl Repr<FW> for Fw<Rc<Widget>> {
+impl Repr for Fw<Rc<Widget>> {
     type Type = FwWrapper<Fw<Rc<Widget>>>;
 }
 
-impl Type<FW> for Fw<Rc<Widget>> {
+impl Type for Fw<Rc<Widget>> {
     const CLASS_NAME: &'static str = "Widget";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -61,7 +61,7 @@ impl Type<FW> for Fw<Rc<Widget>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
 
@@ -80,11 +80,11 @@ impl Type<FW> for Fw<Rc<Widget>> {
     }
 }
 
-impl Repr<FW> for Fw<Rc<Application>> {
+impl Repr for Fw<Rc<Application>> {
     type Type = FwWrapper<Fw<Rc<Application>>>;
 }
 
-impl Type<FW> for Fw<Rc<Application>> {
+impl Type for Fw<Rc<Application>> {
     const CLASS_NAME: &'static str = "Application";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -93,7 +93,7 @@ impl Type<FW> for Fw<Rc<Application>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("status", |this: &Self| -> String {
@@ -115,11 +115,11 @@ impl Type<FW> for Fw<Rc<Application>> {
     }
 }
 
-impl Repr<FW> for Fw<Rc<MainWindow>> {
+impl Repr for Fw<Rc<MainWindow>> {
     type Type = FwWrapper<Fw<Rc<MainWindow>>>;
 }
 
-impl Type<FW> for Fw<Rc<MainWindow>> {
+impl Type for Fw<Rc<MainWindow>> {
     const CLASS_NAME: &'static str = "MainWindow";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -128,7 +128,7 @@ impl Type<FW> for Fw<Rc<MainWindow>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("title", |this: &Self| -> String {
@@ -145,11 +145,11 @@ impl Type<FW> for Fw<Rc<MainWindow>> {
     }
 }
 
-impl Repr<FW> for Fw<Rc<BoxLayout>> {
+impl Repr for Fw<Rc<BoxLayout>> {
     type Type = FwWrapper<Fw<Rc<BoxLayout>>>;
 }
 
-impl Type<FW> for Fw<Rc<BoxLayout>> {
+impl Type for Fw<Rc<BoxLayout>> {
     const CLASS_NAME: &'static str = "BoxLayout";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -158,7 +158,7 @@ impl Type<FW> for Fw<Rc<BoxLayout>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("orientation", |this: &Self| -> String {
@@ -178,11 +178,11 @@ impl Type<FW> for Fw<Rc<BoxLayout>> {
     }
 }
 
-impl Repr<FW> for Fw<Rc<AbstractButton>> {
+impl Repr for Fw<Rc<AbstractButton>> {
     type Type = FwWrapper<Fw<Rc<AbstractButton>>>;
 }
 
-impl Type<FW> for Fw<Rc<AbstractButton>> {
+impl Type for Fw<Rc<AbstractButton>> {
     const CLASS_NAME: &'static str = "AbstractButton";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -191,7 +191,7 @@ impl Type<FW> for Fw<Rc<AbstractButton>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.method0("text", |this: &Self| -> String {
             this.0 .1.borrow().clone()
@@ -207,11 +207,11 @@ impl Type<FW> for Fw<Rc<AbstractButton>> {
     }
 }
 
-impl Repr<FW> for Fw<Rc<PushButton>> {
+impl Repr for Fw<Rc<PushButton>> {
     type Type = FwWrapper<Fw<Rc<PushButton>>>;
 }
 
-impl Type<FW> for Fw<Rc<PushButton>> {
+impl Type for Fw<Rc<PushButton>> {
     const CLASS_NAME: &'static str = "PushButton";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -220,7 +220,7 @@ impl Type<FW> for Fw<Rc<PushButton>> {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<FW, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<AbstractButton>>>()?;
         cls.constructor0(|| -> Temp<Self> { Temp(Default::default()) })?;
         cls.method0("status", |this: &Self| -> String {

@@ -89,3 +89,17 @@ where
         Ok(())
     }
 }
+
+impl<T, P> Implements<P> for JsClassLoader<T> {
+    #[inline(always)]
+    default fn build(self, _phase: &mut P) -> Result<()> {
+        Ok(())
+    }
+}
+
+impl<T, P> Implements<P> for JsModuleLoader<T> {
+    #[inline(always)]
+    default fn build(self, _phase: &mut P) -> Result<()> {
+        Ok(())
+    }
+}

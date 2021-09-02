@@ -130,10 +130,10 @@ where
     }
 }
 
-impl<T> IntoRepr<FW, T> for Temp<T>
+impl<T> IntoRepr<T> for Temp<T>
 where
-    T: Type<FW>,
-    T: Repr<FW, Type = FwWrapper<T>>,
+    T: Type,
+    T: Repr<Type = FwWrapper<T>>,
 {
     fn into_repr(self) -> FwWrapper<T> {
         FwWrapper(self.0)

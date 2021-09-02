@@ -2,18 +2,18 @@ use std::rc::Rc;
 
 use super::*;
 
-impl Module<FW> for FwCore {
+impl Module for FwCore {
     #[inline(always)]
-    fn define<P>(m: &mut ModuleBuilder<FW, Self, P>) -> std::result::Result<(), rquickjs::Error> {
+    fn define<P>(m: &mut ModuleBuilder<Self, P>) -> std::result::Result<(), rquickjs::Error> {
         m.class::<Fw<Rc<Object>>>()?;
         m.class::<Fw<Rc<Application>>>()?;
         Ok(())
     }
 }
 
-impl Module<FW> for FwWidgets {
+impl Module for FwWidgets {
     #[inline(always)]
-    fn define<P>(m: &mut ModuleBuilder<FW, Self, P>) -> std::result::Result<(), rquickjs::Error> {
+    fn define<P>(m: &mut ModuleBuilder<Self, P>) -> std::result::Result<(), rquickjs::Error> {
         m.class::<Fw<Rc<Object>>>()?;
         m.class::<Fw<Rc<Application>>>()?;
         m.class::<Fw<Rc<Widget>>>()?;

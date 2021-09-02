@@ -40,11 +40,3 @@ where
         Fw(Default::default())
     }
 }
-
-impl<CLS> Repr<CLS> for FW
-where
-    CLS: Type<FW>,
-    CLS: StaticUpcast<Fw<Rc<Object>>>,
-{
-    type Type = FwWrapper<CLS>;
-}
