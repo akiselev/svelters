@@ -24,7 +24,10 @@ pub(in crate) fn create_element<'js>(
     name: String,
     _options: Opt<Object<'js>>,
 ) -> Result<Value<'js>> {
-    if let Some(element) = this.elements.get(name.as_str()) {
+    if name == "slot" {
+        return Slot::new().into_js(ctx);
+    }
+    if let Some(element) = this.inner.borrow().elements.get(name.as_str()) {
         (element.constructor)(ctx)
     } else {
         Err(Error::new(ctx, format!("{} is not a valid element", name)))

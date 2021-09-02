@@ -74,6 +74,21 @@ impl<'x> ClassDef for Event<Value<'x>> {
                 ),
             ),
         )?;
+
+        proto.set(
+            "stopPopagation",
+            rquickjs::Func::new(
+                "stopPopagation",
+                rquickjs::Method(|_: &Event<Value<'js>>| {}),
+            ),
+        )?;
+        proto.set(
+            "preventDefault",
+            rquickjs::Func::new(
+                "preventDefault",
+                rquickjs::Method(|_: &Event<Value<'js>>| {}),
+            ),
+        )?;
         proto.prop(
             "type",
             Accessor::new_get(

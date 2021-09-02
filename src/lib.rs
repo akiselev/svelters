@@ -69,12 +69,7 @@ impl<FW: Framework> Runtime<FW> {
         let app = tokio::task::spawn_local(app);
         tokio::time::sleep(Duration::from_millis(1)).await;
         let res: Result<_> = self.ctx.with(|ctx| {
-            let obj = Object::new(ctx)?;
-            ctx.globals().set("window", obj)?;
-
-            let doc = Document::new();
-            rquickjs::Class::<Document>::register(ctx)?;
-            ctx.globals().set("document", doc)?;
+            initialize_svelters(ctx)?;
 
             ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
                 .unwrap();

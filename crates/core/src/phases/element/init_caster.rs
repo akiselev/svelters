@@ -3,12 +3,12 @@ use std::{collections::HashMap, lazy::OnceCell};
 use crate::{build_class, inner::*};
 
 pub struct InitElementCaster<'a, CLS: Type> {
-    pub(in crate) map: &'a mut ElementCasterMap<CLS>,
+    pub(in crate) map: &'a mut ElementCasterMap,
     pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, CLS: Type> InitElementCaster<'a, CLS> {
-    pub fn new(map: &'a mut ElementCasterMap<CLS>) -> Self {
+    pub fn new(map: &'a mut ElementCasterMap) -> Self {
         Self {
             map,
             framework: PhantomData,
@@ -27,7 +27,7 @@ where
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
-                let obj: &Element<CLS> = this.as_ref();
+                let obj = Obj::<CLS>::from_js_ref(ctx, this.inner.as_value().clone())?;
                 obj.inner.with_cast(|data| {
                     let virt = Virt::<SUPER>::new((*data).clone());
                     let value = virt.into_js(ctx)?;
@@ -43,12 +43,12 @@ where
 }
 
 pub struct InitElementSuperCaster<'a, CLS: Type, SUPER> {
-    pub(in crate) map: &'a mut ElementCasterMap<CLS>,
+    pub(in crate) map: &'a mut ElementCasterMap,
     pub(in crate) framework: PhantomData<(CLS, SUPER)>,
 }
 
 impl<'a, CLS: Type, SUPER> InitElementSuperCaster<'a, CLS, SUPER> {
-    pub fn new(map: &'a mut ElementCasterMap<CLS>) -> Self {
+    pub fn new(map: &'a mut ElementCasterMap) -> Self {
         Self {
             map,
             framework: PhantomData,
@@ -69,7 +69,7 @@ where
         phase.map.insert(
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
-                let obj: &Element<CLS> = this.as_ref();
+                let obj = Obj::<CLS>::from_js_ref(ctx, this.inner.as_value().clone())?;
                 obj.inner.with_cast(|data| {
                     Result::<_>::Ok(Virt::<NESTED>::new((*data).clone()).into_js(ctx)?)
                 })

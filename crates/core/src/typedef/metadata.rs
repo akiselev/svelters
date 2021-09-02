@@ -31,7 +31,5 @@ pub(in crate) type VirtCasterMap<CLS> = HashMap<
     &'static str,
     Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Virt<CLS>>) -> Result<Value<'a>>>,
 >;
-pub(in crate) type ElementCasterMap<CLS> = HashMap<
-    &'static str,
-    Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Element<CLS>>) -> Result<Value<'a>>>,
->;
+pub(in crate) type ElementCasterMap =
+    HashMap<&'static str, Box<dyn for<'a, 'b> Fn(Ctx<'a>, &'b Element<'a>) -> Result<Value<'a>>>>;

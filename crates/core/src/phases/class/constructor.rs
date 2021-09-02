@@ -1,3 +1,7 @@
+use std::{collections::HashMap, lazy::OnceCell};
+
+use rquickjs::Persistent;
+
 use crate::{build_class, inner::*};
 
 pub struct ConstructorEval<'a, 'b, 'js, CLS> {
@@ -38,23 +42,76 @@ impl<'a, 'b, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {
     }
 }
 
-impl<'a, 'b, 'js: 'a, T, CLS> Implements<ConstructorEval<'a, 'b, 'js, CLS>>
-    for ElementMember<CLS, T>
+impl<'a, 'b, 'js, T, CLS> Implements<ConstructorEval<'a, 'b, 'js, CLS>> for ElementMember<CLS, T>
 where
-    CLS: Type,
+    CLS: Type + Clone,
     T: 'static + Fn() -> Result<CLS>,
 {
     #[inline(always)]
     fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
         let ElementMember { name, func, .. } = self;
-        let mut eltype = ElementType::new(name, move |ctx| {
-            let el = Element::new((func)()?);
+
+        let cell = OnceCell::new();
+        let mut eltype = ElementType::new(name, move |ctx: Ctx| {
+            let proto = get_element_proto::<CLS>();
+            let el = Element::new(ctx, CLS::CLASS_NAME, (func)()?, proto);
             el.into_js(ctx)
         });
         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
-        phase.doc.elements.insert(name, eltype);
+        phase.doc.inner.borrow_mut().elements.insert(name, eltype);
         Ok(())
     }
+}
+
+fn get_element_proto<'a, 'b: 'a, 'c: 'a, CLS: Type + Clone>(
+    cell: &'a OnceCell<Persistent<Object<'static>>>,
+    ctx: Ctx<'b>,
+) -> Result<Object<'c>> {
+    let proto = Persistent::save(ctx, Object::new(ctx)?);
+    let proto = cell.get_or_try_init(move || -> Result<Persistent<Object<'static>>> {
+        let cell = OnceCell::new();
+        {
+            let proto = proto.restore(ctx)?;
+            proto.set(
+                "castAs",
+                rquickjs::Func::new(
+                    "castAs",
+                    rquickjs::Method(move |this: &mut Element, ctx: Ctx, target: String| {
+                        let map = cell.get_or_try_init(|| {
+                            let mut map: ElementCasterMap = HashMap::new();
+                            map.insert(
+                                CLS::CLASS_NAME,
+                                Box::new(|ctx, this| {
+                                    let obj: &Obj<CLS> =
+                                        FromJs::from_js(ctx, this.inner.as_value().clone())?;
+                                    obj.inner.with_cast(|data: &CLS| {
+                                        let virt = Virt::<CLS>::new((*data).clone());
+                                        let value = virt.into_js(ctx)?;
+                                        Result::<_>::Ok(value)
+                                    })
+                                }),
+                            );
+                            {
+                                build_class!(CLS with InitElementCaster::<'_, CLS>::new(&mut map))
+                            };
+                            Result::Ok(map)
+                        })?;
+
+                        match map.get(target.as_str()) {
+                            Some(func) => (*func)(ctx, this),
+                            None => Err(Error::new(
+                                ctx,
+                                format!("No cast function from {} to {}", CLS::CLASS_NAME, target),
+                            )),
+                        }
+                    }),
+                ),
+            )?;
+            build_class!(CLS with InitElementProto::<CLS>::new(ctx, &proto));
+        }
+        Ok(proto)
+    })?;
+    (*proto).clone().restore(ctx)
 }
 
 macro_rules! tup {
@@ -70,7 +127,7 @@ macro_rules! tup {
                 fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
                     JsClass::<Obj<CLS>>::register(phase.ctx)?;
                     JsClass::<Virt<CLS>>::register(phase.ctx)?;
-                    JsClass::<Element<CLS>>::register(phase.ctx)?;
+                    JsClass::<Element<'b>>::register(phase.ctx)?;
                     phase.module.set(
                         <CLS as Type>::CLASS_NAME,
                         rquickjs::Func::new(

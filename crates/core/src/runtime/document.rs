@@ -2,9 +2,13 @@ use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use crate::inner::*;
 
-pub struct Document {
+pub struct DocInner {
     pub(in crate) events: EventHandlers,
     pub(in crate) elements: HashMap<&'static str, ElementType>,
+}
+
+pub struct Document {
+    pub(in crate) inner: Rc<RefCell<DocInner>>,
 }
 
 impl Clone for Document {
@@ -16,8 +20,10 @@ impl Clone for Document {
 impl Document {
     pub fn new() -> Document {
         Document {
-            events: Default::default(),
-            elements: Default::default(),
+            inner: Rc::new(RefCell::new(DocInner {
+                events: Default::default(),
+                elements: Default::default(),
+            })),
         }
     }
 }

@@ -38,15 +38,17 @@ where
         let res = phase.obj.prop(
             name,
             Accessor::new(
-                rquickjs::Method(move |this: JsClass<'b, Element<BASE>>| {
-                    let obj: &Element<BASE> = this.as_ref();
+                rquickjs::Method(move |this: &mut Element<'b>, ctx: Ctx<'b>| {
+                    let obj: &Obj<BASE> =
+                        FromJs::<'b>::from_js(ctx, this.inner.as_value().clone())?;
                     obj.inner.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
                     })
                 }),
-                rquickjs::Method(move |this: JsClass<'b, Element<BASE>>, val: PROP| {
-                    let obj: &Element<BASE> = this.as_ref();
+                rquickjs::Method(move |this: &mut Element<'b>, ctx: Ctx<'b>, val: PROP| {
+                    let obj: &Obj<BASE> =
+                        FromJs::<'b>::from_js(ctx, this.inner.as_value().clone())?;
                     obj.inner.with_cast(|data| {
                         setter(data, val)?;
                         Result::<_>::Ok(())
@@ -75,13 +77,16 @@ where
 
         let res = phase.obj.prop(
             name,
-            Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Element<BASE>>| {
-                let obj: &Element<BASE> = this.as_ref();
-                obj.inner.with_cast(|data| {
-                    let val = getter(data)?;
-                    rquickjs::Result::Ok(val)
-                })
-            }))
+            Accessor::new_get(rquickjs::Method(
+                move |this: &mut Element<'b>, ctx: Ctx<'b>| {
+                    let obj: &Obj<BASE> =
+                        FromJs::<'b>::from_js(ctx, this.inner.as_value().clone())?;
+                    obj.inner.with_cast(|data| {
+                        let val = getter(data)?;
+                        rquickjs::Result::Ok(val)
+                    })
+                },
+            ))
             .enumerable(),
         );
         res
@@ -121,11 +126,12 @@ macro_rules! tup {
                         rquickjs::Func::new(
                             self.name,
                             rquickjs::Method(
-                                move |this: JsClass<'b, Element<BASE>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                                move |this: &mut Element<'b>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                                     let args = args.into_inner();
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
-                                    let obj: &Element<BASE> = this.as_ref();
+                                    let obj: &Obj<BASE> =
+                                        FromJs::<'b>::from_js(ctx, this.inner.as_value().clone())?;
                                     obj.inner.with_cast(|data| {
                                         let res = (self.func)(
                                             data,
