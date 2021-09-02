@@ -24,6 +24,19 @@ Feature: Core
         When calling function "hasMethod" with args ("Object", "className")
         Then return value is true
 
+    Scenario: check that the Object method is inherited by each child class
+        Given module at "core.js"
+        When calling function "callMethod" with args (<class>, "testMethod")
+        Then return value is <result>
+
+        Examples:
+            | class         | result       |
+            | "Object"      | "__OBJECT__" |
+            | "Application" | "__OBJECT__" |
+            | "Widget"      | "__OBJECT__" |
+            | "MainWindow"  | "__OBJECT__" |
+            | "BoxLayout"   | "__OBJECT__" |
+            | "PushButton"  | "__OBJECT__" |
 
     Scenario: check that the className getter is overriden by each child class
         Given module at "core.js"

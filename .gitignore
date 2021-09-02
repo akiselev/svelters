@@ -133,3 +133,7 @@ vgcore.*
 
 # ghidra project stuff
 ghidra.*
+
+
+# CLion
+.idea/

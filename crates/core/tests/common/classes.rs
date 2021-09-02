@@ -35,6 +35,9 @@ impl Type<FW> for Fw<Rc<Object>> {
                 Ok(())
             },
         )?;
+        cls.method0("testMethod", |_this: &Self| -> String {
+            "__OBJECT__".to_string()
+        })?;
         cls.method0("className", |_this: &Self| -> String {
             "Object".to_string()
         })?;

@@ -66,12 +66,10 @@ pub(in crate) mod phases {
     mod slot {
         mod init_caster;
         mod init_nested_super;
-        mod init_proto;
         mod init_super;
 
         pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_nested_super::*;
-        pub(in crate) use self::init_proto::*;
         pub(in crate) use self::init_super::*;
     }
 

@@ -25,5 +25,7 @@ impl Metadata {
     }
 }
 
-pub(in crate) type MetaFuncMap =
-    HashMap<&'static str, &'static (dyn Sync + for<'x> Fn(Value<'x>) -> Result<Value<'x>>)>;
+pub(in crate) type MetaFuncMap<FW, CLS> = HashMap<
+    &'static str,
+    Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Obj<FW, CLS>>) -> Result<Value<'a>>>,
+>;

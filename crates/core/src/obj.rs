@@ -52,7 +52,6 @@ where
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        build_class!(FW::CLS with InitCaster::<FW, CLS>::new(ctx, _static));
         build_class!(FW::CLS with InitStatic::<FW, CLS>::new(ctx, _static));
         Ok(())
     }
