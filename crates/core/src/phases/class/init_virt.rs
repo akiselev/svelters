@@ -1,0 +1,140 @@
+use rquickjs::This;
+
+use crate::{build_class, inner::*};
+
+pub struct InitVirt<'a, 'js, BASE> {
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) obj: &'a Object<'js>,
+    pub(in crate) framework: PhantomData<(BASE)>,
+}
+
+impl<'a, 'js, BASE> InitVirt<'a, 'js, BASE> {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
+        Self {
+            ctx,
+            obj,
+            framework: PhantomData,
+        }
+    }
+}
+
+impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET> Implements<InitVirt<'a, 'b, BASE>>
+    for Method<CLS, (THIS,), RET, FUNC>
+where
+    CLS: Type,
+    BASE: Type,
+    ReprOf<BASE>: Caster<THIS>,
+    THIS: 'static,
+    RET: 'static + for<'js> IntoJs<'js>,
+    FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
+{
+    #[inline(always)]
+    fn build(self, phase: &mut InitVirt<'a, 'b, BASE>) -> Result<()> {
+        phase.obj.set(
+            self.name,
+            rquickjs::Func::new(
+                self.name,
+                rquickjs::Method(
+                    move |this: JsClass<'b, Virt<BASE>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                        let args = args.into_inner();
+                        let args_len = args.len();
+                        tuple_match_size(args_len, 0)?;
+                        let obj: &Virt<BASE> = this.as_ref();
+                        obj.inner.with_cast(|data| {
+                            let res = (self.func)(data);
+                            Result::<_>::Ok(res.into_js(ctx))
+                        })
+                    },
+                ),
+            ),
+        )?;
+        Ok(())
+    }
+}
+
+impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitVirt<'a, 'b, BASE>>
+    for Property<CLS, PROP, GET, SET>
+where
+    CLS: Type,
+    BASE: Type,
+    ReprOf<BASE>: Caster<CLS>,
+    PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+    GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
+    SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
+{
+    #[inline(always)]
+    fn build(self, phase: &mut InitVirt<'a, 'b, BASE>) -> Result<()> {
+        let Property {
+            name,
+            getter,
+            setter,
+            ..
+        } = self;
+
+        // phase.obj.remove(name).ok();
+        let res = phase.obj.prop(
+            name,
+            Accessor::new(
+                rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
+                    let obj: &Virt<BASE> = this.as_ref();
+                    obj.inner.with_cast(|data| {
+                        let val = getter(data)?;
+                        rquickjs::Result::Ok(val)
+                    })
+                }),
+                rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>, val: PROP| {
+                    let obj: &Virt<BASE> = this.as_ref();
+                    obj.inner.with_cast(|data| {
+                        setter(data, val)?;
+                        Result::<_>::Ok(())
+                    })
+                }),
+            )
+            .enumerable()
+            .configurable(),
+        );
+        res
+    }
+}
+
+impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitVirt<'a, 'b, BASE>>
+    for ReadOnly<CLS, PROP, GET>
+where
+    CLS: Type,
+    BASE: Type,
+    ReprOf<BASE>: Caster<CLS>,
+    PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+    GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
+{
+    #[inline(always)]
+    fn build(self, phase: &mut InitVirt<'a, 'b, BASE>) -> Result<()> {
+        let ReadOnly { name, getter, .. } = self;
+
+        // phase.obj.remove(name).ok();
+        let res = phase.obj.prop(
+            name,
+            Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
+                let obj: &Virt<BASE> = this.as_ref();
+                obj.inner.with_cast(|data| {
+                    let val = getter(data)?;
+                    rquickjs::Result::Ok(val)
+                })
+            }))
+            .enumerable(),
+        );
+        res
+    }
+}
+
+impl<'a, 'b: 'a, CLS, SUPER> Implements<InitVirt<'a, 'b, CLS>> for Superclass<SUPER>
+where
+    CLS: Type,
+    SUPER: Type,
+    ReprOf<CLS>: Caster<SUPER>,
+{
+    #[inline(always)]
+    fn build(self, phase: &mut InitVirt<'a, 'b, CLS>) -> Result<()> {
+        build_class!(SUPER with InitVirt::<'_, '_, CLS>::new(phase.ctx, phase.obj));
+        Ok(())
+    }
+}

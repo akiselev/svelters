@@ -55,7 +55,7 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        build_class!(CLS with InitProto::<CLS>::new(ctx, proto));
+        build_class!(CLS with InitVirt::<CLS>::new(ctx, proto));
         Ok(())
     }
 

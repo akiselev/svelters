@@ -49,6 +49,7 @@ pub(in crate) mod phases {
         mod inherits_member;
         mod init_proto;
         mod init_static;
+        mod init_virt;
 
         pub(in crate) use self::constructor_eval::*;
         pub(in crate) use self::constructor_load::*;
@@ -56,6 +57,7 @@ pub(in crate) mod phases {
         pub(in crate) use self::inherits_member::*;
         pub(in crate) use self::init_proto::*;
         pub(in crate) use self::init_static::*;
+        pub(in crate) use self::init_virt::*;
     }
 
     mod slot {

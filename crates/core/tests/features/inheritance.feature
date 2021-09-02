@@ -4,24 +4,27 @@ Feature: Core
         When calling function "callMethodAfterCast" with args ("Object", "Object", "className2")
         Then return value is "Object"
 
-    # Scenario: Cast to super correctly with caster
-    #     Given module at "core.js"
-    #     When calling function "callMethodAfterCast" with args ("Application", "Object", "className2")
-    #     Then return value is "Application"
+    Scenario: Cast to super correctly with caster
+        Given module at "core.js"
+        When calling function "callMethodAfterCast" with args ("Application", "Object", "className2")
+        Then return value is "Object"
 
-    # # Scenario: Caster initializes correctly
-    # #     Given module at "core.js"
-    # #     When calling function "callMethodAfterCast" with args (<class>, "Object", "className2")
-    # #     Then return value is <result>
+    Scenario: Cast to nested correctly with caster
+        Given module at "core.js"
+        When calling function "callMethodAfterCast" with args ("MainWindow", "Widget", "className2")
+        Then return value is "Widget"
 
-    # #     Examples:
-    # #         | class         | result           |
-    # #         | "Object"      | "Object"         |
-    # #         | "Application" | "Application"    |
-    # #         | "Widget"      | "Widget"         |
-    # #         | "MainWindow"  | "MainWindow"     |
-    # #         | "BoxLayout"   | "Widget"         |
-    # #         | "PushButton"  | "AbstractButton" |
+    Scenario: Casted types can call child functions
+        Given module at "core.js"
+        When calling function "callMethodAfterCast" with args (<class>, "Object", "className2")
+        Then return value is <result>
+
+        Examples:
+            | class        | result   |
+            | "Widget"     | "Object" |
+            | "MainWindow" | "Object" |
+            | "BoxLayout"  | "Object" |
+            | "PushButton" | "Object" |
 
     Scenario: check that the Object staticFn is inherited by each child class
         Given module at "core.js"
