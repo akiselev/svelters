@@ -29,6 +29,7 @@ spez = "0.1.1"
 rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "backtrace", "tokio"] }
 frunk = "0.3.2"
 static_assertions = "1.1.0"
+typedmap = "0.1.1"
 
 [dev-dependencies]
 cucumber_rust = { git="https://github.com/bbqsrc/cucumber-rust", branch="main" }

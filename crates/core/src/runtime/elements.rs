@@ -1,5 +1,13 @@
 use crate::inner::*;
 
+pub(in crate) fn create_event<'js>(
+    this: &mut Document,
+    ctx: Ctx<'js>,
+    interface: String,
+) -> Result<Value<'js>> {
+    Event::custom(ctx)
+}
+
 pub(in crate) fn create_element_ns<'js>(
     this: &mut Document,
     ctx: Ctx<'js>,
@@ -16,7 +24,7 @@ pub(in crate) fn create_element<'js>(
     name: String,
     _options: Opt<Object<'js>>,
 ) -> Result<Value<'js>> {
-    if let Some(element) = this.elements.borrow().get(name.as_str()) {
+    if let Some(element) = this.elements.get(name.as_str()) {
         (element.constructor)(ctx)
     } else {
         Err(Error::new(ctx, format!("{} is not a valid element", name)))

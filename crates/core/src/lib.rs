@@ -32,10 +32,16 @@ pub(in crate) mod utils;
 
 pub(in crate) mod runtime {
     pub(in crate) mod document;
+    pub(in crate) mod element_type;
     pub(in crate) mod elements;
+    pub(in crate) mod event;
+    pub(in crate) mod handlers;
 
     pub(in crate) use self::document::*;
+    pub(in crate) use self::element_type::*;
     pub(in crate) use self::elements::*;
+    pub(in crate) use self::event::*;
+    pub(in crate) use self::handlers::*;
 }
 
 pub(in crate) mod typedef {
@@ -116,8 +122,9 @@ pub(in crate) mod inner {
     pub(in crate) use rquickjs::{
         Accessor, AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error,
         FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, Opt, RefsMarker,
-        Rest, Result, This, Value,
+        RegisteryKey, Rest, Result, This, Value,
     };
+    pub(in crate) use typedmap::TypedMapKey;
 
     pub(in crate) use crate::phases::*;
     pub(in crate) use crate::traits::*;

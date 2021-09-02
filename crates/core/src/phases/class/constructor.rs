@@ -52,7 +52,7 @@ where
             el.into_js(ctx)
         });
         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
-        phase.doc.elements.borrow_mut().insert(name, eltype);
+        phase.doc.elements.insert(name, eltype);
         Ok(())
     }
 }
