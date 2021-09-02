@@ -110,3 +110,9 @@ pub trait Implements<P>: Sized {
         Ok(())
     }
 }
+
+impl<T, P> Implements<P> for T {
+    default fn build(self, _phase: &mut P) -> Result<()> {
+        Ok(())
+    }
+}

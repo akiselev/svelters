@@ -73,7 +73,7 @@ macro_rules! tup {
             pub fn $constructor<FUNC, $($arg,)*>(&mut self, func: FUNC) -> Result<()>
             where
                 CLS: 'static + Type,
-                FUNC: 'static + Fn() -> CLS,
+                FUNC: 'static + Fn($($arg,)*) -> Result<CLS>,
                 Constructor<CLS, ($($arg,)*), FUNC>: Implements<PHASE>,
                 $($arg: for<'x> FromJs<'x>,)*
             {
@@ -88,8 +88,8 @@ macro_rules! tup {
                 CLS: Cast<THIS>,
                 THIS: 'static,
                 RET: 'static + for<'js> IntoJs<'js>,
-                FN: 'static + for<'x> Fn(&'x THIS) -> RET,
-                Method<CLS, (THIS,$($arg,)*), RET, FN>: Implements<PHASE>,
+                FN: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
+                Method<CLS, (THIS, $($arg,)*), RET, FN>: Implements<PHASE>,
                 $($arg: for<'x> FromJs<'x>,)*
             {
                 Method::new(name, func).build(&mut self.phase)?;
@@ -99,7 +99,7 @@ macro_rules! tup {
             #[inline(always)]
             pub fn $static_fn<RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<()>
             where
-                FN: 'static + Fn() -> RET,
+                FN: 'static + Fn($($arg,)*) -> Result<RET>,
                 CLS: 'static + Type,
                 RET: 'static + for<'js> IntoJs<'js>,
                 StaticFn<CLS, ($($arg,)*), RET, FN>: Implements<PHASE>,

@@ -35,10 +35,7 @@ where
                     SUPER::CLASS_NAME
                 );
                 obj.inner.with_cast(|data| {
-                    Result::<_>::Ok(
-                        Virt::<'_, NESTED>::new(this.clone().into_js(ctx)?, (*data).clone())
-                            .into_js(ctx)?,
-                    )
+                    Result::<_>::Ok(Virt::<NESTED>::new((*data).clone()).into_js(ctx)?)
                 })
             }),
         );

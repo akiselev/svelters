@@ -20,7 +20,7 @@ use rquickjs::{
 use static_assertions::assert_impl_all;
 use svelters_core::prelude::*;
 
-use crate::impls::containers::QtWrapper;
+use crate::impls::containers::Qt;
 
 #[derive(Debug, Clone, Copy)]
 pub struct QT;
@@ -63,14 +63,6 @@ impl Framework for QT {
     fn name() -> &'static str {
         "QT"
     }
-}
-
-impl<CLS> Repr<CLS> for QT
-where
-    CLS: Type<QT>,
-    CLS: StaticUpcast<QObject> + CppDeletable,
-{
-    type Type = QtWrapper<CLS>;
 }
 
 mod modules;

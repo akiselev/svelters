@@ -10,30 +10,27 @@ use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{AsFunction, Class, Loaded, Module as QJsModule, Native};
 
 use crate::{
-    impls::containers::{DerefWrapper, QtWrapper},
+    impls::containers::{DerefWrapper, Qt},
     inner::*,
     QtCore,
 };
 
-impl Module<QT> for QtCore {
+impl Module for QtCore {
     #[inline(always)]
-    fn define<P>(module: &mut ModuleBuilder<QT, Self, P>) -> Result<()>
+    fn define<P>(module: &mut ModuleBuilder<Self, P>) -> Result<()>
     where
         QT: Framework,
     {
-        module.class::<QObject>()?;
-        module.class::<QWidget>()?;
-        module.class::<QApplication>()?;
-        module.class::<QMainWindow>()?;
+        module.class::<Qt<QObject>>()?;
+        module.class::<Qt<QWidget>>()?;
+        module.class::<Qt<QApplication>>()?;
+        module.class::<Qt<QMainWindow>>()?;
+        module.class::<Qt<QPushButton>>()?;
         Ok(())
     }
 }
 
-impl Repr<QT> for QObject {
-    type Type = QtWrapper<QObject>;
-}
-
-impl Type<QT> for QObject {
+impl Type for Qt<QObject> {
     const CLASS_NAME: &'static str = "QObject";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -42,11 +39,9 @@ impl Type<QT> for QObject {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
-        cls.constructor0(|| {
-            unsafe { QObject::new_0a() }
-        })?;
-        cls.method0("className", |this: &QObject| -> Result<String> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
+        cls.constructor0(|| unsafe { Ok(Qt::new(QObject::new_0a())) })?;
+        cls.method0("className", |this: &Qt<QObject>| -> Result<String> {
             let name = unsafe {
                 let obj = this.meta_object();
                 CStr::from_ptr(obj.class_name() as *const c_char).to_owned()
@@ -59,21 +54,19 @@ impl Type<QT> for QObject {
                 rust_stack: Some("place2".to_string()),
             })
         })?;
-        cls.method0("test", |this: &QObject| {
+        cls.method0("test", |this: &Qt<QObject>| {
             println!("REAL >>>>>>>>>>>>>>>>>>");
+            Ok(())
         })?;
         cls.static_fn0("staticTest", || {
             println!("STATIC >>>>>>>>>>>>>>>>>>");
+            Ok(())
         })?;
         Ok(())
     }
 }
 
-impl Repr<QT> for QWidget {
-    type Type = QtWrapper<QWidget>;
-}
-
-impl Type<QT> for QWidget {
+impl Type for Qt<QWidget> {
     const CLASS_NAME: &'static str = "QWidget";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -82,26 +75,22 @@ impl Type<QT> for QWidget {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
-        cls.constructor0(|| {
-            unsafe { QWidget::new_0a() }
-        })?;
-        cls.method0("show", |this: &QWidget| unsafe {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
+        cls.constructor0(|| unsafe { Ok(Qt::new(QWidget::new_0a())) })?;
+        cls.method0("show", |this: &Qt<QWidget>| unsafe {
             this.show();
+            Ok(())
         })?;
-        cls.method0("hide", |this: &QWidget| unsafe {
+        cls.method0("hide", |this: &Qt<QWidget>| unsafe {
             this.hide();
+            Ok(())
         })?;
-        cls.superclass::<QObject>()?;
+        cls.superclass::<Qt<QObject>>()?;
         Ok(())
     }
 }
 
-impl Repr<QT> for QApplication {
-    type Type = QtWrapper<QApplication>;
-}
-
-impl Type<QT> for QApplication {
+impl Type for Qt<QApplication> {
     const CLASS_NAME: &'static str = "QApplication";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -110,7 +99,7 @@ impl Type<QT> for QApplication {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         // cls.static_fn0("exec", || unsafe {
         //     QCoreApplication::exec();
         // })?;
@@ -118,18 +107,14 @@ impl Type<QT> for QApplication {
             let mut args = QCoreApplicationArgs::new();
             let (argc, argv) = args.get();
             std::mem::forget(args);
-            QApplication::new_2a(argc, argv)
+            Ok(Qt::new(QApplication::new_2a(argc, argv)))
         })?;
-        cls.superclass::<QObject>()?;
+        cls.superclass::<Qt<QObject>>()?;
         Ok(())
     }
 }
 
-impl Repr<QT> for QMainWindow {
-    type Type = QtWrapper<QMainWindow>;
-}
-
-impl Type<QT> for QMainWindow {
+impl Type for Qt<QMainWindow> {
     const CLASS_NAME: &'static str = "QMainWindow";
 
     unsafe fn metadata() -> &'static mut Metadata {
@@ -138,12 +123,47 @@ impl Type<QT> for QMainWindow {
     }
 
     #[inline(always)]
-    fn define<P>(cls: &mut TypeBuilder<QT, Self, P>) -> Result<()> {
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.static_fn0("exec", || unsafe {
             QCoreApplication::exec();
+            Ok(())
         })?;
-        cls.constructor0(|| unsafe { QMainWindow::new_0a() })?;
-        cls.superclass::<QWidget>()?;
+        cls.method1(
+            "setCentralWidget",
+            |this: &Qt<QMainWindow>, child: Virt<Qt<QWidget>>| {
+                unsafe {
+                    this.set_central_widget(child.as_ptr());
+                }
+                Ok(())
+            },
+        )?;
+        cls.constructor0(|| unsafe { Ok(Qt::new(QMainWindow::new_0a())) })?;
+        cls.superclass::<Qt<QWidget>>()?;
+        Ok(())
+    }
+}
+
+impl Type for Qt<QPushButton> {
+    const CLASS_NAME: &'static str = "QPushButton";
+
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
+    }
+
+    #[inline(always)]
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
+        cls.constructor0(|| unsafe { Ok(Qt::new(QPushButton::new())) })?;
+        cls.prop(
+            "text",
+            |this: &Qt<QPushButton>| unsafe { Ok(this.text().to_std_string()) },
+            |this: &Qt<QPushButton>, value: String| unsafe {
+                let value = QString::from_std_str(value);
+                this.set_text(value.as_ref());
+                Ok(())
+            },
+        )?;
+        cls.superclass::<Qt<QWidget>>()?;
         Ok(())
     }
 }

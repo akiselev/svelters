@@ -12,7 +12,7 @@ impl Type for Fw<Rc<Object>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.constructor0(|| -> Self { Default::default() })?;
+        cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
         cls.prop(
             "type",
             |this: &Self| {
@@ -27,19 +27,23 @@ impl Type for Fw<Rc<Object>> {
                 Ok(())
             },
         )?;
-        cls.method0("testMethod", |_this: &Self| -> String {
-            "__OBJECT__".to_string()
+        cls.method0("testMethod", |_this: &Self| -> Result<String> {
+            Ok("__OBJECT__".to_string())
         })?;
-        cls.static_fn0("staticFn", || -> String { "__STATIC__".to_string() })?;
-        cls.static_fn0("staticFn2", || -> String { "__STATIC__".to_string() })?;
-        cls.method0("className", |_this: &Self| -> String {
-            "Object".to_string()
+        cls.static_fn0("staticFn", || -> Result<String> {
+            Ok("__STATIC__".to_string())
         })?;
-        cls.method0("className2", |_this: &Self| -> String {
-            "Object".to_string()
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("__STATIC__".to_string())
         })?;
-        cls.method0("nestedFn", |_this: &Self| -> String {
-            "Object".to_string()
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("Object".to_string())
+        })?;
+        cls.method0("className2", |_this: &Self| -> Result<String> {
+            Ok("Object".to_string())
+        })?;
+        cls.method0("nestedFn", |_this: &Self| -> Result<String> {
+            Ok("Object".to_string())
         })?;
         Ok(())
     }
@@ -56,20 +60,22 @@ impl Type for Fw<Rc<Widget>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
-        cls.static_fn0("staticFn2", || -> String { "WIDGET".to_string() })?;
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("WIDGET".to_string())
+        })?;
 
-        cls.constructor0(|| -> Self { Default::default() })?;
+        cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
 
         cls.readonly("ro", |this: &Self| {
             let val = this.0 .1.borrow();
-            Ok(format!("Readonly {}", val))
+            Ok(Ok(format!("Readonly {}", val)))
         })?;
 
-        cls.method0("className", |_this: &Self| -> String {
-            "Widget".to_string()
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("Widget".to_string())
         })?;
-        cls.method0("className2", |_this: &Self| -> String {
-            "Widget".to_string()
+        cls.method0("className2", |_this: &Self| -> Result<String> {
+            Ok("Widget".to_string())
         })?;
 
         Ok(())
@@ -87,23 +93,25 @@ impl Type for Fw<Rc<Application>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
-        cls.static_fn0("staticFn2", || -> String { "APPLICATION".to_string() })?;
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("APPLICATION".to_string())
+        })?;
 
-        cls.constructor0(|| -> Self { Default::default() })?;
-        cls.method0("status", |this: &Self| -> String {
-            this.0 .1.borrow().clone()
+        cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
+        cls.method0("status", |this: &Self| -> Result<String> {
+            Ok(this.0 .1.borrow().clone())
         })?;
 
         cls.readonly("ro", |this: &Self| {
             let val = this.0 .1.borrow();
-            Ok(format!("Readonly2 {}", val))
+            Ok(Ok(format!("Readonly2 {}", val)))
         })?;
 
-        cls.method0("className", |_this: &Self| -> String {
-            "Application".to_string()
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("Application".to_string())
         })?;
-        cls.method0("className2", |_this: &Self| -> String {
-            "Application".to_string()
+        cls.method0("className2", |_this: &Self| -> Result<String> {
+            Ok("Application".to_string())
         })?;
         Ok(())
     }
@@ -120,21 +128,23 @@ impl Type for Fw<Rc<MainWindow>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
-        cls.static_fn0("staticFn2", || -> String { "MAINWINDOW".to_string() })?;
-
-        cls.constructor0(|| -> Self { Default::default() })?;
-        cls.method0("title", |this: &Self| -> String {
-            this.0 .1.borrow().clone()
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("MAINWINDOW".to_string())
         })?;
 
-        cls.method0("className", |_this: &Self| -> String {
-            "MainWindow".to_string()
+        cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
+        cls.method0("title", |this: &Self| -> Result<String> {
+            Ok(this.0 .1.borrow().clone())
         })?;
-        cls.method0("className2", |_this: &Self| -> String {
-            "MainWindow".to_string()
+
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("MainWindow".to_string())
         })?;
-        cls.method0("nestedFn", |_this: &Self| -> String {
-            "NESTED".to_string()
+        cls.method0("className2", |_this: &Self| -> Result<String> {
+            Ok("MainWindow".to_string())
+        })?;
+        cls.method0("nestedFn", |_this: &Self| -> Result<String> {
+            Ok("NESTED".to_string())
         })?;
         Ok(())
     }
@@ -151,11 +161,13 @@ impl Type for Fw<Rc<BoxLayout>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
-        cls.static_fn0("staticFn2", || -> String { "BOXLAYOUT".to_string() })?;
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("BOXLAYOUT".to_string())
+        })?;
 
-        cls.constructor0(|| -> Self { Default::default() })?;
-        cls.method0("orientation", |this: &Self| -> String {
-            this.0 .1.borrow().clone()
+        cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
+        cls.method0("orientation", |this: &Self| -> Result<String> {
+            Ok(this.0 .1.borrow().clone())
         })?;
 
         cls.prop(
@@ -164,8 +176,8 @@ impl Type for Fw<Rc<BoxLayout>> {
             |_this: &Self, _val: String| Ok(()),
         )?;
 
-        cls.method0("className", |_this: &Self| -> String {
-            "BoxLayout".to_string()
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("BoxLayout".to_string())
         })?;
         Ok(())
     }
@@ -182,17 +194,19 @@ impl Type for Fw<Rc<AbstractButton>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
-        cls.static_fn0("staticFn2", || -> String { "ABSTRACTBUTTON".to_string() })?;
-
-        cls.method0("text", |this: &Self| -> String {
-            this.0 .1.borrow().clone()
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("ABSTRACTBUTTON".to_string())
         })?;
 
-        cls.method0("className", |_this: &Self| -> String {
-            "AbstractButton".to_string()
+        cls.method0("text", |this: &Self| -> Result<String> {
+            Ok(this.0 .1.borrow().clone())
         })?;
-        cls.method0("className2", |_this: &Self| -> String {
-            "AbstractButton".to_string()
+
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("AbstractButton".to_string())
+        })?;
+        cls.method0("className2", |_this: &Self| -> Result<String> {
+            Ok("AbstractButton".to_string())
         })?;
         Ok(())
     }
@@ -209,15 +223,17 @@ impl Type for Fw<Rc<PushButton>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<AbstractButton>>>()?;
-        cls.static_fn0("staticFn2", || -> String { "PUSHBUTTON".to_string() })?;
-
-        cls.constructor0(|| -> Self { Default::default() })?;
-        cls.method0("status", |this: &Self| -> String {
-            this.0 .1.borrow().clone()
+        cls.static_fn0("staticFn2", || -> Result<String> {
+            Ok("PUSHBUTTON".to_string())
         })?;
 
-        cls.method0("className", |_this: &Self| -> String {
-            "PushButton".to_string()
+        cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
+        cls.method0("status", |this: &Self| -> Result<String> {
+            Ok(this.0 .1.borrow().clone())
+        })?;
+
+        cls.method0("className", |_this: &Self| -> Result<String> {
+            Ok("PushButton".to_string())
         })?;
         Ok(())
     }

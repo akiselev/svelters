@@ -3,9 +3,8 @@ use svelters_core::prelude::*;
 
 use crate::inner::*;
 
-pub enum QtWrapper<CLS>
+pub enum Qt<CLS>
 where
-    CLS: Type<QT>,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
     Owned(QBox<CLS>),
@@ -13,45 +12,82 @@ where
     Ref(Ptr<CLS>),
 }
 
-impl<'a, T> Deref for QtWrapper<T>
+impl<CLS> Clone for Qt<CLS>
 where
-    T: Type<QT>,
+    Qt<CLS>: Type,
+    CLS: StaticUpcast<QObject> + CppDeletable,
+{
+    fn clone(&self) -> Self {
+        Qt::Shared(unsafe { QPtr::<CLS>::new(self.as_ptr()) })
+    }
+}
+
+impl<CLS> Qt<CLS>
+where
+    Qt<CLS>: Type,
+    CLS: StaticUpcast<QObject> + CppDeletable,
+{
+    pub fn new(boxed: QBox<CLS>) -> Self {
+        Qt::Owned(boxed)
+    }
+
+    pub fn as_ptr(&self) -> Ptr<CLS> {
+        unsafe {
+            match self {
+                Qt::Owned(ref val) => val.as_ptr(),
+                Qt::Shared(ref val) => val.as_ptr(),
+                Qt::Ref(ref val) => *val,
+            }
+        }
+    }
+}
+
+impl<'a, T> Deref for Qt<T>
+where
+    Qt<T>: Type,
     T: StaticUpcast<QObject> + CppDeletable,
 {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
         match self {
-            QtWrapper::Owned(ref val) => val.deref(),
-            QtWrapper::Shared(ref val) => val.deref(),
-            QtWrapper::Ref(ref val) => val.deref(),
+            Qt::Owned(ref val) => val.deref(),
+            Qt::Shared(ref val) => val.deref(),
+            Qt::Ref(ref val) => val.deref(),
         }
     }
 }
 
-pub struct DerefWrapper<'a, T>(Ptr<T>, PhantomData<&'a ()>);
+pub struct DerefWrapper<'a, T>(Qt<T>, PhantomData<&'a ()>)
+where
+    T: StaticUpcast<QObject> + CppDeletable;
 
-impl<'a, T> AsRef<T> for DerefWrapper<'a, T> {
-    fn as_ref(&self) -> &T {
+impl<'a, T> AsRef<Qt<T>> for DerefWrapper<'a, T>
+where
+    T: StaticUpcast<QObject> + CppDeletable,
+{
+    fn as_ref(&self) -> &Qt<T> {
         &self.0
     }
 }
 
-impl<T, CLS> CastFrom<T> for QtWrapper<CLS>
+impl<T, CLS> CastFrom<Qt<T>> for Qt<CLS>
 where
     T: CastFrom<CLS>,
-    CLS: Type<QT>,
+    Qt<CLS>: Type,
+    T: StaticUpcast<QObject> + CppDeletable,
     CLS: StaticUpcast<QObject> + CppDeletable,
 {
-    unsafe fn cast_from(value: T) -> Self {
+    unsafe fn cast_from(value: Qt<T>) -> Self {
         todo!()
     }
 }
 
-impl<X, CLS> Cast<X> for QtWrapper<CLS>
+impl<X, CLS> Cast<Qt<X>> for Qt<CLS>
 where
-    CLS: Type<QT>,
+    Qt<CLS>: Type,
     CLS: StaticUpcast<QObject> + CppDeletable,
+    X: StaticUpcast<QObject> + CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
 {
     type Output<'a> = DerefWrapper<'a, X>;
@@ -62,43 +98,13 @@ where
             // let ptr = CastFrom::cast_from(obj);
             let ptr = unsafe {
                 match self {
-                    QtWrapper::Owned(ref val) => val.as_ptr(),
-                    QtWrapper::Shared(ref val) => val.as_ptr(),
-                    QtWrapper::Ref(ref val) => val.clone(),
+                    Qt::Owned(ref val) => val.as_ptr(),
+                    Qt::Shared(ref val) => val.as_ptr(),
+                    Qt::Ref(ref val) => val.clone(),
                 }
             };
             let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
-            DerefWrapper(ptr.as_ptr(), PhantomData)
+            DerefWrapper(Qt::Ref(ptr.as_ptr()), PhantomData)
         }
-    }
-}
-
-impl<CLS> IntoRepr<QT, CLS> for QBox<CLS>
-where
-    CLS: Type<QT> + Repr<QT, Type = QtWrapper<CLS>>,
-    CLS: StaticUpcast<QObject> + CppDeletable,
-{
-    fn into_repr(self) -> QtWrapper<CLS> {
-        QtWrapper::Owned(self)
-    }
-}
-
-impl<CLS> IntoRepr<QT, CLS> for QPtr<CLS>
-where
-    CLS: Type<QT> + Repr<QT, Type = QtWrapper<CLS>>,
-    CLS: StaticUpcast<QObject> + CppDeletable,
-{
-    fn into_repr(self) -> QtWrapper<CLS> {
-        QtWrapper::Shared(self)
-    }
-}
-
-impl<CLS> IntoRepr<QT, CLS> for Ptr<CLS>
-where
-    CLS: Type<QT> + Repr<QT, Type = QtWrapper<CLS>>,
-    CLS: StaticUpcast<QObject> + CppDeletable,
-{
-    fn into_repr(self) -> QtWrapper<CLS> {
-        QtWrapper::Ref(unsafe { self })
     }
 }

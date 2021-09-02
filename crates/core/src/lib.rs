@@ -1,10 +1,10 @@
 #![feature(generic_associated_types)]
-#![feature(min_type_alias_impl_trait)]
-#![feature(const_fn_trait_bound)]
 #![feature(const_type_name)]
 #![feature(type_name_of_val)]
 #![feature(specialization)]
 #![feature(once_cell)]
+#![feature(unboxed_closures)]
+#![feature(fn_traits)]
 #![recursion_limit = "4096"]
 #![allow(incomplete_features, dead_code)]
 
@@ -36,16 +36,14 @@ pub(in crate) mod virt;
 
 pub(in crate) mod phases {
     mod class {
-        mod constructor_eval;
-        mod constructor_load;
+        mod constructor;
         mod has_member;
         mod inherits_member;
         mod init_proto;
         mod init_static;
         mod init_virt;
 
-        pub(in crate) use self::constructor_eval::*;
-        pub(in crate) use self::constructor_load::*;
+        pub(in crate) use self::constructor::*;
         pub(in crate) use self::has_member::*;
         pub(in crate) use self::init_proto::*;
         pub(in crate) use self::init_static::*;
