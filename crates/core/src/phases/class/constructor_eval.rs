@@ -44,13 +44,6 @@ where
     }
 }
 
-impl<T, P> Implements<P> for JsClassLoader<T> {
-    #[inline(always)]
-    default fn build(self, _phase: &mut P) -> Result<()> {
-        Ok(())
-    }
-}
-
 // macro_rules! tup {
 //     ($($($type:ident)*,)*) => {
 //         $(

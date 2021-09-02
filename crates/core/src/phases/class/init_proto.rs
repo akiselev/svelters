@@ -118,7 +118,7 @@ where
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for Superclass<CLS, SUPER>
+impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type,

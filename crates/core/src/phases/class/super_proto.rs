@@ -134,7 +134,7 @@ where
 }
 
 impl<'a, 'b: 'a, CLS, SUPER, NESTED> Implements<InitSuperProto<'a, 'b, CLS, SUPER>>
-    for Superclass<SUPER, NESTED>
+    for Superclass<NESTED>
 where
     CLS: Type,
     SUPER: Type,

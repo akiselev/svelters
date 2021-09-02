@@ -65,9 +65,9 @@ where
         CLS: Type,
         SUPER: Type,
         ReprOf<CLS>: Cast<SUPER>,
-        Superclass<CLS, SUPER>: Implements<PHASE>,
+        Superclass<SUPER>: Implements<PHASE>,
     {
-        Superclass::<CLS, SUPER>::new().build(&mut self.phase)?;
+        Superclass::<SUPER>::new().build(&mut self.phase)?;
         Ok(())
     }
 

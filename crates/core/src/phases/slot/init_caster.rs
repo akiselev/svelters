@@ -61,7 +61,7 @@ where
     }
 }
 
-impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<CLS, SUPER>
+impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<SUPER>
 where
     CLS: Type + Repr,
     SUPER: Type,

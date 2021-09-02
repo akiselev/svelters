@@ -15,7 +15,7 @@ impl<'a, CLS, ROOT: Type + Repr, SUPER> NestedSuperCaster<'a, ROOT, CLS, SUPER> 
 }
 
 impl<'a, CLS, INTER, ROOT, SUPER> Implements<NestedSuperCaster<'a, ROOT, CLS, INTER>>
-    for Superclass<INTER, SUPER>
+    for Superclass<SUPER>
 where
     CLS: Type,
     ROOT: Type + Repr,

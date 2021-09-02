@@ -32,7 +32,7 @@ impl<'a, CLS: Repr> InheritsMember<'a, CLS> {
     }
 }
 
-impl<'a, CLS, SUPER> Implements<InheritsMember<'a, CLS>> for Superclass<CLS, SUPER>
+impl<'a, CLS, SUPER> Implements<InheritsMember<'a, CLS>> for Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type,

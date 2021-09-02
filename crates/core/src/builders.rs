@@ -18,6 +18,13 @@ mod constructor {
             Constructor(func, PhantomData)
         }
     }
+
+    impl<CLS: Type, ARG, RET, FUNC, P> Implements<P> for Constructor<CLS, ARG, RET, FUNC> {
+        #[inline(always)]
+        default fn build(self, _phase: &mut P) -> Result<()> {
+            Ok(())
+        }
+    }
 }
 
 mod prop {
@@ -41,6 +48,12 @@ mod prop {
         }
     }
 
+    impl<CLS, PROP, GET, SET, P> Implements<P> for Property<CLS, PROP, GET, SET> {
+        default fn build(self, phase: &mut P) -> Result<()> {
+            Ok(())
+        }
+    }
+
     pub struct ReadOnly<CLS, PROP, GET> {
         pub(crate) name: &'static str,
         pub(crate) getter: GET,
@@ -54,6 +67,12 @@ mod prop {
                 getter,
                 marker: PhantomData,
             }
+        }
+    }
+
+    impl<CLS, PROP, GET, P> Implements<P> for ReadOnly<CLS, PROP, GET> {
+        default fn build(self, phase: &mut P) -> Result<()> {
+            Ok(())
         }
     }
 }
@@ -74,6 +93,12 @@ mod method {
                 func,
                 marker: PhantomData,
             }
+        }
+    }
+
+    impl<THIS, ARGS, RET, CLS, P> Implements<P> for Method<CLS, ARGS, RET, THIS> {
+        default fn build(self, phase: &mut P) -> Result<()> {
+            Ok(())
         }
     }
 }
@@ -102,14 +127,9 @@ mod staticfn {
 mod superclass {
     use super::*;
 
-    pub struct Superclass<CLS, SUPER>(PhantomData<(CLS, SUPER)>)
-    where
-        CLS: Repr;
+    pub struct Superclass<SUPER>(PhantomData<(SUPER)>);
 
-    impl<SUPER, CLS> Superclass<CLS, SUPER>
-    where
-        CLS: Repr,
-    {
+    impl<SUPER> Superclass<SUPER> {
         pub(in crate) fn new() -> Self {
             Superclass(PhantomData)
         }
