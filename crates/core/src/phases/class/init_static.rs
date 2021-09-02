@@ -16,14 +16,15 @@ impl<'a, 'js, CLS> InitStatic<'a, 'js, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, T, CLS, R> Implements<InitStatic<'a, 'b, CLS>> for StaticFn<CLS, (), R, T>
+impl<'a, 'b: 'a, T, BASE, CLS, R> Implements<InitStatic<'a, 'b, BASE>> for StaticFn<CLS, (), R, T>
 where
+    BASE: Caster<CLS>,
     CLS: Type,
     T: 'static + Fn() -> R,
     R: 'static + for<'js> IntoJs<'js>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitStatic<'a, 'b, CLS>) -> Result<()> {
+    fn build(self, phase: &mut InitStatic<'a, 'b, BASE>) -> Result<()> {
         phase.obj.set(
             self.0,
             rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
@@ -39,14 +40,14 @@ where
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitStatic<'a, 'b, CLS>> for Superclass<SUPER>
+impl<'a, 'b: 'a, BASE, SUPER> Implements<InitStatic<'a, 'b, BASE>> for Superclass<SUPER>
 where
-    CLS: Type,
+    BASE: Caster<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitStatic<'a, 'b, CLS>) -> Result<()> {
-        build_class!(SUPER with InitSuperStatic::<'_, '_, CLS, SUPER>::new(phase.ctx, phase.obj));
+    fn build(self, phase: &mut InitStatic<'a, 'b, BASE>) -> Result<()> {
+        build_class!(SUPER with InitStatic::<'_, '_, BASE>::new(phase.ctx, phase.obj));
         Ok(())
     }
 }

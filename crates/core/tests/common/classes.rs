@@ -34,6 +34,8 @@ impl Type for Fw<Rc<Object>> {
         cls.method0("testMethod", |_this: &Self| -> String {
             "__OBJECT__".to_string()
         })?;
+        cls.static_fn0("staticFn", || -> String { "__STATIC__".to_string() })?;
+        cls.static_fn0("staticFn2", || -> String { "__STATIC__".to_string() })?;
         cls.method0("className", |_this: &Self| -> String {
             "Object".to_string()
         })?;
@@ -55,6 +57,8 @@ impl Type for Fw<Rc<Widget>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
+        cls.static_fn0("staticFn2", || -> String { "WIDGET".to_string() })?;
+
         cls.constructor0(|| -> Self { Default::default() })?;
 
         cls.readonly("ro", |this: &Self| {
@@ -83,6 +87,8 @@ impl Type for Fw<Rc<Application>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Object>>>()?;
+        cls.static_fn0("staticFn2", || -> String { "APPLICATION".to_string() })?;
+
         cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("status", |this: &Self| -> String {
             this.0 .1.borrow().clone()
@@ -114,6 +120,8 @@ impl Type for Fw<Rc<MainWindow>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.static_fn0("staticFn2", || -> String { "MAINWINDOW".to_string() })?;
+
         cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("title", |this: &Self| -> String {
             this.0 .1.borrow().clone()
@@ -140,6 +148,8 @@ impl Type for Fw<Rc<BoxLayout>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.static_fn0("staticFn2", || -> String { "BOXLAYOUT".to_string() })?;
+
         cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("orientation", |this: &Self| -> String {
             this.0 .1.borrow().clone()
@@ -169,6 +179,8 @@ impl Type for Fw<Rc<AbstractButton>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<Widget>>>()?;
+        cls.static_fn0("staticFn2", || -> String { "ABSTRACTBUTTON".to_string() })?;
+
         cls.method0("text", |this: &Self| -> String {
             this.0 .1.borrow().clone()
         })?;
@@ -194,6 +206,8 @@ impl Type for Fw<Rc<PushButton>> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.superclass::<Fw<Rc<AbstractButton>>>()?;
+        cls.static_fn0("staticFn2", || -> String { "PUSHBUTTON".to_string() })?;
+
         cls.constructor0(|| -> Self { Default::default() })?;
         cls.method0("status", |this: &Self| -> String {
             this.0 .1.borrow().clone()

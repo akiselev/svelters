@@ -49,9 +49,6 @@ pub(in crate) mod phases {
         mod inherits_member;
         mod init_proto;
         mod init_static;
-        mod nested_super_proto;
-        mod super_proto;
-        mod super_static;
 
         pub(in crate) use self::constructor_eval::*;
         pub(in crate) use self::constructor_load::*;
@@ -59,18 +56,13 @@ pub(in crate) mod phases {
         pub(in crate) use self::inherits_member::*;
         pub(in crate) use self::init_proto::*;
         pub(in crate) use self::init_static::*;
-        pub(in crate) use self::nested_super_proto::*;
-        pub(in crate) use self::super_proto::*;
-        pub(in crate) use self::super_static::*;
     }
 
     mod slot {
         mod init_caster;
-        mod init_nested_super;
         mod init_super;
 
         pub(in crate) use self::init_caster::*;
-        pub(in crate) use self::init_nested_super::*;
         pub(in crate) use self::init_super::*;
     }
 

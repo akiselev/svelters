@@ -50,6 +50,16 @@ export const hasMethod = (cls, name = "className") => {
     return typeof inst[name] === "function";
 };
 
+export const callStatic = (cls, name = "staticFn", ...args) => {
+    let Class = classes[cls];
+    return Class[name](...args);
+};
+
+export const hasStatic = (cls, name = "staticFn") => {
+    let Class = classes[cls];
+    return typeof Class[name] === "function";
+};
+
 export const typeofProperty = (cls, name = "className") => {
     let inst = constructClass(cls);
     return typeof inst[name];

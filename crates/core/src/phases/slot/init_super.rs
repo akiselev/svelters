@@ -43,7 +43,7 @@ where
             }),
         );
 
-        build_class!(NESTED with NestedSuperCaster::<'_, CLS, SUPER, NESTED>::new(phase.map));
+        build_class!(NESTED with InitSuperCaster::<'_, CLS, NESTED>::new(phase.map));
         Ok(())
     }
 }

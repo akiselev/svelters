@@ -24,6 +24,16 @@ Feature: Core
         When calling function "hasMethod" with args ("Object", "className")
         Then return value is true
 
+    Scenario: check basic static call
+        Given module at "core.js"
+        When calling function "callStatic" with args ("Object", "staticFn")
+        Then return value is "__STATIC__"
+
+    Scenario: check has static
+        Given module at "core.js"
+        When calling function "hasStatic" with args ("Object", "staticFn")
+        Then return value is true
+
     Scenario: check Object constructor
         Given module at "core.js"
         When calling function "constructClass" with args ("Object")

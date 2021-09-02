@@ -4,24 +4,53 @@ Feature: Core
         When calling function "callMethodAfterCast" with args ("Object", "Object", "className2")
         Then return value is "Object"
 
-    Scenario: Cast to super correctly with caster
-        Given module at "core.js"
-        When calling function "callMethodAfterCast" with args ("Application", "Object", "className2")
-        Then return value is "Application"
-
-    # Scenario: Caster initializes correctly
+    # Scenario: Cast to super correctly with caster
     #     Given module at "core.js"
-    #     When calling function "callMethodAfterCast" with args (<class>, "Object", "className2")
-    #     Then return value is <result>
+    #     When calling function "callMethodAfterCast" with args ("Application", "Object", "className2")
+    #     Then return value is "Application"
 
-    #     Examples:
-    #         | class         | result           |
-    #         | "Object"      | "Object"         |
-    #         | "Application" | "Application"    |
-    #         | "Widget"      | "Widget"         |
-    #         | "MainWindow"  | "MainWindow"     |
-    #         | "BoxLayout"   | "Widget"         |
-    #         | "PushButton"  | "AbstractButton" |
+    # # Scenario: Caster initializes correctly
+    # #     Given module at "core.js"
+    # #     When calling function "callMethodAfterCast" with args (<class>, "Object", "className2")
+    # #     Then return value is <result>
+
+    # #     Examples:
+    # #         | class         | result           |
+    # #         | "Object"      | "Object"         |
+    # #         | "Application" | "Application"    |
+    # #         | "Widget"      | "Widget"         |
+    # #         | "MainWindow"  | "MainWindow"     |
+    # #         | "BoxLayout"   | "Widget"         |
+    # #         | "PushButton"  | "AbstractButton" |
+
+    Scenario: check that the Object staticFn is inherited by each child class
+        Given module at "core.js"
+        When calling function "callStatic" with args (<class>, "staticFn2")
+        Then return value is <result>
+
+        Examples:
+            | class         | result        |
+            | "Object"      | "__STATIC__"  |
+            | "Application" | "APPLICATION" |
+            | "Widget"      | "WIDGET"      |
+            | "MainWindow"  | "MAINWINDOW"  |
+            | "BoxLayout"   | "BOXLAYOUT"   |
+            | "PushButton"  | "PUSHBUTTON"  |
+
+    Scenario: check that the Object staticFn is overridden by each child class
+        Given module at "core.js"
+        When calling function "callStatic" with args (<class>, "staticFn")
+        Then return value is <result>
+
+        Examples:
+            | class         | result       |
+            | "Object"      | "__STATIC__" |
+            | "Application" | "__STATIC__" |
+            | "Widget"      | "__STATIC__" |
+            | "MainWindow"  | "__STATIC__" |
+            | "BoxLayout"   | "__STATIC__" |
+            | "PushButton"  | "__STATIC__" |
+
 
     Scenario: check that the Object method is inherited by each child class
         Given module at "core.js"

@@ -119,6 +119,12 @@ mod staticfn {
             StaticFn(name, func, PhantomData)
         }
     }
+
+    impl<THIS, ARGS, RET, CLS: Type, P> Implements<P> for StaticFn<CLS, ARGS, RET, THIS> {
+        default fn build(self, phase: &mut P) -> Result<()> {
+            Ok(())
+        }
+    }
 }
 
 mod superclass {
