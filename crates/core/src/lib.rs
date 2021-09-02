@@ -37,14 +37,11 @@ pub(in crate) mod virt;
 pub(in crate) mod phases {
     mod class {
         mod constructor;
-        mod has_member;
-        mod inherits_member;
         mod init_proto;
         mod init_static;
         mod init_virt;
 
         pub(in crate) use self::constructor::*;
-        pub(in crate) use self::has_member::*;
         pub(in crate) use self::init_proto::*;
         pub(in crate) use self::init_static::*;
         pub(in crate) use self::init_virt::*;

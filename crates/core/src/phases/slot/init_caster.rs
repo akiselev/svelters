@@ -82,7 +82,6 @@ where
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
                 obj.inner.with_cast(|data| {
-                    let value = this.clone().into_js(ctx)?;
                     let virt = Virt::<SUPER>::new((*data).clone());
                     let value = virt.into_js(ctx)?;
                     Result::<_>::Ok(value)

@@ -105,41 +105,42 @@ where
 macro_rules! tup {
     ($($($arg:ident)*,)*) => {
         $(
-        impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitProto<'a, 'b, BASE>>
-            for Method<CLS, (THIS, $($arg,)*), RET, FUNC>
-        where
-            CLS: Type,
-            BASE: Type + Caster<THIS>,
-            THIS: 'static,
-            $($arg: 'static + for<'x> FromJs<'x>,)*
-            RET: 'static + for<'js> IntoJs<'js>,
-            FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
-        {
-            #[inline(always)]
-            fn build(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
-                phase.obj.set(
-                    self.name,
-                    rquickjs::Func::new(
+            #[allow(unused_variables)]
+            impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitProto<'a, 'b, BASE>>
+                for Method<CLS, (THIS, $($arg,)*), RET, FUNC>
+            where
+                CLS: Type,
+                BASE: Type + Caster<THIS>,
+                THIS: 'static,
+                $($arg: 'static + for<'x> FromJs<'x>,)*
+                RET: 'static + for<'js> IntoJs<'js>,
+                FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
+            {
+                #[inline(always)]
+                fn build(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
+                    phase.obj.set(
                         self.name,
-                        rquickjs::Method(
-                            move |this: JsClass<'b, Obj<BASE>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
-                                let args = args.into_inner();
-                                let args_len = args.len();
-                                tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
-                                let obj: &Obj<BASE> = this.as_ref();
-                                obj.inner.with_cast(|data| {
-                                    (self.func)(
-                                        data,
-                                        $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
-                                    )
-                                })
-                            },
+                        rquickjs::Func::new(
+                            self.name,
+                            rquickjs::Method(
+                                move |this: JsClass<'b, Obj<BASE>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                                    let args = args.into_inner();
+                                    let args_len = args.len();
+                                    tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
+                                    let obj: &Obj<BASE> = this.as_ref();
+                                    obj.inner.with_cast(|data| {
+                                        (self.func)(
+                                            data,
+                                            $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
+                                        )
+                                    })
+                                },
+                            ),
                         ),
-                    ),
-                )?;
-                Ok(())
+                    )?;
+                    Ok(())
+                }
             }
-        }
         )*
     };
     (@one $($t:tt)*) => { 1 };
