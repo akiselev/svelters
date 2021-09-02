@@ -1,6 +1,6 @@
 use crate::inner::*;
 
-pub struct ModuleBuilder<MOD, P>(pub(crate) P, pub(crate) PhantomData<(MOD)>);
+pub struct ModuleBuilder<MOD, P>(pub(crate) P, pub(crate) PhantomData<MOD>);
 
 impl<MOD, P> ModuleBuilder<MOD, P> {
     #[inline(always)]

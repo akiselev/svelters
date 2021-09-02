@@ -1,9 +1,4 @@
-use std::{
-    cell::RefCell,
-    marker::PhantomData,
-    ops::{Deref, DerefMut},
-    rc::Rc,
-};
+use std::{cell::RefCell, marker::PhantomData, rc::Rc};
 
 #[derive(Debug, Clone, Copy)]
 pub struct FW;
@@ -11,7 +6,6 @@ pub struct FW;
 pub struct Fw<T>(pub T);
 pub struct FwCore;
 pub struct FwWidgets;
-pub struct FwWrapper<T>(pub T);
 
 #[derive(Debug)]
 pub struct Object(pub RefCell<String>);

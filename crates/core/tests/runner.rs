@@ -3,15 +3,9 @@
 #![feature(specialization)]
 #![allow(incomplete_features)]
 
-use std::convert::Infallible;
-
-use cucumber_rust::{async_trait, criteria::feature, futures::FutureExt, Context, Cucumber, World};
-
-use rquickjs::RegisteryKey;
-use svelters_core::prelude::*;
+use cucumber_rust::{criteria::feature, futures::FutureExt, Cucumber};
 
 mod common;
-use common::*;
 
 mod steps;
 
@@ -31,7 +25,7 @@ async fn main() {
         //     let pool = ctx.get::<SqlitePool>().unwrap().clone();
         //     async move { create_tables(&pool).await }.boxed()
         // })
-        .after(feature("Core"), |ctx| {
+        .after(feature("Core"), |_ctx| {
             async move {
                 println!(" ");
                 println!(" ");

@@ -1,7 +1,4 @@
-use rquickjs::{
-    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, FileResolver, Func, IntoJs, Module,
-    NativeLoader, Persistent, Rest, Result as JsResult, Runtime, ScriptLoader, Value,
-};
+use rquickjs::{bind, Ctx, Rest, Result as JsResult, Value};
 
 #[bind(object)]
 pub mod console {

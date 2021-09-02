@@ -56,7 +56,7 @@ where
     }
 }
 
-pub struct JsClassLoader<CLS>(pub(in crate) PhantomData<(CLS)>);
+pub struct JsClassLoader<CLS>(pub(in crate) PhantomData<CLS>);
 
 impl<CLS> JsClassLoader<CLS>
 where

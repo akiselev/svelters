@@ -1,12 +1,10 @@
 use std::{collections::HashMap, lazy::OnceCell};
 
-use rquickjs::This;
-
 use crate::{build_class, inner::*};
 
 pub struct InitCaster<'a, CLS: Type> {
     pub(in crate) map: &'a mut MetaFuncMap<CLS>,
-    pub(in crate) framework: PhantomData<(CLS)>,
+    pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, CLS: Type> InitCaster<'a, CLS> {
@@ -75,51 +73,18 @@ impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type + Clone,
-    ReprOf<CLS>: Caster<SUPER>,
+    CLS: Caster<SUPER>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitCaster<CLS>) -> Result<()> {
-        println!(
-            "Calling SUPERINITCASTER for {} of {}",
-            CLS::CLASS_NAME,
-            SUPER::CLASS_NAME
-        );
-
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                println!("Casting {} to {}\n\n", CLS::CLASS_NAME, SUPER::CLASS_NAME);
-                println!("Casting {} to {}\n\n", CLS::CLASS_NAME, SUPER::CLASS_NAME);
                 obj.inner.with_cast(|data| {
-                    println!(
-                        "1. Casting {} to {}\n\n",
-                        CLS::CLASS_NAME,
-                        SUPER::CLASS_NAME
-                    );
                     let value = this.clone().into_js(ctx)?;
-                    println!(
-                        "2. Casting {} to {}\n\n",
-                        CLS::CLASS_NAME,
-                        SUPER::CLASS_NAME
-                    );
                     let virt = Virt::<'_, SUPER>::new(value, (*data).clone());
-                    println!(
-                        "3. Casting {} to {}\n\n",
-                        CLS::CLASS_NAME,
-                        std::any::type_name_of_val(&virt)
-                    );
                     let value = virt.into_js(ctx)?;
-                    println!(
-                        "4. Casting {} to {}\n\n",
-                        CLS::CLASS_NAME,
-                        SUPER::CLASS_NAME
-                    );
-                    println!(
-                        "5. Casting {} to {}\n\n",
-                        CLS::CLASS_NAME,
-                        SUPER::CLASS_NAME
-                    );
                     Result::<_>::Ok(value)
                 })
             }),

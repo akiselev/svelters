@@ -1,4 +1,14 @@
 Feature: Core
+    Scenario: Inherited nested member is overriden correctly
+        Given module at "core.js"
+        When calling function "callMethod" with args ("MainWindow", "nestedFn")
+        Then return value is "NESTED"
+
+    Scenario: Inherited member is not overriden
+        Given module at "core.js"
+        When calling function "callMethod" with args ("Widget", "nestedFn")
+        Then return value is "Object"
+
     Scenario: Cast self correctly with caster
         Given module at "core.js"
         When calling function "callMethodAfterCast" with args ("Object", "Object", "className2")

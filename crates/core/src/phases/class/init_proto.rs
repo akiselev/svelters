@@ -1,11 +1,9 @@
-use rquickjs::This;
-
 use crate::{build_class, inner::*};
 
 pub struct InitProto<'a, 'js, BASE> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) obj: &'a Object<'js>,
-    pub(in crate) framework: PhantomData<(BASE)>,
+    pub(in crate) framework: PhantomData<BASE>,
 }
 
 impl<'a, 'js, BASE> InitProto<'a, 'js, BASE> {
@@ -23,7 +21,7 @@ impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET> Implements<InitProto<'a, 'b, BASE>>
 where
     CLS: Type,
     BASE: Type,
-    ReprOf<BASE>: Caster<THIS>,
+    BASE: Caster<THIS>,
     THIS: 'static,
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
@@ -57,7 +55,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitProto<'a, 'b, BASE>>
 where
     CLS: Type,
     BASE: Type,
-    ReprOf<BASE>: Caster<CLS>,
+    BASE: Caster<CLS>,
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -71,7 +69,6 @@ where
             ..
         } = self;
 
-        // phase.obj.remove(name).ok();
         let res = phase.obj.prop(
             name,
             Accessor::new(
@@ -102,7 +99,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitProto<'a, 'b, BASE>>
 where
     CLS: Type,
     BASE: Type,
-    ReprOf<BASE>: Caster<CLS>,
+    BASE: Caster<CLS>,
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -110,7 +107,7 @@ where
     fn build(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
         let ReadOnly { name, getter, .. } = self;
 
-        // phase.obj.remove(name).ok();
+        // phase.obj(name).ok();
         let res = phase.obj.prop(
             name,
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
@@ -130,7 +127,7 @@ impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for Superclass<S
 where
     CLS: Type,
     SUPER: Type,
-    ReprOf<CLS>: Caster<SUPER>,
+    CLS: Caster<SUPER>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, CLS>) -> Result<()> {

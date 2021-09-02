@@ -1,11 +1,9 @@
-use rquickjs::This;
-
 use crate::inner::*;
 
 pub struct HasMember<'a, CLS> {
     pub(in crate) name: &'a str,
     pub(in crate) is_set: bool,
-    pub(in crate) framework: PhantomData<(CLS)>,
+    pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, CLS> HasMember<'a, CLS> {
@@ -21,7 +19,7 @@ impl<'a, CLS> HasMember<'a, CLS> {
 impl<'a, FUNC, THIS, CLS, RET> Implements<HasMember<'a, CLS>> for Method<CLS, (THIS,), RET, FUNC>
 where
     CLS: Type,
-    ReprOf<CLS>: Cast<THIS>,
+    CLS: Cast<THIS>,
     THIS: 'static,
     RET: 'static + for<'js> IntoJs<'js>,
     FUNC: 'static + for<'x> Fn(&'x THIS) -> RET,
@@ -38,7 +36,7 @@ where
 impl<'a, CLS, PROP, GET, SET> Implements<HasMember<'a, CLS>> for Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    ReprOf<CLS>: Cast<CLS>,
+    CLS: Cast<CLS>,
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -55,7 +53,7 @@ where
 impl<'a, CLS, PROP, GET> Implements<HasMember<'a, CLS>> for ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    ReprOf<CLS>: Cast<CLS>,
+    CLS: Cast<CLS>,
     PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {

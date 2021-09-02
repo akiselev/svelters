@@ -1,5 +1,3 @@
-use rquickjs::This;
-
 use crate::{build_class, inner::*};
 
 pub struct InheritsMember<'a, CLS> {
@@ -7,7 +5,7 @@ pub struct InheritsMember<'a, CLS> {
     pub(in crate) is_set: bool,
     pub(in crate) depth: isize,
     pub(in crate) max: isize,
-    pub(in crate) framework: PhantomData<(CLS)>,
+    pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, CLS> InheritsMember<'a, CLS> {
@@ -36,7 +34,7 @@ impl<'a, CLS, SUPER> Implements<InheritsMember<'a, CLS>> for Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type,
-    ReprOf<CLS>: Cast<CLS>,
+    CLS: Cast<CLS>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InheritsMember<'a, CLS>) -> Result<()> {

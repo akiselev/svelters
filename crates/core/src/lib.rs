@@ -1,12 +1,5 @@
 #![feature(generic_associated_types)]
-// Allows impl Trait in associated type
 #![feature(min_type_alias_impl_trait)]
-// Features for evaluating expressions in const generics
-// #![feature(const_evaluatable_checked)]
-// Allows const str from utf8 bytes
-// #![feature(const_str_from_utf8_unchecked)]
-// #![feature(const_type_name)]
-// #![feature(min_specialization)]
 #![feature(const_fn_trait_bound)]
 #![feature(const_type_name)]
 #![feature(type_name_of_val)]
@@ -54,7 +47,6 @@ pub(in crate) mod phases {
         pub(in crate) use self::constructor_eval::*;
         pub(in crate) use self::constructor_load::*;
         pub(in crate) use self::has_member::*;
-        pub(in crate) use self::inherits_member::*;
         pub(in crate) use self::init_proto::*;
         pub(in crate) use self::init_static::*;
         pub(in crate) use self::init_virt::*;
@@ -64,7 +56,6 @@ pub(in crate) mod phases {
         mod init_caster;
         mod init_super;
 
-        pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_super::*;
     }
 
@@ -110,7 +101,6 @@ pub(in crate) mod inner {
     pub(in crate) use crate::utils::*;
     pub(in crate) use crate::virt::*;
 
-    #[macro_use(crate)]
     pub(in crate) use crate::macros::*;
 }
 
@@ -120,4 +110,3 @@ mod legacy;
 pub use crate::legacy::console;
 pub use crate::legacy::document;
 pub use crate::legacy::timing;
-// ------------------ LEGACY ------------------

@@ -1,9 +1,6 @@
-use std::{collections::HashMap, lazy::OnceCell};
+use std::collections::HashMap;
 
-use lazy_static::lazy_static;
-use parking_lot::Once;
-
-use crate::{build_class, inner::*};
+use crate::inner::*;
 
 pub struct Metadata {
     pub(in crate) obj_id: ClassId,
@@ -25,7 +22,5 @@ impl Metadata {
     }
 }
 
-pub(in crate) type MetaFuncMap<CLS> = HashMap<
-    &'static str,
-    Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Obj<CLS>>) -> Result<Value<'a>>>,
->;
+pub(in crate) type MetaFuncMap<CLS> =
+    HashMap<&'static str, Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Obj<CLS>>) -> Result<Value<'a>>>>;

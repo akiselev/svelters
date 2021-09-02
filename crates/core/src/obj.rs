@@ -4,18 +4,18 @@ pub struct Obj<CLS>
 where
     CLS: Type,
 {
-    pub(in crate) inner: ReprOf<CLS>,
+    pub(in crate) inner: CLS,
 }
 
 impl<'a, CLS> Obj<CLS>
 where
     CLS: Type,
 {
-    pub fn new(inner: ReprOf<CLS>) -> Self {
+    pub fn new(inner: CLS) -> Self {
         Self { inner }
     }
 
-    pub fn as_inner<'b>(&'a self) -> &'b ReprOf<CLS>
+    pub fn as_inner<'b>(&'a self) -> &'b CLS
     where
         'a: 'b,
     {

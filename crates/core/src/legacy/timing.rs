@@ -1,14 +1,9 @@
-use std::time::Duration;
-
-use rquickjs::{
-    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, FileResolver, Func, Function, IntoJs,
-    Module, NativeLoader, Persistent, Rest, Result, Runtime, ScriptLoader, Value,
-};
+use rquickjs::{bind, Ctx, Function, Result};
 // use tokio::time::sleep;
 
 #[bind(object)]
 #[quickjs(rename = "setTimeout")]
-pub fn set_timeout<'js>(ctx: Ctx<'js>, func: Function<'js>, ms: u64) -> Result<()> {
+pub fn set_timeout<'js>(_ctx: Ctx<'js>, _func: Function<'js>, _ms: u64) -> Result<()> {
     // if ms > 0 {
     //     let func = Persistent::save(ctx, func);
     //     let context = Context::from_ctx(ctx)?;

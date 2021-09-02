@@ -2,7 +2,7 @@ use std::future::Future;
 
 use rquickjs::{Loader, Resolver};
 
-use crate::{build_class, inner::*};
+use crate::inner::*;
 
 /// The framework that Svelters exposes to Javascript and Svelte
 pub trait Framework: Sized + 'static {
@@ -39,7 +39,7 @@ pub trait Caster<T> {
 impl<T, U> Caster<T> for U {
     default fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
         &'a self,
-        func: FUNC,
+        _func: FUNC,
     ) -> Result<R> {
         Err(rquickjs::Error::Unknown)
     }
@@ -55,12 +55,8 @@ impl<T, U: Cast<T>> Caster<T> for U {
     }
 }
 
-pub type ReprOf<CLS> = CLS;
-pub type CastedAs<'a, CLS, T> = <CLS as Cast<T>>::Output<'a>;
-
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
 pub trait Module: Sized {
-    #[inline(always)]
     fn define<P>(module: &mut ModuleBuilder<Self, P>) -> Result<()>;
 }
 
@@ -70,9 +66,9 @@ pub trait Type: 'static + Sized {
 
     unsafe fn metadata() -> &'static mut Metadata;
 
-    #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()>;
 
+    #[inline(always)]
     fn name() -> &'static str {
         Self::CLASS_NAME
     }
@@ -110,30 +106,7 @@ pub trait Type: 'static + Sized {
 /// features like reflection and debuging.
 pub trait Implements<P>: Sized {
     #[inline(always)]
-    fn build(self, phase: &mut P) -> Result<()> {
+    fn build(self, _phase: &mut P) -> Result<()> {
         Ok(())
     }
-}
-
-// impl<T, P> Implements<P> for T {
-//     #[inline(always)]
-//     default fn build(self, _phase: &mut P) -> Result<()> {
-//         Ok(())
-//     }
-// }
-
-#[inline(always)]
-pub fn test_inline_has_member<'a, CLS>(name: &'a str) -> anyhow::Result<bool>
-where
-    CLS: Type,
-{
-    Ok(build_class!(CLS with HasMember::<'a, CLS>::new(name)).is_set)
-}
-
-#[inline(always)]
-pub fn test_inline_inherits_member<'a, CLS>(name: &'a str, max_depth: isize) -> anyhow::Result<bool>
-where
-    CLS: Type,
-{
-    Ok(build_class!(CLS with InheritsMember::<'a, CLS>::new(name, max_depth)).is_set)
 }

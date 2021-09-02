@@ -7,7 +7,7 @@ where
     CLS: Type,
 {
     pub(in crate) value: Value<'js>,
-    pub(in crate) inner: ReprOf<CLS>,
+    pub(in crate) inner: CLS,
 }
 
 impl<'js, CLS> Clone for Virt<'js, CLS>
@@ -26,11 +26,11 @@ impl<'js, CLS> Virt<'js, CLS>
 where
     CLS: Type,
 {
-    pub fn new(value: Value<'js>, inner: ReprOf<CLS>) -> Self {
+    pub fn new(value: Value<'js>, inner: CLS) -> Self {
         Self { value, inner }
     }
 
-    pub fn as_inner<'a, 'b>(&'a self) -> &'b ReprOf<CLS>
+    pub fn as_inner<'a, 'b>(&'a self) -> &'b CLS
     where
         'a: 'b,
     {
@@ -118,30 +118,12 @@ where
         match mut_ref {
             Ok(virt) => Ok(virt.clone()),
             Err(err) => match Object::from_js(ctx, value) {
-                Ok(obj) => match obj.get::<_, Function<'_>>("asFrameworkClass") {
+                Ok(obj) => match obj.get::<_, Function<'_>>("castAs") {
                     Ok(func) => func.call((This(obj), CLS::name())),
                     _ => Err(err),
                 },
                 _ => Err(err),
             },
         }
-    }
-}
-
-impl<'a, 'js, CLS> rquickjs::FromJs<'js> for &'js Virt<'js, CLS>
-where
-    CLS: 'static + Type,
-{
-    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Virt<'js, CLS> as rquickjs::ClassDef>::from_js_ref(ctx, value)
-    }
-}
-
-impl<'js, CLS> rquickjs::FromJs<'js> for &'js mut Virt<'js, CLS>
-where
-    CLS: 'static + Type,
-{
-    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Virt<'js, CLS> as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

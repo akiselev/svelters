@@ -46,7 +46,7 @@ mod prop {
     }
 
     impl<CLS, PROP, GET, SET, P> Implements<P> for Property<CLS, PROP, GET, SET> {
-        default fn build(self, phase: &mut P) -> Result<()> {
+        default fn build(self, _: &mut P) -> Result<()> {
             Ok(())
         }
     }
@@ -68,7 +68,7 @@ mod prop {
     }
 
     impl<CLS, PROP, GET, P> Implements<P> for ReadOnly<CLS, PROP, GET> {
-        default fn build(self, phase: &mut P) -> Result<()> {
+        default fn build(self, _: &mut P) -> Result<()> {
             Ok(())
         }
     }
@@ -94,7 +94,7 @@ mod method {
     }
 
     impl<THIS, ARGS, RET, CLS, P> Implements<P> for Method<CLS, ARGS, RET, THIS> {
-        default fn build(self, phase: &mut P) -> Result<()> {
+        default fn build(self, _: &mut P) -> Result<()> {
             Ok(())
         }
     }
@@ -121,7 +121,7 @@ mod staticfn {
     }
 
     impl<THIS, ARGS, RET, CLS: Type, P> Implements<P> for StaticFn<CLS, ARGS, RET, THIS> {
-        default fn build(self, phase: &mut P) -> Result<()> {
+        default fn build(self, _: &mut P) -> Result<()> {
             Ok(())
         }
     }
@@ -130,7 +130,7 @@ mod staticfn {
 mod superclass {
     use super::*;
 
-    pub struct Superclass<SUPER>(PhantomData<(SUPER)>);
+    pub struct Superclass<SUPER>(PhantomData<SUPER>);
 
     impl<SUPER> Superclass<SUPER> {
         pub(in crate) fn new() -> Self {

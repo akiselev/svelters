@@ -3,7 +3,7 @@ use crate::{build_class, inner::*};
 pub struct InitStatic<'a, 'js, CLS> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) obj: &'a Object<'js>,
-    pub(in crate) framework: PhantomData<(CLS)>,
+    pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, 'js, CLS> InitStatic<'a, 'js, CLS> {

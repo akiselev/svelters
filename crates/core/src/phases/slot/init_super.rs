@@ -20,7 +20,7 @@ where
     CLS: Type,
     SUPER: Type,
     NESTED: Clone + Type,
-    ReprOf<CLS>: Caster<NESTED>,
+    CLS: Caster<NESTED>,
 {
     #[inline(always)]
     fn build(self, phase: &mut InitSuperCaster<'a, CLS, SUPER>) -> Result<()> {

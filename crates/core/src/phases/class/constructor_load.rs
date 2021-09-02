@@ -3,7 +3,7 @@ use crate::inner::*;
 pub struct ConstructorLoad<'a, 'js, CLS> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) module: &'a QJsModule<'js, Created>,
-    pub(in crate) framework: PhantomData<(CLS)>,
+    pub(in crate) framework: PhantomData<CLS>,
 }
 
 impl<'a, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {

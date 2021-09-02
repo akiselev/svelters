@@ -15,14 +15,3 @@ macro_rules! build_class {
         child
     }};
 }
-
-#[macro_export(crate)]
-macro_rules! default_impl {
-    ($cls:ident with $phase:expr) => {{
-        let mut child = $phase;
-        let mut cls: TypeBuilder<$fw, $cls, _> = TypeBuilder::new(&mut child);
-        cls.class()?;
-        <$cls as Type>::define(&mut cls)?;
-        child
-    }};
-}

@@ -1,10 +1,6 @@
 use std::rc::Rc;
 
-use rquickjs::ClassId;
-
 use super::*;
-
-pub struct Temp<T>(pub T);
 
 impl Type for Fw<Rc<Object>> {
     const CLASS_NAME: &'static str = "Object";
@@ -42,6 +38,9 @@ impl Type for Fw<Rc<Object>> {
         cls.method0("className2", |_this: &Self| -> String {
             "Object".to_string()
         })?;
+        cls.method0("nestedFn", |_this: &Self| -> String {
+            "Object".to_string()
+        })?;
         Ok(())
     }
 }
@@ -72,6 +71,7 @@ impl Type for Fw<Rc<Widget>> {
         cls.method0("className2", |_this: &Self| -> String {
             "Widget".to_string()
         })?;
+
         Ok(())
     }
 }
@@ -133,6 +133,9 @@ impl Type for Fw<Rc<MainWindow>> {
         cls.method0("className2", |_this: &Self| -> String {
             "MainWindow".to_string()
         })?;
+        cls.method0("nestedFn", |_this: &Self| -> String {
+            "NESTED".to_string()
+        })?;
         Ok(())
     }
 }
@@ -157,8 +160,8 @@ impl Type for Fw<Rc<BoxLayout>> {
 
         cls.prop(
             "type",
-            |this: &Self| Ok(format!("Overriden")),
-            |this: &Self, val: String| Ok(()),
+            |_this: &Self| Ok(format!("Overriden")),
+            |_this: &Self, _val: String| Ok(()),
         )?;
 
         cls.method0("className", |_this: &Self| -> String {
