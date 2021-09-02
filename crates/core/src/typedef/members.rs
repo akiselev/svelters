@@ -146,6 +146,31 @@ mod superclass {
     }
 }
 
+mod element {
+    use super::*;
+
+    pub struct Element<CLS> {
+        name: &'static str,
+        marker: PhantomData<CLS>,
+    }
+
+    impl<CLS> Element<CLS> {
+        pub(in crate) fn new(name: &'static str) -> Self {
+            Element {
+                name,
+                marker: PhantomData,
+            }
+        }
+    }
+
+    impl<CLS, P> Implements<P> for Element<CLS> {
+        #[inline(always)]
+        default fn build(self, _phase: &mut P) -> Result<()> {
+            Ok(())
+        }
+    }
+}
+
 pub use self::constructor::*;
 pub use self::method::*;
 pub use self::prop::*;

@@ -9,30 +9,38 @@
 #![allow(incomplete_features, dead_code)]
 
 pub mod prelude {
-    pub use crate::metadata::Metadata;
-    pub use crate::module::ModuleBuilder;
-    pub use crate::obj::Obj;
     pub use crate::traits::*;
-    pub use crate::typedef::TypeBuilder;
-    pub use crate::virt::Virt;
+    pub use crate::typedef::builder::TypeBuilder;
+    pub use crate::typedef::metadata::Metadata;
+    pub use crate::typedef::module::ModuleBuilder;
+    pub use crate::typedef::obj::Obj;
+    pub use crate::typedef::virt::Virt;
 }
 
-#[cfg(feature = "unstable")]
-pub mod types {
-    pub use phases::Constructor;
-}
-
-pub(in crate) mod builders;
-pub(in crate) mod macros;
-pub(in crate) mod metadata;
-pub(in crate) mod module;
-pub(in crate) mod obj;
-pub(in crate) mod traits;
-pub(in crate) mod typedef;
-pub(in crate) mod utils;
-pub(in crate) mod virt;
+pub use crate::utils::console;
+pub use crate::utils::timing;
 
 // ----------------- INTERNAL -----------------
+
+pub(in crate) mod macros;
+pub(in crate) mod traits;
+pub(in crate) mod utils;
+
+pub(in crate) mod typedef {
+    pub(in crate) mod builder;
+    pub(in crate) mod members;
+    pub(in crate) mod metadata;
+    pub(in crate) mod module;
+    pub(in crate) mod obj;
+    pub(in crate) mod virt;
+
+    pub(in crate) use self::builder::*;
+    pub(in crate) use self::members::*;
+    pub(in crate) use self::metadata::*;
+    pub(in crate) use self::module::*;
+    pub(in crate) use self::obj::*;
+    pub(in crate) use self::virt::*;
+}
 
 pub(in crate) mod phases {
     mod class {
@@ -52,6 +60,12 @@ pub(in crate) mod phases {
         mod init_super;
 
         pub(in crate) use self::init_super::*;
+    }
+
+    mod element {
+        mod init_element;
+
+        pub(in crate) use self::init_element::*;
     }
 
     mod module {
@@ -86,22 +100,11 @@ pub(in crate) mod inner {
         Result, Value,
     };
 
-    pub(in crate) use crate::builders::*;
-    pub(in crate) use crate::metadata::*;
-    pub(in crate) use crate::module::*;
-    pub(in crate) use crate::obj::*;
     pub(in crate) use crate::phases::*;
     pub(in crate) use crate::traits::*;
     pub(in crate) use crate::typedef::*;
     pub(in crate) use crate::utils::*;
-    pub(in crate) use crate::virt::*;
 
     pub(in crate) use crate::macros::*;
+    pub(in crate) use crate::utils;
 }
-
-// ------------------ LEGACY ------------------
-mod legacy;
-
-pub use crate::legacy::console;
-pub use crate::legacy::document;
-pub use crate::legacy::timing;
