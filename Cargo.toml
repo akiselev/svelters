@@ -37,14 +37,14 @@ lto = true
 [workspace]
 members = [
     "crates/core",
-    "crates/compiler",
-    "crates/qt",
-    "crates/macros",
     "crates/rquickjs",
     "crates/rquickjs/rquickjs-core",
     "crates/rquickjs/rquickjs-macro",
 ]
 exclude = [
+    "crates/compiler",
+    "crates/qt",
+    "crates/macros",
     "codegen",
     "crates/oldqt",
     "crates/gtk4",

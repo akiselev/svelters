@@ -2,6 +2,21 @@ use std::collections::HashMap;
 
 use crate::inner::*;
 
+#[derive(Debug, Copy, Clone)]
+pub struct Class<CLS>(PhantomData<CLS>);
+
+impl<CLS> Class<CLS> {
+    pub fn new() -> Self {
+        Class(PhantomData)
+    }
+}
+
+impl<CLS: Type> Class<CLS> {
+    pub fn name(&self) -> &'static str {
+        CLS::CLASS_NAME
+    }
+}
+
 pub struct Metadata {
     pub(in crate) obj_id: ClassId,
     pub(in crate) virt_id: ClassId,

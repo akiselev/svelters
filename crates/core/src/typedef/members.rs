@@ -1,3 +1,21 @@
+use crate::inner::Class;
+
+pub struct Member<CLS, MEM> {
+    pub(in crate) name: &'static str,
+    pub(in crate) class: Class<CLS>,
+    pub(in crate) member: MEM,
+}
+
+impl<CLS, FUNC> Member<CLS, FUNC> {
+    pub fn new(name: &'static str, member: FUNC) -> Member<CLS, FUNC> {
+        Member {
+            name,
+            class: Class::new(),
+            member: member,
+        }
+    }
+}
+
 mod constructor {
     use crate::inner::*;
 
@@ -94,6 +112,16 @@ mod method {
     impl<THIS, ARGS, RET, CLS, P> Implements<P> for Method<CLS, ARGS, RET, THIS> {
         default fn build(self, _: &mut P) -> Result<()> {
             Ok(())
+        }
+    }
+
+    pub struct AsMethod<FUNC> {
+        pub(in crate) func: FUNC,
+    }
+
+    impl<FUNC> AsMethod<FUNC> {
+        pub fn new(func: FUNC) -> Self {
+            Self { func }
         }
     }
 }

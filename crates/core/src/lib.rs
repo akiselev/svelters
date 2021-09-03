@@ -1,13 +1,24 @@
-#![feature(generic_associated_types)]
-#![feature(const_type_name)]
-#![feature(type_name_of_val)]
-#![feature(once_cell)]
-#![feature(specialization)]
-#![feature(unboxed_closures)]
-#![feature(fn_traits)]
 #![recursion_limit = "4096"]
 #![allow(incomplete_features, dead_code)]
-
+// GATS and specialization make up the core of this API
+#![feature(specialization)]
+#![feature(generic_associated_types)]
+// Used for static data like type information
+#![feature(once_cell)]
+// Helps with WithImpl trait that converts from JS to args used by functions
+#![feature(negative_impls)]
+#![feature(auto_traits)]
+// For traits using Fn<ARGS, Output=R> instead of Fn(args...) macros
+#![feature(unboxed_closures)]
+#![feature(fn_traits)]
+// Useful for optimized debugging and whatnot
+#![feature(const_type_name)]
+#![feature(type_name_of_val)]
+// allows bounds of the form `where T: MyTrait<Output: TraitBound>`
+//   instead of `<T as MyTrait>::Output: TraitBound`
+#![feature(associated_type_bounds)]
+// Helps reduce some of the trait bound noise
+#![feature(trait_alias)]
 pub mod prelude {
     pub use crate::traits::*;
 
@@ -66,9 +77,17 @@ pub(in crate) mod typedef {
 
     pub(in crate) mod traits {
         pub(in crate) mod constructor;
+        pub(in crate) mod from_impl;
+        pub(in crate) mod method_impl;
+        pub(in crate) mod to_result;
+        pub(in crate) mod with_impl;
     }
 
     pub(in crate) use self::traits::constructor::*;
+    pub(in crate) use self::traits::from_impl::*;
+    pub(in crate) use self::traits::method_impl::*;
+    pub(in crate) use self::traits::to_result::*;
+    pub(in crate) use self::traits::with_impl::*;
 }
 
 pub(in crate) mod phases {

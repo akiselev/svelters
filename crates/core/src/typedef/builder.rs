@@ -24,6 +24,18 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
         Ok(())
     }
 
+    pub fn method<RET, FN, ARGS>(&mut self, name: &'static str, func: FN) -> Result<()>
+    where
+        CLS: 'static + Type,
+        ARGS: WithImpl<CLS>,
+        RET: 'static + for<'js> ToResult<'js>,
+        FN: 'static + for<'x> Fn<ARGS, Output = RET>,
+        Member<CLS, AsMethod<FN>>: Implements<PHASE>,
+    {
+        Member::new(name, AsMethod::new(func)).build(&mut self.phase)?;
+        Ok(())
+    }
+
     #[inline(always)]
     pub fn prop<PROP, GET, SET>(
         &mut self,
