@@ -19,6 +19,9 @@
 #![feature(associated_type_bounds)]
 // Helps reduce some of the trait bound noise
 #![feature(trait_alias)]
+// enables println!("{inline} variables") instead of println!("{} variables", inline)
+#![feature(format_args_capture)]
+
 pub mod prelude {
     pub use crate::traits::*;
 
