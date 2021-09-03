@@ -39,7 +39,7 @@ impl Type for Fw<Rc<Object>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("Object".to_string())
         })?;
-        cls.method("className2", |_this: &Self| -> Result<String> {
+        cls.method0("className2", |_this: &Self| -> Result<String> {
             Ok("Object".to_string())
         })?;
         cls.method0("nestedFn", |_this: &Self| -> Result<String> {
@@ -74,7 +74,7 @@ impl Type for Fw<Rc<Widget>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("Widget".to_string())
         })?;
-        cls.method("className2", |_this: &Self| -> Result<String> {
+        cls.method0("className2", |_this: &Self| -> Result<String> {
             Ok("Widget".to_string())
         })?;
 
@@ -110,7 +110,7 @@ impl Type for Fw<Rc<Application>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("Application".to_string())
         })?;
-        cls.method("className2", |_this: &Self| -> Result<String> {
+        cls.method0("className2", |_this: &Self| -> Result<String> {
             Ok("Application".to_string())
         })?;
         Ok(())
@@ -140,7 +140,7 @@ impl Type for Fw<Rc<MainWindow>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("MainWindow".to_string())
         })?;
-        cls.method("className2", |_this: &Self| -> Result<String> {
+        cls.method0("className2", |_this: &Self| -> Result<String> {
             Ok("MainWindow".to_string())
         })?;
         cls.method0("nestedFn", |_this: &Self| -> Result<String> {
@@ -207,7 +207,7 @@ impl Type for Fw<Rc<AbstractButton>> {
         cls.method0("className", |_this: &Self| -> Result<String> {
             Ok("AbstractButton".to_string())
         })?;
-        cls.method("className2", |_this: &Self| -> Result<String> {
+        cls.method0("className2", |_this: &Self| -> Result<String> {
             Ok("AbstractButton".to_string())
         })?;
         Ok(())

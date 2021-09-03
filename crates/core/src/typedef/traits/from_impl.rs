@@ -208,81 +208,76 @@ where
     }
 }
 
-// macro_rules! tup {
-//     ($($($arg:ident)*,)*) => {
-//         $(
-//             #[allow(unused_variables)]
-//             impl<'js: 'c, 'c, BASE, CLS, $($arg),*> FromImpl<'js, BASE> for (&'c CLS, $($arg,)*)
-//             where
-//                 CLS: Type,
-//                 BASE: Clone + Type + Cast<CLS>,
-//                 $($arg: FromImpl<'js, BASE>),*
-//             {
-//                 #[allow(non_snake_case)]
-//                 fn num_args() -> Range<usize> {
-//                     $(let $arg = $arg::num_args();)*
-//                     0usize $(+ $arg.start)* .. 0usize $(.saturating_add($arg.end))*
-//                 }
+macro_rules! tup {
+    ($($($arg:ident)*,)*) => {
+        $(
+            #[allow(unused_variables)]
+            impl<'js: 'c, 'c, BASE, $($arg),*> FromImpl<'js, BASE> for ($($arg,)*)
+            where
+                BASE: Type,
+                $($arg: FromImpl<'js, BASE>),*
+            {
+                #[allow(non_snake_case)]
+                fn num_args() -> Range<usize> {
+                    $(let $arg = $arg::num_args();)*
+                    0usize $(+ $arg.start)* .. 0usize $(.saturating_add($arg.end))*
+                }
 
-//                 fn from_obj<'i>(accessor: &mut InputAccessor<'i, 'js>) -> Result<Self> {
-//                     let this: &Obj<BASE> = accessor.this()?;
-//                     Ok((this.inner.cast().as_ref(), $(
-//                         $arg::from_obj(accessor)?,
-//                     )*))
-//                 }
+                fn from_obj<'i>(accessor: &mut InputAccessor<'i, 'js>) -> Result<Self> {
+                    Ok(($(
+                        $arg::from_obj(accessor)?,
+                    )*))
+                }
 
-//                 fn from_virt<'i>(accessor: &mut InputAccessor<'i, 'js>) -> Result<Self> {
-//                     let this: Virt<BASE> = accessor.this()?;
-//                     Ok((this.inner.cast().as_ref(), $(
-//                         $arg::from_virt(accessor)?,
-//                     )*))
-//                 }
+                fn from_virt<'i>(accessor: &mut InputAccessor<'i, 'js>) -> Result<Self> {
+                    Ok(($(
+                        $arg::from_virt(accessor)?,
+                    )*))
+                }
 
-//                 fn from_element<'i>(accessor: &mut InputAccessor<'i, 'js>) -> Result<Self> {
-//                     let this: &Element = accessor.this()?;
-//                     let this: &Obj<BASE> = FromJs::from_js(accessor.ctx(), this.inner.as_value().clone())?;
-//                     Ok((this.inner.cast().as_ref(), $(
-//                         $arg::from_element(accessor)?,
-//                     )*))
-//                 }
-//             }
-//         )*
-//     };
-//     (@one $($t:tt)*) => { 1 };
-//     (@idx A) => { 0 };
-//     (@idx B) => { 1 };
-//     (@idx C) => { 2 };
-//     (@idx D) => { 3 };
-//     (@idx E) => { 4 };
-//     (@idx F) => { 5 };
-//     (@idx G) => { 6 };
-//     (@idx H) => { 7 };
-//     (@idx I) => { 8 };
-//     (@idx J) => { 9 };
-//     (@idx K) => { 10 };
-//     (@idx L) => { 11 };
-//     (@idx M) => { 12 };
-//     (@idx N) => { 13 };
-//     (@idx O) => { 14 };
-//     (@idx P) => { 15 };
-// }
+                fn from_element<'i>(accessor: &mut InputAccessor<'i, 'js>) -> Result<Self> {
+                    Ok(($(
+                        $arg::from_element(accessor)?,
+                    )*))
+                }
+            }
+        )*
+    };
+    (@one $($t:tt)*) => { 1 };
+    (@idx A) => { 0 };
+    (@idx B) => { 1 };
+    (@idx C) => { 2 };
+    (@idx D) => { 3 };
+    (@idx E) => { 4 };
+    (@idx F) => { 5 };
+    (@idx G) => { 6 };
+    (@idx H) => { 7 };
+    (@idx I) => { 8 };
+    (@idx J) => { 9 };
+    (@idx K) => { 10 };
+    (@idx L) => { 11 };
+    (@idx M) => { 12 };
+    (@idx N) => { 13 };
+    (@idx O) => { 14 };
+    (@idx P) => { 15 };
+}
 
-// tup! {
-//     ,
-//     A,
-//     A B,
-//     A B C,
-//     A B C D,
-//     A B C D E,
-//     A B C D E F,
-//     A B C D E F G,
-//     A B C D E F G H,
-//     A B C D E F G H I,
-//     A B C D E F G H I J,
-//     A B C D E F G H I J K,
-//     A B C D E F G H I J K L,
-//     A B C D E F G H I J K L M,
-//     A B C D E F G H I J K L M N,
-//     A B C D E F G H I J K L M N O,
-//     A B C D E F G H I J K L M N O P,
-// }
+tup! {
+    ,
+    A,
+    A B,
+    A B C,
+    A B C D,
+    A B C D E,
+    A B C D E F,
+    A B C D E F G,
+    A B C D E F G H,
+    A B C D E F G H I,
+    A B C D E F G H I J,
+    A B C D E F G H I J K,
+    A B C D E F G H I J K L,
+    A B C D E F G H I J K L M,
+    A B C D E F G H I J K L M N,
+    A B C D E F G H I J K L M N O,
+    A B C D E F G H I J K L M N O P,
+}

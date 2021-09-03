@@ -76,13 +76,11 @@ pub(in crate) mod typedef {
     pub(in crate) use self::virt::*;
 
     pub(in crate) mod traits {
-        pub(in crate) mod constructor;
         pub(in crate) mod from_impl;
         pub(in crate) mod method_impl;
         pub(in crate) mod to_result;
     }
 
-    pub(in crate) use self::traits::constructor::*;
     pub(in crate) use self::traits::from_impl::*;
     pub(in crate) use self::traits::method_impl::*;
     pub(in crate) use self::traits::to_result::*;

@@ -13,6 +13,15 @@ where
     }
 }
 
+impl<'js, T> ToResult<'js> for Result<T>
+where
+    T: NotResultType + NotCoreType + NotQJsType + IntoJs<'js>,
+{
+    fn to_result(self, ctx: Ctx<'js>) -> Result<Value<'js>> {
+        self?.into_js(ctx)
+    }
+}
+
 impl<'js> ToResult<'js> for Value<'js> {
     fn to_result(self, ctx: Ctx<'js>) -> Result<Value<'js>> {
         Ok(self)
