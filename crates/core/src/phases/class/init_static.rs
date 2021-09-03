@@ -16,7 +16,7 @@ impl<'a, 'js, CLS> InitStatic<'a, 'js, CLS> {
     }
 }
 
-impl<'a, 'b: 'a, BASE, SUPER> Implements<InitStatic<'a, 'b, BASE>> for Superclass<SUPER>
+impl<'a, 'b: 'a, BASE, SUPER> Implements<InitStatic<'a, 'b, BASE>> for members::Superclass<SUPER>
 where
     BASE: Caster<SUPER>,
     SUPER: Type,
@@ -31,7 +31,7 @@ where
 macro_rules! tup {
     ($($($arg:ident)*,)*) => {
         $(
-            impl<'a, 'b: 'a, T, BASE, CLS, R, $($arg,)*> Implements<InitStatic<'a, 'b, BASE>> for StaticFn<CLS, ($($arg,)*), R, T>
+            impl<'a, 'b: 'a, T, BASE, CLS, R, $($arg,)*> Implements<InitStatic<'a, 'b, BASE>> for members::StaticFn<CLS, ($($arg,)*), R, T>
             where
                 BASE: Caster<CLS>,
                 CLS: Type,

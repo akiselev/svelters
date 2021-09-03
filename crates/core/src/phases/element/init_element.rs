@@ -17,7 +17,7 @@ impl<'a, BASE> InitElement<'a, BASE> {
 }
 
 impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitElement<'a, BASE>>
-    for Property<CLS, PROP, GET, SET>
+    for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
     BASE: Type + Caster<CLS>,
@@ -27,7 +27,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
-        let Property {
+        let members::Property {
             name,
             getter,
             setter,
@@ -42,7 +42,7 @@ where
 }
 
 impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitElement<'a, BASE>>
-    for ReadOnly<CLS, PROP, GET>
+    for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
     BASE: Type + Caster<CLS>,
@@ -51,14 +51,14 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
-        let ReadOnly { name, getter, .. } = self;
+        let members::ReadOnly { name, getter, .. } = self;
 
         phase.element.readonly::<BASE, CLS, PROP, GET>(name, getter);
         Ok(())
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitElement<'a, CLS>> for Superclass<SUPER>
+impl<'a, 'b: 'a, CLS, SUPER> Implements<InitElement<'a, CLS>> for members::Superclass<SUPER>
 where
     CLS: Type + Caster<SUPER>,
     SUPER: Type,

@@ -57,7 +57,7 @@ where
     }
 }
 
-impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for Superclass<SUPER>
+impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for members::Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type + Clone,

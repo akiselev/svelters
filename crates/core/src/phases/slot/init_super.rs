@@ -15,7 +15,7 @@ impl<'a, CLS: Type, SUPER> InitSuperCaster<'a, CLS, SUPER> {
 }
 
 impl<'a, 'b: 'a, CLS, SUPER, NESTED> Implements<InitSuperCaster<'a, CLS, SUPER>>
-    for Superclass<NESTED>
+    for members::Superclass<NESTED>
 where
     CLS: Type,
     SUPER: Type,

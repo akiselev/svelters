@@ -1,13 +1,13 @@
 use crate::{build_class, inner::*};
 
-pub struct InitElementProto<'a, 'js, BASE> {
+pub struct InitElementProto<'a, 'b, 'js, BASE> {
     pub(in crate) ctx: Ctx<'js>,
-    pub(in crate) obj: &'a Object<'js>,
+    pub(in crate) obj: &'a Object<'b>,
     pub(in crate) framework: PhantomData<BASE>,
 }
 
-impl<'a, 'js, BASE> InitElementProto<'a, 'js, BASE> {
-    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
+impl<'a, 'b, 'js, BASE> InitElementProto<'a, 'b, 'js, BASE> {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'b>) -> Self {
         Self {
             ctx,
             obj,
@@ -16,8 +16,8 @@ impl<'a, 'js, BASE> InitElementProto<'a, 'js, BASE> {
     }
 }
 
-impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitElementProto<'a, 'b, BASE>>
-    for Property<CLS, PROP, GET, SET>
+impl<'a, 'b, 'c, BASE, CLS, PROP, GET, SET> Implements<InitElementProto<'a, 'b, 'c, BASE>>
+    for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
     BASE: Type,
@@ -27,8 +27,8 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, BASE>) -> Result<()> {
-        let Property {
+    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+        let members::Property {
             name,
             getter,
             setter,
@@ -62,8 +62,8 @@ where
     }
 }
 
-impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitElementProto<'a, 'b, BASE>>
-    for ReadOnly<CLS, PROP, GET>
+impl<'a, 'b, 'c, BASE, CLS, PROP, GET> Implements<InitElementProto<'a, 'b, 'c, BASE>>
+    for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
     BASE: Type,
@@ -72,8 +72,8 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, BASE>) -> Result<()> {
-        let ReadOnly { name, getter, .. } = self;
+    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+        let members::ReadOnly { name, getter, .. } = self;
 
         let res = phase.obj.prop(
             name,
@@ -93,15 +93,16 @@ where
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitElementProto<'a, 'b, CLS>> for Superclass<SUPER>
+impl<'a, 'b, 'c, CLS, SUPER> Implements<InitElementProto<'a, 'b, 'c, CLS>>
+    for members::Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type,
     CLS: Caster<SUPER>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, CLS>) -> Result<()> {
-        build_class!(SUPER with InitElementProto::<'_, '_, CLS>::new(phase.ctx, phase.obj));
+    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
+        build_class!(SUPER with InitElementProto::<'a, 'b, 'c, CLS>::new(phase.ctx, phase.obj));
         Ok(())
     }
 }
@@ -109,8 +110,8 @@ where
 macro_rules! tup {
     ($($($arg:ident)*,)*) => {
         $(
-            impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitElementProto<'a, 'b, BASE>>
-                for Method<CLS, (THIS, $($arg,)*), RET, FUNC>
+            impl<'a, 'b, 'c, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitElementProto<'a, 'b, 'c, BASE>>
+                for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
                 BASE: Type + Caster<THIS>,
@@ -120,7 +121,7 @@ macro_rules! tup {
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
-                fn build(self, phase: &mut InitElementProto<'a, 'b, BASE>) -> Result<()> {
+                fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
                     phase.obj.set(
                         self.name,
                         rquickjs::Func::new(

@@ -3,7 +3,7 @@ use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use crate::inner::*;
 
 pub struct DocInner {
-    pub(in crate) events: EventHandlers,
+    pub(in crate) events: Dispatcher,
     pub(in crate) elements: HashMap<&'static str, ElementType>,
 }
 

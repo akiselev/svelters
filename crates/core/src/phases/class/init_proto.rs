@@ -17,7 +17,7 @@ impl<'a, 'js, BASE> InitProto<'a, 'js, BASE> {
 }
 
 impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitProto<'a, 'b, BASE>>
-    for Property<CLS, PROP, GET, SET>
+    for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
     BASE: Type,
@@ -28,7 +28,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
-        let Property {
+        let members::Property {
             name,
             getter,
             setter,
@@ -61,7 +61,7 @@ where
 }
 
 impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitProto<'a, 'b, BASE>>
-    for ReadOnly<CLS, PROP, GET>
+    for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
     BASE: Type,
@@ -71,7 +71,7 @@ where
 {
     #[inline(always)]
     fn build(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
-        let ReadOnly { name, getter, .. } = self;
+        let members::ReadOnly { name, getter, .. } = self;
 
         // phase.obj(name).ok();
         let res = phase.obj.prop(
@@ -89,7 +89,7 @@ where
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for Superclass<SUPER>
+impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for members::Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type,
@@ -107,7 +107,7 @@ macro_rules! tup {
         $(
             #[allow(unused_variables)]
             impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitProto<'a, 'b, BASE>>
-                for Method<CLS, (THIS, $($arg,)*), RET, FUNC>
+                for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
                 BASE: Type + Caster<THIS>,

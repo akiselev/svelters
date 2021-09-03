@@ -1,7 +1,5 @@
-use crate::inner::*;
-
 mod constructor {
-    use super::*;
+    use crate::inner::*;
 
     pub struct Constructor<CLS, ARGS, THIS>(pub(crate) THIS, pub(crate) PhantomData<(CLS, ARGS)>)
     where
@@ -25,7 +23,7 @@ mod constructor {
 }
 
 mod prop {
-    use super::*;
+    use crate::inner::*;
 
     pub struct Property<CLS, PROP, GET, SET> {
         pub(crate) name: &'static str,
@@ -75,7 +73,7 @@ mod prop {
 }
 
 mod method {
-    use super::*;
+    use crate::inner::*;
 
     pub struct Method<CLS, ARGS, RET, THIS> {
         pub(crate) name: &'static str,
@@ -101,7 +99,7 @@ mod method {
 }
 
 mod staticfn {
-    use super::*;
+    use crate::inner::*;
 
     pub struct StaticFn<CLS, ARGS, RET, THIS>(
         pub(crate) &'static str,
@@ -128,7 +126,7 @@ mod staticfn {
 }
 
 mod superclass {
-    use super::*;
+    use crate::inner::*;
 
     pub struct Superclass<SUPER>(PhantomData<SUPER>);
 
@@ -147,17 +145,17 @@ mod superclass {
 }
 
 mod element {
-    use super::*;
+    use crate::inner::*;
 
-    pub struct ElementMember<CLS, FUNC> {
+    pub struct Element<CLS, FUNC> {
         pub(in crate) name: &'static str,
         pub(in crate) func: FUNC,
         marker: PhantomData<CLS>,
     }
 
-    impl<CLS, FUNC> ElementMember<CLS, FUNC> {
+    impl<CLS, FUNC> Element<CLS, FUNC> {
         pub(in crate) fn new(name: &'static str, func: FUNC) -> Self {
-            ElementMember {
+            Element {
                 name,
                 func,
                 marker: PhantomData,
@@ -165,7 +163,7 @@ mod element {
         }
     }
 
-    impl<CLS, FUNC, P> Implements<P> for ElementMember<CLS, FUNC> {
+    impl<CLS, FUNC, P> Implements<P> for Element<CLS, FUNC> {
         #[inline(always)]
         default fn build(self, _phase: &mut P) -> Result<()> {
             Ok(())

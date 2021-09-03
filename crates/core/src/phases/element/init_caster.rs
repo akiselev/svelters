@@ -7,7 +7,7 @@ pub struct InitElementCaster<'a, CLS: Type> {
     pub(in crate) framework: PhantomData<CLS>,
 }
 
-impl<'a, CLS: Type> InitElementCaster<'a, CLS> {
+impl<'a, 'b, CLS: Type> InitElementCaster<'a, CLS> {
     pub fn new(map: &'a mut ElementCasterMap) -> Self {
         Self {
             map,
@@ -16,7 +16,7 @@ impl<'a, CLS: Type> InitElementCaster<'a, CLS> {
     }
 }
 
-impl<'a, CLS, SUPER> Implements<InitElementCaster<'a, CLS>> for Superclass<SUPER>
+impl<'a, CLS, SUPER> Implements<InitElementCaster<'a, CLS>> for members::Superclass<SUPER>
 where
     CLS: Type,
     SUPER: Type + Clone,
@@ -56,8 +56,8 @@ impl<'a, CLS: Type, SUPER> InitElementSuperCaster<'a, CLS, SUPER> {
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER, NESTED> Implements<InitElementSuperCaster<'a, CLS, SUPER>>
-    for Superclass<NESTED>
+impl<'a, CLS, SUPER, NESTED> Implements<InitElementSuperCaster<'a, CLS, SUPER>>
+    for members::Superclass<NESTED>
 where
     CLS: Type,
     SUPER: Type,

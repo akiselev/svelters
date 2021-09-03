@@ -1,4 +1,4 @@
-use crate::inner::*;
+use crate::inner::{members::*, *};
 
 pub struct TypeBuilder<'a, CLS, PHASE> {
     phase: &'a mut PHASE,
@@ -70,9 +70,9 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
     where
         CLS: Type,
         FUNC: 'static + Fn() -> Result<CLS>,
-        ElementMember<CLS, FUNC>: Implements<PHASE>,
+        members::Element<CLS, FUNC>: Implements<PHASE>,
     {
-        ElementMember::<CLS, FUNC>::new(name, func).build(&mut self.phase)?;
+        members::Element::<CLS, FUNC>::new(name, func).build(&mut self.phase)?;
         Ok(())
     }
 }
