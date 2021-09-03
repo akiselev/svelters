@@ -1,6 +1,4 @@
-use std::{any::type_name, collections::HashMap, lazy::OnceCell};
-
-use rquickjs::Persistent;
+use std::{collections::HashMap, lazy::OnceCell};
 
 use crate::{build_class, inner::*};
 
@@ -125,7 +123,6 @@ macro_rules! tup {
                 fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
                     JsClass::<Obj<CLS>>::register(phase.ctx)?;
                     JsClass::<Virt<CLS>>::register(phase.ctx)?;
-                    JsClass::<Element<'b>>::register(phase.ctx)?;
                     phase.module.set(
                         <CLS as Type>::CLASS_NAME,
                         rquickjs::Func::new(

@@ -10,7 +10,6 @@ mod common;
 mod steps;
 
 pub use common::CoreWorld;
-use svelters_core::prelude::cleanup_svelters;
 
 #[tokio::main]
 async fn main() {
@@ -26,7 +25,7 @@ async fn main() {
         //     let pool = ctx.get::<SqlitePool>().unwrap().clone();
         //     async move { create_tables(&pool).await }.boxed()
         // })
-        .after(feature("Core"), |ctx| {
+        .after(feature("Core"), |_| {
             async move {
                 println!(" ");
                 println!(" ");

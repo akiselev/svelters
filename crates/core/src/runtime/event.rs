@@ -1,6 +1,4 @@
-use rquickjs::Persistent;
-
-use crate::{build_class, inner::*};
+use crate::{inner::*};
 
 #[derive(Clone)]
 pub struct Event<T> {
@@ -54,14 +52,14 @@ impl<'x> ClassDef for Event<Value<'x>> {
 
     const HAS_REFS: bool = true;
 
-    fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+    fn init_proto<'js>(_ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
         proto.set(
             "initCustomEvent",
             rquickjs::Func::new(
                 "initCustomEvent",
                 rquickjs::Method(
                     |event: &mut Event<Value<'js>>,
-                     ctx: Ctx<'js>,
+                     _ctx: Ctx<'js>,
                      _type: String,
                      bubbles: bool,
                      cancelable: bool,
@@ -128,11 +126,11 @@ impl<'x> ClassDef for Event<Value<'x>> {
         Ok(())
     }
 
-    fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
         Ok(())
     }
 
-    fn mark_refs(&self, marker: &RefsMarker) {}
+    fn mark_refs(&self, _marker: &RefsMarker) {}
 
     fn into_js_obj<'js>(self, ctx: Ctx<'js>) -> Result<Value<'js>>
     where

@@ -8,6 +8,7 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     rquickjs::Class::<Document>::register(ctx)?;
     rquickjs::Class::<Event<Value<'js>>>::register(ctx)?;
     rquickjs::Class::<Slot>::register(ctx)?;
+    rquickjs::Class::<Element>::register(ctx)?;
 
     ctx.globals().set("document", doc)?;
     Ok(())
@@ -16,7 +17,7 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
 pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.clear_registery();
     let doc: &mut Document = ctx.globals().get("document")?;
-    for (key, val) in doc.inner.borrow_mut().elements.drain() {}
+    for (_key, _val) in doc.inner.borrow_mut().elements.drain() {}
     Ok(())
 
 }

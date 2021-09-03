@@ -46,6 +46,7 @@ pub(in crate) mod macros;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
 
+#[allow(unused_imports)]
 pub(in crate) mod runtime {
     pub(in crate) mod callbacks;
     pub(in crate) mod doc_impl;
@@ -64,6 +65,7 @@ pub(in crate) mod runtime {
     pub(in crate) use self::slot::*;
 }
 
+#[allow(unused_imports)]
 pub(in crate) mod typedef {
     pub(in crate) mod builder;
     pub(in crate) mod members;
@@ -89,6 +91,7 @@ pub(in crate) mod typedef {
     pub(in crate) use self::traits::to_result::*;
 }
 
+#[allow(unused_imports)]
 pub(in crate) mod phases {
     mod class {
         mod constructor;

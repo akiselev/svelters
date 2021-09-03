@@ -1,8 +1,8 @@
-use std::{cell::RefCell, collections::HashMap, lazy::OnceCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
-use rquickjs::{Function, This, WithProto};
+use rquickjs::{WithProto};
 
-use crate::{build_class, inner::*};
+use crate::{inner::*};
 
 #[derive(Clone)]
 pub struct Data<'js> {
@@ -59,11 +59,11 @@ impl<'x> ClassDef for Element<'x> {
 
     const HAS_REFS: bool = true;
 
-    fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+    fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
         Ok(())
     }
 
-    fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
         Ok(())
     }
 

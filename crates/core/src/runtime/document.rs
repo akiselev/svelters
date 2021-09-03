@@ -42,7 +42,7 @@ impl ClassDef for Document {
 
     const HAS_REFS: bool = true;
 
-    fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
+    fn init_proto<'js>(_ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
         proto.set(
             "createEvent",
             rquickjs::Func::new("createEvent", rquickjs::Method(create_event)),
@@ -62,7 +62,7 @@ impl ClassDef for Document {
         Ok(())
     }
 
-    fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
         Ok(())
     }
 

@@ -1,9 +1,9 @@
 use crate::inner::*;
 
 pub(in crate) fn create_event<'js>(
-    this: &mut Document,
+    _this: &mut Document,
     ctx: Ctx<'js>,
-    interface: String,
+    _interface: String,
 ) -> Result<Value<'js>> {
     Event::custom(ctx)
 }
@@ -35,9 +35,9 @@ pub(in crate) fn create_element<'js>(
 }
 
 pub(in crate) fn dispatch_event<'js>(
-    this: &mut Document,
-    ctx: Ctx<'js>,
-    event: Object<'js>,
+    _this: &mut Document,
+    _ctx: Ctx<'js>,
+    _event: Object<'js>,
     _options: Opt<Object<'js>>,
 ) -> Result<()> {
     Ok(())

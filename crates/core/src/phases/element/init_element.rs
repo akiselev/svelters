@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::{build_class, inner::*};
 
 pub struct InitElement<'a, BASE> {

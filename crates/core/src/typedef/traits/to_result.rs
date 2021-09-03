@@ -23,7 +23,7 @@ where
 }
 
 impl<'js> ToResult<'js> for Value<'js> {
-    fn to_result(self, ctx: Ctx<'js>) -> Result<Value<'js>> {
+    fn to_result(self, _ctx: Ctx<'js>) -> Result<Value<'js>> {
         Ok(self)
     }
 }
