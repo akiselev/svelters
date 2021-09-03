@@ -199,9 +199,37 @@ mod element {
     }
 }
 
+mod native_slot {
+    use crate::inner::*;
+
+    pub struct NativeSlot<CLS, SLOT> {
+        pub(in crate) name: &'static str,
+        pub(in crate) slot: SLOT,
+        marker: PhantomData<CLS>,
+    }
+
+    impl<CLS, SLOT> NativeSlot<CLS, SLOT> {
+        pub(in crate) fn new(name: &'static str, slot: SLOT) -> Self {
+            NativeSlot {
+                name,
+                slot,
+                marker: PhantomData,
+            }
+        }
+    }
+
+    impl<CLS, SLOT, P> Implements<P> for NativeSlot<CLS, SLOT> {
+        #[inline(always)]
+        default fn build(self, _phase: &mut P) -> Result<()> {
+            Ok(())
+        }
+    }
+}
+
 pub use self::constructor::*;
 pub use self::element::*;
 pub use self::method::*;
 pub use self::prop::*;
 pub use self::staticfn::*;
 pub use self::superclass::*;
+pub use self::native_slot::*;
