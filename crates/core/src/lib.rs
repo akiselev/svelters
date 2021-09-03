@@ -80,14 +80,12 @@ pub(in crate) mod typedef {
         pub(in crate) mod from_impl;
         pub(in crate) mod method_impl;
         pub(in crate) mod to_result;
-        pub(in crate) mod with_impl;
     }
 
     pub(in crate) use self::traits::constructor::*;
     pub(in crate) use self::traits::from_impl::*;
     pub(in crate) use self::traits::method_impl::*;
     pub(in crate) use self::traits::to_result::*;
-    pub(in crate) use self::traits::with_impl::*;
 }
 
 pub(in crate) mod phases {

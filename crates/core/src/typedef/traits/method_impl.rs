@@ -5,7 +5,7 @@ impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
 where
     BASE: Type + Caster<CLS>,
     RET: for<'js_> ToResult<'js_>,
-    ARGS: WithImpl<BASE>,
+    ARGS: for<'js_> FromImpl<'js, BASE>,
     FUNC: 'static + Fn<ARGS, Output = RET>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -15,7 +15,7 @@ where
     fn call(&self, input: &rquickjs::Input<'js>) -> Result<Value<'js>> {
         input.check_num_args::<Self, _, _>()?;
         let mut accessor = input.access();
-        let result = ARGS::with_obj(&self.member.func, &mut accessor)?;
+        let result = self.member.func.call(ARGS::from_obj(&mut accessor)?);
         result.to_result(accessor.ctx())
     }
 }
@@ -25,7 +25,7 @@ impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
 where
     BASE: Type + Caster<CLS>,
     RET: for<'js_> ToResult<'js_>,
-    ARGS: WithImpl<BASE>,
+    ARGS: for<'js_> FromImpl<'js, BASE>,
     FUNC: 'static + Fn<ARGS, Output = RET>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -35,7 +35,7 @@ where
     fn call(&self, input: &rquickjs::Input<'js>) -> Result<Value<'js>> {
         input.check_num_args::<Self, _, _>()?;
         let mut accessor = input.access();
-        let result = ARGS::with_virt(&self.member.func, &mut accessor)?;
+        let result = self.member.func.call(ARGS::from_virt(&mut accessor)?);
         result.to_result(accessor.ctx())
     }
 }
@@ -45,7 +45,7 @@ impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
 where
     BASE: Type + Caster<CLS>,
     RET: for<'js_> ToResult<'js_>,
-    ARGS: WithImpl<BASE>,
+    ARGS: for<'js_> FromImpl<'js, BASE>,
     FUNC: 'static + Fn<ARGS, Output = RET>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -55,7 +55,7 @@ where
     fn call(&self, input: &rquickjs::Input<'js>) -> Result<Value<'js>> {
         input.check_num_args::<Self, _, _>()?;
         let mut accessor = input.access();
-        let result = ARGS::with_element(&self.member.func, &mut accessor)?;
+        let result = self.member.func.call(ARGS::from_element(&mut accessor)?);
         result.to_result(accessor.ctx())
     }
 }

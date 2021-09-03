@@ -27,7 +27,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
     pub fn method<RET, FN, ARGS>(&mut self, name: &'static str, func: FN) -> Result<()>
     where
         CLS: 'static + Type,
-        ARGS: WithImpl<CLS>,
+        ARGS: for<'js> FromImpl<'js, CLS>,
         RET: 'static + for<'js> ToResult<'js>,
         FN: 'static + for<'x> Fn<ARGS, Output = RET>,
         Member<CLS, AsMethod<FN>>: Implements<PHASE>,

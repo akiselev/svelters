@@ -108,8 +108,14 @@ impl<'js> rquickjs::IntoJs<'js> for Element<'js> {
     }
 }
 
-impl<'js, 'a> rquickjs::FromJs<'js> for &'a mut Element<'js> {
+impl<'a, 'js> rquickjs::FromJs<'js> for &'js Element<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Element<'js> as rquickjs::ClassDef>::from_js_mut(ctx, value.clone())
+        <Element<'js> as rquickjs::ClassDef>::from_js_ref(ctx, value)
+    }
+}
+
+impl<'a, 'js> rquickjs::FromJs<'js> for &'js mut Element<'js> {
+    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+        <Element<'js> as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }
