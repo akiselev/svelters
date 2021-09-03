@@ -1,4 +1,4 @@
-use std::{collections::HashMap, lazy::OnceCell};
+use std::{any::type_name, collections::HashMap, lazy::OnceCell};
 
 use rquickjs::Persistent;
 
@@ -42,68 +42,75 @@ impl<'a, 'b, 'js, CLS> ConstructorLoad<'a, 'js, CLS> {
     }
 }
 
-// impl<'a, 'b, 'js, 'c: 'js, T, CLS> Implements<ConstructorEval<'a, 'b, 'js, CLS>>
-//     for ElementMember<CLS, T>
-// where
-//     CLS: Type + Clone,
-//     T: 'static + Fn() -> Result<CLS>,
-// {
-//     #[inline(always)]
-//     fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
-//         let ElementMember { name, func, .. } = self;
-//         let proto_key = {
-//             let proto = Object::new(phase.ctx)?;
-//             let mut map: ElementCasterMap = HashMap::new();
-//             map.insert(
-//                 CLS::CLASS_NAME,
-//                 Box::new(move |ctx, this| {
-//                     let obj: &Obj<CLS> = FromJs::from_js(ctx, this.inner.as_value().clone())?;
-//                     obj.inner.with_cast(move |data: &CLS| {
-//                         let virt = Virt::<CLS>::new((*data).clone());
-//                         let value = virt.into_js(ctx)?;
-//                         Result::<_>::Ok(value)
-//                     })
-//                 }),
-//             );
-//             {
-//                 build_class!(CLS with InitElementCaster::<'_, CLS>::new(&mut map));
-//             }
-//             proto.set(
-//                 "castAs",
-//                 rquickjs::Func::new(
-//                     "castAs",
-//                     rquickjs::Method(
-//                         move |this: &mut Element, ctx: Ctx, target: String| match map
-//                             .get(target.as_str())
-//                         {
-//                             Some(func) => (*func)(ctx, this),
-//                             None => Err(Error::new(
-//                                 ctx,
-//                                 format!("No cast function from {} to {}", CLS::CLASS_NAME, target),
-//                             )),
-//                         },
-//                     ),
-//                 ),
-//             )?;
-//             build_class!(CLS with InitElementProto::<CLS>::new(phase.ctx, &proto));
-//             phase.ctx.register(proto.into_value())
-//         };
+impl<'a, 'b, 'js: 'a + 'b, T, CLS> Implements<ConstructorEval<'a, 'b, 'js, CLS>>
+    for members::Element<CLS, T>
+where
+    CLS: Type + Clone,
+    T: 'static + Fn() -> Result<CLS>,
+{
+    #[inline(always)]
+    fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
+        let members::Element { name, func, .. } = self;
+        let proto = Object::new(phase.ctx)?;
+        proto.set("__TYPE__", "Element")?;
+        proto.set("__CLS__", CLS::CLASS_NAME)?;
+        proto.set(
+            "castAs",
+            rquickjs::Func::new("castAs", rquickjs::Method(el_cast::<CLS>())),
+        )?;
+        build_class!(CLS with InitElementProto::<CLS>::new(phase.ctx, &proto));
+        let proto_key = { phase.ctx.register(proto.into_value()) };
 
-//         let mut eltype = ElementType::new(name, move |ctx: Ctx| {
-//             let proto: Object = ctx
-//                 .get_register(proto_key)
-//                 .unwrap()
-//                 .as_object()
-//                 .unwrap()
-//                 .clone();
-//             let el = Element::new(ctx, CLS::CLASS_NAME, (func)()?, proto);
-//             el.into_js(ctx)
-//         });
-//         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
-//         phase.doc.inner.borrow_mut().elements.insert(name, eltype);
-//         Ok(())
-//     }
-// }
+        let mut eltype = ElementType::new(name, move |ctx: Ctx| {
+            let proto: Object = ctx
+                .get_register(proto_key)
+                .unwrap()
+                .as_object()
+                .unwrap()
+                .clone();
+            let el = Element::new(ctx, CLS::CLASS_NAME, (func)()?, proto);
+            el.into_js(ctx)
+        });
+        build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
+        phase.doc.inner.borrow_mut().elements.insert(name, eltype);
+        Ok(())
+    }
+}
+
+fn el_cast<CLS>() -> impl for<'js> Fn(&mut Element<'js>, Ctx<'js>, String) -> Result<Value<'js>>
+where
+    CLS: Clone + Type,
+{
+    let cell = OnceCell::new();
+    move |this: &mut Element, ctx: Ctx, target: String| {
+        let map = cell.get_or_try_init(|| {
+            let mut map: ElementCasterMap = HashMap::new();
+            map.insert(
+                CLS::CLASS_NAME,
+                Box::new(move |ctx, this| {
+                    let obj: &Obj<CLS> = FromJs::from_js(ctx, this.inner.as_value().clone())?;
+                    obj.inner.with_cast(move |data: &CLS| {
+                        let virt = Virt::<CLS>::new((*data).clone());
+                        let value = virt.into_js(ctx)?;
+                        Result::<_>::Ok(value)
+                    })
+                }),
+            );
+            {
+                build_class!(CLS with InitElementCaster::<'_, CLS>::new(&mut map));
+            }
+            Result::Ok(map)
+        })?;
+
+        match map.get(target.as_str()) {
+            Some(func) => (*func)(ctx, this),
+            None => Err(Error::new(
+                ctx,
+                format!("No cast function from {} to {}", CLS::CLASS_NAME, target),
+            )),
+        }
+    }
+}
 
 macro_rules! tup {
     ($($($arg:ident)*,)*) => {

@@ -12,3 +12,11 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.globals().set("document", doc)?;
     Ok(())
 }
+
+pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
+    ctx.clear_registery();
+    let doc: &mut Document = ctx.globals().get("document")?;
+    for (key, val) in doc.inner.borrow_mut().elements.drain() {}
+    Ok(())
+
+}

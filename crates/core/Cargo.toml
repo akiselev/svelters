@@ -1,6 +1,8 @@
+cargo-features=["edition2021"]
+
 [package]
 authors = ["Alexander Kiselev <svelters@akiselev.com>"]
-edition = "2018"
+edition = "2021"
 name = "svelters-core"
 version = "0.1.0"
 
@@ -38,7 +40,7 @@ pretty_assertions = "0.7"
 rquickjs = { version="0.1.1", path="../rquickjs", features=[
     "full",
     "tokio",
-    # "dump-leaks",
+    "dump-leaks",
     # "dump-mem",
 ] }
 

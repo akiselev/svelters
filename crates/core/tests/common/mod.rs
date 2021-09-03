@@ -122,6 +122,7 @@ impl Drop for CoreWorld {
             ctx.deregister(self.module);
             ctx.deregister(self.subject);
             ctx.deregister(self.result);
+            cleanup_svelters(ctx).unwrap()
         })
     }
 }

@@ -39,12 +39,12 @@ members = [
     "crates/core",
     "crates/rquickjs",
     "crates/rquickjs/rquickjs-core",
-    "crates/rquickjs/rquickjs-macro",
-]
-exclude = [
     "crates/compiler",
     "crates/qt",
     "crates/macros",
+    "crates/rquickjs/rquickjs-macro",
+]
+exclude = [
     "codegen",
     "crates/oldqt",
     "crates/gtk4",
