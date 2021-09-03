@@ -30,7 +30,7 @@ pub mod prelude {
     pub use crate::typedef::obj::Obj;
     pub use crate::typedef::virt::Virt;
 
-    pub use crate::init::{initialize_svelters, cleanup_svelters};
+    pub use crate::init::{cleanup_svelters, initialize_svelters};
     pub use crate::typedef::builder::TypeBuilder;
     pub use crate::typedef::metadata::Metadata;
     pub use crate::typedef::module::ModuleBuilder;

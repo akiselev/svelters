@@ -1,5 +1,7 @@
 use std::{collections::HashMap, lazy::OnceCell};
 
+use rquickjs::WithProto;
+
 use crate::{build_class, inner::*};
 
 pub struct ConstructorEval<'a, 'b, 'js, CLS> {
@@ -66,11 +68,13 @@ where
                 .as_object()
                 .unwrap()
                 .clone();
-            let el = Element::new(ctx, CLS::CLASS_NAME, (func)()?, proto);
-            el.into_js(ctx)
+            let obj = Obj::new((func)()?).into_js_obj(ctx)?;
+            let id = ElementId(ctx.register(obj.clone()));
+            let el = Element::new::<CLS>(id, obj);
+            WithProto(el, proto).into_js(ctx)
         });
         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
-        phase.doc.inner.borrow_mut().elements.insert(name, eltype);
+        phase.doc.inner.borrow_mut().types.insert(name, eltype);
         Ok(())
     }
 }
@@ -86,7 +90,7 @@ where
             map.insert(
                 CLS::CLASS_NAME,
                 Box::new(move |ctx, this| {
-                    let obj: &Obj<CLS> = FromJs::from_js(ctx, this.inner.as_value().clone())?;
+                    let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
                     obj.inner.with_cast(move |data: &CLS| {
                         let virt = Virt::<CLS>::new((*data).clone());
                         let value = virt.into_js(ctx)?;

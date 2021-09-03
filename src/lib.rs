@@ -40,8 +40,7 @@ impl<FW: Framework> Runtime<FW> {
         let rt = JsRuntime::new()?;
         let ctx = Context::full(&rt)?;
         ctx.with(|ctx| {
-            svelters_core::console::init(ctx)?;
-            svelters_core::timing::init(ctx)?;
+            initialize_svelters(ctx)?;
             Result::<()>::Ok(())
         })?;
         Ok(Self { rt, ctx, framework })

@@ -16,16 +16,15 @@ impl<'a, 'b, CLS: Type> InitElementCaster<'a, CLS> {
 
 impl<'a, CLS, SUPER> Implements<InitElementCaster<'a, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type,
+    CLS: Type + Caster<SUPER>,
     SUPER: Type + Clone,
-    CLS: Caster<SUPER>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementCaster<CLS>) -> Result<()> {
+    fn build(self, phase: &mut InitElementCaster<'a, CLS>) -> Result<()> {
         phase.map.insert(
             SUPER::CLASS_NAME,
-            Box::new(|ctx, this| {
-                let obj = Obj::<CLS>::from_js_ref(ctx, this.inner.as_value().clone())?;
+            Box::new(move |ctx, this| {
+                let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
                 obj.inner.with_cast(|data| {
                     let virt = Virt::<SUPER>::new((*data).clone());
                     let value = virt.into_js(ctx)?;
@@ -67,7 +66,7 @@ where
         phase.map.insert(
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
-                let obj = Obj::<CLS>::from_js_ref(ctx, this.inner.as_value().clone())?;
+                let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
                 obj.inner.with_cast(|data| {
                     Result::<_>::Ok(Virt::<NESTED>::new((*data).clone()).into_js(ctx)?)
                 })

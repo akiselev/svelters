@@ -1,10 +1,13 @@
-use std::{cell::RefCell, collections::HashMap, rc::Rc};
+use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
+
 
 use crate::inner::*;
 
+pub type Idx = ElementId;
+
 pub struct DocInner {
     pub(in crate) events: Dispatcher,
-    pub(in crate) elements: HashMap<&'static str, ElementType>,
+    pub(in crate) types: HashMap<&'static str, ElementType>,
 }
 
 pub struct Document {
@@ -22,7 +25,7 @@ impl Document {
         Document {
             inner: Rc::new(RefCell::new(DocInner {
                 events: Default::default(),
-                elements: Default::default(),
+                types: Default::default(),
             })),
         }
     }
@@ -54,7 +57,7 @@ impl Document {
         if name == "slot" {
             return Slot::new().into_js(ctx);
         }
-        if let Some(element) = self.inner.borrow().elements.get(name.as_str()) {
+        if let Some(element) = self.inner.borrow().types.get(name.as_str()) {
             (element.constructor)(ctx)
         } else {
             Err(Error::new(ctx, format!("{} is not a valid element", name)))

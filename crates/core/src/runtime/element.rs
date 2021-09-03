@@ -1,52 +1,58 @@
 use std::{cell::RefCell, rc::Rc};
 
-use rquickjs::{WithProto};
+use rquickjs::WithProto;
+use smallvec::SmallVec;
 
-use crate::{inner::*};
+use crate::inner::*;
 
-#[derive(Clone)]
-pub struct Data<'js> {
-    pub(in crate) mounted: bool,
-    pub(in crate) parent: Option<Object<'js>>,
-    pub(in crate) class_name: &'static str,
+pub(in crate) struct ElInner {
+    pub(in crate) next: Option<Idx>,
+    pub(in crate) prev: Option<Idx>,
+    pub(in crate) parent: Option<Idx>,
+    pub(in crate) children: SmallVec<[Idx; 10]>,
+}
+
+impl ElInner {
+    fn new() -> Self { Self {  
+        children: SmallVec::new(),
+        next: None,
+        prev: None,
+        parent: None,
+    } }
 }
 
 #[derive(Clone)]
 pub struct Element<'js> {
-    pub(in crate) data: Rc<RefCell<Data<'js>>>,
-    pub(in crate) inner: Object<'js>,
+    pub(in crate) id: Idx,
+    pub(in crate) class_name: &'static str,
+    pub(in crate) inner: Rc<RefCell<ElInner>>,
+    pub(in crate) obj: Value<'js>,
 }
 
-impl<'js> Deref for Element<'js> {
-    type Target = Object<'js>;
+impl<'js> std::ops::Deref for Element<'js> {
+    type Target = Value<'js>;
 
     fn deref(&self) -> &Self::Target {
-        &self.inner
+        &self.obj
     }
 }
 
 impl<'js> Element<'js> {
-    pub fn new<CLS: Type + Clone>(
-        ctx: Ctx<'js>,
-        class_name: &'static str,
-        inner: CLS,
-        proto: Object<'js>,
-    ) -> Result<Value<'js>> {
-        let inner = Obj::new(inner).into_js_obj(ctx)?.into_object().unwrap();
-        let data = Element {
-            data: Rc::new(RefCell::new(Data {
-                parent: None,
-                mounted: false,
-                class_name: class_name,
-            })),
-            inner: inner,
-        };
-        WithProto(data, proto).into_js(ctx)
+    pub(in crate) fn new<CLS: Type + Clone>(
+        id: Idx,
+        obj: Value<'js>
+    ) -> Self {
+        Self {
+            id,
+            obj,
+            class_name: CLS::CLASS_NAME,
+            inner: Rc::new(RefCell::new(ElInner::new())),
+        }
     }
 }
 
-impl<'x> ClassDef for Element<'x> {
-    const CLASS_NAME: &'static str = "Element";
+impl<'js> ClassDef for Element<'js> {
+    const CLASS_NAME: &'static str = "Element<'js>";
 
     unsafe fn class_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
@@ -59,24 +65,26 @@ impl<'x> ClassDef for Element<'x> {
 
     const HAS_REFS: bool = true;
 
-    fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
+    fn init_proto<'ctx>(_ctx: Ctx<'ctx>, _proto: &Object<'ctx>) -> Result<()> {
         Ok(())
     }
 
-    fn init_static<'js>(_ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
+    fn init_static<'ctx>(_ctx: Ctx<'ctx>, _static: &Object<'ctx>) -> Result<()> {
         Ok(())
     }
 
-    fn mark_refs(&self, _marker: &RefsMarker) {}
+    fn mark_refs(&self, marker: &RefsMarker) {
+        self.obj.as_object().unwrap().mark(marker)
+    }
 
-    fn into_js_obj<'js>(self, ctx: Ctx<'js>) -> Result<Value<'js>>
+    fn into_js_obj<'ctx>(self, ctx: Ctx<'ctx>) -> Result<Value<'ctx>>
     where
         Self: Sized,
     {
         JsClass::<Self>::instance(ctx, self).map(|cls| cls.into_value())
     }
 
-    fn from_js_ref<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<&'js Self>
+    fn from_js_ref<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx Self>
     where
         Self: Sized,
     {
@@ -84,7 +92,7 @@ impl<'x> ClassDef for Element<'x> {
         JsClass::<Self>::try_ref(ctx, &value)
     }
 
-    fn from_js_mut<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<&'js mut Self>
+    fn from_js_mut<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx mut Self>
     where
         Self: Sized,
     {
@@ -92,7 +100,7 @@ impl<'x> ClassDef for Element<'x> {
         JsClass::<Self>::try_mut(ctx, &value)
     }
 
-    fn from_js_obj<'js>(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self>
+    fn from_js_obj<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<Self>
     where
         Self: Clone + Sized,
     {
@@ -108,6 +116,12 @@ impl<'js> rquickjs::IntoJs<'js> for Element<'js> {
     }
 }
 
+impl<'a, 'js> rquickjs::FromJs<'js> for Element<'js> {
+    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+        <Element<'js> as rquickjs::ClassDef>::from_js_obj(ctx, value)
+    }
+}
+
 impl<'a, 'js> rquickjs::FromJs<'js> for &'js Element<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
         <Element<'js> as rquickjs::ClassDef>::from_js_ref(ctx, value)
@@ -117,5 +131,14 @@ impl<'a, 'js> rquickjs::FromJs<'js> for &'js Element<'js> {
 impl<'a, 'js> rquickjs::FromJs<'js> for &'js mut Element<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
         <Element<'js> as rquickjs::ClassDef>::from_js_mut(ctx, value)
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct ElementId(pub(in crate) RegisteryKey);
+
+impl ElementId {
+    pub fn get_element<'js>(self, ctx: Ctx<'js>) -> Option<Element<'js>> {
+        FromJs::from_js(ctx, ctx.get_register(self.0)?).ok()
     }
 }

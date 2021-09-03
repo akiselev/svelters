@@ -1,6 +1,9 @@
 use crate::inner::*;
 
 pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
+    console::init(ctx)?;
+    timing::init(ctx)?;
+
     let obj = Object::new(ctx)?;
     ctx.globals().set("window", obj)?;
 
@@ -17,7 +20,7 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
 pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.clear_registery();
     let doc: &mut Document = ctx.globals().get("document")?;
-    for (_key, _val) in doc.inner.borrow_mut().elements.drain() {}
+    for (_key, _val) in doc.inner.borrow_mut().types.drain() {}
     Ok(())
 
 }
