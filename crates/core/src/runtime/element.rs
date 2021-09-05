@@ -5,7 +5,7 @@ use smallvec::SmallVec;
 
 use crate::inner::*;
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Element<'js>(Inner<ElData<'js>>);
 
 impl<'js> std::ops::Deref for Element<'js> {
@@ -16,7 +16,6 @@ impl<'js> std::ops::Deref for Element<'js> {
     }
 }
 
-
 pub struct ElData<'js> {
     pub(in crate) obj: Object<'js>,
     pub(in crate) tag: &'static str,
@@ -24,6 +23,14 @@ pub struct ElData<'js> {
     pub(in crate) class_name: &'static str,
 }
 
+impl<'js> PartialEq for ElData<'js> {
+    fn eq(&self, other: &Self) -> bool {
+        self.obj == other.obj
+    }
+}
+impl<'js> Eq for ElData<'js> {
+    fn assert_receiver_is_total_eq(&self) {}
+}
 
 
 impl<'js> HasRefs for Element<'js> {

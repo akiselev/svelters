@@ -11,6 +11,7 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     rquickjs::Class::<Document>::register(ctx)?;
     rquickjs::Class::<Event<Value<'js>>>::register(ctx)?;
     rquickjs::Class::<Slot>::register(ctx)?;
+    rquickjs::Class::<TextNode>::register(ctx)?;
     rquickjs::Class::<Element>::register(ctx)?;
 
     ctx.globals().set("document", doc)?;

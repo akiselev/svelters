@@ -1,28 +1,49 @@
 use crate::inner::*;
 
-impl<'a, 'b, 'c, CLS, SLOT> Implements<InitElementProto<'a, 'b, 'c, CLS>>
+impl<'a, 'js, 'c, CLS, SLOT> Implements<InitElementProto<'a, 'js, 'c, CLS>>
     for members::NativeSlot<CLS, SLOT>
 where
     CLS: Type,
     SLOT: NativeSlot,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
-        let members::ReadOnly { name, getter, .. } = self;
-
-        let res = phase.obj.set(
-            name,
-            rquickjs::Function::new(rquickjs::Method(
-                move |this: &mut Element<'b>, ctx: Ctx<'b>| {
-                    let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
-                    obj.inner.with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
-                },
+    fn build(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
+        phase.obj.set(
+            "appendChild",
+            rquickjs::Func::new(
+                "appendChild",
+                rquickjs::Method(
+                append_child::<SLOT>
             ))
-            .enumerable(),
-        );
-        res
+        )?;
+        phase.obj.set(
+            "removeChild",
+            rquickjs::Func::new(
+                "removeChild",
+                rquickjs::Method(
+                remove_child::<SLOT>
+            ))
+        )?;
+        phase.obj.set(
+            "insertBefore",
+            rquickjs::Func::new(
+                "insertBefore",
+                rquickjs::Method(
+                insert_before::<SLOT>
+            ))
+        )?;
+        Ok(())
     }
+}
+
+fn append_child<'js, SLOT: NativeSlot>(this: Node<'js>, child: Node<'js>) -> Result<()> {
+    SLOT::append_child(this, child)
+}
+
+fn remove_child<'js, SLOT: NativeSlot>(this: Node<'js>, child: Node<'js>) -> Result<()> {
+    SLOT::remove_child(this, child)
+}
+
+fn insert_before<'js, SLOT: NativeSlot>(this: Node<'js>, child: Node<'js>, anchor: Node<'js>) -> Result<()> {
+    SLOT::insert_before(this, child, anchor)
 }

@@ -9,21 +9,133 @@ use crate::inner::*;
 
 #[derive(Clone)]
 pub struct Node<'js> {
-    ctx: Ctx<'js>,
-    this: NodeType<'js>,
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) this: NodeType<'js>,
 }
 
-#[derive(Clone)]
-enum NodeType<'js> {
+impl<'js> PartialEq for Node<'js> {
+    fn eq(&self, other: &Self) -> bool {
+        self.this == other.this
+    }
+}
+
+impl<'js> Eq for Node<'js> {
+    fn assert_receiver_is_total_eq(&self) {}
+}
+
+impl<'js> Node<'js> {
+    pub fn append_node(&self, node: Node<'js>) {
+        let parent = self.clone();
+        self.with_node(move |this| {
+            if !this.is_mounted() { panic!("Tried to append node that is already mounted") }
+            let children = this.children.get_or_insert_with(|| vec![]);
+            let mut prev = if let Some(child) = children.last_mut() {
+                child.with_node(|data| {
+                if data.is_mounted() { panic!("Tried to append node that is already mounted") }
+                if data.next.is_none() { panic!("Next sibling on append node is already set") }
+                    data.next = Some(node.clone());
+                });
+                Some(child.clone())
+            } else {
+                None
+            };
+            let prev = prev.and_then(|prev| {
+                prev.with_node(
+                    |data| data.next = Some(node.clone())
+                );
+                Some(prev)
+            });
+            node.with_node(move |data| {
+                data.parent = Some(parent);
+                data.prev = prev;
+            })
+        })
+    }
+
+    pub fn remove_node(&self, node: Node<'js>) {
+        self.with_node(move |this| {
+            if !this.is_mounted() { panic!("Tried to remove node that is not mounted") }
+            let children = this.children.get_or_insert_with(|| vec![]);
+            let index = { 
+                children.iter_mut().position(|this| *this == node).expect("Can't find node to remove")
+            };
+            node.with_node(|data| {
+                let mut next = data.next.take();
+                let mut prev = data.prev.take();
+                if let Some(prev) = &mut prev {
+                    let next = next.clone();
+                    prev.with_node(move |data| data.next = next)
+                }
+                if let Some(next) = &mut next {
+                    next.with_node(|data| data.prev = prev)
+                }
+                let _ = data.parent.take();
+            });
+            children.remove(index);
+        })
+    }
+
+    pub fn insert_node(&self, node: Node<'js>, anchor: Node<'js>) {
+        let parent = self.clone();
+        self.with_node(move |this| {
+            if !this.is_mounted() { panic!("Tried to remove node that is not mounted") }
+            let children = this.children.get_or_insert_with(|| vec![]);
+            let index = { 
+                children.iter_mut().position(|this| *this == anchor).expect("Can't find anchor for insert")
+            };
+            let target = children[index].clone();
+            let prev = target.with_node(|data| {
+                let prev = data.prev.take();
+                data.prev = Some(node.clone());
+                prev 
+            });
+            if let Some(prev) = &prev { 
+                prev.with_node(|data| data.next = Some(node.clone()));
+            }
+            node.with_node(move |data| {
+                data.parent = Some(parent);
+                data.prev = prev;
+                data.next = Some(target);
+            });
+            children.insert(index, node);
+        })
+    }
+
+    pub fn index_of(&self, node: Node<'js>) -> Option<usize> {
+        self.with_node(move |this| {
+            if let Some(children) = &this.children {
+                children.iter().position(|this| *this == node)
+            } else { None }
+        })
+    }
+
+    fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
+        match &self.this {
+            NodeType::Slot(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.node)
+            },
+            NodeType::Text(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.node)
+            },
+            NodeType::Element(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.node)
+            },
+        }
+        
+    }
+}
+
+#[derive(Clone, Eq, PartialEq)]
+ pub(in crate) enum NodeType<'js> {
     Slot(Slot<'js>),
     Text(TextNode<'js>),
     Element(Element<'js>),
 }
 
-
-
-
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub(in crate) struct NodeData<'js> {
     pub(in crate) next: Option<Node<'js>>,
     pub(in crate) prev: Option<Node<'js>>,
@@ -39,6 +151,12 @@ impl<'js> NodeData<'js> {
             parent: None,
             children: None,
         }
+    }
+}
+
+impl<'js> NodeData<'js> {
+    fn is_mounted(&self) -> bool {
+        self.parent.is_some()
     }
 }
 

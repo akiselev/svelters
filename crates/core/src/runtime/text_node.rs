@@ -2,7 +2,7 @@ use rquickjs::{bind, HasRefs, Object, Persistent};
 
 use crate::inner::*;
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct TextNode<'js>(pub(crate) Inner<TextData<'js>>);
 
 impl<'js> std::ops::Deref for TextNode<'js> {
@@ -28,7 +28,7 @@ impl<'js> TextNode<'js> {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct TextData<'js> {
     pub(in crate) text: String, 
     pub(in crate) node: NodeData<'js>,

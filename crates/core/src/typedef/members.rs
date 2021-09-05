@@ -158,14 +158,12 @@ mod native_slot {
     use crate::inner::*;
 
     pub struct NativeSlot<CLS, SLOT> {
-        pub(in crate) slot: SLOT,
-        marker: PhantomData<CLS>,
+        marker: PhantomData<(CLS, SLOT)>,
     }
 
     impl<CLS, SLOT> NativeSlot<CLS, SLOT> {
-        pub(in crate) fn new(slot: SLOT) -> Self {
+        pub(in crate) fn new() -> Self {
             NativeSlot {
-                slot,
                 marker: PhantomData,
             }
         }

@@ -3,14 +3,14 @@ use rquickjs::{bind, HasRefs, Object, Persistent};
 #[allow(unused_imports)]
 use crate::inner::*;
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub(in crate) struct SlotInner<'js> {
     pub(in crate) name: String,
-    node: NodeData<'js>,
+    pub(in crate) node: NodeData<'js>,
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Slot<'js>(pub(in super) Inner<SlotInner<'js>>);
 
 impl<'js> Slot<'js> {

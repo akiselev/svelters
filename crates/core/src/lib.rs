@@ -30,6 +30,7 @@ pub mod prelude {
 
     pub use crate::typedef::obj::Obj;
     pub use crate::typedef::virt::Virt;
+    pub use crate::typedef::hslot::HSlot;
 
     pub use crate::init::{cleanup_svelters, initialize_svelters};
     pub use crate::typedef::builder::TypeBuilder;
@@ -84,11 +85,13 @@ pub(in crate) mod typedef {
     pub(in crate) mod module;
     pub(in crate) mod obj;
     pub(in crate) mod virt;
+    pub(in crate) mod hslot;
 
     pub(in crate) use self::builder::*;
     pub(in crate) use self::metadata::*;
     pub(in crate) use self::module::*;
     pub(in crate) use self::obj::*;
+    pub(in crate) use self::hslot::*;
     pub(in crate) use self::virt::*;
 
     pub(in crate) mod traits {
@@ -127,9 +130,13 @@ pub(in crate) mod phases {
         mod init_caster;
         mod init_element;
         mod init_proto;
+        mod init_native_slot;
+        mod init_node;
 
         pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_element::*;
+        pub(in crate) use self::init_node::*;
+        pub(in crate) use self::init_native_slot::*;
         pub(in crate) use self::init_proto::*;
     }
 
@@ -159,6 +166,7 @@ pub(in crate) mod inner {
     pub(in crate) use frunk::{
         hlist::{HList, Selector},
         HCons, HNil,
+        coproduct::{CNil, Coproduct},
     };
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{
