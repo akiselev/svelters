@@ -3,7 +3,7 @@ use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
 
 use crate::inner::*;
 
-pub type Idx = ElementId;
+pub type ElId = ElementId;
 
 pub struct DocInner {
     pub(in crate) events: Dispatcher,

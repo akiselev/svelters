@@ -14,6 +14,7 @@
 // Useful for optimized debugging and whatnot
 #![feature(const_type_name)]
 #![feature(type_name_of_val)]
+#![feature(backtrace)]
 // allows bounds of the form `where T: MyTrait<Output: TraitBound>`
 //   instead of `<T as MyTrait>::Output: TraitBound`
 #![feature(associated_type_bounds)]
@@ -49,20 +50,24 @@ pub(in crate) mod utils;
 #[allow(unused_imports)]
 pub(in crate) mod runtime {
     pub(in crate) mod callbacks;
-    pub(in crate) mod doc_impl;
+    pub(in crate) mod doc_def;
     pub(in crate) mod document;
     pub(in crate) mod element;
     pub(in crate) mod element_type;
+    pub(in crate) mod element_def;
     pub(in crate) mod event;
     pub(in crate) mod slot;
+    pub(in crate) mod node;
 
     pub(in crate) use self::callbacks::*;
-    pub(in crate) use self::doc_impl::*;
+    pub(in crate) use self::doc_def::*;
     pub(in crate) use self::document::*;
     pub(in crate) use self::element::*;
+    pub(in crate) use self::element_def::*;
     pub(in crate) use self::element_type::*;
     pub(in crate) use self::event::*;
     pub(in crate) use self::slot::*;
+    pub(in crate) use self::node::*;
 }
 
 #[allow(unused_imports)]

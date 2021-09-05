@@ -31,13 +31,6 @@ mod constructor {
             Constructor(func, PhantomData)
         }
     }
-
-    impl<CLS: Type, ARG, FUNC, P> Implements<P> for Constructor<CLS, ARG, FUNC> {
-        #[inline(always)]
-        default fn build(self, _phase: &mut P) -> Result<()> {
-            Ok(())
-        }
-    }
 }
 
 mod prop {
@@ -61,12 +54,6 @@ mod prop {
         }
     }
 
-    impl<CLS, PROP, GET, SET, P> Implements<P> for Property<CLS, PROP, GET, SET> {
-        default fn build(self, _: &mut P) -> Result<()> {
-            Ok(())
-        }
-    }
-
     pub struct ReadOnly<CLS, PROP, GET> {
         pub(crate) name: &'static str,
         pub(crate) getter: GET,
@@ -80,12 +67,6 @@ mod prop {
                 getter,
                 marker: PhantomData,
             }
-        }
-    }
-
-    impl<CLS, PROP, GET, P> Implements<P> for ReadOnly<CLS, PROP, GET> {
-        default fn build(self, _: &mut P) -> Result<()> {
-            Ok(())
         }
     }
 }
@@ -106,12 +87,6 @@ mod method {
                 func,
                 marker: PhantomData,
             }
-        }
-    }
-
-    impl<THIS, ARGS, RET, CLS, P> Implements<P> for Method<CLS, ARGS, RET, THIS> {
-        default fn build(self, _: &mut P) -> Result<()> {
-            Ok(())
         }
     }
 
@@ -145,12 +120,6 @@ mod staticfn {
             StaticFn(name, func, PhantomData)
         }
     }
-
-    impl<THIS, ARGS, RET, CLS: Type, P> Implements<P> for StaticFn<CLS, ARGS, RET, THIS> {
-        default fn build(self, _: &mut P) -> Result<()> {
-            Ok(())
-        }
-    }
 }
 
 mod superclass {
@@ -161,13 +130,6 @@ mod superclass {
     impl<SUPER> Superclass<SUPER> {
         pub(in crate) fn new() -> Self {
             Superclass(PhantomData)
-        }
-    }
-
-    impl<SUPER, P> Implements<P> for Superclass<SUPER> {
-        #[inline(always)]
-        default fn build(self, _phase: &mut P) -> Result<()> {
-            Ok(())
         }
     }
 }
@@ -190,13 +152,6 @@ mod element {
             }
         }
     }
-
-    impl<CLS, FUNC, P> Implements<P> for Element<CLS, FUNC> {
-        #[inline(always)]
-        default fn build(self, _phase: &mut P) -> Result<()> {
-            Ok(())
-        }
-    }
 }
 
 mod native_slot {
@@ -215,13 +170,6 @@ mod native_slot {
                 slot,
                 marker: PhantomData,
             }
-        }
-    }
-
-    impl<CLS, SLOT, P> Implements<P> for NativeSlot<CLS, SLOT> {
-        #[inline(always)]
-        default fn build(self, _phase: &mut P) -> Result<()> {
-            Ok(())
         }
     }
 }
