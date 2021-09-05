@@ -69,8 +69,9 @@ where
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                obj.inner.with_cast(|data| {
-                    let virt = Virt::<SUPER>::new((*data).clone());
+                let this = this.clone();
+                obj.inner.with_cast(move |data| {
+                    let virt = Virt::<SUPER>::new((*data).clone(), this);
                     let value = virt.into_js(ctx)?;
                     Result::<_>::Ok(value)
                 })

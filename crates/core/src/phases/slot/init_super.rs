@@ -28,8 +28,9 @@ where
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                obj.inner.with_cast(|data| {
-                    Result::<_>::Ok(Virt::<NESTED>::new((*data).clone()).into_js(ctx)?)
+                let this = this.clone();
+                obj.inner.with_cast(move |data| {
+                    Result::<_>::Ok(Virt::<NESTED>::new((*data).clone(), this).into_js(ctx)?)
                 })
             }),
         );

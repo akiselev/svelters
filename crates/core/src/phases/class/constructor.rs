@@ -90,9 +90,10 @@ where
             map.insert(
                 CLS::CLASS_NAME,
                 Box::new(move |ctx, this| {
-                    let obj = Obj::<CLS>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
+                    let this = this.borrow();
+                    let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone().into_value())?;
                     obj.inner.with_cast(move |data: &CLS| {
-                        let virt = Virt::<CLS>::new((*data).clone());
+                        let virt = Virt::<CLS>::new((*data).clone(), this.obj.clone());
                         let value = virt.into_js(ctx)?;
                         Result::<_>::Ok(value)
                     })

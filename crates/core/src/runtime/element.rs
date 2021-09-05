@@ -5,7 +5,7 @@ use smallvec::SmallVec;
 
 use crate::inner::*;
 
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone)]
 pub struct Element<'js>(Inner<ElData<'js>>);
 
 impl<'js> std::ops::Deref for Element<'js> {
@@ -16,22 +16,57 @@ impl<'js> std::ops::Deref for Element<'js> {
     }
 }
 
+impl<'js> PartialEq for Element<'js> {
+    fn eq(&self, other: &Self) -> bool {
+        self.borrow().obj == other.borrow().obj
+    }
+}
+
+impl<'js> PartialEq<Node<'js>> for Element<'js> {
+    fn eq(&self, other: &Node<'js>) -> bool {
+        match &other.this {
+            NodeType::Slot(_) => false,
+            NodeType::Text(_) => false,
+            NodeType::Element(node) => self.borrow().obj == node.borrow().obj,
+        }
+    }
+}
+
+impl<'js> PartialEq<Slot<'js>> for Element<'js> {
+    fn eq(&self, other: &Slot<'js>) -> bool {
+        false
+    }
+}
+
+impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Element<'js> {
+    fn eq(&self, other: &Virt<'js, CLS>) -> bool {
+        self.borrow().obj == other.obj
+    }
+}
+
+
+impl<'js> PartialEq<Object<'js>> for Element<'js> {
+    fn eq(&self, other: &Object<'js>) -> bool {
+        self.borrow().obj == *other
+    }
+}
+
+impl<'js> PartialEq<Value<'js>> for Element<'js> {
+    fn eq(&self, other: &Value<'js>) -> bool {
+        if let Some(other) = other.as_object() {
+            self.borrow().obj == *other 
+        } else { false }
+    }
+}
+
+impl<'js> Eq  for Element<'js> {}
+
 pub struct ElData<'js> {
     pub(in crate) obj: Object<'js>,
     pub(in crate) tag: &'static str,
     pub(in crate) node: NodeData<'js>,
     pub(in crate) class_name: &'static str,
 }
-
-impl<'js> PartialEq for ElData<'js> {
-    fn eq(&self, other: &Self) -> bool {
-        self.obj == other.obj
-    }
-}
-impl<'js> Eq for ElData<'js> {
-    fn assert_receiver_is_total_eq(&self) {}
-}
-
 
 impl<'js> HasRefs for Element<'js> {
     fn mark_refs(&self, marker: &RefsMarker) {

@@ -70,11 +70,11 @@ impl<T> !NotQJsType for This<T> {}
 impl<T> !NotQJsType for Opt<T> {}
 impl<T> !NotQJsType for Rest<T> {}
 impl<CLS> !NotCoreType for Obj<CLS> {}
-impl<CLS> !NotCoreType for Virt<CLS> {}
+impl<'js, CLS> !NotCoreType for Virt<'js, CLS> {}
 impl<'js> !NotCoreType for Element<'js> {}
 impl<T: Type> !NotUserType for T {}
 impl<T: Type> !NotUserType for Obj<T> {}
-impl<T: Type> !NotUserType for Virt<T> {}
+impl<'js, T: Type> !NotUserType for Virt<'js, T> {}
 impl<T> !NotRef for &T {}
 impl<T> !NotRef for &mut T {}
 impl<'js, T> !NotFromJsType for T where T: FromJs<'js> {}

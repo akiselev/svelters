@@ -19,9 +19,35 @@ impl<'js> PartialEq for Node<'js> {
     }
 }
 
-impl<'js> Eq for Node<'js> {
-    fn assert_receiver_is_total_eq(&self) {}
+impl<'js> PartialEq<Element<'js>> for Node<'js> {
+    fn eq(&self, other: &Element<'js>) -> bool {
+        match &self.this {
+            NodeType::Element(this) => this.borrow().obj == other.borrow().obj,
+            _ => false,
+        }
+    }
 }
+
+impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Node<'js> {
+    fn eq(&self, other: &Virt<'js, CLS>) -> bool {
+        match &self.this {
+            NodeType::Element(this) => this.borrow().obj == other.obj,
+            _ => false,
+        }
+    }
+}
+
+impl<'js> PartialEq<Object<'js>> for Node<'js> {
+    fn eq(&self, other: &Object<'js>) -> bool {
+        match &self.this {
+            NodeType::Element(this) => this.borrow().obj == *other,
+            _ => false,
+        }
+    }
+}
+
+
+impl<'js> Eq for Node<'js> {}
 
 impl<'js> Node<'js> {
     pub fn append_node(&self, node: Node<'js>) {
@@ -29,7 +55,7 @@ impl<'js> Node<'js> {
         self.with_node(move |this| {
             if !this.is_mounted() { panic!("Tried to append node that is already mounted") }
             let children = this.children.get_or_insert_with(|| vec![]);
-            let mut prev = if let Some(child) = children.last_mut() {
+            let prev = if let Some(child) = children.last_mut() {
                 child.with_node(|data| {
                 if data.is_mounted() { panic!("Tried to append node that is already mounted") }
                 if data.next.is_none() { panic!("Next sibling on append node is already set") }
@@ -109,6 +135,28 @@ impl<'js> Node<'js> {
         })
     }
 
+    fn instance_of<CLS: Type>(&self) -> bool {
+        match &self.this {
+            NodeType::Element(this) => {
+                this.borrow().obj.instance_of::<Obj<CLS>>()
+            },
+            _ => false,
+        }
+    }
+
+    fn with_instance<CLS: Type, F: for<'a> FnOnce(&'a CLS) -> R, R>(&self, func: F) -> Option<R> {
+        match &self.this {
+            NodeType::Element(this) => {
+                let this = this.borrow();
+                if this.obj.instance_of::<Obj<CLS>>() {
+                    this.obj.clone().into_instance::<Obj<CLS>>()
+                        .and_then(|obj| Some(func(&AsRef::<Obj<CLS>>::as_ref(&obj).inner)))
+                } else { None }
+            },
+            _ => None,
+        }
+    }
+
     fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
         match &self.this {
             NodeType::Slot(this) => {
@@ -124,16 +172,34 @@ impl<'js> Node<'js> {
                 func(&mut data.node)
             },
         }
-        
     }
 }
 
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone, Eq)]
  pub(in crate) enum NodeType<'js> {
     Slot(Slot<'js>),
     Text(TextNode<'js>),
     Element(Element<'js>),
 }
+
+impl<'js> PartialEq<NodeType<'js>> for NodeType<'js> {
+    fn eq(&self, other: &NodeType<'js>) -> bool {
+        match (self, other) {
+            (NodeType::Slot(left), NodeType::Slot(right)) => {
+                left == right
+            },
+            (NodeType::Text(left), NodeType::Text(right)) => {
+                left == right
+            },
+            (NodeType::Element(left), NodeType::Element(right)) => {
+                left == right
+            },
+            _ => false
+        }
+    }
+}
+
+
 
 #[derive(Clone, Eq, PartialEq)]
 pub(in crate) struct NodeData<'js> {
