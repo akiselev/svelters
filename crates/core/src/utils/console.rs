@@ -2,26 +2,52 @@ use rquickjs::{bind, Ctx, Rest, Result as JsResult, Value};
 
 #[bind(object)]
 pub mod console {
+    use rquickjs::Coerced;
+
     use super::*;
 
-    pub fn log<'js>(args: Rest<Value<'js>>) {
-        let args: Vec<Value<'js>> = args.into_inner();
-        tracing::info!(?args, "console.log");
+    pub fn log<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+        let args: Vec<Coerced<String>> = args.into_inner();
+        let line = args
+            .into_iter()
+            .map(|entry| entry.0)
+            .collect::<Vec<_>>()
+            .join(" ");
+        tracing::info!("{}", line);
+        Ok(())
     }
 
-    pub fn error<'js>(args: Rest<Value<'js>>) {
-        let args: Vec<Value<'js>> = args.into_inner();
-        tracing::error!(?args, "console.error");
+    pub fn error<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+        let args: Vec<Coerced<String>> = args.into_inner();
+        let line = args
+            .into_iter()
+            .map(|entry| entry.0)
+            .collect::<Vec<_>>()
+            .join(" ");
+        tracing::error!("{}", line);
+        Ok(())
     }
 
-    pub fn warn<'js>(args: Rest<Value<'js>>) {
-        let args: Vec<Value<'js>> = args.into_inner();
-        tracing::warn!(?args, "console.warn");
+    pub fn warn<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+        let args: Vec<Coerced<String>> = args.into_inner();
+        let line = args
+            .into_iter()
+            .map(|entry| entry.0)
+            .collect::<Vec<_>>()
+            .join(" ");
+        tracing::warn!("{}", line);
+        Ok(())
     }
 
-    pub fn debug<'js>(args: Rest<Value<'js>>) {
-        let args: Vec<Value<'js>> = args.into_inner();
-        tracing::debug!(?args, "console.debug");
+    pub fn debug<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+        let args: Vec<Coerced<String>> = args.into_inner();
+        let line = args
+            .into_iter()
+            .map(|entry| entry.0)
+            .collect::<Vec<_>>()
+            .join(" ");
+        tracing::debug!("{}", line);
+        Ok(())
     }
 }
 
