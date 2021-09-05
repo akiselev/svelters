@@ -1,29 +1,17 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use rquickjs::{Function, Persistent};
 
 use crate::inner::*;
 
 pub struct Callback {
-    func: Persistent<Function<'static>>,
-    disconnect: Option<Box<dyn FnOnce()>>,
+    pub(in crate) key: RegisteryKey,
+    pub(in crate) disconnect: DisconnectFn,
 }
 
 impl Callback {
-    pub fn new(func: Persistent<Function<'static>>, disconnect: Option<Box<dyn FnOnce()>>) -> Self {
-        Self { func, disconnect }
-    }
-}
-
-impl rquickjs::HasRefs for Callback {
-    fn mark_refs(&self, marker: &RefsMarker) {
-        self.func.mark_refs(marker)
-    }
-}
-
-impl std::cmp::PartialEq<Persistent<Function<'static>>> for Callback {
-    fn eq(&self, other: &Persistent<Function<'static>>) -> bool {
-        self.func == *other
+    pub fn new(key: RegisteryKey, disconnect: DisconnectFn) -> Self {
+        Self { key, disconnect }
     }
 }
 
@@ -31,35 +19,37 @@ pub struct Subscriptions {
     callbacks: Vec<Callback>,
 }
 
-impl rquickjs::HasRefs for Subscriptions {
-    fn mark_refs(&self, marker: &RefsMarker) {
-        for callback in self.callbacks.iter() {
-            callback.mark_refs(marker)
-        }
-    }
-}
-
 impl Subscriptions {
     pub fn new() -> Self {
         Self { callbacks: vec![] }
     }
 
-    pub fn remove_callback(&mut self, func: Persistent<Function<'static>>) -> Result<()> {
-        for callback in self.callbacks.iter_mut() {
-            if *callback == func {
-                if let Some(func) = callback.disconnect.take() {
-                    func();
+    pub fn remove_callback<'js>(
+        &mut self,
+        ctx: Ctx<'js>,
+        func: Function<'js>,
+    ) -> Result<DisconnectFn> {
+        let pos = {
+            self.callbacks.iter().position(|callback| {
+                if let Some(callback) = ctx.get_register(callback.key) {
+                    callback == *func.as_value()
+                } else {
+                    false
                 }
-            }
+            })
+        };
+        if let Some(index) = pos {
+            let callback = self.callbacks.remove(index);
+            Ok(callback.disconnect)
+        } else {
+            Err(Error::new(ctx, "Event handler not registered"))
         }
-        self.callbacks.retain(|callback| *callback != func);
-        Ok(())
     }
 }
 
 #[derive(Default)]
 pub struct Dispatcher {
-    map: HashMap<String, Subscriptions>,
+    map: Inner<HashMap<String, Subscriptions>>,
 }
 
 impl Clone for Dispatcher {
@@ -81,11 +71,16 @@ impl Dispatcher {
         name: String,
         event: Event<Value<'js>>,
     ) -> Result<bool> {
-        if let Some(list) = self.map.get_mut(&name) {
+        let mut this = self.map.borrow_mut();
+
+        if let Some(list) = this.get_mut(&name) {
             let event = event.into_js(ctx)?;
             for callback in list.callbacks.iter_mut() {
-                let func: Function = callback.func.clone().restore(ctx)?;
-                func.call((event.clone(),))?;
+                let callback = ctx
+                    .get_register(callback.key)
+                    .and_then(|val| val.into_function())
+                    .expect("Event handler not found");
+                callback.call((event.clone(),))?;
             }
             Ok(true)
         } else {
@@ -96,31 +91,28 @@ impl Dispatcher {
     pub fn add_event_callback(
         &mut self,
         name: String,
-        func: Persistent<Function<'static>>,
-        disconnect: Option<Box<dyn FnOnce()>>,
+        key: RegisteryKey,
+        disconnect: DisconnectFn,
     ) -> Result<()> {
-        let list = self.map.entry(name).or_insert_with(|| Subscriptions::new());
-        list.callbacks.push(Callback::new(func, disconnect));
+        let mut this = self.map.borrow_mut();
+        let list = this.entry(name).or_insert_with(|| Subscriptions::new());
+        list.callbacks.push(Callback::new(key, disconnect));
         Ok(())
     }
 
-    pub fn remove_event_callback(
+    pub fn remove_event_callback<'js>(
         &mut self,
+        ctx: Ctx<'js>,
         name: String,
-        func: Persistent<Function<'static>>,
-    ) -> Result<()> {
-        if let Some(list) = self.map.get_mut(&name) {
-            list.remove_callback(func)
+        func: Function<'js>,
+    ) -> Result<DisconnectFn> {
+        let mut this = self.map.borrow_mut();
+        if let Some(list) = this.get_mut(&name) {
+            list.remove_callback(ctx, func)
         } else {
-            Ok(())
+            Err(Error::new(ctx, "Event handler not registered"))
         }
     }
 }
 
-impl rquickjs::HasRefs for Dispatcher {
-    fn mark_refs(&self, marker: &RefsMarker) {
-        for callback in self.map.values() {
-            callback.mark_refs(marker)
-        }
-    }
-}
+pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Node<'js_>) -> Result<()>>;

@@ -112,7 +112,6 @@ pub trait Implements<P>: Sized {
     //     tracing::info!("Calling phase <{}> for <{}>", std::any::type_name::<P>(), std::any::type_name::<Self>());
     //     self.build_phase(phase)
     // }
-
 }
 
 impl<T, P> Implements<P> for T {
@@ -121,12 +120,16 @@ impl<T, P> Implements<P> for T {
     }
 }
 
-
 /// Core trait for slot implementations (provides DOM APIs)
 pub trait NativeSlot: 'static + Clone {
     fn append_child<'js>(&self, this: Node<'js>, node: Node<'js>) -> Result<()>;
     fn remove_child<'js>(&self, this: Node<'js>, node: Node<'js>) -> Result<()>;
-    fn insert_before<'js>(&self, this: Node<'js>, node: Node<'js>, anchor: Node<'js>) -> Result<()>;
+    fn insert_before<'js>(
+        &self,
+        this: Node<'js>,
+        node: Node<'js>,
+        anchor: Option<Node<'js>>,
+    ) -> Result<()>;
 }
 
 pub trait INode {

@@ -3,5 +3,5 @@
 </script>
 
 <qPushButton {text} on:clicked />
-<slot />
-<svelte:options namespace="foreign" />
+<!-- <slot />
+<svelte:options namespace="foreign" /> -->

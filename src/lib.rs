@@ -1,17 +1,14 @@
 #![feature(generic_associated_types)]
 // Allows impl Trait in associated type
-#![feature(min_type_alias_impl_trait)]
-//
+#![feature(type_alias_impl_trait)]
 #![feature(const_impl_trait)]
 // Features for evaluating expressions in const generics
 // #![feature(const_evaluatable_checked)]
 // Allows const str from utf8 bytes
 // #![feature(const_str_from_utf8_unchecked)]
-#![feature(const_generics)]
 #![feature(const_fn_trait_bound)]
 #![feature(const_type_name)]
 #![feature(specialization)]
-#![feature(impl_trait_in_bindings)]
 #![allow(incomplete_features)]
 #![recursion_limit = "1024"]
 #![deny(clippy::all)]

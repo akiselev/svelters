@@ -1,3 +1,5 @@
+use rquickjs::{Func, Function};
+
 use crate::{build_class, inner::*};
 
 pub struct InitElementProto<'a, 'b, 'js, BASE> {
@@ -13,6 +15,23 @@ impl<'a, 'b, 'js, BASE> InitElementProto<'a, 'b, 'js, BASE> {
             obj,
             framework: PhantomData,
         }
+    }
+}
+
+impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassLoader<CLS> {
+    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
+        phase.obj.set("castAs",
+            Func::new("castAs", 
+                rquickjs::Method(move |this: Element<'b>, ctx: Ctx<'b>, target: rquickjs::String<'b>| {
+                    
+                    let inner = this.borrow();
+                    let func: Function = inner.obj.get("castAs")?;
+                    
+                    let res: Value = Function::call(&func, (This(inner.obj.clone()), target))?;
+                    Result::Ok(res)
+                })
+            )
+        )
     }
 }
 

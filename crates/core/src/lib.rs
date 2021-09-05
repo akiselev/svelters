@@ -28,11 +28,12 @@ pub mod prelude {
 
     pub use crate::runtime::document::Document;
 
-    pub use crate::typedef::obj::Obj;
-    pub use crate::typedef::virt::Virt;
+    pub use crate::runtime::element::Element;
+    pub use crate::runtime::event::Event;
     pub use crate::runtime::node::Node;
     pub use crate::typedef::hslot::BasicSlot;
-    pub use crate::runtime::element::Element;
+    pub use crate::typedef::obj::Obj;
+    pub use crate::typedef::virt::Virt;
 
     pub use crate::init::{cleanup_svelters, initialize_svelters};
     pub use crate::typedef::builder::TypeBuilder;
@@ -56,14 +57,14 @@ pub(in crate) mod runtime {
     pub(in crate) mod doc_def;
     pub(in crate) mod document;
     pub(in crate) mod element;
-    pub(in crate) mod element_type;
     pub(in crate) mod element_def;
+    pub(in crate) mod element_type;
     pub(in crate) mod event;
+    pub(in crate) mod node;
+    pub(in crate) mod slot_def;
     pub(in crate) mod slot_node;
     pub(in crate) mod text_node;
     pub(in crate) mod text_node_def;
-    pub(in crate) mod slot_def;
-    pub(in crate) mod node;
 
     pub(in crate) use self::callbacks::*;
     pub(in crate) use self::doc_def::*;
@@ -72,28 +73,28 @@ pub(in crate) mod runtime {
     pub(in crate) use self::element_def::*;
     pub(in crate) use self::element_type::*;
     pub(in crate) use self::event::*;
-    pub(in crate) use self::slot_def::*;
-    pub(in crate) use self::text_node_def::*;
-    pub(in crate) use self::text_node::*;
-    pub(in crate) use self::slot_node::*;
     pub(in crate) use self::node::*;
+    pub(in crate) use self::slot_def::*;
+    pub(in crate) use self::slot_node::*;
+    pub(in crate) use self::text_node::*;
+    pub(in crate) use self::text_node_def::*;
 }
 
 #[allow(unused_imports)]
 pub(in crate) mod typedef {
     pub(in crate) mod builder;
+    pub(in crate) mod hslot;
     pub(in crate) mod members;
     pub(in crate) mod metadata;
     pub(in crate) mod module;
     pub(in crate) mod obj;
     pub(in crate) mod virt;
-    pub(in crate) mod hslot;
 
     pub(in crate) use self::builder::*;
+    pub(in crate) use self::hslot::*;
     pub(in crate) use self::metadata::*;
     pub(in crate) use self::module::*;
     pub(in crate) use self::obj::*;
-    pub(in crate) use self::hslot::*;
     pub(in crate) use self::virt::*;
 
     pub(in crate) mod traits {
@@ -131,14 +132,14 @@ pub(in crate) mod phases {
     mod element {
         mod init_caster;
         mod init_element;
-        mod init_proto;
         mod init_native_slot;
         mod init_node;
+        mod init_proto;
 
         pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_element::*;
-        pub(in crate) use self::init_node::*;
         pub(in crate) use self::init_native_slot::*;
+        pub(in crate) use self::init_node::*;
         pub(in crate) use self::init_proto::*;
     }
 
@@ -158,17 +159,17 @@ pub(in crate) mod phases {
 pub(in crate) mod inner {
     pub(in crate) use std::{
         borrow::Cow,
-        rc::Rc,
         cell::{Cell, RefCell},
         convert::{TryFrom, TryInto},
         marker::PhantomData,
         ops::{Add, Deref, DerefMut},
+        rc::Rc,
     };
 
     pub(in crate) use frunk::{
+        coproduct::{CNil, Coproduct},
         hlist::{HList, Selector},
         HCons, HNil,
-        coproduct::{CNil, Coproduct},
     };
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
     pub(in crate) use rquickjs::{

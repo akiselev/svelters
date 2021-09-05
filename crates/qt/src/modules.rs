@@ -2,8 +2,8 @@ use std::{ffi::CStr, ops::Deref, os::raw::c_char};
 
 use frunk::hlist::IntoTuple2;
 use qt_core::{
-    cpp_core::{CastFrom, CppBox, CppDeletable, Ptr, Ref, StaticDowncast, StaticUpcast},
-    QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString,
+    cpp_core::{CastFrom, CppBox, CppDeletable, NullPtr, Ptr, Ref, StaticDowncast, StaticUpcast},
+    QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString, SlotOfBool,
 };
 use qt_gui::QWindow;
 use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
@@ -139,7 +139,48 @@ impl Type for Qt<QMainWindow> {
             },
         )?;
         cls.constructor0(|| unsafe { Ok(Qt::new(QMainWindow::new_0a())) })?;
-        cls.superclass::<Qt<QWidget>>()?;
+        cls.as_element("qMainWindow", || unsafe {
+            Ok(Qt::new(QMainWindow::new_0a()))
+        })?;
+        cls.superclass::<Qt<QWidget>>()?.with_slot(BasicSlot::new(
+            |node, child| {
+                let this = node.cast_as::<Self>().unwrap();
+                if let Some(widget) = child.cast_as::<Qt<QWidget>>() {
+                    unsafe { this.set_central_widget(widget.as_ptr()) };
+                    node.append_node(child);
+                    Ok(())
+                } else {
+                    Err(Error::new(node.ctx(), "Could not cast as QWidget"))
+                }
+            },
+            |node, child, anchor| {
+                if let Some(anchor) = anchor {
+                    Err(Error::new(
+                        node.ctx(),
+                        "QMainWindow only allows one central widget",
+                    ))
+                } else {
+                    let this = node.cast_as::<Self>().unwrap();
+                    if let Some(widget) = child.cast_as::<Qt<QWidget>>() {
+                        unsafe { this.set_central_widget(widget.as_ptr()) };
+                        node.append_node(child);
+                        Ok(())
+                    } else {
+                        Err(Error::new(node.ctx(), "Could not cast as QWidget"))
+                    }
+                }
+            },
+            |node, child| {
+                let this = node.cast_as::<Self>().unwrap();
+                if let Some(widget) = child.cast_as::<Qt<QWidget>>() {
+                    unsafe { this.take_central_widget() };
+                    node.remove_node(child);
+                    Ok(())
+                } else {
+                    Err(Error::new(node.ctx(), "Could not cast as QWidget"))
+                }
+            },
+        ))?;
         Ok(())
     }
 }
@@ -155,6 +196,7 @@ impl Type for Qt<QPushButton> {
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.constructor0(|| unsafe { Ok(Qt::new(QPushButton::new())) })?;
+        cls.as_element("qPushButton", || unsafe { Ok(Qt::new(QPushButton::new())) })?;
         cls.prop(
             "text",
             |this: &Qt<QPushButton>| unsafe { Ok(this.text().to_std_string()) },
@@ -164,6 +206,31 @@ impl Type for Qt<QPushButton> {
                 Ok(())
             },
         )?;
+        cls.with_event("clicked", |el, ctx, callback| unsafe {
+            let this = el.cast_as::<Self>().unwrap();
+            let callback = ctx.register(callback.into_value());
+            let context = Context::from_ctx(ctx)?;
+            tracing::info!("Adding event listener on QPushButton::clicked");
+            let conn = SlotOfBool::new(this.as_ptr(), move |_| {
+                tracing::info!("Handling QPushButton::clicked");
+                context.with(|ctx| {
+                    ctx.get_register(callback)
+                        .unwrap()
+                        .into_function()
+                        .unwrap()
+                        .call::<_, ()>((Event::new(ctx, "clicked", ()),))
+                        .unwrap();
+                })
+            });
+            let disconnect = this.clicked().connect(&conn);
+
+            Ok(Box::new(move |node| {
+                tracing::info!("Disconnected QPushButton::clicked");
+                let conn = conn;
+                QObject::disconnect_connection(disconnect.as_ref());
+                Ok(())
+            }))
+        })?;
         cls.superclass::<Qt<QWidget>>()?;
         Ok(())
     }

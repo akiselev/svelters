@@ -18,7 +18,7 @@ impl<'a, CLS: Type> InitCaster<'a, CLS> {
 
 impl<'a, 'js, CLS> Implements<InitProto<'a, 'js, CLS>> for JsClassLoader<CLS>
 where
-    CLS: Type,
+    CLS: Type + Clone,
 {
     #[inline(always)]
     fn build_phase(self, phase: &mut InitProto<'a, 'js, CLS>) -> Result<()> {
@@ -29,27 +29,32 @@ where
                 "castAs",
                 rquickjs::Method(
                     move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
-                        let map = cell.get_or_init(|| {
+                        let map = cell.get_or_try_init(|| {
                             tracing::info!("Building caster for {}", CLS::CLASS_NAME);
                             let mut map: ObjCasterMap<CLS> = HashMap::new();
-                            map.insert(CLS::CLASS_NAME, Box::new(|ctx, value| value.into_js(ctx)));
+                            map.insert(CLS::CLASS_NAME, Box::new(|ctx, value| {
+                                tracing::info!("Casting {} to self", CLS::CLASS_NAME);
+                                let obj: &Obj<CLS> = value.as_ref();
+                                let cls = obj.as_inner().clone();
+                                Virt::new(cls, value.as_object().clone()).into_js(ctx)
+                            }));
                             {
                                 build_class!(CLS with InitCaster::<CLS>::new(&mut map))
                             };
                             Result::Ok(map)
-                        });
-                        let map = match map {
-                            Ok(map) => Ok(map),
-                            Err(err) => Err(err.clone()),
-                        }?;
+                        })?;
                         match map.get(target.as_str()) {
                             Some(func) => {
+                                tracing::info!("Casting {} to {}", CLS::CLASS_NAME, target);
                                 (*func)(ctx, this)
                             },
-                            None => Err(Error::new(
-                                ctx,
-                                format!("No cast function from {} to {}", CLS::CLASS_NAME, target),
-                            )),
+                            None => {
+                                tracing::error!("No cast function from {} to {}", CLS::CLASS_NAME, target);
+                                Err(Error::new(
+                                    ctx,
+                                    format!("No cast function from {} to {}", CLS::CLASS_NAME, target),
+                                ))
+                            },
                         }
                     },
                 ),

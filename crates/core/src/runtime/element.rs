@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use rquickjs::{HasRefs, WithProto};
+use rquickjs::{Function, HasRefs, WithProto};
 use smallvec::SmallVec;
 
 use crate::inner::*;
@@ -44,7 +44,6 @@ impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Element<'js> {
     }
 }
 
-
 impl<'js> PartialEq<Object<'js>> for Element<'js> {
     fn eq(&self, other: &Object<'js>) -> bool {
         self.borrow().obj == *other
@@ -54,17 +53,20 @@ impl<'js> PartialEq<Object<'js>> for Element<'js> {
 impl<'js> PartialEq<Value<'js>> for Element<'js> {
     fn eq(&self, other: &Value<'js>) -> bool {
         if let Some(other) = other.as_object() {
-            self.borrow().obj == *other 
-        } else { false }
+            self.borrow().obj == *other
+        } else {
+            false
+        }
     }
 }
 
-impl<'js> Eq  for Element<'js> {}
+impl<'js> Eq for Element<'js> {}
 
 pub struct ElData<'js> {
     pub(in crate) obj: Object<'js>,
     pub(in crate) tag: &'static str,
     pub(in crate) node: NodeData<'js>,
+    pub dispatcher: Dispatcher,
     pub(in crate) class_name: &'static str,
 }
 
@@ -85,16 +87,26 @@ impl<'js> std::ops::Deref for ElData<'js> {
 }
 
 impl<'js> Element<'js> {
-    pub(in crate) fn new<CLS: Type + Clone>(
-        tag: &'static str,
-        obj: Object<'js>
-    ) -> Self {
-        Self(Inner::new( ElData{
+    pub(in crate) fn new<CLS: Type + Clone>(tag: &'static str, obj: Object<'js>) -> Self {
+        Self(Inner::new(ElData {
             obj,
             tag,
+            dispatcher: Dispatcher::new(),
             node: NodeData::new(),
             class_name: CLS::CLASS_NAME,
         }))
+    }
+
+    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>> {
+        let this = self.borrow();
+        let func: Function = this
+            .obj
+            .get("castAs")
+            .expect("No castAs function found on Node");
+        let res = func
+            .call((This(this.obj.clone()), CLS::CLASS_NAME))
+            .expect("Could not convert");
+        Some(res)
     }
 }
 

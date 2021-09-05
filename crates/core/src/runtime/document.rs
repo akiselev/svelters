@@ -1,5 +1,8 @@
-use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
-
+use std::{
+    cell::RefCell,
+    collections::{HashMap, HashSet},
+    rc::Rc,
+};
 
 use crate::inner::*;
 
@@ -11,7 +14,7 @@ pub struct DocInner {
 }
 
 pub struct Document {
-    pub(in crate) inner: Rc<RefCell<DocInner>>,
+    pub(in crate) inner: Inner<DocInner>,
 }
 
 impl Clone for Document {
@@ -23,10 +26,10 @@ impl Clone for Document {
 impl Document {
     pub fn new() -> Document {
         Document {
-            inner: Rc::new(RefCell::new(DocInner {
+            inner: Inner::new(DocInner {
                 events: Default::default(),
                 types: Default::default(),
-            })),
+            }),
         }
     }
 
@@ -45,14 +48,13 @@ impl Document {
         name: String,
         options: Opt<Object<'js>>,
     ) -> Result<Value<'js>> {
-        self.create_element(ctx, name, options)
+        self.create_element(ctx, name)
     }
 
     pub(in crate) fn create_element<'js>(
         &mut self,
         ctx: Ctx<'js>,
         name: String,
-        _options: Opt<Object<'js>>,
     ) -> Result<Value<'js>> {
         if name == "slot" {
             return Slot::new().into_js(ctx);

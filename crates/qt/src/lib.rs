@@ -1,7 +1,5 @@
 #![feature(generic_associated_types)]
-#![feature(const_generics)]
-#![feature(impl_trait_in_bindings)]
-#![feature(min_type_alias_impl_trait)]
+#![feature(type_alias_impl_trait)]
 #![feature(specialization)]
 #![feature(in_band_lifetimes)]
 #![recursion_limit = "1024"]

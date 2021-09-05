@@ -9,7 +9,7 @@ use crate::inner::*;
 
 #[derive(Clone)]
 pub struct Node<'js> {
-    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) _ctx: Ctx<'js>,
     pub(in crate) this: NodeType<'js>,
 }
 
@@ -46,19 +46,24 @@ impl<'js> PartialEq<Object<'js>> for Node<'js> {
     }
 }
 
-
 impl<'js> Eq for Node<'js> {}
 
 impl<'js> Node<'js> {
     pub fn append_node(&self, node: Node<'js>) {
         let parent = self.clone();
         self.with_node(move |this| {
-            if !this.is_mounted() { panic!("Tried to append node that is already mounted") }
+            if this.is_mounted() {
+                panic!("Tried to append node that is already mounted")
+            }
             let children = this.children.get_or_insert_with(|| vec![]);
             let prev = if let Some(child) = children.last_mut() {
                 child.with_node(|data| {
-                if data.is_mounted() { panic!("Tried to append node that is already mounted") }
-                if data.next.is_none() { panic!("Next sibling on append node is already set") }
+                    if data.is_mounted() {
+                        panic!("Tried to append node that is already mounted")
+                    }
+                    if data.next.is_none() {
+                        panic!("Next sibling on append node is already set")
+                    }
                     data.next = Some(node.clone());
                 });
                 Some(child.clone())
@@ -66,9 +71,7 @@ impl<'js> Node<'js> {
                 None
             };
             let prev = prev.and_then(|prev| {
-                prev.with_node(
-                    |data| data.next = Some(node.clone())
-                );
+                prev.with_node(|data| data.next = Some(node.clone()));
                 Some(prev)
             });
             node.with_node(move |data| {
@@ -80,10 +83,15 @@ impl<'js> Node<'js> {
 
     pub fn remove_node(&self, node: Node<'js>) {
         self.with_node(move |this| {
-            if !this.is_mounted() { panic!("Tried to remove node that is not mounted") }
+            if !this.is_mounted() {
+                panic!("Tried to remove node that is not mounted")
+            }
             let children = this.children.get_or_insert_with(|| vec![]);
-            let index = { 
-                children.iter_mut().position(|this| *this == node).expect("Can't find node to remove")
+            let index = {
+                children
+                    .iter_mut()
+                    .position(|this| *this == node)
+                    .expect("Can't find node to remove")
             };
             node.with_node(|data| {
                 let mut next = data.next.take();
@@ -104,18 +112,23 @@ impl<'js> Node<'js> {
     pub fn insert_node(&self, node: Node<'js>, anchor: Node<'js>) {
         let parent = self.clone();
         self.with_node(move |this| {
-            if !this.is_mounted() { panic!("Tried to remove node that is not mounted") }
+            if this.is_mounted() {
+                panic!("Tried to insert node that is already mounted")
+            }
             let children = this.children.get_or_insert_with(|| vec![]);
-            let index = { 
-                children.iter_mut().position(|this| *this == anchor).expect("Can't find anchor for insert")
+            let index = {
+                children
+                    .iter_mut()
+                    .position(|this| *this == anchor)
+                    .expect("Can't find anchor for insert")
             };
             let target = children[index].clone();
             let prev = target.with_node(|data| {
                 let prev = data.prev.take();
                 data.prev = Some(node.clone());
-                prev 
+                prev
             });
-            if let Some(prev) = &prev { 
+            if let Some(prev) = &prev {
                 prev.with_node(|data| data.next = Some(node.clone()));
             }
             node.with_node(move |data| {
@@ -131,15 +144,15 @@ impl<'js> Node<'js> {
         self.with_node(move |this| {
             if let Some(children) = &this.children {
                 children.iter().position(|this| *this == node)
-            } else { None }
+            } else {
+                None
+            }
         })
     }
 
     fn instance_of<CLS: Type>(&self) -> bool {
         match &self.this {
-            NodeType::Element(this) => {
-                this.borrow().obj.instance_of::<Obj<CLS>>()
-            },
+            NodeType::Element(this) => this.borrow().obj.instance_of::<Obj<CLS>>(),
             _ => false,
         }
     }
@@ -149,10 +162,14 @@ impl<'js> Node<'js> {
             NodeType::Element(this) => {
                 let this = this.borrow();
                 if this.obj.instance_of::<Obj<CLS>>() {
-                    this.obj.clone().into_instance::<Obj<CLS>>()
+                    this.obj
+                        .clone()
+                        .into_instance::<Obj<CLS>>()
                         .and_then(|obj| Some(func(&AsRef::<Obj<CLS>>::as_ref(&obj).inner)))
-                } else { None }
-            },
+                } else {
+                    None
+                }
+            }
             _ => None,
         }
     }
@@ -162,61 +179,92 @@ impl<'js> Node<'js> {
             NodeType::Slot(this) => {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
-            },
+            }
             NodeType::Text(this) => {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
-            },
+            }
             NodeType::Element(this) => {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
-            },
+            }
         }
     }
 
-    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>>
-    {
+    pub fn with_dispatcher<F: FnOnce(&mut Dispatcher) -> R, R>(&self, func: F) -> R {
+        match &self.this {
+            NodeType::Slot(this) => {
+                // let mut data = this.borrow_mut();
+                // func(&mut data.node)
+                todo!()
+            }
+            NodeType::Text(this) => {
+                // let mut data = this.borrow_mut();
+                // func(&mut data.node)
+                todo!()
+            }
+            NodeType::Element(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.dispatcher)
+            }
+        }
+    }
+
+    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>> {
         match &self.this {
             NodeType::Element(this) => {
-                let func: Function = this.borrow().obj.get("castAs").ok()?;
-                func.call((CLS::CLASS_NAME,)).ok()
-            },
-            _ => None
+                let this = this.borrow();
+                let func: Function = this
+                    .obj
+                    .get("castAs")
+                    .expect("No castAs function found on Node");
+                let res = func
+                    .call((This(this.obj.clone()), CLS::CLASS_NAME))
+                    .expect("Could not convert");
+                Some(res)
+            }
+            _ => None,
         }
     }
 
     pub fn num_children(&self) -> usize {
-        self.with_node(|node| if let Some(children) = &node.children {
-            children.len()
-        } else { 0 })
+        self.with_node(|node| {
+            if let Some(children) = &node.children {
+                children.len()
+            } else {
+                0
+            }
+        })
+    }
+
+    pub fn ctx(&self) -> Ctx<'js> {
+        self._ctx
     }
 }
 
 #[derive(Clone, Eq)]
- pub(in crate) enum NodeType<'js> {
+pub(in crate) enum NodeType<'js> {
     Slot(Slot<'js>),
     Text(TextNode<'js>),
     Element(Element<'js>),
 }
 
-impl<'js> PartialEq<NodeType<'js>> for NodeType<'js> {
-    fn eq(&self, other: &NodeType<'js>) -> bool {
-        match (self, other) {
-            (NodeType::Slot(left), NodeType::Slot(right)) => {
-                left == right
-            },
-            (NodeType::Text(left), NodeType::Text(right)) => {
-                left == right
-            },
-            (NodeType::Element(left), NodeType::Element(right)) => {
-                left == right
-            },
-            _ => false
-        }
+impl<'js> From<Element<'js>> for NodeType<'js> {
+    fn from(v: Element<'js>) -> Self {
+        Self::Element(v)
     }
 }
 
-
+impl<'js> PartialEq<NodeType<'js>> for NodeType<'js> {
+    fn eq(&self, other: &NodeType<'js>) -> bool {
+        match (self, other) {
+            (NodeType::Slot(left), NodeType::Slot(right)) => left == right,
+            (NodeType::Text(left), NodeType::Text(right)) => left == right,
+            (NodeType::Element(left), NodeType::Element(right)) => left == right,
+            _ => false,
+        }
+    }
+}
 
 #[derive(Clone, Eq, PartialEq)]
 pub(in crate) struct NodeData<'js> {
@@ -253,13 +301,20 @@ impl<'js> HasRefs for Node<'js> {
     }
 }
 
-
 impl<'js> HasRefs for NodeData<'js> {
     fn mark_refs(&self, marker: &RefsMarker) {
-        if let Some(next) = &self.next { next.mark_refs(marker)}
-        if let Some(prev) = &self.prev { prev.mark_refs(marker)}
-        if let Some(parent) = &self.parent { parent.mark_refs(marker)}
-        if let Some(children) = &self.children { children.iter().for_each(|child| child.mark_refs(marker)) }
+        if let Some(next) = &self.next {
+            next.mark_refs(marker)
+        }
+        if let Some(prev) = &self.prev {
+            prev.mark_refs(marker)
+        }
+        if let Some(parent) = &self.parent {
+            parent.mark_refs(marker)
+        }
+        if let Some(children) = &self.children {
+            children.iter().for_each(|child| child.mark_refs(marker))
+        }
     }
 }
 
@@ -274,18 +329,23 @@ impl<'js> rquickjs::IntoJs<'js> for Node<'js> {
 }
 
 impl<'js, 'a> rquickjs::FromJs<'js> for Node<'js> {
-    fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+    fn from_js(_ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
         let this = if let Some(obj) = value.as_object() {
             match obj {
-                obj if obj.instance_of::<Element<'js>>() => NodeType::Element(Element::from_js_obj(ctx, value)?),
-                obj if obj.instance_of::<Slot<'js>>() => NodeType::Slot(Slot::from_js_obj(ctx, value)?),
-                obj if obj.instance_of::<TextNode<'js>>() => NodeType::Text(TextNode::from_js_obj(ctx, value)?),
-                _ => return Err(Error::new_from_js("object", "Node"))
+                obj if obj.instance_of::<Element<'js>>() => {
+                    NodeType::Element(Element::from_js_obj(_ctx, value)?)
+                }
+                obj if obj.instance_of::<Slot<'js>>() => {
+                    NodeType::Slot(Slot::from_js_obj(_ctx, value)?)
+                }
+                obj if obj.instance_of::<TextNode<'js>>() => {
+                    NodeType::Text(TextNode::from_js_obj(_ctx, value)?)
+                }
+                _ => return Err(Error::new_from_js("object", "Node")),
             }
-        } else { return Err(Error::new_from_js(value.type_name(), "Node")) };
-        Ok(Node {
-            ctx,
-            this
-        })
+        } else {
+            return Err(Error::new_from_js(value.type_name(), "Node"));
+        };
+        Ok(Node { _ctx, this })
     }
 }

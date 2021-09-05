@@ -1,3 +1,5 @@
+use rquickjs::Function;
+
 use crate::{build_class, inner::*};
 
 pub struct InitElement<'a, BASE> {
@@ -65,6 +67,19 @@ where
     fn build_phase(self, phase: &mut InitElement<'a, CLS>) -> Result<()> {
         phase.element.inherits::<SUPER>();
         build_class!(SUPER with InitElement::<'_, CLS>::new(phase.element));
+        Ok(())
+    }
+}
+
+impl<'a, 'b: 'a, CLS, BASE, FUNC> Implements<InitElement<'a, BASE>> for members::Event<CLS, FUNC>
+where
+    CLS: Type,
+    BASE: Type + Caster<CLS>,
+    FUNC: 'static + for<'js> Fn(Element<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
+{
+    #[inline(always)]
+    fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
+        phase.element.event::<BASE, CLS, _>(self.name, self.func);
         Ok(())
     }
 }

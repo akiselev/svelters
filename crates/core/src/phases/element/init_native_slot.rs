@@ -14,9 +14,8 @@ where
                 "appendChild",
                 rquickjs::Func::new(
                     "appendChild",
-                    rquickjs::Method(
-                    move |this, child| slot.append_child(this, child)
-                ))
+                    rquickjs::Method(move |this, child| slot.append_child(this, child)),
+                ),
             )?;
         }
         {
@@ -25,9 +24,8 @@ where
                 "removeChild",
                 rquickjs::Func::new(
                     "removeChild",
-                    rquickjs::Method(
-                    move |this, child| slot.remove_child(this, child)
-                ))
+                    rquickjs::Method(move |this, child| slot.remove_child(this, child)),
+                ),
             )?;
         }
         {
@@ -36,23 +34,37 @@ where
                 "insertBefore",
                 rquickjs::Func::new(
                     "insertBefore",
-                    rquickjs::Method(
-                    move |this, child, anchor| slot.insert_before(this, child, anchor)
-                ))
+                    rquickjs::Method(move |this, child, anchor| {
+                        slot.insert_before(this, child, anchor)
+                    }),
+                ),
             )?;
         }
         Ok(())
     }
 }
 
-fn append_child<'js, SLOT: NativeSlot>(slot: &SLOT, this: Node<'js>, child: Node<'js>) -> Result<()> {
+fn append_child<'js, SLOT: NativeSlot>(
+    slot: &SLOT,
+    this: Node<'js>,
+    child: Node<'js>,
+) -> Result<()> {
     slot.append_child(this, child)
 }
 
-fn remove_child<'js, SLOT: NativeSlot>(slot: &SLOT, this: Node<'js>, child: Node<'js>) -> Result<()> {
+fn remove_child<'js, SLOT: NativeSlot>(
+    slot: &SLOT,
+    this: Node<'js>,
+    child: Node<'js>,
+) -> Result<()> {
     slot.remove_child(this, child)
 }
 
-fn insert_before<'js, SLOT: NativeSlot>(slot: &SLOT, this: Node<'js>, child: Node<'js>, anchor: Node<'js>) -> Result<()> {
-    slot.insert_before(this, child, anchor)
+fn insert_before<'js, SLOT: NativeSlot>(
+    slot: &SLOT,
+    this: Node<'js>,
+    child: Node<'js>,
+    anchor: Opt<Node<'js>>,
+) -> Result<()> {
+    slot.insert_before(this, child, anchor.into_inner())
 }

@@ -172,10 +172,31 @@ mod native_slot {
     }
 }
 
+mod event {
+    use crate::inner::*;
+
+    pub struct Event<CLS, FUNC> {
+        pub(in crate) name: &'static str,
+        pub(in crate) func: FUNC,
+        marker: PhantomData<CLS>,
+    }
+
+    impl<CLS, FUNC> Event<CLS, FUNC> {
+        pub(in crate) fn new(name: &'static str, func: FUNC) -> Self {
+            Event {
+                name,
+                func,
+                marker: PhantomData,
+            }
+        }
+    }
+}
+
 pub use self::constructor::*;
 pub use self::element::*;
+pub use self::event::*;
 pub use self::method::*;
+pub use self::native_slot::*;
 pub use self::prop::*;
 pub use self::staticfn::*;
 pub use self::superclass::*;
-pub use self::native_slot::*;

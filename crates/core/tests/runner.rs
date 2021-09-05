@@ -1,4 +1,4 @@
-#![feature(min_type_alias_impl_trait)]
+#![feature(type_alias_impl_trait)]
 #![feature(generic_associated_types)]
 #![feature(specialization)]
 #![allow(incomplete_features)]

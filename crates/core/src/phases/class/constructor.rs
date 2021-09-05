@@ -62,15 +62,22 @@ where
         let proto_key = { phase.ctx.register(proto.into_value()) };
 
         let mut eltype = ElementType::new(name, move |ctx: Ctx| {
+            tracing::info!("El constructor for {} 1", CLS::CLASS_NAME);
             let proto: Object = ctx
                 .get_register(proto_key)
                 .unwrap()
                 .as_object()
                 .unwrap()
                 .clone();
-            let obj = Obj::new((func)()?).into_js_obj(ctx)?;
+            tracing::info!("El constructor for {} 22", CLS::CLASS_NAME);
+            let res = (func)()?;
+            tracing::info!("El constructor for {} 3", CLS::CLASS_NAME);
+            let obj = Obj::new(res).into_js_obj(ctx)?;
+            tracing::info!("El constructor for {} 4", CLS::CLASS_NAME);
             let id = ElementId(ctx.register(obj.clone()));
+            tracing::info!("El constructor for {} 5", CLS::CLASS_NAME);
             let el = Element::new::<CLS>(name, obj.into_object().unwrap());
+            tracing::info!("El constructor for {} 6", CLS::CLASS_NAME);
             WithProto(el, proto).into_js(ctx)
         });
         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
@@ -85,6 +92,7 @@ where
 {
     let cell = OnceCell::new();
     move |this: &mut Element, ctx: Ctx, target: String| {
+        tracing::info!("Casting Element to {}", CLS::CLASS_NAME);
         let map = cell.get_or_try_init(|| {
             let mut map: ElementCasterMap = HashMap::new();
             map.insert(
