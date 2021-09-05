@@ -123,3 +123,15 @@ export const setElementProperty = (el, name, value) => {
     const newValue = inst[name];
     return newValue;
 };
+
+export const addWidget = (cls) => {
+    let box = constructClass("BoxLayout");
+    let inst = constructClass(cls);
+    return box.addWidget(inst);
+};
+
+export const addObject = (cls) => {
+    let box = constructClass("BoxLayout");
+    let inst = constructClass(cls);
+    return box.addObject(inst);
+};

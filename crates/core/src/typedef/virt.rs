@@ -42,6 +42,10 @@ where
         Self { inner, obj }
     }
 
+    pub fn get<T>(&self, name: &str) -> Result<T> where T: FromJs<'js> {
+        self.obj.get(name)
+    }
+
     pub fn as_inner<'a, 'b>(&'a self) -> &'b CLS
     where
         'a: 'b,
@@ -59,7 +63,7 @@ where
     pub fn cast_as<OTHER: Clone + Type>(&self) -> Option<Virt<'js, OTHER>>
     {
         let func: Function = self.obj.get("castAs").ok()?;
-        func.call((OTHER::CLASS_NAME,)).ok()
+        func.call((This(self.obj.clone()), OTHER::CLASS_NAME,)).ok()
     }
 }
 
@@ -131,7 +135,7 @@ where
     CLS: 'static + Type,
 {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
-        <Self as rquickjs::ClassDef>::into_js_obj(self, ctx)
+        self.into_js_obj(ctx)
     }
 }
 
@@ -141,17 +145,13 @@ where
     Self: Clone,
 {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        let mut_ref = <Virt<'js, CLS> as rquickjs::ClassDef>::from_js_mut(ctx, value.clone());
-        match mut_ref {
-            Ok(virt) => Ok(virt.clone()),
-            Err(err) => match Object::from_js(ctx, value) {
-                Ok(obj) => match obj.get::<_, Function<'_>>("castAs") {
-                    Ok(func) => func.call((This(obj), CLS::name())),
-                    _ => Err(err),
-                },
-                _ => Err(err),
-            },
+        let obj = value.as_object().ok_or_else(|| Error::new(ctx, format!("Could not cast to {}", CLS::CLASS_NAME)))?;
+        if obj.instance_of::<Self>() {
+            return Self::from_js_obj(ctx, value);
         }
+        let func: Function = obj.get::<_, Function<'_>>("castAs")?;
+        let res = func.call((This(obj.clone()), CLS::name()));
+        res
     }
 }
 

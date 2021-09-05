@@ -19,7 +19,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
     where
         JsClassLoader<CLS>: Implements<PHASE>,
     {
-        JsClassLoader::<CLS>::new().build(&mut self.phase)?;
+        JsClassLoader::<CLS>::new().build_phase(&mut self.phase)?;
         Ok(self)
     }
 
@@ -31,7 +31,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
         FN: 'static + for<'x> Fn<ARGS, Output = RET>,
         Member<CLS, AsMethod<FN>>: Implements<PHASE>,
     {
-        Member::new(name, AsMethod::new(func)).build(&mut self.phase)?;
+        Member::new(name, AsMethod::new(func)).build_phase(&mut self.phase)?;
         Ok(self)
     }
 
@@ -49,7 +49,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
         Property<CLS, PROP, GET, SET>: Implements<PHASE>,
     {
-        Property::<CLS, PROP, GET, SET>::new(name, getter, setter).build(&mut self.phase)?;
+        Property::<CLS, PROP, GET, SET>::new(name, getter, setter).build_phase(&mut self.phase)?;
         Ok(self)
     }
 
@@ -61,7 +61,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         ReadOnly<CLS, PROP, GET>: Implements<PHASE>,
     {
-        ReadOnly::<CLS, PROP, GET>::new(name, getter).build(&mut self.phase)?;
+        ReadOnly::<CLS, PROP, GET>::new(name, getter).build_phase(&mut self.phase)?;
         Ok(self)
     }
 
@@ -72,7 +72,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
         CLS: Cast<SUPER>,
         Superclass<SUPER>: Implements<PHASE>,
     {
-        Superclass::<SUPER>::new().build(&mut self.phase)?;
+        Superclass::<SUPER>::new().build_phase(&mut self.phase)?;
         Ok(self)
     }
 
@@ -82,7 +82,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
         FUNC: 'static + Fn() -> Result<CLS>,
         members::Element<CLS, FUNC>: Implements<PHASE>,
     {
-        members::Element::<CLS, FUNC>::new(name, func).build(&mut self.phase)?;
+        members::Element::<CLS, FUNC>::new(name, func).build_phase(&mut self.phase)?;
         Ok(self)
     }
 
@@ -92,7 +92,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
         SLOT: crate::traits::NativeSlot,
         members::NativeSlot<CLS, SLOT>: Implements<PHASE>,
     {
-        members::NativeSlot::<CLS, SLOT>::new().build(&mut self.phase)?;
+        members::NativeSlot::<CLS, SLOT>::new().build_phase(&mut self.phase)?;
         Ok(self)
     }
 }
@@ -108,22 +108,22 @@ macro_rules! tup {
                 Constructor<CLS, ($($arg,)*), FUNC>: Implements<PHASE>,
                 $($arg: for<'x> FromJs<'x>,)*
             {
-                Constructor::new(func).build(&mut self.phase)?;
+                Constructor::new(func).build_phase(&mut self.phase)?;
                 Ok(self)
             }
 
             #[inline(always)]
-            pub fn $method<THIS, RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
+            pub fn $method<'js, THIS, RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
             where
                 CLS: 'static + Type,
                 CLS: Cast<THIS>,
                 THIS: 'static,
-                RET: 'static + for<'js> IntoJs<'js>,
+                RET: 'static +  for<'x> IntoJs<'x>,
                 FN: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
                 Method<CLS, (THIS, $($arg,)*), RET, FN>: Implements<PHASE>,
-                $($arg: for<'x> FromJs<'x>,)*
+                $($arg: FromJs<'js>,)*
             {
-                Method::new(name, func).build(&mut self.phase)?;
+                Method::new(name, func).build_phase(&mut self.phase)?;
                 Ok(self)
             }
 
@@ -136,7 +136,7 @@ macro_rules! tup {
                 StaticFn<CLS, ($($arg,)*), RET, FN>: Implements<PHASE>,
                 $($arg: for<'x> FromJs<'x>,)*
             {
-                StaticFn::new(name, func).build(&mut self.phase)?;
+                StaticFn::new(name, func).build_phase(&mut self.phase)?;
                 Ok(self)
             }
 

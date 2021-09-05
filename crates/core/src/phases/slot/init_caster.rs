@@ -43,7 +43,9 @@ where
                             Err(err) => Err(err.clone()),
                         }?;
                         match map.get(target.as_str()) {
-                            Some(func) => (*func)(ctx, this),
+                            Some(func) => {
+                                (*func)(ctx, this)
+                            },
                             None => Err(Error::new(
                                 ctx,
                                 format!("No cast function from {} to {}", CLS::CLASS_NAME, target),

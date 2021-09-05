@@ -80,7 +80,7 @@ pub trait Type: 'static + Sized {
 ///
 /// ```rust
 /// impl<T, P> Implements<P> for T {
-///     default fn build(self, _phase: &mut P) -> Result<()> {
+///     default fn build_phase(self, _phase: &mut P) -> Result<()> {
 ///         Ok(())
 ///     }
 /// }
@@ -106,13 +106,17 @@ pub trait Type: 'static + Sized {
 /// features like reflection and debuging.
 pub trait Implements<P>: Sized {
     #[inline(always)]
-    fn build(self, _phase: &mut P) -> Result<()> {
-        Ok(())
-    }
+    fn build_phase(self, _phase: &mut P) -> Result<()>;
+
+    // fn build_phase_logged(self, phase: &mut P) -> Result<()> {
+    //     tracing::info!("Calling phase <{}> for <{}>", std::any::type_name::<P>(), std::any::type_name::<Self>());
+    //     self.build_phase(phase)
+    // }
+
 }
 
 impl<T, P> Implements<P> for T {
-    default fn build(self, _phase: &mut P) -> Result<()> {
+    default fn build_phase(self, _phase: &mut P) -> Result<()> {
         Ok(())
     }
 }
