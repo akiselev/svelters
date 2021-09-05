@@ -87,12 +87,12 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
     }
 
     #[inline(always)]
-    pub fn with_slot<SLOT>(&mut self) -> Result<&mut Self>
+    pub fn with_slot<SLOT>(&mut self, slot: SLOT) -> Result<&mut Self>
     where
         SLOT: crate::traits::NativeSlot,
         members::NativeSlot<CLS, SLOT>: Implements<PHASE>,
     {
-        members::NativeSlot::<CLS, SLOT>::new().build_phase(&mut self.phase)?;
+        members::NativeSlot::<CLS, SLOT>::new(slot).build_phase(&mut self.phase)?;
         Ok(self)
     }
 }

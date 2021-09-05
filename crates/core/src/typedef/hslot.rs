@@ -1,6 +1,45 @@
 
 use crate::inner::*;
 
+
+#[derive(Clone)]
+pub struct BasicSlot<APP, INS, REM> {
+    append: APP,
+    insert: INS,
+    remove: REM,
+}
+
+impl<APP, INS, REM> BasicSlot<APP, INS, REM> {
+    pub fn new(append: APP, insert: INS, remove: REM) -> BasicSlot<APP, INS, REM>
+    where
+        APP: for<'js> Fn(Node<'js>, Node<'js>) -> Result<()>,
+        REM: for<'js> Fn(Node<'js>, Node<'js>) -> Result<()>,
+        INS: for<'js> Fn(Node<'js>, Node<'js>, Node<'js>) -> Result<()>,
+    {
+        BasicSlot { append, insert, remove }
+    }
+
+}
+
+impl<APP, INS, REM> NativeSlot for BasicSlot<APP, INS, REM>
+where
+    APP: Clone + 'static + for<'js> Fn(Node<'js>, Node<'js>) -> Result<()>,
+    REM: Clone + 'static + for<'js> Fn(Node<'js>, Node<'js>) -> Result<()>,
+    INS: Clone + 'static + for<'js> Fn(Node<'js>, Node<'js>, Node<'js>) -> Result<()>,
+{
+    fn append_child<'js>(&self, this: Node<'js>, node: Node<'js>) -> Result<()> {
+        (self.append)(this, node)
+    }
+
+    fn remove_child<'js>(&self, this: Node<'js>, node: Node<'js>) -> Result<()> {
+        (self.remove)(this, node)
+    }
+
+    fn insert_before<'js>(&self, this: Node<'js>, node: Node<'js>, anchor: Node<'js>) -> Result<()> {
+        (self.insert)(this, node, anchor)
+    }
+}
+
 pub struct HSlot<TY, APP, INS, REM> {
     append: APP,
     insert: INS,

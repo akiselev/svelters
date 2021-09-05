@@ -184,6 +184,12 @@ impl<'js> Node<'js> {
             _ => None
         }
     }
+
+    pub fn num_children(&self) -> usize {
+        self.with_node(|node| if let Some(children) = &node.children {
+            children.len()
+        } else { 0 })
+    }
 }
 
 #[derive(Clone, Eq)]
