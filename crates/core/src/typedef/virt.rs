@@ -55,6 +55,12 @@ where
     {
         &self.obj
     }
+
+    pub fn cast_as<OTHER: Clone + Type>(&self) -> Option<Virt<'js, OTHER>>
+    {
+        let func: Function = self.obj.get("castAs").ok()?;
+        func.call((OTHER::CLASS_NAME,)).ok()
+    }
 }
 
 impl<'a, CLS> ClassDef for Virt<'a, CLS>
@@ -148,3 +154,27 @@ where
         }
     }
 }
+
+
+impl<'js, BASE, CLS> PartialEq<Virt<'js, CLS>> for Virt<'js, BASE> {
+    fn eq(&self, other: &Virt<'js, CLS>) -> bool {
+        self.obj == other.obj
+    }
+}
+
+
+impl<'js, CLS> PartialEq<Object<'js>> for Virt<'js, CLS> {
+    fn eq(&self, other: &Object<'js>) -> bool {
+        self.obj == *other
+    }
+}
+
+impl<'js, CLS> PartialEq<Value<'js>> for Virt<'js, CLS> {
+    fn eq(&self, other: &Value<'js>) -> bool {
+        if let Some(other) = other.as_object() {
+            self.obj == *other 
+        } else { false }
+    }
+}
+
+impl<'js, CLS> Eq for Virt<'js, CLS> {}

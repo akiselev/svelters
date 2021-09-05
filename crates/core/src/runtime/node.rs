@@ -1,4 +1,4 @@
-use rquickjs::HasRefs;
+use rquickjs::{Function, HasRefs};
 use smallvec::SmallVec;
 
 use crate::inner::*;
@@ -171,6 +171,17 @@ impl<'js> Node<'js> {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
             },
+        }
+    }
+
+    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>>
+    {
+        match &self.this {
+            NodeType::Element(this) => {
+                let func: Function = this.borrow().obj.get("castAs").ok()?;
+                func.call((CLS::CLASS_NAME,)).ok()
+            },
+            _ => None
         }
     }
 }
