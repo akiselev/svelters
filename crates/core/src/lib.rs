@@ -56,7 +56,10 @@ pub(in crate) mod runtime {
     pub(in crate) mod element_type;
     pub(in crate) mod element_def;
     pub(in crate) mod event;
-    pub(in crate) mod slot;
+    pub(in crate) mod slot_node;
+    pub(in crate) mod text_node;
+    pub(in crate) mod text_node_def;
+    pub(in crate) mod slot_def;
     pub(in crate) mod node;
 
     pub(in crate) use self::callbacks::*;
@@ -66,7 +69,10 @@ pub(in crate) mod runtime {
     pub(in crate) use self::element_def::*;
     pub(in crate) use self::element_type::*;
     pub(in crate) use self::event::*;
-    pub(in crate) use self::slot::*;
+    pub(in crate) use self::slot_def::*;
+    pub(in crate) use self::text_node_def::*;
+    pub(in crate) use self::text_node::*;
+    pub(in crate) use self::slot_node::*;
     pub(in crate) use self::node::*;
 }
 
@@ -143,7 +149,8 @@ pub(in crate) mod phases {
 pub(in crate) mod inner {
     pub(in crate) use std::{
         borrow::Cow,
-        cell::Cell,
+        rc::Rc,
+        cell::{Cell, RefCell},
         convert::{TryFrom, TryInto},
         marker::PhantomData,
         ops::{Add, Deref, DerefMut},

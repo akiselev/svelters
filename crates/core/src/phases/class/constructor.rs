@@ -70,7 +70,7 @@ where
                 .clone();
             let obj = Obj::new((func)()?).into_js_obj(ctx)?;
             let id = ElementId(ctx.register(obj.clone()));
-            let el = Element::new::<CLS>(id, obj);
+            let el = Element::new::<CLS>(name, obj.into_object().unwrap());
             WithProto(el, proto).into_js(ctx)
         });
         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
@@ -90,7 +90,7 @@ where
             map.insert(
                 CLS::CLASS_NAME,
                 Box::new(move |ctx, this| {
-                    let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
+                    let obj = Obj::<CLS>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(move |data: &CLS| {
                         let virt = Virt::<CLS>::new((*data).clone());
                         let value = virt.into_js(ctx)?;

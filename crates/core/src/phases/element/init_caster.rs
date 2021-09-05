@@ -24,7 +24,7 @@ where
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(move |ctx, this| {
-                let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
+                let obj = Obj::<CLS>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                 obj.inner.with_cast(|data| {
                     let virt = Virt::<SUPER>::new((*data).clone());
                     let value = virt.into_js(ctx)?;
@@ -66,7 +66,7 @@ where
         phase.map.insert(
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
-                let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone())?;
+                let obj = Obj::<CLS>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                 obj.inner.with_cast(|data| {
                     Result::<_>::Ok(Virt::<NESTED>::new((*data).clone()).into_js(ctx)?)
                 })

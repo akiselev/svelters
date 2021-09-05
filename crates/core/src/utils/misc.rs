@@ -1,3 +1,5 @@
+use rquickjs::{HasRefs, IntoJsByRef};
+
 use crate::inner::*;
 
 pub struct Global<T>(pub T);

@@ -5,7 +5,7 @@ pub struct TypeBuilder<'a, CLS, PHASE> {
     pub(in crate) framework: PhantomData<CLS>,
 }
 
-impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
+impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> where CLS: Type {
     #[inline(always)]
     pub fn new(phase: &'a mut PHASE) -> Self {
         Self {
@@ -15,16 +15,15 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
     }
 
     #[inline(always)]
-    pub fn class(&mut self) -> Result<()>
+    pub fn class(&mut self) -> Result<&mut Self>
     where
-        CLS: Type,
         JsClassLoader<CLS>: Implements<PHASE>,
     {
         JsClassLoader::<CLS>::new().build(&mut self.phase)?;
-        Ok(())
+        Ok(self)
     }
 
-    pub fn method<RET, FN, ARGS>(&mut self, name: &'static str, func: FN) -> Result<()>
+    pub fn method<RET, FN, ARGS>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
     where
         CLS: 'static + Type,
         ARGS: for<'js> FromImpl<'js, CLS>,
@@ -33,7 +32,7 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
         Member<CLS, AsMethod<FN>>: Implements<PHASE>,
     {
         Member::new(name, AsMethod::new(func)).build(&mut self.phase)?;
-        Ok(())
+        Ok(self)
     }
 
     #[inline(always)]
@@ -42,50 +41,59 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
         name: &'static str,
         getter: GET,
         setter: SET,
-    ) -> Result<()>
+    ) -> Result<&mut Self>
     where
-        CLS: Type + Cast<CLS>,
+        CLS: Cast<CLS>,
         PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
         Property<CLS, PROP, GET, SET>: Implements<PHASE>,
     {
         Property::<CLS, PROP, GET, SET>::new(name, getter, setter).build(&mut self.phase)?;
-        Ok(())
+        Ok(self)
     }
 
     #[inline(always)]
-    pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<()>
+    pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<&mut Self>
     where
-        CLS: Type + Cast<CLS>,
+        CLS: Cast<CLS>,
         PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         ReadOnly<CLS, PROP, GET>: Implements<PHASE>,
     {
         ReadOnly::<CLS, PROP, GET>::new(name, getter).build(&mut self.phase)?;
-        Ok(())
+        Ok(self)
     }
 
     #[inline(always)]
-    pub fn superclass<SUPER>(&mut self) -> Result<()>
+    pub fn superclass<SUPER>(&mut self) -> Result<&mut Self>
     where
         SUPER: Type,
-        CLS: Type + Cast<SUPER>,
+        CLS: Cast<SUPER>,
         Superclass<SUPER>: Implements<PHASE>,
     {
         Superclass::<SUPER>::new().build(&mut self.phase)?;
-        Ok(())
+        Ok(self)
     }
 
     #[inline(always)]
-    pub fn as_element<FUNC>(&mut self, name: &'static str, func: FUNC) -> Result<()>
+    pub fn as_element<FUNC>(&mut self, name: &'static str, func: FUNC) -> Result<&mut Self>
     where
-        CLS: Type,
         FUNC: 'static + Fn() -> Result<CLS>,
         members::Element<CLS, FUNC>: Implements<PHASE>,
     {
         members::Element::<CLS, FUNC>::new(name, func).build(&mut self.phase)?;
-        Ok(())
+        Ok(self)
+    }
+
+    #[inline(always)]
+    pub fn with_slot<SLOT>(&mut self, slot: SLOT) -> Result<&mut Self>
+    where
+        SLOT: crate::traits::NativeSlot,
+        members::NativeSlot<CLS, SLOT>: Implements<PHASE>,
+    {
+        members::NativeSlot::<CLS, SLOT>::new(slot).build(&mut self.phase)?;
+        Ok(self)
     }
 }
 
@@ -93,7 +101,7 @@ macro_rules! tup {
     ($($static_fn:ident $method:ident $constructor:ident $($arg:ident)*,)*) => {
         $(
             #[inline(always)]
-            pub fn $constructor<FUNC, $($arg,)*>(&mut self, func: FUNC) -> Result<()>
+            pub fn $constructor<FUNC, $($arg,)*>(&mut self, func: FUNC) -> Result<&mut Self>
             where
                 CLS: 'static + Type,
                 FUNC: 'static + Fn($($arg,)*) -> Result<CLS>,
@@ -101,11 +109,11 @@ macro_rules! tup {
                 $($arg: for<'x> FromJs<'x>,)*
             {
                 Constructor::new(func).build(&mut self.phase)?;
-                Ok(())
+                Ok(self)
             }
 
             #[inline(always)]
-            pub fn $method<THIS, RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<()>
+            pub fn $method<THIS, RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
             where
                 CLS: 'static + Type,
                 CLS: Cast<THIS>,
@@ -116,11 +124,11 @@ macro_rules! tup {
                 $($arg: for<'x> FromJs<'x>,)*
             {
                 Method::new(name, func).build(&mut self.phase)?;
-                Ok(())
+                Ok(self)
             }
 
             #[inline(always)]
-            pub fn $static_fn<RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<()>
+            pub fn $static_fn<RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
             where
                 FN: 'static + Fn($($arg,)*) -> Result<RET>,
                 CLS: 'static + Type,
@@ -129,7 +137,7 @@ macro_rules! tup {
                 $($arg: for<'x> FromJs<'x>,)*
             {
                 StaticFn::new(name, func).build(&mut self.phase)?;
-                Ok(())
+                Ok(self)
             }
 
         )*

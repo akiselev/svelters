@@ -2,33 +2,34 @@ use rquickjs::{bind, HasRefs, Object, Persistent};
 
 use crate::inner::*;
 
-#[bind(object)]
-#[quickjs(bare)]
-pub(in crate) mod textnode {
-    use super::*;
+#[derive(Clone)]
+pub struct TextNode<'js>(pub(crate) Inner<TextData<'js>>);
 
-    pub struct TextNode {
-        pub(in crate) mounted: bool,
-        pub(in crate) text: String,
-    }
+impl<'js> std::ops::Deref for TextNode<'js> {
+    type Target = Inner<TextData<'js>>;
 
-    impl TextNode {
-        // constructor
-        #[quickjs(skip)]
-        pub fn new(text: String) -> Self {
-            Self { text }
-        }
-
-        #[quickjs(rename = "text", get)]
-        pub fn get_text(&self) -> String {
-            self.text.clone()
-        }
-
-        #[quickjs(retext = "text", set)]
-        pub fn set_text(&mut self, text: String) {
-            self.text = text
-        }
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
-pub use self::slotdef::Slot;
+impl<'js> TextNode<'js> {
+    // constructor
+    pub fn new(text: String) -> Self {
+        Self(Inner::new(TextData { text, node: NodeData::new() }))
+    }
+
+    pub fn get_text(&self) -> String {
+        self.with(|data| data.text.clone())
+    }
+
+    pub fn set_text(&mut self, text: String) {
+        self.with_mut(|data| data.text = text)
+    }
+}
+
+#[derive(Clone)]
+pub struct TextData<'js> {
+    pub(in crate) text: String, 
+    pub(in crate) node: NodeData<'js>,
+}

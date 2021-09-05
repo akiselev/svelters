@@ -116,3 +116,20 @@ impl<T, P> Implements<P> for T {
         Ok(())
     }
 }
+
+
+/// Core trait for slot implementations (provides DOM APIs)
+pub trait NativeSlot: 'static + Clone {
+    fn next<'js>(this: &mut Node<'js>, ctx: Ctx<'js>) -> Option<Node<'js>>;
+    fn prev<'js>(this: &mut Node<'js>, ctx: Ctx<'js>) -> Option<Node<'js>>;
+    fn parent<'js>(this: &mut Node<'js>, ctx: Ctx<'js>) -> Option<Node<'js>>;
+    fn children<'js, 'node>(this: &'node mut Node<'js>, ctx: Ctx<'js>) -> Option<&'node [Node<'js>]>;
+    fn append_child<'js>(this: &mut Node<'js>, ctx: Ctx<'js>, node: Node<'js>) -> Result<()>;
+    fn remove_child<'js>(this: &mut Node<'js>, ctx: Ctx<'js>, node: Node<'js>) -> Result<()>;
+    fn insert_before<'js>(this: &mut Node<'js>, ctx: Ctx<'js>, node: Node<'js>, anchor: Node<'js>) -> Result<()>;
+}
+
+pub trait INode {
+    fn node_name<'js>(&self, ctx: Ctx<'js>) -> String;
+    fn get_root_node<'js>(&self, ctx: Ctx<'js>) -> Option<Object<'js>>;
+}

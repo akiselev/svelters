@@ -5,43 +5,37 @@ use smallvec::SmallVec;
 
 use crate::inner::*;
 
-pub(in crate) struct ElInfo {
-    id: ElId,
-    slot_name: Cow<'static, str>,
-}
-
-pub(in crate) struct ElInner {
-    pub(in crate) next: Option<ElId>,
-    pub(in crate) prev: Option<ElId>,
-    pub(in crate) parent: Option<ElId>,
-    pub(in crate) children: SmallVec<[ElInfo; 10]>,
-}
-
-impl ElInner {
-    fn new() -> Self { Self {  
-        children: SmallVec::new(),
-        next: None,
-        prev: None,
-        parent: None,
-    } }
-}
-
 #[derive(Clone)]
-pub struct Element<'js> {
-    pub(in crate) id: ElId,
-    pub(in crate) class_name: &'static str,
-    pub(in crate) inner: Rc<RefCell<ElInner>>,
-    pub(in crate) obj: Value<'js>,
-}
+pub struct Element<'js>(Inner<ElData<'js>>);
 
-impl<'js> HasRefs for Element<'js> {
-    fn mark_refs(&self, marker: &RefsMarker) {
-        self.obj.as_object().unwrap().mark(marker)
+impl<'js> std::ops::Deref for Element<'js> {
+    type Target = Inner<ElData<'js>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
-impl<'js> std::ops::Deref for Element<'js> {
-    type Target = Value<'js>;
+
+pub struct ElData<'js> {
+    pub(in crate) obj: Object<'js>,
+    pub(in crate) tag: &'static str,
+    pub(in crate) node: NodeData<'js>,
+    pub(in crate) class_name: &'static str,
+}
+
+
+
+impl<'js> HasRefs for Element<'js> {
+    fn mark_refs(&self, marker: &RefsMarker) {
+        let this = self.0.borrow();
+        this.obj.mark(marker);
+        this.node.mark_refs(marker)
+    }
+}
+
+impl<'js> std::ops::Deref for ElData<'js> {
+    type Target = Object<'js>;
 
     fn deref(&self) -> &Self::Target {
         &self.obj
@@ -50,15 +44,15 @@ impl<'js> std::ops::Deref for Element<'js> {
 
 impl<'js> Element<'js> {
     pub(in crate) fn new<CLS: Type + Clone>(
-        id: ElId,
-        obj: Value<'js>
+        tag: &'static str,
+        obj: Object<'js>
     ) -> Self {
-        Self {
-            id,
+        Self(Inner::new( ElData{
             obj,
+            tag,
+            node: NodeData::new(),
             class_name: CLS::CLASS_NAME,
-            inner: Rc::new(RefCell::new(ElInner::new())),
-        }
+        }))
     }
 }
 

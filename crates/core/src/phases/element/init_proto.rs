@@ -39,14 +39,14 @@ where
             name,
             Accessor::new(
                 rquickjs::Method(move |this: &mut Element<'b>, ctx: Ctx<'b>| {
-                    let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone())?;
+                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
                     })
                 }),
                 rquickjs::Method(move |this: &mut Element<'b>, ctx: Ctx<'b>, val: PROP| {
-                    let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone())?;
+                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(|data| {
                         setter(data, val)?;
                         Result::<_>::Ok(())
@@ -77,7 +77,7 @@ where
             name,
             Accessor::new_get(rquickjs::Method(
                 move |this: &mut Element<'b>, ctx: Ctx<'b>| {
-                    let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone())?;
+                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
@@ -128,7 +128,7 @@ macro_rules! tup {
                                     let args = args.into_inner();
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
-                                    let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone())?;
+                                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                                     obj.inner.with_cast(|data| {
                                         let res = (self.func)(
                                             data,

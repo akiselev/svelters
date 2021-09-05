@@ -48,9 +48,9 @@ impl ElementType {
             name,
             inherited: BASE::CLASS_NAME == CLS::CLASS_NAME,
             getter: Rc::new(move |this: This<Value<'_>>, ctx: Ctx<'_>| {
-                let this = Element::from_js(ctx, this.0)?;
-                let val = ctx.get_register(this.id.0).unwrap();
-                let obj = Obj::<BASE>::from_js_ref(ctx, val.clone())?;
+                let el = Element::from_js(ctx, this.0)?;
+                let this = el.borrow();
+                let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                 obj.inner
                     .with_cast(|data| {
                         let val = getter(data)?;
@@ -60,9 +60,9 @@ impl ElementType {
             }),
             setter: Some(Rc::new(
                 move |this: This<Value<'_>>, ctx: Ctx<'_>, value: Value<'_>| {
-                    let this = Element::from_js_ref(ctx, this.0)?;
-                    let val = ctx.get_register(this.id.0).unwrap();
-                    let obj = Obj::<BASE>::from_js_ref(ctx, val.clone())?;
+                    let el = Element::from_js(ctx, this.0)?;
+                    let this = el.borrow();
+                    let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                     let val = PROP::from_js(ctx, value)?;
                     obj.inner.with_cast(|data| {
                         setter(data, val)?;
@@ -85,9 +85,9 @@ impl ElementType {
             name,
             inherited: BASE::CLASS_NAME == CLS::CLASS_NAME,
             getter: Rc::new(move |this: This<Value<'_>>, ctx: Ctx<'_>| {
-                let this = Element::from_js_ref(ctx, this.0)?;
-                let val = ctx.get_register(this.id.0).unwrap();
-                let obj = Obj::<BASE>::from_js_ref(ctx, val.clone())?;
+                let el = Element::from_js(ctx, this.0)?;
+                let this = el.borrow();
+                let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                 obj.inner
                     .with_cast(|data| {
                         let val = getter(data)?;
