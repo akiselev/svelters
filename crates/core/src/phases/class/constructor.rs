@@ -49,7 +49,7 @@ where
     T: 'static + Fn() -> Result<CLS>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
         let members::Element { name, func, .. } = self;
         let proto = Object::new(phase.ctx)?;
         proto.set("__TYPE__", "Element")?;
@@ -125,7 +125,7 @@ macro_rules! tup {
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
-                fn build(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
+                fn build_phase(self, phase: &mut ConstructorEval<'a, 'b, 'js, CLS>) -> Result<()> {
                     JsClass::<Obj<CLS>>::register(phase.ctx)?;
                     JsClass::<Virt<CLS>>::register(phase.ctx)?;
                     phase.module.set(
@@ -154,7 +154,7 @@ macro_rules! tup {
                 T: Fn($($arg,)*) -> R,
             {
                 #[inline(always)]
-                fn build(self, phase: &mut ConstructorLoad<'a, 'js, CLS>) -> Result<()> {
+                fn build_phase(self, phase: &mut ConstructorLoad<'a, 'js, CLS>) -> Result<()> {
                     phase.module.add(<CLS as Type>::name())?;
                     Ok(())
                 }

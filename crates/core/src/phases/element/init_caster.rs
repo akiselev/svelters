@@ -20,7 +20,7 @@ where
     SUPER: Type + Clone,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementCaster<'a, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementCaster<'a, CLS>) -> Result<()> {
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(move |ctx, this| {
@@ -63,7 +63,7 @@ where
     CLS: Caster<NESTED>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementSuperCaster<'a, CLS, SUPER>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementSuperCaster<'a, CLS, SUPER>) -> Result<()> {
         phase.map.insert(
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {

@@ -131,6 +131,7 @@ impl Type for Qt<QMainWindow> {
         cls.method1(
             "setCentralWidget",
             |this: &Qt<QMainWindow>, child: Virt<Qt<QWidget>>| {
+                tracing::info!(" LOOK AT THIS");
                 unsafe {
                     this.set_central_widget(child.as_ptr());
                 }

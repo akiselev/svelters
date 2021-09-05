@@ -7,7 +7,7 @@ where
     SLOT: NativeSlot,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
         phase.obj.set(
             "appendChild",
             rquickjs::Func::new(

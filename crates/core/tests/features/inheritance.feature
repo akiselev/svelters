@@ -106,3 +106,27 @@ Feature: Core
             | "MainWindow"  | "MainWindow"     |
             | "BoxLayout"   | "Widget"         |
             | "PushButton"  | "AbstractButton" |
+
+    Scenario: check that Virt works
+        Given module at "core.js"
+        When calling function "addWidget" with args (<class>)
+        Then return value is <result>
+
+        Examples:
+            | class        | result         |
+            | "MainWindow" | "Hello Widget" |
+            | "BoxLayout"  | "Hello Widget" |
+            | "PushButton" | "Hello Widget" |
+
+    Scenario: check that Virt obj works
+        Given module at "core.js"
+        When calling function "addObject" with args (<class>)
+        Then return value is <result>
+
+        Examples:
+            | class         | result           |
+            | "Application" | "Application"    |
+            | "Widget"      | "Widget"         |
+            | "MainWindow"  | "MainWindow"     |
+            | "BoxLayout"   | "Widget"         |
+            | "PushButton"  | "AbstractButton" |

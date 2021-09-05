@@ -21,7 +21,7 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitProto<'a, 'js, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitProto<'a, 'js, CLS>) -> Result<()> {
         let cell = OnceCell::new();
         phase.obj.set(
             "castAs",
@@ -30,6 +30,7 @@ where
                 rquickjs::Method(
                     move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
                         let map = cell.get_or_init(|| {
+                            tracing::info!("Building caster for {}", CLS::CLASS_NAME);
                             let mut map: ObjCasterMap<CLS> = HashMap::new();
                             map.insert(CLS::CLASS_NAME, Box::new(|ctx, value| value.into_js(ctx)));
                             {
@@ -64,7 +65,7 @@ where
     CLS: Caster<SUPER>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitCaster<CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitCaster<CLS>) -> Result<()> {
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {

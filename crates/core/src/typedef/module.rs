@@ -9,7 +9,7 @@ impl<MOD, P> ModuleBuilder<MOD, P> {
         CLS: Type,
         JsClassLoader<CLS>: Implements<P>,
     {
-        JsClassLoader(PhantomData).build(&mut self.0)?;
+        JsClassLoader(PhantomData).build_phase(&mut self.0)?;
         Ok(())
     }
 }

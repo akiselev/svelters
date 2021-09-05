@@ -79,7 +79,7 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut ModuleEval<'a, 'b, 'c>) -> Result<()> {
+    fn build_phase(self, phase: &mut ModuleEval<'a, 'b, 'c>) -> Result<()> {
         unsafe { CLS::metadata().init()? };
         build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.ctx, phase.module, phase.doc));
         Ok(())
@@ -91,7 +91,7 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
+    fn build_phase(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
         build_class!(CLS with ConstructorLoad::<'a, 'b, CLS>::new(phase.ctx, phase.module));
         Ok(())
     }
@@ -99,14 +99,14 @@ where
 
 // impl<T, P> Implements<P> for JsClassLoader<T> {
 //     #[inline(always)]
-//     default fn build(self, _phase: &mut P) -> Result<()> {
+//     default fn build_phase(self, _phase: &mut P) -> Result<()> {
 //         Ok(())
 //     }
 // }
 
 // impl<T, P> Implements<P> for JsModuleLoader<T> {
 //     #[inline(always)]
-//     default fn build(self, _phase: &mut P) -> Result<()> {
+//     default fn build_phase(self, _phase: &mut P) -> Result<()> {
 //         Ok(())
 //     }
 // }

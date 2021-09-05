@@ -6,7 +6,7 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
         phase.obj.prop(
             "nextSibling",
             Accessor::new_get(

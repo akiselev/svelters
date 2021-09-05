@@ -24,7 +24,7 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
         let members::Property {
             name,
             getter,
@@ -48,7 +48,7 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
         let members::ReadOnly { name, getter, .. } = self;
 
         phase.element.readonly::<BASE, CLS, PROP, GET>(name, getter);
@@ -62,7 +62,7 @@ where
     SUPER: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElement<'a, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElement<'a, CLS>) -> Result<()> {
         phase.element.inherits::<SUPER>();
         build_class!(SUPER with InitElement::<'_, CLS>::new(phase.element));
         Ok(())

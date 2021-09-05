@@ -1,5 +1,7 @@
 use std::rc::Rc;
 
+use rquickjs::{Function, This};
+
 use super::*;
 
 impl Type for Fw<Rc<Object>> {
@@ -173,6 +175,13 @@ impl Type for Fw<Rc<BoxLayout>> {
         cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
         cls.method0("orientation", |this: &Self| -> Result<String> {
             Ok(this.0 .1.borrow().clone())
+        })?;
+        cls.method1("addWidget", |this: &Self, widget: Virt<Fw<Rc<Widget>>>| -> Result<String> {
+            Ok(widget.0.1.borrow().clone())
+        })?;
+        cls.method1("addObject", |this: &Self, widget: Virt<Fw<Rc<Object>>>| -> Result<String> {
+            let func: Function = widget.get("className2")?;
+            func.call((This(widget.as_object().clone()), ))
         })?;
 
         cls.prop(

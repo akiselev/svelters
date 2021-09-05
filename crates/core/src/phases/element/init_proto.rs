@@ -27,7 +27,7 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
         let members::Property {
             name,
             getter,
@@ -70,7 +70,7 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
         let members::ReadOnly { name, getter, .. } = self;
 
         let res = phase.obj.prop(
@@ -98,7 +98,7 @@ where
     CLS: Caster<SUPER>,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
         build_class!(SUPER with InitElementProto::<'a, 'b, 'c, CLS>::new(phase.ctx, phase.obj));
         Ok(())
     }
@@ -113,12 +113,12 @@ macro_rules! tup {
                 CLS: Type,
                 BASE: Type + Caster<THIS>,
                 THIS: 'static,
-                RET: 'static + for<'js> IntoJs<'js>,
+                RET: 'static + IntoJs<'b>,
                 FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
-                fn build(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+                fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
                     phase.obj.set(
                         self.name,
                         rquickjs::Func::new(

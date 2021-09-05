@@ -22,7 +22,7 @@ where
     SUPER: Type,
 {
     #[inline(always)]
-    fn build(self, phase: &mut InitStatic<'a, 'b, BASE>) -> Result<()> {
+    fn build_phase(self, phase: &mut InitStatic<'a, 'b, BASE>) -> Result<()> {
         build_class!(SUPER with InitStatic::<'_, '_, BASE>::new(phase.ctx, phase.obj));
         Ok(())
     }
@@ -40,7 +40,7 @@ macro_rules! tup {
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
-                fn build(self, phase: &mut InitStatic<'a, 'b, BASE>) -> Result<()> {
+                fn build_phase(self, phase: &mut InitStatic<'a, 'b, BASE>) -> Result<()> {
                     phase.obj.set(
                         self.0,
                         rquickjs::Func::new(self.0, move |ctx: Ctx<'b>, args: Rest<Value<'b>>| {
