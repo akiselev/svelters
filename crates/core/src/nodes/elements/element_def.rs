@@ -12,7 +12,6 @@ impl<'a, 'js> rquickjs::FromJs<'js> for Element<'js> {
                 el_node: node,
                 doc_cell: OnceCell::new(),
                 node_cell: OnceCell::new(),
-                dispatcher_cell: OnceCell::new(),
             })
         } else {
             Err(Error::new(

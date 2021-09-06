@@ -41,18 +41,11 @@ impl<T, U> Caster<T> for U {
         &'a self,
         _func: FUNC,
     ) -> Result<R> {
-        let backtrace = Backtrace::capture().to_string();
-        Err(rquickjs::Error::Exception {
-            message: format!(
-                "Type <{}> does not implement Cast<{}>",
-                std::any::type_name::<U>(),
-                std::any::type_name::<T>()
-            ),
-            file: file!().to_string(),
-            line: line!().try_into().unwrap(),
-            stack: backtrace.clone(),
-            rust_stack: Some(backtrace),
-        })
+        Err(exception!(
+            "Type <{}> does not implement Cast<{}>",
+            std::any::type_name::<U>(),
+            std::any::type_name::<T>()
+        ))
     }
 }
 

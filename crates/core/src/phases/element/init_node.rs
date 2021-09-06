@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use rquickjs::{Func, Function};
 
 use crate::inner::*;
@@ -102,12 +104,21 @@ fn add_event_listener<'js, CLS: Type>(
 }
 
 #[inline(always)]
-fn remove_event_listener<'js>(
-    this: ElementNode<'js>,
-    _name: String,
-    _value: Function<'js>,
-) -> Option<Vec<UINode<'js>>> {
-    this.borrow().node.children.clone()
+fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'js>) -> Result<()> {
+    let disconnect = {
+        let dispatcher = this.dispatcher()?;
+        let dispatcher = RefCell::borrow_mut(&dispatcher.inner);
+        let sub = dispatcher
+            .subs
+            .get(name.as_str())
+            .ok_or_else(|| Error::new(this.ctx(), "Dispathcher not found"))?;
+        sub.remove_callback(this.ctx(), func)
+    }?;
+    if let Some(disconnect) = disconnect {
+        tracing::info!("Disconnecting event {}", name.as_str());
+        (disconnect)(this)?;
+    }
+    Ok(())
 }
 
 #[inline(always)]

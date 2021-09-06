@@ -4,12 +4,12 @@ use crate::inner::*;
 
 #[derive(Clone)]
 pub struct Event<'js> {
-    _type: Option<String>,
-    interface: String,
-    bubbles: bool,
-    cancelable: bool,
-    target: Value<'js>,
-    detail: Value<'js>,
+    pub(in crate) _type: Option<String>,
+    pub(in crate) interface: String,
+    pub(in crate) bubbles: bool,
+    pub(in crate) cancelable: bool,
+    pub(in crate) target: Value<'js>,
+    pub(in crate) detail: Value<'js>,
 }
 
 impl<'js> Event<'js> {

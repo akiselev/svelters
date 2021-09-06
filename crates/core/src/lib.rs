@@ -216,4 +216,6 @@ pub(in crate) mod inner {
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
+
+    pub(in crate) use crate::exception;
 }

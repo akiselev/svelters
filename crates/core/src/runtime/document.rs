@@ -7,7 +7,6 @@ use std::{
 use crate::inner::*;
 
 pub struct DocInner {
-    pub(in crate) events: Dispatcher,
     pub(in crate) types: HashMap<&'static str, ElementType>,
 }
 
@@ -25,7 +24,6 @@ impl Document {
     pub fn new() -> Document {
         Document {
             inner: Inner::new(DocInner {
-                events: Dispatcher::new(),
                 types: Default::default(),
             }),
         }

@@ -15,3 +15,21 @@ macro_rules! build_class {
         child
     }};
 }
+
+#[macro_export(crate)]
+macro_rules! exception {
+    ($($tokens:tt)*) => {
+        {
+            let backtrace = std::backtrace::Backtrace::capture().to_string();
+            rquickjs::Error::Exception {
+                message: format!(
+                    $($tokens)*
+                ),
+                file: file!().to_string(),
+                line: line!().try_into().unwrap(),
+                stack: backtrace.clone(),
+                rust_stack: Some(backtrace),
+            }
+        }
+    };
+}

@@ -11,7 +11,6 @@ pub struct Element<'js> {
 
     pub(in crate) doc_cell: OnceCell<Document>,
     pub(in crate) node_cell: OnceCell<ElementNode<'js>>,
-    pub(in crate) dispatcher_cell: OnceCell<Dispatcher>,
 }
 
 impl<'js> Element<'js> {
@@ -19,22 +18,21 @@ impl<'js> Element<'js> {
         self._ctx
     }
 
-    pub fn event(self, name: &'static str) -> Result<SubscriptionBuilder<'js>> {
-        let sub = self
-            .dispatcher()?
-            .borrow_mut()
-            .subs
-            .entry(name)
-            .or_insert_with(|| {
-                let key = self.ctx().register(self.el_node.clone().into_value());
-                Inner::new(EventSub::new(key))
-            })
-            .clone();
+    pub fn event(&self, name: &'static str) -> Result<SubscriptionBuilder<'js>> {
+        let callbacks = {
+            let disp = self.dispatcher()?;
+            let mut inner = disp.borrow_mut();
+            inner
+                .subs
+                .entry(name)
+                .or_insert_with(|| Callbacks::<'js>::new())
+                .clone()
+        };
         Ok(SubscriptionBuilder {
             name,
             ctx: self.ctx(),
-            sub,
-            element: self,
+            callbacks,
+            element: self.clone(),
         })
     }
 
@@ -51,10 +49,8 @@ impl<'js> Element<'js> {
         })
     }
 
-    pub(in crate) fn dispatcher(&self) -> Result<&Dispatcher> {
-        let node = self.node()?;
-        self.dispatcher_cell
-            .get_or_try_init(|| Result::Ok(node.borrow().dispatcher.clone()))
+    pub(in crate) fn dispatcher(&self) -> Result<Dispatcher<'js>> {
+        Ok(self.node()?.borrow().dispatcher.clone())
     }
 
     pub fn cast_as<CLS: Clone + Type>(&self) -> Result<Virt<'js, CLS>> {

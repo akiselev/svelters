@@ -6,7 +6,7 @@ use qt_core::{
     QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString, SlotOfBool,
 };
 use qt_gui::QWindow;
-use qt_widgets::{QApplication, QMainWindow, QPushButton, QWidget};
+use qt_widgets::{QAbstractButton, QApplication, QMainWindow, QPushButton, QWidget};
 use rquickjs::{AsFunction, Class, Loaded, Module as QJsModule, Native};
 
 use crate::{
@@ -185,6 +185,45 @@ impl Type for Qt<QMainWindow> {
     }
 }
 
+impl Type for Qt<QAbstractButton> {
+    const CLASS_NAME: &'static str = "QAbstractButton";
+
+    unsafe fn metadata() -> &'static mut Metadata {
+        static mut META: Metadata = Metadata::new();
+        &mut META
+    }
+
+    #[inline(always)]
+    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
+        cls.prop(
+            "text",
+            |this: &Qt<QAbstractButton>| unsafe { Ok(this.text().to_std_string()) },
+            |this: &Qt<QAbstractButton>, value: String| unsafe {
+                let value = QString::from_std_str(value);
+                this.set_text(value.as_ref());
+                Ok(())
+            },
+        )?;
+        cls.with_event("clicked", |el, func| unsafe {
+            el.event("clicked")?
+                .subscribe(func)
+                .connect(|this: &Self, sub, dc| {
+                    let conn = SlotOfBool::new(this.as_ptr(), move |val| {
+                        tracing::info!("Handling QAbstractButton::clicked");
+                        sub.dispatch(val);
+                    });
+                    let disconnect = this.clicked().connect(&conn);
+                    dc.with(move |this: &Self, sub| {
+                        QObject::disconnect_connection(disconnect.as_ref());
+                        Ok(())
+                    })
+                })
+        })?;
+        cls.superclass::<Qt<QWidget>>()?;
+        Ok(())
+    }
+}
+
 impl Type for Qt<QPushButton> {
     const CLASS_NAME: &'static str = "QPushButton";
 
@@ -197,32 +236,8 @@ impl Type for Qt<QPushButton> {
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
         cls.constructor0(|| unsafe { Ok(Qt::new(QPushButton::new())) })?;
         cls.as_element("qPushButton", || unsafe { Ok(Qt::new(QPushButton::new())) })?;
-        cls.prop(
-            "text",
-            |this: &Qt<QPushButton>| unsafe { Ok(this.text().to_std_string()) },
-            |this: &Qt<QPushButton>, value: String| unsafe {
-                let value = QString::from_std_str(value);
-                this.set_text(value.as_ref());
-                Ok(())
-            },
-        )?;
-        cls.with_event("clicked", |el, func| unsafe {
-            el.event("clicked")?
-                .subscribe(func)
-                .connect(|this: &Self, sub| {
-                    let inner = sub.clone();
-                    let conn = SlotOfBool::new(this.as_ptr(), move |val| {
-                        tracing::info!("Handling QPushButton::clicked");
-                        inner.dispatch(val);
-                    });
-                    let disconnect = this.clicked().connect(&conn);
-                    sub.disconnect(move |this: &Self, sub| {
-                        QObject::disconnect_connection(disconnect.as_ref());
-                        Ok(())
-                    })
-                })
-        })?;
-        cls.superclass::<Qt<QWidget>>()?;
+
+        cls.superclass::<Qt<QAbstractButton>>()?;
         Ok(())
     }
 }

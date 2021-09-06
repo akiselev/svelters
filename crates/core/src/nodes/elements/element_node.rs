@@ -10,8 +10,7 @@ pub struct ElementNode<'js> {
     pub(in crate) tag_name: &'static str,
     pub(in crate) class_name: &'static str,
     pub(in crate) obj_id: RegisteryKey,
-    pub(in crate) dispatcher_id: RegisteryKey,
-    inner: Inner<ElData<'js>>,
+    pub(in crate) inner: Inner<ElData<'js>>,
 }
 
 impl<'js> std::ops::Deref for ElementNode<'js> {
@@ -71,7 +70,7 @@ impl<'js> Eq for ElementNode<'js> {}
 pub struct ElData<'js> {
     pub(in crate) obj: Object<'js>,
     pub(in crate) node: NodeData<'js>,
-    pub(in crate) dispatcher: Dispatcher,
+    pub(in crate) dispatcher: Dispatcher<'js>,
 }
 
 impl<'js> HasRefs for ElementNode<'js> {
@@ -102,13 +101,11 @@ impl<'js> ElementNode<'js> {
             .expect("Sould be object");
         let obj_id = ctx.register(obj.clone().into_value());
         let dispatcher = Dispatcher::new();
-        let dispatcher_id = ctx.register(dispatcher.clone().into_js_obj(ctx)?);
         Ok(Self {
             tag_name,
             class_name: CLS::CLASS_NAME,
 
             obj_id,
-            dispatcher_id,
             inner: Inner::new(ElData {
                 obj,
                 dispatcher,

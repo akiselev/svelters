@@ -1,55 +1,91 @@
 use std::collections::HashMap;
 
-use rquickjs::{Function, Persistent};
+use rquickjs::{Function, HasRefs, Persistent};
 
 use crate::inner::*;
 
 pub trait SubscribeFn = for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>;
 pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Element<'js_>) -> Result<()>>;
 
-pub struct Callback {
-    pub(in crate) key: RegisteryKey,
+pub struct Disconnect {
+    pub(in crate) func: Inner<Option<DisconnectFn>>,
+    pub(in crate) sub: Subscription,
 }
 
-impl Callback {
-    pub fn new(key: RegisteryKey) -> Self {
-        Self { key }
+pub(in crate) struct CbInner<'js> {
+    pub(in crate) callbacks: Vec<Function<'js>>,
+    pub(in crate) disconnect: Inner<Option<DisconnectFn>>,
+}
+
+impl Disconnect {
+    pub(in crate) fn new(func: Inner<Option<DisconnectFn>>, sub: Subscription) -> Self {
+        Self { func, sub }
+    }
+
+    pub fn with<CLS, FUNC>(self, func: FUNC) -> Result<()>
+    where
+        CLS: 'static,
+        FUNC: 'static + for<'a> FnOnce(&'a CLS, Subscription) -> Result<()>,
+    {
+        let sub = self.sub;
+        *self.func.borrow_mut() = Some(Box::new(move |el: Element| {
+            tracing::info!("Disconnecting {}", sub.name);
+            el.with_cast(|this| func(this, sub).to_result(el.ctx()))?;
+            Ok(())
+        }));
+        Ok(())
     }
 }
 
-pub struct EventSub {
-    pub(in crate) target_id: RegisteryKey,
-    pub(in crate) callbacks: Vec<Callback>,
-    pub(in crate) disconnect: Option<DisconnectFn>,
+#[derive(Clone)]
+pub(in crate) struct Callbacks<'js> {
+    pub(in crate) inner: Inner<CbInner<'js>>,
 }
 
-impl EventSub {
-    pub fn new(target_id: RegisteryKey) -> Self {
-        Self {
-            target_id,
-            callbacks: vec![],
-            disconnect: None,
+impl<'js> std::ops::Deref for Callbacks<'js> {
+    type Target = Inner<CbInner<'js>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+impl<'js> HasRefs for Callbacks<'js> {
+    fn mark_refs(&self, marker: &RefsMarker) {
+        self.inner
+            .borrow()
+            .callbacks
+            .iter()
+            .for_each(|func| func.as_object().mark(marker));
+    }
+}
+
+impl<'js> Callbacks<'js> {
+    pub fn new() -> Self {
+        Callbacks {
+            inner: Inner::new(CbInner {
+                callbacks: vec![],
+                disconnect: Inner::new(None),
+            }),
         }
     }
 
-    pub fn remove_callback<'js>(
-        &mut self,
+    pub fn remove_callback(
+        &self,
         ctx: Ctx<'js>,
         func: Function<'js>,
     ) -> Result<Option<DisconnectFn>> {
         let pos = {
-            self.callbacks.iter().position(|callback| {
-                if let Some(callback) = ctx.get_register(callback.key) {
-                    callback == *func.as_value()
-                } else {
-                    false
-                }
-            })
+            self.borrow()
+                .callbacks
+                .iter()
+                .position(|callback| callback.as_object() == func.as_object())
         };
         if let Some(index) = pos {
-            let callback = self.callbacks.remove(index);
-            if self.callbacks.len() == 0 {
-                Ok(self.disconnect.take())
+            let mut this = self.borrow_mut();
+            let callback = this.callbacks.remove(index);
+            if this.callbacks.len() == 0 {
+                Ok(this.disconnect.take())
             } else {
                 Ok(None)
             }

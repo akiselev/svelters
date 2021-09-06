@@ -1,6 +1,4 @@
-
 use crate::inner::*;
-
 
 #[derive(Debug, PartialOrd, Ord, PartialEq, Eq)]
 #[repr(transparent)]
@@ -13,7 +11,9 @@ impl<T> Clone for Inner<T> {
 }
 
 impl<T> Inner<T> {
-    pub fn new(inner: T) -> Self { Self(Rc::new(RefCell::new(inner))) }
+    pub fn new(inner: T) -> Self {
+        Self(Rc::new(RefCell::new(inner)))
+    }
 
     pub fn with<FN: for<'a> FnOnce(&'a T) -> R, R>(&self, func: FN) -> R {
         let inner = self.0.borrow();
@@ -26,7 +26,10 @@ impl<T> Inner<T> {
     }
 }
 
-impl<T> Default for Inner<T> where T: Default {
+impl<T> Default for Inner<T>
+where
+    T: Default,
+{
     fn default() -> Self {
         Self::new(Default::default())
     }
@@ -39,4 +42,3 @@ impl<T> std::ops::Deref for Inner<T> {
         &*self.0
     }
 }
-
