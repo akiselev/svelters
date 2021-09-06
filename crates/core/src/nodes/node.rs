@@ -19,8 +19,8 @@ impl<'js> PartialEq for Node<'js> {
     }
 }
 
-impl<'js> PartialEq<Element<'js>> for Node<'js> {
-    fn eq(&self, other: &Element<'js>) -> bool {
+impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
+    fn eq(&self, other: &ElementNode<'js>) -> bool {
         match &self.this {
             NodeType::Element(this) => this.borrow().obj == other.borrow().obj,
             _ => false,
@@ -191,24 +191,24 @@ impl<'js> Node<'js> {
         }
     }
 
-    pub fn with_dispatcher<F: FnOnce(&mut Dispatcher) -> R, R>(&self, func: F) -> R {
-        match &self.this {
-            NodeType::Slot(this) => {
-                // let mut data = this.borrow_mut();
-                // func(&mut data.node)
-                todo!()
-            }
-            NodeType::Text(this) => {
-                // let mut data = this.borrow_mut();
-                // func(&mut data.node)
-                todo!()
-            }
-            NodeType::Element(this) => {
-                let mut data = this.borrow_mut();
-                func(&mut data.dispatcher)
-            }
-        }
-    }
+    // pub fn with_dispatcher<F: FnOnce(&mut Dispatcher) -> R, R>(&self, func: F) -> R {
+    //     match &self.this {
+    //         NodeType::Slot(_this) => {
+    //             // let mut data = this.borrow_mut();
+    //             // func(&mut data.node)
+    //             todo!()
+    //         }
+    //         NodeType::Text(_this) => {
+    //             // let mut data = this.borrow_mut();
+    //             // func(&mut data.node)
+    //             todo!()
+    //         }
+    //         NodeType::Element(this) => {
+    //             let mut data = this.borrow_mut();
+    //             func(&mut data.dispatcher)
+    //         }
+    //     }
+    // }
 
     pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>> {
         match &self.this {
@@ -244,13 +244,13 @@ impl<'js> Node<'js> {
 
 #[derive(Clone, Eq)]
 pub(in crate) enum NodeType<'js> {
-    Slot(Slot<'js>),
+    Slot(SlotNode<'js>),
     Text(TextNode<'js>),
-    Element(Element<'js>),
+    Element(ElementNode<'js>),
 }
 
-impl<'js> From<Element<'js>> for NodeType<'js> {
-    fn from(v: Element<'js>) -> Self {
+impl<'js> From<ElementNode<'js>> for NodeType<'js> {
+    fn from(v: ElementNode<'js>) -> Self {
         Self::Element(v)
     }
 }
@@ -296,7 +296,7 @@ impl<'js> HasRefs for Node<'js> {
         match &self.this {
             NodeType::Slot(node) => node.mark_refs(marker),
             NodeType::Text(node) => node.mark_refs(marker),
-            NodeType::Element(node) => <Element<'js> as HasRefs>::mark_refs(&node, marker),
+            NodeType::Element(node) => <ElementNode<'js> as HasRefs>::mark_refs(&node, marker),
         }
     }
 }
@@ -332,11 +332,11 @@ impl<'js, 'a> rquickjs::FromJs<'js> for Node<'js> {
     fn from_js(_ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
         let this = if let Some(obj) = value.as_object() {
             match obj {
-                obj if obj.instance_of::<Element<'js>>() => {
-                    NodeType::Element(Element::from_js_obj(_ctx, value)?)
+                obj if obj.instance_of::<ElementNode<'js>>() => {
+                    NodeType::Element(ElementNode::from_js_obj(_ctx, value)?)
                 }
-                obj if obj.instance_of::<Slot<'js>>() => {
-                    NodeType::Slot(Slot::from_js_obj(_ctx, value)?)
+                obj if obj.instance_of::<SlotNode<'js>>() => {
+                    NodeType::Slot(SlotNode::from_js_obj(_ctx, value)?)
                 }
                 obj if obj.instance_of::<TextNode<'js>>() => {
                     NodeType::Text(TextNode::from_js_obj(_ctx, value)?)

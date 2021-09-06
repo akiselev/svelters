@@ -21,7 +21,6 @@ impl<'js, CLS> HasRefs for Virt<'js, CLS> {
     }
 }
 
-
 impl<'js, CLS> Clone for Virt<'js, CLS>
 where
     CLS: Type + Clone,
@@ -29,7 +28,7 @@ where
     fn clone(&self) -> Self {
         Virt {
             inner: self.inner.clone(),
-            obj: self.obj.clone()
+            obj: self.obj.clone(),
         }
     }
 }
@@ -42,7 +41,10 @@ where
         Self { inner, obj }
     }
 
-    pub fn get<T>(&self, name: &str) -> Result<T> where T: FromJs<'js> {
+    pub fn get<T>(&self, name: &str) -> Result<T>
+    where
+        T: FromJs<'js>,
+    {
         self.obj.get(name)
     }
 
@@ -60,10 +62,9 @@ where
         &self.obj
     }
 
-    pub fn cast_as<OTHER: Clone + Type>(&self) -> Option<Virt<'js, OTHER>>
-    {
+    pub fn cast_as<OTHER: Clone + Type>(&self) -> Option<Virt<'js, OTHER>> {
         let func: Function = self.obj.get("castAs").ok()?;
-        func.call((This(self.obj.clone()), OTHER::CLASS_NAME,)).ok()
+        func.call((This(self.obj.clone()), OTHER::CLASS_NAME)).ok()
     }
 }
 
@@ -71,7 +72,7 @@ impl<'a, CLS> ClassDef for Virt<'a, CLS>
 where
     CLS: 'static + Type,
 {
-    const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
+    const CLASS_NAME: &'static str = CLS::CLASS_NAME;
 
     unsafe fn class_id() -> &'static mut ClassId {
         &mut <CLS as Type>::metadata().virt_id
@@ -145,7 +146,9 @@ where
     Self: Clone,
 {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        let obj = value.as_object().ok_or_else(|| Error::new(ctx, format!("Could not cast to {}", CLS::CLASS_NAME)))?;
+        let obj = value
+            .as_object()
+            .ok_or_else(|| Error::new(ctx, format!("Could not cast to {}", CLS::CLASS_NAME)))?;
         if obj.instance_of::<Self>() {
             return Self::from_js_obj(ctx, value);
         }
@@ -155,13 +158,11 @@ where
     }
 }
 
-
 impl<'js, BASE, CLS> PartialEq<Virt<'js, CLS>> for Virt<'js, BASE> {
     fn eq(&self, other: &Virt<'js, CLS>) -> bool {
         self.obj == other.obj
     }
 }
-
 
 impl<'js, CLS> PartialEq<Object<'js>> for Virt<'js, CLS> {
     fn eq(&self, other: &Object<'js>) -> bool {
@@ -172,8 +173,10 @@ impl<'js, CLS> PartialEq<Object<'js>> for Virt<'js, CLS> {
 impl<'js, CLS> PartialEq<Value<'js>> for Virt<'js, CLS> {
     fn eq(&self, other: &Value<'js>) -> bool {
         if let Some(other) = other.as_object() {
-            self.obj == *other 
-        } else { false }
+            self.obj == *other
+        } else {
+            false
+        }
     }
 }
 

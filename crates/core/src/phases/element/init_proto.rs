@@ -19,18 +19,22 @@ impl<'a, 'b, 'js, BASE> InitElementProto<'a, 'b, 'js, BASE> {
 }
 
 impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassLoader<CLS> {
+    #[inline(always)]
     fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
-        phase.obj.set("castAs",
-            Func::new("castAs", 
-                rquickjs::Method(move |this: Element<'b>, ctx: Ctx<'b>, target: rquickjs::String<'b>| {
-                    
-                    let inner = this.borrow();
-                    let func: Function = inner.obj.get("castAs")?;
-                    
-                    let res: Value = Function::call(&func, (This(inner.obj.clone()), target))?;
-                    Result::Ok(res)
-                })
-            )
+        phase.obj.set(
+            "castAs",
+            Func::new(
+                "castAs",
+                rquickjs::Method(
+                    move |this: ElementNode<'b>, _ctx: Ctx<'b>, target: rquickjs::String<'b>| {
+                        let inner = this.borrow();
+                        let func: Function = inner.obj.get("castAs")?;
+
+                        let res: Value = Function::call(&func, (This(inner.obj.clone()), target))?;
+                        Result::Ok(res)
+                    },
+                ),
+            ),
         )
     }
 }
@@ -57,15 +61,17 @@ where
         let res = phase.obj.prop(
             name,
             Accessor::new(
-                rquickjs::Method(move |this: &mut Element<'b>, ctx: Ctx<'b>| {
-                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
+                rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
+                    let obj =
+                        Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
                     })
                 }),
-                rquickjs::Method(move |this: &mut Element<'b>, ctx: Ctx<'b>, val: PROP| {
-                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
+                rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, val: PROP| {
+                    let obj =
+                        Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(|data| {
                         setter(data, val)?;
                         Result::<_>::Ok(())
@@ -95,8 +101,9 @@ where
         let res = phase.obj.prop(
             name,
             Accessor::new_get(rquickjs::Method(
-                move |this: &mut Element<'b>, ctx: Ctx<'b>| {
-                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
+                move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
+                    let obj =
+                        Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     obj.inner.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
@@ -143,7 +150,7 @@ macro_rules! tup {
                         rquickjs::Func::new(
                             self.name,
                             rquickjs::Method(
-                                move |this: &mut Element<'b>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                                move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
                                     let args = args.into_inner();
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;

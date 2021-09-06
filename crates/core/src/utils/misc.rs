@@ -1,11 +1,11 @@
-use rquickjs::{HasRefs, IntoJsByRef};
-
 use crate::inner::*;
 
 pub struct Global<T>(pub T);
 
 impl<T> Global<T> {
-    pub fn new(var: T) -> Self { Self(var) }
+    pub fn new(var: T) -> Self {
+        Self(var)
+    }
 }
 
 impl<T> std::ops::Deref for Global<T> {

@@ -56,32 +56,37 @@ where
     }
 }
 
-fn get_next_sibling<'js>(this: Element<'js>) -> Option<Node<'js>> {
+#[inline(always)]
+fn get_next_sibling<'js>(this: ElementNode<'js>) -> Option<Node<'js>> {
     this.borrow().node.next.clone()
 }
 
-fn get_prev_sibling<'js>(this: Element<'js>) -> Option<Node<'js>> {
+#[inline(always)]
+fn get_prev_sibling<'js>(this: ElementNode<'js>) -> Option<Node<'js>> {
     this.borrow().node.prev.clone()
 }
 
-fn get_parent<'js>(this: Element<'js>) -> Option<Node<'js>> {
+#[inline(always)]
+fn get_parent<'js>(this: ElementNode<'js>) -> Option<Node<'js>> {
     this.borrow().node.parent.clone()
 }
 
-fn get_children<'js>(this: Element<'js>) -> Option<Vec<Node<'js>>> {
+#[inline(always)]
+fn get_children<'js>(this: ElementNode<'js>) -> Option<Vec<Node<'js>>> {
     this.borrow().node.children.clone()
 }
 
+#[inline(always)]
 fn add_event_listener<'js, CLS: Type>(
-    this: Element<'js>,
+    this: ElementNode<'js>,
     ctx: Ctx<'js>,
     name: String,
     value: Function<'js>,
-    opt: Opt<Object<'js>>,
+    _opt: Opt<Object<'js>>,
 ) -> Result<()> {
     let doc: &mut Document = ctx.globals().get("document")?;
     let inner = doc.inner.borrow();
-    let tag = { this.borrow().tag };
+    let tag = { this.tag_name };
     let _type = inner
         .types
         .get(tag)
@@ -95,18 +100,21 @@ fn add_event_listener<'js, CLS: Type>(
     (subscribe.subscribe)(this, ctx, value)
 }
 
+#[inline(always)]
 fn remove_event_listener<'js>(
-    this: Element<'js>,
-    name: String,
-    value: Function<'js>,
+    this: ElementNode<'js>,
+    _name: String,
+    _value: Function<'js>,
 ) -> Option<Vec<Node<'js>>> {
     this.borrow().node.children.clone()
 }
 
-fn get_attribute<'js>(this: Element<'js>, name: String) -> Result<Value<'js>> {
+#[inline(always)]
+fn get_attribute<'js>(this: ElementNode<'js>, name: String) -> Result<Value<'js>> {
     this.borrow().obj.get(name)
 }
 
-fn set_attribute<'js>(this: Element<'js>, name: String, value: Value<'js>) -> Result<()> {
+#[inline(always)]
+fn set_attribute<'js>(this: ElementNode<'js>, name: String, value: Value<'js>) -> Result<()> {
     this.borrow().obj.set(name, value)
 }

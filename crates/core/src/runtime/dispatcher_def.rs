@@ -2,8 +2,8 @@ use rquickjs::HasRefs;
 
 use crate::inner::*;
 
-impl<'js> ClassDef for Element<'js> {
-    const CLASS_NAME: &'static str = "Element";
+impl ClassDef for Dispatcher {
+    const CLASS_NAME: &'static str = "Dispatcher";
 
     unsafe fn class_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
@@ -14,7 +14,7 @@ impl<'js> ClassDef for Element<'js> {
 
     const HAS_STATIC: bool = true;
 
-    const HAS_REFS: bool = true;
+    const HAS_REFS: bool = false;
 
     fn init_proto<'ctx>(_ctx: Ctx<'ctx>, _proto: &Object<'ctx>) -> Result<()> {
         Ok(())
@@ -25,7 +25,7 @@ impl<'js> ClassDef for Element<'js> {
     }
 
     fn mark_refs(&self, marker: &RefsMarker) {
-        HasRefs::mark_refs(self, marker)
+        // HasRefs::mark_refs(self, marker)
     }
 
     fn into_js_obj<'ctx>(self, ctx: Ctx<'ctx>) -> Result<Value<'ctx>>
@@ -61,26 +61,26 @@ impl<'js> ClassDef for Element<'js> {
     }
 }
 
-impl<'js> rquickjs::IntoJs<'js> for Element<'js> {
+impl<'js> rquickjs::IntoJs<'js> for Dispatcher {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
         <Self as rquickjs::ClassDef>::into_js_obj(self, ctx)
     }
 }
 
-impl<'a, 'js> rquickjs::FromJs<'js> for Element<'js> {
+impl<'js> rquickjs::FromJs<'js> for Dispatcher {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Element<'js> as rquickjs::ClassDef>::from_js_obj(ctx, value)
+        <Dispatcher as rquickjs::ClassDef>::from_js_obj(ctx, value)
     }
 }
 
-impl<'a, 'js> rquickjs::FromJs<'js> for &'js Element<'js> {
+impl<'js> rquickjs::FromJs<'js> for &'js Dispatcher {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Element<'js> as rquickjs::ClassDef>::from_js_ref(ctx, value)
+        <Dispatcher as rquickjs::ClassDef>::from_js_ref(ctx, value)
     }
 }
 
-impl<'a, 'js> rquickjs::FromJs<'js> for &'js mut Element<'js> {
+impl<'js> rquickjs::FromJs<'js> for &'js mut Dispatcher {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Element<'js> as rquickjs::ClassDef>::from_js_mut(ctx, value)
+        <Dispatcher as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

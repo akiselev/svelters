@@ -14,7 +14,7 @@ impl Type for Fw<Rc<Object>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.as_element("object", || -> Result<Self> {Ok(Default::default())})?;
+        cls.as_element("object", || -> Result<Self> { Ok(Default::default()) })?;
         cls.constructor0(|| -> Result<Self> { Ok(Default::default()) })?;
         cls.prop(
             "type",
@@ -62,7 +62,7 @@ impl Type for Fw<Rc<Widget>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.as_element("widget", || -> Result<Self> {Ok(Default::default())})?;
+        cls.as_element("widget", || -> Result<Self> { Ok(Default::default()) })?;
         cls.superclass::<Fw<Rc<Object>>>()?;
         cls.static_fn0("staticFn2", || -> Result<String> {
             Ok("WIDGET".to_string())
@@ -96,7 +96,7 @@ impl Type for Fw<Rc<Application>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.as_element("application", || -> Result<Self> {Ok(Default::default())})?;
+        cls.as_element("application", || -> Result<Self> { Ok(Default::default()) })?;
         cls.superclass::<Fw<Rc<Object>>>()?;
         cls.static_fn0("staticFn2", || -> Result<String> {
             Ok("APPLICATION".to_string())
@@ -132,7 +132,7 @@ impl Type for Fw<Rc<MainWindow>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.as_element("mainWindow", || -> Result<Self> {Ok(Default::default())})?;
+        cls.as_element("mainWindow", || -> Result<Self> { Ok(Default::default()) })?;
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.static_fn0("staticFn2", || -> Result<String> {
             Ok("MAINWINDOW".to_string())
@@ -166,7 +166,7 @@ impl Type for Fw<Rc<BoxLayout>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.as_element("boxLayout", || -> Result<Self> {Ok(Default::default())})?;
+        cls.as_element("boxLayout", || -> Result<Self> { Ok(Default::default()) })?;
         cls.superclass::<Fw<Rc<Widget>>>()?;
         cls.static_fn0("staticFn2", || -> Result<String> {
             Ok("BOXLAYOUT".to_string())
@@ -176,13 +176,19 @@ impl Type for Fw<Rc<BoxLayout>> {
         cls.method0("orientation", |this: &Self| -> Result<String> {
             Ok(this.0 .1.borrow().clone())
         })?;
-        cls.method1("addWidget", |this: &Self, widget: Virt<Fw<Rc<Widget>>>| -> Result<String> {
-            Ok(widget.0.1.borrow().clone())
-        })?;
-        cls.method1("addObject", |this: &Self, widget: Virt<Fw<Rc<Object>>>| -> Result<String> {
-            let func: Function = widget.get("className2")?;
-            func.call((This(widget.as_object().clone()), ))
-        })?;
+        cls.method1(
+            "addWidget",
+            |_this: &Self, widget: Virt<Fw<Rc<Widget>>>| -> Result<String> {
+                Ok(widget.0 .1.borrow().clone())
+            },
+        )?;
+        cls.method1(
+            "addObject",
+            |_this: &Self, widget: Virt<Fw<Rc<Object>>>| -> Result<String> {
+                let func: Function = widget.get("className2")?;
+                func.call((This(widget.as_object().clone()),))
+            },
+        )?;
 
         cls.prop(
             "type",
@@ -236,7 +242,7 @@ impl Type for Fw<Rc<PushButton>> {
 
     #[inline(always)]
     fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()> {
-        cls.as_element("pushButton", || -> Result<Self> {Ok(Default::default())})?;
+        cls.as_element("pushButton", || -> Result<Self> { Ok(Default::default()) })?;
         cls.superclass::<Fw<Rc<AbstractButton>>>()?;
         cls.static_fn0("staticFn2", || -> Result<String> {
             Ok("PUSHBUTTON".to_string())

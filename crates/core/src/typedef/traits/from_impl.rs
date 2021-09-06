@@ -71,7 +71,7 @@ impl<T> !NotQJsType for Opt<T> {}
 impl<T> !NotQJsType for Rest<T> {}
 impl<CLS> !NotCoreType for Obj<CLS> {}
 impl<'js, CLS> !NotCoreType for Virt<'js, CLS> {}
-impl<'js> !NotCoreType for Element<'js> {}
+impl<'js> !NotCoreType for ElementNode<'js> {}
 impl<T: Type> !NotUserType for T {}
 impl<T: Type> !NotUserType for Obj<T> {}
 impl<'js, T: Type> !NotUserType for Virt<'js, T> {}

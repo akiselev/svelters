@@ -18,7 +18,7 @@ pub struct ElementEvent {
     pub(in crate) inherited: bool,
     pub(in crate) name: &'static str,
     pub(in crate) subscribe:
-        Rc<dyn for<'js> Fn(Element<'js>, Ctx<'js>, Function<'js>) -> Result<()>>,
+        Rc<dyn for<'js> Fn(ElementNode<'js>, Ctx<'js>, Function<'js>) -> Result<()>>,
 }
 
 #[derive(Clone)]
@@ -60,7 +60,7 @@ impl ElementType {
             name,
             inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
             getter: Rc::new(move |this: Value<'_>, ctx: Ctx<'_>| {
-                let el = Element::from_js(ctx, this)?;
+                let el = ElementNode::from_js(ctx, this)?;
                 let this = el.borrow();
                 let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                 obj.inner
@@ -72,7 +72,7 @@ impl ElementType {
             }),
             setter: Some(Rc::new(
                 move |this: Value<'_>, ctx: Ctx<'_>, value: Value<'_>| {
-                    let el = Element::from_js(ctx, this)?;
+                    let el = ElementNode::from_js(ctx, this)?;
                     let this = el.borrow();
                     let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                     let val = PROP::from_js(ctx, value)?;
@@ -97,7 +97,7 @@ impl ElementType {
             name,
             inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
             getter: Rc::new(move |this: Value<'_>, ctx: Ctx<'_>| {
-                let el = Element::from_js(ctx, this)?;
+                let el = ElementNode::from_js(ctx, this)?;
                 let this = el.borrow();
                 let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                 obj.inner
@@ -117,14 +117,15 @@ impl ElementType {
     where
         CLS: Type,
         BASE: Type + Caster<CLS>,
-        FUNC: 'static + for<'js> Fn(Element<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
+        FUNC: 'static
+            + for<'js> Fn(ElementNode<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
     {
         let event = ElementEvent {
             name,
             inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
             subscribe: Rc::new(
-                move |el: Element<'_>, ctx: Ctx<'_>, callback: Function<'_>| {
-                    let this = el.borrow_mut().obj.clone().into_value();
+                move |el: ElementNode<'_>, ctx: Ctx<'_>, callback: Function<'_>| {
+                    let _this = el.borrow_mut().obj.clone().into_value();
                     let disconnect = func(el.clone(), ctx, callback.clone())?;
                     let key = ctx.register(callback.into_value());
                     el.borrow_mut().dispatcher.add_event_callback(

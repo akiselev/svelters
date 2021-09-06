@@ -105,7 +105,6 @@ pub trait Type: 'static + Sized {
 /// implementations can also pass information back to the caller to implement
 /// features like reflection and debuging.
 pub trait Implements<P>: Sized {
-    #[inline(always)]
     fn build_phase(self, _phase: &mut P) -> Result<()>;
 
     // fn build_phase_logged(self, phase: &mut P) -> Result<()> {
@@ -115,6 +114,7 @@ pub trait Implements<P>: Sized {
 }
 
 impl<T, P> Implements<P> for T {
+    #[inline(always)]
     default fn build_phase(self, _phase: &mut P) -> Result<()> {
         Ok(())
     }

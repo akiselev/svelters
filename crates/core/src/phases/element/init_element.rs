@@ -75,7 +75,7 @@ impl<'a, 'b: 'a, CLS, BASE, FUNC> Implements<InitElement<'a, BASE>> for members:
 where
     CLS: Type,
     BASE: Type + Caster<CLS>,
-    FUNC: 'static + for<'js> Fn(Element<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
+    FUNC: 'static + for<'js> Fn(ElementNode<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
 {
     #[inline(always)]
     fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {

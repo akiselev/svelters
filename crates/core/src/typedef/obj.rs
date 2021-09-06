@@ -27,7 +27,7 @@ impl<'a, CLS> ClassDef for Obj<CLS>
 where
     CLS: 'static + Type,
 {
-    const CLASS_NAME: &'static str = std::any::type_name::<CLS>();
+    const CLASS_NAME: &'static str = CLS::CLASS_NAME;
 
     unsafe fn class_id() -> &'static mut ClassId {
         &mut <CLS as Type>::metadata().obj_id

@@ -28,9 +28,9 @@ pub mod prelude {
 
     pub use crate::runtime::document::Document;
 
-    pub use crate::runtime::element::Element;
+    pub use crate::nodes::element::Element;
+    pub use crate::nodes::node::Node;
     pub use crate::runtime::event::Event;
-    pub use crate::runtime::node::Node;
     pub use crate::typedef::hslot::BasicSlot;
     pub use crate::typedef::obj::Obj;
     pub use crate::typedef::virt::Virt;
@@ -54,30 +54,55 @@ pub(in crate) mod utils;
 #[allow(unused_imports)]
 pub(in crate) mod runtime {
     pub(in crate) mod callbacks;
+    pub(in crate) mod dispatcher;
+    pub(in crate) mod dispatcher_def;
     pub(in crate) mod doc_def;
     pub(in crate) mod document;
-    pub(in crate) mod element;
-    pub(in crate) mod element_def;
-    pub(in crate) mod element_type;
     pub(in crate) mod event;
-    pub(in crate) mod node;
-    pub(in crate) mod slot_def;
-    pub(in crate) mod slot_node;
-    pub(in crate) mod text_node;
-    pub(in crate) mod text_node_def;
 
     pub(in crate) use self::callbacks::*;
+    pub(in crate) use self::dispatcher::*;
+    pub(in crate) use self::dispatcher_def::*;
     pub(in crate) use self::doc_def::*;
     pub(in crate) use self::document::*;
-    pub(in crate) use self::element::*;
-    pub(in crate) use self::element_def::*;
-    pub(in crate) use self::element_type::*;
     pub(in crate) use self::event::*;
+}
+
+#[allow(unused_imports)]
+pub(in crate) mod nodes {
+    pub(in crate) mod element;
+    pub(in crate) mod node;
+
+    pub(in crate) use self::element::*;
     pub(in crate) use self::node::*;
-    pub(in crate) use self::slot_def::*;
-    pub(in crate) use self::slot_node::*;
-    pub(in crate) use self::text_node::*;
-    pub(in crate) use self::text_node_def::*;
+
+    pub(in crate) mod elements {
+        pub(in crate) mod element_def;
+        pub(in crate) mod element_node;
+        pub(in crate) mod element_node_def;
+        pub(in crate) mod element_type;
+    }
+
+    pub(in crate) use self::elements::element_def::*;
+    pub(in crate) use self::elements::element_node::*;
+    pub(in crate) use self::elements::element_node_def::*;
+    pub(in crate) use self::elements::element_type::*;
+
+    pub(in crate) mod slot {
+        pub(in crate) mod slot_def;
+        pub(in crate) mod slot_node;
+    }
+
+    pub(in crate) use self::slot::slot_def::*;
+    pub(in crate) use self::slot::slot_node::*;
+
+    pub(in crate) mod text {
+        pub(in crate) mod text_node;
+        pub(in crate) mod text_node_def;
+    }
+
+    pub(in crate) use self::text::text_node::*;
+    pub(in crate) use self::text::text_node_def::*;
 }
 
 #[allow(unused_imports)]
@@ -161,6 +186,7 @@ pub(in crate) mod inner {
         borrow::Cow,
         cell::{Cell, RefCell},
         convert::{TryFrom, TryInto},
+        lazy::OnceCell,
         marker::PhantomData,
         ops::{Add, Deref, DerefMut},
         rc::Rc,
@@ -179,6 +205,7 @@ pub(in crate) mod inner {
     };
     pub(in crate) use typedmap::TypedMapKey;
 
+    pub(in crate) use crate::nodes::*;
     pub(in crate) use crate::phases::*;
     pub(in crate) use crate::traits::*;
     pub(in crate) use crate::typedef::*;

@@ -6,8 +6,6 @@ use std::{
 
 use crate::inner::*;
 
-pub type ElId = ElementId;
-
 pub struct DocInner {
     pub(in crate) events: Dispatcher,
     pub(in crate) types: HashMap<&'static str, ElementType>,
@@ -46,7 +44,7 @@ impl Document {
         ctx: Ctx<'js>,
         _ns: Value<'js>,
         name: String,
-        options: Opt<Object<'js>>,
+        _options: Opt<Object<'js>>,
     ) -> Result<Value<'js>> {
         self.create_element(ctx, name)
     }
@@ -57,7 +55,7 @@ impl Document {
         name: String,
     ) -> Result<Value<'js>> {
         if name == "slot" {
-            return Slot::new().into_js(ctx);
+            return SlotNode::new().into_js(ctx);
         }
         if let Some(element) = self.inner.borrow().types.get(name.as_str()) {
             (element.constructor)(ctx)

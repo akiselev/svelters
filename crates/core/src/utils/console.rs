@@ -1,4 +1,4 @@
-use rquickjs::{bind, Ctx, Rest, Result as JsResult, Value};
+use rquickjs::{bind, Ctx, Rest, Result as JsResult};
 
 #[bind(object)]
 pub mod console {
@@ -6,7 +6,7 @@ pub mod console {
 
     use super::*;
 
-    pub fn log<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn log<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -17,7 +17,7 @@ pub mod console {
         Ok(())
     }
 
-    pub fn error<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn error<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -28,7 +28,7 @@ pub mod console {
         Ok(())
     }
 
-    pub fn warn<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn warn<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -39,7 +39,7 @@ pub mod console {
         Ok(())
     }
 
-    pub fn debug<'js>(ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn debug<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
