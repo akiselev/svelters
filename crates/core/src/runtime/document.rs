@@ -25,7 +25,7 @@ impl Document {
     pub fn new() -> Document {
         Document {
             inner: Inner::new(DocInner {
-                events: Default::default(),
+                events: Dispatcher::new(),
                 types: Default::default(),
             }),
         }

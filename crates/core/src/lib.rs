@@ -59,6 +59,7 @@ pub(in crate) mod runtime {
     pub(in crate) mod doc_def;
     pub(in crate) mod document;
     pub(in crate) mod event;
+    pub(in crate) mod subscription;
 
     pub(in crate) use self::callbacks::*;
     pub(in crate) use self::dispatcher::*;
@@ -66,6 +67,7 @@ pub(in crate) mod runtime {
     pub(in crate) use self::doc_def::*;
     pub(in crate) use self::document::*;
     pub(in crate) use self::event::*;
+    pub(in crate) use self::subscription::*;
 }
 
 #[allow(unused_imports)]

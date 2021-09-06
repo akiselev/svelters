@@ -1,44 +1,58 @@
-use crate::{inner::*};
+use rquickjs::HasRefs;
+
+use crate::inner::*;
 
 #[derive(Clone)]
-pub struct Event<T> {
+pub struct Event<'js> {
     _type: Option<String>,
     interface: String,
     bubbles: bool,
     cancelable: bool,
-    detail: T,
+    target: Value<'js>,
+    detail: Value<'js>,
 }
 
-impl<T> Event<T>
-where
-    T: for<'js> IntoJs<'js>,
-{
-    pub fn new<'js>(ctx: Ctx<'js>, _type: &'static str, detail: T) -> Result<Event<Value<'js>>> {
+impl<'js> Event<'js> {
+    pub fn new(
+        ctx: Ctx<'js>,
+        _type: &'static str,
+        target: Value<'js>,
+        detail: Value<'js>,
+    ) -> Result<Event<'js>> {
         let detail: Value<'js> = detail.into_js(ctx)?;
         Ok(Event {
             _type: Some(_type.to_string()),
             interface: "CustomEvent".to_string(),
             bubbles: false,
             cancelable: false,
-            detail: detail,
+            target,
+            detail,
         })
     }
 }
 
-impl<'js> Event<Value<'js>> {
+impl<'js> HasRefs for Event<'js> {
+    fn mark_refs(&self, marker: &RefsMarker) {
+        self.detail.as_object().map(|obj| obj.mark(marker));
+        self.target.as_object().map(|obj| obj.mark(marker));
+    }
+}
+
+impl<'js> Event<'js> {
     pub fn custom(ctx: Ctx<'js>) -> Result<Value<'js>> {
         Event {
             _type: None,
             interface: "CustomEvent".to_string(),
             bubbles: false,
             cancelable: false,
+            target: Value::new_undefined(ctx),
             detail: Value::new_undefined(ctx),
         }
         .into_js(ctx)
     }
 }
 
-impl<'x> ClassDef for Event<Value<'x>> {
+impl<'x> ClassDef for Event<'x> {
     const CLASS_NAME: &'static str = "Event";
 
     unsafe fn class_id() -> &'static mut ClassId {
@@ -58,7 +72,7 @@ impl<'x> ClassDef for Event<Value<'x>> {
             rquickjs::Func::new(
                 "initCustomEvent",
                 rquickjs::Method(
-                    |event: &mut Event<Value<'js>>,
+                    |event: &mut Event<'js>,
                      _ctx: Ctx<'js>,
                      _type: String,
                      bubbles: bool,
@@ -75,23 +89,17 @@ impl<'x> ClassDef for Event<Value<'x>> {
 
         proto.set(
             "stopPopagation",
-            rquickjs::Func::new(
-                "stopPopagation",
-                rquickjs::Method(|_: &Event<Value<'js>>| {}),
-            ),
+            rquickjs::Func::new("stopPopagation", rquickjs::Method(|_: &Event<'js>| {})),
         )?;
         proto.set(
             "preventDefault",
-            rquickjs::Func::new(
-                "preventDefault",
-                rquickjs::Method(|_: &Event<Value<'js>>| {}),
-            ),
+            rquickjs::Func::new("preventDefault", rquickjs::Method(|_: &Event<'js>| {})),
         )?;
         proto.prop(
             "type",
             Accessor::new_get(
-                rquickjs::Method(move |this: &Event<Value>| this._type.clone()),
-                // rquickjs::Method(move |this: &mut Event<Value>, val: String| {
+                rquickjs::Method(move |this: &Event| this._type.clone()),
+                // rquickjs::Method(move |this: &mut Event, val: String| {
                 //     this._type = Some(val);
                 // }),
             ),
@@ -99,8 +107,8 @@ impl<'x> ClassDef for Event<Value<'x>> {
         proto.prop(
             "bubbles",
             Accessor::new_get(
-                rquickjs::Method(move |this: &Event<Value>| this.bubbles),
-                // rquickjs::Method(move |this: &mut Event<Value>, val: bool| {
+                rquickjs::Method(move |this: &Event| this.bubbles),
+                // rquickjs::Method(move |this: &mut Event, val: bool| {
                 //     this.bubbles = val;
                 // }),
             ),
@@ -108,8 +116,8 @@ impl<'x> ClassDef for Event<Value<'x>> {
         proto.prop(
             "cancelable",
             Accessor::new_get(
-                rquickjs::Method(move |this: &Event<Value>| this.cancelable),
-                // rquickjs::Method(move |this: &mut Event<Value>, val: bool| {
+                rquickjs::Method(move |this: &Event| this.cancelable),
+                // rquickjs::Method(move |this: &mut Event, val: bool| {
                 //         this.cancelable = val;
                 //     }),
             ),
@@ -117,8 +125,17 @@ impl<'x> ClassDef for Event<Value<'x>> {
         proto.prop(
             "detail",
             Accessor::new_get(
-                rquickjs::Method(move |this: &Event<Value<'js>>| this.detail.clone()),
-                // rquickjs::Method(move |this: &mut Event<Value<'js>>, val: Value<'js>| {
+                rquickjs::Method(move |this: &Event<'js>| this.detail.clone()),
+                // rquickjs::Method(move |this: &mut Event<'js>, val: Value<'js>| {
+                //     this.detail = val;
+                // }),
+            ),
+        )?;
+        proto.prop(
+            "target",
+            Accessor::new_get(
+                rquickjs::Method(move |this: &Event<'js>| this.target.clone()),
+                // rquickjs::Method(move |this: &mut Event<'js>, val: Value<'js>| {
                 //     this.detail = val;
                 // }),
             ),
@@ -165,20 +182,20 @@ impl<'x> ClassDef for Event<Value<'x>> {
     }
 }
 
-impl<'js> rquickjs::IntoJs<'js> for Event<Value<'js>> {
+impl<'js> rquickjs::IntoJs<'js> for Event<'js> {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
-        <Event<Value<'js>> as rquickjs::ClassDef>::into_js_obj(self, ctx)
+        <Event<'js> as rquickjs::ClassDef>::into_js_obj(self, ctx)
     }
 }
 
-impl<'js> rquickjs::FromJs<'js> for &'js Event<Value<'js>> {
+impl<'js> rquickjs::FromJs<'js> for &'js Event<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Event<Value<'js>> as rquickjs::ClassDef>::from_js_ref(ctx, value)
+        <Event<'js> as rquickjs::ClassDef>::from_js_ref(ctx, value)
     }
 }
 
-impl<'js> rquickjs::FromJs<'js> for &'js mut Event<Value<'js>> {
+impl<'js> rquickjs::FromJs<'js> for &'js mut Event<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <Event<Value<'js>> as rquickjs::ClassDef>::from_js_mut(ctx, value)
+        <Event<'js> as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

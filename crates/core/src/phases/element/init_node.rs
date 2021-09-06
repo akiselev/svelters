@@ -57,36 +57,36 @@ where
 }
 
 #[inline(always)]
-fn get_next_sibling<'js>(this: ElementNode<'js>) -> Option<Node<'js>> {
+fn get_next_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.next.clone()
 }
 
 #[inline(always)]
-fn get_prev_sibling<'js>(this: ElementNode<'js>) -> Option<Node<'js>> {
+fn get_prev_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.prev.clone()
 }
 
 #[inline(always)]
-fn get_parent<'js>(this: ElementNode<'js>) -> Option<Node<'js>> {
+fn get_parent<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.parent.clone()
 }
 
 #[inline(always)]
-fn get_children<'js>(this: ElementNode<'js>) -> Option<Vec<Node<'js>>> {
+fn get_children<'js>(this: ElementNode<'js>) -> Option<Vec<UINode<'js>>> {
     this.borrow().node.children.clone()
 }
 
 #[inline(always)]
 fn add_event_listener<'js, CLS: Type>(
-    this: ElementNode<'js>,
-    ctx: Ctx<'js>,
+    this: Element<'js>,
     name: String,
     value: Function<'js>,
     _opt: Opt<Object<'js>>,
 ) -> Result<()> {
+    let ctx = this.ctx();
     let doc: &mut Document = ctx.globals().get("document")?;
     let inner = doc.inner.borrow();
-    let tag = { this.tag_name };
+    let tag = { this.node()?.tag_name };
     let _type = inner
         .types
         .get(tag)
@@ -97,7 +97,8 @@ fn add_event_listener<'js, CLS: Type>(
             format!("Could not find event {} for {}", name, CLS::CLASS_NAME),
         )
     })?;
-    (subscribe.subscribe)(this, ctx, value)
+    (subscribe.subscribe)(this, value)?;
+    Ok(())
 }
 
 #[inline(always)]
@@ -105,7 +106,7 @@ fn remove_event_listener<'js>(
     this: ElementNode<'js>,
     _name: String,
     _value: Function<'js>,
-) -> Option<Vec<Node<'js>>> {
+) -> Option<Vec<UINode<'js>>> {
     this.borrow().node.children.clone()
 }
 

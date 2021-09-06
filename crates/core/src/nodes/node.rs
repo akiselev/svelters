@@ -10,7 +10,8 @@ use crate::inner::*;
 #[derive(Clone)]
 pub struct Node<'js> {
     pub(in crate) _ctx: Ctx<'js>,
-    pub(in crate) this: NodeType<'js>,
+    pub(in crate) this: UINode<'js>,
+    pub(in crate) doc_cell: OnceCell<Document>,
 }
 
 impl<'js> PartialEq for Node<'js> {
@@ -22,7 +23,7 @@ impl<'js> PartialEq for Node<'js> {
 impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
     fn eq(&self, other: &ElementNode<'js>) -> bool {
         match &self.this {
-            NodeType::Element(this) => this.borrow().obj == other.borrow().obj,
+            UINode::Element(this) => this.borrow().obj == other.borrow().obj,
             _ => false,
         }
     }
@@ -31,7 +32,7 @@ impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
 impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Node<'js> {
     fn eq(&self, other: &Virt<'js, CLS>) -> bool {
         match &self.this {
-            NodeType::Element(this) => this.borrow().obj == other.obj,
+            UINode::Element(this) => this.borrow().obj == other.obj,
             _ => false,
         }
     }
@@ -40,7 +41,7 @@ impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Node<'js> {
 impl<'js> PartialEq<Object<'js>> for Node<'js> {
     fn eq(&self, other: &Object<'js>) -> bool {
         match &self.this {
-            NodeType::Element(this) => this.borrow().obj == *other,
+            UINode::Element(this) => this.borrow().obj == *other,
             _ => false,
         }
     }
@@ -50,7 +51,7 @@ impl<'js> Eq for Node<'js> {}
 
 impl<'js> Node<'js> {
     pub fn append_node(&self, node: Node<'js>) {
-        let parent = self.clone();
+        let parent = self.this.clone();
         self.with_node(move |this| {
             if this.is_mounted() {
                 panic!("Tried to append node that is already mounted")
@@ -64,14 +65,14 @@ impl<'js> Node<'js> {
                     if data.next.is_none() {
                         panic!("Next sibling on append node is already set")
                     }
-                    data.next = Some(node.clone());
+                    data.next = Some(node.this.clone());
                 });
                 Some(child.clone())
             } else {
                 None
             };
             let prev = prev.and_then(|prev| {
-                prev.with_node(|data| data.next = Some(node.clone()));
+                prev.with_node(|data| data.next = Some(node.this.clone()));
                 Some(prev)
             });
             node.with_node(move |data| {
@@ -90,7 +91,7 @@ impl<'js> Node<'js> {
             let index = {
                 children
                     .iter_mut()
-                    .position(|this| *this == node)
+                    .position(|this| *this == node.this)
                     .expect("Can't find node to remove")
             };
             node.with_node(|data| {
@@ -110,7 +111,7 @@ impl<'js> Node<'js> {
     }
 
     pub fn insert_node(&self, node: Node<'js>, anchor: Node<'js>) {
-        let parent = self.clone();
+        let parent = self.this.clone();
         self.with_node(move |this| {
             if this.is_mounted() {
                 panic!("Tried to insert node that is already mounted")
@@ -119,31 +120,31 @@ impl<'js> Node<'js> {
             let index = {
                 children
                     .iter_mut()
-                    .position(|this| *this == anchor)
+                    .position(|this| *this == anchor.this)
                     .expect("Can't find anchor for insert")
             };
             let target = children[index].clone();
             let prev = target.with_node(|data| {
                 let prev = data.prev.take();
-                data.prev = Some(node.clone());
+                data.prev = Some(node.this.clone());
                 prev
             });
             if let Some(prev) = &prev {
-                prev.with_node(|data| data.next = Some(node.clone()));
+                prev.with_node(|data| data.next = Some(node.this.clone()));
             }
             node.with_node(move |data| {
                 data.parent = Some(parent);
                 data.prev = prev;
                 data.next = Some(target);
             });
-            children.insert(index, node);
+            children.insert(index, node.this);
         })
     }
 
     pub fn index_of(&self, node: Node<'js>) -> Option<usize> {
         self.with_node(move |this| {
             if let Some(children) = &this.children {
-                children.iter().position(|this| *this == node)
+                children.iter().position(|this| *this == node.this)
             } else {
                 None
             }
@@ -152,14 +153,14 @@ impl<'js> Node<'js> {
 
     fn instance_of<CLS: Type>(&self) -> bool {
         match &self.this {
-            NodeType::Element(this) => this.borrow().obj.instance_of::<Obj<CLS>>(),
+            UINode::Element(this) => this.borrow().obj.instance_of::<Obj<CLS>>(),
             _ => false,
         }
     }
 
     fn with_instance<CLS: Type, F: for<'a> FnOnce(&'a CLS) -> R, R>(&self, func: F) -> Option<R> {
         match &self.this {
-            NodeType::Element(this) => {
+            UINode::Element(this) => {
                 let this = this.borrow();
                 if this.obj.instance_of::<Obj<CLS>>() {
                     this.obj
@@ -175,44 +176,19 @@ impl<'js> Node<'js> {
     }
 
     fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
-        match &self.this {
-            NodeType::Slot(this) => {
-                let mut data = this.borrow_mut();
-                func(&mut data.node)
-            }
-            NodeType::Text(this) => {
-                let mut data = this.borrow_mut();
-                func(&mut data.node)
-            }
-            NodeType::Element(this) => {
-                let mut data = this.borrow_mut();
-                func(&mut data.node)
-            }
-        }
+        self.this.with_node(func)
     }
 
-    // pub fn with_dispatcher<F: FnOnce(&mut Dispatcher) -> R, R>(&self, func: F) -> R {
-    //     match &self.this {
-    //         NodeType::Slot(_this) => {
-    //             // let mut data = this.borrow_mut();
-    //             // func(&mut data.node)
-    //             todo!()
-    //         }
-    //         NodeType::Text(_this) => {
-    //             // let mut data = this.borrow_mut();
-    //             // func(&mut data.node)
-    //             todo!()
-    //         }
-    //         NodeType::Element(this) => {
-    //             let mut data = this.borrow_mut();
-    //             func(&mut data.dispatcher)
-    //         }
-    //     }
-    // }
+    pub fn document(&self) -> Result<&Document> {
+        self.doc_cell.get_or_try_init(|| {
+            let doc: &Document = self.ctx().globals().get("document")?;
+            Result::Ok((*doc).clone())
+        })
+    }
 
     pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>> {
         match &self.this {
-            NodeType::Element(this) => {
+            UINode::Element(this) => {
                 let this = this.borrow();
                 let func: Function = this
                     .obj
@@ -243,24 +219,55 @@ impl<'js> Node<'js> {
 }
 
 #[derive(Clone, Eq)]
-pub(in crate) enum NodeType<'js> {
+pub(in crate) enum UINode<'js> {
     Slot(SlotNode<'js>),
     Text(TextNode<'js>),
     Element(ElementNode<'js>),
 }
 
-impl<'js> From<ElementNode<'js>> for NodeType<'js> {
+impl<'js> UINode<'js> {
+    fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
+        match self {
+            UINode::Slot(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.node)
+            }
+            UINode::Text(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.node)
+            }
+            UINode::Element(this) => {
+                let mut data = this.borrow_mut();
+                func(&mut data.node)
+            }
+        }
+    }
+}
+
+impl<'js> From<ElementNode<'js>> for UINode<'js> {
     fn from(v: ElementNode<'js>) -> Self {
         Self::Element(v)
     }
 }
 
-impl<'js> PartialEq<NodeType<'js>> for NodeType<'js> {
-    fn eq(&self, other: &NodeType<'js>) -> bool {
+impl<'js> From<SlotNode<'js>> for UINode<'js> {
+    fn from(v: SlotNode<'js>) -> Self {
+        Self::Slot(v)
+    }
+}
+
+impl<'js> From<TextNode<'js>> for UINode<'js> {
+    fn from(v: TextNode<'js>) -> Self {
+        Self::Text(v)
+    }
+}
+
+impl<'js> PartialEq<UINode<'js>> for UINode<'js> {
+    fn eq(&self, other: &UINode<'js>) -> bool {
         match (self, other) {
-            (NodeType::Slot(left), NodeType::Slot(right)) => left == right,
-            (NodeType::Text(left), NodeType::Text(right)) => left == right,
-            (NodeType::Element(left), NodeType::Element(right)) => left == right,
+            (UINode::Slot(left), UINode::Slot(right)) => left == right,
+            (UINode::Text(left), UINode::Text(right)) => left == right,
+            (UINode::Element(left), UINode::Element(right)) => left == right,
             _ => false,
         }
     }
@@ -268,10 +275,10 @@ impl<'js> PartialEq<NodeType<'js>> for NodeType<'js> {
 
 #[derive(Clone, Eq, PartialEq)]
 pub(in crate) struct NodeData<'js> {
-    pub(in crate) next: Option<Node<'js>>,
-    pub(in crate) prev: Option<Node<'js>>,
-    pub(in crate) parent: Option<Node<'js>>,
-    pub(in crate) children: Option<Vec<Node<'js>>>,
+    pub(in crate) next: Option<UINode<'js>>,
+    pub(in crate) prev: Option<UINode<'js>>,
+    pub(in crate) parent: Option<UINode<'js>>,
+    pub(in crate) children: Option<Vec<UINode<'js>>>,
 }
 
 impl<'js> NodeData<'js> {
@@ -291,12 +298,12 @@ impl<'js> NodeData<'js> {
     }
 }
 
-impl<'js> HasRefs for Node<'js> {
+impl<'js> HasRefs for UINode<'js> {
     fn mark_refs(&self, marker: &RefsMarker) {
-        match &self.this {
-            NodeType::Slot(node) => node.mark_refs(marker),
-            NodeType::Text(node) => node.mark_refs(marker),
-            NodeType::Element(node) => <ElementNode<'js> as HasRefs>::mark_refs(&node, marker),
+        match &self {
+            UINode::Slot(node) => node.mark_refs(marker),
+            UINode::Text(node) => node.mark_refs(marker),
+            UINode::Element(node) => <ElementNode<'js> as HasRefs>::mark_refs(&node, marker),
         }
     }
 }
@@ -320,10 +327,16 @@ impl<'js> HasRefs for NodeData<'js> {
 
 impl<'js> rquickjs::IntoJs<'js> for Node<'js> {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
-        Ok(match self.this {
-            NodeType::Slot(node) => node.into_js(ctx)?,
-            NodeType::Text(node) => node.into_js(ctx)?,
-            NodeType::Element(node) => node.into_js(ctx)?,
+        self.this.into_js(ctx)
+    }
+}
+
+impl<'js> rquickjs::IntoJs<'js> for UINode<'js> {
+    fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+        Ok(match self {
+            UINode::Slot(node) => node.into_js(ctx)?,
+            UINode::Text(node) => node.into_js(ctx)?,
+            UINode::Element(node) => node.into_js(ctx)?,
         })
     }
 }
@@ -333,19 +346,23 @@ impl<'js, 'a> rquickjs::FromJs<'js> for Node<'js> {
         let this = if let Some(obj) = value.as_object() {
             match obj {
                 obj if obj.instance_of::<ElementNode<'js>>() => {
-                    NodeType::Element(ElementNode::from_js_obj(_ctx, value)?)
+                    UINode::Element(ElementNode::from_js_obj(_ctx, value)?)
                 }
                 obj if obj.instance_of::<SlotNode<'js>>() => {
-                    NodeType::Slot(SlotNode::from_js_obj(_ctx, value)?)
+                    UINode::Slot(SlotNode::from_js_obj(_ctx, value)?)
                 }
                 obj if obj.instance_of::<TextNode<'js>>() => {
-                    NodeType::Text(TextNode::from_js_obj(_ctx, value)?)
+                    UINode::Text(TextNode::from_js_obj(_ctx, value)?)
                 }
                 _ => return Err(Error::new_from_js("object", "Node")),
             }
         } else {
             return Err(Error::new_from_js(value.type_name(), "Node"));
         };
-        Ok(Node { _ctx, this })
+        Ok(Node {
+            _ctx,
+            this,
+            doc_cell: OnceCell::new(),
+        })
     }
 }

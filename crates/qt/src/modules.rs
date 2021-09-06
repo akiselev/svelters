@@ -206,30 +206,21 @@ impl Type for Qt<QPushButton> {
                 Ok(())
             },
         )?;
-        cls.with_event("clicked", |el, ctx, callback| unsafe {
-            let this = el.cast_as::<Self>().unwrap();
-            let callback = ctx.register(callback.into_value());
-            let context = Context::from_ctx(ctx)?;
-            tracing::info!("Adding event listener on QPushButton::clicked");
-            let conn = SlotOfBool::new(this.as_ptr(), move |_| {
-                tracing::info!("Handling QPushButton::clicked");
-                context.with(|ctx| {
-                    ctx.get_register(callback)
-                        .unwrap()
-                        .into_function()
-                        .unwrap()
-                        .call::<_, ()>((Event::new(ctx, "clicked", ()),))
-                        .unwrap();
+        cls.with_event("clicked", |el, func| unsafe {
+            el.event("clicked")?
+                .subscribe(func)
+                .connect(|this: &Self, sub| {
+                    let inner = sub.clone();
+                    let conn = SlotOfBool::new(this.as_ptr(), move |val| {
+                        tracing::info!("Handling QPushButton::clicked");
+                        inner.dispatch(val);
+                    });
+                    let disconnect = this.clicked().connect(&conn);
+                    sub.disconnect(move |this: &Self, sub| {
+                        QObject::disconnect_connection(disconnect.as_ref());
+                        Ok(())
+                    })
                 })
-            });
-            let disconnect = this.clicked().connect(&conn);
-
-            Ok(Box::new(move |node| {
-                tracing::info!("Disconnected QPushButton::clicked");
-                let conn = conn;
-                QObject::disconnect_connection(disconnect.as_ref());
-                Ok(())
-            }))
         })?;
         cls.superclass::<Qt<QWidget>>()?;
         Ok(())

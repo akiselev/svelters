@@ -17,8 +17,7 @@ pub struct ElementProp {
 pub struct ElementEvent {
     pub(in crate) inherited: bool,
     pub(in crate) name: &'static str,
-    pub(in crate) subscribe:
-        Rc<dyn for<'js> Fn(ElementNode<'js>, Ctx<'js>, Function<'js>) -> Result<()>>,
+    pub(in crate) subscribe: Rc<dyn SubscribeFn>,
 }
 
 #[derive(Clone)]
@@ -117,25 +116,12 @@ impl ElementType {
     where
         CLS: Type,
         BASE: Type + Caster<CLS>,
-        FUNC: 'static
-            + for<'js> Fn(ElementNode<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
+        FUNC: 'static + SubscribeFn,
     {
         let event = ElementEvent {
             name,
             inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
-            subscribe: Rc::new(
-                move |el: ElementNode<'_>, ctx: Ctx<'_>, callback: Function<'_>| {
-                    let _this = el.borrow_mut().obj.clone().into_value();
-                    let disconnect = func(el.clone(), ctx, callback.clone())?;
-                    let key = ctx.register(callback.into_value());
-                    el.borrow_mut().dispatcher.add_event_callback(
-                        name.to_string(),
-                        key,
-                        disconnect,
-                    )?;
-                    Ok(())
-                },
-            ),
+            subscribe: Rc::new(move |el: Element<'_>, callback: Function<'_>| func(el, callback)),
         };
         self.events.insert(name, event);
     }

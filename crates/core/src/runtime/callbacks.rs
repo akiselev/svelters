@@ -4,33 +4,39 @@ use rquickjs::{Function, Persistent};
 
 use crate::inner::*;
 
-pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Node<'js_>) -> Result<()>>;
+pub trait SubscribeFn = for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>;
+pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Element<'js_>) -> Result<()>>;
 
 pub struct Callback {
     pub(in crate) key: RegisteryKey,
-    pub(in crate) disconnect: DisconnectFn,
 }
 
 impl Callback {
-    pub fn new(key: RegisteryKey, disconnect: DisconnectFn) -> Self {
-        Self { key, disconnect }
+    pub fn new(key: RegisteryKey) -> Self {
+        Self { key }
     }
 }
 
-pub struct Subscriptions {
+pub struct EventSub {
+    pub(in crate) target_id: RegisteryKey,
     pub(in crate) callbacks: Vec<Callback>,
+    pub(in crate) disconnect: Option<DisconnectFn>,
 }
 
-impl Subscriptions {
-    pub fn new() -> Self {
-        Self { callbacks: vec![] }
+impl EventSub {
+    pub fn new(target_id: RegisteryKey) -> Self {
+        Self {
+            target_id,
+            callbacks: vec![],
+            disconnect: None,
+        }
     }
 
     pub fn remove_callback<'js>(
         &mut self,
         ctx: Ctx<'js>,
         func: Function<'js>,
-    ) -> Result<DisconnectFn> {
+    ) -> Result<Option<DisconnectFn>> {
         let pos = {
             self.callbacks.iter().position(|callback| {
                 if let Some(callback) = ctx.get_register(callback.key) {
@@ -42,7 +48,11 @@ impl Subscriptions {
         };
         if let Some(index) = pos {
             let callback = self.callbacks.remove(index);
-            Ok(callback.disconnect)
+            if self.callbacks.len() == 0 {
+                Ok(self.disconnect.take())
+            } else {
+                Ok(None)
+            }
         } else {
             Err(Error::new(ctx, "Event handler not registered"))
         }

@@ -106,8 +106,7 @@ where
     pub fn with_event<FUNC>(&mut self, name: &'static str, func: FUNC) -> Result<&mut Self>
     where
         members::Event<CLS, FUNC>: Implements<PHASE>,
-        FUNC: 'static
-            + for<'js> Fn(ElementNode<'js>, Ctx<'js>, Function<'js>) -> Result<DisconnectFn>,
+        FUNC: 'static + for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>,
     {
         members::Event::<CLS, FUNC>::new(name, func).build_phase(&mut self.phase)?;
         Ok(self)

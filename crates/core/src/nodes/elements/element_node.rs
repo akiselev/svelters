@@ -31,9 +31,9 @@ impl<'js> PartialEq for ElementNode<'js> {
 impl<'js> PartialEq<Node<'js>> for ElementNode<'js> {
     fn eq(&self, other: &Node<'js>) -> bool {
         match &other.this {
-            NodeType::Slot(_) => false,
-            NodeType::Text(_) => false,
-            NodeType::Element(node) => self.borrow().obj == node.borrow().obj,
+            UINode::Slot(_) => false,
+            UINode::Text(_) => false,
+            UINode::Element(node) => self.borrow().obj == node.borrow().obj,
         }
     }
 }

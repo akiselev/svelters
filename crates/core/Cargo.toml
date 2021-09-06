@@ -33,6 +33,7 @@ frunk = "0.4.0"
 static_assertions = "1.1.0"
 typedmap = "0.1.1"
 smallvec = "1.6.1" 
+ouroboros = "0.10.1"
 
 [dev-dependencies]
 cucumber_rust = { git="https://github.com/bbqsrc/cucumber-rust", branch="main" }

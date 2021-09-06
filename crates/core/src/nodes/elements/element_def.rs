@@ -8,7 +8,7 @@ impl<'a, 'js> rquickjs::FromJs<'js> for Element<'js> {
         let node = Object::from_js(ctx, value)?;
         if node.instance_of::<ElementNode>() {
             Ok(Element {
-                ctx,
+                _ctx: ctx,
                 el_node: node,
                 doc_cell: OnceCell::new(),
                 node_cell: OnceCell::new(),
