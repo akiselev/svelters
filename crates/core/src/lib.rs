@@ -1,5 +1,6 @@
 #![recursion_limit = "4096"]
 #![allow(incomplete_features, dead_code)]
+#![allow(warnings)]
 // GATS and specialization make up the core of this API
 #![feature(specialization)]
 #![feature(generic_associated_types)]

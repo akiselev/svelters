@@ -2,8 +2,10 @@ import * as core from "QtCore";
 import { QMainWindow } from "QtWidgets";
 import App from "./App.svelte";
 window.main = document.createElement("qMainWindow");
-window.App = new App({ target: window.main });
+window.main.windowOpacity = 0.5;
 window.main.show();
+
+window.App = new App({ target: window.main });
 
 //--------------------------------
 // import * as mod from "QtCore";

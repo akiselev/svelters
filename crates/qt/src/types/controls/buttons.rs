@@ -16,18 +16,18 @@ use crate::{
 };
 
 define!(|cls: QAbstractButton| {
-    cls.prop(
-        "text",
-        |this: &Qt<QAbstractButton>| unsafe { Ok(this.text().to_std_string()) },
-        |this: &Qt<QAbstractButton>, value: String| unsafe {
-            let value = QString::from_std_str(value);
-            this.set_text(value.as_ref());
-            Ok(())
-        },
-    )?
-    .superclass::<Qt<QWidget>>()?;
-    event!(cls.clicked as SlotOfBool[val,]);
+    props!(cls(this: QAbstractButton) {
+        text: Q<QString> {
+            Q(this.text());
+            this.set_text(text.as_ref())
+        };
+    });
+
+    cls.superclass::<Qt<QWidget>>()?;
+    event!(cls.clicked as SlotOfBool[val](val));
 });
+
+fn test() {}
 
 define!(|cls: QPushButton| {
     cls.constructor0(|| unsafe { Ok(Qt::new(QPushButton::new())) })?

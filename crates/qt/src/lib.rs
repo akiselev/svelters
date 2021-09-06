@@ -1,3 +1,5 @@
+#![allow(warnings)]
+#![allow(incomplete_features)]
 #![feature(generic_associated_types)]
 #![feature(type_alias_impl_trait)]
 #![feature(specialization)]
@@ -5,7 +7,6 @@
 #![feature(backtrace)]
 #![feature(decl_macro)]
 #![recursion_limit = "1024"]
-#[allow(incomplete_features)]
 use std::{borrow::Cow, future::Future, time::Duration};
 
 use frunk::hlist;
@@ -89,6 +90,12 @@ mod types {
         pub use main_window::*;
     }
 
+    mod primitives {
+        mod qstring;
+
+        pub use qstring::*;
+    }
+
     mod layout {}
 
     mod core;
@@ -96,6 +103,7 @@ mod types {
     pub use self::controls::*;
     pub use self::core::*;
     pub use self::layout::*;
+    pub use self::primitives::*;
     pub use self::windows::*;
 }
 

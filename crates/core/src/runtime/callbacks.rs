@@ -7,6 +7,7 @@ use crate::inner::*;
 pub trait SubscribeFn = for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>;
 pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Element<'js_>) -> Result<()>>;
 
+#[must_use]
 pub struct Disconnect {
     pub(in crate) func: Inner<Option<DisconnectFn>>,
     pub(in crate) sub: Subscription,

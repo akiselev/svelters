@@ -49,7 +49,7 @@ where
     ) -> Result<&mut Self>
     where
         CLS: Cast<CLS>,
-        PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+        PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
         members::Property<CLS, PROP, GET, SET>: Implements<PHASE>,
@@ -63,7 +63,7 @@ where
     pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<&mut Self>
     where
         CLS: Cast<CLS>,
-        PROP: 'static + std::fmt::Debug + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+        PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         members::ReadOnly<CLS, PROP, GET>: Implements<PHASE>,
     {
