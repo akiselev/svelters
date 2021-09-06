@@ -142,6 +142,16 @@ pub(in crate) macro method {
             },
         )?
     },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]($($arg:ident: $argty:ty),*) $(-> $res:ty)? { $func:expr }) => {
+        let func = method!(@num $num);
+        func(
+            $bld,
+            stringify!($name),
+            |$this: &Qt<$cls>, $($arg: $argty),*| $(-> rquickjs::Result<$res>)? {
+                unsafe { Ok($func) }
+            },
+        )?
+    },
 }
 
 pub(in crate) macro methods {
@@ -153,6 +163,11 @@ pub(in crate) macro methods {
     ($bld:ident($this:ident: $cls:ty) { $($name:ident[$num:tt]($($arg:ident),*) $(-> $ty:ty)? { $($tt:tt)* }; )* }) => {
         $(
             method!($bld($this: $cls) => $name[$num]($($arg),*) $(-> $ty)? { $($tt)* });
+        )*
+    },
+    ($bld:ident($this:ident: $cls:ty) { $($name:ident[$num:tt]($($arg:ident: $argty:ty),*) $(-> $ty:ty)? { $($tt:tt)* }; )* }) => {
+        $(
+            method!($bld($this: $cls) => $name[$num]($($arg: $argty),*) $(-> $ty)? { $($tt)* });
         )*
     }
 }

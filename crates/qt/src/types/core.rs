@@ -46,6 +46,9 @@ define!(|cls: QWidget| {
     methods!(cls(this: QWidget) {
         show[0]() { this.show() };
         hide[0]() { this.hide() };
+        resize[2](w: i32, h: i32) {
+            this.resize_2a(w, h)
+        };
     });
     props!(cls(this: QWidget) {
         height: i32 {

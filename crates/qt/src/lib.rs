@@ -6,6 +6,7 @@
 #![feature(in_band_lifetimes)]
 #![feature(backtrace)]
 #![feature(decl_macro)]
+#![feature(let_chains)]
 #![recursion_limit = "1024"]
 use std::{borrow::Cow, future::Future, time::Duration};
 
@@ -91,8 +92,10 @@ mod types {
     }
 
     mod primitives {
+        mod geometry;
         mod qstring;
 
+        pub use geometry::*;
         pub use qstring::*;
     }
 
@@ -115,6 +118,7 @@ pub(in crate) mod inner {
         marker::PhantomData,
         ops::{Add, Deref, DerefMut},
     };
+    pub(in crate) use svelters_core::exception;
 
     pub(in crate) use frunk::{hlist, hlist::Selector, HCons, HNil, Hlist};
     pub(in crate) use parking_lot::{const_rwlock, RwLock};
