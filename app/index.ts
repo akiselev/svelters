@@ -1,4 +1,5 @@
-import { QMainWindow } from "QtCore";
+import * as core from "QtCore";
+import { QMainWindow } from "QtWidgets";
 import App from "./App.svelte";
 window.main = document.createElement("qMainWindow");
 window.App = new App({ target: window.main });

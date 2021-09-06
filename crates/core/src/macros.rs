@@ -16,7 +16,7 @@ macro_rules! build_class {
     }};
 }
 
-#[macro_export(crate)]
+#[macro_export]
 macro_rules! exception {
     ($($tokens:tt)*) => {
         {

@@ -2,8 +2,10 @@
 #![feature(type_alias_impl_trait)]
 #![feature(specialization)]
 #![feature(in_band_lifetimes)]
+#![feature(backtrace)]
+#![feature(decl_macro)]
 #![recursion_limit = "1024"]
-
+#[allow(incomplete_features)]
 use std::{borrow::Cow, future::Future, time::Duration};
 
 use frunk::hlist;
@@ -22,6 +24,7 @@ use crate::impls::containers::Qt;
 
 #[derive(Debug, Clone, Copy)]
 pub struct QT;
+pub struct QtWidgets;
 pub struct QtCore;
 
 impl Framework for QT {
@@ -53,8 +56,12 @@ impl Framework for QT {
     }
 
     fn get_loader() -> (Self::Resolver, Self::Loader) {
-        let resolver = BuiltinResolver::default().with_module("QtCore");
-        let loader = ModuleLoader::default().with_module("QtCore", QT::module(QtCore));
+        let resolver = BuiltinResolver::default()
+            .with_module("QtCore")
+            .with_module("QtWidgets");
+        let loader = ModuleLoader::default()
+            .with_module("QtCore", QT::module(QtCore))
+            .with_module("QtWidgets", QT::module(QtWidgets));
         (resolver, loader)
     }
 
@@ -63,9 +70,33 @@ impl Framework for QT {
     }
 }
 
+mod macros;
 mod modules;
 mod impls {
     pub mod containers;
+}
+
+mod types {
+    mod controls {
+        mod buttons;
+
+        pub use buttons::*;
+    }
+
+    mod windows {
+        mod main_window;
+
+        pub use main_window::*;
+    }
+
+    mod layout {}
+
+    mod core;
+
+    pub use self::controls::*;
+    pub use self::core::*;
+    pub use self::layout::*;
+    pub use self::windows::*;
 }
 
 pub(in crate) mod inner {
@@ -91,4 +122,7 @@ pub(in crate) mod inner {
     pub(in crate) use svelters_core::prelude::*;
 
     pub(in crate) use crate::QT;
+
+    pub(in crate) use crate::macros::*;
+    pub(in crate) use crate::types::*;
 }
