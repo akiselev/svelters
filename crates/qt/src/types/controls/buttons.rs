@@ -18,8 +18,8 @@ use crate::{
 define!(|cls: QAbstractButton| {
     props!(cls(this: QAbstractButton) {
         text: Q<QString> {
-            Q(this.text());
-            this.set_text(text.as_ref())
+            Q::Box(this.text());
+            this.set_text(text.to_ref())
         };
     });
 

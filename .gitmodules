@@ -1,3 +1,6 @@
 [submodule "crates/rquickjs"]
 	path = crates/rquickjs
 	url = git@github.com:akiselev/rquickjs.git
+[submodule "crates/svelte"]
+	path = crates/svelte
+	url = ssh://git@github.com:/akiselev/svelte.git

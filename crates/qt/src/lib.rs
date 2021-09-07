@@ -99,7 +99,11 @@ mod types {
         pub use qstring::*;
     }
 
-    mod layout {}
+    mod layout {
+        mod box_layout;
+
+        pub use box_layout::*;
+    }
 
     mod core;
 
@@ -133,6 +137,7 @@ pub(in crate) mod inner {
 
     pub(in crate) use svelters_core::prelude::*;
 
+    pub(in crate) use crate::impls::containers::Qt;
     pub(in crate) use crate::QT;
 
     pub(in crate) use crate::macros::*;

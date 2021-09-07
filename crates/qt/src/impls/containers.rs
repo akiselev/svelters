@@ -71,6 +71,19 @@ where
     }
 }
 
+pub struct QDerefWrapper<'a, T>(Q<T>, PhantomData<&'a ()>)
+where
+    T: CppDeletable;
+
+impl<'a, T> AsRef<Q<T>> for QDerefWrapper<'a, T>
+where
+    T: CppDeletable,
+{
+    fn as_ref(&self) -> &Q<T> {
+        &self.0
+    }
+}
+
 impl<T, CLS> CastFrom<Qt<T>> for Qt<CLS>
 where
     T: CastFrom<CLS>,
@@ -105,6 +118,57 @@ where
             };
             let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
             DerefWrapper(Qt::Ref(ptr.as_ptr()), PhantomData)
+        }
+    }
+}
+
+impl<X, CLS> Cast<Q<X>> for Qt<CLS>
+where
+    Qt<CLS>: Type,
+    CLS: StaticUpcast<QObject> + CppDeletable,
+    X: CppDeletable,
+    Ref<X>: CastFrom<Ref<CLS>>,
+{
+    type Output<'a> = QDerefWrapper<'a, X>;
+
+    fn cast<'a>(&'a self) -> Self::Output<'a> {
+        unsafe {
+            // let obj: Ref<QObject> = CastFrom::cast_from(self.get_ptr());
+            // let ptr = CastFrom::cast_from(obj);
+            let ptr = unsafe {
+                match self {
+                    Qt::Owned(ref val) => val.as_ptr(),
+                    Qt::Shared(ref val) => val.as_ptr(),
+                    Qt::Ref(ref val) => val.clone(),
+                }
+            };
+            let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
+            QDerefWrapper(Q::Ptr(ptr.as_ptr()), PhantomData)
+        }
+    }
+}
+
+impl<X, CLS> Cast<Q<X>> for Q<CLS>
+where
+    Q<CLS>: Type,
+    CLS: CppDeletable,
+    X: CppDeletable,
+    Ref<X>: CastFrom<Ref<CLS>>,
+{
+    type Output<'a> = QDerefWrapper<'a, X>;
+
+    fn cast<'a>(&'a self) -> Self::Output<'a> {
+        unsafe {
+            // let obj: Ref<QObject> = CastFrom::cast_from(self.get_ptr());
+            // let ptr = CastFrom::cast_from(obj);
+            let ptr = unsafe {
+                match self {
+                    Q::Box(ref val) => val.as_ptr(),
+                    Q::Ptr(ref val) => val.clone(),
+                }
+            };
+            let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
+            QDerefWrapper(Q::Ptr(ptr.as_ptr()), PhantomData)
         }
     }
 }

@@ -136,37 +136,152 @@ define!(|cls: QWidget| {
             this.set_window_modified(isWindowModified);
         };
         accessibleDescription: Q<QString> {
-            Q(this.accessible_description());
-            this.set_accessible_description(accessibleDescription.as_ref())
+            Q::Box(this.accessible_description());
+            this.set_accessible_description(accessibleDescription.to_ref())
         };
         accessibleName: Q<QString> {
-            Q(this.accessible_name());
-            this.set_accessible_name(accessibleName.as_ref())
+            Q::Box(this.accessible_name());
+            this.set_accessible_name(accessibleName.to_ref())
         };
         statusTip: Q<QString> {
-            Q(this.status_tip());
-            this.set_status_tip(statusTip.as_ref())
+            Q::Box(this.status_tip());
+            this.set_status_tip(statusTip.to_ref())
         };
         styleSheet: Q<QString> {
-            Q(this.style_sheet());
-            this.set_style_sheet(styleSheet.as_ref())
+            Q::Box(this.style_sheet());
+            this.set_style_sheet(styleSheet.to_ref())
         };
         toolTip: Q<QString> {
-            Q(this.tool_tip());
-            this.set_tool_tip(toolTip.as_ref())
+            Q::Box(this.tool_tip());
+            this.set_tool_tip(toolTip.to_ref())
         };
         whatsThis: Q<QString> {
-            Q(this.whats_this());
-            this.set_whats_this(whatsThis.as_ref())
+            Q::Box(this.whats_this());
+            this.set_whats_this(whatsThis.to_ref())
         };
         windowFilePath: Q<QString> {
-            Q(this.window_file_path());
-            this.set_window_file_path(windowFilePath.as_ref())
+            Q::Box(this.window_file_path());
+            this.set_window_file_path(windowFilePath.to_ref())
         };
         windowTitle: Q<QString> {
-            Q(this.window_title());
-            this.set_window_title(windowTitle.as_ref())
+            Q::Box(this.window_title());
+            this.set_window_title(windowTitle.to_ref())
         };
+        /**********************************************
+         * ---------------------------
+         *  Access functions:
+         *  QSize 	baseSize() const
+         *  void 	setBaseSize(const QSize &)
+         *  void 	setBaseSize(int basew, int baseh)
+         *  ---------------------------
+         *  Access functions:
+         *  QRect 	childrenRect() const
+         *  ---------------------------
+         *  Access functions:
+         *  QRegion 	childrenRegion() const
+         *  ---------------------------
+         *  Access functions:
+         *  Qt::ContextMenuPolicy 	contextMenuPolicy() const
+         *  void 	setContextMenuPolicy(Qt::ContextMenuPolicy policy)
+         *  ---------------------------
+         *  Access functions:
+         *  QCursor 	cursor() const
+         *  void 	setCursor(const QCursor &)
+         *  void 	unsetCursor()
+         *  ---------------------------
+         *  Access functions:
+         *  Qt::FocusPolicy 	focusPolicy() const
+         *  void 	setFocusPolicy(Qt::FocusPolicy policy)
+         *  ---------------------------
+         *  Access functions:
+         *  const QFont &	font() const
+         *  void 	setFont(const QFont &)
+         *  ---------------------------
+         *  Access functions:
+         *  QRect 	frameGeometry() const
+         *  ---------------------------
+         *  Access functions:
+         *  QSize 	frameSize() const
+         *  fullScreen : const bool
+         *  ---------------------------
+         *  Access functions:
+         *  const QRect &	geometry() const
+         *  void 	setGeometry(int x, int y, int w, int h)
+         *  void 	setGeometry(const QRect &)
+         *  ---------------------------
+         *  ess functions:
+         *  Qt::InputMethodHints 	inputMethodHints() const
+         *  void 	setInputMethodHints(Qt::InputMethodHints hints)
+         *  ---------------------------
+         *  Access functions:
+         *  Qt::LayoutDirection 	layoutDirection() const
+         *  void 	setLayoutDirection(Qt::LayoutDirection direction)
+         *  void 	unsetLayoutDirection()
+         *  ---------------------------
+         *  Access functions:
+         *  QLocale 	locale() const
+         *  void 	setLocale(const QLocale &locale)
+         *  void 	unsetLocale()
+         *  ---------------------------
+         *  Access functions:
+         *  QSize 	maximumSize() const
+         *  void 	setMaximumSize(const QSize &)
+         *  void 	setMaximumSize(int maxw, int maxh)
+         *  ---------------------------
+         *  Access functions:
+         *  QSize 	minimumSize() const
+         *  void 	setMinimumSize(const QSize &)
+         *  void 	setMinimumSize(int minw, int minh)
+         *  ---------------------------
+         *  Access functions:
+         *  virtual QSize 	minimumSizeHint() const
+         *  ---------------------------
+         *  Access functions:
+         *  QRect 	normalGeometry() const
+         *  ---------------------------
+         *  Access functions:
+         *  const QPalette &	palette() const
+         *  void 	setPalette(const QPalette &)
+         *  ---------------------------
+         *  Access functions:
+         *  QPoint 	pos() const
+         *  void 	move(int x, int y)
+         *  void 	move(const QPoint &)
+         *  ---------------------------
+         *  Access functions:
+         *  QRect 	rect() const
+         *  ---------------------------
+         *  Access functions:
+         *  QSize 	size() const
+         *  void 	resize(int w, int h)
+         *  void 	resize(const QSize &)
+         *  ---------------------------
+         *  Access functions:
+         *  virtual QSize 	sizeHint() const
+         *  ---------------------------
+         *  Access functions:
+         *  QSize 	sizeIncrement() const
+         *  void 	setSizeIncrement(const QSize &)
+         *  void 	setSizeIncrement(int w, int h)
+         *  ---------------------------
+         *  Access functions:
+         *  QSizePolicy 	sizePolicy() const
+         *  void 	setSizePolicy(QSizePolicy)
+         *  void 	setSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)
+         *  ---------------------------
+         *  Access functions:
+         *  Qt::WindowFlags 	windowFlags() const
+         *  void 	setWindowFlags(Qt::WindowFlags type)
+         *  ---------------------------
+         *  Access functions:
+         *  QIcon 	windowIcon() const
+         *  void 	setWindowIcon(const QIcon &icon)
+         *  ---------------------------
+         *  Access functions:
+         *  Qt::WindowModality 	windowModality() const
+         *  void 	setWindowModality(Qt::WindowModality windowModality)
+         *  ---------------------------
+         */
     });
 });
 

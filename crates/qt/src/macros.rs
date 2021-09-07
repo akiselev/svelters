@@ -13,7 +13,24 @@ pub(in crate) macro module($modname:ty: $($ty:ty),*$(,)?) {
     }
 }
 
-pub(in crate) macro define(|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
+pub(in crate) macro qdefine(|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
+    impl Type for Q<$cls> {
+        const CLASS_NAME: & 'static str = stringify!($cls);
+
+        unsafe fn metadata() -> &'static mut Metadata {
+            static mut META: Metadata = Metadata::new();
+            &mut META
+        }
+
+        #[inline(always)]
+        fn define<P>($builder: &mut TypeBuilder<Self, P>) -> Result<()> {
+            $($tokens)*
+            Ok(())
+        }
+    }
+}
+
+pub(in crate) macro define (|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
     impl Type for Qt<$cls> {
         const CLASS_NAME: & 'static str = stringify!($cls);
 
@@ -168,6 +185,107 @@ pub(in crate) macro methods {
     ($bld:ident($this:ident: $cls:ty) { $($name:ident[$num:tt]($($arg:ident: $argty:ty),*) $(-> $ty:ty)? { $($tt:tt)* }; )* }) => {
         $(
             method!($bld($this: $cls) => $name[$num]($($arg: $argty),*) $(-> $ty)? { $($tt)* });
+        )*
+    }
+}
+
+pub(in crate) macro qprop {
+    ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:block; $set:block $(;)? }) => {
+        $bld.prop(
+            stringify!($name),
+            |$this: &Q<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+            |$this: &Q<$cls>, $name: $ty| unsafe {
+                $set
+                Ok(())
+            },
+        )?
+    },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:expr; $set:expr $(;)? }) => {
+        $bld.prop(
+            stringify!($name),
+            |$this: &Q<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+            |$this: &Q<$cls>, $name: $ty| unsafe {
+                { $set }
+                Ok(())
+            },
+        )?
+    },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:block }) => {
+        $bld.readonly(
+            stringify!($name),
+            |$this: &Q<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+        )?
+    },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:expr $(;)? }) => {
+        $bld.readonly(
+            stringify!($name),
+            |$this: &Q<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+        )?
+    }
+}
+
+pub(in crate) macro qprops {
+    ($bld:ident($this:ident: $cls:ty) { $($name:ident: $ty:ty { $($tt:tt)* }; )* }) => {
+        $(
+            prop!($bld($this: $cls) => $name: $ty { $($tt)* });
+        )*
+    }
+}
+
+pub(in crate) macro qmethod {
+    (@num 0) => { TypeBuilder::method0 },
+    (@num 1) => { TypeBuilder::method1 },
+    (@num 2) => { TypeBuilder::method2 },
+    (@num 3) => { TypeBuilder::method3 },
+    (@num 4) => { TypeBuilder::method4 },
+    (@num 5) => { TypeBuilder::method5 },
+    (@num 6) => { TypeBuilder::method6 },
+    (@num 7) => { TypeBuilder::method7 },
+    (@num 8) => { TypeBuilder::method8 },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]() $(-> $res:ty)? { $func:expr }) => {
+        let func = qmethod!(@num $num);
+        func(
+            $bld,
+            stringify!($name),
+            |$this: &Q<$cls>| $(-> rquickjs::Result<$res>)? { unsafe { Ok($func) } },
+        )?
+    },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]($($arg:ident),*) $(-> $res:ty)? { $func:expr }) => {
+        let func = qmethod!(@num $num);
+        func(
+            $bld,
+            stringify!($name),
+            |$this: &Q<$cls>, $($arg),*| $(-> rquickjs::Result<$res>)? {
+                unsafe { Ok($func) }
+            },
+        )?
+    },
+    ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]($($arg:ident: $argty:ty),*) $(-> $res:ty)? { $func:expr }) => {
+        let func = qmethod!(@num $num);
+        func(
+            $bld,
+            stringify!($name),
+            |$this: &Q<$cls>, $($arg: $argty),*| $(-> rquickjs::Result<$res>)? {
+                unsafe { Ok($func) }
+            },
+        )?
+    },
+}
+
+pub(in crate) macro qmethods {
+    ($bld:ident($this:ident: $cls:ty) { $($name:ident[$num:tt]() $(-> $ty:ty)? { $($tt:tt)* };)* }) => {
+        $(
+            qmethod!($bld($this: $cls) => $name[$num]() $(-> $ty)? { $($tt)* });
+        )*
+    },
+    ($bld:ident($this:ident: $cls:ty) { $($name:ident[$num:tt]($($arg:ident),*) $(-> $ty:ty)? { $($tt:tt)* }; )* }) => {
+        $(
+            qmethod!($bld($this: $cls) => $name[$num]($($arg),*) $(-> $ty)? { $($tt)* });
+        )*
+    },
+    ($bld:ident($this:ident: $cls:ty) { $($name:ident[$num:tt]($($arg:ident: $argty:ty),*) $(-> $ty:ty)? { $($tt:tt)* }; )* }) => {
+        $(
+            qmethod!($bld($this: $cls) => $name[$num]($($arg: $argty),*) $(-> $ty)? { $($tt)* });
         )*
     }
 }
