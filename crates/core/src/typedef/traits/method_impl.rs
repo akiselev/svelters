@@ -3,7 +3,7 @@ use crate::{inner::*, typedef::members::*};
 impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
     for ObjImpl<BASE, Member<CLS, AsMethod<FUNC>>>
 where
-    BASE: Type + Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     RET: for<'js_> ToResult<'js_>,
     ARGS: for<'js_> FromImpl<'js, BASE>,
     FUNC: 'static + Fn<ARGS, Output = RET>,
@@ -23,7 +23,7 @@ where
 impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
     for VirtImpl<BASE, Member<CLS, AsMethod<FUNC>>>
 where
-    BASE: Type + Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     RET: for<'js_> ToResult<'js_>,
     ARGS: for<'js_> FromImpl<'js, BASE>,
     FUNC: 'static + Fn<ARGS, Output = RET>,
@@ -43,7 +43,7 @@ where
 impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
     for ElementImpl<BASE, Member<CLS, AsMethod<FUNC>>>
 where
-    BASE: Type + Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     RET: for<'js_> ToResult<'js_>,
     ARGS: for<'js_> FromImpl<'js, BASE>,
     FUNC: 'static + Fn<ARGS, Output = RET>,

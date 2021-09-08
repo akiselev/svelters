@@ -16,7 +16,7 @@ impl<'a, 'b, CLS: Type> InitElementCaster<'a, CLS> {
 
 impl<'a, CLS, SUPER> Implements<InitElementCaster<'a, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type + Caster<SUPER>,
+    CLS: Type + Cast<SUPER>,
     SUPER: Type + Clone,
 {
     #[inline(always)]
@@ -56,7 +56,7 @@ where
     CLS: Type,
     SUPER: Type,
     NESTED: Clone + Type,
-    CLS: Caster<NESTED>,
+    CLS: Cast<NESTED>,
 {
     #[inline(always)]
     fn build_phase(

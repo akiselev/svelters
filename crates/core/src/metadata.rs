@@ -90,7 +90,7 @@ impl ElementType {
     pub fn prop<BASE, CLS, PROP, GET, SET>(&mut self, name: &'static str, getter: GET, setter: SET)
     where
         CLS: Type,
-        BASE: Type + Caster<CLS>,
+        BASE: Type + Cast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -102,12 +102,10 @@ impl ElementType {
                 let el = ElementNode::from_js(ctx, this)?;
                 let this = el.borrow();
                 let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                let ptr = obj.borrow();
-                ptr.with_cast(|data| {
-                    let val = getter(data)?;
-                    rquickjs::Result::Ok(val)
-                })
-                .into_js(ctx)
+                let ptr = obj.borrow().unwrap();
+                let cls = ptr.cast();
+                let val = getter(cls.as_ref())?;
+                val.into_js(ctx)
             }),
             setter: Some(Rc::new(
                 move |this: Value<'_>, ctx: Ctx<'_>, value: Value<'_>| {
@@ -116,10 +114,10 @@ impl ElementType {
                     let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                     let val = PROP::from_js(ctx, value)?;
                     let ptr = obj.borrow().unwrap();
-                    ptr.with_cast(|data| {
-                        setter(data, val)?;
-                        Result::<_>::Ok(())
-                    })
+                    let cls = ptr.cast();
+
+                    setter(cls.as_ref(), val)?;
+                    Result::<_>::Ok(())
                 },
             )),
         };
@@ -129,7 +127,7 @@ impl ElementType {
     pub fn readonly<BASE, CLS, PROP, GET>(&mut self, name: &'static str, getter: GET)
     where
         CLS: Type,
-        BASE: Type + Caster<CLS>,
+        BASE: Type + Cast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     {
@@ -140,12 +138,10 @@ impl ElementType {
                 let el = ElementNode::from_js(ctx, this)?;
                 let this = el.borrow();
                 let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                let ptr = obj.borrow();
-                ptr.with_cast(|data| {
-                    let val = getter(data)?;
-                    rquickjs::Result::Ok(val)
-                })
-                .into_js(ctx)
+                let ptr = obj.borrow().unwrap();
+                let cls = ptr.cast();
+                let val = getter(cls.as_ref())?;
+                val.into_js(ctx)
             }),
             setter: None,
         };
@@ -156,7 +152,7 @@ impl ElementType {
     pub fn event<BASE: Type, CLS: Type, FUNC>(&mut self, name: &'static str, func: FUNC)
     where
         CLS: Type,
-        BASE: Type + Caster<CLS>,
+        BASE: Type + Cast<CLS>,
         FUNC: 'static + SubscribeFn,
     {
         let event = ElementEvent {

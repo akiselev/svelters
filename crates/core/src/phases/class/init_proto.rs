@@ -20,8 +20,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitProto<'a, 'b, BASE>>
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type,
-    BASE: Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -41,18 +40,18 @@ where
                 rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
                     let obj: &Obj<BASE> = this.as_ref();
                     let ptr = obj.borrow().unwrap();
-                    ptr.with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
+                    let cls = ptr.cast();
+
+                    let val = getter(cls.as_ref())?;
+                    rquickjs::Result::Ok(val)
                 }),
                 rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>, val: PROP| {
                     let obj: &Obj<BASE> = this.as_ref();
                     let ptr = obj.borrow().unwrap();
-                    ptr.with_cast(|data| {
-                        setter(data, val)?;
-                        Result::<_>::Ok(())
-                    })
+                    let cls = ptr.cast();
+
+                    setter(cls.as_ref(), val)?;
+                    Result::<_>::Ok(())
                 }),
             )
             .enumerable()
@@ -66,8 +65,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitProto<'a, 'b, BASE>>
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type,
-    BASE: Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -81,10 +79,9 @@ where
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
                 let obj: &Obj<BASE> = this.as_ref();
                 let ptr = obj.borrow().unwrap();
-                ptr.with_cast(|data| {
-                    let val = getter(data)?;
-                    rquickjs::Result::Ok(val)
-                })
+                let cls = ptr.cast();
+                let val = getter(cls.as_ref())?;
+                rquickjs::Result::Ok(val)
             }))
             .enumerable(),
         )?;
@@ -94,9 +91,8 @@ where
 
 impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type,
+    CLS: Type + Cast<SUPER>,
     SUPER: Type,
-    CLS: Caster<SUPER>,
 {
     #[inline(always)]
     fn build_phase(self, phase: InitProto<'a, 'b, CLS>) -> Result<InitProto<'a, 'b, CLS>> {
@@ -113,7 +109,7 @@ macro_rules! tup {
                 for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Caster<THIS>,
+                BASE: Type + Cast<THIS>,
                 THIS: 'static,
                 $($arg: 'static + FromJs<'b>,)*
                 RET: 'static + for<'js> IntoJs<'js>,
@@ -132,12 +128,11 @@ macro_rules! tup {
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Obj<BASE> = this.as_ref();
                                     let ptr = obj.borrow().unwrap();
-                                    ptr.with_cast(|data| {
-                                        (self.func)(
-                                            data,
-                                            $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
-                                        )
-                                    })
+                                    let cls = ptr.cast();
+                                    (self.func)(
+                                        cls.as_ref(),
+                                        $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
+                                    )
                                 },
                             ),
                         ),

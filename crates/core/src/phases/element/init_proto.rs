@@ -47,8 +47,7 @@ impl<'a, 'b, 'c, BASE, CLS, PROP, GET, SET> Implements<InitElementProto<'a, 'b, 
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type,
-    BASE: Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -72,19 +71,16 @@ where
                     let obj =
                         Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     let ptr = obj.borrow().unwrap();
-                    ptr.with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
+                    let cls = ptr.cast();
+
+                    getter(cls.as_ref())
                 }),
                 rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, val: PROP| {
                     let obj =
                         Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     let ptr = obj.borrow().unwrap();
-                    ptr.with_cast(|data| {
-                        setter(data, val)?;
-                        Result::<_>::Ok(())
-                    })
+                    let cls = ptr.cast();
+                    setter(cls.as_ref(), val)
                 }),
             )
             .enumerable()
@@ -98,8 +94,7 @@ impl<'a, 'b, 'c, BASE, CLS, PROP, GET> Implements<InitElementProto<'a, 'b, 'c, B
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type,
-    BASE: Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -117,10 +112,9 @@ where
                     let obj =
                         Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                     let ptr = obj.borrow().unwrap();
-                    ptr.with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
+                    let cls = ptr.cast();
+                    let val = getter(cls.as_ref())?;
+                    rquickjs::Result::Ok(val)
                 },
             ))
             .enumerable(),
@@ -134,7 +128,7 @@ impl<'a, 'b, 'c, CLS, SUPER> Implements<InitElementProto<'a, 'b, 'c, CLS>>
 where
     CLS: Type,
     SUPER: Type,
-    CLS: Caster<SUPER>,
+    CLS: Cast<SUPER>,
 {
     #[inline(always)]
     fn build_phase(
@@ -153,7 +147,7 @@ macro_rules! tup {
                 for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Caster<THIS>,
+                BASE: Type + Cast<THIS>,
                 THIS: 'static,
                 RET: 'static + IntoJs<'b>,
                 FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
@@ -172,13 +166,12 @@ macro_rules! tup {
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
                                     let ptr = obj.borrow().unwrap();
-                ptr.with_cast(|data| {
-                                        let res = (self.func)(
-                                            data,
-                                            $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
-                                        )?;
-                                        Result::<_>::Ok(res.into_js(ctx))
-                                    })
+                                    let cls = ptr.cast();
+                                    let res = (self.func)(
+                                        cls.as_ref(),
+                                        $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
+                                    )?;
+                                    res.into_js(ctx)
                                 },
                             ),
                         ),

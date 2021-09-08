@@ -84,7 +84,7 @@ impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for members::Superclass<SUP
 where
     CLS: Type,
     SUPER: Type + Clone,
-    CLS: Caster<SUPER>,
+    CLS: Cast<SUPER>,
 {
     #[inline(always)]
     fn build_phase(self, phase: InitCaster<CLS>) -> Result<InitCaster<CLS>> {

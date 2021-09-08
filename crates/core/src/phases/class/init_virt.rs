@@ -20,8 +20,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitVirt<'a, 'b, BASE>>
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type,
-    BASE: Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -40,17 +39,19 @@ where
             Accessor::new(
                 rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
                     let obj: &Virt<BASE> = this.as_ref();
-                    obj.with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
+                    let base = obj.as_base::<BASE>().unwrap();
+                    let ptr = base.cast();
+
+                    let val = getter(ptr.as_ref())?;
+                    rquickjs::Result::Ok(val)
                 }),
                 rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>, val: PROP| {
                     let obj: &Virt<BASE> = this.as_ref();
-                    obj.with_cast(|data| {
-                        setter(data, val)?;
-                        Result::<_>::Ok(())
-                    })
+                    let base = obj.as_base::<BASE>().unwrap();
+                    let ptr = base.cast();
+
+                    setter(ptr.as_ref(), val)?;
+                    Result::<_>::Ok(())
                 }),
             )
             .enumerable()
@@ -64,8 +65,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitVirt<'a, 'b, BASE>>
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type,
-    BASE: Caster<CLS>,
+    BASE: Type + Cast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -77,10 +77,11 @@ where
             name,
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
                 let obj: &Virt<BASE> = this.as_ref();
-                obj.with_cast(|data| {
-                    let val = getter(data)?;
-                    rquickjs::Result::Ok(val)
-                })
+                let base = obj.as_base::<BASE>().unwrap();
+                let ptr = base.cast();
+
+                let val = getter(ptr.as_ref())?;
+                rquickjs::Result::Ok(val)
             }))
             .enumerable(),
         )?;
@@ -90,9 +91,8 @@ where
 
 impl<'a, 'b: 'a, CLS, SUPER> Implements<InitVirt<'a, 'b, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type,
+    CLS: Type + Cast<SUPER>,
     SUPER: Type,
-    CLS: Caster<SUPER>,
 {
     #[inline(always)]
     fn build_phase(self, phase: InitVirt<'a, 'b, CLS>) -> Result<InitVirt<'a, 'b, CLS>> {
@@ -108,7 +108,7 @@ macro_rules! tup {
                 for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Caster<THIS>,
+                BASE: Type + Cast<THIS>,
                 THIS: 'static,
                 RET: 'static +  IntoJs<'b>,
                 FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
@@ -126,13 +126,14 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Virt<BASE> = this.as_ref();
-                                    obj.with_cast(|data| {
-                                        let res = (self.func)(
-                                            data,
-                                            $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
-                                        )?;
-                                        Result::<_>::Ok(res.into_js(ctx))
-                                    })
+                                    let base = obj.as_base::<BASE>().unwrap();
+                                    let ptr = base.cast();
+
+                                    let res = (self.func)(
+                                        ptr.as_ref(),
+                                        $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
+                                    )?;
+                                    Result::<_>::Ok(res.into_js(ctx))
                                 },
                             ),
                         ),

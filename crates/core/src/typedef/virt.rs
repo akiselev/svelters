@@ -49,6 +49,10 @@ where
         let func: Function = self.obj.get("castAs").ok()?;
         func.call((This(self.obj.clone()), OTHER::CLASS_NAME)).ok()
     }
+
+    pub(in crate) fn as_base<BASE: Type>(&self) -> Option<ObjRef<BASE>> {
+        Obj::<BASE>::from_rt(&self.rt, self.idx)
+    }
 }
 
 impl<'a, CLS> ClassDef for Virt<'a, CLS>

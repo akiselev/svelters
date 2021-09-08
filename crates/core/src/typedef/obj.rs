@@ -27,11 +27,15 @@ where
     }
 
     pub fn borrow(&self) -> Option<ObjRef<CLS>> {
-        let rt: Ref<RT> = (*self.rt.inner).borrow();
+        Obj::<CLS>::from_rt(&self.rt, self.idx)
+    }
+
+    pub(in crate) fn from_rt(rt: &Rt, idx: Idx) -> Option<ObjRef<CLS>> {
+        let rt: Ref<RT> = (*rt.inner).borrow();
         ObjRefTryBuilder {
             rt,
             obj_builder: |this: &Ref<RT>| {
-                let inst = this.objects.get(self.idx).ok_or(())?;
+                let inst = this.objects.get(idx).ok_or(())?;
                 inst.data.downcast_ref::<CLS>().ok_or(())
             },
             cls: Class::new(),

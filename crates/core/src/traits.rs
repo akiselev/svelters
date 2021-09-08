@@ -29,14 +29,14 @@ pub trait Cast<T> {
     fn cast<'a>(&'a self) -> Self::Output<'a>;
 }
 
-pub trait Caster<T> {
+pub trait Csaster<T> {
     fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
         &'a self,
         func: FUNC,
     ) -> Result<R>;
 }
 
-impl<T, U> Caster<T> for U {
+impl<T, U> Csaster<T> for U {
     default fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
         &'a self,
         _func: FUNC,
@@ -49,7 +49,7 @@ impl<T, U> Caster<T> for U {
     }
 }
 
-impl<T, U: Cast<T>> Caster<T> for U {
+impl<T, U: Cast<T>> Csaster<T> for U {
     fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
         &'a self,
         func: FUNC,

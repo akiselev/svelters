@@ -20,7 +20,7 @@ where
     CLS: Type,
     SUPER: Type,
     NESTED: Clone + Type,
-    CLS: Caster<NESTED>,
+    CLS: Cast<NESTED>,
 {
     #[inline(always)]
     fn build_phase(
