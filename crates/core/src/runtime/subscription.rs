@@ -56,7 +56,7 @@ impl<'js> SubscriptionBuilder<'js> {
     pub fn connect<CLS, FUNC>(self, func: FUNC) -> Result<()>
     where
         CLS: Clone + Type,
-        FUNC: 'static + for<'a, 'b> FnOnce(&'a CLS, Subscription, Disconnect) -> Result<()>,
+        FUNC: 'static + for<'a, 'b> FnOnce(&'a CLS, Subscription, Disconnect<CLS>) -> Result<()>,
     {
         let name = self.name;
         let disconnected = {

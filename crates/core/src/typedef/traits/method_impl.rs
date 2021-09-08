@@ -1,4 +1,7 @@
-use crate::{inner::*, typedef::members::*};
+use crate::{
+    inner::*,
+    members::{AsMethod, Member},
+};
 
 impl<'js, BASE, CLS, FUNC, ARGS, RET> AsFunction<'js, ARGS, RET>
     for ObjImpl<BASE, Member<CLS, AsMethod<FUNC>>>

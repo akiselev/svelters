@@ -8,9 +8,10 @@ pub trait SubscribeFn = for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>;
 pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Element<'js_>) -> Result<()>>;
 
 #[must_use]
-pub struct Disconnect {
+pub struct Disconnect<CLS> {
     pub(in crate) func: Inner<Option<DisconnectFn>>,
     pub(in crate) sub: Subscription,
+    cls: Class<CLS>,
 }
 
 pub(in crate) struct CbInner<'js> {
@@ -18,12 +19,16 @@ pub(in crate) struct CbInner<'js> {
     pub(in crate) disconnect: Inner<Option<DisconnectFn>>,
 }
 
-impl Disconnect {
+impl<CLS: Type> Disconnect<CLS> {
     pub(in crate) fn new(func: Inner<Option<DisconnectFn>>, sub: Subscription) -> Self {
-        Self { func, sub }
+        Self {
+            func,
+            sub,
+            cls: Class::new(),
+        }
     }
 
-    pub fn with<CLS, FUNC>(self, func: FUNC) -> Result<()>
+    pub fn with<FUNC>(self, func: FUNC) -> Result<()>
     where
         CLS: 'static,
         FUNC: 'static + for<'a> FnOnce(&'a CLS, Subscription) -> Result<()>,

@@ -60,6 +60,7 @@ pub(in crate) mod metadata;
 pub(in crate) mod rt;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
+pub(in crate) mod members;
 
 #[allow(unused_imports)]
 pub(in crate) mod runtime {
@@ -119,7 +120,6 @@ pub(in crate) mod nodes {
 pub(in crate) mod typedef {
     pub(in crate) mod builder;
     pub(in crate) mod hslot;
-    pub(in crate) mod members;
     pub(in crate) mod module;
     pub(in crate) mod obj;
     pub(in crate) mod virt;
@@ -227,6 +227,7 @@ pub(in crate) mod inner {
     pub(in crate) use crate::rt::*;
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
+    pub(in crate) use crate::members;
 
     pub(in crate) use crate::exception;
 
