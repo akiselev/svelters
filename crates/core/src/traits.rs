@@ -61,21 +61,30 @@ impl<T, U: Cast<T>> Caster<T> for U {
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
 pub trait Module: Sized {
-    fn define<P>(module: &mut ModuleBuilder<Self, P>) -> Result<()>;
+    fn define<P>(module: ModuleBuilder<Self, P>) -> Result<ModuleBuilder<Self, P>>;
 }
 
 /// Defines a framework type that is exposed to Javascript using a [TypeBuilder]
 pub trait Type: 'static + Sized {
     const CLASS_NAME: &'static str;
 
+    type Definition<P>: TypeDef<P>;
+
     unsafe fn metadata() -> &'static mut Metadata;
 
-    fn define<P>(cls: &mut TypeBuilder<Self, P>) -> Result<()>;
+    fn define<P>(cls: TypeBuilder<Self, P>) -> Result<Self::Definition<P>>;
 
     #[inline(always)]
     fn name() -> &'static str {
         Self::CLASS_NAME
     }
+}
+
+pub trait TypeDef<P> {
+    // const NUM_PROPS: usize;
+    // const NUM_EVENTS: usize;
+
+    // fn get_phase(self) -> P;
 }
 
 /// Implementation for a phase
@@ -109,7 +118,7 @@ pub trait Type: 'static + Sized {
 /// implementations can also pass information back to the caller to implement
 /// features like reflection and debuging.
 pub trait Implements<P>: Sized {
-    fn build_phase(self, _phase: &mut P) -> Result<()>;
+    fn build_phase(self, _phase: P) -> Result<P>;
 
     // fn build_phase_logged(self, phase: &mut P) -> Result<()> {
     //     tracing::info!("Calling phase <{}> for <{}>", std::any::type_name::<P>(), std::any::type_name::<Self>());
@@ -119,8 +128,8 @@ pub trait Implements<P>: Sized {
 
 impl<T, P> Implements<P> for T {
     #[inline(always)]
-    default fn build_phase(self, _phase: &mut P) -> Result<()> {
-        Ok(())
+    default fn build_phase(self, phase: P) -> Result<P> {
+        Ok(phase)
     }
 }
 

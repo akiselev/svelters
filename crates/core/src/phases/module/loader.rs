@@ -39,7 +39,8 @@ where
             ModuleLoad::<'_, '_>::new(ctx, module),
             PhantomData,
         );
-        <MOD as Module>::define::<ModuleLoad<'_, '_>>(&mut _mod)
+        <MOD as Module>::define::<ModuleLoad<'_, '_>>(_mod)?;
+        Ok(())
     }
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &QJsModule<'js, Loaded<Native>>) -> Result<()> {
@@ -50,7 +51,8 @@ where
             ModuleEval::<'_, '_, '_>::new(ctx, exports, document),
             PhantomData,
         );
-        <MOD as Module>::define::<ModuleEval<'_, '_, '_>>(&mut _mod)
+        <MOD as Module>::define::<ModuleEval<'_, '_, '_>>(_mod)?;
+        Ok(())
     }
 }
 
@@ -79,10 +81,10 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut ModuleEval<'a, 'b, 'c>) -> Result<()> {
+    fn build_phase(self, phase: ModuleEval<'a, 'b, 'c>) -> Result<ModuleEval<'a, 'b, 'c>> {
         unsafe { CLS::metadata().init()? };
         build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.ctx, phase.module, phase.doc));
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -91,9 +93,9 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut ModuleLoad<'a, 'b>) -> Result<()> {
+    fn build_phase(self, phase: ModuleLoad<'a, 'b>) -> Result<ModuleLoad<'a, 'b>> {
         build_class!(CLS with ConstructorLoad::<'a, 'b, CLS>::new(phase.ctx, phase.module));
-        Ok(())
+        Ok(phase)
     }
 }
 

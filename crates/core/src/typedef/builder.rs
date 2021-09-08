@@ -2,33 +2,55 @@ use rquickjs::Function;
 
 use crate::inner::*;
 
-pub struct TypeBuilder<'a, CLS, PHASE> {
-    phase: &'a mut PHASE,
-    pub(in crate) framework: PhantomData<CLS>,
+pub struct TypeBuilder<CLS, PHASE> {
+    phase: PHASE,
+    pub(in crate) marker: PhantomData<CLS>,
 }
 
-impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE>
+impl<CLS, PHASE> TypeBuilder<CLS, PHASE>
 where
     CLS: Type,
 {
     #[inline(always)]
-    pub fn new(phase: &'a mut PHASE) -> Self {
+    pub fn new(phase: PHASE) -> Self {
         Self {
             phase,
-            framework: PhantomData,
+            marker: PhantomData,
         }
     }
 
     #[inline(always)]
-    pub fn class(&mut self) -> Result<&mut Self>
+    pub fn class(self) -> Result<ClassBuilder<CLS, PHASE>>
     where
         JsClassLoader<CLS>: Implements<PHASE>,
+        ClassBuilder<CLS, PHASE>: Implements<PHASE>,
     {
-        JsClassLoader::<CLS>::new().build_phase(&mut self.phase)?;
+        let phase = JsClassLoader::<CLS>::new().build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
+    }
+}
+
+pub struct ClassBuilder<CLS, PHASE> {
+    phase: PHASE,
+    pub(in crate) marker: PhantomData<CLS>,
+}
+
+impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
+    pub fn new(phase: PHASE) -> Self {
+        Self {
+            phase,
+            marker: PhantomData,
+        }
+    }
+
+    pub fn build(self) -> Result<Self>
+    where
+        Self: TypeDef<PHASE>,
+    {
         Ok(self)
     }
 
-    pub fn method<RET, FN, ARGS>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
+    pub fn method<RET, FN, ARGS>(self, name: &'static str, func: FN) -> Result<Self>
     where
         CLS: 'static + Type,
         ARGS: for<'js> FromImpl<'js, CLS>,
@@ -36,17 +58,13 @@ where
         FN: 'static + for<'x> Fn<ARGS, Output = RET>,
         members::Member<CLS, members::AsMethod<FN>>: Implements<PHASE>,
     {
-        members::Member::new(name, members::AsMethod::new(func)).build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase =
+            members::Member::new(name, members::AsMethod::new(func)).build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 
     #[inline(always)]
-    pub fn prop<PROP, GET, SET>(
-        &mut self,
-        name: &'static str,
-        getter: GET,
-        setter: SET,
-    ) -> Result<&mut Self>
+    pub fn prop<PROP, GET, SET>(self, name: &'static str, getter: GET, setter: SET) -> Result<Self>
     where
         CLS: Cast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
@@ -54,62 +72,63 @@ where
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
         members::Property<CLS, PROP, GET, SET>: Implements<PHASE>,
     {
-        members::Property::<CLS, PROP, GET, SET>::new(name, getter, setter)
-            .build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase = members::Property::<CLS, PROP, GET, SET>::new(name, getter, setter)
+            .build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 
     #[inline(always)]
-    pub fn readonly<PROP, GET>(&mut self, name: &'static str, getter: GET) -> Result<&mut Self>
+    pub fn readonly<PROP, GET>(self, name: &'static str, getter: GET) -> Result<Self>
     where
         CLS: Cast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         members::ReadOnly<CLS, PROP, GET>: Implements<PHASE>,
     {
-        members::ReadOnly::<CLS, PROP, GET>::new(name, getter).build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase =
+            members::ReadOnly::<CLS, PROP, GET>::new(name, getter).build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 
     #[inline(always)]
-    pub fn superclass<SUPER>(&mut self) -> Result<&mut Self>
+    pub fn superclass<SUPER>(self) -> Result<Self>
     where
         SUPER: Type,
         CLS: Cast<SUPER>,
         members::Superclass<SUPER>: Implements<PHASE>,
     {
-        members::Superclass::<SUPER>::new().build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase = members::Superclass::<SUPER>::new().build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 
     #[inline(always)]
-    pub fn as_element<FUNC>(&mut self, name: &'static str, func: FUNC) -> Result<&mut Self>
+    pub fn as_element<FUNC>(self, name: &'static str, func: FUNC) -> Result<Self>
     where
         FUNC: 'static + Fn() -> Result<CLS>,
         members::Element<CLS, FUNC>: Implements<PHASE>,
     {
-        members::Element::<CLS, FUNC>::new(name, func).build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase = members::Element::<CLS, FUNC>::new(name, func).build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 
     #[inline(always)]
-    pub fn with_slot<SLOT>(&mut self, slot: SLOT) -> Result<&mut Self>
+    pub fn with_slot<SLOT>(self, slot: SLOT) -> Result<Self>
     where
         SLOT: crate::traits::NativeSlot,
         members::NativeSlot<CLS, SLOT>: Implements<PHASE>,
     {
-        members::NativeSlot::<CLS, SLOT>::new(slot).build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase = members::NativeSlot::<CLS, SLOT>::new(slot).build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 
     #[inline(always)]
-    pub fn with_event<FUNC>(&mut self, name: &'static str, func: FUNC) -> Result<&mut Self>
+    pub fn with_event<FUNC>(self, name: &'static str, func: FUNC) -> Result<Self>
     where
         members::Event<CLS, FUNC>: Implements<PHASE>,
         FUNC: 'static + for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>,
     {
-        members::Event::<CLS, FUNC>::new(name, func).build_phase(&mut self.phase)?;
-        Ok(self)
+        let phase = members::Event::<CLS, FUNC>::new(name, func).build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
     }
 }
 
@@ -117,19 +136,19 @@ macro_rules! tup {
     ($($static_fn:ident $method:ident $constructor:ident $($arg:ident)*,)*) => {
         $(
             #[inline(always)]
-            pub fn $constructor<FUNC, $($arg,)*>(&mut self, func: FUNC) -> Result<&mut Self>
+            pub fn $constructor<FUNC, $($arg,)*>(self, func: FUNC) -> Result<Self>
             where
                 CLS: 'static + Type,
                 FUNC: 'static + Fn($($arg,)*) -> Result<CLS>,
                 members::Constructor<CLS, ($($arg,)*), FUNC>: Implements<PHASE>,
                 $($arg: for<'x> FromJs<'x>,)*
             {
-                members::Constructor::new(func).build_phase(&mut self.phase)?;
-                Ok(self)
+                let phase = members::Constructor::new(func).build_phase(self.phase)?;
+                Ok(ClassBuilder::new(phase))
             }
 
             #[inline(always)]
-            pub fn $method<'js, THIS, RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
+            pub fn $method<'js, THIS, RET, FN, $($arg,)*>(self, name: &'static str, func: FN) -> Result<Self>
             where
                 CLS: 'static + Type,
                 CLS: Cast<THIS>,
@@ -139,12 +158,12 @@ macro_rules! tup {
                 members::Method<CLS, (THIS, $($arg,)*), RET, FN>: Implements<PHASE>,
                 $($arg: FromJs<'js>,)*
             {
-                members::Method::new(name, func).build_phase(&mut self.phase)?;
-                Ok(self)
+                let phase = members::Method::new(name, func).build_phase(self.phase)?;
+                Ok(ClassBuilder::new(phase))
             }
 
             #[inline(always)]
-            pub fn $static_fn<RET, FN, $($arg,)*>(&mut self, name: &'static str, func: FN) -> Result<&mut Self>
+            pub fn $static_fn<RET, FN, $($arg,)*>(self, name: &'static str, func: FN) -> Result<Self>
             where
                 FN: 'static + Fn($($arg,)*) -> Result<RET>,
                 CLS: 'static + Type,
@@ -152,8 +171,8 @@ macro_rules! tup {
                 members::StaticFn<CLS, ($($arg,)*), RET, FN>: Implements<PHASE>,
                 $($arg: for<'x> FromJs<'x>,)*
             {
-                members::StaticFn::new(name, func).build_phase(&mut self.phase)?;
-                Ok(self)
+                let phase = members::StaticFn::new(name, func).build_phase(self.phase)?;
+                Ok(ClassBuilder::new(phase))
             }
 
         )*
@@ -177,7 +196,7 @@ macro_rules! tup {
     (@idx P) => { 15 };
 }
 
-impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
+impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
     tup! {
         static_fn0 method0 constructor0 ,
         static_fn1 method1 constructor1 A,
@@ -198,3 +217,5 @@ impl<'a, CLS, PHASE> TypeBuilder<'a, CLS, PHASE> {
         static_fn16 method16 constructor16 A B C D E F G H I J K L M N O P,
     }
 }
+
+impl<CLS, PHASE> TypeDef<PHASE> for ClassBuilder<CLS, PHASE> {}

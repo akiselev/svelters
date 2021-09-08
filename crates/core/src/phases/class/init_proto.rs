@@ -27,7 +27,7 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
+    fn build_phase(self, phase: InitProto<'a, 'b, BASE>) -> Result<InitProto<'a, 'b, BASE>> {
         let members::Property {
             name,
             getter,
@@ -55,8 +55,8 @@ where
             )
             .enumerable()
             .configurable(),
-        );
-        res
+        )?;
+        Ok(phase)
     }
 }
 
@@ -70,7 +70,7 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
+    fn build_phase(self, phase: InitProto<'a, 'b, BASE>) -> Result<InitProto<'a, 'b, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
         // phase.obj(name).ok();
@@ -84,8 +84,8 @@ where
                 })
             }))
             .enumerable(),
-        );
-        res
+        )?;
+        Ok(phase)
     }
 }
 
@@ -96,9 +96,9 @@ where
     CLS: Caster<SUPER>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitProto<'a, 'b, CLS>) -> Result<()> {
+    fn build_phase(self, phase: InitProto<'a, 'b, CLS>) -> Result<InitProto<'a, 'b, CLS>> {
         build_class!(SUPER with InitProto::<'_, '_, CLS>::new(phase.ctx, phase.obj));
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -117,7 +117,7 @@ macro_rules! tup {
                 FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
             {
                 #[inline(always)]
-                fn build_phase(self, phase: &mut InitProto<'a, 'b, BASE>) -> Result<()> {
+                fn build_phase(self, phase: InitProto<'a, 'b, BASE>) -> Result<InitProto<'a, 'b, BASE>> {
                     phase.obj.set(
                         self.name,
                         rquickjs::Func::new(
@@ -138,7 +138,7 @@ macro_rules! tup {
                             ),
                         ),
                     )?;
-                    Ok(())
+                    Ok(phase)
                 }
             }
         )*

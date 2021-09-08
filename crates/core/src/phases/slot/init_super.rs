@@ -23,7 +23,10 @@ where
     CLS: Caster<NESTED>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitSuperCaster<'a, CLS, SUPER>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitSuperCaster<'a, CLS, SUPER>,
+    ) -> Result<InitSuperCaster<'a, CLS, SUPER>> {
         phase.map.insert(
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
@@ -36,6 +39,6 @@ where
         );
 
         build_class!(NESTED with InitSuperCaster::<'_, CLS, NESTED>::new(phase.map));
-        Ok(())
+        Ok(phase)
     }
 }

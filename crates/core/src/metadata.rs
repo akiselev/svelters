@@ -1,8 +1,48 @@
+use std::any::{Any, TypeId};
 use std::{collections::HashMap, rc::Rc};
 
 use rquickjs::Function;
 
 use crate::inner::*;
+
+/// Helper class to access type metadata
+#[derive(Debug, Copy, Clone)]
+pub struct Class<CLS>(PhantomData<CLS>);
+
+impl<CLS> Class<CLS> {
+    pub fn new() -> Self {
+        Class(PhantomData)
+    }
+}
+
+impl<CLS: Type> Class<CLS> {
+    pub fn name(&self) -> &'static str {
+        CLS::CLASS_NAME
+    }
+}
+
+/// Type metadata for a type registered with Svelters
+pub struct Metadata {
+    pub(in crate) type_id: TypeId,
+    pub(in crate) obj_id: ClassId,
+    pub(in crate) virt_id: ClassId,
+}
+
+impl Metadata {
+    pub const fn new<CLS: Type + Any>() -> Metadata {
+        Metadata {
+            obj_id: ClassId::new(),
+            virt_id: ClassId::new(),
+            type_id: TypeId::of::<CLS>(),
+        }
+    }
+
+    pub(in crate) unsafe fn init(&mut self) -> Result<()> {
+        self.obj_id.init();
+        self.virt_id.init();
+        Ok(())
+    }
+}
 
 #[derive(Clone)]
 pub struct ElementProp {

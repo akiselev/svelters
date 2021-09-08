@@ -7,7 +7,10 @@ where
     SLOT: NativeSlot,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'js, 'c, CLS>,
+    ) -> Result<InitElementProto<'a, 'js, 'c, CLS>> {
         {
             let slot = self.slot.clone();
             phase.obj.set(
@@ -40,7 +43,7 @@ where
                 ),
             )?;
         }
-        Ok(())
+        Ok(phase)
     }
 }
 

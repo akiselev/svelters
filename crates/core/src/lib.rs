@@ -23,6 +23,13 @@
 #![feature(trait_alias)]
 // enables println!("{inline} variables") instead of println!("{} variables", inline)
 #![feature(format_args_capture)]
+// Enables using TypeId in Metadata
+#![feature(const_type_id)]
+#![feature(const_fn_trait_bound)]
+// Enables using size_of in [u8; size_of::<T>()]
+#![feature(generic_const_exprs)]
+// Unsize trait for coercing user types
+#![feature(unsize)]
 
 pub mod prelude {
     pub use crate::traits::*;
@@ -37,8 +44,8 @@ pub mod prelude {
     pub use crate::typedef::virt::Virt;
 
     pub use crate::init::{cleanup_svelters, initialize_svelters};
+    pub use crate::metadata::Metadata;
     pub use crate::typedef::builder::TypeBuilder;
-    pub use crate::typedef::metadata::Metadata;
     pub use crate::typedef::module::ModuleBuilder;
 }
 
@@ -49,6 +56,8 @@ pub use crate::utils::timing;
 
 pub(in crate) mod init;
 pub(in crate) mod macros;
+pub(in crate) mod metadata;
+pub(in crate) mod rt;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
 
@@ -83,13 +92,11 @@ pub(in crate) mod nodes {
         pub(in crate) mod element_def;
         pub(in crate) mod element_node;
         pub(in crate) mod element_node_def;
-        pub(in crate) mod element_type;
     }
 
     pub(in crate) use self::elements::element_def::*;
     pub(in crate) use self::elements::element_node::*;
     pub(in crate) use self::elements::element_node_def::*;
-    pub(in crate) use self::elements::element_type::*;
 
     pub(in crate) mod slot {
         pub(in crate) mod slot_def;
@@ -113,14 +120,12 @@ pub(in crate) mod typedef {
     pub(in crate) mod builder;
     pub(in crate) mod hslot;
     pub(in crate) mod members;
-    pub(in crate) mod metadata;
     pub(in crate) mod module;
     pub(in crate) mod obj;
     pub(in crate) mod virt;
 
     pub(in crate) use self::builder::*;
     pub(in crate) use self::hslot::*;
-    pub(in crate) use self::metadata::*;
     pub(in crate) use self::module::*;
     pub(in crate) use self::obj::*;
     pub(in crate) use self::virt::*;
@@ -188,6 +193,7 @@ pub(in crate) mod inner {
     pub(in crate) use std::{
         borrow::Cow,
         cell::{Cell, RefCell},
+        collections::HashMap,
         convert::{TryFrom, TryInto},
         lazy::OnceCell,
         marker::PhantomData,
@@ -206,6 +212,7 @@ pub(in crate) mod inner {
         FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, Opt, RefsMarker,
         RegisteryKey, Rest, Result, This, Value,
     };
+    pub(in crate) use slotmap::{new_key_type, SlotMap};
     pub(in crate) use typedmap::TypedMapKey;
 
     pub(in crate) use crate::nodes::*;
@@ -215,8 +222,22 @@ pub(in crate) mod inner {
     pub(in crate) use crate::utils::*;
 
     pub(in crate) use crate::macros::*;
+    pub(in crate) use crate::metadata::*;
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
 
     pub(in crate) use crate::exception;
+
+    pub(in crate) type ObjCasterMap<CLS> = HashMap<
+        &'static str,
+        Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Obj<CLS>>) -> Result<Value<'a>>>,
+    >;
+    pub(in crate) type VirtCasterMap<CLS> = HashMap<
+        &'static str,
+        Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Virt<CLS>>) -> Result<Value<'a>>>,
+    >;
+    pub(in crate) type ElementCasterMap = HashMap<
+        &'static str,
+        Box<dyn for<'a, 'b> Fn(Ctx<'a>, &'b ElementNode<'a>) -> Result<Value<'a>>>,
+    >;
 }

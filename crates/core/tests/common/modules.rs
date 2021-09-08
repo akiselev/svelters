@@ -4,23 +4,24 @@ use super::*;
 
 impl Module for FwCore {
     #[inline(always)]
-    fn define<P>(m: &mut ModuleBuilder<Self, P>) -> std::result::Result<(), rquickjs::Error> {
-        m.class::<Fw<Rc<Object>>>()?;
-        m.class::<Fw<Rc<Application>>>()?;
-        Ok(())
+    fn define<P>(
+        m: ModuleBuilder<Self, P>,
+    ) -> std::result::Result<ModuleBuilder<Self, P>, rquickjs::Error> {
+        m.class::<Fw<Rc<Object>>>()?.class::<Fw<Rc<Application>>>()
     }
 }
 
 impl Module for FwWidgets {
     #[inline(always)]
-    fn define<P>(m: &mut ModuleBuilder<Self, P>) -> std::result::Result<(), rquickjs::Error> {
-        m.class::<Fw<Rc<Object>>>()?;
-        m.class::<Fw<Rc<Application>>>()?;
-        m.class::<Fw<Rc<Widget>>>()?;
-        m.class::<Fw<Rc<MainWindow>>>()?;
-        m.class::<Fw<Rc<BoxLayout>>>()?;
-        m.class::<Fw<Rc<AbstractButton>>>()?;
-        m.class::<Fw<Rc<PushButton>>>()?;
-        Ok(())
+    fn define<P>(
+        m: ModuleBuilder<Self, P>,
+    ) -> std::result::Result<ModuleBuilder<Self, P>, rquickjs::Error> {
+        m.class::<Fw<Rc<Object>>>()?
+            .class::<Fw<Rc<Application>>>()?
+            .class::<Fw<Rc<Widget>>>()?
+            .class::<Fw<Rc<MainWindow>>>()?
+            .class::<Fw<Rc<BoxLayout>>>()?
+            .class::<Fw<Rc<AbstractButton>>>()?
+            .class::<Fw<Rc<PushButton>>>()
     }
 }

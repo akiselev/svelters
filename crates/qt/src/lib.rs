@@ -6,6 +6,7 @@
 #![feature(in_band_lifetimes)]
 #![feature(backtrace)]
 #![feature(decl_macro)]
+#![feature(proc_macro_hygiene)]
 #![feature(let_chains)]
 #![recursion_limit = "1024"]
 use std::{borrow::Cow, future::Future, time::Duration};

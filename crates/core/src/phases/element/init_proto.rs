@@ -20,7 +20,10 @@ impl<'a, 'b, 'js, BASE> InitElementProto<'a, 'b, 'js, BASE> {
 
 impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassLoader<CLS> {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'b, 'c, CLS>,
+    ) -> Result<InitElementProto<'a, 'b, 'c, CLS>> {
         phase.obj.set(
             "castAs",
             Func::new(
@@ -35,7 +38,8 @@ impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassL
                     },
                 ),
             ),
-        )
+        );
+        Ok(phase)
     }
 }
 
@@ -50,7 +54,10 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'b, 'c, BASE>,
+    ) -> Result<InitElementProto<'a, 'b, 'c, BASE>> {
         let members::Property {
             name,
             getter,
@@ -80,8 +87,8 @@ where
             )
             .enumerable()
             .configurable(),
-        );
-        res
+        )?;
+        Ok(phase)
     }
 }
 
@@ -95,7 +102,10 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'b, 'c, BASE>,
+    ) -> Result<InitElementProto<'a, 'b, 'c, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
         let res = phase.obj.prop(
@@ -111,8 +121,8 @@ where
                 },
             ))
             .enumerable(),
-        );
-        res
+        )?;
+        Ok(phase)
     }
 }
 
@@ -124,9 +134,12 @@ where
     CLS: Caster<SUPER>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, CLS>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'b, 'c, CLS>,
+    ) -> Result<InitElementProto<'a, 'b, 'c, CLS>> {
         build_class!(SUPER with InitElementProto::<'a, 'b, 'c, CLS>::new(phase.ctx, phase.obj));
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -144,7 +157,7 @@ macro_rules! tup {
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
-                fn build_phase(self, phase: &mut InitElementProto<'a, 'b, 'c, BASE>) -> Result<()> {
+                fn build_phase(self, phase: InitElementProto<'a, 'b, 'c, BASE>) -> Result<InitElementProto<'a, 'b, 'c, BASE>> {
                     phase.obj.set(
                         self.name,
                         rquickjs::Func::new(
@@ -166,7 +179,7 @@ macro_rules! tup {
                             ),
                         ),
                     )?;
-                    Ok(())
+                    Ok(phase)
                 }
             }
         )*

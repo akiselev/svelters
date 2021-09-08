@@ -20,7 +20,7 @@ where
     SUPER: Type + Clone,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementCaster<'a, CLS>) -> Result<()> {
+    fn build_phase(self, phase: InitElementCaster<'a, CLS>) -> Result<InitElementCaster<'a, CLS>> {
         phase.map.insert(
             SUPER::CLASS_NAME,
             Box::new(move |ctx, this| {
@@ -36,7 +36,7 @@ where
 
         build_class!(SUPER with InitElementSuperCaster::<'_, CLS, SUPER>::new(phase.map));
 
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -63,19 +63,24 @@ where
     CLS: Caster<NESTED>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementSuperCaster<'a, CLS, SUPER>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementSuperCaster<'a, CLS, SUPER>,
+    ) -> Result<InitElementSuperCaster<'a, CLS, SUPER>> {
         phase.map.insert(
             NESTED::CLASS_NAME,
             Box::new(|ctx, this| {
                 let this = this.borrow();
                 let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone().into_value())?;
                 obj.inner.with_cast(|data| {
-                    Result::<_>::Ok(Virt::<NESTED>::new((*data).clone(), this.obj.clone()).into_js(ctx)?)
+                    Result::<_>::Ok(
+                        Virt::<NESTED>::new((*data).clone(), this.obj.clone()).into_js(ctx)?,
+                    )
                 })
             }),
         );
 
         build_class!(NESTED with InitElementSuperCaster::<'_, CLS, NESTED>::new(phase.map));
-        Ok(())
+        Ok(phase)
     }
 }

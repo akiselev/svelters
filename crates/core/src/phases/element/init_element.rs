@@ -26,7 +26,7 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
+    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
         let members::Property {
             name,
             getter,
@@ -37,7 +37,7 @@ where
         phase
             .element
             .prop::<BASE, CLS, PROP, GET, SET>(name, getter, setter);
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -50,11 +50,11 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
+    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
         phase.element.readonly::<BASE, CLS, PROP, GET>(name, getter);
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -64,10 +64,10 @@ where
     SUPER: Type,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElement<'a, CLS>) -> Result<()> {
+    fn build_phase(self, phase: InitElement<'a, CLS>) -> Result<InitElement<'a, CLS>> {
         phase.element.inherits::<SUPER>();
         build_class!(SUPER with InitElement::<'_, CLS>::new(phase.element));
-        Ok(())
+        Ok(phase)
     }
 }
 
@@ -78,8 +78,8 @@ where
     FUNC: 'static + SubscribeFn,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElement<'a, BASE>) -> Result<()> {
+    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
         phase.element.event::<BASE, CLS, _>(self.name, self.func);
-        Ok(())
+        Ok(phase)
     }
 }

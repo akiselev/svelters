@@ -10,7 +10,10 @@ where
     CLS: Type,
 {
     #[inline(always)]
-    fn build_phase(self, phase: &mut InitElementProto<'a, 'js, 'c, CLS>) -> Result<()> {
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'js, 'c, CLS>,
+    ) -> Result<InitElementProto<'a, 'js, 'c, CLS>> {
         phase.obj.prop(
             "nextSibling",
             Accessor::new_get(rquickjs::Method(get_next_sibling)).enumerable(),
@@ -54,7 +57,7 @@ where
             Func::new("setAttribute", rquickjs::Method(set_attribute)),
         )?;
 
-        Ok(())
+        Ok(phase)
     }
 }
 
