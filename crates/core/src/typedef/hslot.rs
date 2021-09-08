@@ -22,7 +22,7 @@ impl<APP, INS, REM> BasicSlot<APP, INS, REM> {
     }
 }
 
-impl<APP, INS, REM> NativeSlot for BasicSlot<APP, INS, REM>
+impl<APP, INS, REM> INativeSlot for BasicSlot<APP, INS, REM>
 where
     APP: Clone + 'static + for<'js> Fn(Node<'js>, Node<'js>) -> Result<()>,
     REM: Clone + 'static + for<'js> Fn(Node<'js>, Node<'js>) -> Result<()>,

@@ -114,7 +114,7 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
     #[inline(always)]
     pub fn with_slot<SLOT>(self, slot: SLOT) -> Result<Self>
     where
-        SLOT: crate::traits::NativeSlot,
+        SLOT: crate::traits::INativeSlot,
         members::NativeSlot<CLS, SLOT>: Implements<PHASE>,
     {
         let phase = members::NativeSlot::<CLS, SLOT>::new(slot).build_phase(self.phase)?;

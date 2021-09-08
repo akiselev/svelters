@@ -56,11 +56,11 @@ pub use crate::utils::timing;
 
 pub(in crate) mod init;
 pub(in crate) mod macros;
+pub(in crate) mod members;
 pub(in crate) mod metadata;
 pub(in crate) mod rt;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
-pub(in crate) mod members;
 
 #[allow(unused_imports)]
 pub(in crate) mod runtime {
@@ -143,32 +143,15 @@ pub(in crate) mod typedef {
 
 #[allow(unused_imports)]
 pub(in crate) mod phases {
-    mod class {
-        mod constructor;
-        mod init_proto;
-        mod init_static;
-        mod init_virt;
-
-        pub(in crate) use self::constructor::*;
-        pub(in crate) use self::init_proto::*;
-        pub(in crate) use self::init_static::*;
-        pub(in crate) use self::init_virt::*;
-    }
-
-    mod slot {
-        mod init_caster;
-        mod init_super;
-
-        pub(in crate) use self::init_super::*;
-    }
-
     mod element {
+        mod constructor;
         mod init_caster;
         mod init_element;
         mod init_native_slot;
         mod init_node;
         mod init_proto;
 
+        pub(in crate) use self::constructor::*;
         pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_element::*;
         pub(in crate) use self::init_native_slot::*;
@@ -176,16 +159,12 @@ pub(in crate) mod phases {
         pub(in crate) use self::init_proto::*;
     }
 
-    mod module {
-        mod loader;
-
-        pub(in crate) use self::loader::*;
-    }
+    mod class;
+    mod loader;
 
     pub(in crate) use self::class::*;
     pub(in crate) use self::element::*;
-    pub(in crate) use self::module::*;
-    pub(in crate) use self::slot::*;
+    pub(in crate) use self::loader::*;
 }
 
 #[allow(unused_imports)]
@@ -210,7 +189,7 @@ pub(in crate) mod inner {
     pub(in crate) use rquickjs::{
         Accessor, AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error,
         FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, Opt, RefsMarker,
-        RegisteryKey, Rest, This, Value,
+        RegisteryKey, Rest, This, Value, WithProto,
     };
     pub type Result<T, E = Error> = std::result::Result<T, E>;
     pub(in crate) use slotmap::{new_key_type, SlotMap};
@@ -223,13 +202,13 @@ pub(in crate) mod inner {
     pub(in crate) use crate::utils::*;
 
     pub(in crate) use crate::macros::*;
+    pub(in crate) use crate::members;
     pub(in crate) use crate::metadata::*;
     pub(in crate) use crate::rt::*;
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
-    pub(in crate) use crate::members;
 
-    pub(in crate) use crate::exception;
+    pub(in crate) use crate::{build_class, exception};
 
     pub(in crate) type ObjCasterMap<CLS> = HashMap<
         &'static str,

@@ -134,7 +134,7 @@ impl<T, P> Implements<P> for T {
 }
 
 /// Core trait for slot implementations (provides DOM APIs)
-pub trait NativeSlot: 'static + Clone {
+pub trait INativeSlot: 'static + Clone {
     fn append_child<'js>(&self, this: Node<'js>, node: Node<'js>) -> Result<()>;
     fn remove_child<'js>(&self, this: Node<'js>, node: Node<'js>) -> Result<()>;
     fn insert_before<'js>(

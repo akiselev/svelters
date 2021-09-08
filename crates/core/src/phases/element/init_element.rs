@@ -16,61 +16,6 @@ impl<'a, BASE> InitElement<'a, BASE> {
     }
 }
 
-impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitElement<'a, BASE>>
-    for members::Property<CLS, PROP, GET, SET>
-where
-    CLS: Type,
-    BASE: Type + Cast<CLS>,
-    PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
-    GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
-    SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
-{
-    #[inline(always)]
-    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
-        let members::Property {
-            name,
-            getter,
-            setter,
-            ..
-        } = self;
-
-        phase
-            .element
-            .prop::<BASE, CLS, PROP, GET, SET>(name, getter, setter);
-        Ok(phase)
-    }
-}
-
-impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitElement<'a, BASE>>
-    for members::ReadOnly<CLS, PROP, GET>
-where
-    CLS: Type,
-    BASE: Type + Cast<CLS>,
-    PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
-    GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
-{
-    #[inline(always)]
-    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
-        let members::ReadOnly { name, getter, .. } = self;
-
-        phase.element.readonly::<BASE, CLS, PROP, GET>(name, getter);
-        Ok(phase)
-    }
-}
-
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitElement<'a, CLS>> for members::Superclass<SUPER>
-where
-    CLS: Type + Cast<SUPER>,
-    SUPER: Type,
-{
-    #[inline(always)]
-    fn build_phase(self, phase: InitElement<'a, CLS>) -> Result<InitElement<'a, CLS>> {
-        phase.element.inherits::<SUPER>();
-        build_class!(SUPER with InitElement::<'_, CLS>::new(phase.element));
-        Ok(phase)
-    }
-}
-
 impl<'a, 'b: 'a, CLS, BASE, FUNC> Implements<InitElement<'a, BASE>> for members::Event<CLS, FUNC>
 where
     CLS: Type,

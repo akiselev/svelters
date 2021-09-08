@@ -4,7 +4,7 @@ impl<'a, 'js, 'c, CLS, SLOT> Implements<InitElementProto<'a, 'js, 'c, CLS>>
     for members::NativeSlot<CLS, SLOT>
 where
     CLS: Type,
-    SLOT: NativeSlot,
+    SLOT: INativeSlot,
 {
     #[inline(always)]
     fn build_phase(
@@ -48,7 +48,7 @@ where
 }
 
 #[inline(always)]
-fn append_child<'js, SLOT: NativeSlot>(
+fn append_child<'js, SLOT: INativeSlot>(
     slot: &SLOT,
     this: Node<'js>,
     child: Node<'js>,
@@ -57,7 +57,7 @@ fn append_child<'js, SLOT: NativeSlot>(
 }
 
 #[inline(always)]
-fn remove_child<'js, SLOT: NativeSlot>(
+fn remove_child<'js, SLOT: INativeSlot>(
     slot: &SLOT,
     this: Node<'js>,
     child: Node<'js>,
@@ -66,7 +66,7 @@ fn remove_child<'js, SLOT: NativeSlot>(
 }
 
 #[inline(always)]
-fn insert_before<'js, SLOT: NativeSlot>(
+fn insert_before<'js, SLOT: INativeSlot>(
     slot: &SLOT,
     this: Node<'js>,
     child: Node<'js>,

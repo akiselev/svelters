@@ -1,4 +1,4 @@
-use crate::inner::Class;
+use crate::inner::*;
 
 pub struct Member<CLS, MEM> {
     pub(in crate) name: &'static str,
@@ -25,20 +25,62 @@ impl<FUNC> AsMethod<FUNC> {
     }
 }
 
+pub struct NativeSlot<CLS, SLOT> {
+    pub(in crate) slot: SLOT,
+    marker: PhantomData<CLS>,
+}
+
+impl<CLS, SLOT> NativeSlot<CLS, SLOT> {
+    pub(in crate) fn new(slot: SLOT) -> Self {
+        NativeSlot {
+            slot,
+            marker: PhantomData,
+        }
+    }
+}
+
+pub struct Element<CLS, FUNC> {
+    pub(in crate) name: &'static str,
+    pub(in crate) func: FUNC,
+    marker: PhantomData<CLS>,
+}
+
+impl<CLS, FUNC> Element<CLS, FUNC> {
+    pub(in crate) fn new(name: &'static str, func: FUNC) -> Self {
+        Element {
+            name,
+            func,
+            marker: PhantomData,
+        }
+    }
+}
+
+pub struct Event<CLS, FUNC> {
+    pub(in crate) name: &'static str,
+    pub(in crate) func: FUNC,
+    marker: PhantomData<CLS>,
+}
+
+impl<CLS, FUNC> Event<CLS, FUNC> {
+    pub(in crate) fn new(name: &'static str, func: FUNC) -> Self {
+        Event {
+            name,
+            func,
+            marker: PhantomData,
+        }
+    }
+}
+
+mod caster;
 mod constructor;
-mod def_element;
-mod def_event;
-mod def_native_slot;
 mod method;
 mod property;
 mod readonly;
 mod static_fn;
 mod superclass;
 
+pub use self::caster::*;
 pub use self::constructor::*;
-pub use self::def_element::*;
-pub use self::def_event::*;
-pub use self::def_native_slot::*;
 pub use self::method::*;
 pub use self::property::*;
 pub use self::readonly::*;
