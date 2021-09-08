@@ -5,6 +5,7 @@ use rquickjs::WithProto;
 use crate::{build_class, inner::*};
 
 pub struct ConstructorEval<'a, 'b, 'js, CLS> {
+    pub(in crate) rt: Rt,
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) doc: &'b mut Document,
     pub(in crate) module: &'a QJsModule<'js, Loaded<Native>>,
@@ -13,11 +14,13 @@ pub struct ConstructorEval<'a, 'b, 'js, CLS> {
 
 impl<'a, 'b, 'js, CLS> ConstructorEval<'a, 'b, 'js, CLS> {
     pub fn new(
+        rt: Rt,
         ctx: Ctx<'js>,
         module: &'a QJsModule<'js, Loaded<Native>>,
         doc: &'b mut Document,
     ) -> Self {
         Self {
+            rt,
             ctx,
             doc,
             module,
@@ -64,6 +67,7 @@ where
         build_class!(CLS with InitElementProto::<CLS>::new(phase.ctx, &proto));
         let proto_key = { phase.ctx.register(proto.into_value()) };
 
+        let rt = phase.rt.weak();
         let mut eltype = ElementType::new(name, move |ctx: Ctx| {
             let proto: Object = ctx
                 .get_register(proto_key)
@@ -72,7 +76,7 @@ where
                 .unwrap()
                 .clone();
             let res = (func)()?;
-            let el = ElementNode::new::<CLS>(ctx, name, Obj::new(res))?;
+            let el = ElementNode::new::<CLS>(ctx, name, Obj::new(rt.upgrade().unwrap(), res))?;
             WithProto(el, proto).into_js(ctx)
         });
         build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
@@ -96,17 +100,16 @@ where
                 Box::new(move |ctx, this| {
                     let this = this.borrow();
                     let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                    obj.inner.with_cast(move |data: &CLS| {
-                        let virt = Virt::<CLS>::new((*data).clone(), this.obj.clone());
-                        let value = virt.into_js(ctx)?;
-                        Result::<_>::Ok(value)
-                    })
+                    let ptr = obj.borrow().unwrap();
+                    let virt = Virt::<CLS>::new(obj.rt.clone(), obj.idx, this.obj.clone());
+                    let value = virt.into_js(ctx)?;
+                    Result::Ok(value)
                 }),
             );
             {
                 build_class!(CLS with InitElementCaster::<'_, CLS>::new(&mut map));
             }
-            Result::Ok(map)
+            Result::<_>::Ok(map)
         })?;
 
         match map.get(target.as_str()) {
@@ -132,6 +135,7 @@ macro_rules! tup {
                 fn build_phase(self, phase: ConstructorEval<'a, 'b, 'js, CLS>) -> Result<ConstructorEval<'a, 'b, 'js, CLS>> {
                     JsClass::<Obj<CLS>>::register(phase.ctx)?;
                     JsClass::<Virt<CLS>>::register(phase.ctx)?;
+                    let rt = phase.rt.weak();
                     phase.module.set(
                         <CLS as Type>::CLASS_NAME,
                         rquickjs::Func::new(
@@ -144,7 +148,7 @@ macro_rules! tup {
                                 let result = self.0(
                                     $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
                                 )?;
-                                JsClass::instance(ctx, Obj::<CLS>::new(result))
+                                JsClass::instance(ctx, Obj::<CLS>::new(rt.upgrade().unwrap(), result))
                             }),
                         ),
                     )?;

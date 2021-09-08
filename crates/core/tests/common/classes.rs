@@ -189,7 +189,8 @@ impl Type for Fw<Rc<BoxLayout>> {
             .method1(
                 "addWidget",
                 |_this: &Self, widget: Virt<Fw<Rc<Widget>>>| -> Result<String> {
-                    Ok(widget.0 .1.borrow().clone())
+                    Err(rquickjs::Error::Unknown)
+                    // Ok(widget.0 .1.borrow().clone())
                 },
             )?
             .method1(

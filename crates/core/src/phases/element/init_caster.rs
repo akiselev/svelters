@@ -26,11 +26,7 @@ where
             Box::new(move |ctx, this| {
                 let this = this.borrow();
                 let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                obj.inner.with_cast(|data| {
-                    let virt = Virt::<SUPER>::new((*data).clone(), this.obj.clone());
-                    let value = virt.into_js(ctx)?;
-                    Result::<_>::Ok(value)
-                })
+                Virt::<SUPER>::new(obj.rt.clone(), obj.idx, this.obj.clone()).into_js(ctx)
             }),
         );
 
@@ -72,11 +68,7 @@ where
             Box::new(|ctx, this| {
                 let this = this.borrow();
                 let obj = Obj::<CLS>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                obj.inner.with_cast(|data| {
-                    Result::<_>::Ok(
-                        Virt::<NESTED>::new((*data).clone(), this.obj.clone()).into_js(ctx)?,
-                    )
-                })
+                Virt::<NESTED>::new(obj.rt.clone(), obj.idx, this.obj.clone()).into_js(ctx)
             }),
         );
 

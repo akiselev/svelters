@@ -11,6 +11,7 @@ pub struct DocInner {
 }
 
 pub struct Document {
+    pub(in crate) rt: Rt,
     pub(in crate) inner: Inner<DocInner>,
 }
 
@@ -23,6 +24,7 @@ impl Clone for Document {
 impl Document {
     pub fn new() -> Document {
         Document {
+            rt: Rt::new(),
             inner: Inner::new(DocInner {
                 types: Default::default(),
             }),

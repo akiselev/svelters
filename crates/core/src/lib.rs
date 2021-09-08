@@ -210,8 +210,9 @@ pub(in crate) mod inner {
     pub(in crate) use rquickjs::{
         Accessor, AsFunction, Class as JsClass, ClassDef, ClassId, Context, Created, Ctx, Error,
         FromJs, IntoJs, Loaded, Module as QJsModule, ModuleDef, Native, Object, Opt, RefsMarker,
-        RegisteryKey, Rest, Result, This, Value,
+        RegisteryKey, Rest, This, Value,
     };
+    pub type Result<T, E = Error> = std::result::Result<T, E>;
     pub(in crate) use slotmap::{new_key_type, SlotMap};
     pub(in crate) use typedmap::TypedMapKey;
 
@@ -223,6 +224,7 @@ pub(in crate) mod inner {
 
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::metadata::*;
+    pub(in crate) use crate::rt::*;
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
 

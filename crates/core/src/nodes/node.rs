@@ -3,8 +3,6 @@ use smallvec::SmallVec;
 
 use crate::inner::*;
 
-pub type Idx = RegisteryKey;
-
 use crate::inner::*;
 
 #[derive(Clone)]
@@ -166,7 +164,10 @@ impl<'js> Node<'js> {
                     this.obj
                         .clone()
                         .into_instance::<Obj<CLS>>()
-                        .and_then(|obj| Some(func(&AsRef::<Obj<CLS>>::as_ref(&obj).inner)))
+                        .and_then(|obj| {
+                            let ptr = AsRef::<Obj<CLS>>::as_ref(&obj).borrow().unwrap();
+                            Some(func(&ptr))
+                        })
                 } else {
                     None
                 }

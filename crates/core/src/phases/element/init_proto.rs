@@ -34,7 +34,7 @@ impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassL
                         let func: Function = inner.obj.get("castAs")?;
 
                         let res: Value = Function::call(&func, (This(inner.obj.clone()), target))?;
-                        Result::Ok(res)
+                        Result::<_>::Ok(res)
                     },
                 ),
             ),
@@ -71,7 +71,8 @@ where
                 rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
                     let obj =
                         Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                    obj.inner.with_cast(|data| {
+                    let ptr = obj.borrow().unwrap();
+                    ptr.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
                     })
@@ -79,7 +80,8 @@ where
                 rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, val: PROP| {
                     let obj =
                         Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                    obj.inner.with_cast(|data| {
+                    let ptr = obj.borrow().unwrap();
+                    ptr.with_cast(|data| {
                         setter(data, val)?;
                         Result::<_>::Ok(())
                     })
@@ -114,7 +116,8 @@ where
                 move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
                     let obj =
                         Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                    obj.inner.with_cast(|data| {
+                    let ptr = obj.borrow().unwrap();
+                    ptr.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
                     })
@@ -168,7 +171,8 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                                    obj.inner.with_cast(|data| {
+                                    let ptr = obj.borrow().unwrap();
+                ptr.with_cast(|data| {
                                         let res = (self.func)(
                                             data,
                                             $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*

@@ -1,25 +1,65 @@
+use std::{borrow::Borrow, cell::Ref};
+
+use ouroboros::self_referencing;
+
 use crate::{build_class, inner::*};
 
 pub struct Obj<CLS>
 where
     CLS: Type,
 {
-    pub(in crate) inner: CLS,
+    pub(in crate) rt: Rt,
+    pub(in crate) idx: Idx,
+    pub(in crate) cls: Class<CLS>,
 }
 
-impl<'a, CLS> Obj<CLS>
+impl<CLS> Obj<CLS>
 where
     CLS: Type,
 {
-    pub fn new(inner: CLS) -> Self {
-        Self { inner }
+    pub fn new(rt: Rt, inner: CLS) -> Self {
+        let idx = rt.new_instance(inner);
+        Self {
+            rt,
+            idx,
+            cls: Class::new(),
+        }
     }
 
-    pub fn as_inner<'b>(&'a self) -> &'b CLS
-    where
-        'a: 'b,
-    {
-        &self.inner
+    pub fn borrow(&self) -> Option<ObjRef<CLS>> {
+        let rt: Ref<RT> = (*self.rt.inner).borrow();
+        ObjRefTryBuilder {
+            rt,
+            obj_builder: |this: &Ref<RT>| {
+                let inst = this.objects.get(self.idx).ok_or(())?;
+                inst.data.downcast_ref::<CLS>().ok_or(())
+            },
+            cls: Class::new(),
+        }
+        .try_build()
+        .ok()
+    }
+}
+
+#[self_referencing]
+pub struct ObjRef<'a, CLS>
+where
+    CLS: 'a,
+{
+    pub(in crate) rt: Ref<'a, RT>,
+    #[borrows(rt)]
+    pub(in crate) obj: &'this CLS,
+    pub(in crate) cls: Class<CLS>,
+}
+
+impl<'a, CLS> std::ops::Deref for ObjRef<'a, CLS>
+where
+    CLS: 'a,
+{
+    type Target = CLS;
+
+    fn deref(&self) -> &Self::Target {
+        self.borrow_obj()
     }
 }
 

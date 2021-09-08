@@ -40,14 +40,14 @@ where
             Accessor::new(
                 rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
                     let obj: &Virt<BASE> = this.as_ref();
-                    obj.inner.with_cast(|data| {
+                    obj.with_cast(|data| {
                         let val = getter(data)?;
                         rquickjs::Result::Ok(val)
                     })
                 }),
                 rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>, val: PROP| {
                     let obj: &Virt<BASE> = this.as_ref();
-                    obj.inner.with_cast(|data| {
+                    obj.with_cast(|data| {
                         setter(data, val)?;
                         Result::<_>::Ok(())
                     })
@@ -77,7 +77,7 @@ where
             name,
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
                 let obj: &Virt<BASE> = this.as_ref();
-                obj.inner.with_cast(|data| {
+                obj.with_cast(|data| {
                     let val = getter(data)?;
                     rquickjs::Result::Ok(val)
                 })
@@ -126,7 +126,7 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Virt<BASE> = this.as_ref();
-                                    obj.inner.with_cast(|data| {
+                                    obj.with_cast(|data| {
                                         let res = (self.func)(
                                             data,
                                             $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*

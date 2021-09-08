@@ -37,14 +37,18 @@ where
                                 Box::new(|ctx, value| {
                                     tracing::info!("Casting {} to self", CLS::CLASS_NAME);
                                     let obj: &Obj<CLS> = value.as_ref();
-                                    let cls = obj.as_inner().clone();
-                                    Virt::new(cls, value.as_object().clone()).into_js(ctx)
+                                    Virt::<CLS>::new(
+                                        obj.rt.clone(),
+                                        obj.idx,
+                                        value.as_object().clone(),
+                                    )
+                                    .into_js(ctx)
                                 }),
                             );
                             {
                                 build_class!(CLS with InitCaster::<CLS>::new(&mut map))
                             };
-                            Result::Ok(map)
+                            Result::<_>::Ok(map)
                         })?;
                         match map.get(target.as_str()) {
                             Some(func) => {
@@ -88,12 +92,8 @@ where
             SUPER::CLASS_NAME,
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
-                let this = this.clone();
-                obj.inner.with_cast(move |data| {
-                    let virt = Virt::<SUPER>::new((*data).clone(), this);
-                    let value = virt.into_js(ctx)?;
-                    Result::<_>::Ok(value)
-                })
+                let virt = Virt::<SUPER>::new(obj.rt.clone(), obj.idx, this.into_object());
+                virt.into_js(ctx)
             }),
         );
 

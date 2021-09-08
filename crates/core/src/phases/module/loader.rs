@@ -13,6 +13,7 @@ impl<'a, 'js> ModuleLoad<'a, 'js> {
 }
 
 pub struct ModuleEval<'a, 'b, 'js> {
+    pub(in crate) rt: Rt,
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) doc: &'b mut Document,
     pub(in crate) module: &'a QJsModule<'js, Loaded<Native>>,
@@ -20,11 +21,17 @@ pub struct ModuleEval<'a, 'b, 'js> {
 
 impl<'a, 'b, 'js> ModuleEval<'a, 'b, 'js> {
     pub fn new(
+        rt: Rt,
         ctx: Ctx<'js>,
         module: &'a QJsModule<'js, Loaded<Native>>,
         doc: &'b mut Document,
     ) -> Self {
-        Self { ctx, doc, module }
+        Self {
+            rt,
+            ctx,
+            doc,
+            module,
+        }
     }
 }
 
@@ -45,10 +52,9 @@ where
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &QJsModule<'js, Loaded<Native>>) -> Result<()> {
         let globals = ctx.globals();
-        let value: Value<'js> = globals.get("document")?;
-        let document: &mut Document = Document::from_js_mut(ctx, value)?;
+        let document: &mut Document = globals.get("document")?;
         let mut _mod = ModuleBuilder::<MOD, ModuleEval<'_, '_, '_>>(
-            ModuleEval::<'_, '_, '_>::new(ctx, exports, document),
+            ModuleEval::<'_, '_, '_>::new(document.rt.clone(), ctx, exports, document),
             PhantomData,
         );
         <MOD as Module>::define::<ModuleEval<'_, '_, '_>>(_mod)?;
@@ -83,7 +89,7 @@ where
     #[inline(always)]
     fn build_phase(self, phase: ModuleEval<'a, 'b, 'c>) -> Result<ModuleEval<'a, 'b, 'c>> {
         unsafe { CLS::metadata().init()? };
-        build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.ctx, phase.module, phase.doc));
+        build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.rt.clone(), phase.ctx, phase.module, phase.doc));
         Ok(phase)
     }
 }

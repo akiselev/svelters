@@ -102,12 +102,12 @@ impl ElementType {
                 let el = ElementNode::from_js(ctx, this)?;
                 let this = el.borrow();
                 let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                obj.inner
-                    .with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
-                    .into_js(ctx)
+                let ptr = obj.borrow();
+                ptr.with_cast(|data| {
+                    let val = getter(data)?;
+                    rquickjs::Result::Ok(val)
+                })
+                .into_js(ctx)
             }),
             setter: Some(Rc::new(
                 move |this: Value<'_>, ctx: Ctx<'_>, value: Value<'_>| {
@@ -115,7 +115,8 @@ impl ElementType {
                     let this = el.borrow();
                     let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
                     let val = PROP::from_js(ctx, value)?;
-                    obj.inner.with_cast(|data| {
+                    let ptr = obj.borrow().unwrap();
+                    ptr.with_cast(|data| {
                         setter(data, val)?;
                         Result::<_>::Ok(())
                     })
@@ -139,12 +140,12 @@ impl ElementType {
                 let el = ElementNode::from_js(ctx, this)?;
                 let this = el.borrow();
                 let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-                obj.inner
-                    .with_cast(|data| {
-                        let val = getter(data)?;
-                        rquickjs::Result::Ok(val)
-                    })
-                    .into_js(ctx)
+                let ptr = obj.borrow();
+                ptr.with_cast(|data| {
+                    let val = getter(data)?;
+                    rquickjs::Result::Ok(val)
+                })
+                .into_js(ctx)
             }),
             setter: None,
         };

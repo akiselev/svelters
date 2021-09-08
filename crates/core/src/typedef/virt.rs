@@ -1,18 +1,15 @@
+use std::cell::Ref;
+
 use rquickjs::{Function, HasRefs, This};
 
 use crate::{build_class, inner::*};
 
+#[derive(Clone)]
 pub struct Virt<'js, CLS> {
-    pub(in crate) inner: CLS,
+    pub(in crate) rt: Rt,
+    pub(in crate) idx: Idx,
+    pub(in crate) cls: Class<CLS>,
     pub(in crate) obj: Object<'js>,
-}
-
-impl<'js, CLS> Deref for Virt<'js, CLS> {
-    type Target = CLS;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
 }
 
 impl<'js, CLS> HasRefs for Virt<'js, CLS> {
@@ -21,24 +18,17 @@ impl<'js, CLS> HasRefs for Virt<'js, CLS> {
     }
 }
 
-impl<'js, CLS> Clone for Virt<'js, CLS>
-where
-    CLS: Type + Clone,
-{
-    fn clone(&self) -> Self {
-        Virt {
-            inner: self.inner.clone(),
-            obj: self.obj.clone(),
-        }
-    }
-}
-
 impl<'js, CLS> Virt<'js, CLS>
 where
     CLS: Type,
 {
-    pub fn new(inner: CLS, obj: Object<'js>) -> Self {
-        Self { inner, obj }
+    pub(in crate) fn new(rt: Rt, idx: Idx, obj: Object<'js>) -> Self {
+        Self {
+            rt,
+            idx,
+            obj,
+            cls: Class::new(),
+        }
     }
 
     pub fn get<T>(&self, name: &str) -> Result<T>
@@ -46,13 +36,6 @@ where
         T: FromJs<'js>,
     {
         self.obj.get(name)
-    }
-
-    pub fn as_inner<'a, 'b>(&'a self) -> &'b CLS
-    where
-        'a: 'b,
-    {
-        &self.inner
     }
 
     pub fn as_object<'a, 'b>(&'a self) -> &'b Object<'js>

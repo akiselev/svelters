@@ -32,9 +32,8 @@ where
             Box::new(|ctx, this| {
                 let obj: &Obj<CLS> = this.as_ref();
                 let this = this.clone();
-                obj.inner.with_cast(move |data| {
-                    Result::<_>::Ok(Virt::<NESTED>::new((*data).clone(), this).into_js(ctx)?)
-                })
+                let ptr = obj.borrow().unwrap();
+                Virt::<NESTED>::new(obj.rt.clone(), obj.idx, this).into_js(ctx)
             }),
         );
 
