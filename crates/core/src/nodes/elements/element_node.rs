@@ -9,6 +9,7 @@ use crate::inner::*;
 pub struct ElementNode<'js> {
     pub(in crate) rt: Rt,
     pub(in crate) idx: Idx,
+    pub(in crate) typekey: TypeKey,
     pub(in crate) tag_name: &'static str,
     pub(in crate) class_name: &'static str,
     pub(in crate) inner: Inner<ElData<'js>>,
@@ -76,6 +77,7 @@ impl<'js> ElementNode<'js> {
         Ok(Self {
             rt,
             idx,
+            typekey: Class::<CLS>::typekey(),
             tag_name,
             class_name: CLS::CLASS_NAME,
             inner: Inner::new(ElData {

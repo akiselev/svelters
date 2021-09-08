@@ -13,50 +13,55 @@ use crate::inner::*;
 
 pub type Rt = Runtime;
 
+pub(in crate) type ObjMap = SlotMap<Idx, Instance>;
+
 #[derive(Clone)]
 pub struct Runtime {
+    pub(in crate) objects: Rc<RefCell<ObjMap>>,
     pub(in crate) inner: Rc<RefCell<RT>>,
 }
 
 pub struct WeakRt {
+    pub(in crate) objects: Weak<RefCell<ObjMap>>,
     pub(in crate) inner: Weak<RefCell<RT>>,
 }
 
 impl Runtime {
     pub fn new() -> Self {
         Self {
+            objects: Rc::new(RefCell::new(Default::default())),
             inner: Rc::new(RefCell::new(RT {
-                casters: Default::default(),
                 types: Default::default(),
-                objects: Default::default(),
+                elements: Default::default(),
             })),
         }
     }
 
     pub(in crate) fn weak(&self) -> WeakRt {
         WeakRt {
+            objects: Rc::downgrade(&self.objects),
             inner: Rc::downgrade(&self.inner),
         }
     }
 
     pub(in crate) fn new_instance<CLS: Type>(&self, cls: CLS) -> Idx {
-        self.inner
-            .deref()
-            .borrow_mut()
-            .objects
-            .insert(Instance::new(cls))
+        self.objects.deref().borrow_mut().insert(Instance::new(cls))
     }
 
     pub(in crate) fn get_instance<CLS: Type>(&self, idx: Idx) -> Option<ObjRef<CLS>> {
         Obj::<CLS>::from_rt(&self, idx)
     }
 
-    pub(in crate) fn register_type<CLS: Type>(&self) -> TypeKey {
-        self.inner.deref().borrow_mut().types.insert(TypeDef {
-            typeid: TypeId::of::<CLS>(),
-            name: CLS::CLASS_NAME,
-            metadata: unsafe { CLS::metadata() },
-        })
+    pub(in crate) fn register_type<'js, CLS: Type>(&self, ctx: Ctx<'js>) -> TypeKey {
+        let mut typedef = TypeDef::new::<CLS>();
+        let mut child = InitType::<CLS>::new(&mut typedef);
+        let mut cls: TypeBuilder<CLS, _> = TypeBuilder::new(child);
+        <CLS as Type>::define(cls).unwrap();
+
+        let mut child = InitCaster::<CLS>::new(&mut typedef.casters);
+        let mut cls: TypeBuilder<CLS, _> = TypeBuilder::new(child);
+        <CLS as Type>::define(cls).unwrap();
+        self.inner.deref().borrow_mut().types.insert(typedef)
     }
 
     delegate::delegate! {
@@ -68,20 +73,17 @@ impl Runtime {
 
 impl WeakRt {
     pub(in crate) fn upgrade(&self) -> Option<Runtime> {
-        self.inner.upgrade().map(|inner| Runtime { inner })
+        Some(Runtime {
+            objects: self.objects.upgrade()?,
+            inner: self.inner.upgrade()?,
+        })
     }
 }
 
 pub(in crate) struct RT {
-    pub(in crate) casters: Casters,
-    pub(in crate) objects: SlotMap<Idx, Instance>,
     pub(in crate) types: SlotMap<TypeKey, TypeDef>,
-}
-
-pub(in crate) struct TypeDef {
-    pub(in crate) typeid: TypeId,
-    pub(in crate) name: &'static str,
-    pub(in crate) metadata: &'static Metadata,
+    pub(in crate) elements:
+        HashMap<&'static str, SmallBox<dyn for<'js> Fn(Ctx<'js>) -> Result<Value<'js>>, space::S8>>,
 }
 
 pub(in crate) struct Instance {

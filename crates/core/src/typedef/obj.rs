@@ -31,12 +31,23 @@ where
     }
 
     pub(in crate) fn from_rt(rt: &Rt, idx: Idx) -> Option<ObjRef<CLS>> {
-        let rt: Ref<RT> = (*rt.inner).borrow();
+        let rt = rt.objects.deref().borrow();
+        println!(">>>>>");
+        println!(">>>>>");
         ObjRefTryBuilder {
             rt,
-            obj_builder: |this: &Ref<RT>| {
-                let inst = this.objects.get(idx).ok_or(())?;
-                inst.data.downcast_ref::<CLS>().ok_or(())
+            obj_builder: |this: &Ref<ObjMap>| {
+                if let Some(inst) = this.get(idx) {
+                    if let Some(inst) = inst.data.downcast_ref::<CLS>() {
+                        Result::<_, ()>::Ok(inst)
+                    } else {
+                        panic!("Could not downcast");
+                        panic!("Could not downcast");
+                    }
+                } else {
+                    panic!("Could not get instance");
+                    panic!("Could not get instance");
+                }
             },
             cls: Class::new(),
         }
@@ -50,7 +61,7 @@ pub struct ObjRef<'a, CLS>
 where
     CLS: 'a,
 {
-    pub(in crate) rt: Ref<'a, RT>,
+    pub(in crate) rt: Ref<'a, ObjMap>,
     #[borrows(rt)]
     pub(in crate) obj: &'this CLS,
     pub(in crate) cls: Class<CLS>,

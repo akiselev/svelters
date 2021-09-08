@@ -113,10 +113,10 @@ Feature: Core
         Then return value is <result>
 
         Examples:
-            | class        | result         |
-            | "MainWindow" | "Hello Widget" |
-            | "BoxLayout"  | "Hello Widget" |
-            | "PushButton" | "Hello Widget" |
+            | class        | result              |
+            | "MainWindow" | "ADD_WIDGET_RESULT" |
+            | "BoxLayout"  | "ADD_WIDGET_RESULT" |
+            | "PushButton" | "ADD_WIDGET_RESULT" |
 
     Scenario: check that Virt obj works
         Given module at "core.js"

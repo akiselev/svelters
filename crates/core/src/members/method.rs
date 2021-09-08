@@ -1,13 +1,13 @@
 use crate::inner::*;
 
-pub struct Method<CLS, ARGS, RET, THIS> {
+pub struct Method<CLS, ARGS, RET, FUNC> {
     pub(crate) name: &'static str,
-    pub(crate) func: THIS,
+    pub(crate) func: FUNC,
     marker: PhantomData<(CLS, ARGS, RET)>,
 }
 
-impl<THIS, ARGS, RET, CLS> Method<CLS, ARGS, RET, THIS> {
-    pub(in crate) fn new(name: &'static str, func: THIS) -> Self {
+impl<FUNC, ARGS, RET, CLS> Method<CLS, ARGS, RET, FUNC> {
+    pub(in crate) fn new(name: &'static str, func: FUNC) -> Self {
         Method {
             name,
             func,
@@ -20,15 +20,14 @@ macro_rules! tup {
     ($($($arg:ident)*,)*) => {
         $(
             #[allow(unused_variables)]
-            impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitProto<'a, 'b, BASE>>
-                for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
+            impl<'a, 'b: 'a, BASE, FUNC, CLS, RET, $($arg,)*> Implements<InitProto<'a, 'b, BASE>>
+                for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Cast<THIS>,
-                THIS: 'static,
+                BASE: Type + Cast<CLS>,
                 $($arg: 'static + FromJs<'b>,)*
                 RET: 'static + for<'js> IntoJs<'js>,
-                FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
+                FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
             {
                 #[inline(always)]
                 fn build_phase(self, phase: InitProto<'a, 'b, BASE>) -> Result<InitProto<'a, 'b, BASE>> {
@@ -56,14 +55,13 @@ macro_rules! tup {
                 }
             }
 
-            impl<'a, 'b, 'c, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitElementProto<'a, 'b, 'c, BASE>>
-                for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
+            impl<'a, 'b, 'c, BASE, FUNC, CLS, RET, $($arg,)*> Implements<InitElementProto<'a, 'b, 'c, BASE>>
+                for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Cast<THIS>,
-                THIS: 'static,
+                BASE: Type + Cast<CLS>,
                 RET: 'static + IntoJs<'b>,
-                FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
+                FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
@@ -92,14 +90,13 @@ macro_rules! tup {
                 }
             }
 
-            impl<'a, 'b: 'a, BASE, FUNC, THIS, CLS, RET, $($arg,)*> Implements<InitVirt<'a, 'b, BASE>>
-                for members::Method<CLS, (THIS, $($arg,)*), RET, FUNC>
+            impl<'a, 'b: 'a, BASE, FUNC, CLS, RET, $($arg,)*> Implements<InitVirt<'a, 'b, BASE>>
+                for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Cast<THIS>,
-                THIS: 'static,
+                BASE: Type + Cast<CLS>,
                 RET: 'static +  IntoJs<'b>,
-                FUNC: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,
+                FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
                 $($arg: 'static + for<'x> FromJs<'x>,)*
             {
                 #[inline(always)]
@@ -114,7 +111,7 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Virt<BASE> = this.as_ref();
-                                    let base = obj.as_base::<BASE>().unwrap();
+                                    let base = obj.as_base::<BASE>().expect("WTDF");
                                     let ptr = base.cast();
 
                                     let res = (self.func)(

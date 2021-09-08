@@ -90,12 +90,12 @@ impl<'a, 'js, CLS> InitStatic<'a, 'js, CLS> {
 }
 
 pub(in crate) struct InitCaster<'a, CLS: Type> {
-    pub(in crate) map: &'a mut Casters,
+    pub(in crate) map: &'a mut CasterMap,
     pub(in crate) cls: Class<CLS>,
 }
 
 impl<'a, CLS: Type> InitCaster<'a, CLS> {
-    pub fn new(map: &'a mut Casters) -> Self {
+    pub fn new(map: &'a mut CasterMap) -> Self {
         Self {
             map,
             cls: Class::new(),
@@ -104,13 +104,13 @@ impl<'a, CLS: Type> InitCaster<'a, CLS> {
 }
 
 pub(in crate) struct InitSuperCaster<'a, CLS: Type, SUPER> {
-    pub(in crate) map: &'a mut Casters,
+    pub(in crate) map: &'a mut CasterMap,
     pub(in crate) cls: Class<CLS>,
     pub(in crate) sup: Class<SUPER>,
 }
 
 impl<'a, CLS: Type, SUPER> InitSuperCaster<'a, CLS, SUPER> {
-    pub fn new(map: &'a mut Casters) -> Self {
+    pub fn new(map: &'a mut CasterMap) -> Self {
         Self {
             map,
             cls: Class::new(),

@@ -68,23 +68,14 @@ pub trait Module: Sized {
 pub trait Type: 'static + Sized {
     const CLASS_NAME: &'static str;
 
-    type Definition<P>: TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata;
 
-    fn define<P>(cls: TypeBuilder<Self, P>) -> Result<Self::Definition<P>>;
+    fn define<P>(cls: TypeBuilder<Self, P>) -> Result<()>;
 
     #[inline(always)]
     fn name() -> &'static str {
         Self::CLASS_NAME
     }
-}
-
-pub trait TypeDef<P> {
-    // const NUM_PROPS: usize;
-    // const NUM_EVENTS: usize;
-
-    // fn get_phase(self) -> P;
 }
 
 /// Implementation for a phase

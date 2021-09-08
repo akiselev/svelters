@@ -2,6 +2,7 @@ use std::any::{Any, TypeId};
 use std::{collections::HashMap, rc::Rc};
 
 use rquickjs::Function;
+use smallvec::SmallVec;
 
 use crate::inner::*;
 
@@ -59,42 +60,41 @@ impl Metadata {
     }
 }
 
-#[derive(Clone)]
-pub struct ElementProp {
+pub struct PropertyDef {
     pub(in crate) inherited: bool,
     pub(in crate) name: &'static str,
-    pub(in crate) getter: Rc<dyn for<'js> Fn(Value<'js>, Ctx<'js>) -> Result<Value<'js>>>,
+    pub(in crate) getter:
+        SmallBox<dyn for<'js> Fn(Ctx<'js>, &Rt, Idx) -> Result<Value<'js>>, space::S4>,
     pub(in crate) setter:
-        Option<Rc<dyn for<'js> Fn(Value<'js>, Ctx<'js>, Value<'js>) -> Result<()>>>,
+        Option<SmallBox<dyn for<'js> Fn(Ctx<'js>, &Rt, Idx, Value<'js>) -> Result<()>, space::S4>>,
 }
 
-#[derive(Clone)]
-pub struct ElementEvent {
+pub struct EventDef {
     pub(in crate) inherited: bool,
     pub(in crate) name: &'static str,
     pub(in crate) subscribe: Rc<dyn SubscribeFn>,
 }
 
-#[derive(Clone)]
-pub struct ElementType {
+pub struct TypeDef {
+    pub(in crate) typeid: TypeId,
     pub(in crate) name: &'static str,
-    pub(in crate) inherits: Vec<&'static str>,
-    pub(in crate) props: HashMap<&'static str, ElementProp>,
-    pub(in crate) events: HashMap<&'static str, ElementEvent>,
-    pub(in crate) constructor: Rc<dyn for<'js> Fn(Ctx<'js>) -> Result<Value<'js>>>,
+    pub(in crate) metadata: &'static Metadata,
+    pub(in crate) inherits: SmallVec<[&'static str; 8]>,
+    pub(in crate) props: HashMap<&'static str, PropertyDef>,
+    pub(in crate) events: HashMap<&'static str, EventDef>,
+    pub(in crate) casters: CasterMap,
 }
 
-impl ElementType {
-    pub fn new<FUNC>(name: &'static str, constructor: FUNC) -> ElementType
-    where
-        FUNC: 'static + for<'js> Fn(Ctx<'js>) -> Result<Value<'js>>,
-    {
-        ElementType {
-            name,
-            inherits: vec![],
+impl TypeDef {
+    pub fn new<CLS: Type>() -> TypeDef {
+        TypeDef {
+            typeid: TypeId::of::<CLS>(),
+            name: CLS::CLASS_NAME,
+            metadata: unsafe { CLS::metadata() },
+            inherits: SmallVec::new(),
             props: HashMap::new(),
             events: HashMap::new(),
-            constructor: Rc::new(constructor),
+            casters: HashMap::new(),
         }
     }
 
@@ -110,59 +110,29 @@ impl ElementType {
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
     {
-        // TODO: FIX ELEMENT TYPE
-        // let prop = ElementProp {
-        //     name,
-        //     inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
-        //     getter: Rc::new(move |this: Value<'_>, ctx: Ctx<'_>| {
-        //         let el = ElementNode::from_js(ctx, this)?;
-        //         let this = el.borrow();
-        //         let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-        //         let ptr = obj.borrow().unwrap();
-        //         let cls = ptr.cast();
-        //         let val = getter(cls.as_ref())?;
-        //         val.into_js(ctx)
-        //     }),
-        //     setter: Some(Rc::new(
-        //         move |this: Value<'_>, ctx: Ctx<'_>, value: Value<'_>| {
-        //             let el = ElementNode::from_js(ctx, this)?;
-        //             let this = el.borrow();
-        //             let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-        //             let val = PROP::from_js(ctx, value)?;
-        //             let ptr = obj.borrow().unwrap();
-        //             let cls = ptr.cast();
-
-        //             setter(cls.as_ref(), val)?;
-        //             Result::<_>::Ok(())
-        //         },
-        //     )),
-        // };
-        // self.props.insert(name, prop);
+        let prop = PropertyDef {
+            name,
+            inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
+            getter: smallbox!(getter_fn::<BASE, CLS, PROP, _>(getter)),
+            setter: Some(smallbox!(setter_fn::<BASE, CLS, PROP, _>(setter))),
+        };
+        self.props.insert(name, prop);
     }
 
-    pub fn readonly<BASE, CLS, PROP, GET>(&mut self, name: &'static str, getter: GET)
+    pub fn readonly<'js, BASE, CLS, PROP, GET>(&mut self, name: &'static str, getter: GET)
     where
         CLS: Type,
         BASE: Type + Cast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     {
-        // TODO: FIX ELEMENT TYPE
-        // let prop = ElementProp {
-        //     name,
-        //     inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
-        //     getter: Rc::new(move |this: Value<'_>, ctx: Ctx<'_>| {
-        //         let el = ElementNode::from_js(ctx, this)?;
-        //         let this = el.borrow();
-        //         let obj = Obj::<BASE>::from_js_ref(ctx, this.obj.clone().into_value())?;
-        //         let ptr = obj.borrow().unwrap();
-        //         let cls = ptr.cast();
-        //         let val = getter(cls.as_ref())?;
-        //         val.into_js(ctx)
-        //     }),
-        //     setter: None,
-        // };
-        // self.props.insert(name, prop);
+        let prop = PropertyDef {
+            name,
+            inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
+            getter: smallbox!(getter_fn::<BASE, CLS, PROP, _>(getter)),
+            setter: None,
+        };
+        self.props.insert(name, prop);
     }
 
     #[inline(always)]
@@ -172,11 +142,45 @@ impl ElementType {
         BASE: Type + Cast<CLS>,
         FUNC: 'static + SubscribeFn,
     {
-        let event = ElementEvent {
+        let event = EventDef {
             name,
             inherited: BASE::CLASS_NAME != CLS::CLASS_NAME,
             subscribe: Rc::new(move |el: Element<'_>, callback: Function<'_>| func(el, callback)),
         };
         self.events.insert(name, event);
+    }
+}
+
+fn getter_fn<BASE, CLS, PROP, GET>(
+    getter: GET,
+) -> impl for<'js> Fn(Ctx<'js>, &Rt, Idx) -> Result<Value<'js>>
+where
+    CLS: Type,
+    BASE: Type + Cast<CLS>,
+    PROP: 'static + for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
+    GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
+{
+    move |ctx: Ctx, rt: &Rt, idx: Idx| {
+        let obj = Obj::<BASE>::from_rt(&rt, idx).unwrap();
+        let cls = obj.cast();
+        let val = getter(cls.as_ref())?;
+        val.into_js(ctx)
+    }
+}
+
+fn setter_fn<BASE, CLS, PROP, SET>(
+    setter: SET,
+) -> impl for<'js> Fn(Ctx<'js>, &Rt, Idx, Value<'js>) -> Result<()>
+where
+    CLS: Type,
+    BASE: Type + Cast<CLS>,
+    PROP: 'static + for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
+    SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
+{
+    move |ctx: Ctx, rt: &Rt, idx: Idx, value: Value| {
+        let obj = Obj::<BASE>::from_rt(&rt, idx).unwrap();
+        let cls = obj.cast();
+        let val = PROP::from_js(ctx, value)?;
+        setter(cls.as_ref(), val)
     }
 }

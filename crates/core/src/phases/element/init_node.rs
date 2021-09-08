@@ -88,21 +88,22 @@ fn add_event_listener<'js, CLS: Type>(
     value: Function<'js>,
     _opt: Opt<Object<'js>>,
 ) -> Result<()> {
-    let ctx = this.ctx();
-    let doc: &mut Document = ctx.globals().get("document")?;
-    let inner = doc.inner.borrow();
-    let tag = { this.node()?.tag_name };
-    let _type = inner
-        .types
-        .get(tag)
-        .ok_or_else(|| Error::new(ctx, format!("Could not find type {}", CLS::CLASS_NAME)))?;
-    let subscribe = _type.events.get(name.as_str()).ok_or_else(|| {
-        Error::new(
-            ctx,
-            format!("Could not find event {} for {}", name, CLS::CLASS_NAME),
-        )
-    })?;
-    (subscribe.subscribe)(this, value)?;
+    // TODO: ELEMENT FIX
+    // let ctx = this.ctx();
+    // let doc: &mut Document = ctx.globals().get("document")?;
+    // let inner = doc.inner.borrow();
+    // let tag = { this.node()?.tag_name };
+    // let _type = inner
+    //     .types
+    //     .get(tag)
+    //     .ok_or_else(|| Error::new(ctx, format!("Could not find type {}", CLS::CLASS_NAME)))?;
+    // let subscribe = _type.events.get(name.as_str()).ok_or_else(|| {
+    //     Error::new(
+    //         ctx,
+    //         format!("Could not find event {} for {}", name, CLS::CLASS_NAME),
+    //     )
+    // })?;
+    // (subscribe.subscribe)(this, value)?;
     Ok(())
 }
 
@@ -127,9 +128,16 @@ fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'
 #[inline(always)]
 fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Result<Value<'js>> {
     tracing::info!("Getting attr {}::{}", this.tag_name, name);
-    // TODO: FIX CASTER
-    // this.borrow().obj.get(name)
-    Ok(Value::new_undefined(ctx))
+    let rt = this.rt.inner.deref().borrow();
+    let typedef = rt.types.get(this.typekey).unwrap();
+    let prop = typedef.props.get(name.as_str()).ok_or_else(|| {
+        exception!(
+            "{} does not have an attribute named {}",
+            this.tag_name,
+            name
+        )
+    })?;
+    (prop.getter)(ctx, &this.rt, this.idx)
 }
 
 #[inline(always)]

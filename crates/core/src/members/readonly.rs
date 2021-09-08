@@ -44,7 +44,7 @@ where
     }
 }
 
-impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitElement<'a, BASE>>
+impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitType<'a, BASE>>
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
@@ -53,7 +53,7 @@ where
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
+    fn build_phase(self, phase: InitType<'a, BASE>) -> Result<InitType<'a, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
         phase.element.readonly::<BASE, CLS, PROP, GET>(name, getter);

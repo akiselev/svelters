@@ -43,11 +43,8 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         }
     }
 
-    pub fn build(self) -> Result<Self>
-    where
-        Self: TypeDef<PHASE>,
-    {
-        Ok(self)
+    pub fn build(self) -> Result<()> {
+        Ok(())
     }
 
     pub fn method<RET, FN, ARGS>(self, name: &'static str, func: FN) -> Result<Self>
@@ -217,5 +214,3 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         static_fn16 method16 constructor16 A B C D E F G H I J K L M N O P,
     }
 }
-
-impl<CLS, PHASE> TypeDef<PHASE> for ClassBuilder<CLS, PHASE> {}

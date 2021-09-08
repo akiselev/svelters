@@ -7,7 +7,7 @@ use std::{
 use crate::inner::*;
 
 pub struct DocInner {
-    pub(in crate) types: HashMap<&'static str, ElementType>,
+    // pub(in crate) types: HashMap<&'static str, TypeDef>,
 }
 
 pub struct Document {
@@ -25,9 +25,7 @@ impl Document {
     pub fn new() -> Document {
         Document {
             rt: Rt::new(),
-            inner: Inner::new(DocInner {
-                types: Default::default(),
-            }),
+            inner: Inner::new(DocInner {}),
         }
     }
 
@@ -57,8 +55,8 @@ impl Document {
         if name == "slot" {
             return SlotNode::new().into_js(ctx);
         }
-        if let Some(element) = self.inner.borrow().types.get(name.as_str()) {
-            (element.constructor)(ctx)
+        if let Some(element) = self.rt.inner.borrow().elements.get(name.as_str()) {
+            (element)(ctx)
         } else {
             Err(Error::new(ctx, format!("{} is not a valid element", name)))
         }

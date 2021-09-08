@@ -7,15 +7,13 @@ use super::*;
 impl Type for Fw<Rc<Object>> {
     const CLASS_NAME: &'static str = "Object";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<Object>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .as_element("object", || -> Result<Self> { Ok(Default::default()) })?
@@ -59,15 +57,13 @@ impl Type for Fw<Rc<Object>> {
 impl Type for Fw<Rc<Widget>> {
     const CLASS_NAME: &'static str = "Widget";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<Widget>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .as_element("widget", || -> Result<Self> { Ok(Default::default()) })?
@@ -93,15 +89,13 @@ impl Type for Fw<Rc<Widget>> {
 impl Type for Fw<Rc<Application>> {
     const CLASS_NAME: &'static str = "Application";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<Application>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .as_element("application", || -> Result<Self> { Ok(Default::default()) })?
@@ -130,15 +124,13 @@ impl Type for Fw<Rc<Application>> {
 impl Type for Fw<Rc<MainWindow>> {
     const CLASS_NAME: &'static str = "MainWindow";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<MainWindow>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .as_element("mainWindow", || -> Result<Self> { Ok(Default::default()) })?
@@ -166,15 +158,13 @@ impl Type for Fw<Rc<MainWindow>> {
 impl Type for Fw<Rc<BoxLayout>> {
     const CLASS_NAME: &'static str = "BoxLayout";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<BoxLayout>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .as_element("boxLayout", || -> Result<Self> { Ok(Default::default()) })?
@@ -189,8 +179,9 @@ impl Type for Fw<Rc<BoxLayout>> {
             .method1(
                 "addWidget",
                 |_this: &Self, widget: Virt<Fw<Rc<Widget>>>| -> Result<String> {
-                    Err(rquickjs::Error::Unknown)
+                    // Err(rquickjs::Error::Unknown)
                     // Ok(widget.0 .1.borrow().clone())
+                    Ok("ADD_WIDGET_RESULT".to_string())
                 },
             )?
             .method1(
@@ -215,15 +206,13 @@ impl Type for Fw<Rc<BoxLayout>> {
 impl Type for Fw<Rc<AbstractButton>> {
     const CLASS_NAME: &'static str = "AbstractButton";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<AbstractButton>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .superclass::<Fw<Rc<Widget>>>()?
@@ -246,15 +235,13 @@ impl Type for Fw<Rc<AbstractButton>> {
 impl Type for Fw<Rc<PushButton>> {
     const CLASS_NAME: &'static str = "PushButton";
 
-    type Definition<P> = impl TypeDef<P>;
-
     unsafe fn metadata() -> &'static mut Metadata {
         static mut META: Metadata = Metadata::new::<Fw<Rc<PushButton>>>();
         &mut META
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<Self::Definition<P>> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
         builder
             .class()?
             .as_element("pushButton", || -> Result<Self> { Ok(Default::default()) })?

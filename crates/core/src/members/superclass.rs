@@ -32,15 +32,15 @@ where
     }
 }
 
-impl<'a, 'b: 'a, CLS, SUPER> Implements<InitElement<'a, CLS>> for members::Superclass<SUPER>
+impl<'a, 'b: 'a, CLS, SUPER> Implements<InitType<'a, CLS>> for members::Superclass<SUPER>
 where
     CLS: Type + Cast<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]
-    fn build_phase(self, phase: InitElement<'a, CLS>) -> Result<InitElement<'a, CLS>> {
+    fn build_phase(self, phase: InitType<'a, CLS>) -> Result<InitType<'a, CLS>> {
         phase.element.inherits::<SUPER>();
-        build_class!(SUPER with InitElement::<'_, CLS>::new(phase.element));
+        build_class!(SUPER with InitType::<'_, CLS>::new(phase.element));
         Ok(phase)
     }
 }

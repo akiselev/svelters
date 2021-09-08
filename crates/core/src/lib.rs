@@ -211,14 +211,18 @@ pub(in crate) mod inner {
 
     pub(in crate) use crate::{build_class, exception};
 
-    pub(in crate) type CasterCallback<'js, CLS> =
-        SmallBox<dyn Fn(Ctx<'js>, &CLS) -> Result<Value<'js>>, space::S4>;
-    pub(in crate) type Casters = SecondaryMap<TypeKey, SmallBox<dyn Any, space::S4>>;
-    pub(in crate) type CasterMap<CLS> = SparseSecondaryMap<
-        TypeKey,
-        SmallBox<
-            dyn for<'a> Fn(Ctx<'a>, Rt, Idx, CasterCallback<'a, CLS>) -> Result<Value<'a>>,
-            space::S8,
-        >,
+    // pub(in crate) type CasterCallback<'js, CLS> =
+    //     SmallBox<dyn Fn(Ctx<'js>, &CLS) -> Result<Value<'js>>, space::S4>;
+    // pub(in crate) type Casters = SecondaryMap<TypeKey, SmallBox<dyn Any, space::S4>>;
+    // pub(in crate) type CasterMap<CLS> = SparseSecondaryMap<
+    //     TypeKey,
+    //     SmallBox<
+    //         dyn for<'a> Fn(Ctx<'a>, Rt, Idx, CasterCallback<'a, CLS>) -> Result<Value<'a>>,
+    //         space::S8,
+    //     >,
+    // >;
+    pub(in crate) type CasterMap = HashMap<
+        &'static str,
+        SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>, Rt, Idx) -> Result<Value<'a>>, space::S8>,
     >;
 }

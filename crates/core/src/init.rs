@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use crate::inner::*;
 
 pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
@@ -22,6 +24,9 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
 pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.clear_registery();
     let doc: &mut Document = ctx.globals().get("document")?;
-    for (_key, _val) in doc.inner.borrow_mut().types.drain() {}
+    let mut rt = doc.rt.inner.deref().borrow_mut();
+    doc.rt.objects.deref().borrow_mut().clear();
+    rt.types.clear();
+    // for (_key, _val) in doc.inner.borrow_mut().types.drain() {}
     Ok(())
 }

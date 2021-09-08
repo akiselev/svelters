@@ -63,7 +63,7 @@ where
     }
 }
 
-impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitElement<'a, BASE>>
+impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitType<'a, BASE>>
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
@@ -73,7 +73,7 @@ where
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {
     #[inline(always)]
-    fn build_phase(self, phase: InitElement<'a, BASE>) -> Result<InitElement<'a, BASE>> {
+    fn build_phase(self, phase: InitType<'a, BASE>) -> Result<InitType<'a, BASE>> {
         let members::Property {
             name,
             getter,

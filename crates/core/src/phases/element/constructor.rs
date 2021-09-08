@@ -20,23 +20,38 @@ where
             rquickjs::Func::new("castAs", rquickjs::Method(el_cast::<CLS>())),
         )?;
         build_class!(CLS with InitElementProto::<CLS>::new(phase.ctx, &proto));
+
         let proto_key = { phase.ctx.register(proto.into_value()) };
 
         let rt = phase.rt.weak();
-        let mut eltype = ElementType::new(name, move |ctx: Ctx| {
-            let proto: Object = ctx
-                .get_register(proto_key)
-                .unwrap()
-                .as_object()
-                .unwrap()
-                .clone();
-            let res = (func)()?;
-            let el = ElementNode::new::<CLS>(rt.upgrade().unwrap(), ctx, name, res)?;
-            WithProto(el, proto).into_js(ctx)
-        });
-        build_class!(CLS with InitElement::<'_, CLS>::new(&mut eltype));
-        phase.doc.inner.borrow_mut().types.insert(name, eltype);
+        phase.rt.inner.deref().borrow_mut().elements.insert(
+            self.name,
+            smallbox!(constructor_fn(rt, name, func, proto_key)),
+        );
         Ok(phase)
+    }
+}
+
+fn constructor_fn<'js, T, CLS>(
+    rt: WeakRt,
+    name: &'static str,
+    func: T,
+    proto_key: RegisteryKey,
+) -> impl for<'x> Fn(Ctx<'x>) -> Result<Value<'x>>
+where
+    CLS: Type + Clone,
+    T: 'static + Fn() -> Result<CLS>,
+{
+    move |ctx| {
+        let proto: Object = ctx
+            .get_register(proto_key)
+            .unwrap()
+            .as_object()
+            .unwrap()
+            .clone();
+        let res = (func)()?;
+        let el = ElementNode::new::<CLS>(rt.upgrade().unwrap(), ctx, name, res)?;
+        WithProto(el, proto).into_js(ctx)
     }
 }
 
