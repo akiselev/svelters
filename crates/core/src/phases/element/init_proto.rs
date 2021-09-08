@@ -29,12 +29,14 @@ impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassL
             Func::new(
                 "castAs",
                 rquickjs::Method(
-                    move |this: ElementNode<'b>, _ctx: Ctx<'b>, target: rquickjs::String<'b>| {
-                        let inner = this.borrow();
-                        let func: Function = inner.obj.get("castAs")?;
+                    move |this: ElementNode<'b>, ctx: Ctx<'b>, target: rquickjs::String<'b>| {
+                        // TODO: FIX CASTER
+                        // let inner = this.borrow();
+                        // let func: Function = this.get("castAs")?;
 
-                        let res: Value = Function::call(&func, (This(inner.obj.clone()), target))?;
-                        Result::<_>::Ok(res)
+                        // let res: Value = Function::call(&func, (This(this), target))?;
+                        // Result::<_>::Ok(res)
+                        Result::<_>::Ok(Value::new_undefined(ctx))
                     },
                 ),
             ),

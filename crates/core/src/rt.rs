@@ -1,5 +1,7 @@
 use std::{
     any::{Any, TypeId},
+    borrow::BorrowMut,
+    cell::Ref,
     marker::Unsize,
     mem::{align_of, size_of},
     rc::Weak,
@@ -24,6 +26,8 @@ impl Runtime {
     pub fn new() -> Self {
         Self {
             inner: Rc::new(RefCell::new(RT {
+                casters: Default::default(),
+                types: Default::default(),
                 objects: Default::default(),
             })),
         }
@@ -36,7 +40,29 @@ impl Runtime {
     }
 
     pub(in crate) fn new_instance<CLS: Type>(&self, cls: CLS) -> Idx {
-        self.inner.borrow_mut().objects.insert(Instance::new(cls))
+        self.inner
+            .deref()
+            .borrow_mut()
+            .objects
+            .insert(Instance::new(cls))
+    }
+
+    pub(in crate) fn get_instance<CLS: Type>(&self, idx: Idx) -> Option<ObjRef<CLS>> {
+        Obj::<CLS>::from_rt(&self, idx)
+    }
+
+    pub(in crate) fn register_type<CLS: Type>(&self) -> TypeKey {
+        self.inner.deref().borrow_mut().types.insert(TypeDef {
+            typeid: TypeId::of::<CLS>(),
+            name: CLS::CLASS_NAME,
+            metadata: unsafe { CLS::metadata() },
+        })
+    }
+
+    delegate::delegate! {
+        to self.inner {
+            fn borrow(&self) -> Ref<RT>;
+        }
     }
 }
 
@@ -47,7 +73,15 @@ impl WeakRt {
 }
 
 pub(in crate) struct RT {
+    pub(in crate) casters: Casters,
     pub(in crate) objects: SlotMap<Idx, Instance>,
+    pub(in crate) types: SlotMap<TypeKey, TypeDef>,
+}
+
+pub(in crate) struct TypeDef {
+    pub(in crate) typeid: TypeId,
+    pub(in crate) name: &'static str,
+    pub(in crate) metadata: &'static Metadata,
 }
 
 pub(in crate) struct Instance {
@@ -67,6 +101,7 @@ impl Instance {
 
 pub(in crate) type Idx = InstanceKey;
 new_key_type! { pub(in crate) struct InstanceKey; }
+new_key_type! { pub(in crate) struct TypeKey; }
 
 impl ClassDef for Runtime {
     const CLASS_NAME: &'static str = "Runtime";

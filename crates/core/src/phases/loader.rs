@@ -1,14 +1,15 @@
 use crate::{build_class, inner::*};
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct ModuleLoad<'a, 'js: 'a> {
+    pub(in crate) rt: Rt,
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) module: &'a QJsModule<'js, Created>,
 }
 
 impl<'a, 'js> ModuleLoad<'a, 'js> {
-    pub fn new(ctx: Ctx<'js>, module: &'a QJsModule<'js, Created>) -> Self {
-        Self { ctx, module }
+    pub fn new(ctx: Ctx<'js>, rt: Rt, module: &'a QJsModule<'js, Created>) -> Self {
+        Self { rt, ctx, module }
     }
 }
 
@@ -21,8 +22,8 @@ pub struct ModuleEval<'a, 'b, 'js> {
 
 impl<'a, 'b, 'js> ModuleEval<'a, 'b, 'js> {
     pub fn new(
-        rt: Rt,
         ctx: Ctx<'js>,
+        rt: Rt,
         module: &'a QJsModule<'js, Loaded<Native>>,
         doc: &'b mut Document,
     ) -> Self {
@@ -37,13 +38,15 @@ impl<'a, 'b, 'js> ModuleEval<'a, 'b, 'js> {
 
 pub struct JsModuleLoader<MOD>(MOD);
 
-impl<'a, 'b: 'a, 'aa, 'bb: 'aa, MOD> ModuleDef for JsModuleLoader<MOD>
+impl<MOD> ModuleDef for JsModuleLoader<MOD>
 where
     MOD: Module,
 {
     fn load<'js>(ctx: Ctx<'js>, module: &QJsModule<'js, Created>) -> Result<()> {
+        let doc: &Document = ctx.globals().get("document")?;
+        let rt = doc.rt.clone();
         let mut _mod = ModuleBuilder::<MOD, ModuleLoad<'_, '_>>(
-            ModuleLoad::<'_, '_>::new(ctx, module),
+            ModuleLoad::<'_, '_>::new(ctx, rt, module),
             PhantomData,
         );
         <MOD as Module>::define::<ModuleLoad<'_, '_>>(_mod)?;
@@ -51,10 +54,10 @@ where
     }
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &QJsModule<'js, Loaded<Native>>) -> Result<()> {
-        let globals = ctx.globals();
-        let document: &mut Document = globals.get("document")?;
+        let doc: &mut Document = ctx.globals().get("document")?;
+        let rt = doc.rt.clone();
         let mut _mod = ModuleBuilder::<MOD, ModuleEval<'_, '_, '_>>(
-            ModuleEval::<'_, '_, '_>::new(document.rt.clone(), ctx, exports, document),
+            ModuleEval::<'_, '_, '_>::new(ctx, rt, exports, doc),
             PhantomData,
         );
         <MOD as Module>::define::<ModuleEval<'_, '_, '_>>(_mod)?;
@@ -88,7 +91,6 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: ModuleEval<'a, 'b, 'c>) -> Result<ModuleEval<'a, 'b, 'c>> {
-        unsafe { CLS::metadata().init()? };
         build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.rt.clone(), phase.ctx, phase.module, phase.doc));
         Ok(phase)
     }
@@ -100,21 +102,9 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: ModuleLoad<'a, 'b>) -> Result<ModuleLoad<'a, 'b>> {
+        let key = phase.rt.register_type::<CLS>();
+        unsafe { CLS::metadata().init(key)? };
         build_class!(CLS with ConstructorLoad::<'a, 'b, CLS>::new(phase.ctx, phase.module));
         Ok(phase)
     }
 }
-
-// impl<T, P> Implements<P> for JsClassLoader<T> {
-//     #[inline(always)]
-//     default fn build_phase(self, _phase: &mut P) -> Result<()> {
-//         Ok(())
-//     }
-// }
-
-// impl<T, P> Implements<P> for JsModuleLoader<T> {
-//     #[inline(always)]
-//     default fn build_phase(self, _phase: &mut P) -> Result<()> {
-//         Ok(())
-//     }
-// }

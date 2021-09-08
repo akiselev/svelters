@@ -113,18 +113,14 @@ where
             name,
             Accessor::new(
                 rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
-                    let obj =
-                        Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                    let ptr = obj.borrow().unwrap();
-                    let cls = ptr.cast();
+                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                    let cls = obj.cast();
 
                     getter(cls.as_ref())
                 }),
                 rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, val: PROP| {
-                    let obj =
-                        Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                    let ptr = obj.borrow().unwrap();
-                    let cls = ptr.cast();
+                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                    let cls = obj.cast();
                     setter(cls.as_ref(), val)
                 }),
             )

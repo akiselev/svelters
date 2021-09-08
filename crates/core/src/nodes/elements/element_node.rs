@@ -7,9 +7,10 @@ use crate::inner::*;
 
 #[derive(Clone)]
 pub struct ElementNode<'js> {
+    pub(in crate) rt: Rt,
+    pub(in crate) idx: Idx,
     pub(in crate) tag_name: &'static str,
     pub(in crate) class_name: &'static str,
-    pub(in crate) obj_id: RegisteryKey,
     pub(in crate) inner: Inner<ElData<'js>>,
 }
 
@@ -23,7 +24,7 @@ impl<'js> std::ops::Deref for ElementNode<'js> {
 
 impl<'js> PartialEq for ElementNode<'js> {
     fn eq(&self, other: &Self) -> bool {
-        self.borrow().obj == other.borrow().obj
+        self.idx == other.idx
     }
 }
 
@@ -32,7 +33,7 @@ impl<'js> PartialEq<Node<'js>> for ElementNode<'js> {
         match &other.this {
             UINode::Slot(_) => false,
             UINode::Text(_) => false,
-            UINode::Element(node) => self.borrow().obj == node.borrow().obj,
+            UINode::Element(node) => self.idx == node.idx,
         }
     }
 }
@@ -45,30 +46,13 @@ impl<'js> PartialEq<SlotNode<'js>> for ElementNode<'js> {
 
 impl<'js, CLS> PartialEq<Virt<'js, CLS>> for ElementNode<'js> {
     fn eq(&self, other: &Virt<'js, CLS>) -> bool {
-        self.borrow().obj == other.obj
-    }
-}
-
-impl<'js> PartialEq<Object<'js>> for ElementNode<'js> {
-    fn eq(&self, other: &Object<'js>) -> bool {
-        self.borrow().obj == *other
-    }
-}
-
-impl<'js> PartialEq<Value<'js>> for ElementNode<'js> {
-    fn eq(&self, other: &Value<'js>) -> bool {
-        if let Some(other) = other.as_object() {
-            self.borrow().obj == *other
-        } else {
-            false
-        }
+        self.idx == other.idx
     }
 }
 
 impl<'js> Eq for ElementNode<'js> {}
 
 pub struct ElData<'js> {
-    pub(in crate) obj: Object<'js>,
     pub(in crate) node: NodeData<'js>,
     pub(in crate) dispatcher: Dispatcher<'js>,
 }
@@ -76,53 +60,32 @@ pub struct ElData<'js> {
 impl<'js> HasRefs for ElementNode<'js> {
     fn mark_refs(&self, marker: &RefsMarker) {
         let this = self.inner.borrow();
-        this.obj.mark(marker);
         this.node.mark_refs(marker)
-    }
-}
-
-impl<'js> std::ops::Deref for ElData<'js> {
-    type Target = Object<'js>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.obj
     }
 }
 
 impl<'js> ElementNode<'js> {
     pub(in crate) fn new<CLS: Type + Clone>(
+        rt: Rt,
         ctx: Ctx<'js>,
         tag_name: &'static str,
-        obj: Obj<CLS>,
+        cls: CLS,
     ) -> Result<Self> {
-        let obj = obj
-            .into_js_obj(ctx)?
-            .into_object()
-            .expect("Sould be object");
-        let obj_id = ctx.register(obj.clone().into_value());
+        let idx = rt.new_instance(cls);
         let dispatcher = Dispatcher::new();
         Ok(Self {
+            rt,
+            idx,
             tag_name,
             class_name: CLS::CLASS_NAME,
-
-            obj_id,
             inner: Inner::new(ElData {
-                obj,
                 dispatcher,
                 node: NodeData::new(),
             }),
         })
     }
 
-    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>> {
-        let this = self.borrow();
-        let func: Function = this
-            .obj
-            .get("castAs")
-            .expect("No castAs function found on Node");
-        let res = func
-            .call((This(this.obj.clone()), CLS::CLASS_NAME))
-            .expect("Could not convert");
-        Some(res)
+    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<ObjRef<CLS>> {
+        Obj::<CLS>::from_rt(&self.rt, self.idx)
     }
 }

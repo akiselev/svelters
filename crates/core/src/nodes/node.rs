@@ -21,7 +21,7 @@ impl<'js> PartialEq for Node<'js> {
 impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
     fn eq(&self, other: &ElementNode<'js>) -> bool {
         match &self.this {
-            UINode::Element(this) => this.borrow().obj == other.borrow().obj,
+            UINode::Element(this) => this.idx == other.idx,
             _ => false,
         }
     }
@@ -30,16 +30,7 @@ impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
 impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Node<'js> {
     fn eq(&self, other: &Virt<'js, CLS>) -> bool {
         match &self.this {
-            UINode::Element(this) => this.borrow().obj == other.obj,
-            _ => false,
-        }
-    }
-}
-
-impl<'js> PartialEq<Object<'js>> for Node<'js> {
-    fn eq(&self, other: &Object<'js>) -> bool {
-        match &self.this {
-            UINode::Element(this) => this.borrow().obj == *other,
+            UINode::Element(this) => this.idx == other.idx,
             _ => false,
         }
     }
@@ -149,33 +140,6 @@ impl<'js> Node<'js> {
         })
     }
 
-    fn instance_of<CLS: Type>(&self) -> bool {
-        match &self.this {
-            UINode::Element(this) => this.borrow().obj.instance_of::<Obj<CLS>>(),
-            _ => false,
-        }
-    }
-
-    fn with_instance<CLS: Type, F: for<'a> FnOnce(&'a CLS) -> R, R>(&self, func: F) -> Option<R> {
-        match &self.this {
-            UINode::Element(this) => {
-                let this = this.borrow();
-                if this.obj.instance_of::<Obj<CLS>>() {
-                    this.obj
-                        .clone()
-                        .into_instance::<Obj<CLS>>()
-                        .and_then(|obj| {
-                            let ptr = AsRef::<Obj<CLS>>::as_ref(&obj).borrow().unwrap();
-                            Some(func(&ptr))
-                        })
-                } else {
-                    None
-                }
-            }
-            _ => None,
-        }
-    }
-
     fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
         self.this.with_node(func)
     }
@@ -187,19 +151,9 @@ impl<'js> Node<'js> {
         })
     }
 
-    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<Virt<'js, CLS>> {
+    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<ObjRef<CLS>> {
         match &self.this {
-            UINode::Element(this) => {
-                let this = this.borrow();
-                let func: Function = this
-                    .obj
-                    .get("castAs")
-                    .expect("No castAs function found on Node");
-                let res = func
-                    .call((This(this.obj.clone()), CLS::CLASS_NAME))
-                    .expect("Could not convert");
-                Some(res)
-            }
+            UINode::Element(this) => this.cast_as::<CLS>(),
             _ => None,
         }
     }

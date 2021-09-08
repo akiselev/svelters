@@ -80,10 +80,8 @@ where
             name,
             Accessor::new_get(rquickjs::Method(
                 move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
-                    let obj =
-                        Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                    let ptr = obj.borrow().unwrap();
-                    let cls = ptr.cast();
+                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                    let cls = obj.cast();
                     let val = getter(cls.as_ref())?;
                     rquickjs::Result::Ok(val)
                 },

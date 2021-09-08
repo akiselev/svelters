@@ -77,9 +77,8 @@ macro_rules! tup {
                                     let args = args.into_inner();
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
-                                    let obj = Obj::<BASE>::from_js_ref(ctx, this.borrow().obj.clone().into_value())?;
-                                    let ptr = obj.borrow().unwrap();
-                                    let cls = ptr.cast();
+                                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                                    let cls = obj.cast();
                                     let res = (self.func)(
                                         cls.as_ref(),
                                         $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*

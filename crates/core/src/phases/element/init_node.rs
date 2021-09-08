@@ -1,6 +1,6 @@
 use std::borrow::BorrowMut;
 
-use rquickjs::{Func, Function};
+use rquickjs::{Func, Function, Undefined};
 
 use crate::inner::*;
 
@@ -125,18 +125,27 @@ fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'
 }
 
 #[inline(always)]
-fn get_attribute<'js>(this: ElementNode<'js>, name: String) -> Result<Value<'js>> {
+fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Result<Value<'js>> {
     tracing::info!("Getting attr {}::{}", this.tag_name, name);
-    this.borrow().obj.get(name)
+    // TODO: FIX CASTER
+    // this.borrow().obj.get(name)
+    Ok(Value::new_undefined(ctx))
 }
 
 #[inline(always)]
-fn set_attribute<'js>(this: ElementNode<'js>, name: String, value: Value<'js>) -> Result<()> {
+fn set_attribute<'js>(
+    this: ElementNode<'js>,
+    ctx: Ctx<'js>,
+    name: String,
+    value: Value<'js>,
+) -> Result<()> {
     tracing::info!(
         "Setting attr {}::{} to <{}>",
         this.tag_name,
         name,
         value.type_of()
     );
-    this.borrow().obj.set(name, value)
+    // TODO: FIX CASTER
+    // this.borrow().obj.set(name, value)
+    Ok(())
 }

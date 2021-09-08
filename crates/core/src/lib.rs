@@ -145,14 +145,12 @@ pub(in crate) mod typedef {
 pub(in crate) mod phases {
     mod element {
         mod constructor;
-        mod init_caster;
         mod init_element;
         mod init_native_slot;
         mod init_node;
         mod init_proto;
 
         pub(in crate) use self::constructor::*;
-        pub(in crate) use self::init_caster::*;
         pub(in crate) use self::init_element::*;
         pub(in crate) use self::init_native_slot::*;
         pub(in crate) use self::init_node::*;
@@ -170,6 +168,7 @@ pub(in crate) mod phases {
 #[allow(unused_imports)]
 pub(in crate) mod inner {
     pub(in crate) use std::{
+        any::Any,
         borrow::Cow,
         cell::{Cell, RefCell},
         collections::HashMap,
@@ -193,6 +192,8 @@ pub(in crate) mod inner {
     };
     pub type Result<T, E = Error> = std::result::Result<T, E>;
     pub(in crate) use slotmap::{new_key_type, SlotMap};
+    pub(in crate) use slotmap::{SecondaryMap, SparseSecondaryMap};
+    pub(in crate) use smallbox::{smallbox, space, SmallBox};
     pub(in crate) use typedmap::TypedMapKey;
 
     pub(in crate) use crate::nodes::*;
@@ -210,16 +211,14 @@ pub(in crate) mod inner {
 
     pub(in crate) use crate::{build_class, exception};
 
-    pub(in crate) type ObjCasterMap<CLS> = HashMap<
-        &'static str,
-        Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Obj<CLS>>) -> Result<Value<'a>>>,
-    >;
-    pub(in crate) type VirtCasterMap<CLS> = HashMap<
-        &'static str,
-        Box<dyn for<'a> Fn(Ctx<'a>, JsClass<'a, Virt<CLS>>) -> Result<Value<'a>>>,
-    >;
-    pub(in crate) type ElementCasterMap = HashMap<
-        &'static str,
-        Box<dyn for<'a, 'b> Fn(Ctx<'a>, &'b ElementNode<'a>) -> Result<Value<'a>>>,
+    pub(in crate) type CasterCallback<'js, CLS> =
+        SmallBox<dyn Fn(Ctx<'js>, &CLS) -> Result<Value<'js>>, space::S4>;
+    pub(in crate) type Casters = SecondaryMap<TypeKey, SmallBox<dyn Any, space::S4>>;
+    pub(in crate) type CasterMap<CLS> = SparseSecondaryMap<
+        TypeKey,
+        SmallBox<
+            dyn for<'a> Fn(Ctx<'a>, Rt, Idx, CasterCallback<'a, CLS>) -> Result<Value<'a>>,
+            space::S8,
+        >,
     >;
 }
