@@ -28,7 +28,8 @@ qdefine!(|cls: QGraphicsLayoutItem| {
 });
 
 define!(|cls: QLayout| {
-    cls.superclass::<Qt<QObject>>()?
+    let cls = cls
+        .superclass::<Qt<QObject>>()?
         .superclass::<Q<QLayoutItem>>()?;
     methods!(cls(this: QLayoutItem) {
         // show[0]() { this.show() };
@@ -45,7 +46,7 @@ define!(|cls: QLayout| {
 });
 
 define!(|cls: QBoxLayout| {
-    cls.superclass::<Qt<QLayout>>()?;
+    let cls = cls.superclass::<Qt<QLayout>>()?;
     methods!(cls(this: QBoxLayout) {
         // show[0]() { this.show() };
         // hide[0]() { this.hide() };

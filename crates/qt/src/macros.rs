@@ -3,12 +3,12 @@ use crate::{impls::containers::Qt, inner::*};
 pub(in crate) macro module($modname:ty: $($ty:ty),*$(,)?) {
     impl Module for $modname {
         #[inline(always)]
-        fn define<P>(module: &mut ModuleBuilder<Self, P>) -> Result<()>
+        fn define<P>(module: ModuleBuilder<Self, P>) -> Result<ModuleBuilder<Self, P>>
         where
            crate::QT: Framework,
         {
-            $(module.class::<Qt<$ty>>()?;)*
-            Ok(())
+            $(let module = module.class::<Qt<$ty>>()?;)*
+            Ok(module)
         }
     }
 }
@@ -18,12 +18,13 @@ pub(in crate) macro qdefine(|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
         const CLASS_NAME: & 'static str = stringify!($cls);
 
         unsafe fn metadata() -> &'static mut Metadata {
-            static mut META: Metadata = Metadata::new();
+            static mut META: Metadata = Metadata::new::<Q<$cls>>();
             &mut META
         }
 
         #[inline(always)]
-        fn define<P>($builder: &mut TypeBuilder<Self, P>) -> Result<()> {
+        fn define<P>($builder: TypeBuilder<Self, P>) -> Result<()> {
+            let $builder = $builder.class()?;
             $($tokens)*
             Ok(())
         }
@@ -35,12 +36,13 @@ pub(in crate) macro define (|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
         const CLASS_NAME: & 'static str = stringify!($cls);
 
         unsafe fn metadata() -> &'static mut Metadata {
-            static mut META: Metadata = Metadata::new();
+            static mut META: Metadata = Metadata::new::<Qt<$cls>>();
             &mut META
         }
 
         #[inline(always)]
-        fn define<P>($builder: &mut TypeBuilder<Self, P>) -> Result<()> {
+        fn define<P>($builder: TypeBuilder<Self, P>) -> Result<()> {
+            let $builder = $builder.class()?;
             $($tokens)*
             Ok(())
         }
@@ -90,36 +92,36 @@ pub(in crate) macro event {
 
 pub(in crate) macro prop {
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:block; $set:block $(;)? }) => {
-        $bld.prop(
+        let $bld = $bld.prop(
             stringify!($name),
             |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
             |$this: &Qt<$cls>, $name: $ty| unsafe {
                 $set
                 Ok(())
             },
-        )?
+        )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:expr; $set:expr $(;)? }) => {
-        $bld.prop(
+        let $bld = $bld.prop(
             stringify!($name),
             |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
             |$this: &Qt<$cls>, $name: $ty| unsafe {
                 { $set }
                 Ok(())
             },
-        )?
+        )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:block }) => {
-        $bld.readonly(
+        let $bld = $bld.readonly(
             stringify!($name),
             |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
-        )?
+        )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:expr $(;)? }) => {
-        $bld.readonly(
+        let $bld = $bld.readonly(
             stringify!($name),
             |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
-        )?
+        )?;
     }
 }
 
@@ -132,42 +134,42 @@ pub(in crate) macro props {
 }
 
 pub(in crate) macro method {
-    (@num 0) => { TypeBuilder::method0 },
-    (@num 1) => { TypeBuilder::method1 },
-    (@num 2) => { TypeBuilder::method2 },
-    (@num 3) => { TypeBuilder::method3 },
-    (@num 4) => { TypeBuilder::method4 },
-    (@num 5) => { TypeBuilder::method5 },
-    (@num 6) => { TypeBuilder::method6 },
-    (@num 7) => { TypeBuilder::method7 },
-    (@num 8) => { TypeBuilder::method8 },
+    (@num 0) => { ClassBuilder::method0 },
+    (@num 1) => { ClassBuilder::method1 },
+    (@num 2) => { ClassBuilder::method2 },
+    (@num 3) => { ClassBuilder::method3 },
+    (@num 4) => { ClassBuilder::method4 },
+    (@num 5) => { ClassBuilder::method5 },
+    (@num 6) => { ClassBuilder::method6 },
+    (@num 7) => { ClassBuilder::method7 },
+    (@num 8) => { ClassBuilder::method8 },
     ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]() $(-> $res:ty)? { $func:expr }) => {
         let func = method!(@num $num);
-        func(
+        let $bld = func(
             $bld,
             stringify!($name),
             |$this: &Qt<$cls>| $(-> rquickjs::Result<$res>)? { unsafe { Ok($func) } },
-        )?
+        )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]($($arg:ident),*) $(-> $res:ty)? { $func:expr }) => {
         let func = method!(@num $num);
-        func(
+        let $bld = func(
             $bld,
             stringify!($name),
             |$this: &Qt<$cls>, $($arg),*| $(-> rquickjs::Result<$res>)? {
                 unsafe { Ok($func) }
             },
-        )?
+        )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]($($arg:ident: $argty:ty),*) $(-> $res:ty)? { $func:expr }) => {
         let func = method!(@num $num);
-        func(
+        let $bld = func(
             $bld,
             stringify!($name),
             |$this: &Qt<$cls>, $($arg: $argty),*| $(-> rquickjs::Result<$res>)? {
                 unsafe { Ok($func) }
             },
-        )?
+        )?;
     },
 }
 
@@ -233,15 +235,15 @@ pub(in crate) macro qprops {
 }
 
 pub(in crate) macro qmethod {
-    (@num 0) => { TypeBuilder::method0 },
-    (@num 1) => { TypeBuilder::method1 },
-    (@num 2) => { TypeBuilder::method2 },
-    (@num 3) => { TypeBuilder::method3 },
-    (@num 4) => { TypeBuilder::method4 },
-    (@num 5) => { TypeBuilder::method5 },
-    (@num 6) => { TypeBuilder::method6 },
-    (@num 7) => { TypeBuilder::method7 },
-    (@num 8) => { TypeBuilder::method8 },
+    (@num 0) => { ClassBuilder::method0 },
+    (@num 1) => { ClassBuilder::method1 },
+    (@num 2) => { ClassBuilder::method2 },
+    (@num 3) => { ClassBuilder::method3 },
+    (@num 4) => { ClassBuilder::method4 },
+    (@num 5) => { ClassBuilder::method5 },
+    (@num 6) => { ClassBuilder::method6 },
+    (@num 7) => { ClassBuilder::method7 },
+    (@num 8) => { ClassBuilder::method8 },
     ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]() $(-> $res:ty)? { $func:expr }) => {
         let func = qmethod!(@num $num);
         func(

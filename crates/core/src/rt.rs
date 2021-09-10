@@ -48,7 +48,7 @@ impl Runtime {
         self.objects.deref().borrow_mut().insert(Instance::new(cls))
     }
 
-    pub(in crate) fn get_instance<CLS: Type>(&self, idx: Idx) -> Option<ObjRef<CLS>> {
+    pub(in crate) fn get_instance<CLS: Type>(&self, idx: Idx) -> Result<ObjRef<CLS>> {
         Obj::<CLS>::from_rt(&self, idx)
     }
 

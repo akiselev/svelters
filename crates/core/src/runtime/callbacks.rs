@@ -37,8 +37,7 @@ impl<CLS: Type> Disconnect<CLS> {
         *self.func.borrow_mut() = Some(Box::new(move |el: Element| {
             tracing::info!("Disconnecting {}", sub.name);
             let node = el.node()?;
-            let obj = Obj::<CLS>::from_rt(&node.rt, node.idx)
-                .ok_or_else(|| exception!("Could not find Obj<{}>", CLS::CLASS_NAME))?;
+            let obj = Obj::<CLS>::from_rt(&node.rt, node.idx)?;
             func(&*obj, sub)?;
             Ok(())
         }));

@@ -12,6 +12,14 @@ pub struct Virt<'js, CLS> {
     pub(in crate) obj: Object<'js>,
 }
 
+impl<'js, CLS> std::ops::Deref for Virt<'js, CLS> {
+    type Target = CLS;
+
+    fn deref(&self) -> &Self::Target {
+        &self.cls
+    }
+}
+
 impl<'js, CLS> HasRefs for Virt<'js, CLS> {
     fn mark_refs(&self, marker: &RefsMarker) {
         self.obj.mark(marker)

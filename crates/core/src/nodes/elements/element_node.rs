@@ -86,8 +86,4 @@ impl<'js> ElementNode<'js> {
             }),
         })
     }
-
-    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<ObjRef<CLS>> {
-        Obj::<CLS>::from_rt(&self.rt, self.idx)
-    }
 }

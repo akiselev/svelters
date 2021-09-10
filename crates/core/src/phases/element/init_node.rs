@@ -88,23 +88,17 @@ fn add_event_listener<'js, CLS: Type>(
     value: Function<'js>,
     _opt: Opt<Object<'js>>,
 ) -> Result<()> {
-    // TODO: ELEMENT FIX
-    // let ctx = this.ctx();
-    // let doc: &mut Document = ctx.globals().get("document")?;
-    // let inner = doc.inner.borrow();
-    // let tag = { this.node()?.tag_name };
-    // let _type = inner
-    //     .types
-    //     .get(tag)
-    //     .ok_or_else(|| Error::new(ctx, format!("Could not find type {}", CLS::CLASS_NAME)))?;
-    // let subscribe = _type.events.get(name.as_str()).ok_or_else(|| {
-    //     Error::new(
-    //         ctx,
-    //         format!("Could not find event {} for {}", name, CLS::CLASS_NAME),
-    //     )
-    // })?;
-    // (subscribe.subscribe)(this, value)?;
-    Ok(())
+    let node = this.node()?;
+    let rt = node.rt.inner.deref().borrow();
+    let typedef = rt.types.get(node.typekey).unwrap();
+    let event = typedef.events.get(name.as_str()).ok_or_else(|| {
+        exception!(
+            "{} does not have an attribute named {}",
+            node.tag_name,
+            name
+        )
+    })?;
+    (event.subscribe)(this.clone(), value)
 }
 
 #[inline(always)]
@@ -153,7 +147,18 @@ fn set_attribute<'js>(
         name,
         value.type_of()
     );
-    // TODO: FIX CASTER
-    // this.borrow().obj.set(name, value)
-    Ok(())
+    let rt = this.rt.inner.deref().borrow();
+    let typedef = rt.types.get(this.typekey).unwrap();
+    let prop = typedef.props.get(name.as_str()).ok_or_else(|| {
+        exception!(
+            "{} does not have an attribute named {}",
+            this.tag_name,
+            name
+        )
+    })?;
+    if let Some(setter) = &prop.setter {
+        (setter)(ctx, &this.rt, this.idx, value)
+    } else {
+        Err(exception!("{}::{} is read only", this.tag_name, name))
+    }
 }

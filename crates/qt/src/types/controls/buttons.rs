@@ -23,7 +23,7 @@ define!(|cls: QAbstractButton| {
         };
     });
 
-    cls.superclass::<Qt<QWidget>>()?;
+    let cls = cls.superclass::<Qt<QWidget>>()?;
     event!(cls.clicked as SlotOfBool[val](val));
 });
 

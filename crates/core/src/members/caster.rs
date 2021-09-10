@@ -17,8 +17,7 @@ where
                     move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
                         let cls: &Obj<CLS> = this.as_ref();
                         let rt = cls.rt.inner.deref().borrow();
-                        let obj = Obj::<CLS>::from_rt(&cls.rt, cls.idx)
-                            .ok_or_else(|| exception!("Could not find Obj<{}>", CLS::CLASS_NAME))?;
+                        let obj = Obj::<CLS>::from_rt(&cls.rt, cls.idx)?;
                         let objref = this.as_object().clone();
                         let proto: Object<'js> = objref.get("__VIRT__")?;
                         if CLS::CLASS_NAME == target {
@@ -72,10 +71,7 @@ fn caster_fn<'js, BASE: Type + Cast<CLS>, CLS: Type>(
     rt: Rt,
     idx: Idx,
 ) -> Result<Value<'js>> {
-    println!("Trying to cast {} to {}", BASE::CLASS_NAME, CLS::CLASS_NAME);
-    println!("Trying to cast {} to {}", BASE::CLASS_NAME, CLS::CLASS_NAME);
-    let this = Obj::<BASE>::from_rt(&rt, idx)
-        .ok_or_else(|| exception!("Could not get base Obj<{}>", BASE::CLASS_NAME))?;
+    let this = Obj::<BASE>::from_rt(&rt, idx)?;
     Virt::<CLS>::new(rt.clone(), idx, this.cast(), obj).into_js(ctx)
 }
 

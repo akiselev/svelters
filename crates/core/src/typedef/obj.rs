@@ -26,33 +26,25 @@ where
         }
     }
 
-    pub fn borrow(&self) -> Option<ObjRef<CLS>> {
+    pub fn borrow(&self) -> Result<ObjRef<CLS>> {
         Obj::<CLS>::from_rt(&self.rt, self.idx)
     }
 
-    pub(in crate) fn from_rt(rt: &Rt, idx: Idx) -> Option<ObjRef<CLS>> {
+    pub(in crate) fn from_rt(rt: &Rt, idx: Idx) -> Result<ObjRef<CLS>> {
         let rt = rt.objects.deref().borrow();
-        println!(">>>>>");
-        println!(">>>>>");
         ObjRefTryBuilder {
             rt,
             obj_builder: |this: &Ref<ObjMap>| {
-                if let Some(inst) = this.get(idx) {
-                    if let Some(inst) = inst.data.downcast_ref::<CLS>() {
-                        Result::<_, ()>::Ok(inst)
-                    } else {
-                        panic!("Could not downcast");
-                        panic!("Could not downcast");
-                    }
-                } else {
-                    panic!("Could not get instance");
-                    panic!("Could not get instance");
-                }
+                let inst = this.get(idx).ok_or_else(|| {
+                    exception!("Could not find object for Obj<{}>", CLS::CLASS_NAME)
+                })?;
+                inst.data
+                    .downcast_ref::<CLS>()
+                    .ok_or_else(|| exception!("Could not cast to {}", CLS::CLASS_NAME))
             },
             cls: Class::new(),
         }
         .try_build()
-        .ok()
     }
 }
 

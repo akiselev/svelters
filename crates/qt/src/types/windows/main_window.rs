@@ -29,46 +29,37 @@ define!(|cls: QMainWindow| {
             }
             Ok(())
         },
-    )?;
-    cls.constructor0(|| unsafe { Ok(Qt::new(QMainWindow::new_0a())) })?
-        .as_element("qMainWindow", || unsafe {
-            Ok(Qt::new(QMainWindow::new_0a()))
-        })?
-        .superclass::<Qt<QWidget>>()?
-        .with_slot(BasicSlot::new(
-            |node, child| {
+    )?
+    .constructor0(|| unsafe { Ok(Qt::new(QMainWindow::new_0a())) })?
+    .as_element("qMainWindow", || unsafe {
+        Ok(Qt::new(QMainWindow::new_0a()))
+    })?
+    .superclass::<Qt<QWidget>>()?
+    .with_slot(BasicSlot::new(
+        |node, child| {
+            let this = node.cast_as::<Self>().unwrap();
+            let widget = child.cast_as::<Qt<QWidget>>()?;
+            unsafe { this.set_central_widget(widget.as_ptr()) };
+            node.append_node(child.clone());
+            Ok(())
+        },
+        |node, child, anchor| {
+            if let Some(anchor) = anchor {
+                Err(exc!("QMainWindow only allows one central widget"))
+            } else {
                 let this = node.cast_as::<Self>().unwrap();
-                if let Some(widget) = child.cast_as::<Qt<QWidget>>() {
-                    unsafe { this.set_central_widget(widget.as_ptr()) };
-                    node.append_node(child);
-                    Ok(())
-                } else {
-                    Err(exc!(cast QWidget))
-                }
-            },
-            |node, child, anchor| {
-                if let Some(anchor) = anchor {
-                    Err(exc!("QMainWindow only allows one central widget"))
-                } else {
-                    let this = node.cast_as::<Self>().unwrap();
-                    if let Some(widget) = child.cast_as::<Qt<QWidget>>() {
-                        unsafe { this.set_central_widget(widget.as_ptr()) };
-                        node.append_node(child);
-                        Ok(())
-                    } else {
-                        Err(exc!(cast QWidget))
-                    }
-                }
-            },
-            |node, child| {
-                let this = node.cast_as::<Self>().unwrap();
-                if let Some(widget) = child.cast_as::<Qt<QWidget>>() {
-                    unsafe { this.take_central_widget() };
-                    node.remove_node(child);
-                    Ok(())
-                } else {
-                    Err(exc!(cast QWidget))
-                }
-            },
-        ))?;
+                let widget = child.cast_as::<Qt<QWidget>>()?;
+                unsafe { this.set_central_widget(widget.as_ptr()) };
+                node.append_node(child.clone());
+                Ok(())
+            }
+        },
+        |node, child| {
+            let this = node.cast_as::<Self>().unwrap();
+            let widget = child.cast_as::<Qt<QWidget>>()?;
+            unsafe { this.take_central_widget() };
+            node.remove_node(child.clone());
+            Ok(())
+        },
+    ))?;
 });

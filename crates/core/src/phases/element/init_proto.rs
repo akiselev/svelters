@@ -33,17 +33,9 @@ where
                 "castAs",
                 rquickjs::Method(
                     move |value: JsClass<'b, ElementNode<'b>>, ctx: Ctx<'b>, target: String| {
-                        // TODO: FIX CASTER
-                        // let inner = this.borrow();
-                        // let func: Function = this.get("castAs")?;
-
-                        // let res: Value = Function::call(&func, (This(this), target))?;
-                        // Result::<_>::Ok(res)
-                        // Result::<_>::Ok(Value::new_undefined(ctx))
                         let this: &ElementNode<'b> = value.as_ref();
                         let rt = this.rt.inner.deref().borrow();
-                        let obj = Obj::<CLS>::from_rt(&this.rt, this.idx)
-                            .ok_or_else(|| exception!("Could not find Obj<{}>", CLS::CLASS_NAME))?;
+                        let obj = Obj::<CLS>::from_rt(&this.rt, this.idx)?;
                         if CLS::CLASS_NAME == target {
                             Virt::<CLS>::new(
                                 this.rt.clone(),

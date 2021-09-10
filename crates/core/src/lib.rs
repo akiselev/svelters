@@ -45,6 +45,7 @@ pub mod prelude {
 
     pub use crate::init::{cleanup_svelters, initialize_svelters};
     pub use crate::metadata::Metadata;
+    pub use crate::typedef::builder::ClassBuilder;
     pub use crate::typedef::builder::TypeBuilder;
     pub use crate::typedef::module::ModuleBuilder;
 }

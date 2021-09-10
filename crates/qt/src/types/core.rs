@@ -41,7 +41,8 @@ define!(|cls: QObject| {
 });
 
 define!(|cls: QWidget| {
-    cls.constructor0(|| unsafe { Ok(Qt::new(QWidget::new_0a())) })?
+    let cls = cls
+        .constructor0(|| unsafe { Ok(Qt::new(QWidget::new_0a())) })?
         .superclass::<Qt<QObject>>()?;
     methods!(cls(this: QWidget) {
         show[0]() { this.show() };

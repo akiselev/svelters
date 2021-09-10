@@ -8,6 +8,7 @@ use crate::inner::*;
 #[derive(Clone)]
 pub struct Node<'js> {
     pub(in crate) _ctx: Ctx<'js>,
+    pub(in crate) obj: Object<'js>,
     pub(in crate) this: UINode<'js>,
     pub(in crate) doc_cell: OnceCell<Document>,
 }
@@ -39,6 +40,11 @@ impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Node<'js> {
 impl<'js> Eq for Node<'js> {}
 
 impl<'js> Node<'js> {
+    pub fn cast_as<CLS: Clone + Type>(&self) -> Result<Virt<'js, CLS>> {
+        let func: Function = self.obj.get("castAs")?;
+        func.call((This(self.obj.clone()), CLS::CLASS_NAME))
+    }
+
     pub fn append_node(&self, node: Node<'js>) {
         let parent = self.this.clone();
         self.with_node(move |this| {
@@ -149,13 +155,6 @@ impl<'js> Node<'js> {
             let doc: &Document = self.ctx().globals().get("document")?;
             Result::Ok((*doc).clone())
         })
-    }
-
-    pub fn cast_as<CLS: Clone + Type>(&self) -> Option<ObjRef<CLS>> {
-        match &self.this {
-            UINode::Element(this) => this.cast_as::<CLS>(),
-            _ => None,
-        }
     }
 
     pub fn num_children(&self) -> usize {
@@ -298,26 +297,27 @@ impl<'js> rquickjs::IntoJs<'js> for UINode<'js> {
 
 impl<'js, 'a> rquickjs::FromJs<'js> for Node<'js> {
     fn from_js(_ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        let this = if let Some(obj) = value.as_object() {
-            match obj {
+        if let Some(obj) = value.as_object() {
+            let this = match obj {
                 obj if obj.instance_of::<ElementNode<'js>>() => {
-                    UINode::Element(ElementNode::from_js_obj(_ctx, value)?)
+                    UINode::Element(ElementNode::from_js_obj(_ctx, value.clone())?)
                 }
                 obj if obj.instance_of::<SlotNode<'js>>() => {
-                    UINode::Slot(SlotNode::from_js_obj(_ctx, value)?)
+                    UINode::Slot(SlotNode::from_js_obj(_ctx, value.clone())?)
                 }
                 obj if obj.instance_of::<TextNode<'js>>() => {
-                    UINode::Text(TextNode::from_js_obj(_ctx, value)?)
+                    UINode::Text(TextNode::from_js_obj(_ctx, value.clone())?)
                 }
                 _ => return Err(Error::new_from_js("object", "Node")),
-            }
+            };
+            Ok(Node {
+                _ctx,
+                this,
+                obj: obj.clone(),
+                doc_cell: OnceCell::new(),
+            })
         } else {
-            return Err(Error::new_from_js(value.type_name(), "Node"));
-        };
-        Ok(Node {
-            _ctx,
-            this,
-            doc_cell: OnceCell::new(),
-        })
+            Err(Error::new_from_js(value.type_name(), "Node"))
+        }
     }
 }

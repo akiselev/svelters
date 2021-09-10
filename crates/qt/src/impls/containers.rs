@@ -103,9 +103,7 @@ where
     X: StaticUpcast<QObject> + CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
 {
-    type Output<'a> = DerefWrapper<'a, X>;
-
-    fn cast<'a>(&'a self) -> Self::Output<'a> {
+    fn cast<'a>(&'a self) -> Qt<X> {
         unsafe {
             // let obj: Ref<QObject> = CastFrom::cast_from(self.get_ptr());
             // let ptr = CastFrom::cast_from(obj);
@@ -117,7 +115,7 @@ where
                 }
             };
             let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
-            DerefWrapper(Qt::Ref(ptr.as_ptr()), PhantomData)
+            Qt::Ref(ptr.as_ptr())
         }
     }
 }
@@ -129,9 +127,7 @@ where
     X: CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
 {
-    type Output<'a> = QDerefWrapper<'a, X>;
-
-    fn cast<'a>(&'a self) -> Self::Output<'a> {
+    fn cast<'a>(&'a self) -> Q<X> {
         unsafe {
             // let obj: Ref<QObject> = CastFrom::cast_from(self.get_ptr());
             // let ptr = CastFrom::cast_from(obj);
@@ -143,7 +139,7 @@ where
                 }
             };
             let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
-            QDerefWrapper(Q::Ptr(ptr.as_ptr()), PhantomData)
+            Q::Ptr(ptr.as_ptr())
         }
     }
 }
@@ -155,9 +151,7 @@ where
     X: CppDeletable,
     Ref<X>: CastFrom<Ref<CLS>>,
 {
-    type Output<'a> = QDerefWrapper<'a, X>;
-
-    fn cast<'a>(&'a self) -> Self::Output<'a> {
+    fn cast<'a>(&'a self) -> Q<X> {
         unsafe {
             // let obj: Ref<QObject> = CastFrom::cast_from(self.get_ptr());
             // let ptr = CastFrom::cast_from(obj);
@@ -168,7 +162,7 @@ where
                 }
             };
             let ptr: Ref<X> = CastFrom::cast_from(Ref::new(ptr).unwrap());
-            QDerefWrapper(Q::Ptr(ptr.as_ptr()), PhantomData)
+            Q::Ptr(ptr.as_ptr())
         }
     }
 }
