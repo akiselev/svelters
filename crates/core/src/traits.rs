@@ -24,39 +24,7 @@ pub trait Framework: Sized + 'static {
 
 /// Cast Self to type &T
 pub trait Cast<T> {
-    type Output<'a>: AsRef<T>;
-
-    fn cast<'a>(&'a self) -> Self::Output<'a>;
-}
-
-pub trait Csaster<T> {
-    fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
-        &'a self,
-        func: FUNC,
-    ) -> Result<R>;
-}
-
-impl<T, U> Csaster<T> for U {
-    default fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
-        &'a self,
-        _func: FUNC,
-    ) -> Result<R> {
-        Err(exception!(
-            "Type <{}> does not implement Cast<{}>",
-            std::any::type_name::<U>(),
-            std::any::type_name::<T>()
-        ))
-    }
-}
-
-impl<T, U: Cast<T>> Csaster<T> for U {
-    fn with_cast<'a, FUNC: for<'b> FnOnce(&'b T) -> Result<R>, R>(
-        &'a self,
-        func: FUNC,
-    ) -> Result<R> {
-        let caster = self.cast();
-        func(caster.as_ref())
-    }
+    fn cast<'a>(&'a self) -> T;
 }
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]

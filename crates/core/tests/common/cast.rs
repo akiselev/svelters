@@ -135,9 +135,7 @@ where
     Fw<O>: StaticUpcast<Fw<T>>,
     T: Clone,
 {
-    type Output<'a> = RefWrapper<'a, Fw<T>>;
-
-    fn cast<'a>(&'a self) -> Self::Output<'a> {
-        RefWrapper(self.static_cast().clone(), PhantomData)
+    fn cast<'a>(&'a self) -> Fw<T> {
+        self.static_cast().clone()
     }
 }

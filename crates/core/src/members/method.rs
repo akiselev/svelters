@@ -42,9 +42,8 @@ macro_rules! tup {
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Obj<BASE> = this.as_ref();
                                     let ptr = obj.borrow().unwrap();
-                                    let cls = ptr.cast();
                                     (self.func)(
-                                        cls.as_ref(),
+                                        &ptr.cast(),
                                         $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
                                     )
                                 },
@@ -78,7 +77,7 @@ macro_rules! tup {
                                     let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
                                     let cls = obj.cast();
                                     let res = (self.func)(
-                                        cls.as_ref(),
+                                        &cls,
                                         $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
                                     )?;
                                     res.into_js(ctx)
@@ -111,11 +110,10 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Virt<BASE> = this.as_ref();
-                                    let base = obj.as_base::<BASE>().expect("WTDF");
-                                    let ptr = base.cast();
+                                    let ptr = obj.cls.cast();
 
                                     let res = (self.func)(
-                                        ptr.as_ref(),
+                                        &ptr,
                                         $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
                                     )?;
                                     Result::<_>::Ok(res.into_js(ctx))

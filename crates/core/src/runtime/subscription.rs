@@ -78,7 +78,7 @@ impl<'js> SubscriptionBuilder<'js> {
                 let disconnect =
                     Disconnect::new(self.callbacks.borrow().disconnect.clone(), sub.clone());
                 let obj = self.element.cast_as::<CLS>()?;
-                obj.with_cast(|data| func(data, sub, disconnect))
+                func(&obj.cls, sub, disconnect)
             };
             if self.callbacks.borrow().disconnect.borrow().is_none() {
                 tracing::warn!("DisconnectFn not set after connect for {}", name);

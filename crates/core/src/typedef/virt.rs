@@ -8,7 +8,7 @@ use crate::{build_class, inner::*};
 pub struct Virt<'js, CLS> {
     pub(in crate) rt: Rt,
     pub(in crate) idx: Idx,
-    pub(in crate) cls: Class<CLS>,
+    pub(in crate) cls: CLS,
     pub(in crate) obj: Object<'js>,
 }
 
@@ -22,13 +22,8 @@ impl<'js, CLS> Virt<'js, CLS>
 where
     CLS: Type,
 {
-    pub(in crate) fn new(rt: Rt, idx: Idx, obj: Object<'js>) -> Self {
-        Self {
-            rt,
-            idx,
-            obj,
-            cls: Class::new(),
-        }
+    pub(in crate) fn new(rt: Rt, idx: Idx, cls: CLS, obj: Object<'js>) -> Self {
+        Self { rt, idx, obj, cls }
     }
 
     pub fn get<T>(&self, name: &str) -> Result<T>
@@ -48,10 +43,6 @@ where
     pub fn cast_as<OTHER: Clone + Type>(&self) -> Option<Virt<'js, OTHER>> {
         let func: Function = self.obj.get("castAs").ok()?;
         func.call((This(self.obj.clone()), OTHER::CLASS_NAME)).ok()
-    }
-
-    pub(in crate) fn as_base<BASE: Type>(&self) -> Option<ObjRef<BASE>> {
-        Obj::<BASE>::from_rt(&self.rt, self.idx)
     }
 }
 

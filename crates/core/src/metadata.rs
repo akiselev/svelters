@@ -163,7 +163,7 @@ where
     move |ctx: Ctx, rt: &Rt, idx: Idx| {
         let obj = Obj::<BASE>::from_rt(&rt, idx).unwrap();
         let cls = obj.cast();
-        let val = getter(cls.as_ref())?;
+        let val = getter(&cls)?;
         val.into_js(ctx)
     }
 }
@@ -181,6 +181,6 @@ where
         let obj = Obj::<BASE>::from_rt(&rt, idx).unwrap();
         let cls = obj.cast();
         let val = PROP::from_js(ctx, value)?;
-        setter(cls.as_ref(), val)
+        setter(&cls, val)
     }
 }
