@@ -26,6 +26,7 @@ mod macros;
 mod wrapper;
 
 mod types {
+    mod buttons;
     mod core;
     mod windows;
 }
@@ -54,9 +55,16 @@ pub(in crate) mod inner {
 mod module {
     use super::Gtk;
     use glib::object::Object as GObject;
-    use gtk4::{Application, ApplicationWindow, Window};
+    use gtk4::*;
 
-    crate::macros::module!(Gtk: GObject, Application, Window, ApplicationWindow);
+    crate::macros::module!(
+        Gtk: GObject,
+        Widget,
+        Application,
+        Window,
+        ApplicationWindow,
+        Button
+    );
 }
 
 pub struct GtkExecutor;
@@ -68,4 +76,9 @@ impl ExecutorSpawner for GtkExecutor {
         let ctx = MainContext::default();
         ctx.spawn_local(task)
     }
+}
+
+pub fn spawn_local(fut: impl 'static + Future<Output = ()>) {
+    let ctx = MainContext::default();
+    ctx.spawn_local(fut)
 }

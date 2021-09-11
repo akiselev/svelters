@@ -1,9 +1,9 @@
-use std::time::Duration;
+use std::{future, time::Duration};
 
 use rquickjs::{ClassDef, Function, Object, This, Value};
 use svelters::Svelters;
 use svelters_core::prelude::*;
-use svelters_gtk4::{Gtk, GtkExecutor};
+use svelters_gtk4::{spawn_local, Gtk, GtkExecutor};
 
 #[tracing::instrument]
 fn main() {
@@ -34,5 +34,9 @@ fn main() {
             tracing::error!("Eval error: {}", err);
             std::thread::sleep(Duration::from_secs(2));
         }
+        spawn_local(async move {
+            let sv = sv;
+            future::pending().await
+        })
     })
 }

@@ -1,16 +1,22 @@
 use crate::inner::*;
 
-impl<'a, 'js, 'c, CLS, SLOT> Implements<InitElementProto<'a, 'js, 'c, CLS>>
+impl<'a, 'js, 'c, BASE, CLS, SLOT> Implements<InitElementProto<'a, 'js, 'c, BASE>>
     for members::NativeSlot<CLS, SLOT>
 where
+    BASE: Type + Upcast<CLS>,
     CLS: Type,
     SLOT: INativeSlot,
 {
     #[inline(always)]
     fn build_phase(
         self,
-        phase: InitElementProto<'a, 'js, 'c, CLS>,
-    ) -> Result<InitElementProto<'a, 'js, 'c, CLS>> {
+        phase: InitElementProto<'a, 'js, 'c, BASE>,
+    ) -> Result<InitElementProto<'a, 'js, 'c, BASE>> {
+        tracing::info!(
+            "InitElementProto(BASE: {}, CLS: {})",
+            BASE::CLASS_NAME,
+            CLS::CLASS_NAME
+        );
         {
             let slot = self.slot.clone();
             phase.obj.set(

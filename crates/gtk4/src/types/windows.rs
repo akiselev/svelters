@@ -51,6 +51,14 @@ define!(|cls: Window| {
             this.is_maximized();
             this.set_maximized(maximized);
         };
+        defaultWidth: i32 {
+            this.default_width();
+            this.set_default_width(defaultWidth);
+        };
+        defaultHeight: i32 {
+            this.default_height();
+            this.set_default_height(defaultHeight);
+        };
         fullscreened: bool {
             this.is_fullscreened();
             this.set_fullscreened(fullscreened);
@@ -124,12 +132,46 @@ define!(|cls: Window| {
         //     this.set_transient_for(transientFor);
         // };
     });
+    let cls = cls.with_slot(BasicSlot::new(
+        |node, child| {
+            let this = node.cast_as::<Self>().unwrap();
+            if let Some(child) = this.child() {
+                return Err(exception!("Window only allows one child"));
+            }
+            let widget = child.cast_as::<Gtk<Widget>>()?;
+            this.set_child(Some(&widget.0));
+            node.append_node(child.clone());
+            Ok(())
+        },
+        |node, child, anchor| {
+            if let Some(anchor) = anchor {
+                Err(exc!("Window only allows one child"))
+            } else {
+                let this = node.cast_as::<Self>().unwrap();
+                let widget = child.cast_as::<Gtk<Widget>>()?;
+                this.set_child(Some(&widget.0));
+                node.append_node(child.clone());
+                Ok(())
+            }
+        },
+        |node, child| {
+            let this = node.cast_as::<Self>().unwrap();
+            let widget = child.cast_as::<Gtk<Widget>>()?;
+            if let Some(gtk_child) = this.child() {
+                if widget.0 == gtk_child {
+                    this.set_child::<Widget>(None);
+                    node.remove_node(child.clone());
+                }
+            }
+            Ok(())
+        },
+    ))?;
     // event!(cls.clicked as SlotOfBool[val](val));
 });
 
 define!(|cls: ApplicationWindow| {
     let cls =
-        cls.superclass::<Gtk<Widget>>()?
+        cls.superclass::<Gtk<Window>>()?
             .as_element_with_js("applicationWindow", |ctx: Ctx| {
                 let app: &Obj<Gtk<Application>> = ctx.globals().get("application")?;
                 let inner = app.borrow()?;

@@ -7,6 +7,7 @@ use svelters_core::prelude::*;
 
 use crate::inner::*;
 
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Gtk<CLS = ()>(pub CLS);
 
 impl Gtk<()> {
@@ -22,15 +23,6 @@ impl Gtk<()> {
 
     pub fn module() -> Self {
         Self(())
-    }
-}
-
-impl<CLS> Clone for Gtk<CLS>
-where
-    CLS: Clone,
-{
-    fn clone(&self) -> Self {
-        Gtk(self.0.clone())
     }
 }
 

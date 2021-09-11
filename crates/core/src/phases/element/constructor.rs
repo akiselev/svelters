@@ -27,6 +27,7 @@ where
                 self.name,
                 smallbox!(constructor_fn(rt, name, func, proto_key)),
             );
+            tracing::info!("Keys: {:?}", inner.elements.keys());
         }
         Ok(phase)
     }
@@ -45,9 +46,9 @@ where
     move |ctx| {
         let proto: Object = ctx
             .get_register(proto_key)
-            .unwrap()
+            .ok_or_else(|| exception!("Could not get proto for type {}", CLS::CLASS_NAME))?
             .as_object()
-            .unwrap()
+            .ok_or_else(|| exception!("Proto for type {} is not an object", CLS::CLASS_NAME))?
             .clone();
         let res = (func)()?;
         let el = ElementNode::new::<CLS>(rt.upgrade().unwrap(), ctx, name, res)?;
@@ -102,10 +103,11 @@ where
     move |ctx| {
         let proto: Object = ctx
             .get_register(proto_key)
-            .unwrap()
+            .ok_or_else(|| exception!("Could not get proto for type {}", CLS::CLASS_NAME))?
             .as_object()
-            .unwrap()
+            .ok_or_else(|| exception!("Proto for type {} is not an object", CLS::CLASS_NAME))?
             .clone();
+        tracing::info!("Constructing element {}", name);
         let res = (func)(ctx)?;
         let el = ElementNode::new::<CLS>(rt.upgrade().unwrap(), ctx, name, res)?;
         WithProto(el, proto).into_js(ctx)

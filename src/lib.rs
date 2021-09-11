@@ -47,7 +47,7 @@ impl Svelters {
     }
 
     #[tracing::instrument(skip(self))]
-    pub fn eval<P>(self, path: P) -> Result<()>
+    pub fn eval<P>(&self, path: P) -> Result<()>
     where
         P: std::fmt::Debug + AsRef<Path>,
     {

@@ -2,6 +2,6 @@
     export let text;
 </script>
 
-<qPushButton {text} on:clicked acceptDrops={true} visible={false} />
+<button label={text} />
 <!-- <slot />
 <svelte:options namespace="foreign" /> -->
