@@ -17,7 +17,7 @@ use std::{ffi::CString, os::raw::c_char, path::Path, time::Duration};
 use rquickjs::{
     bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, Func,
     Function, IntoJs, ModuleLoader, NativeLoader, Object, Persistent, Result as JsResult,
-    Runtime as JsRuntime, ScriptLoader,
+    Runtime as JsRuntime, ScriptLoader, Value,
 };
 
 use svelters_compiler::{compile_sync, SvelteCompiler};
@@ -52,9 +52,14 @@ impl Svelters {
     {
         let modpath = path.as_ref().to_owned();
         let src = compile_sync(&self.compiler, path)?;
-        let res: Result<()> = self
-            .ctx
-            .with(|ctx| ctx.eval_global_module::<(), _>(modpath, Some(src.into_bytes())));
+        let res: Result<()> = self.ctx.with(|ctx| {
+            let res = ctx.eval_global_module::<Value, _>(modpath, Some(src.into_bytes()));
+            match res {
+                Ok(ok) => tracing::info!("Success! Result: {:?}", ok),
+                Err(err) => tracing::error!("Failure! Result: {}", err),
+            }
+            Ok(())
+        });
         res
     }
 
@@ -74,6 +79,8 @@ impl Svelters {
 
 impl Drop for Svelters {
     fn drop(&mut self) {
+        while let Ok(true) = self.ctx.runtime().execute_pending_job() {}
+        self.ctx.runtime().run_gc();
         self.ctx.with(|ctx| {
             if let Err(err) = cleanup_svelters(ctx) {
                 tracing::error!("Error while cleaning up svelters: {}", err);

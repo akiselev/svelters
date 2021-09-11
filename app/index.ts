@@ -1,9 +1,12 @@
-import * as core from "QtCore";
-import { QMainWindow } from "QtWidgets";
+import * as core from "Gtk";
 import App from "./App.svelte";
-window.main = document.createElement("qMainWindow");
+console.log(">>>>>, 1");
+// window.main = document.createElement("qMainWindow");
+console.log(">>>>>, 2");
 window.main.windowOpacity = 0.5;
+console.log(">>>>>, 3");
 window.main.show();
+console.log(">>>>>, 4");
 
 window.App = new App({ target: window.main });
 
