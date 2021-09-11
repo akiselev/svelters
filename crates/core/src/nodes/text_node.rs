@@ -1,7 +1,44 @@
+use rquickjs::{bind, HasRefs, Object, Persistent};
+
 use crate::inner::*;
 
-impl<'x> ClassDef for SlotNode<'x> {
-    const CLASS_NAME: &'static str = "SlotNode";
+#[derive(Clone, Eq, PartialEq)]
+pub struct TextNode<'js>(pub(crate) Inner<TextData<'js>>);
+
+impl<'js> std::ops::Deref for TextNode<'js> {
+    type Target = Inner<TextData<'js>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<'js> TextNode<'js> {
+    // constructor
+    pub fn new(text: String) -> Self {
+        Self(Inner::new(TextData {
+            text,
+            node: NodeData::new(),
+        }))
+    }
+
+    pub fn get_text(&self) -> String {
+        self.with(|data| data.text.clone())
+    }
+
+    pub fn set_text(&mut self, text: String) {
+        self.with_mut(|data| data.text = text)
+    }
+}
+
+#[derive(Clone, Eq, PartialEq)]
+pub struct TextData<'js> {
+    pub(in crate) text: String,
+    pub(in crate) node: NodeData<'js>,
+}
+
+impl<'x> ClassDef for TextNode<'x> {
+    const CLASS_NAME: &'static str = "TextNode";
 
     unsafe fn class_id() -> &'static mut ClassId {
         static mut CLASS_ID: ClassId = ClassId::new();
@@ -17,22 +54,22 @@ impl<'x> ClassDef for SlotNode<'x> {
     fn init_proto<'js>(_ctx: Ctx<'js>, _proto: &Object<'js>) -> Result<()> {
         // proto.set(
         //     "createEvent",
-        //     rquickjs::Func::new("createEvent", rquickjs::Method(Slot::create_event)),
+        //     rquickjs::Func::new("createEvent", rquickjs::Method(TextNode::create_event)),
         // )?;
         // proto.set(
         //     "createElement",
-        //     rquickjs::Func::new("createElement", rquickjs::Method(Slot::create_element)),
+        //     rquickjs::Func::new("createElement", rquickjs::Method(TextNode::create_element)),
         // )?;
         // proto.set(
         //     "createElementNS",
         //     rquickjs::Func::new(
         //         "createElementNS",
-        //         rquickjs::Method(Slot::create_element_ns),
+        //         rquickjs::Method(TextNode::create_element_ns),
         //     ),
         // )?;
         // proto.set(
         //     "dispatchEvent",
-        //     rquickjs::Func::new("dispatchEvent", rquickjs::Method(Slot::dispatch_event)),
+        //     rquickjs::Func::new("dispatchEvent", rquickjs::Method(TextNode::dispatch_event)),
         // )?;
         Ok(())
     }
@@ -76,20 +113,20 @@ impl<'x> ClassDef for SlotNode<'x> {
     }
 }
 
-impl<'js> rquickjs::IntoJs<'js> for SlotNode<'js> {
+impl<'js> rquickjs::IntoJs<'js> for TextNode<'js> {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
-        <SlotNode as rquickjs::ClassDef>::into_js_obj(self, ctx)
+        <TextNode as rquickjs::ClassDef>::into_js_obj(self, ctx)
     }
 }
 
-impl<'js, 'a> rquickjs::FromJs<'js> for &'a SlotNode<'js> {
+impl<'js, 'a> rquickjs::FromJs<'js> for &'a TextNode<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <SlotNode as rquickjs::ClassDef>::from_js_ref(ctx, value)
+        <TextNode as rquickjs::ClassDef>::from_js_ref(ctx, value)
     }
 }
 
-impl<'js, 'a> rquickjs::FromJs<'js> for &'a mut SlotNode<'js> {
+impl<'js, 'a> rquickjs::FromJs<'js> for &'a mut TextNode<'js> {
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
-        <SlotNode as rquickjs::ClassDef>::from_js_mut(ctx, value)
+        <TextNode as rquickjs::ClassDef>::from_js_mut(ctx, value)
     }
 }

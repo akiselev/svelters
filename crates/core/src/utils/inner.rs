@@ -39,6 +39,6 @@ impl<T> std::ops::Deref for Inner<T> {
     type Target = RefCell<T>;
 
     fn deref(&self) -> &Self::Target {
-        &*self.0
+        self.0.deref()
     }
 }
