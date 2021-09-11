@@ -81,9 +81,9 @@ mod impls {
 
 mod types {
     mod controls {
-        mod buttons;
+        mod basic;
 
-        pub use buttons::*;
+        pub use basic::*;
     }
 
     mod windows {
@@ -107,9 +107,11 @@ mod types {
     }
 
     mod core;
+    mod graphics;
 
     pub use self::controls::*;
     pub use self::core::*;
+    pub use self::graphics::*;
     pub use self::layout::*;
     pub use self::primitives::*;
     pub use self::windows::*;

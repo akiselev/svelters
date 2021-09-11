@@ -51,7 +51,7 @@ pub(in crate) macro define (|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
 
 pub(in crate) macro event {
     ($cls:ident.$name:ident as $slot:ty[$($arg:ident),* ]) => {
-        $cls.with_event(stringify!($name), |el, func| unsafe {
+        let $cls = $cls.with_event(stringify!($name), |el, func| unsafe {
             el.event(stringify!($name))?
                 .subscribe(func)
                 .connect(|this: &Self, sub, dc| {
@@ -65,10 +65,10 @@ pub(in crate) macro event {
                         Ok(())
                     })
                 })
-        })?
+        })?;
     },
     ($cls:ident.$name:ident as $slot:ty[$($arg:ident),*]($($var:ident),*)) => {
-        $cls.with_event(stringify!($name), |el, func| unsafe {
+        let $cls = $cls.with_event(stringify!($name), |el, func| unsafe {
             el.event(stringify!($name))?
                 .subscribe(func)
                 .connect(|this: &Self, sub, dc| {
@@ -86,7 +86,7 @@ pub(in crate) macro event {
                         Ok(())
                     })
                 })
-        })?
+        })?;
     }
 }
 
@@ -94,8 +94,8 @@ pub(in crate) macro prop {
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:block; $set:block $(;)? }) => {
         let $bld = $bld.prop(
             stringify!($name),
-            |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
-            |$this: &Qt<$cls>, $name: $ty| unsafe {
+            |$this: &$cls| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+            |$this: &$cls, $name: $ty| unsafe {
                 $set
                 Ok(())
             },
@@ -104,8 +104,8 @@ pub(in crate) macro prop {
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:expr; $set:expr $(;)? }) => {
         let $bld = $bld.prop(
             stringify!($name),
-            |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
-            |$this: &Qt<$cls>, $name: $ty| unsafe {
+            |$this: &$cls| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+            |$this: &$cls, $name: $ty| unsafe {
                 { $set }
                 Ok(())
             },
@@ -114,13 +114,13 @@ pub(in crate) macro prop {
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:block }) => {
         let $bld = $bld.readonly(
             stringify!($name),
-            |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+            |$this: &$cls| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
         )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident: $ty:ty { $get:expr $(;)? }) => {
         let $bld = $bld.readonly(
             stringify!($name),
-            |$this: &Qt<$cls>| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
+            |$this: &$cls| -> rquickjs::Result<$ty> { unsafe { Ok($get) } },
         )?;
     }
 }
@@ -148,7 +148,7 @@ pub(in crate) macro method {
         let $bld = func(
             $bld,
             stringify!($name),
-            |$this: &Qt<$cls>| $(-> rquickjs::Result<$res>)? { unsafe { Ok($func) } },
+            |$this: &$cls| $(-> rquickjs::Result<$res>)? { unsafe { Ok($func) } },
         )?;
     },
     ($bld:ident($this:ident: $cls:ty) => $name:ident[$num:tt]($($arg:ident),*) $(-> $res:ty)? { $func:expr }) => {
@@ -156,7 +156,7 @@ pub(in crate) macro method {
         let $bld = func(
             $bld,
             stringify!($name),
-            |$this: &Qt<$cls>, $($arg),*| $(-> rquickjs::Result<$res>)? {
+            |$this: &$cls, $($arg),*| $(-> rquickjs::Result<$res>)? {
                 unsafe { Ok($func) }
             },
         )?;
@@ -166,7 +166,7 @@ pub(in crate) macro method {
         let $bld = func(
             $bld,
             stringify!($name),
-            |$this: &Qt<$cls>, $($arg: $argty),*| $(-> rquickjs::Result<$res>)? {
+            |$this: &$cls, $($arg: $argty),*| $(-> rquickjs::Result<$res>)? {
                 unsafe { Ok($func) }
             },
         )?;

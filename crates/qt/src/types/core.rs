@@ -3,10 +3,10 @@ use std::{ffi::CStr, ops::Deref, os::raw::c_char};
 use frunk::hlist::IntoTuple2;
 use qt_core::{
     cpp_core::{CastFrom, CppBox, CppDeletable, NullPtr, Ptr, Ref, StaticDowncast, StaticUpcast},
-    QBox, QCoreApplication, QCoreApplicationArgs, QObject, QPtr, QString, SlotOfBool,
+    QBox, QCoreApplication, QCoreApplicationArgs, QEvent, QObject, QPtr, QString, SlotOfBool,
 };
 use qt_gui::QWindow;
-use qt_widgets::{QAbstractButton, QApplication, QMainWindow, QPushButton, QWidget};
+use qt_widgets::{QAbstractButton, QApplication, QMainWindow, QPushButton, QStyleOption, QWidget};
 use rquickjs::{AsFunction, Class, Loaded, Module as QJsModule, Native};
 
 use crate::{
@@ -14,6 +14,34 @@ use crate::{
     inner::*,
     QtCore, QtWidgets,
 };
+
+qdefine!(|cls: QStyleOption| {
+    // let cls = cls.constructor0(|| unsafe { Ok(Qt::new(QStyleOption::new_0a())) })?;
+    methods!(cls(this: Q<QStyleOption>) {
+        // accept[0]() { this.accept() };
+        // ignore[0]() { this.ignore() };
+    });
+    props!(cls(this: Q<QStyleOption>) {
+        // accepted: bool {
+        //     this.is_accepted();
+        //     this.set_accepted(accepted);
+        // };
+    });
+});
+
+qdefine!(|cls: QEvent| {
+    // let cls = cls.constructor0(|| unsafe { Ok(Qt::new(QEvent::new_0a())) })?;
+    methods!(cls(this: Q<QEvent>) {
+        accept[0]() { this.accept() };
+        ignore[0]() { this.ignore() };
+    });
+    props!(cls(this: Q<QEvent>) {
+        accepted: bool {
+            this.is_accepted();
+            this.set_accepted(accepted);
+        };
+    });
+});
 
 define!(|cls: QObject| {
     cls.constructor0(|| unsafe { Ok(Qt::new(QObject::new_0a())) })?
@@ -44,14 +72,14 @@ define!(|cls: QWidget| {
     let cls = cls
         .constructor0(|| unsafe { Ok(Qt::new(QWidget::new_0a())) })?
         .superclass::<Qt<QObject>>()?;
-    methods!(cls(this: QWidget) {
+    methods!(cls(this: Qt<QWidget>) {
         show[0]() { this.show() };
         hide[0]() { this.hide() };
         resize[2](w: i32, h: i32) {
             this.resize_2a(w, h)
         };
     });
-    props!(cls(this: QWidget) {
+    props!(cls(this: Qt<QWidget>) {
         height: i32 {
             this.height()
         };

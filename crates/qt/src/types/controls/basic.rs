@@ -1,318 +1,367 @@
+use qt_core::{QString, SlotNoArgs, SlotOfBool};
 use qt_widgets::*;
 
-define!(|cls: Qt<QAbstractButton>| {
+use crate::inner::*;
+
+define!(|cls: QAbstractButton| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QAbstractButton) {
+    props!(cls(this: Qt<QAbstractButton>) {
         text: Q<QString> {
             Q::Box(this.text());
             this.set_text(text.to_ref())
         };
+        autoExclusive: bool {
+            this.auto_exclusive();
+            this.set_auto_exclusive(autoExclusive);
+        };
+        autoRepeat: bool {
+            this.auto_repeat();
+            this.set_auto_repeat(autoRepeat);
+        };
+        autoRepeatDelay: i32 {
+            this.auto_repeat_delay();
+            this.set_auto_repeat_delay(autoRepeatDelay);
+        };
+        autoRepeatInterval: i32 {
+            this.auto_repeat_interval();
+            this.set_auto_repeat_interval(autoRepeatInterval);
+        };
+        checkable: bool {
+            this.is_checkable();
+            this.set_checkable(checkable);
+        };
+        checked: bool {
+            this.is_checked();
+            this.set_checked(checked);
+        };
+        down: bool {
+            this.is_down();
+            this.set_down(down);
+        };
+        // icon: QIcon {
+        //     this.icon();
+        //     this.set_icon(icon);
+        // };
+        // iconSize: QSize {
+        //     this.icon_size();
+        //     this.set_icon_size(iconSize);
+        // };
+        // shortcut: QKeySequence {
+        //     this.shortcut();
+        //     this.set_shortcut(shortcut);
+        // };
     });
-    methods!(cls(this: QAbstractButton) {
+    methods!(cls(this: Qt<QAbstractButton>) {
 
     });
     event!(cls.clicked as SlotOfBool[val](val));
+    event!(cls.toggled as SlotOfBool[val](val));
+    event!(cls.pressed as SlotNoArgs[]());
+    event!(cls.released as SlotNoArgs[]());
 });
 
-define!(|cls: Qt<QAbstractScrollArea>| {
+define!(|cls: QAbstractScrollArea| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QAbstractScrollArea) {
+    props!(cls(this: Qt<QAbstractScrollArea>) {
 
     });
-    methods!(cls(this: QAbstractScrollArea) {
+    methods!(cls(this: Qt<QAbstractScrollArea>) {
 
     });
 });
 
-define!(|cls: Qt<QAbstractSlider>| {
+define!(|cls: QAbstractSlider| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QAbstractSlider) {
+    props!(cls(this: Qt<QAbstractSlider>) {
 
     });
-    methods!(cls(this: QAbstractSlider) {
+    methods!(cls(this: Qt<QAbstractSlider>) {
 
     });
 });
 
-define!(|cls: Qt<QAbstractSpinBox>| {
+define!(|cls: QAbstractSpinBox| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QAbstractSpinBox) {
+    props!(cls(this: Qt<QAbstractSpinBox>) {
 
     });
-    methods!(cls(this: QAbstractSpinBox) {
+    methods!(cls(this: Qt<QAbstractSpinBox>) {
 
     });
 });
 
-define!(|cls: Qt<QCheckBox>| {
+define!(|cls: QCheckBox| {
+    let cls = cls
+        .superclass::<Qt<QAbstractButton>>()?
+        .constructor0(|| unsafe { Ok(Qt::new(QCheckBox::new())) })?
+        .as_element("qCheckBox", || unsafe { Ok(Qt::new(QCheckBox::new())) })?;
+    props!(cls(this: Qt<QCheckBox>) {
+
+    });
+    methods!(cls(this: Qt<QCheckBox>) {
+
+    });
+});
+
+define!(|cls: QComboBox| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QCheckBox) {
+    props!(cls(this: Qt<QComboBox>) {
 
     });
-    methods!(cls(this: QCheckBox) {
+    methods!(cls(this: Qt<QComboBox>) {
 
     });
 });
 
-define!(|cls: Qt<QComboBox>| {
+define!(|cls: QCommandLinkButton| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QComboBox) {
+    props!(cls(this: Qt<QCommandLinkButton>) {
 
     });
-    methods!(cls(this: QComboBox) {
+    methods!(cls(this: Qt<QCommandLinkButton>) {
 
     });
 });
 
-define!(|cls: Qt<QCommandLinkButton>| {
+define!(|cls: QDateEdit| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QCommandLinkButton) {
+    props!(cls(this: Qt<QDateEdit>) {
 
     });
-    methods!(cls(this: QCommandLinkButton) {
+    methods!(cls(this: Qt<QDateEdit>) {
 
     });
 });
 
-define!(|cls: Qt<QDateEdit>| {
+define!(|cls: QDateTimeEdit| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QDateEdit) {
+    props!(cls(this: Qt<QDateTimeEdit>) {
 
     });
-    methods!(cls(this: QDateEdit) {
+    methods!(cls(this: Qt<QDateTimeEdit>) {
 
     });
 });
 
-define!(|cls: Qt<QDateTimeEdit>| {
+define!(|cls: QDial| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QDateTimeEdit) {
+    props!(cls(this: Qt<QDial>) {
 
     });
-    methods!(cls(this: QDateTimeEdit) {
+    methods!(cls(this: Qt<QDial>) {
 
     });
 });
 
-define!(|cls: Qt<QDial>| {
+define!(|cls: QDoubleSpinBox| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QDial) {
+    props!(cls(this: Qt<QDoubleSpinBox>) {
 
     });
-    methods!(cls(this: QDial) {
+    methods!(cls(this: Qt<QDoubleSpinBox>) {
 
     });
 });
 
-define!(|cls: Qt<QDoubleSpinBox>| {
+define!(|cls: QFocusFrame| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QDoubleSpinBox) {
+    props!(cls(this: Qt<QFocusFrame>) {
 
     });
-    methods!(cls(this: QDoubleSpinBox) {
+    methods!(cls(this: Qt<QFocusFrame>) {
 
     });
 });
 
-define!(|cls: Qt<QFocusFrame>| {
+define!(|cls: QFontComboBox| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QFocusFrame) {
+    props!(cls(this: Qt<QFontComboBox>) {
 
     });
-    methods!(cls(this: QFocusFrame) {
+    methods!(cls(this: Qt<QFontComboBox>) {
 
     });
 });
 
-define!(|cls: Qt<QFontComboBox>| {
+define!(|cls: QLCDNumber| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QFontComboBox) {
+    props!(cls(this: Qt<QLCDNumber>) {
 
     });
-    methods!(cls(this: QFontComboBox) {
+    methods!(cls(this: Qt<QLCDNumber>) {
 
     });
 });
 
-define!(|cls: Qt<QLCDNumber>| {
+define!(|cls: QLabel| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QLCDNumber) {
+    props!(cls(this: Qt<QLabel>) {
 
     });
-    methods!(cls(this: QLCDNumber) {
+    methods!(cls(this: Qt<QLabel>) {
 
     });
 });
 
-define!(|cls: Qt<QLabel>| {
+define!(|cls: QLineEdit| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QLabel) {
+    props!(cls(this: Qt<QLineEdit>) {
 
     });
-    methods!(cls(this: QLabel) {
+    methods!(cls(this: Qt<QLineEdit>) {
 
     });
 });
 
-define!(|cls: Qt<QLineEdit>| {
+define!(|cls: QMenu| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QLineEdit) {
+    props!(cls(this: Qt<QMenu>) {
 
     });
-    methods!(cls(this: QLineEdit) {
+    methods!(cls(this: Qt<QMenu>) {
 
     });
 });
 
-define!(|cls: Qt<QMenu>| {
+define!(|cls: QProgressBar| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QMenu) {
+    props!(cls(this: Qt<QProgressBar>) {
 
     });
-    methods!(cls(this: QMenu) {
-
-    });
-});
-
-define!(|cls: Qt<QProgressBar>| {
-    let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QProgressBar) {
-
-    });
-    methods!(cls(this: QProgressBar) {
+    methods!(cls(this: Qt<QProgressBar>) {
 
     });
 });
 
-define!(|cls: Qt<QPushButton>| {
+define!(|cls: QPushButton| {
     let cls = cls
         .superclass::<Qt<QAbstractButton>>()?
         .constructor0(|| unsafe { Ok(Qt::new(QPushButton::new())) })?
         .as_element("qPushButton", || unsafe { Ok(Qt::new(QPushButton::new())) })?;
-    props!(cls(this: QPushButton) {
+    props!(cls(this: Qt<QPushButton>) {
 
     });
-    methods!(cls(this: QPushButton) {
-
-    });
-});
-
-define!(|cls: Qt<QRadioButton>| {
-    let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QRadioButton) {
-
-    });
-    methods!(cls(this: QRadioButton) {
+    methods!(cls(this: Qt<QPushButton>) {
 
     });
 });
 
-define!(|cls: Qt<QScrollArea>| {
-    let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QScrollArea) {
+define!(|cls: QRadioButton| {
+    let cls = cls
+        .superclass::<Qt<QAbstractButton>>()?
+        .constructor0(|| unsafe { Ok(Qt::new(QRadioButton::new())) })?
+        .as_element("qRadioButton", || unsafe {
+            Ok(Qt::new(QRadioButton::new()))
+        })?;
+    props!(cls(this: Qt<QRadioButton>) {
 
     });
-    methods!(cls(this: QScrollArea) {
-
-    });
-});
-
-define!(|cls: Qt<QScrollBar>| {
-    let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QScrollBar) {
-
-    });
-    methods!(cls(this: QScrollBar) {
+    methods!(cls(this: Qt<QRadioButton>) {
 
     });
 });
 
-define!(|cls: Qt<QSizeGrip>| {
+define!(|cls: QScrollArea| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QSizeGrip) {
+    props!(cls(this: Qt<QScrollArea>) {
 
     });
-    methods!(cls(this: QSizeGrip) {
+    methods!(cls(this: Qt<QScrollArea>) {
 
     });
 });
 
-define!(|cls: Qt<QSlider>| {
+define!(|cls: QScrollBar| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QSlider) {
+    props!(cls(this: Qt<QScrollBar>) {
 
     });
-    methods!(cls(this: QSlider) {
+    methods!(cls(this: Qt<QScrollBar>) {
 
     });
 });
 
-define!(|cls: Qt<QSpinBox>| {
+define!(|cls: QSizeGrip| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QSpinBox) {
+    props!(cls(this: Qt<QSizeGrip>) {
 
     });
-    methods!(cls(this: QSpinBox) {
+    methods!(cls(this: Qt<QSizeGrip>) {
 
     });
 });
 
-define!(|cls: Qt<QTabBar>| {
+define!(|cls: QSlider| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QTabBar) {
+    props!(cls(this: Qt<QSlider>) {
 
     });
-    methods!(cls(this: QTabBar) {
+    methods!(cls(this: Qt<QSlider>) {
 
     });
 });
 
-define!(|cls: Qt<QTabWidget>| {
+define!(|cls: QSpinBox| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QTabWidget) {
+    props!(cls(this: Qt<QSpinBox>) {
 
     });
-    methods!(cls(this: QTabWidget) {
+    methods!(cls(this: Qt<QSpinBox>) {
 
     });
 });
 
-define!(|cls: Qt<QTimeEdit>| {
+define!(|cls: QTabBar| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QTimeEdit) {
+    props!(cls(this: Qt<QTabBar>) {
 
     });
-    methods!(cls(this: QTimeEdit) {
+    methods!(cls(this: Qt<QTabBar>) {
 
     });
 });
 
-define!(|cls: Qt<QToolBox>| {
+define!(|cls: QTabWidget| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QToolBox) {
+    props!(cls(this: Qt<QTabWidget>) {
 
     });
-    methods!(cls(this: QToolBox) {
+    methods!(cls(this: Qt<QTabWidget>) {
 
     });
 });
 
-define!(|cls: Qt<QToolButton>| {
+define!(|cls: QTimeEdit| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QToolButton) {
+    props!(cls(this: Qt<QTimeEdit>) {
 
     });
-    methods!(cls(this: QToolButton) {
+    methods!(cls(this: Qt<QTimeEdit>) {
 
     });
 });
 
-define!(|cls: Qt<QWidget>| {
+define!(|cls: QToolBox| {
     let cls = cls.superclass::<Qt<QWidget>>()?;
-    props!(cls(this: QWidget) {
+    props!(cls(this: Qt<QToolBox>) {
 
     });
-    methods!(cls(this: QWidget) {
+    methods!(cls(this: Qt<QToolBox>) {
+
+    });
+});
+
+define!(|cls: QToolButton| {
+    let cls = cls
+        .superclass::<Qt<QAbstractButton>>()?
+        .constructor0(|| unsafe { Ok(Qt::new(QToolButton::new_0a())) })?
+        .as_element("qToolButton", || unsafe {
+            Ok(Qt::new(QToolButton::new_0a()))
+        })?;
+    props!(cls(this: Qt<QToolButton>) {
+
+    });
+    methods!(cls(this: Qt<QToolButton>) {
 
     });
 });

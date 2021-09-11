@@ -1,26 +1,15 @@
 use qt_widgets::{
-    QBoxLayout, QFrame, QGraphicsLayoutItem, QGroupBox, QLayout, QLayoutItem, QStackedWidget,
-    QWidget,
+    QBoxLayout, QDialog, QFrame, QGraphicsLayoutItem, QGroupBox, QLayout, QLayoutItem,
+    QStackedWidget, QWidget,
 };
 
 use crate::inner::*;
 
 qdefine!(|cls: QLayoutItem| {
-    qmethods!(cls(this: QLayoutItem) {
+    methods!(cls(this: Q<QLayoutItem>) {
         invalidate[0]() { this.invalidate() };
     });
-    qprops!(cls(this: QLayoutItem) {
-        // isEmpty: bool {
-        //     this.is_empty()
-        // };
-    });
-});
-
-qdefine!(|cls: QGraphicsLayoutItem| {
-    qmethods!(cls(this: QGraphicsLayoutItem) {
-        // invalidate[0]() { this.invalidate() };
-    });
-    qprops!(cls(this: QGraphicsLayoutItem) {
+    props!(cls(this: Q<QLayoutItem>) {
         // isEmpty: bool {
         //     this.is_empty()
         // };
@@ -31,14 +20,14 @@ define!(|cls: QLayout| {
     let cls = cls
         .superclass::<Qt<QObject>>()?
         .superclass::<Q<QLayoutItem>>()?;
-    methods!(cls(this: QLayoutItem) {
+    methods!(cls(this: Qt<QLayoutItem>) {
         // show[0]() { this.show() };
         // hide[0]() { this.hide() };
         // resize[2](w: i32, h: i32) {
         //     this.resize_2a(w, h)
         // };
     });
-    props!(cls(this: QLayout) {
+    props!(cls(this: Qt<QLayout>) {
         // height: i32 {
         //     this.height()
         // };
@@ -47,14 +36,14 @@ define!(|cls: QLayout| {
 
 define!(|cls: QBoxLayout| {
     let cls = cls.superclass::<Qt<QLayout>>()?;
-    methods!(cls(this: QBoxLayout) {
+    methods!(cls(this: Qt<QBoxLayout>) {
         // show[0]() { this.show() };
         // hide[0]() { this.hide() };
         // resize[2](w: i32, h: i32) {
         //     this.resize_2a(w, h)
         // };
     });
-    props!(cls(this: QBoxLayout) {
+    props!(cls(this: Qt<QBoxLayout>) {
         // height: i32 {
         //     this.height()
         // };
@@ -67,14 +56,6 @@ define!(|cls: qt_widgets::QButtonGroup| {
 
 define!(|cls: qt_widgets::QFormLayout| {
     cls.superclass::<Qt<QLayout>>()?;
-});
-
-define!(|cls: qt_widgets::QGraphicsAnchor| {
-    cls.superclass::<Qt<QObject>>()?;
-});
-
-qdefine!(|cls: qt_widgets::QGraphicsAnchorLayout| {
-    cls.superclass::<Q<QGraphicsLayoutItem>>()?;
 });
 
 define!(|cls: qt_widgets::QGridLayout| {
@@ -100,6 +81,11 @@ qdefine!(|cls: qt_widgets::QSpacerItem| {
 
 define!(|cls: qt_widgets::QStackedLayout| {
     cls.superclass::<Qt<QLayout>>()?;
+});
+
+define!(|cls: QDialog| {
+    cls.superclass::<Qt<QWidget>>()?
+        .as_element("qDialog", || unsafe { Ok(Qt::new(QDialog::new_0a())) });
 });
 
 define!(|cls: QFrame| {
