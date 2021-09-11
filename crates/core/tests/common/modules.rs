@@ -3,6 +3,7 @@ use std::rc::Rc;
 use super::*;
 
 impl Module for FwCore {
+    const MODULE_NAME: &'static str = "FwCore";
     #[inline(always)]
     fn define<P>(
         m: ModuleBuilder<Self, P>,
@@ -12,6 +13,7 @@ impl Module for FwCore {
 }
 
 impl Module for FwWidgets {
+    const MODULE_NAME: &'static str = "FwWidgets";
     #[inline(always)]
     fn define<P>(
         m: ModuleBuilder<Self, P>,

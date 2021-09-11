@@ -15,6 +15,8 @@ pub trait UpcastRef<T> {
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
 pub trait Module: Sized {
+    const MODULE_NAME: &'static str;
+
     fn define<P>(module: ModuleBuilder<Self, P>) -> Result<ModuleBuilder<Self, P>>;
 
     #[inline(always)]
