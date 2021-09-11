@@ -135,7 +135,7 @@ where
     Fw<O>: StaticUpcast<Fw<T>>,
     T: Clone,
 {
-    fn cast<'a>(&'a self) -> Fw<T> {
+    fn upcast<'a>(&'a self) -> Fw<T> {
         self.static_cast().clone()
     }
 }

@@ -34,7 +34,7 @@ where
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
                 let obj: &Obj<BASE> = this.as_ref();
                 let ptr = obj.borrow().unwrap();
-                let cls = ptr.cast();
+                let cls = ptr.upcast();
                 let val = getter(&cls)?;
                 rquickjs::Result::Ok(val)
             }))
@@ -81,7 +81,7 @@ where
             Accessor::new_get(rquickjs::Method(
                 move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
                     let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
-                    let cls = obj.cast();
+                    let cls = obj.upcast();
                     let val = getter(&cls)?;
                     rquickjs::Result::Ok(val)
                 },
@@ -108,7 +108,7 @@ where
             name,
             Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
                 let obj: &Virt<BASE> = this.as_ref();
-                let ptr = obj.cls.cast();
+                let ptr = obj.cls.upcast();
 
                 let val = getter(&ptr)?;
                 rquickjs::Result::Ok(val)

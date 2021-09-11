@@ -43,7 +43,7 @@ macro_rules! tup {
                                     let obj: &Obj<BASE> = this.as_ref();
                                     let ptr = obj.borrow().unwrap();
                                     (self.func)(
-                                        &ptr.cast(),
+                                        &ptr.upcast(),
                                         $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
                                     )
                                 },
@@ -75,7 +75,7 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
-                                    let cls = obj.cast();
+                                    let cls = obj.upcast();
                                     let res = (self.func)(
                                         &cls,
                                         $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
@@ -110,7 +110,7 @@ macro_rules! tup {
                                     let args_len = args.len();
                                     tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
                                     let obj: &Virt<BASE> = this.as_ref();
-                                    let ptr = obj.cls.cast();
+                                    let ptr = obj.cls.upcast();
 
                                     let res = (self.func)(
                                         &ptr,

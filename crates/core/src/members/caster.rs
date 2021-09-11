@@ -72,7 +72,7 @@ fn caster_fn<'js, BASE: Type + Upcast<CLS>, CLS: Type>(
     idx: Idx,
 ) -> Result<Value<'js>> {
     let this = Obj::<BASE>::from_rt(&rt, idx)?;
-    Virt::<CLS>::new(rt.clone(), idx, this.cast(), obj).into_js(ctx)
+    Virt::<CLS>::new(rt.clone(), idx, this.upcast(), obj).into_js(ctx)
 }
 
 impl<'a, 'b: 'a, CLS, SUPER, NESTED> Implements<InitSuperCaster<'a, CLS, SUPER>>

@@ -6,7 +6,11 @@ use crate::inner::*;
 
 /// Cast Self to type &T
 pub trait Upcast<T> {
-    fn cast<'a>(&'a self) -> T;
+    fn upcast(&self) -> T;
+}
+
+pub trait UpcastRef<T> {
+    fn upcast_ref(&self) -> &T;
 }
 
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
