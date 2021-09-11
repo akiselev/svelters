@@ -10,7 +10,7 @@ impl<SUPER> Superclass<SUPER> {
 
 impl<'a, 'b: 'a, CLS, SUPER> Implements<InitProto<'a, 'b, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type + Cast<SUPER>,
+    CLS: Type + Upcast<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]
@@ -22,7 +22,7 @@ where
 
 impl<'a, 'b: 'a, BASE, SUPER> Implements<InitStatic<'a, 'b, BASE>> for members::Superclass<SUPER>
 where
-    BASE: Cast<SUPER>,
+    BASE: Upcast<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]
@@ -34,7 +34,7 @@ where
 
 impl<'a, 'b: 'a, CLS, SUPER> Implements<InitType<'a, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type + Cast<SUPER>,
+    CLS: Type + Upcast<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]
@@ -50,7 +50,7 @@ impl<'a, 'b, 'c, CLS, SUPER> Implements<InitElementProto<'a, 'b, 'c, CLS>>
 where
     CLS: Type,
     SUPER: Type,
-    CLS: Cast<SUPER>,
+    CLS: Upcast<SUPER>,
 {
     #[inline(always)]
     fn build_phase(
@@ -64,7 +64,7 @@ where
 
 impl<'a, 'b: 'a, CLS, SUPER> Implements<InitVirt<'a, 'b, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type + Cast<SUPER>,
+    CLS: Type + Upcast<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]

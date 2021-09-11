@@ -105,7 +105,7 @@ impl TypeDef {
     pub fn prop<BASE, CLS, PROP, GET, SET>(&mut self, name: &'static str, getter: GET, setter: SET)
     where
         CLS: Type,
-        BASE: Type + Cast<CLS>,
+        BASE: Type + Upcast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -122,7 +122,7 @@ impl TypeDef {
     pub fn readonly<'js, BASE, CLS, PROP, GET>(&mut self, name: &'static str, getter: GET)
     where
         CLS: Type,
-        BASE: Type + Cast<CLS>,
+        BASE: Type + Upcast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     {
@@ -139,7 +139,7 @@ impl TypeDef {
     pub fn event<BASE: Type, CLS: Type, FUNC>(&mut self, name: &'static str, func: FUNC)
     where
         CLS: Type,
-        BASE: Type + Cast<CLS>,
+        BASE: Type + Upcast<CLS>,
         FUNC: 'static + SubscribeFn,
     {
         let event = EventDef {
@@ -156,7 +156,7 @@ fn getter_fn<BASE, CLS, PROP, GET>(
 ) -> impl for<'js> Fn(Ctx<'js>, &Rt, Idx) -> Result<Value<'js>>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -173,7 +173,7 @@ fn setter_fn<BASE, CLS, PROP, SET>(
 ) -> impl for<'js> Fn(Ctx<'js>, &Rt, Idx, Value<'js>) -> Result<()>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'js> IntoJs<'js> + for<'js> FromJs<'js>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
 {

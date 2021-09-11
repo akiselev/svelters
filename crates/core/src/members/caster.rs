@@ -49,7 +49,7 @@ where
 
 impl<'a, CLS, SUPER> Implements<InitCaster<'a, CLS>> for members::Superclass<SUPER>
 where
-    CLS: Type + Cast<SUPER>,
+    CLS: Type + Upcast<SUPER>,
     SUPER: Type,
 {
     #[inline(always)]
@@ -65,7 +65,7 @@ where
     }
 }
 
-fn caster_fn<'js, BASE: Type + Cast<CLS>, CLS: Type>(
+fn caster_fn<'js, BASE: Type + Upcast<CLS>, CLS: Type>(
     ctx: Ctx<'js>,
     obj: Object<'js>,
     rt: Rt,
@@ -81,7 +81,7 @@ where
     CLS: Type,
     SUPER: Type,
     NESTED: Clone + Type,
-    CLS: Cast<NESTED>,
+    CLS: Upcast<NESTED>,
 {
     #[inline(always)]
     fn build_phase(

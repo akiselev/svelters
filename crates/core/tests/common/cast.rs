@@ -110,7 +110,7 @@ impl StaticUpcast<Fw<Rc<Application>>> for Fw<Rc<Application>> {
     }
 }
 
-// impl Cast<Fw<Rc<Object>>> for Fw<Rc<Object>> {
+// impl Upcast<Fw<Rc<Object>>> for Fw<Rc<Object>> {
 //     type Output<'a> = RefWrapper<'a, Fw<Rc<Object>>>;
 
 //     fn cast<'a>(&'a self) -> Self::Output<'a> {
@@ -118,7 +118,7 @@ impl StaticUpcast<Fw<Rc<Application>>> for Fw<Rc<Application>> {
 //     }
 // }
 
-// impl<T, O> Cast<T> for FwWrapper<O>
+// impl<T, O> Upcast<T> for FwWrapper<O>
 // where
 //     O: StaticUpcast<T>,
 //     T: Clone,
@@ -130,7 +130,7 @@ impl StaticUpcast<Fw<Rc<Application>>> for Fw<Rc<Application>> {
 //     }
 // }
 
-impl<T, O> Cast<Fw<T>> for Fw<O>
+impl<T, O> Upcast<Fw<T>> for Fw<O>
 where
     Fw<O>: StaticUpcast<Fw<T>>,
     T: Clone,

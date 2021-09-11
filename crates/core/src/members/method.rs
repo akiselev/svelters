@@ -24,7 +24,7 @@ macro_rules! tup {
                 for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Cast<CLS>,
+                BASE: Type + Upcast<CLS>,
                 $($arg: 'static + FromJs<'b>,)*
                 RET: 'static + for<'js> IntoJs<'js>,
                 FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
@@ -58,7 +58,7 @@ macro_rules! tup {
                 for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Cast<CLS>,
+                BASE: Type + Upcast<CLS>,
                 RET: 'static + IntoJs<'b>,
                 FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
                 $($arg: 'static + for<'x> FromJs<'x>,)*
@@ -93,7 +93,7 @@ macro_rules! tup {
                 for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
             where
                 CLS: Type,
-                BASE: Type + Cast<CLS>,
+                BASE: Type + Upcast<CLS>,
                 RET: 'static +  IntoJs<'b>,
                 FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
                 $($arg: 'static + for<'x> FromJs<'x>,)*

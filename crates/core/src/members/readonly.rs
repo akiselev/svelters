@@ -20,7 +20,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitProto<'a, 'b, BASE>>
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -48,7 +48,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitType<'a, BASE>>
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -65,7 +65,7 @@ impl<'a, 'b, 'c, BASE, CLS, PROP, GET> Implements<InitElementProto<'a, 'b, 'c, B
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {
@@ -96,7 +96,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitVirt<'a, 'b, BASE>>
     for members::ReadOnly<CLS, PROP, GET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
 {

@@ -19,7 +19,7 @@ impl<'a, BASE> InitType<'a, BASE> {
 impl<'a, 'b: 'a, CLS, BASE, FUNC> Implements<InitType<'a, BASE>> for members::Event<CLS, FUNC>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     FUNC: 'static + SubscribeFn,
 {
     #[inline(always)]

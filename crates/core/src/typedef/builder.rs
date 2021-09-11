@@ -63,7 +63,7 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
     #[inline(always)]
     pub fn prop<PROP, GET, SET>(self, name: &'static str, getter: GET, setter: SET) -> Result<Self>
     where
-        CLS: Cast<CLS>,
+        CLS: Upcast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -77,7 +77,7 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
     #[inline(always)]
     pub fn readonly<PROP, GET>(self, name: &'static str, getter: GET) -> Result<Self>
     where
-        CLS: Cast<CLS>,
+        CLS: Upcast<CLS>,
         PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
         GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
         members::ReadOnly<CLS, PROP, GET>: Implements<PHASE>,
@@ -91,7 +91,7 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
     pub fn superclass<SUPER>(self) -> Result<Self>
     where
         SUPER: Type,
-        CLS: Cast<SUPER>,
+        CLS: Upcast<SUPER>,
         members::Superclass<SUPER>: Implements<PHASE>,
     {
         let phase = members::Superclass::<SUPER>::new().build_phase(self.phase)?;
@@ -148,7 +148,7 @@ macro_rules! tup {
             pub fn $method<'js, THIS, RET, FN, $($arg,)*>(self, name: &'static str, func: FN) -> Result<Self>
             where
                 CLS: 'static + Type,
-                CLS: Cast<THIS>,
+                CLS: Upcast<THIS>,
                 THIS: 'static,
                 RET: 'static +  for<'x> IntoJs<'x>,
                 FN: 'static + for<'x> Fn(&'x THIS, $($arg,)*) -> Result<RET>,

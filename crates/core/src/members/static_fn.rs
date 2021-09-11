@@ -22,7 +22,7 @@ macro_rules! tup {
         $(
             impl<'a, 'b: 'a, T, BASE, CLS, R, $($arg,)*> Implements<InitStatic<'a, 'b, BASE>> for members::StaticFn<CLS, ($($arg,)*), R, T>
             where
-                BASE: Cast<CLS>,
+                BASE: Upcast<CLS>,
                 CLS: Type,
                 T: 'static + Fn($($arg,)*) -> Result<R>,
                 R: 'static + for<'js> IntoJs<'js>,

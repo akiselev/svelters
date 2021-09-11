@@ -22,7 +22,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitProto<'a, 'b, BASE>>
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -67,7 +67,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitType<'a, BASE>>
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -92,7 +92,7 @@ impl<'a, 'b, 'c, BASE, CLS, PROP, GET, SET> Implements<InitElementProto<'a, 'b, 
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,
@@ -135,7 +135,7 @@ impl<'a, 'b: 'a, BASE, CLS, PROP, GET, SET> Implements<InitVirt<'a, 'b, BASE>>
     for members::Property<CLS, PROP, GET, SET>
 where
     CLS: Type,
-    BASE: Type + Cast<CLS>,
+    BASE: Type + Upcast<CLS>,
     PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
     GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
     SET: 'static + for<'x> Fn(&'x CLS, PROP) -> Result<()>,

@@ -5,7 +5,7 @@ use rquickjs::{Loader, Resolver};
 use crate::inner::*;
 
 /// Cast Self to type &T
-pub trait Cast<T> {
+pub trait Upcast<T> {
     fn cast<'a>(&'a self) -> T;
 }
 
