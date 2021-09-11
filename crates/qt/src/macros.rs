@@ -7,7 +7,7 @@ pub(in crate) macro module($modname:ty: $($ty:ty),*$(,)?) {
         where
            crate::QT: Framework,
         {
-            $(let module = module.class::<Qt<$ty>>()?;)*
+            $(let module = module.class::<$ty>()?;)*
             Ok(module)
         }
     }

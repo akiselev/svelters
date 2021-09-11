@@ -12,67 +12,72 @@
 #![allow(incomplete_features)]
 #![recursion_limit = "1024"]
 #![deny(clippy::all)]
-use std::{ffi::CString, os::raw::c_char, time::Duration};
+use std::{ffi::CString, os::raw::c_char, path::Path, time::Duration};
 
-use anyhow::Result;
 use rquickjs::{
-    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, FileResolver, Func, Function, IntoJs,
-    Module, NativeLoader, Object, Persistent, Result as JsResult, Runtime as JsRuntime,
-    ScriptLoader,
+    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, Func,
+    Function, IntoJs, ModuleLoader, NativeLoader, Object, Persistent, Result as JsResult,
+    Runtime as JsRuntime, ScriptLoader,
 };
 
-use svelters_compiler::{compile, SvelteCompiler};
+use svelters_compiler::{compile_sync, SvelteCompiler};
 use svelters_core::prelude::*;
 
 pub mod logging;
 
-pub struct Runtime<FW: Framework> {
-    framework: FW,
-    rt: JsRuntime,
+pub struct Svelters {
     ctx: Context,
+    compiler: SvelteCompiler,
 }
 
-impl<FW: Framework> Runtime<FW> {
-    pub fn new(framework: FW) -> Result<Self> {
+impl Svelters {
+    pub fn new<MOD: Module>(module: MOD) -> Result<Self> {
         let rt = JsRuntime::new()?;
         let ctx = Context::full(&rt)?;
+        let compiler = SvelteCompiler::new();
+        let resolver = BuiltinResolver::default().with_module(MOD::MODULE_NAME);
+        let loader = ModuleLoader::default().with_module(MOD::MODULE_NAME, module.loader());
+        rt.set_loader((resolver, compiler.clone()), (loader, compiler.clone()));
         ctx.with(|ctx| {
             initialize_svelters(ctx)?;
             Result::<()>::Ok(())
         })?;
-        Ok(Self { rt, ctx, framework })
-    }
-
-    pub async fn start<P: AsRef<str>>(self, path: P) -> Result<()> {
-        let path = path.as_ref().to_string();
-        let local = tokio::task::LocalSet::new();
-        let handle = local.spawn_local(self.main_task(path));
-        local.await;
-        Ok(handle.await??)
+        Ok(Self { ctx, compiler })
     }
 
     #[tracing::instrument(skip(self))]
-    async fn main_task(self, path: String) -> Result<()> {
-        let compiler = SvelteCompiler::new();
-        let src = compile(&compiler, "./app/index.ts").await?;
+    pub fn eval<P>(self, path: P) -> Result<()>
+    where
+        P: std::fmt::Debug + AsRef<Path>,
+    {
+        let modpath = path.as_ref().to_owned();
+        let src = compile_sync(&self.compiler, path)?;
+        let res: Result<()> = self
+            .ctx
+            .with(|ctx| ctx.eval_global_module::<(), _>(modpath, Some(src.into_bytes())));
+        res
+    }
 
-        self.rt.spawn_executor(rquickjs::Tokio);
-        let (resolver, loader) = FW::get_loader();
-        self.rt
-            .set_loader((resolver, compiler.clone()), (loader, compiler.clone()));
+    pub fn execute_pending_job(&self) -> Result<bool> {
+        self.ctx.runtime().execute_pending_job()
+    }
 
-        let app = FW::init_app(self.ctx.clone())?;
-        let app = tokio::task::spawn_local(app);
-        tokio::time::sleep(Duration::from_millis(1)).await;
-        let res: Result<_> = self.ctx.with(|ctx| {
-            initialize_svelters(ctx)?;
+    pub fn execute_pending_jobs(&self) -> Result<()> {
+        while self.ctx.runtime().execute_pending_job()? {}
+        Ok(())
+    }
 
-            ctx.eval_global_module::<(), _>("./app/index.ts", Some(src.into_bytes()))
-                .unwrap();
-            // Ok(())
-            Ok(app)
-        });
-        while let Ok(true) = self.ctx.runtime().execute_pending_job() {}
-        Ok(res?.await??)
+    pub fn spawn_executor<A: ExecutorSpawner>(&self, executor: A) -> A::JoinHandle {
+        self.ctx.runtime().spawn_executor(executor)
+    }
+}
+
+impl Drop for Svelters {
+    fn drop(&mut self) {
+        self.ctx.with(|ctx| {
+            if let Err(err) = cleanup_svelters(ctx) {
+                tracing::error!("Error while cleaning up svelters: {}", err);
+            }
+        })
     }
 }

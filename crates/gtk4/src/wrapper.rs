@@ -1,0 +1,49 @@
+use glib::{object::Cast as GtkCast, IsA, ObjectType};
+use svelters_core::prelude::*;
+
+use crate::inner::*;
+
+pub struct Gtk<CLS = ()>(pub CLS);
+
+impl<CLS> Clone for Gtk<CLS>
+where
+    CLS: Clone,
+{
+    fn clone(&self) -> Self {
+        Gtk(self.0.clone())
+    }
+}
+
+impl<CLS> Gtk<CLS>
+where
+    Gtk<CLS>: Type,
+{
+    pub fn new(inner: CLS) -> Self {
+        Gtk(inner)
+    }
+
+    pub fn module() -> Gtk<()> {
+        Gtk(())
+    }
+}
+
+impl<T> Deref for Gtk<T>
+where
+    Gtk<T>: Type,
+{
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<X, Y> Upcast<Gtk<X>> for Gtk<Y>
+where
+    X: ObjectType,
+    Y: Clone + GtkCast + IsA<X>,
+{
+    fn upcast(&self) -> Gtk<X> {
+        Gtk(self.0.clone().upcast())
+    }
+}

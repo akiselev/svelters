@@ -1,3 +1,5 @@
+cargo-features = ["strip"]
+
 [package]
 authors = ["Alexander Kiselev <svelters@akiselev.com>"]
 edition = "2018"
@@ -20,32 +22,34 @@ tracing-bunyan-formatter = "0.2.4"
 tracing-log = "0.1.2"
 tracing-subscriber = "0.2.18"
 lazy_static = "1.4.0"
-rquickjs = { version="0.1.1", path="./crates/rquickjs", features=["full", "backtrace", "tokio", "frunk"] }
-svelters-compiler = { version="0.1.0", path="./crates/compiler" }
-svelters-core = { version="0.1.0", path="./crates/core" }
-svelters-qt = { version="0.1.0", path="./crates/qt" }
+rquickjs = { version = "0.1.1", path = "./crates/rquickjs", features = [
+    "full",
+    "backtrace",
+    "tokio",
+    "frunk",
+] }
+svelters-compiler = { version = "0.1.0", path = "./crates/compiler" }
+svelters-core = { version = "0.1.0", path = "./crates/core" }
+svelters-gtk4 = { version = "0.1.0", path = "./crates/gtk4" }
 anyhow = "1.0.40"
 notify = "4.0.17"
-tokio = { version="1", features=["full"] }
+tokio = { version = "1", features = ["full"] }
 
 [profile.release]
 lto = true
-# opt-level = 'z'
-# panic = 'abort'
-# codegen-units = 1
+strip = true
+opt-level = 'z'
+codegen-units = 1
+panic = 'abort'
 
 [workspace]
 members = [
     "crates/core",
+    "crates/gtk4",
+    "crates/macros",
+    "crates/compiler",
     "crates/rquickjs",
     "crates/rquickjs/rquickjs-core",
-    "crates/compiler",
-    "crates/qt",
-    "crates/macros",
     "crates/rquickjs/rquickjs-macro",
 ]
-exclude = [
-    "codegen",
-    "crates/oldqt",
-    "crates/gtk4",
-]
+exclude = ["codegen", "crates/oldqt", "crates/qt"]

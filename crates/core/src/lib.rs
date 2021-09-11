@@ -48,6 +48,8 @@ pub mod prelude {
     pub use crate::typedef::builder::ClassBuilder;
     pub use crate::typedef::builder::TypeBuilder;
     pub use crate::typedef::module::ModuleBuilder;
+
+    pub use crate::inner::Result;
 }
 
 pub use crate::utils::console;

@@ -1,12 +1,10 @@
-use anyhow::Result;
-use svelters_qt::{QApplication, QMainWindow, QObject, QT};
+use svelters::Svelters;
+use svelters_gtk4::Gtk;
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() {
     svelters::logging::init();
     tracing::info!("Starting...");
     // Run the local task set.
-    let mut rt = svelters::Runtime::new(svelters_qt::QT)?;
-    rt.start("./app/index.ts").await?;
-    Ok(())
+    let mut sv = Svelters::new(Gtk::module()).unwrap();
+    sv.eval("./app/index.ts").unwrap();
 }
