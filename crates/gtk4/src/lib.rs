@@ -12,8 +12,10 @@
 
 use std::{borrow::Cow, future::Future, time::Duration};
 
+use glib::MainContext;
 use rquickjs::{
-    BuiltinResolver, Context, Ctx, Error, Loader, ModuleLoader, Resolver, Result, Value,
+    BuiltinResolver, Context, Ctx, Error, Executor, ExecutorSpawner, Loader, ModuleLoader,
+    Resolver, Result, Value,
 };
 use static_assertions::assert_impl_all;
 use svelters_core::prelude::*;
@@ -24,7 +26,8 @@ mod macros;
 mod wrapper;
 
 mod types {
-    mod object;
+    mod core;
+    mod windows;
 }
 
 pub(in crate) mod inner {
@@ -43,10 +46,26 @@ pub(in crate) mod inner {
         Result, Value,
     };
 
-    pub(in crate) use svelters_core::prelude::*;
+    pub(in crate) use svelters_core::{exception, prelude::*};
 
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::wrapper::Gtk;
 }
+mod module {
+    use super::Gtk;
+    use glib::object::Object as GObject;
+    use gtk4::{Application, ApplicationWindow, Window};
 
-macros::module!(Gtk: glib::object::Object,);
+    crate::macros::module!(Gtk: GObject, Application, Window, ApplicationWindow);
+}
+
+pub struct GtkExecutor;
+
+impl ExecutorSpawner for GtkExecutor {
+    type JoinHandle = ();
+
+    fn spawn_executor(self, task: Executor) -> Self::JoinHandle {
+        let ctx = MainContext::default();
+        ctx.spawn_local(task)
+    }
+}

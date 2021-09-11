@@ -10,15 +10,10 @@ pub struct DocInner {
     // pub(in crate) types: HashMap<&'static str, TypeDef>,
 }
 
+#[derive(Clone)]
 pub struct Document {
     pub(in crate) rt: Rt,
     pub(in crate) inner: Inner<DocInner>,
-}
-
-impl Clone for Document {
-    fn clone(&self) -> Self {
-        panic!("Can't clone Document struct")
-    }
 }
 
 impl Document {
@@ -27,6 +22,33 @@ impl Document {
             rt: Rt::new(),
             inner: Inner::new(DocInner {}),
         }
+    }
+
+    pub fn new_instance<'js, CLS: Type>(&self, ctx: Ctx<'js>, cls: CLS) -> Result<Value<'js>> {
+        Obj::new(self.rt.clone(), cls).into_js(ctx)
+    }
+
+    pub fn new_element<'js, CLS: Type>(
+        &self,
+        ctx: Ctx<'js>,
+        tag_name: &'static str,
+        cls: CLS,
+    ) -> Result<Value<'js>> {
+        let proto_key = {
+            let mut inner = self.rt.inner.deref().borrow();
+            let r#type = inner.types.get(Class::<CLS>::typekey()).unwrap();
+            r#type
+                .element_proto
+                .ok_or_else(|| exception!("Type {} is not initialized", CLS::CLASS_NAME))?
+        };
+        let proto: Object = ctx
+            .get_register(proto_key)
+            .ok_or_else(|| exception!("Could not get proto for type {}", CLS::CLASS_NAME))?
+            .as_object()
+            .ok_or_else(|| exception!("Proto for type {} is not an object", CLS::CLASS_NAME))?
+            .clone();
+        let el = ElementNode::new::<CLS>(self.rt.clone(), ctx, tag_name, cls)?;
+        WithProto(el, proto).into_js(ctx)
     }
 
     pub(in crate) fn create_event<'js>(
@@ -58,7 +80,7 @@ impl Document {
         if let Some(element) = self.rt.inner.borrow().elements.get(name.as_str()) {
             (element)(ctx)
         } else {
-            Err(Error::new(ctx, format!("{} is not a valid element", name)))
+            Err(exception!("{} is not a valid element", name))
         }
     }
 

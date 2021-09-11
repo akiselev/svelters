@@ -13,6 +13,31 @@ pub(in crate) macro module($modname:ty: $($ty:ty),*$(,)?) {
     }
 }
 
+pub(in crate) macro gtk_enum($name:ty: $($val:literal as $var:path),*$(,)?) {
+    impl<'js> rquickjs::IntoJs<'js> for Gtk<$name> {
+        fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+            match self.0 {
+                $(
+                    $var => $val.into_js(ctx),
+                )*
+                _ => Err(exception!("Uknown value of {}", stringify!($name)))
+            }
+        }
+    }
+
+    impl<'js> rquickjs::FromJs<'js> for Gtk<$name> {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            let val: String = String::from_js(ctx, value)?;
+            match val.as_str() {
+                $(
+                    $val => Ok(Gtk($var)),
+                )*
+                _ => Err(exception!("\"{}\" is not a valid value for {}", val, stringify!($name)))
+            }
+        }
+    }
+}
+
 pub(in crate) macro define (|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
     impl Type for Gtk<$cls> {
         const CLASS_NAME: & 'static str = stringify!($cls);

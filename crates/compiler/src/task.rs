@@ -41,8 +41,6 @@ pub(in crate) async fn task_loop(rx: Receiver<(String, String, Sender<Result<Str
         });
         tracing::info!("Compiling component");
     }
-
-    executor.await.unwrap();
     tracing::info!("Task finished");
 }
 

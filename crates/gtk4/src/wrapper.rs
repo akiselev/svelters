@@ -1,9 +1,29 @@
 use glib::{object::Cast as GtkCast, IsA, ObjectType};
+use gtk4::{
+    prelude::{ApplicationExt, ApplicationExtManual},
+    Application,
+};
 use svelters_core::prelude::*;
 
 use crate::inner::*;
 
 pub struct Gtk<CLS = ()>(pub CLS);
+
+impl Gtk<()> {
+    pub fn start<FUNC: 'static + Fn(&Application)>(name: &str, func: FUNC) {
+        let app = Application::builder().application_id(name).build();
+
+        // Connect to "activate" signal of `app`
+        app.connect_activate(func);
+
+        // Run the application
+        app.run();
+    }
+
+    pub fn module() -> Self {
+        Self(())
+    }
+}
 
 impl<CLS> Clone for Gtk<CLS>
 where
@@ -20,10 +40,6 @@ where
 {
     pub fn new(inner: CLS) -> Self {
         Gtk(inner)
-    }
-
-    pub fn module() -> Gtk<()> {
-        Gtk(())
     }
 }
 

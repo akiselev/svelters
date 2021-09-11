@@ -106,3 +106,7 @@ pub trait INode {
     fn node_name<'js>(&self, ctx: Ctx<'js>) -> String;
     fn get_root_node<'js>(&self, ctx: Ctx<'js>) -> Option<Object<'js>>;
 }
+
+pub trait IElement<CLS>: 'static {
+    fn constructor<'js>(&self, ctx: Ctx<'js>) -> Result<CLS>;
+}

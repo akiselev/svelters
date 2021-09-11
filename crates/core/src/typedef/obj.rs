@@ -87,12 +87,12 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        build_class!(CLS with InitProto::<CLS>::new(ctx, proto));
+        build!(CLS::InitProto::<CLS>[ctx, proto]);
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        build_class!(CLS with InitStatic::<CLS>::new(ctx, _static));
+        build!(CLS::InitStatic::<CLS>[ctx, _static]);
         Ok(())
     }
 

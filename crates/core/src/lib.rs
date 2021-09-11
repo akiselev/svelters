@@ -191,7 +191,7 @@ pub(in crate) mod inner {
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
 
-    pub(in crate) use crate::{build_class, exception};
+    pub(in crate) use crate::{build, build_class, exception};
 
     // pub(in crate) type CasterCallback<'js, CLS> =
     //     SmallBox<dyn Fn(Ctx<'js>, &CLS) -> Result<Value<'js>>, space::S4>;

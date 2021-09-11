@@ -6,9 +6,6 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     console::init(ctx)?;
     timing::init(ctx)?;
 
-    let obj = Object::new(ctx)?;
-    ctx.globals().set("window", obj)?;
-
     let doc = Document::new();
     rquickjs::Class::<Document>::register(ctx)?;
     rquickjs::Class::<Event<'js>>::register(ctx)?;
@@ -36,6 +33,7 @@ pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.globals().set("window", Value::new_undefined(ctx))?;
     ctx.globals().set("setTimeout", Value::new_undefined(ctx))?;
     ctx.globals().set("console", Value::new_undefined(ctx))?;
+    tracing::info!("Done cleaning up Svelters...");
     // for (_key, _val) in doc.inner.borrow_mut().types.drain() {}
     Ok(())
 }

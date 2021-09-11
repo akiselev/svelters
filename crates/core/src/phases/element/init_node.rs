@@ -61,6 +61,63 @@ where
     }
 }
 
+impl<'a, 'js, 'c, CLS, T> Implements<InitElementProto<'a, 'js, 'c, CLS>>
+    for members::ElementCtx<CLS, T>
+where
+    CLS: Type,
+{
+    #[inline(always)]
+    fn build_phase(
+        self,
+        phase: InitElementProto<'a, 'js, 'c, CLS>,
+    ) -> Result<InitElementProto<'a, 'js, 'c, CLS>> {
+        phase.obj.prop(
+            "nextSibling",
+            Accessor::new_get(rquickjs::Method(get_next_sibling)).enumerable(),
+        )?;
+
+        phase.obj.prop(
+            "prevSibling",
+            Accessor::new_get(rquickjs::Method(get_prev_sibling)).enumerable(),
+        )?;
+
+        phase.obj.prop(
+            "parentNode",
+            Accessor::new_get(rquickjs::Method(get_parent)).enumerable(),
+        )?;
+
+        phase.obj.prop(
+            "children",
+            Accessor::new_get(rquickjs::Method(get_children)).enumerable(),
+        )?;
+
+        phase.obj.prop(
+            "addEventListener",
+            Func::new(
+                "addEventListener",
+                rquickjs::Method(add_event_listener::<CLS>),
+            ),
+        )?;
+        phase.obj.prop(
+            "removeEventListener",
+            Func::new(
+                "removeEventListener",
+                rquickjs::Method(remove_event_listener),
+            ),
+        )?;
+        phase.obj.prop(
+            "getAttribute",
+            Func::new("getAttribute", rquickjs::Method(get_attribute)),
+        )?;
+        phase.obj.prop(
+            "setAttribute",
+            Func::new("setAttribute", rquickjs::Method(set_attribute)),
+        )?;
+
+        Ok(phase)
+    }
+}
+
 #[inline(always)]
 fn get_next_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.next.clone()

@@ -82,6 +82,7 @@ pub struct TypeDef {
     pub(in crate) inherits: SmallVec<[&'static str; 8]>,
     pub(in crate) props: HashMap<&'static str, PropertyDef>,
     pub(in crate) events: HashMap<&'static str, EventDef>,
+    pub(in crate) element_proto: Option<RegisteryKey>,
     pub(in crate) casters: CasterMap,
 }
 
@@ -95,6 +96,7 @@ impl TypeDef {
             props: HashMap::new(),
             events: HashMap::new(),
             casters: HashMap::new(),
+            element_proto: None,
         }
     }
 

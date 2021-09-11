@@ -71,12 +71,12 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        build_class!(CLS with InitVirt::<CLS>::new(ctx, proto));
+        build!(CLS::InitVirt::<CLS>[ctx, proto]);
         Ok(())
     }
 
     fn init_static<'js>(ctx: Ctx<'js>, _static: &Object<'js>) -> Result<()> {
-        build_class!(CLS with InitStatic::<CLS>::new(ctx, _static));
+        build!(CLS::InitStatic::<CLS>[ctx, _static]);
         Ok(())
     }
 
@@ -134,7 +134,7 @@ where
     fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
         let obj = value
             .as_object()
-            .ok_or_else(|| Error::new(ctx, format!("Could not cast to {}", CLS::CLASS_NAME)))?;
+            .ok_or_else(|| exception!("Could not cast to {}", CLS::CLASS_NAME))?;
         if obj.instance_of::<Self>() {
             return Self::from_js_obj(ctx, value);
         }

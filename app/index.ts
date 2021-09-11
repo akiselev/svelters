@@ -1,14 +1,14 @@
 import * as core from "Gtk";
 import App from "./App.svelte";
 console.log(">>>>>, 1");
-// window.main = document.createElement("qMainWindow");
+// window.main = document.createElement("applicationWindow");
 console.log(">>>>>, 2");
-window.main.windowOpacity = 0.5;
+// window.main.windowOpacity = 0.5;
 console.log(">>>>>, 3");
-window.main.show();
+// window.main.show();
 console.log(">>>>>, 4");
 
-window.App = new App({ target: window.main });
+window.App = new App({ target: window });
 
 //--------------------------------
 // import * as mod from "QtCore";

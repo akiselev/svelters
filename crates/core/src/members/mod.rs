@@ -55,6 +55,22 @@ impl<CLS, FUNC> Element<CLS, FUNC> {
     }
 }
 
+pub struct ElementCtx<CLS, FUNC> {
+    pub(in crate) name: &'static str,
+    pub(in crate) element: FUNC,
+    pub(in crate) cls: Class<CLS>,
+}
+
+impl<CLS, FUNC> ElementCtx<CLS, FUNC> {
+    pub(in crate) fn new(name: &'static str, element: FUNC) -> Self {
+        ElementCtx {
+            name,
+            element,
+            cls: Class::new(),
+        }
+    }
+}
+
 pub struct Event<CLS, FUNC> {
     pub(in crate) name: &'static str,
     pub(in crate) func: FUNC,

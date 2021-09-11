@@ -54,6 +54,7 @@ where
     }
 
     fn eval<'js>(ctx: Ctx<'js>, exports: &QJsModule<'js, Loaded<Native>>) -> Result<()> {
+        tracing::info!("Evaluating module {}", MOD::MODULE_NAME);
         let doc: &mut Document = ctx.globals().get("document")?;
         let rt = doc.rt.clone();
         let mut _mod = ModuleBuilder::<MOD, ModuleEval<'_, '_, '_>>(
@@ -91,7 +92,12 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: ModuleEval<'a, 'b, 'c>) -> Result<ModuleEval<'a, 'b, 'c>> {
-        build_class!(CLS with ConstructorEval::<'a, '_, 'c, CLS>::new(phase.rt.clone(), phase.ctx, phase.module, phase.doc));
+        build!(CLS::ConstructorEval::<'a, '_, 'c, CLS>[
+            phase.rt.clone(),
+            phase.ctx,
+            phase.module,
+            phase.doc
+        ]);
         Ok(phase)
     }
 }
@@ -102,9 +108,10 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: ModuleLoad<'a, 'b>) -> Result<ModuleLoad<'a, 'b>> {
+        tracing::info!("Registering type {}", CLS::CLASS_NAME);
         let key = phase.rt.register_type::<CLS>(phase.ctx);
         unsafe { CLS::metadata().init(key)? };
-        build_class!(CLS with ConstructorLoad::<'a, 'b, CLS>::new(phase.ctx, phase.module));
+        build!(CLS::ConstructorLoad::<'a, 'b, CLS>[phase.ctx, phase.module]);
         Ok(phase)
     }
 }

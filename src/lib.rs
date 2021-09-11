@@ -15,9 +15,9 @@
 use std::{ffi::CString, os::raw::c_char, path::Path, time::Duration};
 
 use rquickjs::{
-    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, Func,
-    Function, IntoJs, ModuleLoader, NativeLoader, Object, Persistent, Result as JsResult,
-    Runtime as JsRuntime, ScriptLoader, Value,
+    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, FromJs,
+    Func, Function, IntoAtom, IntoJs, ModuleLoader, NativeLoader, Object, Persistent,
+    Result as JsResult, Runtime as JsRuntime, ScriptLoader, Value,
 };
 
 use svelters_compiler::{compile_sync, SvelteCompiler};
@@ -26,6 +26,7 @@ use svelters_core::prelude::*;
 pub mod logging;
 
 pub struct Svelters {
+    rt: JsRuntime,
     ctx: Context,
     compiler: SvelteCompiler,
 }
@@ -42,7 +43,7 @@ impl Svelters {
             initialize_svelters(ctx)?;
             Result::<()>::Ok(())
         })?;
-        Ok(Self { ctx, compiler })
+        Ok(Self { rt, ctx, compiler })
     }
 
     #[tracing::instrument(skip(self))]
@@ -52,13 +53,19 @@ impl Svelters {
     {
         let modpath = path.as_ref().to_owned();
         let src = compile_sync(&self.compiler, path)?;
+
         let res: Result<()> = self.ctx.with(|ctx| {
             let res = ctx.eval_global_module::<Value, _>(modpath, Some(src.into_bytes()));
             match res {
-                Ok(ok) => tracing::info!("Success! Result: {:?}", ok),
-                Err(err) => tracing::error!("Failure! Result: {}", err),
+                Ok(ok) => {
+                    tracing::info!("Success! Result: {:?}", ok);
+                    Ok(())
+                }
+                Err(err) => {
+                    tracing::error!("Failure! Result: {}", err);
+                    Err(err)
+                }
             }
-            Ok(())
         });
         res
     }
@@ -75,6 +82,22 @@ impl Svelters {
     pub fn spawn_executor<A: ExecutorSpawner>(&self, executor: A) -> A::JoinHandle {
         self.ctx.runtime().spawn_executor(executor)
     }
+
+    pub fn set_global<K, V>(&self, key: K, value: V) -> Result<()>
+    where
+        K: for<'js> IntoAtom<'js>,
+        V: for<'js> IntoJs<'js>,
+    {
+        self.ctx.with(move |ctx| ctx.globals().set(key, value))
+    }
+
+    pub fn with_js<FUNC, R>(&self, func: FUNC) -> R
+    where
+        FUNC: for<'js> FnOnce(Ctx<'js>) -> R,
+        R: for<'js> FromJs<'js>,
+    {
+        self.ctx.with(move |ctx| func(ctx))
+    }
 }
 
 impl Drop for Svelters {
@@ -85,6 +108,6 @@ impl Drop for Svelters {
             if let Err(err) = cleanup_svelters(ctx) {
                 tracing::error!("Error while cleaning up svelters: {}", err);
             }
-        })
+        });
     }
 }

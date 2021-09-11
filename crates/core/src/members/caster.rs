@@ -7,7 +7,7 @@ where
     #[inline(always)]
     fn build_phase(self, phase: InitProto<'a, 'js, CLS>) -> Result<InitProto<'a, 'js, CLS>> {
         let obj = Object::new(phase.ctx)?;
-        build_class!(CLS with InitVirt::<CLS>::new(phase.ctx, &obj));
+        build!(CLS::InitVirt::<CLS>[phase.ctx, &obj]);
         phase.obj.set("__VIRT__", obj)?;
         phase.obj.set(
             "castAs",
@@ -54,13 +54,11 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: InitCaster<CLS>) -> Result<InitCaster<CLS>> {
-        // let casters = phase.map.get_mut(Class::<SUPER>::typekey()).unwrap();
-        // let map: &mut CasterMap<SUPER> = casters.downcast_mut().unwrap();
         phase
             .map
             .insert(SUPER::CLASS_NAME, smallbox!(caster_fn::<CLS, SUPER>));
 
-        build_class!(SUPER with InitSuperCaster::<CLS, SUPER>::new(phase.map));
+        build!(SUPER::InitSuperCaster::<CLS, SUPER>[phase.map]);
         Ok(phase)
     }
 }
@@ -80,7 +78,7 @@ impl<'a, 'b: 'a, CLS, SUPER, NESTED> Implements<InitSuperCaster<'a, CLS, SUPER>>
 where
     CLS: Type,
     SUPER: Type,
-    NESTED: Clone + Type,
+    NESTED: Type,
     CLS: Upcast<NESTED>,
 {
     #[inline(always)]
@@ -88,14 +86,11 @@ where
         self,
         phase: InitSuperCaster<CLS, SUPER>,
     ) -> Result<InitSuperCaster<CLS, SUPER>> {
-        // let casters = phase.map.get_mut(Class::<NESTED>::typekey()).unwrap();
-        // let map: &mut CasterMap<NESTED> = casters.downcast_mut().unwrap();
-        // map.insert(Class::<CLS>::typekey(), smallbox!(caster_fn::<CLS, NESTED>));
         phase
             .map
             .insert(NESTED::CLASS_NAME, smallbox!(caster_fn::<CLS, NESTED>));
 
-        build_class!(NESTED with InitSuperCaster::<CLS, NESTED>::new(phase.map));
+        build!(NESTED::InitSuperCaster::<CLS, NESTED>[phase.map]);
         Ok(phase)
     }
 }

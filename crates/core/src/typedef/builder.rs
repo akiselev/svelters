@@ -109,6 +109,16 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
     }
 
     #[inline(always)]
+    pub fn as_element_with_js<FUNC>(self, name: &'static str, func: FUNC) -> Result<Self>
+    where
+        FUNC: 'static + for<'js> Fn(Ctx<'js>) -> Result<CLS>,
+        members::ElementCtx<CLS, FUNC>: Implements<PHASE>,
+    {
+        let phase = members::ElementCtx::<CLS, FUNC>::new(name, func).build_phase(self.phase)?;
+        Ok(ClassBuilder::new(phase))
+    }
+
+    #[inline(always)]
     pub fn with_slot<SLOT>(self, slot: SLOT) -> Result<Self>
     where
         SLOT: crate::traits::INativeSlot,

@@ -66,7 +66,7 @@ impl<'js> HasRefs for ElementNode<'js> {
 }
 
 impl<'js> ElementNode<'js> {
-    pub(in crate) fn new<CLS: Type + Clone>(
+    pub(in crate) fn new<CLS: Type>(
         rt: Rt,
         ctx: Ctx<'js>,
         tag_name: &'static str,

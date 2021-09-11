@@ -1,4 +1,12 @@
 #[macro_export(crate)]
+macro_rules! build{($cls:ident::$phase:ty[$($args:expr),*]) => {{
+    let mut child = <$phase>::new($($args),*);
+    let mut cls: TypeBuilder<$cls, _> = TypeBuilder::new(child);
+    let res = <$cls as Type>::define(cls)?;
+    res
+}}}
+
+#[macro_export(crate)]
 macro_rules! build_class {
     ($cls:ident with $phase:expr) => {{
         let mut child = $phase;
