@@ -36,9 +36,9 @@ impl<'a, 'b, 'js> ModuleEval<'a, 'b, 'js> {
     }
 }
 
-pub struct JsModuleLoader<MOD>(MOD);
+pub struct SveltersModule<MOD>(MOD);
 
-impl<MOD> ModuleDef for JsModuleLoader<MOD>
+impl<MOD> ModuleDef for SveltersModule<MOD>
 where
     MOD: Module,
 {
@@ -65,7 +65,7 @@ where
     }
 }
 
-impl<MOD> JsModuleLoader<MOD>
+impl<MOD> SveltersModule<MOD>
 where
     MOD: Module,
 {

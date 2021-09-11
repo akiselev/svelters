@@ -5,8 +5,6 @@ pub(crate) use rquickjs::{
     Result, Value,
 };
 
-use svelters_core::prelude::Framework;
-
 pub(in crate) mod cast;
 pub(in crate) mod classes;
 pub(in crate) mod framework;
@@ -40,7 +38,15 @@ impl World for CoreWorld {
     async fn new() -> Result<Self> {
         let rt = rquickjs::Runtime::new()?;
         let ctx = rquickjs::Context::full(&rt)?;
-        let (resolver, loader) = FW::get_loader();
+        let (resolver, loader) = {
+            let resolver = BuiltinResolver::default()
+                .with_module("Core")
+                .with_module("Widgets");
+            let loader = ModuleLoader::default()
+                .with_module("Core", FwCore.loader())
+                .with_module("Widgets", FwWidgets.loader());
+            (resolver, loader)
+        };
         rt.set_loader(resolver, loader);
         let key = ctx
             .with(move |ctx| {

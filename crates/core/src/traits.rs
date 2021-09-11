@@ -4,24 +4,6 @@ use rquickjs::{Loader, Resolver};
 
 use crate::inner::*;
 
-/// The framework that Svelters exposes to Javascript and Svelte
-pub trait Framework: Sized + 'static {
-    type Loader: Loader;
-    type Resolver: Resolver;
-    type AppTask: Future<Output = anyhow::Result<()>>;
-
-    fn name() -> &'static str;
-    fn get_loader() -> (Self::Resolver, Self::Loader);
-    fn init_app(ctx: Context) -> Result<Self::AppTask>;
-
-    fn module<MOD>(module: MOD) -> JsModuleLoader<MOD>
-    where
-        MOD: Module,
-    {
-        JsModuleLoader::new(module)
-    }
-}
-
 /// Cast Self to type &T
 pub trait Cast<T> {
     fn cast<'a>(&'a self) -> T;
@@ -30,6 +12,11 @@ pub trait Cast<T> {
 /// Defines the contents of a Javascript module using a [ModuleBuilder]
 pub trait Module: Sized {
     fn define<P>(module: ModuleBuilder<Self, P>) -> Result<ModuleBuilder<Self, P>>;
+
+    #[inline(always)]
+    fn loader(self) -> SveltersModule<Self> {
+        SveltersModule::new(self)
+    }
 }
 
 /// Defines a framework type that is exposed to Javascript using a [TypeBuilder]
