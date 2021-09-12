@@ -1,5 +1,7 @@
 use glib::object::Object as GObject;
-use gtk4::{gdk::Cursor, prelude::*, Align, Application, Overflow, TextDirection, Widget};
+use gtk4::{
+    gdk::Cursor, prelude::*, Align, Application, ConstraintTarget, Overflow, TextDirection, Widget,
+};
 
 use crate::inner::*;
 
@@ -30,8 +32,37 @@ define!(|cls: GObject| {
     // event!(cls.clicked as SlotOfBool[val](val));
 });
 
+define!(|cls: ConstraintTarget| {
+    // let cls = cls.superclass::<Gtk<GObjecst>>()?;
+
+    // layout_manager: {
+    //     layout_manager
+    // };
+    // fn <P: IsA<LayoutManager>>(&self, layout_manager: Option<&P>)
+    // focus_child: {
+    //     focus_child
+    // };
+    // fn <P: IsA<Widget>>(&self, child: Option<&P>)
+    // font_map: {
+    //     font_map
+    // };
+    // fn <P: IsA<FontMap>>(&self, font_map: Option<&P>)
+    // parent: {
+    //     parent
+    // };
+    // fn <P: IsA<Widget>>(&self, parent: &P)
+    props!(cls(this: Gtk<ConstraintTarget>) {
+    });
+    methods!(cls(this: Gtk<ConstraintTarget>) {
+
+    });
+    // event!(cls.clicked as SlotOfBool[val](val));
+});
+
 define!(|cls: Widget| {
-    let cls = cls.superclass::<Gtk<GObject>>()?;
+    let cls = cls
+        .superclass::<Gtk<GObject>>()?
+        .superclass::<Gtk<ConstraintTarget>>()?;
 
     // layout_manager: {
     //     layout_manager
@@ -75,9 +106,9 @@ define!(|cls: Widget| {
         //     this.cursor();
         //     this.set_cursor(cursor);
         // };
-        direction:  Gtk<TextDirection> {
-            Gtk(this.direction());
-            this.set_direction(direction.0);
+        direction:  Enum<TextDirection> {
+            this.direction().into();
+            this.set_direction(direction.into());
         };
         focusOnClick:  bool {
             this.gets_focus_on_click();
@@ -91,9 +122,9 @@ define!(|cls: Widget| {
         //     this.font_options();
         //     this.set_font_options(fontOptions);
         // };
-        hAlign: Gtk<Align> {
-            Gtk(this.halign());
-            this.set_halign(hAlign.0);
+        hAlign: Enum<Align> {
+            this.halign().into();
+            this.set_halign(hAlign.into());
         };
         hasTooltip:  bool {
             this.has_tooltip();
@@ -131,9 +162,9 @@ define!(|cls: Widget| {
             this.opacity();
             this.set_opacity(opacity);
         };
-        overflow:  Gtk<Overflow> {
-            Gtk(this.overflow());
-            this.set_overflow(overflow.0);
+        overflow:  Enum<Overflow> {
+            this.overflow().into();
+            this.set_overflow(overflow.into());
         };
         receivesDefault:  bool {
             this.receives_default();
@@ -155,9 +186,9 @@ define!(|cls: Widget| {
             this.tooltip_text().map(|val| val.to_string());
             this.set_tooltip_text(tooltipText.as_ref().map(String::as_str));
         };
-        vAlign:  Gtk<Align> {
-            Gtk(this.valign());
-            this.set_valign(vAlign.0);
+        vAlign:  Enum<Align> {
+            this.valign().into();
+            this.set_valign(vAlign.into());
         };
         vExpandSet:  bool {
             this.is_vexpand_set();

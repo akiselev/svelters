@@ -8,6 +8,7 @@
 #![feature(decl_macro)]
 #![feature(proc_macro_hygiene)]
 #![feature(let_chains)]
+#![feature(trait_alias)]
 #![recursion_limit = "1024"]
 
 use std::{borrow::Cow, future::Future, time::Duration};
@@ -22,14 +23,10 @@ use svelters_core::prelude::*;
 
 pub use crate::wrapper::Gtk;
 
+mod jsenum;
 mod macros;
+mod types;
 mod wrapper;
-
-mod types {
-    mod buttons;
-    mod core;
-    mod windows;
-}
 
 pub(in crate) mod inner {
     pub(in crate) use std::{
@@ -49,21 +46,114 @@ pub(in crate) mod inner {
 
     pub(in crate) use svelters_core::{exception, prelude::*};
 
+    pub(in crate) use crate::jsenum::*;
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::wrapper::Gtk;
 }
 mod module {
     use super::Gtk;
     use glib::object::Object as GObject;
-    use gtk4::*;
+    use gtk4::{gsk::Transform, *};
 
     crate::macros::module!(
+        /***** Core *****/
         Gtk: GObject,
         Widget,
         Application,
+        /***** Window *****/
         Window,
         ApplicationWindow,
-        Button
+        /***** Layout *****/
+        Transform,
+        LayoutChild,
+        ConstraintLayoutChild,
+        FixedLayoutChild,
+        GridLayoutChild,
+        OverlayLayoutChild,
+        LayoutManager,
+        /***** Accessibility *****/
+        Accessible,
+        /***** Buttons *****/
+        Button,
+        /***** WIP *****/
+        ActionBar,
+        Actionable,
+        AppChooserButton,
+        AppChooserWidget,
+        AppChooser,
+        AspectFrame,
+        Box,
+        Calendar,
+        CellEditable,
+        CellView,
+        CenterBox,
+        CheckButton,
+        ColorButton,
+        ColorChooserWidget,
+        ColumnView,
+        ComboBox,
+        DragIcon,
+        DrawingArea,
+        DropDown,
+        EditableLabel,
+        Editable,
+        Entry,
+        Expander,
+        FileChooserWidget,
+        Fixed,
+        FlowBoxChild,
+        FlowBox,
+        FontButton,
+        FontChooserWidget,
+        Frame,
+        GLArea,
+        Grid,
+        HeaderBar,
+        IconView,
+        Image,
+        InfoBar,
+        Label,
+        LevelBar,
+        ListBase,
+        ListBoxRow,
+        ListBox,
+        MediaControls,
+        MenuButton,
+        Native,
+        Notebook,
+        Overlay,
+        Paned,
+        PasswordEntry,
+        Picture,
+        PopoverMenuBar,
+        Popover,
+        ProgressBar,
+        Range,
+        Revealer,
+        Root,
+        ScaleButton,
+        Scrollbar,
+        ScrolledWindow,
+        SearchBar,
+        SearchEntry,
+        Separator,
+        ShortcutLabel,
+        ShortcutsShortcut,
+        SpinButton,
+        Spinner,
+        StackSidebar,
+        StackSwitcher,
+        Stack,
+        Statusbar,
+        Switch,
+        TextView,
+        Text,
+        TreeExpander,
+        TreeView,
+        Video,
+        Viewport,
+        WindowControls,
+        WindowHandle,
     );
 }
 

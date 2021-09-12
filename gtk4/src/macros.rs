@@ -48,10 +48,10 @@ pub(in crate) macro define (|$builder:ident: $cls:ty| { $($tokens:tt)* }) {
         }
 
         #[inline(always)]
-        fn define<P>($builder: TypeBuilder<Self, P>) -> Result<()> {
+        fn define<P>($builder: TypeBuilder<Self, P>) -> Result<P> {
             let $builder = $builder.class()?;
             $($tokens)*
-            Ok(())
+            $builder.build()
         }
     }
 }
