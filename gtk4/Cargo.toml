@@ -24,7 +24,7 @@ flume = "0.10.7"
 tokio = { version = "1", features = ["time"] }
 serde_json = "1.0.64"
 serde = "1.0.126"
-rquickjs = { version = "0.1.1", path = "../rquickjs", features = [
+rquickjs = { version = "0.1.1", path = "../crates/rquickjs", features = [
     "full",
     "tokio",
 ] }

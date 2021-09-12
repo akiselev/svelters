@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
+    "target": "ES2020",
     "strict": true,
     "moduleResolution": "node",
     "module": "EsNext",
@@ -9,7 +9,8 @@
     "esModuleInterop": true,
     "declaration": true,
     "declarationDir": "dist/",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "lib": ["ES2020"],
   },
   "include": ["src/"],
   "exclude": ["node_modules"]

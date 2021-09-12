@@ -28,8 +28,12 @@
 #![feature(const_fn_trait_bound)]
 // Enables using size_of in [u8; size_of::<T>()]
 #![feature(generic_const_exprs)]
-// Unsize trait for coercing user types
+// Unsize trait for coercing user types (used for SmallBox)
 #![feature(unsize)]
+// Allows creating try blocks in functions that dont return result
+#![feature(try_blocks)]
+// New implementation of ? operator
+// #![feature(try_trait_v2)]
 
 pub mod prelude {
     pub use crate::traits::*;
