@@ -101,7 +101,7 @@ export const callElementMethodAfterCast = (
     return inst[name](...args);
 };
 
-export const callMethodAfterImpl = (
+export const callMethodAsImpl = (
     cls,
     castTo = "Object",
     name = "className",
@@ -112,7 +112,7 @@ export const callMethodAfterImpl = (
     return inst[name](...args);
 };
 
-export const callElementMethodAfterImpl = (
+export const callElementMethodAsImpl = (
     el,
     castTo = "Object",
     name = "className",

@@ -39,22 +39,22 @@ Feature: Core
 
     Scenario: ELEMENT IMPL self correctly with caster
         Given module at "core.js"
-        When calling function "callElementMethodAfterImpl" with args ("object", "Object", "className2")
+        When calling function "callElementMethodAsImpl" with args ("object", "Object", "className2")
         Then return value is "Object"
 
     Scenario: ELEMENT IMPL to super correctly with caster
         Given module at "core.js"
-        When calling function "callElementMethodAfterImpl" with args ("application", "Object", "className2")
+        When calling function "callElementMethodAsImpl" with args ("application", "Object", "className2")
         Then return value is "Object"
 
     Scenario: ELEMENT IMPL to nested correctly with caster
         Given module at "core.js"
-        When calling function "callElementMethodAfterImpl" with args ("mainWindow", "Widget", "className2")
+        When calling function "callElementMethodAsImpl" with args ("mainWindow", "Widget", "className2")
         Then return value is "Widget"
 
     Scenario: ELEMENT IMPL types can call child functions
         Given module at "core.js"
-        When calling function "callElementMethodAfterImpl" with args (<class>, "Object", "className2")
+        When calling function "callElementMethodAsImpl" with args (<class>, "Object", "className2")
         Then return value is <result>
 
         Examples:

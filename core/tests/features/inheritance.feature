@@ -39,22 +39,22 @@ Feature: Core
 
     Scenario: IMPL self correctly with caster
         Given module at "core.js"
-        When calling function "callMethodAfterImpl" with args ("Object", "Object", "className2")
+        When calling function "callMethodAsImpl" with args ("Object", "Object", "className2")
         Then return value is "Object"
 
     Scenario: IMPL to super correctly with caster
         Given module at "core.js"
-        When calling function "callMethodAfterImpl" with args ("Application", "Object", "className2")
+        When calling function "callMethodAsImpl" with args ("Application", "Object", "className2")
         Then return value is "Object"
 
     Scenario: IMPL to nested correctly with caster
         Given module at "core.js"
-        When calling function "callMethodAfterImpl" with args ("MainWindow", "Widget", "className2")
+        When calling function "callMethodAsImpl" with args ("MainWindow", "Widget", "className2")
         Then return value is "Widget"
 
     Scenario: IMPLed types can call child functions
         Given module at "core.js"
-        When calling function "callMethodAfterImpl" with args (<class>, "Object", "className2")
+        When calling function "callMethodAsImpl" with args (<class>, "Object", "className2")
         Then return value is <result>
 
         Examples:
