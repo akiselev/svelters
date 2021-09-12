@@ -75,3 +75,15 @@ where
         Ok(phase)
     }
 }
+
+impl<'a, 'b: 'a, CLS, SUPER> Implements<InitImpl<'a, 'b, CLS>> for members::Superclass<SUPER>
+where
+    CLS: Type + Upcast<SUPER>,
+    SUPER: Type,
+{
+    #[inline(always)]
+    fn build_phase(self, phase: InitImpl<'a, 'b, CLS>) -> Result<InitImpl<'a, 'b, CLS>> {
+        build!(SUPER::InitImpl::<'_, '_, CLS>[phase.ctx, phase.obj]);
+        Ok(phase)
+    }
+}

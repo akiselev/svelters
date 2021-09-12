@@ -16,6 +16,22 @@ impl<'a, 'js, BASE> InitVirt<'a, 'js, BASE> {
     }
 }
 
+pub struct InitImpl<'a, 'js, BASE> {
+    pub(in crate) ctx: Ctx<'js>,
+    pub(in crate) obj: &'a Object<'js>,
+    pub(in crate) framework: PhantomData<BASE>,
+}
+
+impl<'a, 'js, BASE> InitImpl<'a, 'js, BASE> {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'js>) -> Self {
+        Self {
+            ctx,
+            obj,
+            framework: PhantomData,
+        }
+    }
+}
+
 pub struct ConstructorEval<'a, 'b, 'js, CLS> {
     pub(in crate) rt: Rt,
     pub(in crate) ctx: Ctx<'js>,

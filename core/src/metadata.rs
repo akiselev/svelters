@@ -36,14 +36,16 @@ pub struct Metadata {
     pub(in crate) type_id: TypeId,
     pub(in crate) obj_id: ClassId,
     pub(in crate) virt_id: ClassId,
+    pub(in crate) impl_id: ClassId,
 }
 
 impl Metadata {
     pub const fn new<CLS: Type + Any>() -> Metadata {
         Metadata {
-            obj_id: ClassId::new(),
             _typekey: None,
+            obj_id: ClassId::new(),
             virt_id: ClassId::new(),
+            impl_id: ClassId::new(),
             type_id: TypeId::of::<CLS>(),
         }
     }
@@ -51,6 +53,7 @@ impl Metadata {
     pub(in crate) unsafe fn init(&mut self, _typekey: TypeKey) -> Result<()> {
         self.obj_id.init();
         self.virt_id.init();
+        self.impl_id.init();
         self._typekey = Some(_typekey);
         Ok(())
     }

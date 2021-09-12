@@ -45,12 +45,6 @@ impl<'js> PartialEq<SlotNode<'js>> for ElementNode<'js> {
     }
 }
 
-impl<'js, CLS> PartialEq<Virt<'js, CLS>> for ElementNode<'js> {
-    fn eq(&self, other: &Virt<'js, CLS>) -> bool {
-        self.idx == other.idx
-    }
-}
-
 impl<'js> Eq for ElementNode<'js> {}
 
 pub struct ElData<'js> {

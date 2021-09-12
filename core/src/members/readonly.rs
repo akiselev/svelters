@@ -118,3 +118,30 @@ where
         Ok(phase)
     }
 }
+
+impl<'a, 'b: 'a, BASE, CLS, PROP, GET> Implements<InitImpl<'a, 'b, BASE>>
+    for members::ReadOnly<CLS, PROP, GET>
+where
+    CLS: Type,
+    BASE: Type + Upcast<CLS>,
+    PROP: 'static + for<'x> IntoJs<'x> + for<'x> FromJs<'x>,
+    GET: 'static + for<'x> Fn(&'x CLS) -> Result<PROP>,
+{
+    #[inline(always)]
+    fn build_phase(self, phase: InitImpl<'a, 'b, BASE>) -> Result<InitImpl<'a, 'b, BASE>> {
+        let members::ReadOnly { name, getter, .. } = self;
+
+        let res = phase.obj.prop(
+            name,
+            Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>| {
+                let obj: &Impl<BASE> = this.as_ref();
+                let ptr = obj.cls.upcast();
+
+                let val = getter(&ptr)?;
+                rquickjs::Result::Ok(val)
+            }))
+            .enumerable(),
+        )?;
+        Ok(phase)
+    }
+}

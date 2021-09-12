@@ -49,7 +49,43 @@ where
                             let caster = obj.casters.get(target.as_str()).ok_or_else(|| {
                                 exception!("Could not cast {} to {}", CLS::CLASS_NAME, target)
                             })?;
-                            caster(ctx, value.as_object().clone(), this.rt.clone(), this.idx)
+                            (caster.obj_to_virt)(
+                                ctx,
+                                value.as_object().clone(),
+                                this.rt.clone(),
+                                this.idx,
+                            )
+                        }
+                    },
+                ),
+            ),
+        );
+        phase.obj.set(
+            "asImpl",
+            Func::new(
+                "asImpl",
+                rquickjs::Method(
+                    move |value: JsClass<'b, ElementNode<'b>>, ctx: Ctx<'b>, target: String| {
+                        let this: &ElementNode<'b> = value.as_ref();
+                        let rt = this.rt.inner.deref().borrow();
+                        let obj = Obj::<CLS>::from_rt(&this.rt, this.idx)?;
+                        if CLS::CLASS_NAME == target {
+                            Impl::<CLS>::new((*obj).clone()).into_js(ctx)
+                        } else {
+                            let obj = rt.types.get(Class::<CLS>::typekey()).unwrap();
+                            let caster = obj.casters.get(target.as_str()).ok_or_else(|| {
+                                exception!(
+                                    "Could not get interface {} from {}",
+                                    target,
+                                    CLS::CLASS_NAME
+                                )
+                            })?;
+                            (caster.obj_to_impl)(
+                                ctx,
+                                value.as_object().clone(),
+                                this.rt.clone(),
+                                this.idx,
+                            )
                         }
                     },
                 ),

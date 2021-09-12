@@ -101,6 +101,28 @@ export const callElementMethodAfterCast = (
     return inst[name](...args);
 };
 
+export const callMethodAfterImpl = (
+    cls,
+    castTo = "Object",
+    name = "className",
+    ...args
+) => {
+    let inst = constructClass(cls);
+    inst = inst.asImpl(castTo);
+    return inst[name](...args);
+};
+
+export const callElementMethodAfterImpl = (
+    el,
+    castTo = "Object",
+    name = "className",
+    ...args
+) => {
+    let inst = document.createElement(el);
+    inst = inst.asImpl(castTo);
+    return inst[name](...args);
+};
+
 export const getElementClassName = (el = "object") => {
     return document.createElement(el).className();
 };

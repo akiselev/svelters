@@ -124,6 +124,42 @@ macro_rules! tup {
                     Ok(phase)
                 }
             }
+
+            impl<'a, 'b: 'a, BASE, FUNC, CLS, RET, $($arg,)*> Implements<InitImpl<'a, 'b, BASE>>
+                for members::Method<CLS, (CLS, $($arg,)*), RET, FUNC>
+            where
+                CLS: Type,
+                BASE: Type + Upcast<CLS>,
+                RET: 'static +  IntoJs<'b>,
+                FUNC: 'static + for<'x> Fn(&'x CLS, $($arg,)*) -> Result<RET>,
+                $($arg: 'static + for<'x> FromJs<'x>,)*
+            {
+                #[inline(always)]
+                fn build_phase(self, phase: InitImpl<'a, 'b, BASE>) -> Result<InitImpl<'a, 'b, BASE>> {
+                    phase.obj.set(
+                        self.name,
+                        rquickjs::Func::new(
+                            self.name,
+                            rquickjs::Method(
+                                move |this: JsClass<'b, Impl<BASE>>, ctx: Ctx<'b>, args: Rest<Value<'b>>| {
+                                    let args = args.into_inner();
+                                    let args_len = args.len();
+                                    tuple_match_size(args_len, {0 $(+ tup!(@one $arg))*})?;
+                                    let obj: &Impl<BASE> = this.as_ref();
+                                    let ptr = obj.cls.upcast();
+
+                                    let res = (self.func)(
+                                        &ptr,
+                                        $({ let arg: $arg = FromJs::from_js(ctx, args.get(tup!(@idx $arg)).cloned().unwrap())?; arg },)*
+                                    )?;
+                                    Result::<_>::Ok(res.into_js(ctx))
+                                },
+                            ),
+                        ),
+                    )?;
+                    Ok(phase)
+                }
+            }
         )*
     };
     (@one $($t:tt)*) => { 1 };

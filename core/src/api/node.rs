@@ -28,15 +28,6 @@ impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
     }
 }
 
-impl<'js, CLS> PartialEq<Virt<'js, CLS>> for Node<'js> {
-    fn eq(&self, other: &Virt<'js, CLS>) -> bool {
-        match &self.this {
-            UINode::Element(this) => this.idx == other.idx,
-            _ => false,
-        }
-    }
-}
-
 impl<'js> Eq for Node<'js> {}
 
 impl<'js> Node<'js> {

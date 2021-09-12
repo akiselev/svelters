@@ -44,6 +44,7 @@ pub mod prelude {
     pub use crate::api::node::Node;
     pub use crate::runtime::event::Event;
     pub use crate::typedef::hslot::BasicSlot;
+    pub use crate::typedef::impls::Impl;
     pub use crate::typedef::obj::Obj;
     pub use crate::typedef::virt::Virt;
 
@@ -105,12 +106,14 @@ pub(in crate) mod nodes {
 pub(in crate) mod typedef {
     pub(in crate) mod builder;
     pub(in crate) mod hslot;
+    pub(in crate) mod impls;
     pub(in crate) mod module;
     pub(in crate) mod obj;
     pub(in crate) mod virt;
 
     pub(in crate) use self::builder::*;
     pub(in crate) use self::hslot::*;
+    pub(in crate) use self::impls::*;
     pub(in crate) use self::module::*;
     pub(in crate) use self::obj::*;
     pub(in crate) use self::virt::*;
@@ -207,8 +210,29 @@ pub(in crate) mod inner {
     //         space::S8,
     //     >,
     // >;
-    pub(in crate) type CasterMap = HashMap<
-        &'static str,
-        SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>, Rt, Idx) -> Result<Value<'a>>, space::S8>,
-    >;
+    pub(in crate) struct Casters {
+        pub(in crate) obj_to_virt:
+            SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>, Rt, Idx) -> Result<Value<'a>>, space::S8>,
+        pub(in crate) obj_to_impl:
+            SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>, Rt, Idx) -> Result<Value<'a>>, space::S8>,
+        pub(in crate) impl_to_impl:
+            SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>) -> Result<Value<'a>>, space::S8>,
+    }
+
+    impl Casters {
+        pub(in crate) fn new<F1, F2, F3>(obj_to_virt: F1, obj_to_impl: F2, impl_to_impl: F3) -> Self
+        where
+            F1: 'static + for<'a> Fn(Ctx<'a>, Object<'a>, Rt, Idx) -> Result<Value<'a>>,
+            F2: 'static + for<'a> Fn(Ctx<'a>, Object<'a>, Rt, Idx) -> Result<Value<'a>>,
+            F3: 'static + for<'a> Fn(Ctx<'a>, Object<'a>) -> Result<Value<'a>>,
+        {
+            Self {
+                obj_to_virt: smallbox!(obj_to_virt),
+                obj_to_impl: smallbox!(obj_to_impl),
+                impl_to_impl: smallbox!(impl_to_impl),
+            }
+        }
+    }
+
+    pub(in crate) type CasterMap = HashMap<&'static str, Casters>;
 }

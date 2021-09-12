@@ -26,6 +26,7 @@ macro_rules! tup {
                 fn build_phase(self, phase: ConstructorEval<'a, 'b, 'js, CLS>) -> Result<ConstructorEval<'a, 'b, 'js, CLS>> {
                     JsClass::<Obj<CLS>>::register(phase.ctx)?;
                     JsClass::<Virt<CLS>>::register(phase.ctx)?;
+                    JsClass::<Impl<CLS>>::register(phase.ctx)?;
                     let rt = phase.rt.weak();
                     phase.module.set(
                         <CLS as Type>::CLASS_NAME,

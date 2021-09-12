@@ -36,6 +36,35 @@ Feature: Core
             | "BoxLayout"  | "Object" |
             | "PushButton" | "Object" |
 
+
+    Scenario: IMPL self correctly with caster
+        Given module at "core.js"
+        When calling function "callMethodAfterImpl" with args ("Object", "Object", "className2")
+        Then return value is "Object"
+
+    Scenario: IMPL to super correctly with caster
+        Given module at "core.js"
+        When calling function "callMethodAfterImpl" with args ("Application", "Object", "className2")
+        Then return value is "Object"
+
+    Scenario: IMPL to nested correctly with caster
+        Given module at "core.js"
+        When calling function "callMethodAfterImpl" with args ("MainWindow", "Widget", "className2")
+        Then return value is "Widget"
+
+    Scenario: IMPLed types can call child functions
+        Given module at "core.js"
+        When calling function "callMethodAfterImpl" with args (<class>, "Object", "className2")
+        Then return value is <result>
+
+        Examples:
+            | class        | result   |
+            | "Widget"     | "Object" |
+            | "MainWindow" | "Object" |
+            | "BoxLayout"  | "Object" |
+            | "PushButton" | "Object" |
+
+
     Scenario: check that the Object staticFn is inherited by each child class
         Given module at "core.js"
         When calling function "callStatic" with args (<class>, "staticFn2")

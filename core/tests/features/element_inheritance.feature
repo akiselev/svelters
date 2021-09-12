@@ -36,6 +36,34 @@ Feature: Core
             | "boxLayout"  | "Object" |
             | "pushButton" | "Object" |
 
+
+    Scenario: ELEMENT IMPL self correctly with caster
+        Given module at "core.js"
+        When calling function "callElementMethodAfterImpl" with args ("object", "Object", "className2")
+        Then return value is "Object"
+
+    Scenario: ELEMENT IMPL to super correctly with caster
+        Given module at "core.js"
+        When calling function "callElementMethodAfterImpl" with args ("application", "Object", "className2")
+        Then return value is "Object"
+
+    Scenario: ELEMENT IMPL to nested correctly with caster
+        Given module at "core.js"
+        When calling function "callElementMethodAfterImpl" with args ("mainWindow", "Widget", "className2")
+        Then return value is "Widget"
+
+    Scenario: ELEMENT IMPL types can call child functions
+        Given module at "core.js"
+        When calling function "callElementMethodAfterImpl" with args (<class>, "Object", "className2")
+        Then return value is <result>
+
+        Examples:
+            | class        | result   |
+            | "widget"     | "Object" |
+            | "mainWindow" | "Object" |
+            | "boxLayout"  | "Object" |
+            | "pushButton" | "Object" |
+
     #
     # NOT USING THESE TESTS FOR NOW BECAUSE NOT SURE IF ELEMENT PROTOTYPE SHOULD HAVE
     #   ACCESS TO CLASS STATIC FUNCTIONS
