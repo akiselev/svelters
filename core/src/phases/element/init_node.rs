@@ -4,118 +4,50 @@ use rquickjs::{Func, Function, Undefined};
 
 use crate::inner::*;
 
-impl<'a, 'js, 'c, CLS, T> Implements<InitElementProto<'a, 'js, 'c, CLS>>
-    for members::Element<CLS, T>
-where
-    CLS: Type,
-{
-    #[inline(always)]
-    fn build_phase(
-        self,
-        phase: InitElementProto<'a, 'js, 'c, CLS>,
-    ) -> Result<InitElementProto<'a, 'js, 'c, CLS>> {
-        phase.obj.prop(
-            "nextSibling",
-            Accessor::new_get(rquickjs::Method(get_next_sibling)).enumerable(),
-        )?;
+pub fn initialize_element_node_proto<'js, CLS: Type>(obj: &Object<'js>) -> Result<()> {
+    obj.prop(
+        "nextSibling",
+        Accessor::new_get(rquickjs::Method(get_next_sibling)).enumerable(),
+    )?;
 
-        phase.obj.prop(
-            "prevSibling",
-            Accessor::new_get(rquickjs::Method(get_prev_sibling)).enumerable(),
-        )?;
+    obj.prop(
+        "prevSibling",
+        Accessor::new_get(rquickjs::Method(get_prev_sibling)).enumerable(),
+    )?;
 
-        phase.obj.prop(
-            "parentNode",
-            Accessor::new_get(rquickjs::Method(get_parent)).enumerable(),
-        )?;
+    obj.prop(
+        "parentNode",
+        Accessor::new_get(rquickjs::Method(get_parent)).enumerable(),
+    )?;
 
-        phase.obj.prop(
-            "children",
-            Accessor::new_get(rquickjs::Method(get_children)).enumerable(),
-        )?;
+    obj.prop(
+        "children",
+        Accessor::new_get(rquickjs::Method(get_children)).enumerable(),
+    )?;
 
-        phase.obj.prop(
+    obj.prop(
+        "addEventListener",
+        Func::new(
             "addEventListener",
-            Func::new(
-                "addEventListener",
-                rquickjs::Method(add_event_listener::<CLS>),
-            ),
-        )?;
-        phase.obj.prop(
+            rquickjs::Method(add_event_listener::<CLS>),
+        ),
+    )?;
+    obj.prop(
+        "removeEventListener",
+        Func::new(
             "removeEventListener",
-            Func::new(
-                "removeEventListener",
-                rquickjs::Method(remove_event_listener),
-            ),
-        )?;
-        phase.obj.prop(
-            "getAttribute",
-            Func::new("getAttribute", rquickjs::Method(get_attribute)),
-        )?;
-        phase.obj.prop(
-            "setAttribute",
-            Func::new("setAttribute", rquickjs::Method(set_attribute)),
-        )?;
-
-        Ok(phase)
-    }
-}
-
-impl<'a, 'js, 'c, CLS, T> Implements<InitElementProto<'a, 'js, 'c, CLS>>
-    for members::ElementCtx<CLS, T>
-where
-    CLS: Type,
-{
-    #[inline(always)]
-    fn build_phase(
-        self,
-        phase: InitElementProto<'a, 'js, 'c, CLS>,
-    ) -> Result<InitElementProto<'a, 'js, 'c, CLS>> {
-        phase.obj.prop(
-            "nextSibling",
-            Accessor::new_get(rquickjs::Method(get_next_sibling)).enumerable(),
-        )?;
-
-        phase.obj.prop(
-            "prevSibling",
-            Accessor::new_get(rquickjs::Method(get_prev_sibling)).enumerable(),
-        )?;
-
-        phase.obj.prop(
-            "parentNode",
-            Accessor::new_get(rquickjs::Method(get_parent)).enumerable(),
-        )?;
-
-        phase.obj.prop(
-            "children",
-            Accessor::new_get(rquickjs::Method(get_children)).enumerable(),
-        )?;
-
-        phase.obj.prop(
-            "addEventListener",
-            Func::new(
-                "addEventListener",
-                rquickjs::Method(add_event_listener::<CLS>),
-            ),
-        )?;
-        phase.obj.prop(
-            "removeEventListener",
-            Func::new(
-                "removeEventListener",
-                rquickjs::Method(remove_event_listener),
-            ),
-        )?;
-        phase.obj.prop(
-            "getAttribute",
-            Func::new("getAttribute", rquickjs::Method(get_attribute)),
-        )?;
-        phase.obj.prop(
-            "setAttribute",
-            Func::new("setAttribute", rquickjs::Method(set_attribute)),
-        )?;
-
-        Ok(phase)
-    }
+            rquickjs::Method(remove_event_listener),
+        ),
+    )?;
+    obj.prop(
+        "getAttribute",
+        Func::new("getAttribute", rquickjs::Method(get_attribute)),
+    )?;
+    obj.prop(
+        "setAttribute",
+        Func::new("setAttribute", rquickjs::Method(set_attribute)),
+    )?;
+    Ok(())
 }
 
 #[inline(always)]
@@ -146,7 +78,7 @@ fn add_event_listener<'js, CLS: Type>(
     _opt: Opt<Object<'js>>,
 ) -> Result<()> {
     let node = this.node()?;
-    let rt = node.rt.inner.deref().borrow();
+    let rt = node.rt.metadata.deref().borrow();
     let typedef = rt.types.get(node.typekey).unwrap();
     let event = typedef.events.get(name.as_str()).ok_or_else(|| {
         exception!(
@@ -179,7 +111,7 @@ fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'
 #[inline(always)]
 fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Result<Value<'js>> {
     tracing::info!("Getting attr {}::{}", this.tag_name, name);
-    let rt = this.rt.inner.deref().borrow();
+    let rt = this.rt.metadata.deref().borrow();
     let typedef = rt.types.get(this.typekey).unwrap();
     let prop = typedef.props.get(name.as_str()).ok_or_else(|| {
         exception!(
@@ -204,7 +136,7 @@ fn set_attribute<'js>(
         name,
         value.type_of()
     );
-    let rt = this.rt.inner.deref().borrow();
+    let rt = this.rt.metadata.deref().borrow();
     let typedef = rt.types.get(this.typekey).unwrap();
     let prop = typedef.props.get(name.as_str()).ok_or_else(|| {
         exception!(

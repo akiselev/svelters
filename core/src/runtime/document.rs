@@ -35,11 +35,12 @@ impl Document {
         cls: CLS,
     ) -> Result<Value<'js>> {
         let proto_key = {
-            let mut inner = self.rt.inner.deref().borrow();
-            let r#type = inner.types.get(Class::<CLS>::typekey()).unwrap();
-            r#type
-                .element_proto
-                .ok_or_else(|| exception!("Type {} is not initialized", CLS::CLASS_NAME))?
+            let mut inner = self.rt.metadata.deref().borrow();
+            inner
+                .elements
+                .get(tag_name)
+                .ok_or_else(|| exception!("Element \"{}\" is not defined", tag_name))?
+                .proto
         };
         let proto: Object = ctx
             .get_register(proto_key)
@@ -77,10 +78,10 @@ impl Document {
         if name == "slot" {
             return SlotNode::new().into_js(ctx);
         }
-        if let Some(element) = self.rt.inner.borrow().elements.get(name.as_str()) {
-            (element)(ctx)
+        if let Some(element) = self.rt.metadata.borrow().elements.get(name.as_str()) {
+            (element.constructor)(ctx)
         } else {
-            Err(exception!("{} is not a valid element", name))
+            Err(exception!("Element \"{}\" is not defined", name))
         }
     }
 

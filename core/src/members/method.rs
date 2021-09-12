@@ -49,7 +49,7 @@ macro_rules! tup {
                                 },
                             ),
                         ),
-                    )?;
+                    ).map_err(define_error::<BASE>("obj method", self.name))?;
                     Ok(phase)
                 }
             }
@@ -84,7 +84,7 @@ macro_rules! tup {
                                 },
                             ),
                         ),
-                    )?;
+                    ).map_err(define_error::<BASE>("el method", self.name))?;
                     Ok(phase)
                 }
             }
@@ -120,7 +120,7 @@ macro_rules! tup {
                                 },
                             ),
                         ),
-                    )?;
+                    ).map_err(define_error::<BASE>("virt method", self.name))?;
                     Ok(phase)
                 }
             }
@@ -156,7 +156,7 @@ macro_rules! tup {
                                 },
                             ),
                         ),
-                    )?;
+                    ).map_err(define_error::<BASE>("impl method", self.name))?;
                     Ok(phase)
                 }
             }

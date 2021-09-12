@@ -3,16 +3,18 @@ use rquickjs::{Func, Function};
 use crate::{build_class, inner::*};
 
 pub struct InitElementProto<'a, 'b, 'js, BASE> {
+    pub(in crate) depth: isize,
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) obj: &'a Object<'b>,
     pub(in crate) framework: PhantomData<BASE>,
 }
 
 impl<'a, 'b, 'js, BASE> InitElementProto<'a, 'b, 'js, BASE> {
-    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'b>) -> Self {
+    pub fn new(ctx: Ctx<'js>, obj: &'a Object<'b>, depth: isize) -> Self {
         Self {
             ctx,
             obj,
+            depth,
             framework: PhantomData,
         }
     }
@@ -34,7 +36,7 @@ where
                 rquickjs::Method(
                     move |value: JsClass<'b, ElementNode<'b>>, ctx: Ctx<'b>, target: String| {
                         let this: &ElementNode<'b> = value.as_ref();
-                        let rt = this.rt.inner.deref().borrow();
+                        let rt = this.rt.metadata.deref().borrow();
                         let obj = Obj::<CLS>::from_rt(&this.rt, this.idx)?;
                         if CLS::CLASS_NAME == target {
                             Virt::<CLS>::new(
@@ -67,7 +69,7 @@ where
                 rquickjs::Method(
                     move |value: JsClass<'b, ElementNode<'b>>, ctx: Ctx<'b>, target: String| {
                         let this: &ElementNode<'b> = value.as_ref();
-                        let rt = this.rt.inner.deref().borrow();
+                        let rt = this.rt.metadata.deref().borrow();
                         let obj = Obj::<CLS>::from_rt(&this.rt, this.idx)?;
                         if CLS::CLASS_NAME == target {
                             Impl::<CLS>::new((*obj).clone()).into_js(ctx)

@@ -18,7 +18,7 @@ pub(in crate) type ObjMap = SlotMap<Idx, Instance>;
 #[derive(Clone)]
 pub struct Runtime {
     pub(in crate) objects: Rc<RefCell<ObjMap>>,
-    pub(in crate) inner: Rc<RefCell<RT>>,
+    pub(in crate) metadata: Rc<RefCell<RT>>,
 }
 
 pub struct WeakRt {
@@ -30,7 +30,7 @@ impl Runtime {
     pub fn new() -> Self {
         Self {
             objects: Rc::new(RefCell::new(Default::default())),
-            inner: Rc::new(RefCell::new(RT {
+            metadata: Rc::new(RefCell::new(RT {
                 types: Default::default(),
                 elements: Default::default(),
             })),
@@ -40,7 +40,7 @@ impl Runtime {
     pub(in crate) fn weak(&self) -> WeakRt {
         WeakRt {
             objects: Rc::downgrade(&self.objects),
-            inner: Rc::downgrade(&self.inner),
+            inner: Rc::downgrade(&self.metadata),
         }
     }
 
@@ -61,11 +61,11 @@ impl Runtime {
         let mut child = InitCaster::<CLS>::new(&mut typedef.casters);
         let mut cls: TypeBuilder<CLS, _> = TypeBuilder::new(child);
         <CLS as Type>::define(cls).unwrap();
-        self.inner.deref().borrow_mut().types.insert(typedef)
+        self.metadata.deref().borrow_mut().types.insert(typedef)
     }
 
     delegate::delegate! {
-        to self.inner {
+        to self.metadata {
             fn borrow(&self) -> Ref<RT>;
         }
     }
@@ -75,15 +75,14 @@ impl WeakRt {
     pub(in crate) fn upgrade(&self) -> Option<Runtime> {
         Some(Runtime {
             objects: self.objects.upgrade()?,
-            inner: self.inner.upgrade()?,
+            metadata: self.inner.upgrade()?,
         })
     }
 }
 
 pub(in crate) struct RT {
     pub(in crate) types: SlotMap<TypeKey, TypeDef>,
-    pub(in crate) elements:
-        HashMap<&'static str, SmallBox<dyn for<'js> Fn(Ctx<'js>) -> Result<Value<'js>>, space::S8>>,
+    pub(in crate) elements: HashMap<&'static str, ElementDef>,
 }
 
 pub(in crate) struct Instance {

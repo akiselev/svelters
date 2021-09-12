@@ -145,12 +145,21 @@ pub(in crate) mod phases {
         pub(in crate) use self::init_proto::*;
     }
 
+    mod queries {
+        pub(in crate) mod has_member;
+        pub(in crate) mod inherits_member;
+
+        pub(in crate) use self::has_member::*;
+        pub(in crate) use self::inherits_member::*;
+    }
+
     mod class;
     mod loader;
 
     pub(in crate) use self::class::*;
     pub(in crate) use self::element::*;
     pub(in crate) use self::loader::*;
+    pub use self::queries::*;
 }
 
 #[allow(unused_imports)]
@@ -198,7 +207,7 @@ pub(in crate) mod inner {
     pub(in crate) use crate::runtime::*;
     pub(in crate) use crate::utils;
 
-    pub(in crate) use crate::{build, build_class, exception};
+    pub(in crate) use crate::{build, build_class, check_member, exception};
 
     // pub(in crate) type CasterCallback<'js, CLS> =
     //     SmallBox<dyn Fn(Ctx<'js>, &CLS) -> Result<Value<'js>>, space::S4>;

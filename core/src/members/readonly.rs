@@ -29,17 +29,20 @@ where
         let members::ReadOnly { name, getter, .. } = self;
 
         // phase.obj(name).ok();
-        let res = phase.obj.prop(
-            name,
-            Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
-                let obj: &Obj<BASE> = this.as_ref();
-                let ptr = obj.borrow().unwrap();
-                let cls = ptr.upcast();
-                let val = getter(&cls)?;
-                rquickjs::Result::Ok(val)
-            }))
-            .enumerable(),
-        )?;
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
+                    let obj: &Obj<BASE> = this.as_ref();
+                    let ptr = obj.borrow().unwrap();
+                    let cls = ptr.upcast();
+                    let val = getter(&cls)?;
+                    rquickjs::Result::Ok(val)
+                }))
+                .enumerable(),
+            )
+            .map_err(define_error::<BASE>("obj readonly", self.name))?;
         Ok(phase)
     }
 }
@@ -76,18 +79,21 @@ where
     ) -> Result<InitElementProto<'a, 'b, 'c, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new_get(rquickjs::Method(
-                move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
-                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
-                    let cls = obj.upcast();
-                    let val = getter(&cls)?;
-                    rquickjs::Result::Ok(val)
-                },
-            ))
-            .enumerable(),
-        )?;
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new_get(rquickjs::Method(
+                    move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
+                        let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                        let cls = obj.upcast();
+                        let val = getter(&cls)?;
+                        rquickjs::Result::Ok(val)
+                    },
+                ))
+                .enumerable(),
+            )
+            .map_err(define_error::<BASE>("el readonly", self.name))?;
         Ok(phase)
     }
 }
@@ -104,17 +110,20 @@ where
     fn build_phase(self, phase: InitVirt<'a, 'b, BASE>) -> Result<InitVirt<'a, 'b, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
-                let obj: &Virt<BASE> = this.as_ref();
-                let ptr = obj.cls.upcast();
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
+                    let obj: &Virt<BASE> = this.as_ref();
+                    let ptr = obj.cls.upcast();
 
-                let val = getter(&ptr)?;
-                rquickjs::Result::Ok(val)
-            }))
-            .enumerable(),
-        )?;
+                    let val = getter(&ptr)?;
+                    rquickjs::Result::Ok(val)
+                }))
+                .enumerable(),
+            )
+            .map_err(define_error::<BASE>("virt readonly", self.name))?;
         Ok(phase)
     }
 }
@@ -131,17 +140,20 @@ where
     fn build_phase(self, phase: InitImpl<'a, 'b, BASE>) -> Result<InitImpl<'a, 'b, BASE>> {
         let members::ReadOnly { name, getter, .. } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>| {
-                let obj: &Impl<BASE> = this.as_ref();
-                let ptr = obj.cls.upcast();
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new_get(rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>| {
+                    let obj: &Impl<BASE> = this.as_ref();
+                    let ptr = obj.cls.upcast();
 
-                let val = getter(&ptr)?;
-                rquickjs::Result::Ok(val)
-            }))
-            .enumerable(),
-        )?;
+                    let val = getter(&ptr)?;
+                    rquickjs::Result::Ok(val)
+                }))
+                .enumerable(),
+            )
+            .map_err(define_error::<BASE>("impl readonly", self.name))?;
         Ok(phase)
     }
 }

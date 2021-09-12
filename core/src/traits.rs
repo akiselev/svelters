@@ -31,7 +31,7 @@ pub trait Type: 'static + Sized {
 
     unsafe fn metadata() -> &'static mut Metadata;
 
-    fn define<P>(cls: TypeBuilder<Self, P>) -> Result<()>;
+    fn define<P>(cls: TypeBuilder<Self, P>) -> Result<P>;
 
     #[inline(always)]
     fn name() -> &'static str {

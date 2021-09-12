@@ -36,29 +36,32 @@ where
             ..
         } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new(
-                rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
-                    let obj: &Obj<BASE> = this.as_ref();
-                    let ptr = obj.borrow().unwrap();
-                    let cls = ptr.upcast();
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new(
+                    rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>| {
+                        let obj: &Obj<BASE> = this.as_ref();
+                        let ptr = obj.borrow().unwrap();
+                        let cls = ptr.upcast();
 
-                    let val = getter(&cls)?;
-                    rquickjs::Result::Ok(val)
-                }),
-                rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>, val: PROP| {
-                    let obj: &Obj<BASE> = this.as_ref();
-                    let ptr = obj.borrow().unwrap();
-                    let cls = ptr.upcast();
+                        let val = getter(&cls)?;
+                        rquickjs::Result::Ok(val)
+                    }),
+                    rquickjs::Method(move |this: JsClass<'b, Obj<BASE>>, val: PROP| {
+                        let obj: &Obj<BASE> = this.as_ref();
+                        let ptr = obj.borrow().unwrap();
+                        let cls = ptr.upcast();
 
-                    setter(&cls, val)?;
-                    Result::<_>::Ok(())
-                }),
+                        setter(&cls, val)?;
+                        Result::<_>::Ok(())
+                    }),
+                )
+                .enumerable()
+                .configurable(),
             )
-            .enumerable()
-            .configurable(),
-        )?;
+            .map_err(define_error::<BASE>("obj property", self.name))?;
         Ok(phase)
     }
 }
@@ -109,24 +112,27 @@ where
             ..
         } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new(
-                rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
-                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
-                    let cls = obj.upcast();
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new(
+                    rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>| {
+                        let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                        let cls = obj.upcast();
 
-                    getter(&cls)
-                }),
-                rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, val: PROP| {
-                    let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
-                    let cls = obj.upcast();
-                    setter(&cls, val)
-                }),
+                        getter(&cls)
+                    }),
+                    rquickjs::Method(move |this: &mut ElementNode<'b>, ctx: Ctx<'b>, val: PROP| {
+                        let obj = this.rt.get_instance::<BASE>(this.idx).unwrap();
+                        let cls = obj.upcast();
+                        setter(&cls, val)
+                    }),
+                )
+                .enumerable()
+                .configurable(),
             )
-            .enumerable()
-            .configurable(),
-        )?;
+            .map_err(define_error::<BASE>("el property", self.name))?;
         Ok(phase)
     }
 }
@@ -149,27 +155,30 @@ where
             ..
         } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new(
-                rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
-                    let obj: &Virt<BASE> = this.as_ref();
-                    let ptr = obj.cls.upcast();
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new(
+                    rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>| {
+                        let obj: &Virt<BASE> = this.as_ref();
+                        let ptr = obj.cls.upcast();
 
-                    let val = getter(&ptr)?;
-                    rquickjs::Result::Ok(val)
-                }),
-                rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>, val: PROP| {
-                    let obj: &Virt<BASE> = this.as_ref();
-                    let ptr = obj.cls.upcast();
+                        let val = getter(&ptr)?;
+                        rquickjs::Result::Ok(val)
+                    }),
+                    rquickjs::Method(move |this: JsClass<'b, Virt<BASE>>, val: PROP| {
+                        let obj: &Virt<BASE> = this.as_ref();
+                        let ptr = obj.cls.upcast();
 
-                    setter(&ptr, val)?;
-                    Result::<_>::Ok(())
-                }),
+                        setter(&ptr, val)?;
+                        Result::<_>::Ok(())
+                    }),
+                )
+                .enumerable()
+                .configurable(),
             )
-            .enumerable()
-            .configurable(),
-        )?;
+            .map_err(define_error::<BASE>("virt property", self.name))?;
         Ok(phase)
     }
 }
@@ -192,27 +201,30 @@ where
             ..
         } = self;
 
-        let res = phase.obj.prop(
-            name,
-            Accessor::new(
-                rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>| {
-                    let obj: &Impl<BASE> = this.as_ref();
-                    let ptr = obj.cls.upcast();
+        let res = phase
+            .obj
+            .prop(
+                name,
+                Accessor::new(
+                    rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>| {
+                        let obj: &Impl<BASE> = this.as_ref();
+                        let ptr = obj.cls.upcast();
 
-                    let val = getter(&ptr)?;
-                    rquickjs::Result::Ok(val)
-                }),
-                rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>, val: PROP| {
-                    let obj: &Impl<BASE> = this.as_ref();
-                    let ptr = obj.cls.upcast();
+                        let val = getter(&ptr)?;
+                        rquickjs::Result::Ok(val)
+                    }),
+                    rquickjs::Method(move |this: JsClass<'b, Impl<BASE>>, val: PROP| {
+                        let obj: &Impl<BASE> = this.as_ref();
+                        let ptr = obj.cls.upcast();
 
-                    setter(&ptr, val)?;
-                    Result::<_>::Ok(())
-                }),
+                        setter(&ptr, val)?;
+                        Result::<_>::Ok(())
+                    }),
+                )
+                .enumerable()
+                .configurable(),
             )
-            .enumerable()
-            .configurable(),
-        )?;
+            .map_err(define_error::<BASE>("impl property", self.name))?;
         Ok(phase)
     }
 }

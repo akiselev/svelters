@@ -43,7 +43,7 @@ macro_rules! tup {
                                 JsClass::instance(ctx, Obj::<CLS>::new(rt.upgrade().unwrap(), result))
                             }),
                         ),
-                    )?;
+                    ).map_err(define_error::<CLS>("obj constructor", stringify!($($arg,)*)))?;
                     Ok(phase)
                 }
             }

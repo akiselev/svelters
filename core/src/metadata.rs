@@ -78,6 +78,36 @@ pub struct EventDef {
     pub(in crate) subscribe: Rc<dyn SubscribeFn>,
 }
 
+pub type ElementConstructor = SmallBox<dyn for<'js> Fn(Ctx<'js>) -> Result<Value<'js>>, space::S8>;
+
+pub struct ElementDef {
+    pub(in crate) typeid: TypeId,
+    pub(in crate) typekey: TypeKey,
+    pub(in crate) tag: &'static str,
+    pub(in crate) name: &'static str,
+    pub(in crate) proto: RegisteryKey,
+    pub(in crate) metadata: &'static Metadata,
+    pub(in crate) constructor: ElementConstructor,
+}
+
+impl ElementDef {
+    pub fn new<CLS: Type, FUNC: 'static + for<'js> Fn(Ctx<'js>) -> Result<Value<'js>>>(
+        tag: &'static str,
+        proto: RegisteryKey,
+        constructor: FUNC,
+    ) -> ElementDef {
+        ElementDef {
+            tag,
+            proto,
+            name: CLS::CLASS_NAME,
+            typeid: TypeId::of::<CLS>(),
+            typekey: Class::<CLS>::typekey(),
+            constructor: smallbox!(constructor),
+            metadata: unsafe { CLS::metadata() },
+        }
+    }
+}
+
 pub struct TypeDef {
     pub(in crate) typeid: TypeId,
     pub(in crate) name: &'static str,
@@ -85,7 +115,6 @@ pub struct TypeDef {
     pub(in crate) inherits: SmallVec<[&'static str; 8]>,
     pub(in crate) props: HashMap<&'static str, PropertyDef>,
     pub(in crate) events: HashMap<&'static str, EventDef>,
-    pub(in crate) element_proto: Option<RegisteryKey>,
     pub(in crate) casters: CasterMap,
 }
 
@@ -99,7 +128,6 @@ impl TypeDef {
             props: HashMap::new(),
             events: HashMap::new(),
             casters: HashMap::new(),
-            element_proto: None,
         }
     }
 

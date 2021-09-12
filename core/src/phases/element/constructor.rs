@@ -15,17 +15,20 @@ where
         let proto = Object::new(phase.ctx)?;
         proto.set("__TYPE__", "Element")?;
         proto.set("__CLS__", CLS::CLASS_NAME)?;
-        build!(CLS::InitElementProto::<CLS>[phase.ctx, &proto]);
+        build!(CLS::InitElementProto::<CLS>[phase.ctx, &proto, 0]);
+        initialize_element_node_proto::<CLS>(&proto)?;
 
         let proto_key = { phase.ctx.register(proto.into_value()) };
         let rt = phase.rt.weak();
         {
-            let mut inner = phase.rt.inner.deref().borrow_mut();
-            let r#type = inner.types.get_mut(Class::<CLS>::typekey()).unwrap();
-            r#type.element_proto = Some(proto_key);
+            let mut inner = phase.rt.metadata.deref().borrow_mut();
             inner.elements.insert(
                 self.name,
-                smallbox!(constructor_fn(rt, name, func, proto_key)),
+                ElementDef::new::<CLS, _>(
+                    name,
+                    proto_key,
+                    constructor_fn(rt, name, func, proto_key),
+                ),
             );
             tracing::info!("Keys: {:?}", inner.elements.keys());
         }
@@ -72,17 +75,20 @@ where
         let proto = Object::new(phase.ctx)?;
         proto.set("__TYPE__", "Element")?;
         proto.set("__CLS__", CLS::CLASS_NAME)?;
-        build!(CLS::InitElementProto::<CLS>[phase.ctx, &proto]);
+        build!(CLS::InitElementProto::<CLS>[phase.ctx, &proto, 0]);
+        initialize_element_node_proto::<CLS>(&proto)?;
 
         let proto_key = { phase.ctx.register(proto.into_value()) };
         let rt = phase.rt.weak();
         {
-            let mut inner = phase.rt.inner.deref().borrow_mut();
-            let r#type = inner.types.get_mut(Class::<CLS>::typekey()).unwrap();
-            r#type.element_proto = Some(proto_key);
+            let mut inner = phase.rt.metadata.deref().borrow_mut();
             inner.elements.insert(
                 self.name,
-                smallbox!(constructor_ext(rt, name, element, proto_key)),
+                ElementDef::new::<CLS, _>(
+                    name,
+                    proto_key,
+                    constructor_ext(rt, name, element, proto_key),
+                ),
             );
             tracing::info!("Keys: {:?}", inner.elements.keys());
         }

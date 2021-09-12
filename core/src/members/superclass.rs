@@ -15,7 +15,7 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: InitProto<'a, 'b, CLS>) -> Result<InitProto<'a, 'b, CLS>> {
-        build!(SUPER::InitProto::<'_, '_, CLS>[phase.ctx, phase.obj]);
+        build!(SUPER::InitProto::<'_, '_, CLS>[phase.ctx, phase.obj, phase.depth + 1]);
         Ok(phase)
     }
 }
@@ -58,7 +58,7 @@ where
         phase: InitElementProto<'a, 'b, 'c, CLS>,
     ) -> Result<InitElementProto<'a, 'b, 'c, CLS>> {
         build!(SUPER::InitElementProto::<'a, 'b, 'c, CLS>[
-            phase.ctx, phase.obj
+            phase.ctx, phase.obj, phase.depth + 1
         ]);
         Ok(phase)
     }
@@ -71,7 +71,7 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: InitVirt<'a, 'b, CLS>) -> Result<InitVirt<'a, 'b, CLS>> {
-        build!(SUPER::InitVirt::<'_, '_, CLS>[phase.ctx, phase.obj]);
+        build!(SUPER::InitVirt::<'_, '_, CLS>[phase.ctx, phase.obj, phase.depth + 1]);
         Ok(phase)
     }
 }
@@ -83,7 +83,7 @@ where
 {
     #[inline(always)]
     fn build_phase(self, phase: InitImpl<'a, 'b, CLS>) -> Result<InitImpl<'a, 'b, CLS>> {
-        build!(SUPER::InitImpl::<'_, '_, CLS>[phase.ctx, phase.obj]);
+        build!(SUPER::InitImpl::<'_, '_, CLS>[phase.ctx, phase.obj, phase.depth + 1]);
         Ok(phase)
     }
 }

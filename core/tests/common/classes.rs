@@ -13,7 +13,7 @@ impl Type for Fw<Rc<Object>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .as_element("object", || -> Result<Self> { Ok(Default::default()) })?
@@ -63,7 +63,7 @@ impl Type for Fw<Rc<Widget>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .as_element("widget", || -> Result<Self> { Ok(Default::default()) })?
@@ -95,7 +95,7 @@ impl Type for Fw<Rc<Application>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .as_element("application", || -> Result<Self> { Ok(Default::default()) })?
@@ -130,7 +130,7 @@ impl Type for Fw<Rc<MainWindow>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .as_element("mainWindow", || -> Result<Self> { Ok(Default::default()) })?
@@ -164,7 +164,7 @@ impl Type for Fw<Rc<BoxLayout>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .as_element("boxLayout", || -> Result<Self> { Ok(Default::default()) })?
@@ -212,7 +212,7 @@ impl Type for Fw<Rc<AbstractButton>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .superclass::<Fw<Rc<Widget>>>()?
@@ -241,7 +241,7 @@ impl Type for Fw<Rc<PushButton>> {
     }
 
     #[inline(always)]
-    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<()> {
+    fn define<P>(builder: TypeBuilder<Self, P>) -> Result<P> {
         builder
             .class()?
             .as_element("pushButton", || -> Result<Self> { Ok(Default::default()) })?

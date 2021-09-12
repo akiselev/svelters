@@ -23,7 +23,7 @@ pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.clear_registery();
     tracing::info!("Cleaning up Svelters...");
     let doc: &mut Document = ctx.globals().get("document")?;
-    let mut rt = doc.rt.inner.deref().borrow_mut();
+    let mut rt = doc.rt.metadata.deref().borrow_mut();
     doc.rt.objects.deref().borrow_mut().clear();
     rt.types.clear();
     ctx.globals().keys::<String>().for_each(|key| {

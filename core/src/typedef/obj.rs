@@ -87,7 +87,7 @@ where
     const HAS_REFS: bool = true;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        build!(CLS::InitProto::<CLS>[ctx, proto]);
+        build!(CLS::InitProto::<CLS>[ctx, proto, 0]);
         Ok(())
     }
 

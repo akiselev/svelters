@@ -43,8 +43,8 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         }
     }
 
-    pub fn build(self) -> Result<()> {
-        Ok(())
+    pub fn build(self) -> Result<PHASE> {
+        Ok(self.phase)
     }
 
     pub fn method<RET, FN, ARGS>(self, name: &'static str, func: FN) -> Result<Self>

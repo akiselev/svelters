@@ -7,7 +7,7 @@ where
     #[inline(always)]
     fn build_phase(self, phase: InitProto<'a, 'js, CLS>) -> Result<InitProto<'a, 'js, CLS>> {
         let obj = Object::new(phase.ctx)?;
-        build!(CLS::InitVirt::<CLS>[phase.ctx, &obj]);
+        build!(CLS::InitVirt::<CLS>[phase.ctx, &obj, phase.depth + 1]);
         phase.obj.set("__VIRT__", obj)?;
         phase.obj.set(
             "castAs",
@@ -16,7 +16,7 @@ where
                 rquickjs::Method(
                     move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
                         let cls: &Obj<CLS> = this.as_ref();
-                        let rt = cls.rt.inner.deref().borrow();
+                        let rt = cls.rt.metadata.deref().borrow();
                         let obj = Obj::<CLS>::from_rt(&cls.rt, cls.idx)?;
                         let objref = this.as_object().clone();
                         let proto: Object<'js> = objref.get("__VIRT__")?;
@@ -54,7 +54,7 @@ where
                 rquickjs::Method(
                     move |this: JsClass<'js, Obj<CLS>>, ctx: Ctx<'js>, target: String| {
                         let cls: &Obj<CLS> = this.as_ref();
-                        let rt = cls.rt.inner.deref().borrow();
+                        let rt = cls.rt.metadata.deref().borrow();
                         let obj = Obj::<CLS>::from_rt(&cls.rt, cls.idx)?;
                         let objref = this.as_object().clone();
                         if CLS::CLASS_NAME == target {
@@ -96,7 +96,7 @@ where
                 rquickjs::Method(
                     move |this: JsClass<'js, Virt<CLS>>, ctx: Ctx<'js>, target: String| {
                         let cls: &Virt<CLS> = this.as_ref();
-                        let rt = cls.rt.inner.deref().borrow();
+                        let rt = cls.rt.metadata.deref().borrow();
                         let obj = Obj::<CLS>::from_rt(&cls.rt, cls.idx)?;
                         let objref = this.as_object().clone();
                         let proto: Object<'js> = objref.get("__VIRT__")?;
@@ -134,7 +134,7 @@ where
                 rquickjs::Method(
                     move |this: JsClass<'js, Virt<CLS>>, ctx: Ctx<'js>, target: String| {
                         let cls: &Virt<CLS> = this.as_ref();
-                        let rt = cls.rt.inner.deref().borrow();
+                        let rt = cls.rt.metadata.deref().borrow();
                         let obj = Obj::<CLS>::from_rt(&cls.rt, cls.idx)?;
                         let objref = this.as_object().clone();
                         if CLS::CLASS_NAME == target {
@@ -180,7 +180,7 @@ where
                             Result::<_>::Ok(Some(cls.clone().into_js(ctx)?))
                         } else {
                             let doc: &Document = ctx.globals().get("document")?;
-                            let rt = doc.rt.inner.borrow();
+                            let rt = doc.rt.metadata.borrow();
                             let obj = rt.types.get(Class::<CLS>::typekey()).unwrap();
                             let res = obj.casters.get(target.as_str());
                             match res {

@@ -17,6 +17,15 @@ impl<CLS> std::ops::Deref for Impl<CLS> {
     }
 }
 
+impl<CLS> From<CLS> for Impl<CLS>
+where
+    CLS: Type,
+{
+    fn from(cls: CLS) -> Self {
+        Impl::new(cls)
+    }
+}
+
 impl<CLS> Impl<CLS>
 where
     CLS: Type,
@@ -43,7 +52,7 @@ where
     const HAS_REFS: bool = false;
 
     fn init_proto<'js>(ctx: Ctx<'js>, proto: &Object<'js>) -> Result<()> {
-        build!(CLS::InitImpl::<CLS>[ctx, proto]);
+        build!(CLS::InitImpl::<CLS>[ctx, proto, 0]);
         Ok(())
     }
 
