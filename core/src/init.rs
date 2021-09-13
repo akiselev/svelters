@@ -2,19 +2,24 @@ use std::borrow::BorrowMut;
 
 use crate::inner::*;
 
-pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
-    console::init(ctx)?;
-    timing::init(ctx)?;
+pub fn initialize_svelters(ctx: rquickjs::Context) -> Result<()> {
+    let context = ctx.clone();
+    ctx.with(move |ctx| {
+        console::init(ctx)?;
+        timing::init(ctx)?;
 
-    let doc = Document::new();
-    rquickjs::Class::<Document>::register(ctx)?;
-    rquickjs::Class::<Event<'js>>::register(ctx)?;
-    rquickjs::Class::<SlotNode>::register(ctx)?;
-    rquickjs::Class::<TextNode>::register(ctx)?;
-    rquickjs::Class::<ElementNode>::register(ctx)?;
-    rquickjs::Class::<Dispatcher>::register(ctx)?;
+        let runtime = Runtime::new(context);
+        rquickjs::Class::<Runtime>::register(ctx)?;
+        ctx.globals().set("document", runtime)?;
+        Result::<_>::Ok(())
+    })?;
 
-    ctx.globals().set("document", doc)?;
+    // rquickjs::Class::<Event<'js>>::register(ctx)?;
+    // rquickjs::Class::<SlotNode>::register(ctx)?;
+    // rquickjs::Class::<TextNode>::register(ctx)?;
+    // rquickjs::Class::<ElementNode>::register(ctx)?;
+    // rquickjs::Class::<Dispatcher>::register(ctx)?;
+
     Ok(())
 }
 
@@ -22,10 +27,10 @@ pub fn initialize_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
 pub fn cleanup_svelters<'js>(ctx: Ctx<'js>) -> Result<()> {
     ctx.clear_registery();
     tracing::info!("Cleaning up Svelters...");
-    let doc: &mut Document = ctx.globals().get("document")?;
-    let mut rt = doc.rt.metadata.deref().borrow_mut();
-    doc.rt.objects.deref().borrow_mut().clear();
-    rt.types.clear();
+    let doc: &mut Runtime = ctx.globals().get("document")?;
+    // let mut rt = doc.rt.metadata.deref().borrow_mut();
+    // doc.rt.objects.deref().borrow_mut().clear();
+    // rt.types.clear();
     ctx.globals().keys::<String>().for_each(|key| {
         ctx.globals().set(key.unwrap(), Value::new_undefined(ctx));
     });

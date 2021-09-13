@@ -1,4 +1,4 @@
-cargo-features=["edition2021"]
+cargo-features = ["edition2021"]
 
 [package]
 authors = ["Alexander Kiselev <svelters@akiselev.com>"]
@@ -12,38 +12,52 @@ version = "0.1.0"
 path = "src/lib.rs"
 
 [dependencies]
-log = "0.4.14"
+anyhow = "1.0.40"
+delegate = "0.6.1"            # Method delegation with less boilerplate
 either = "1.6.1"
+flume = "0.10.7"
+frunk = "0.4.0"
+heapless = "0.7.5"            # `static` friendly data structures that don't require dynamic memory allocation
+lazy_static = "1.4.0"
+log = "0.4.14"
+ouroboros = "0.10.1"
+parking_lot = "0.11.1"
+query_interface = "0.3.5"     # Dynamically query a type-erased object for any trait implementation
+serde = "1.0.126"
+serde_json = "1.0.64"
+smallvec = "1.6.1"
+smartstring = "0.2.6"
+spez = "0.1.1"
+static_assertions = "1.1.0"
+thiserror = "1.0.25"
 tracing = "0.1.26"
 tracing-log = "0.1.2"
-lazy_static = "1.4.0"
-anyhow = "1.0.40"
-parking_lot = "0.11.1"
-tracing-subscriber = "0.2.18"
-thiserror = "1.0.25"
 tracing-macros = "0.0.0"
-phf = { version="0.9", features=["macros"] }
-smartstring = "0.2.6"
-flume = "0.10.7"
-serde_json = "1.0.64"
-serde = "1.0.126"
-spez = "0.1.1"
-rquickjs = { version="0.1.1", path="../crates/rquickjs", features=["full", "backtrace", "tokio", "frunk"] }
-frunk = "0.4.0"
-static_assertions = "1.1.0"
+tracing-subscriber = "0.2.18"
 typedmap = "0.1.1"
-smallvec = "1.6.1" 
-ouroboros = "0.10.1"
-slotmap = { version = "1.0.6", features = ["unstable"] }
-smallbox = { version = "0.8.0", features = ["coerce"] }    # `Small Box` optimization: store small item on stack and fallback to heap for large item.
-delegate = "0.6.1"    # Method delegation with less boilerplate
-heapless = "0.7.5"            # `static` friendly data structures that don't require dynamic memory allocation
+
+[dependencies.rquickjs]
+version = "0.1.1"
+path = "../crates/rquickjs"
+features = ["full", "backtrace", "tokio", "frunk"]
+
+[dependencies.phf]
+version = "0.9"
+features = ["macros"]
+
+[dependencies.smallbox]
+version = "0.8.0"
+features = ["coerce"]
+
+[dependencies.slotmap]
+version = "1.0.6"
+features = ["unstable"]
 
 [dev-dependencies]
-cucumber_rust = { git="https://github.com/bbqsrc/cucumber-rust", branch="main" }
-tokio = { version="1", features=["macros", "rt-multi-thread"] }
+cucumber_rust = { git = "https://github.com/bbqsrc/cucumber-rust", branch = "main" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 pretty_assertions = "0.7"
-rquickjs = { version="0.1.1", path="../crates/rquickjs", features=[
+rquickjs = { version = "0.1.1", path = "../crates/rquickjs", features = [
     "full",
     "tokio",
     "dump-leaks",

@@ -13,152 +13,188 @@ use crate::inner::*;
 
 pub type Rt = Runtime;
 
-pub(in crate) type ObjMap = SlotMap<Idx, Instance>;
+pub struct SvRuntime {
+    ctx: Context,
+    pub(in crate) elements: HashMap<&'static str, ()>,
+}
 
 #[derive(Clone)]
 pub struct Runtime {
-    pub(in crate) objects: Rc<RefCell<ObjMap>>,
-    pub(in crate) metadata: Rc<RefCell<RT>>,
-}
-
-pub struct WeakRt {
-    pub(in crate) objects: Weak<RefCell<ObjMap>>,
-    pub(in crate) inner: Weak<RefCell<RT>>,
+    pub(in crate) inner: Inner<SvRuntime>,
 }
 
 impl Runtime {
-    pub fn new() -> Self {
+    pub fn new(ctx: Context) -> Self {
         Self {
-            objects: Rc::new(RefCell::new(Default::default())),
-            metadata: Rc::new(RefCell::new(RT {
-                types: Default::default(),
+            inner: Inner::new(SvRuntime {
+                ctx,
                 elements: Default::default(),
-            })),
+            }),
         }
     }
 
-    pub(in crate) fn weak(&self) -> WeakRt {
-        WeakRt {
-            objects: Rc::downgrade(&self.objects),
-            inner: Rc::downgrade(&self.metadata),
-        }
-    }
-
-    pub(in crate) fn new_instance<CLS: Type>(&self, cls: CLS) -> Idx {
-        self.objects.deref().borrow_mut().insert(Instance::new(cls))
-    }
-
-    pub(in crate) fn get_instance<CLS: Type>(&self, idx: Idx) -> Result<ObjRef<CLS>> {
-        Obj::<CLS>::from_rt(&self, idx)
-    }
-
-    pub(in crate) fn register_type<'js, CLS: Type>(&self, ctx: Ctx<'js>) -> TypeKey {
-        let mut typedef = TypeDef::new::<CLS>();
-        let mut child = InitType::<CLS>::new(&mut typedef);
-        let mut cls: TypeBuilder<CLS, _> = TypeBuilder::new(child);
-        <CLS as Type>::define(cls).unwrap();
-
-        let mut child = InitCaster::<CLS>::new(&mut typedef.casters);
-        let mut cls: TypeBuilder<CLS, _> = TypeBuilder::new(child);
-        <CLS as Type>::define(cls).unwrap();
-        self.metadata.deref().borrow_mut().types.insert(typedef)
-    }
-
-    delegate::delegate! {
-        to self.metadata {
-            fn borrow(&self) -> Ref<RT>;
+    pub(in crate) fn weak(&self) -> WeakRuntime {
+        WeakRuntime {
+            inner: self.inner.downgrade(),
         }
     }
 }
 
-impl WeakRt {
+#[derive(Clone)]
+pub struct WeakRuntime {
+    pub(in crate) inner: WeakInner<SvRuntime>,
+}
+
+impl WeakRuntime {
     pub(in crate) fn upgrade(&self) -> Option<Runtime> {
         Some(Runtime {
-            objects: self.objects.upgrade()?,
-            metadata: self.inner.upgrade()?,
+            inner: self.inner.upgrade()?,
         })
     }
 }
 
-pub(in crate) struct RT {
-    pub(in crate) types: SlotMap<TypeKey, TypeDef>,
-    pub(in crate) elements: HashMap<&'static str, ElementDef>,
-}
+mod js_impl {
+    use super::*;
 
-pub(in crate) struct Instance {
-    pub(in crate) metadata: &'static Metadata,
-    pub(in crate) data: SmallBox<dyn Any, smallbox::space::S2>,
-}
+    impl ClassDef for Runtime {
+        const CLASS_NAME: &'static str = "Runtime";
 
-impl Instance {
-    pub(in crate) fn new<CLS: Type>(data: CLS) -> Self {
-        let typeid = TypeId::of::<CLS>();
-        Self {
-            metadata: unsafe { CLS::metadata() },
-            data: smallbox!(data),
+        unsafe fn class_id() -> &'static mut ClassId {
+            static mut CLASS_ID: ClassId = ClassId::new();
+            &mut CLASS_ID
+        }
+
+        const HAS_PROTO: bool = false;
+
+        const HAS_STATIC: bool = false;
+
+        const HAS_REFS: bool = false;
+
+        fn into_js_obj<'ctx>(self, ctx: Ctx<'ctx>) -> Result<Value<'ctx>>
+        where
+            Self: Sized,
+        {
+            JsClass::<Self>::instance(ctx, self).map(|cls| cls.into_value())
+        }
+
+        fn from_js_ref<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx Self>
+        where
+            Self: Sized,
+        {
+            let value = Object::from_js(ctx, value)?;
+            JsClass::<Self>::try_ref(ctx, &value)
+        }
+
+        fn from_js_mut<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx mut Self>
+        where
+            Self: Sized,
+        {
+            let value = Object::from_js(ctx, value)?;
+            JsClass::<Self>::try_mut(ctx, &value)
+        }
+
+        fn from_js_obj<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<Self>
+        where
+            Self: Clone + Sized,
+        {
+            let value = Object::from_js(ctx, value)?;
+            let instance = JsClass::<Self>::try_ref(ctx, &value)?;
+            Ok(instance.clone())
         }
     }
-}
 
-pub(in crate) type Idx = InstanceKey;
-new_key_type! { pub(in crate) struct InstanceKey; }
-new_key_type! { pub(in crate) struct TypeKey; }
-
-impl ClassDef for Runtime {
-    const CLASS_NAME: &'static str = "Runtime";
-
-    unsafe fn class_id() -> &'static mut ClassId {
-        static mut CLASS_ID: ClassId = ClassId::new();
-        &mut CLASS_ID
+    impl<'js> rquickjs::IntoJs<'js> for Runtime {
+        fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+            <Self as rquickjs::ClassDef>::into_js_obj(self, ctx)
+        }
     }
 
-    const HAS_PROTO: bool = false;
-
-    const HAS_STATIC: bool = false;
-
-    const HAS_REFS: bool = false;
-
-    fn init_proto<'ctx>(_ctx: Ctx<'ctx>, _proto: &Object<'ctx>) -> Result<()> {
-        Ok(())
+    impl<'js> rquickjs::FromJs<'js> for Runtime {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            <Runtime as rquickjs::ClassDef>::from_js_obj(ctx, value)
+        }
     }
 
-    fn init_static<'ctx>(_ctx: Ctx<'ctx>, _static: &Object<'ctx>) -> Result<()> {
-        Ok(())
+    impl<'js> rquickjs::FromJs<'js> for &'js Runtime {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            <Runtime as rquickjs::ClassDef>::from_js_ref(ctx, value)
+        }
     }
 
-    fn mark_refs(&self, marker: &RefsMarker) {
-        // HasRefs::mark_refs(self, marker)
+    impl<'js> rquickjs::FromJs<'js> for &'js mut Runtime {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            <Runtime as rquickjs::ClassDef>::from_js_mut(ctx, value)
+        }
     }
 
-    fn into_js_obj<'ctx>(self, ctx: Ctx<'ctx>) -> Result<Value<'ctx>>
-    where
-        Self: Sized,
-    {
-        JsClass::<Self>::instance(ctx, self).map(|cls| cls.into_value())
+    impl ClassDef for WeakRuntime {
+        const CLASS_NAME: &'static str = "RuntimeWeakRef";
+
+        unsafe fn class_id() -> &'static mut ClassId {
+            static mut CLASS_ID: ClassId = ClassId::new();
+            &mut CLASS_ID
+        }
+
+        const HAS_PROTO: bool = false;
+
+        const HAS_STATIC: bool = false;
+
+        const HAS_REFS: bool = false;
+
+        fn into_js_obj<'ctx>(self, ctx: Ctx<'ctx>) -> Result<Value<'ctx>>
+        where
+            Self: Sized,
+        {
+            JsClass::<Self>::instance(ctx, self).map(|cls| cls.into_value())
+        }
+
+        fn from_js_ref<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx Self>
+        where
+            Self: Sized,
+        {
+            let value = Object::from_js(ctx, value)?;
+            JsClass::<Self>::try_ref(ctx, &value)
+        }
+
+        fn from_js_mut<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx mut Self>
+        where
+            Self: Sized,
+        {
+            let value = Object::from_js(ctx, value)?;
+            JsClass::<Self>::try_mut(ctx, &value)
+        }
+
+        fn from_js_obj<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<Self>
+        where
+            Self: Clone + Sized,
+        {
+            let value = Object::from_js(ctx, value)?;
+            let instance = JsClass::<Self>::try_ref(ctx, &value)?;
+            Ok(instance.clone())
+        }
     }
 
-    fn from_js_ref<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx Self>
-    where
-        Self: Sized,
-    {
-        let value = Object::from_js(ctx, value)?;
-        JsClass::<Self>::try_ref(ctx, &value)
+    impl<'js> rquickjs::IntoJs<'js> for WeakRuntime {
+        fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+            <Self as rquickjs::ClassDef>::into_js_obj(self, ctx)
+        }
     }
 
-    fn from_js_mut<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<&'ctx mut Self>
-    where
-        Self: Sized,
-    {
-        let value = Object::from_js(ctx, value)?;
-        JsClass::<Self>::try_mut(ctx, &value)
+    impl<'js> rquickjs::FromJs<'js> for WeakRuntime {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            <WeakRuntime as rquickjs::ClassDef>::from_js_obj(ctx, value)
+        }
     }
 
-    fn from_js_obj<'ctx>(ctx: Ctx<'ctx>, value: Value<'ctx>) -> Result<Self>
-    where
-        Self: Clone + Sized,
-    {
-        let value = Object::from_js(ctx, value)?;
-        let instance = JsClass::<Self>::try_ref(ctx, &value)?;
-        Ok(instance.clone())
+    impl<'js> rquickjs::FromJs<'js> for &'js WeakRuntime {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            <WeakRuntime as rquickjs::ClassDef>::from_js_ref(ctx, value)
+        }
+    }
+
+    impl<'js> rquickjs::FromJs<'js> for &'js mut WeakRuntime {
+        fn from_js(ctx: rquickjs::Ctx<'js>, value: rquickjs::Value<'js>) -> rquickjs::Result<Self> {
+            <WeakRuntime as rquickjs::ClassDef>::from_js_mut(ctx, value)
+        }
     }
 }

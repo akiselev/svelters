@@ -1,3 +1,5 @@
+use std::rc::Weak;
+
 use crate::inner::*;
 
 #[derive(Debug, PartialOrd, Ord, PartialEq, Eq)]
@@ -24,6 +26,10 @@ impl<T> Inner<T> {
         let mut inner = self.0.borrow_mut();
         func(&mut inner)
     }
+
+    pub fn downgrade(&self) -> WeakInner<T> {
+        WeakInner(Rc::downgrade(&self.0))
+    }
 }
 
 impl<T> Default for Inner<T>
@@ -40,5 +46,19 @@ impl<T> std::ops::Deref for Inner<T> {
 
     fn deref(&self) -> &Self::Target {
         self.0.deref()
+    }
+}
+
+pub struct WeakInner<T>(Weak<RefCell<T>>);
+
+impl<T> Clone for WeakInner<T> {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+
+impl<T> WeakInner<T> {
+    pub fn upgrade(&self) -> Option<Inner<T>> {
+        self.0.upgrade().map(|inner| Inner(inner))
     }
 }
