@@ -24,7 +24,6 @@ impl<'a, 'b, 'c, CLS> Implements<InitElementProto<'a, 'b, 'c, CLS>> for JsClassL
 where
     CLS: Type + Clone,
 {
-    #[inline(always)]
     fn build_phase(
         self,
         phase: InitElementProto<'a, 'b, 'c, CLS>,

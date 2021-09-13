@@ -90,7 +90,6 @@ impl<'a, 'b, 'c: 'a + 'b, CLS> Implements<ModuleEval<'a, 'b, 'c>> for JsClassLoa
 where
     CLS: Type,
 {
-    #[inline(always)]
     fn build_phase(self, phase: ModuleEval<'a, 'b, 'c>) -> Result<ModuleEval<'a, 'b, 'c>> {
         build!(CLS::ConstructorEval::<'a, '_, 'c, CLS>[
             phase.rt.clone(),
@@ -106,7 +105,6 @@ impl<'a, 'b: 'a, CLS> Implements<ModuleLoad<'a, 'b>> for JsClassLoader<CLS>
 where
     CLS: Type,
 {
-    #[inline(always)]
     fn build_phase(self, phase: ModuleLoad<'a, 'b>) -> Result<ModuleLoad<'a, 'b>> {
         tracing::info!("Registering type {}", CLS::CLASS_NAME);
         let key = phase.rt.register_type::<CLS>(phase.ctx);

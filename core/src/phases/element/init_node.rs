@@ -50,27 +50,22 @@ pub fn initialize_element_node_proto<'js, CLS: Type>(obj: &Object<'js>) -> Resul
     Ok(())
 }
 
-#[inline(always)]
 fn get_next_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.next.clone()
 }
 
-#[inline(always)]
 fn get_prev_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.prev.clone()
 }
 
-#[inline(always)]
 fn get_parent<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.parent.clone()
 }
 
-#[inline(always)]
 fn get_children<'js>(this: ElementNode<'js>) -> Option<Vec<UINode<'js>>> {
     this.borrow().node.children.clone()
 }
 
-#[inline(always)]
 fn add_event_listener<'js, CLS: Type>(
     this: Element<'js>,
     name: String,
@@ -90,7 +85,6 @@ fn add_event_listener<'js, CLS: Type>(
     (event.subscribe)(this.clone(), value)
 }
 
-#[inline(always)]
 fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'js>) -> Result<()> {
     let disconnect = {
         let dispatcher = this.dispatcher()?;
@@ -108,7 +102,6 @@ fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'
     Ok(())
 }
 
-#[inline(always)]
 fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Result<Value<'js>> {
     tracing::info!("Getting attr {}::{}", this.tag_name, name);
     let rt = this.rt.metadata.deref().borrow();
@@ -123,7 +116,6 @@ fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Re
     (prop.getter)(ctx, &this.rt, this.idx)
 }
 
-#[inline(always)]
 fn set_attribute<'js>(
     this: ElementNode<'js>,
     ctx: Ctx<'js>,

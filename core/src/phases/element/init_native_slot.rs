@@ -53,7 +53,6 @@ where
     }
 }
 
-#[inline(always)]
 fn append_child<'js, SLOT: INativeSlot>(
     slot: &SLOT,
     this: Node<'js>,
@@ -62,7 +61,6 @@ fn append_child<'js, SLOT: INativeSlot>(
     slot.append_child(this, child)
 }
 
-#[inline(always)]
 fn remove_child<'js, SLOT: INativeSlot>(
     slot: &SLOT,
     this: Node<'js>,
@@ -71,7 +69,6 @@ fn remove_child<'js, SLOT: INativeSlot>(
     slot.remove_child(this, child)
 }
 
-#[inline(always)]
 fn insert_before<'js, SLOT: INativeSlot>(
     slot: &SLOT,
     this: Node<'js>,

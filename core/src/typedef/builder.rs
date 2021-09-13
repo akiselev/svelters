@@ -11,7 +11,6 @@ impl<CLS, PHASE> TypeBuilder<CLS, PHASE>
 where
     CLS: Type,
 {
-    #[inline(always)]
     pub fn new(phase: PHASE) -> Self {
         Self {
             phase,
@@ -19,7 +18,6 @@ where
         }
     }
 
-    #[inline(always)]
     pub fn class(self) -> Result<ClassBuilder<CLS, PHASE>>
     where
         JsClassLoader<CLS>: Implements<PHASE>,
@@ -60,7 +58,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn prop<PROP, GET, SET>(self, name: &'static str, getter: GET, setter: SET) -> Result<Self>
     where
         CLS: Upcast<CLS>,
@@ -74,7 +71,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn readonly<PROP, GET>(self, name: &'static str, getter: GET) -> Result<Self>
     where
         CLS: Upcast<CLS>,
@@ -87,7 +83,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn superclass<SUPER>(self) -> Result<Self>
     where
         SUPER: Type,
@@ -98,7 +93,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn as_element<FUNC>(self, name: &'static str, func: FUNC) -> Result<Self>
     where
         FUNC: 'static + Fn() -> Result<CLS>,
@@ -108,7 +102,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn as_element_with_js<FUNC>(self, name: &'static str, func: FUNC) -> Result<Self>
     where
         FUNC: 'static + for<'js> Fn(Ctx<'js>) -> Result<CLS>,
@@ -118,7 +111,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn with_slot<SLOT>(self, slot: SLOT) -> Result<Self>
     where
         SLOT: crate::traits::INativeSlot,
@@ -128,7 +120,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
         Ok(ClassBuilder::new(phase))
     }
 
-    #[inline(always)]
     pub fn with_event<FUNC>(self, name: &'static str, func: FUNC) -> Result<Self>
     where
         members::Event<CLS, FUNC>: Implements<PHASE>,
@@ -142,7 +133,6 @@ impl<CLS, PHASE> ClassBuilder<CLS, PHASE> {
 macro_rules! tup {
     ($($static_fn:ident $method:ident $constructor:ident $($arg:ident)*,)*) => {
         $(
-            #[inline(always)]
             pub fn $constructor<FUNC, $($arg,)*>(self, func: FUNC) -> Result<Self>
             where
                 CLS: 'static + Type,
@@ -154,7 +144,6 @@ macro_rules! tup {
                 Ok(ClassBuilder::new(phase))
             }
 
-            #[inline(always)]
             pub fn $method<'js, THIS, RET, FN, $($arg,)*>(self, name: &'static str, func: FN) -> Result<Self>
             where
                 CLS: 'static + Type,
@@ -169,7 +158,6 @@ macro_rules! tup {
                 Ok(ClassBuilder::new(phase))
             }
 
-            #[inline(always)]
             pub fn $static_fn<RET, FN, $($arg,)*>(self, name: &'static str, func: FN) -> Result<Self>
             where
                 FN: 'static + Fn($($arg,)*) -> Result<RET>,
