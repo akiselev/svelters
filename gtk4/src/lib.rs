@@ -9,6 +9,9 @@
 #![feature(proc_macro_hygiene)]
 #![feature(let_chains)]
 #![feature(trait_alias)]
+#![feature(fn_traits)]
+#![feature(unboxed_closures)]
+#![feature(associated_type_bounds)]
 #![recursion_limit = "1024"]
 
 use std::{any::Any, borrow::Cow, future::Future, marker::PhantomData, rc::Rc, time::Duration};
@@ -36,7 +39,16 @@ mod jsenum;
 mod macros;
 mod wrapper;
 
+pub mod impls {
+    mod method;
+    mod property;
+
+    pub use method::*;
+    pub use property::*;
+}
+
 pub(in crate) mod inner {
+    pub(in crate) use crate::impls::*;
     pub(in crate) use std::{
         borrow::Cow,
         cell::Cell,
@@ -96,76 +108,5 @@ pub fn initialize_gtk(app: Application) -> impl FnOnce(&Svelters) -> Result<()> 
         })?;
         sv.execute_pending_jobs().unwrap();
         Ok(())
-    }
-}
-
-pub struct GtkProp<IMPL: ?Sized, GET, GRET, SET, SIN> {
-    interface: &'static str,
-    name: &'static str,
-    getter: GET,
-    setter: SET,
-    marker: PhantomData<(GRET, SIN, IMPL)>,
-}
-
-impl<GET, GRET, SET, SIN> GtkProp<(), GET, GRET, SET, SIN> {
-    #[inline(always)]
-    pub fn new<IMPL>(
-        interface: &'static str,
-        name: &'static str,
-        getter: GET,
-        setter: SET,
-    ) -> GtkProp<IMPL, GET, GRET, SET, SIN>
-    where
-        IMPL: 'static,
-        GET: 'static + for<'js> Fn(Ctx<'js>, &IMPL) -> GRET,
-        SET: 'static + for<'js> Fn(Ctx<'js>, &IMPL, SIN) -> Result<()>,
-        SIN: 'static + for<'js> FromJs<'js>,
-        GRET: 'static + for<'js> IntoJs<'js>,
-    {
-        GtkProp {
-            name,
-            getter,
-            setter,
-            interface,
-            marker: PhantomData,
-        }
-    }
-}
-
-impl<IMPL, GET, GRET, SET, SIN> IProperty for GtkProp<IMPL, GET, GRET, SET, SIN>
-where
-    IMPL: 'static,
-    GET: 'static + for<'js> Fn(Ctx<'js>, &IMPL) -> GRET,
-    SET: 'static + for<'js> Fn(Ctx<'js>, &IMPL, SIN) -> Result<()>,
-    SIN: 'static + for<'js> FromJs<'js>,
-    GRET: 'static + for<'js> IntoJs<'js>,
-{
-    fn name<'a>(&'a self) -> Cow<'a, str> {
-        self.name.into()
-    }
-
-    fn get<'js>(
-        &self,
-        ctx: Ctx<'js>,
-        element: &dyn IElement,
-    ) -> svelters_core::prelude::Result<Value<'js>> {
-        let this: &dyn Upcast<IMPL> = element
-            .query_ref()
-            .ok_or_else(|| exception!("Element does not has an attribute named {}", self.name))?;
-        let this = this.upcast();
-        (self.getter)(ctx, &this).into_js(ctx)
-    }
-
-    fn set<'js>(
-        &self,
-        ctx: Ctx<'js>,
-        element: &dyn IElement,
-        value: Value<'js>,
-    ) -> svelters_core::prelude::Result<()> {
-        let this: &dyn Upcast<IMPL> = element
-            .query_ref()
-            .ok_or_else(|| exception!("Element does not implement the {} interface", self.name))?;
-        let mut this = this.upcast();
-        (self.setter)(ctx, &mut this, SIN::from_js(ctx, value)?)
     }
 }

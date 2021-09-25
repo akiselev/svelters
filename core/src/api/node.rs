@@ -159,7 +159,7 @@ impl<'js> Node<'js> {
 }
 
 #[derive(Clone, Eq)]
-pub(in crate) enum UINode<'js> {
+pub enum UINode<'js> {
     Slot(SlotNode<'js>),
     Text(TextNode<'js>),
     Element(ElementNode<'js>),
@@ -214,11 +214,11 @@ impl<'js> PartialEq<UINode<'js>> for UINode<'js> {
 }
 
 #[derive(Clone, Eq, PartialEq)]
-pub(in crate) struct NodeData<'js> {
-    pub(in crate) next: Option<UINode<'js>>,
-    pub(in crate) prev: Option<UINode<'js>>,
-    pub(in crate) parent: Option<UINode<'js>>,
-    pub(in crate) children: Option<Vec<UINode<'js>>>,
+pub struct NodeData<'js> {
+    pub next: Option<UINode<'js>>,
+    pub prev: Option<UINode<'js>>,
+    pub parent: Option<UINode<'js>>,
+    pub children: Option<Vec<UINode<'js>>>,
 }
 
 impl<'js> NodeData<'js> {

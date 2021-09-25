@@ -47,9 +47,9 @@ impl<'js> PartialEq<SlotNode<'js>> for ElementNode<'js> {
 impl<'js> Eq for ElementNode<'js> {}
 
 pub struct ElData<'js> {
-    pub(in crate) tag_name: Cow<'static, str>,
-    pub(in crate) object: SmallBox<dyn IElement, space::S8>,
-    pub(in crate) node: NodeData<'js>,
+    pub tag_name: Cow<'static, str>,
+    pub object: SmallBox<dyn IElement, space::S8>,
+    pub node: NodeData<'js>,
     // pub(in crate) dispatcher: Dispatcher<'js>,
 }
 

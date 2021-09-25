@@ -47,6 +47,26 @@ pub fn initialize_element_node_proto<'js>(obj: &Object<'js>) -> Result<()> {
         "setAttribute",
         Func::new("setAttribute", rquickjs::Method(set_attribute)),
     )?;
+
+    obj.prop(
+        "callMethod",
+        Func::new("callMethod", rquickjs::Method(call_method)),
+    )?;
+
+    obj.prop(
+        "insertBefore",
+        Func::new("insertBefore", rquickjs::Method(insert_before)),
+    )?;
+
+    obj.prop(
+        "appendChild",
+        Func::new("appendChild", rquickjs::Method(append_child)),
+    )?;
+
+    obj.prop(
+        "removeChild",
+        Func::new("removeChild", rquickjs::Method(remove_child)),
+    )?;
     Ok(())
 }
 
@@ -145,5 +165,58 @@ fn set_attribute<'js>(
             typedef.tag_name,
             name
         )),
+    }
+}
+
+fn call_method<'js>(
+    this: ElementNode<'js>,
+    ctx: Ctx<'js>,
+    name: String,
+    args: Rest<Value<'js>>,
+) -> Result<Value<'js>> {
+    let typedef = this.r#type;
+    tracing::info!("Calling method {}::{}", typedef.tag_name, name);
+    let method = typedef
+        .members
+        .get(name.as_str())
+        .ok_or_else(|| exception!("{} does not have a method named {}", typedef.tag_name, name))?;
+    match method {
+        Member::Method(func) => func.call(ctx, &*this.inner.borrow().object, args.0),
+        _ => Err(exception!("{}::{} is not a method", typedef.tag_name, name)),
+    }
+}
+
+fn insert_before<'js>(
+    this: ElementNode<'js>,
+    ctx: Ctx<'js>,
+    node: ElementNode<'js>,
+    anchor: Opt<ElementNode<'js>>,
+) -> Result<()> {
+    let typedef = &this.r#type;
+    tracing::info!("Calling {}::insertBefore", typedef.tag_name);
+    if let Some(slot) = &typedef.slot {
+        slot.insert_before(&this, node, anchor.0)
+    } else {
+        Err(exception!("{} does not support children", typedef.tag_name))
+    }
+}
+
+fn append_child<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
+    let typedef = &this.r#type;
+    tracing::info!("Calling {}::insertBefore", typedef.tag_name);
+    if let Some(slot) = &typedef.slot {
+        slot.append_child(&this, node)
+    } else {
+        Err(exception!("{} does not support children", typedef.tag_name))
+    }
+}
+
+fn remove_child<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
+    let typedef = &this.r#type;
+    tracing::info!("Calling {}::insertBefore", typedef.tag_name);
+    if let Some(slot) = &typedef.slot {
+        slot.remove_child(&this, node)
+    } else {
+        Err(exception!("{} does not support children", typedef.tag_name))
     }
 }

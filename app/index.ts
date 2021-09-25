@@ -1,14 +1,14 @@
-// import * as core from "Gtk";
 import App from "./App.svelte";
 console.log(">>>>>, 1");
+window.App = new App({ target: window });
 console.log(">>>>>, 2");
+window.callMethod("present");
 console.log(">>>>>, 3");
 // console.log(">>>", "keyx".matchAll(/key/));
 
 // window.insertBefore
 
-window.App = new App({ target: window });
-window.callMethod("present");
+// import * as core from "Gtk";
 
 //--------------------------------
 // import * as mod from "QtCore";

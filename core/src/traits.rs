@@ -32,3 +32,15 @@ impl<T> IElement for T where
         + HasInterface<dyn ObjectPartialEq>
 {
 }
+
+/// Core trait for slot implementations (provides DOM APIs)
+pub trait INativeSlot: 'static {
+    fn append_child<'js>(&self, this: &ElementNode<'js>, node: ElementNode<'js>) -> Result<()>;
+    fn remove_child<'js>(&self, this: &ElementNode<'js>, node: ElementNode<'js>) -> Result<()>;
+    fn insert_before<'js>(
+        &self,
+        this: &ElementNode<'js>,
+        node: ElementNode<'js>,
+        anchor: Option<ElementNode<'js>>,
+    ) -> Result<()>;
+}

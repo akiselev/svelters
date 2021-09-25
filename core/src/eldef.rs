@@ -1,4 +1,5 @@
 use phf::Map;
+use smallvec::SmallVec;
 
 use crate::inner::*;
 
@@ -20,6 +21,7 @@ pub struct ElementDef {
     pub(in crate) tag_name: &'static str,
     pub(in crate) constructor: ConstructorFn,
     pub(in crate) members: HashMap<&'static str, Member>,
+    pub(in crate) slot: Option<SmallBox<dyn INativeSlot, space::S4>>,
 }
 
 impl ElementDef {
@@ -35,11 +37,13 @@ impl ElementDef {
                 tag_name,
                 constructor: smallbox!(constructor),
                 members: Default::default(),
+                slot: None,
             },
         }
     }
 
     pub fn method<FUNC: 'static + IMethod>(&mut self, name: &'static str, func: FUNC) -> &mut Self {
+        tracing::info!("Added method {}::{}", self.tag_name, name);
         if self
             .members
             .insert(name, Member::Method(smallbox!(func)))
@@ -54,6 +58,7 @@ impl ElementDef {
     }
 
     pub fn prop<FUNC: 'static + IProperty>(&mut self, name: &'static str, func: FUNC) -> &mut Self {
+        tracing::info!("Added property {}::{}", self.tag_name, name);
         if self
             .members
             .insert(name, Member::Property(smallbox!(func)))
@@ -64,6 +69,18 @@ impl ElementDef {
                 name, self.tag_name
             );
         }
+        self
+    }
+
+    pub fn slot<FUNC>(&mut self, func: FUNC) -> &mut Self
+    where
+        FUNC: INativeSlot,
+    {
+        tracing::info!("Added slot to {}", self.tag_name);
+        if self.slot.is_some() {
+            panic!("Slot on element {} already defined", self.tag_name);
+        }
+        self.slot = Some(smallbox!(func));
         self
     }
 }
@@ -84,10 +101,10 @@ pub trait IProperty {
 }
 
 pub trait IMethod {
-    fn call<'js>(
+    fn call<'js, 'a>(
         &self,
         ctx: Ctx<'js>,
-        element: &dyn IElement,
+        element: &'a dyn IElement,
         args: Vec<Value<'js>>,
     ) -> Result<Value<'js>>;
 }

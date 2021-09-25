@@ -13,6 +13,8 @@ pub fn application_window(builder: TypeBuilder) -> ElementDef {
         let app: &Gtk<Application> = ctx.globals().get("application")?;
         Ok(smallbox!(Gtk(ApplicationWindow::new(&app.0))))
     })
+    .with_interface("Object")
+    .with_interface("Window")
     .build()
 }
 

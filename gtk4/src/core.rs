@@ -143,6 +143,13 @@ pub(in crate) fn widget_interface(this: &mut ElementDef) {
 pub(in crate) fn accessible_interface(this: &mut ElementDef) {}
 
 pub(in crate) fn window_interface(this: &mut ElementDef) {
+    this.method(
+        "present",
+        GtkMethod::new::<Window>("Window", "present", |ext: &Window| {
+            ext.present();
+        }),
+    );
+    this.slot(WindowSlot);
     props!(|this: Window| {
         decorated: bool {
             this.is_decorated();
@@ -212,3 +219,46 @@ pub(in crate) fn window_interface(this: &mut ElementDef) {
 }
 
 pub(in crate) fn application_window_interface(this: &mut ElementDef) {}
+
+pub(in crate) struct WindowSlot;
+
+impl INativeSlot for WindowSlot {
+    fn append_child<'js>(
+        &self,
+        this: &ElementNode<'js>,
+        node: ElementNode<'js>,
+    ) -> svelters_core::prelude::Result<()> {
+        todo!()
+    }
+
+    fn remove_child<'js>(
+        &self,
+        this: &ElementNode<'js>,
+        node: ElementNode<'js>,
+    ) -> svelters_core::prelude::Result<()> {
+        todo!()
+    }
+
+    fn insert_before<'js>(
+        &self,
+        this: &ElementNode<'js>,
+        node: ElementNode<'js>,
+        anchor: Option<ElementNode<'js>>,
+    ) -> svelters_core::prelude::Result<()> {
+        let el = this.borrow();
+        let this = el
+            .object
+            .query_ref::<Upcast<Window>>()
+            .ok_or_else(|| exception!("Could not upcast to window"))?;
+
+        let widget_ref = node.borrow();
+        let widget = widget_ref
+            .object
+            .query_ref::<Upcast<Widget>>()
+            .ok_or_else(|| exception!("Could not upcast child to widget"))?;
+        let widget = widget.upcast();
+        let window = this.upcast();
+        window.set_child(Some(&widget));
+        Ok(())
+    }
+}
