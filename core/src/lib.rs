@@ -36,6 +36,8 @@
 // #![feature(try_trait_v2)]
 
 pub mod prelude {
+    pub use crate::api::*;
+    pub use crate::eldef::*;
     pub use crate::traits::*;
 
     pub use crate::init::{cleanup_svelters, initialize_svelters};
@@ -49,6 +51,8 @@ pub use crate::utils::timing;
 
 // ----------------- INTERNAL -----------------
 
+mod api;
+mod eldef;
 pub(in crate) mod init;
 pub(in crate) mod macros;
 pub(in crate) mod metadata;
@@ -87,9 +91,11 @@ pub(in crate) mod inner {
     pub(in crate) use smallbox::{smallbox, space, SmallBox};
     pub(in crate) use typedmap::TypedMapKey;
 
+    pub(in crate) use crate::api::*;
     pub(in crate) use crate::traits::*;
     pub(in crate) use crate::utils::*;
 
+    pub(in crate) use crate::eldef::*;
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::metadata::*;
     pub(in crate) use crate::rt::*;

@@ -26,6 +26,7 @@ macro_rules! exception {
     ($($tokens:tt)*) => {
         {
             let backtrace = std::backtrace::Backtrace::capture().to_string();
+            use std::convert::TryInto;
             rquickjs::Error::Exception {
                 message: format!(
                     $($tokens)*

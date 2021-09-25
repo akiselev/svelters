@@ -25,36 +25,16 @@ use svelters_core::prelude::*;
 
 pub mod logging;
 
-pub struct Svelters {
-    rt: JsRuntime,
-    ctx: Context,
-    compiler: SvelteCompiler,
-}
+#[tracing::instrument(skip(svelters, compiler))]
+pub fn svelters_eval_file<P>(svelters: &Svelters, compiler: &SvelteCompiler, path: P) -> Result<()>
+where
+    P: std::fmt::Debug + AsRef<Path>,
+{
+    let modpath = path.as_ref().to_owned();
+    let src = compile_sync(compiler, path)?;
 
-impl Svelters {
-    pub fn new<MOD: Module>(module: MOD) -> Result<Self> {
-        let rt = JsRuntime::new()?;
-        let ctx = Context::full(&rt)?;
-        let compiler = SvelteCompiler::new();
-        let resolver = BuiltinResolver::default().with_module(MOD::MODULE_NAME);
-        let loader = ModuleLoader::default().with_module(MOD::MODULE_NAME, module.loader());
-        rt.set_loader((resolver, compiler.clone()), (loader, compiler.clone()));
+    let res: Result<()> = svelters.with_ctx(|ctx| {
         ctx.with(|ctx| {
-            initialize_svelters(ctx)?;
-            Result::<()>::Ok(())
-        })?;
-        Ok(Self { rt, ctx, compiler })
-    }
-
-    #[tracing::instrument(skip(self))]
-    pub fn eval<P>(&self, path: P) -> Result<()>
-    where
-        P: std::fmt::Debug + AsRef<Path>,
-    {
-        let modpath = path.as_ref().to_owned();
-        let src = compile_sync(&self.compiler, path)?;
-
-        let res: Result<()> = self.ctx.with(|ctx| {
             let res = ctx.eval_global_module::<Value, _>(modpath, Some(src.into_bytes()));
             match res {
                 Ok(ok) => {
@@ -66,48 +46,7 @@ impl Svelters {
                     Err(err)
                 }
             }
-        });
-        res
-    }
-
-    pub fn execute_pending_job(&self) -> Result<bool> {
-        self.ctx.runtime().execute_pending_job()
-    }
-
-    pub fn execute_pending_jobs(&self) -> Result<()> {
-        while self.ctx.runtime().execute_pending_job()? {}
-        Ok(())
-    }
-
-    pub fn spawn_executor<A: ExecutorSpawner>(&self, executor: A) -> A::JoinHandle {
-        self.ctx.runtime().spawn_executor(executor)
-    }
-
-    pub fn set_global<K, V>(&self, key: K, value: V) -> Result<()>
-    where
-        K: for<'js> IntoAtom<'js>,
-        V: for<'js> IntoJs<'js>,
-    {
-        self.ctx.with(move |ctx| ctx.globals().set(key, value))
-    }
-
-    pub fn with_js<FUNC, R>(&self, func: FUNC) -> R
-    where
-        FUNC: for<'js> FnOnce(Ctx<'js>) -> R,
-        R: for<'js> FromJs<'js>,
-    {
-        self.ctx.with(move |ctx| func(ctx))
-    }
-}
-
-impl Drop for Svelters {
-    fn drop(&mut self) {
-        while let Ok(true) = self.ctx.runtime().execute_pending_job() {}
-        self.ctx.runtime().run_gc();
-        self.ctx.with(|ctx| {
-            if let Err(err) = cleanup_svelters(ctx) {
-                tracing::error!("Error while cleaning up svelters: {}", err);
-            }
-        });
-    }
+        })
+    });
+    res
 }

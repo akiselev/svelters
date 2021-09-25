@@ -1,4 +1,4 @@
-import * as core from "Gtk";
+// import * as core from "Gtk";
 import App from "./App.svelte";
 console.log(">>>>>, 1");
 console.log(">>>>>, 2");
@@ -8,7 +8,7 @@ console.log(">>>>>, 3");
 // window.insertBefore
 
 window.App = new App({ target: window });
-window.present();
+window.callMethod("present");
 
 //--------------------------------
 // import * as mod from "QtCore";
