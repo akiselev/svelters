@@ -11,21 +11,29 @@
 #![feature(trait_alias)]
 #![recursion_limit = "1024"]
 
-use std::{borrow::Cow, future::Future, time::Duration};
+use std::{any::Any, borrow::Cow, future::Future, marker::PhantomData, rc::Rc, time::Duration};
 
 use glib::MainContext;
+use gtk4::{prelude::*, Application, Widget};
+use macros::props;
 use rquickjs::{
-    BuiltinResolver, Context, Ctx, Error, Executor, ExecutorSpawner, Loader, ModuleLoader,
-    Resolver, Result, Value,
+    BuiltinResolver, ClassDef, Context, Ctx, Error, Executor, ExecutorSpawner, FromJs, Function,
+    IntoJs, Loader, ModuleLoader, Object, Resolver, Result, This, Value,
 };
+use smallbox::smallbox;
 use static_assertions::assert_impl_all;
-use svelters_core::prelude::*;
+use svelters_core::{exception, prelude::*};
 
+use crate::application::application_window;
 pub use crate::wrapper::Gtk;
 
+pub(in crate) mod application;
+pub(in crate) mod core;
+pub(in crate) mod wip;
+
+mod elements;
 mod jsenum;
 mod macros;
-mod types;
 mod wrapper;
 
 pub(in crate) mod inner {
@@ -50,112 +58,6 @@ pub(in crate) mod inner {
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::wrapper::Gtk;
 }
-mod module {
-    use super::Gtk;
-    use glib::object::Object as GObject;
-    use gtk4::{gsk::Transform, *};
-
-    crate::macros::module!(
-        /***** Core *****/
-        Gtk: GObject,
-        Widget,
-        Application,
-        /***** Window *****/
-        Window,
-        ApplicationWindow,
-        /***** Layout *****/
-        Transform,
-        LayoutChild,
-        ConstraintLayoutChild,
-        FixedLayoutChild,
-        GridLayoutChild,
-        OverlayLayoutChild,
-        LayoutManager,
-        /***** Accessibility *****/
-        Accessible,
-        /***** Buttons *****/
-        Button,
-        /***** WIP *****/
-        ActionBar,
-        Actionable,
-        AppChooserButton,
-        AppChooserWidget,
-        AppChooser,
-        AspectFrame,
-        Box,
-        Calendar,
-        CellEditable,
-        CellView,
-        CenterBox,
-        CheckButton,
-        ColorButton,
-        ColorChooserWidget,
-        ColumnView,
-        ComboBox,
-        DragIcon,
-        DrawingArea,
-        DropDown,
-        EditableLabel,
-        Editable,
-        Entry,
-        Expander,
-        FileChooserWidget,
-        Fixed,
-        FlowBoxChild,
-        FlowBox,
-        FontButton,
-        FontChooserWidget,
-        Frame,
-        GLArea,
-        Grid,
-        HeaderBar,
-        IconView,
-        Image,
-        InfoBar,
-        Label,
-        LevelBar,
-        ListBase,
-        ListBoxRow,
-        ListBox,
-        MediaControls,
-        MenuButton,
-        Native,
-        Notebook,
-        Overlay,
-        Paned,
-        PasswordEntry,
-        Picture,
-        PopoverMenuBar,
-        Popover,
-        ProgressBar,
-        Range,
-        Revealer,
-        Root,
-        ScaleButton,
-        Scrollbar,
-        ScrolledWindow,
-        SearchBar,
-        SearchEntry,
-        Separator,
-        ShortcutLabel,
-        ShortcutsShortcut,
-        SpinButton,
-        Spinner,
-        StackSidebar,
-        StackSwitcher,
-        Stack,
-        Statusbar,
-        Switch,
-        TextView,
-        Text,
-        TreeExpander,
-        TreeView,
-        Video,
-        Viewport,
-        WindowControls,
-        WindowHandle,
-    );
-}
 
 pub struct GtkExecutor;
 
@@ -168,7 +70,102 @@ impl ExecutorSpawner for GtkExecutor {
     }
 }
 
+pub fn spawn(fut: impl 'static + Future<Output = ()> + Send) {
+    let ctx = MainContext::default();
+    ctx.spawn(fut)
+}
+
 pub fn spawn_local(fut: impl 'static + Future<Output = ()>) {
     let ctx = MainContext::default();
     ctx.spawn_local(fut)
+}
+
+pub fn initialize_gtk(app: Application) -> impl FnOnce(&Svelters) -> Result<()> {
+    move |sv| {
+        sv.spawn_executor(GtkExecutor);
+        sv.with_types(|builder| elements::initialize_elements(builder))?;
+        sv.with_js(|ctx| {
+            rquickjs::Class::<Gtk<Application>>::register(ctx)?;
+            let app = Gtk(app);
+            ctx.globals().set("application", app)?;
+            let doc_obj: Object = ctx.globals().get("document")?;
+            let func: Function = doc_obj.get("createElement")?;
+            let window: Value = func.call((This(doc_obj), "applicationWindow"))?;
+            ctx.globals().set("window", window)?;
+            Result::<_>::Ok(())
+        })?;
+        sv.execute_pending_jobs().unwrap();
+        Ok(())
+    }
+}
+
+pub struct GtkProp<IMPL: ?Sized, GET, GRET, SET, SIN> {
+    interface: &'static str,
+    name: &'static str,
+    getter: GET,
+    setter: SET,
+    marker: PhantomData<(GRET, SIN, IMPL)>,
+}
+
+impl<GET, GRET, SET, SIN> GtkProp<(), GET, GRET, SET, SIN> {
+    #[inline(always)]
+    pub fn new<IMPL>(
+        interface: &'static str,
+        name: &'static str,
+        getter: GET,
+        setter: SET,
+    ) -> GtkProp<IMPL, GET, GRET, SET, SIN>
+    where
+        IMPL: 'static,
+        GET: 'static + for<'js> Fn(Ctx<'js>, &IMPL) -> GRET,
+        SET: 'static + for<'js> Fn(Ctx<'js>, &IMPL, SIN) -> Result<()>,
+        SIN: 'static + for<'js> FromJs<'js>,
+        GRET: 'static + for<'js> IntoJs<'js>,
+    {
+        GtkProp {
+            name,
+            getter,
+            setter,
+            interface,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<IMPL, GET, GRET, SET, SIN> IProperty for GtkProp<IMPL, GET, GRET, SET, SIN>
+where
+    IMPL: 'static,
+    GET: 'static + for<'js> Fn(Ctx<'js>, &IMPL) -> GRET,
+    SET: 'static + for<'js> Fn(Ctx<'js>, &IMPL, SIN) -> Result<()>,
+    SIN: 'static + for<'js> FromJs<'js>,
+    GRET: 'static + for<'js> IntoJs<'js>,
+{
+    fn name<'a>(&'a self) -> Cow<'a, str> {
+        self.name.into()
+    }
+
+    fn get<'js>(
+        &self,
+        ctx: Ctx<'js>,
+        element: &dyn IElement,
+    ) -> svelters_core::prelude::Result<Value<'js>> {
+        let this: &dyn Upcast<IMPL> = element
+            .query_ref()
+            .ok_or_else(|| exception!("Element does not has an attribute named {}", self.name))?;
+        let this = this.upcast();
+        (self.getter)(ctx, &this).into_js(ctx)
+    }
+
+    fn set<'js>(
+        &self,
+        ctx: Ctx<'js>,
+        element: &dyn IElement,
+        value: Value<'js>,
+    ) -> svelters_core::prelude::Result<()> {
+        let this: &dyn Upcast<IMPL> = element
+            .query_ref()
+            .ok_or_else(|| exception!("Element does not implement the {} interface", self.name))?;
+        let mut this = this.upcast();
+        (self.setter)(ctx, &mut this, SIN::from_js(ctx, value)?)
+    }
 }
