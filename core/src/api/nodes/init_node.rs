@@ -25,20 +25,17 @@ pub fn initialize_element_node_proto<'js>(obj: &Object<'js>) -> Result<()> {
         Accessor::new_get(rquickjs::Method(get_children)).enumerable(),
     )?;
 
-    // obj.prop(
-    //     "addEventListener",
-    //     Func::new(
-    //         "addEventListener",
-    //         rquickjs::Method(add_event_listener::<CLS>),
-    //     ),
-    // )?;
-    // obj.prop(
-    //     "removeEventListener",
-    //     Func::new(
-    //         "removeEventListener",
-    //         rquickjs::Method(remove_event_listener),
-    //     ),
-    // )?;
+    obj.prop(
+        "addEventListener",
+        Func::new("addEventListener", rquickjs::Method(add_event_listener)),
+    )?;
+    obj.prop(
+        "removeEventListener",
+        Func::new(
+            "removeEventListener",
+            rquickjs::Method(remove_event_listener),
+        ),
+    )?;
     obj.prop(
         "getAttribute",
         Func::new("getAttribute", rquickjs::Method(get_attribute)),
@@ -70,19 +67,19 @@ pub fn initialize_element_node_proto<'js>(obj: &Object<'js>) -> Result<()> {
     Ok(())
 }
 
-fn get_next_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
+fn get_next_sibling<'js>(this: &ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.next.clone()
 }
 
-fn get_prev_sibling<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
+fn get_prev_sibling<'js>(this: &ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.prev.clone()
 }
 
-fn get_parent<'js>(this: ElementNode<'js>) -> Option<UINode<'js>> {
+fn get_parent<'js>(this: &ElementNode<'js>) -> Option<UINode<'js>> {
     this.borrow().node.parent.clone()
 }
 
-fn get_children<'js>(this: ElementNode<'js>) -> Option<Vec<UINode<'js>>> {
+fn get_children<'js>(this: &ElementNode<'js>) -> Option<Vec<UINode<'js>>> {
     this.borrow().node.children.clone()
 }
 
@@ -92,39 +89,39 @@ fn add_event_listener<'js>(
     value: Function<'js>,
     _opt: Opt<Object<'js>>,
 ) -> Result<()> {
-    // let node = this.node()?;
-    // let rt = node.rt.metadata.deref().borrow();
-    // let typedef = rt.types.get(node.typekey).unwrap();
-    // let event = typedef.events.get(name.as_str()).ok_or_else(|| {
-    //     exception!(
-    //         "{} does not have an attribute named {}",
-    //         node.tag_name,
-    //         name
-    //     )
-    // })?;
-    // (event.subscribe)(this.clone(), value)
+    let node = this.node.borrow();
+    let typedef = &*this.node.r#type;
+    let event = typedef
+        .events
+        .get(name.as_str())
+        .ok_or_else(|| exception!("{} does not have an event named {}", node.tag_name, name))?;
+    event.subscribe(this.clone(), value)
+}
+
+fn remove_event_listener<'js>(
+    this: &ElementNode<'js>,
+    ctx: Ctx<'js>,
+    name: String,
+    func: Function<'js>,
+) -> Result<()> {
+    let disconnect = {
+        let dispatcher = &this.borrow().dispatcher;
+        let dispatcher = RefCell::borrow_mut(&dispatcher.inner);
+        let sub = dispatcher
+            .subs
+            .get(name.as_str())
+            .ok_or_else(|| Error::new(ctx, "Dispathcher not found"))?;
+        sub.remove_callback(ctx, func)
+    }?;
+    if let Some(disconnect) = disconnect {
+        tracing::info!("Disconnecting event {}", name.as_str());
+        (disconnect)(this)?;
+    }
     Ok(())
 }
 
-fn remove_event_listener<'js>(this: Element<'js>, name: String, func: Function<'js>) -> Result<()> {
-    // let disconnect = {
-    //     let dispatcher = this.dispatcher()?;
-    //     let dispatcher = RefCell::borrow_mut(&dispatcher.inner);
-    //     let sub = dispatcher
-    //         .subs
-    //         .get(name.as_str())
-    //         .ok_or_else(|| Error::new(this.ctx(), "Dispathcher not found"))?;
-    //     sub.remove_callback(this.ctx(), func)
-    // }?;
-    // if let Some(disconnect) = disconnect {
-    //     tracing::info!("Disconnecting event {}", name.as_str());
-    //     (disconnect)(this)?;
-    // }
-    Ok(())
-}
-
-fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Result<Value<'js>> {
-    let typedef = this.r#type;
+fn get_attribute<'js>(this: &ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Result<Value<'js>> {
+    let typedef = &this.r#type;
     tracing::info!("Getting attr {}::{}", typedef.tag_name, name);
     let prop = typedef.members.get(name.as_str()).ok_or_else(|| {
         exception!(
@@ -144,12 +141,12 @@ fn get_attribute<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, name: String) -> Re
 }
 
 fn set_attribute<'js>(
-    this: ElementNode<'js>,
+    this: &ElementNode<'js>,
     ctx: Ctx<'js>,
     name: String,
     value: Value<'js>,
 ) -> Result<()> {
-    let typedef = this.r#type;
+    let typedef = &this.r#type;
     tracing::info!("Setting attr {}::{}", typedef.tag_name, name);
     let prop = typedef.members.get(name.as_str()).ok_or_else(|| {
         exception!(
@@ -169,12 +166,12 @@ fn set_attribute<'js>(
 }
 
 fn call_method<'js>(
-    this: ElementNode<'js>,
+    this: &ElementNode<'js>,
     ctx: Ctx<'js>,
     name: String,
     args: Rest<Value<'js>>,
 ) -> Result<Value<'js>> {
-    let typedef = this.r#type;
+    let typedef = &this.r#type;
     tracing::info!("Calling method {}::{}", typedef.tag_name, name);
     let method = typedef
         .members
@@ -187,7 +184,7 @@ fn call_method<'js>(
 }
 
 fn insert_before<'js>(
-    this: ElementNode<'js>,
+    this: &ElementNode<'js>,
     ctx: Ctx<'js>,
     node: ElementNode<'js>,
     anchor: Opt<ElementNode<'js>>,
@@ -201,7 +198,7 @@ fn insert_before<'js>(
     }
 }
 
-fn append_child<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
+fn append_child<'js>(this: &ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
     let typedef = &this.r#type;
     tracing::info!("Calling {}::insertBefore", typedef.tag_name);
     if let Some(slot) = &typedef.slot {
@@ -211,7 +208,7 @@ fn append_child<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'j
     }
 }
 
-fn remove_child<'js>(this: ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
+fn remove_child<'js>(this: &ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
     let typedef = &this.r#type;
     tracing::info!("Calling {}::insertBefore", typedef.tag_name);
     if let Some(slot) = &typedef.slot {

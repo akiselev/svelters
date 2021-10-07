@@ -68,6 +68,7 @@ impl Svelters {
 
 impl Drop for Svelters {
     fn drop(&mut self) {
+        tracing::warn!("Droping svelters runtime");
         cleanup_svelters(&self.context).expect("Failed to clean up Svelters runtime");
     }
 }

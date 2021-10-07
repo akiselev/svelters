@@ -9,27 +9,27 @@ version = "0.1.0"
 path = "src/lib.rs"
 
 [dependencies]
-anyhow = "1.0.40"
+anyhow = "1.0.44"
 either = "1.6.1"
-flume = "0.10.7"
-frunk = "0.4"
-glib = "0.14"
-gtk4-macros = "0.2.0"
+flume = "0.10.9"
+frunk = "0.4.0"
+glib = "0.14.5"
+gtk4-macros = "0.3.0"
 itertools = "0.10.1"
 lazy_static = "1.4.0"
 log = "0.4.14"
-parking_lot = "0.11.1"
-query_interface = "0.3.5"                      # Dynamically query a type-erased object for any trait implementation
-serde = "1.0.126"
-serde_json = "1.0.64"
-smartstring = "0.2.6"
+parking_lot = "0.11.2"
+query_interface = "0.3.5"                           # Dynamically query a type-erased object for any trait implementation
+serde = "1.0.130"
+serde_json = "1.0.68"
+smartstring = "0.2.9"
 static_assertions = "1.1.0"
-thiserror = "1.0.25"
-tokio = { version = "1", features = ["time"] }
-tracing = "0.1.26"
+thiserror = "1.0.29"
+tokio = { version = "1.12.0", features = ["time"] }
+tracing = "0.1.28"
 tracing-log = "0.1.2"
 tracing-macros = "0.0.0"
-tracing-subscriber = "0.2.18"
+tracing-subscriber = "0.2.24"
 
 [dependencies.smallbox]
 version = "0.8.0"
@@ -40,7 +40,7 @@ version = "0.1.0"
 path = "../core"
 
 [dependencies.gtk4]
-version = "0.2"
+version = "0.3.0"
 features = ["v4_2"]
 
 [dependencies.rquickjs]

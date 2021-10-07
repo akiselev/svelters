@@ -1,4 +1,5 @@
 use phf::Map;
+use rquickjs::Function;
 use smallvec::SmallVec;
 
 use crate::inner::*;
@@ -21,6 +22,7 @@ pub struct ElementDef {
     pub(in crate) tag_name: &'static str,
     pub(in crate) constructor: ConstructorFn,
     pub(in crate) members: HashMap<&'static str, Member>,
+    pub(in crate) events: HashMap<&'static str, SmallBox<dyn IEvent, space::S4>>,
     pub(in crate) slot: Option<SmallBox<dyn INativeSlot, space::S4>>,
 }
 
@@ -37,6 +39,7 @@ impl ElementDef {
                 tag_name,
                 constructor: smallbox!(constructor),
                 members: Default::default(),
+                events: Default::default(),
                 slot: None,
             },
         }
@@ -66,6 +69,17 @@ impl ElementDef {
         {
             panic!(
                 "Member {} on element {} already defined",
+                name, self.tag_name
+            );
+        }
+        self
+    }
+
+    pub fn event<FUNC: 'static + IEvent>(&mut self, name: &'static str, func: FUNC) -> &mut Self {
+        tracing::info!("Added event {}::{}", self.tag_name, name);
+        if self.events.insert(name, smallbox!(func)).is_some() {
+            panic!(
+                "Event {} on element {} already defined",
                 name, self.tag_name
             );
         }
@@ -109,6 +123,10 @@ pub trait IMethod {
     ) -> Result<Value<'js>>;
 }
 
+pub trait IEvent {
+    fn subscribe<'js>(&self, element: Element<'js>, func: Function<'js>) -> Result<()>;
+}
+
 pub struct ElementBuilder<'a> {
     builder: TypeBuilder<'a>,
     def: ElementDef,
@@ -135,6 +153,11 @@ impl<'a> ElementBuilder<'a> {
 
     pub fn prop<FUNC: 'static + IProperty>(&mut self, name: &'static str, func: FUNC) -> &mut Self {
         self.def.prop(name, func);
+        self
+    }
+
+    pub fn event<FUNC: 'static + IEvent>(&mut self, name: &'static str, func: FUNC) -> &mut Self {
+        self.def.event(name, func);
         self
     }
 }

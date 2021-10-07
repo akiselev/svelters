@@ -1,3 +1,5 @@
+use std::any::type_name;
+
 use rquickjs::{Function, HasRefs, Persistent};
 
 use crate::inner::*;
@@ -12,6 +14,7 @@ pub struct Subscription {
 
 impl Subscription {
     pub fn dispatch<T: for<'js> IntoJs<'js>>(&self, detail: T) {
+        tracing::info!("Dispatch outer");
         self.ctx.with(move |ctx| {
             let res = dispatch_inner(ctx, self, detail);
             match res {
@@ -27,6 +30,7 @@ fn dispatch_inner<'js, T: IntoJs<'js>>(
     this: &Subscription,
     detail: T,
 ) -> Result<()> {
+    tracing::info!("Dispatch inner");
     let detail = detail.into_js(ctx)?;
     let value = ctx
         .get_register(this.target_id)
@@ -41,29 +45,28 @@ fn dispatch_inner<'js, T: IntoJs<'js>>(
 pub struct SubscriptionBuilder<'js> {
     pub(in crate) ctx: Ctx<'js>,
     pub(in crate) name: &'static str,
-    pub(in crate) element: Element<'js>,
+    pub(in crate) node: ElementNode<'js>,
     pub(in crate) callbacks: Callbacks<'js>,
 }
 
 impl<'js> SubscriptionBuilder<'js> {
     pub fn subscribe(self, func: Function<'js>) -> Self {
-        self.callbacks.borrow_mut().callbacks.push(func);
+        self.callbacks.inner.borrow_mut().callbacks.push(func);
         self
     }
 
-    pub fn connect<CLS, FUNC>(self, func: FUNC) -> Result<()>
+    pub fn connect<CLS: 'static + ?Sized, FUNC>(self, func: FUNC) -> Result<()>
     where
-        CLS: Clone + Type,
         FUNC: 'static + for<'a, 'b> FnOnce(&'a CLS, Subscription, Disconnect<CLS>) -> Result<()>,
     {
         let name = self.name;
         let disconnected = {
-            let event = self.callbacks.borrow();
+            let event = self.callbacks.inner.borrow();
             let inner = event.disconnect.borrow();
             inner.is_none()
         };
         if disconnected {
-            let target_id = self.ctx.register(self.element.el_node.clone().into_value());
+            let target_id = self.ctx.register(self.node.clone().into_js(self.ctx)?);
             let sub = Subscription {
                 name,
                 target_id,
@@ -73,12 +76,21 @@ impl<'js> SubscriptionBuilder<'js> {
             {
                 // Disconnect wrapper to make returning the disconnect function
                 // cleaner, otherwise it looks ugly: `Ok(Box::new(move |...| { ... }))`
-                let disconnect =
-                    Disconnect::new(self.callbacks.borrow().disconnect.clone(), sub.clone());
-                let obj = self.element.cast_as::<CLS>()?;
-                func(&obj.cls, sub, disconnect)
+                let disconnect = Disconnect::new(
+                    self.callbacks.inner.borrow().disconnect.clone(),
+                    sub.clone(),
+                );
+                let inner = self.node.borrow();
+                let this = inner.object.query_ref::<CLS>().ok_or_else(|| {
+                    exception!(
+                        "Element {} does not implement {}",
+                        self.node.r#type.tag_name,
+                        type_name::<CLS>()
+                    )
+                })?;
+                func(this, sub, disconnect)
             };
-            if self.callbacks.borrow().disconnect.borrow().is_none() {
+            if self.callbacks.inner.borrow().disconnect.borrow().is_none() {
                 tracing::warn!("DisconnectFn not set after connect for {}", name);
             }
         }
@@ -86,14 +98,14 @@ impl<'js> SubscriptionBuilder<'js> {
     }
 }
 
-pub trait SubscribeFn = for<'js> Fn(Element<'js>, Function<'js>) -> Result<()>;
-pub type DisconnectFn = Box<dyn for<'js_> FnOnce(Element<'js_>) -> Result<()>>;
+pub trait SubscribeFn = for<'js> Fn(&ElementNode<'js>, Function<'js>) -> Result<()>;
+pub type DisconnectFn = Box<dyn for<'js_> FnOnce(&ElementNode<'js_>) -> Result<()>>;
 
 #[must_use]
-pub struct Disconnect<CLS> {
+pub struct Disconnect<CLS: ?Sized> {
     pub(in crate) func: Inner<Option<DisconnectFn>>,
     pub(in crate) sub: Subscription,
-    cls: Class<CLS>,
+    cls: PhantomData<CLS>,
 }
 
 pub(in crate) struct CbInner<'js> {
@@ -101,26 +113,31 @@ pub(in crate) struct CbInner<'js> {
     pub(in crate) disconnect: Inner<Option<DisconnectFn>>,
 }
 
-impl<CLS: Type> Disconnect<CLS> {
+impl<CLS: 'static + ?Sized> Disconnect<CLS> {
     pub(in crate) fn new(func: Inner<Option<DisconnectFn>>, sub: Subscription) -> Self {
         Self {
             func,
             sub,
-            cls: Class::new(),
+            cls: PhantomData,
         }
     }
 
     pub fn with<FUNC>(self, func: FUNC) -> Result<()>
     where
-        CLS: 'static,
         FUNC: 'static + for<'a> FnOnce(&'a CLS, Subscription) -> Result<()>,
     {
         let sub = self.sub;
-        *self.func.borrow_mut() = Some(Box::new(move |el: Element| {
+        *self.func.borrow_mut() = Some(Box::new(move |el: &ElementNode| {
             tracing::info!("Disconnecting {}", sub.name);
-            let node = el.node()?;
-            let obj = Obj::<CLS>::from_rt(&node.rt, node.idx)?;
-            func(&*obj, sub)?;
+            let node = el.borrow();
+            let this = node.object.query_ref::<CLS>().ok_or_else(|| {
+                exception!(
+                    "Element {} does not implement {}",
+                    el.r#type.tag_name,
+                    type_name::<CLS>()
+                )
+            })?;
+            func(this, sub)?;
             Ok(())
         }));
         Ok(())
@@ -128,16 +145,8 @@ impl<CLS: Type> Disconnect<CLS> {
 }
 
 #[derive(Clone)]
-pub(in crate) struct Callbacks<'js> {
+pub struct Callbacks<'js> {
     pub(in crate) inner: Inner<CbInner<'js>>,
-}
-
-impl<'js> std::ops::Deref for Callbacks<'js> {
-    type Target = Inner<CbInner<'js>>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
 }
 
 impl<'js> HasRefs for Callbacks<'js> {
@@ -166,13 +175,14 @@ impl<'js> Callbacks<'js> {
         func: Function<'js>,
     ) -> Result<Option<DisconnectFn>> {
         let pos = {
-            self.borrow()
+            self.inner
+                .borrow()
                 .callbacks
                 .iter()
                 .position(|callback| callback.as_object() == func.as_object())
         };
         if let Some(index) = pos {
-            let mut this = self.borrow_mut();
+            let mut this = self.inner.borrow_mut();
             let callback = this.callbacks.remove(index);
             if this.callbacks.len() == 0 {
                 Ok(this.disconnect.take())

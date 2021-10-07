@@ -36,24 +36,14 @@ impl Runtime {
             }),
         }
     }
-    // pub fn new_element<'js, CLS: IElement>(
-    //     &self,
-    //     ctx: Ctx<'js>,
-    //     tag_name: &'static str,
-    //     cls: CLS,
-    // ) -> Result<Value<'js>> {
 
-    //     let el = ElementNode::new::<CLS>(self.rt.clone(), ctx, tag_name, cls)?;
-    //     WithProto(el, proto).into_js(ctx)
-    // }
-
-    // pub(in crate) fn create_event<'js>(
-    //     &mut self,
-    //     ctx: Ctx<'js>,
-    //     _interface: String,
-    // ) -> Result<Value<'js>> {
-    //     Event::custom(ctx)
-    // }
+    pub(in crate) fn create_event<'js>(
+        &mut self,
+        ctx: Ctx<'js>,
+        _interface: String,
+    ) -> Result<Value<'js>> {
+        Event::custom(ctx)
+    }
 
     pub(in crate) fn create_element_ns<'js>(
         &mut self,
@@ -170,10 +160,10 @@ mod js_impl {
         }
 
         fn init_proto<'js>(_ctx: Ctx<'js>, proto: &Object<'js>) -> rquickjs::Result<()> {
-            // proto.set(
-            //     "createEvent",
-            //     rquickjs::Func::new("createEvent", rquickjs::Method(Runtime::create_event)),
-            // )?;
+            proto.set(
+                "createEvent",
+                rquickjs::Func::new("createEvent", rquickjs::Method(Runtime::create_event)),
+            )?;
             proto.set(
                 "createElement",
                 rquickjs::Func::new("createElement", rquickjs::Method(Runtime::create_element)),
@@ -185,10 +175,10 @@ mod js_impl {
                     rquickjs::Method(Runtime::create_element_ns),
                 ),
             )?;
-            // proto.set(
-            //     "dispatchEvent",
-            //     rquickjs::Func::new("dispatchEvent", rquickjs::Method(Runtime::dispatch_event)),
-            // )?;
+            proto.set(
+                "dispatchEvent",
+                rquickjs::Func::new("dispatchEvent", rquickjs::Method(Runtime::dispatch_event)),
+            )?;
             Ok(())
         }
 

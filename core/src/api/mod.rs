@@ -18,7 +18,17 @@ mod nodes {
     pub use self::text_node::*;
 }
 
+mod events {
+    mod dispatcher;
+    mod event;
+    mod subscription;
+    pub use self::dispatcher::*;
+    pub use self::event::*;
+    pub use self::subscription::*;
+}
+
 pub use element::*;
+pub use events::*;
 pub use node::*;
 pub use nodes::*;
 pub use svbuilder::*;

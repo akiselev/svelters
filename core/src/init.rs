@@ -14,12 +14,11 @@ pub fn initialize_svelters(ctx: &rquickjs::Context) -> Result<Runtime> {
         rquickjs::Class::<SlotNode>::register(ctx)?;
         rquickjs::Class::<TextNode>::register(ctx)?;
         rquickjs::Class::<ElementNode>::register(ctx)?;
+        rquickjs::Class::<Event>::register(ctx)?;
+        rquickjs::Class::<Dispatcher>::register(ctx)?;
 
         ctx.globals().set("document", runtime.clone())?;
         Result::<_>::Ok(runtime)
-
-        // rquickjs::Class::<Event<'js>>::register(ctx)?;
-        // rquickjs::Class::<Dispatcher>::register(ctx)?;
     })
 }
 
@@ -29,9 +28,7 @@ pub fn cleanup_svelters(ctx: &rquickjs::Context) -> Result<()> {
         ctx.clear_registery();
         tracing::info!("Cleaning up Svelters...");
         let doc: &mut Runtime = ctx.globals().get("document")?;
-        // let mut rt = doc.rt.metadata.deref().borrow_mut();
-        // doc.rt.objects.deref().borrow_mut().clear();
-        // rt.types.clear();
+
         ctx.globals().keys::<String>().for_each(|key| {
             ctx.globals().set(key.unwrap(), Value::new_undefined(ctx));
         });
@@ -40,7 +37,6 @@ pub fn cleanup_svelters(ctx: &rquickjs::Context) -> Result<()> {
         ctx.globals().set("setTimeout", Value::new_undefined(ctx))?;
         ctx.globals().set("console", Value::new_undefined(ctx))?;
         tracing::info!("Done cleaning up Svelters...");
-        // for (_key, _val) in doc.inner.borrow_mut().types.drain() {}
         Ok(())
     })
 }

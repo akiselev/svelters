@@ -20,7 +20,7 @@ frunk = "0.4.0"
 heapless = "0.7.5"            # `static` friendly data structures that don't require dynamic memory allocation
 lazy_static = "1.4.0"
 log = "0.4.14"
-ouroboros = "0.10.1"
+ouroboros = "0.12"
 parking_lot = "0.11.1"
 query_interface = "0.3.5"     # Dynamically query a type-erased object for any trait implementation
 serde = "1.0.126"
@@ -42,7 +42,7 @@ path = "../crates/rquickjs"
 features = ["full", "backtrace", "tokio", "frunk"]
 
 [dependencies.phf]
-version = "0.9"
+version = "0.10"
 features = ["macros"]
 
 [dependencies.smallbox]
@@ -56,7 +56,7 @@ features = ["unstable"]
 [dev-dependencies]
 cucumber_rust = { git = "https://github.com/bbqsrc/cucumber-rust", branch = "main" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-pretty_assertions = "0.7"
+pretty_assertions = "1.0"
 rquickjs = { version = "0.1.1", path = "../crates/rquickjs", features = [
     "full",
     "tokio",

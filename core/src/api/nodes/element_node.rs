@@ -50,7 +50,7 @@ pub struct ElData<'js> {
     pub tag_name: Cow<'static, str>,
     pub object: SmallBox<dyn IElement, space::S8>,
     pub node: NodeData<'js>,
-    // pub(in crate) dispatcher: Dispatcher<'js>,
+    pub dispatcher: Dispatcher<'js>,
 }
 
 impl<'js> HasRefs for ElementNode<'js> {
@@ -66,16 +66,20 @@ impl<'js> ElementNode<'js> {
         cls: ElementContainer,
         r#type: Rc<ElementDef>,
     ) -> Result<Self> {
-        // let dispatcher = Dispatcher::new();
+        let dispatcher = Dispatcher::new();
         Ok(Self {
             r#type,
             inner: Inner::new(ElData {
                 tag_name,
                 object: cls,
-                // dispatcher,
+                dispatcher,
                 node: NodeData::new(),
             }),
         })
+    }
+
+    pub(in crate) fn dispatcher(&self) -> Dispatcher<'js> {
+        self.borrow().dispatcher.clone()
     }
 }
 

@@ -7,8 +7,7 @@ use crate::inner::*;
 #[derive(Clone)]
 pub struct Element<'js> {
     pub(in crate) _ctx: Ctx<'js>,
-
-    pub(in crate) _this: ElementNode<'js>,
+    pub(in crate) node: ElementNode<'js>,
     pub(in crate) doc_cell: OnceCell<Runtime>,
 }
 
@@ -17,23 +16,23 @@ impl<'js> Element<'js> {
         self._ctx
     }
 
-    // pub fn event(&self, name: &'static str) -> Result<SubscriptionBuilder<'js>> {
-    //     let callbacks = {
-    //         let disp = self.dispatcher()?;
-    //         let mut inner = disp.borrow_mut();
-    //         inner
-    //             .subs
-    //             .entry(name)
-    //             .or_insert_with(|| Callbacks::<'js>::new())
-    //             .clone()
-    //     };
-    //     Ok(SubscriptionBuilder {
-    //         name,
-    //         ctx: self.ctx(),
-    //         callbacks,
-    //         element: self.clone(),
-    //     })
-    // }
+    pub fn event(&self, name: &'static str) -> Result<SubscriptionBuilder<'js>> {
+        let callbacks = {
+            let disp = self.dispatcher()?;
+            let mut inner = disp.borrow_mut();
+            inner
+                .subs
+                .entry(name)
+                .or_insert_with(|| Callbacks::<'js>::new())
+                .clone()
+        };
+        Ok(SubscriptionBuilder {
+            name,
+            ctx: self.ctx(),
+            callbacks,
+            node: self.node.clone(),
+        })
+    }
 
     pub fn document(&self) -> Result<&Runtime> {
         self.doc_cell.get_or_try_init(|| {
@@ -42,9 +41,9 @@ impl<'js> Element<'js> {
         })
     }
 
-    // pub(in crate) fn dispatcher(&self) -> Result<Dispatcher<'js>> {
-    //     Ok(self.node()?.borrow().dispatcher.clone())
-    // }
+    pub(in crate) fn dispatcher(&self) -> Result<Dispatcher<'js>> {
+        Ok(self.node.borrow().dispatcher.clone())
+    }
 }
 
 impl<'a, 'js> rquickjs::FromJs<'js> for Element<'js> {
@@ -54,7 +53,7 @@ impl<'a, 'js> rquickjs::FromJs<'js> for Element<'js> {
         if node.instance_of::<ElementNode>() {
             Ok(Element {
                 _ctx: ctx,
-                _this: ElementNode::from_js(ctx, node.into_value())?,
+                node: ElementNode::from_js(ctx, node.clone().into_value())?,
                 doc_cell: OnceCell::new(),
             })
         } else {

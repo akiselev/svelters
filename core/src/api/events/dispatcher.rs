@@ -1,20 +1,15 @@
-use std::collections::HashMap;
+use std::{
+    cell::{Ref, RefMut},
+    collections::HashMap,
+};
 
 use rquickjs::{Function, Persistent};
 
 use crate::inner::*;
 
 #[derive(Clone)]
-pub(in crate) struct Dispatcher<'js> {
+pub struct Dispatcher<'js> {
     pub(in crate) inner: Inner<DispInner<'js>>,
-}
-
-impl<'js> std::ops::Deref for Dispatcher<'js> {
-    type Target = Inner<DispInner<'js>>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
 }
 
 pub(in crate) struct DispInner<'js> {
@@ -23,6 +18,7 @@ pub(in crate) struct DispInner<'js> {
 
 impl<'js> Dispatcher<'js> {
     pub fn new() -> Self {
+        tracing::info!("Dispatcher created...");
         Self {
             inner: Inner::new(DispInner {
                 subs: Default::default(),
@@ -31,6 +27,7 @@ impl<'js> Dispatcher<'js> {
     }
 
     pub fn dispatch(&self, ctx: Ctx<'js>, event: Event<'js>) -> Result<()> {
+        tracing::info!("Dispatch inner2");
         let inner = self.inner.borrow();
         let name = event
             ._type
@@ -38,12 +35,31 @@ impl<'js> Dispatcher<'js> {
             .ok_or_else(|| exception!("Event has no type"))?
             .as_str();
         if let Some(cb) = inner.subs.get(name) {
+            let inner = cb.inner.borrow();
+            tracing::info!(
+                "Found {} subscriptions for event {}",
+                inner.callbacks.len(),
+                name
+            );
             let value = event.into_js(ctx)?;
-            for func in cb.borrow().callbacks.iter() {
-                func.call((value.clone(),))?;
+            for func in inner.callbacks.iter() {
+                match func.call::<_, Value>((value.clone(),)) {
+                    Ok(ret) => tracing::info!("Called event handler: {}", ret.type_of()),
+                    Err(err) => tracing::error!("Error in event handler: {}", err),
+                }
             }
+            Ok(())
+        } else {
+            tracing::error!("Event {} not found", name);
+            Err(exception!("Event named {} not found", name))
         }
-        Ok(())
+    }
+
+    delegate::delegate! {
+        to self.inner {
+            pub(in crate) fn borrow(&self) -> Ref<DispInner<'js>>;
+            pub(in crate) fn borrow_mut(&self) -> RefMut<DispInner<'js>>;
+        }
     }
 }
 

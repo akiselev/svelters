@@ -869,6 +869,21 @@ pub fn button_interface(this: &mut ElementDef) {
             this.set_label(label.as_str());
         };
     });
+    this.event(
+        "click",
+        GtkEvent::new::<dyn Upcast<Button>>(
+            "Button",
+            "click",
+            |btn, sub| {
+                tracing::info!("Inner event impl for Button::clicked");
+                Ok(btn.upcast().connect_clicked(move |_| {
+                    tracing::info!("Dispatching Button::clicked");
+                    sub.dispatch(())
+                }))
+            },
+            |btn, sub| Ok(btn.upcast().disconnect(sub)),
+        ),
+    );
 }
 
 pub fn action_bar_interface(this: &mut ElementDef) {}

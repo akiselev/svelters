@@ -40,9 +40,11 @@ mod macros;
 mod wrapper;
 
 pub mod impls {
+    mod event;
     mod method;
     mod property;
 
+    pub use event::*;
     pub use method::*;
     pub use property::*;
 }
