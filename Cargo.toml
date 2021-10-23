@@ -31,7 +31,6 @@ rquickjs = { version = "0.1.1", path = "./crates/rquickjs", features = [
 ] }
 svelters-compiler = { version = "0.1.0", path = "./crates/compiler" }
 svelters-core = { version = "0.1.0", path = "./core" }
-svelters-gtk4 = { version = "0.1.0", path = "./gtk4" }
 anyhow = "1.0.40"
 notify = "4.0.17"
 tokio = { version = "1", features = ["full"] }
@@ -46,7 +45,6 @@ strip = true
 [workspace]
 members = [
     "core",
-    "gtk4",
     "crates/macros",
     "crates/compiler",
     "crates/rquickjs",
