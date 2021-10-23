@@ -1,8 +1,0 @@
-{
-  "env": {
-    "params": {
-      "env": "TS_NODE_TRANSPILE_ONLY=true"
-    }
-  },
-  "recycle": true
-}

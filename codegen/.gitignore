@@ -1,9 +1,0 @@
-# QT Documentation for codegen
-docs/qt/
-
-target/
-
-# Debug output for codegen
-schema.json
-
-/_*.txt
