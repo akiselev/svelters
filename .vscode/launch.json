@@ -12,6 +12,14 @@
             "preLaunchTask": "build",
             "args": [],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release",
+            "program": "${workspaceFolder}/target/release/svelters",
+            "args": [],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
