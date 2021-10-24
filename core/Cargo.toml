@@ -37,9 +37,14 @@ tracing-subscriber = "0.2.18"
 typedmap = "0.1.1"
 
 [dependencies.rquickjs]
-version = "0.1.1"
-path = "../crates/rquickjs"
-features = ["full", "backtrace", "tokio", "frunk"]
+version = "0.1.2"
+path = "../crates/rquickjs2"
+features = [
+    "full",
+    # "backtrace",
+    "tokio",
+    # "frunk",
+]
 
 [dependencies.phf]
 version = "0.10"
@@ -57,7 +62,7 @@ features = ["unstable"]
 cucumber_rust = { git = "https://github.com/bbqsrc/cucumber-rust", branch = "main" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 pretty_assertions = "1.0"
-rquickjs = { version = "0.1.1", path = "../crates/rquickjs", features = [
+rquickjs = { version = "0.1.2", path = "../crates/rquickjs2", features = [
     "full",
     "tokio",
     "dump-leaks",

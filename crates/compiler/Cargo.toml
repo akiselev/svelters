@@ -7,7 +7,11 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-swc_common = { version="0.10.20", features=["sourcemap", "tty-emitter", "concurrent"] }
+swc_common = { version = "0.10.20", features = [
+    "sourcemap",
+    "tty-emitter",
+    "concurrent",
+] }
 swc_ecma_codegen = "0.56.0"
 swc_ecma_visit = "0.32.0"
 swc_ecma_parser = "0.58.0"
@@ -22,7 +26,10 @@ anyhow = "1.0.41"
 tracing = "0.1.26"
 tracing-macros = "0.0.0"
 thiserror = "1.0.25"
-tokio = { version="1", features=["full"] }
-rquickjs = { version="0.1.1", path="../rquickjs", features=["full", "tokio"] }
+tokio = { version = "1", features = ["full"] }
+rquickjs = { version = "0.1.1", path = "../rquickjs2", features = [
+    "full",
+    "tokio",
+] }
 futures = "0.3.15"
 flume = "0.10.7"

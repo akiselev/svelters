@@ -121,19 +121,42 @@ target/
 target2/
 Cargo.lock
 
+###############
+
 # JS build files
 dist/
+
+###############
 
 # macos
 .DS_Store
 
+###############
+
 # valgrind
 vgcore.*
 
+###############
 
 # ghidra project stuff
 ghidra.*
 
+###############
 
 # CLion
 .idea/
+
+###############
+
+# Zig build dirs
+zig-*/
+zig-cache
+
+# Zig emit docs
+docs/data.js
+docs/index.html
+docs/main.js
+
+# Zigmod
+.zigmod
+deps.zig
