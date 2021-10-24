@@ -22,15 +22,19 @@ tracing-bunyan-formatter = "0.2.4"
 tracing-log = "0.1.2"
 tracing-subscriber = "0.2.18"
 lazy_static = "1.4.0"
-rquickjs = { version = "0.1.2", path = "./crates/rquickjs2", features = [
+rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "full",
-    # "backtrace",
+    "backtrace",
     "tokio",
     # "frunk",
+    "dump-gc",
+    "dump-mem",
+    "dump-gc-free",
     "dump-leaks",
 ] }
 svelters-compiler = { version = "0.1.0", path = "./crates/compiler" }
 svelters-core = { version = "0.1.0", path = "./core" }
+svelters-zig = { version = "0.1.0", path = "./zig" }
 anyhow = "1.0.40"
 notify = "4.0.17"
 tokio = { version = "1", features = ["full"] }
@@ -48,8 +52,8 @@ members = [
     "zig",
     "crates/macros",
     "crates/compiler",
-    "crates/rquickjs2",
-    "crates/rquickjs2/core",
-    "crates/rquickjs2/macro",
+    "crates/rquickjs",
+    "crates/rquickjs/core",
+    "crates/rquickjs/macro",
 ]
 exclude = ["codegen", "crates/oldqt", "crates/qt", "crates/rquickjs"]

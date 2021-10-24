@@ -38,10 +38,10 @@ typedmap = "0.1.1"
 
 [dependencies.rquickjs]
 version = "0.1.2"
-path = "../crates/rquickjs2"
+path = "../crates/rquickjs"
 features = [
     "full",
-    # "backtrace",
+    "backtrace",
     "tokio",
     # "frunk",
 ]
@@ -59,10 +59,10 @@ version = "1.0.6"
 features = ["unstable"]
 
 [dev-dependencies]
-cucumber_rust = { git = "https://github.com/bbqsrc/cucumber-rust", branch = "main" }
+cucumber_rust = { git = "https://github.com/bbqsrc/cucumber-rust", branch = "main", package = "cucumber" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 pretty_assertions = "1.0"
-rquickjs = { version = "0.1.2", path = "../crates/rquickjs2", features = [
+rquickjs = { version = "0.1.2", path = "../crates/rquickjs", features = [
     "full",
     "tokio",
     "dump-leaks",
