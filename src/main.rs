@@ -15,6 +15,8 @@ fn main() {
             .with_initializer(initialize_svgtk)
             .build_with(compiler.clone(), compiler.clone())
             .expect("Could not start Svelters runtime");
+        // Testing to make sure we've managed memory in svelters-zig correctly
+        sv.gc();
 
         if let Err(err) = svelters_eval_file(&sv, &compiler, "./app/index.js") {
             tracing::error!("Eval error: {}", err);

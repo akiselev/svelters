@@ -28,9 +28,16 @@ rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "tokio",
     # "frunk",
     "dump-gc",
-    "dump-mem",
     "dump-gc-free",
+    # "dump-free",
     "dump-leaks",
+    "dump-mem",
+    "dump-objects",
+    "dump-atoms",
+    "dump-shapes",
+    "dump-module-resolve",
+    "dump-promise",
+    "dump-read-object",
 ] }
 svelters-compiler = { version = "0.1.0", path = "./crates/compiler" }
 svelters-core = { version = "0.1.0", path = "./core" }

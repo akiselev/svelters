@@ -13,6 +13,10 @@ impl Svelters {
         SveltersBuilder::new()
     }
 
+    pub fn gc(&self) {
+        self.quickjs.run_gc();
+    }
+
     pub fn with_ctx<F: FnOnce(&Context) -> R, R>(&self, func: F) -> R {
         func(&self.context)
     }

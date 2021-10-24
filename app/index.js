@@ -49,5 +49,6 @@ cb.func = () => {
     win.setChild(null);
     console.log("Clicked3!!");
     btn1.disconnect_clicked(cb.func);
+    console.log("Clicked4!!");
 };
 btn1.connect_clicked(cb.func);
