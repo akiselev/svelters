@@ -1,6 +1,9 @@
 use rquickjs::{BuiltinResolver, ModuleLoader};
 
-use crate::{init::initialize_svelters, inner::*};
+use crate::{
+    init::{initialize_gui_context, initialize_view_model_context},
+    inner::*,
+};
 
 pub type Initializers = Vec<Box<dyn FnOnce(&Svelters) -> Result<()>>>;
 
@@ -44,10 +47,12 @@ impl SveltersBuilder {
 
     pub fn build(self) -> Result<Svelters> {
         let rt = rquickjs::Runtime::new()?;
-        let ctx = rquickjs::Context::full(&rt)?;
         rt.set_loader(self.resolver, self.loader);
-        let runtime = initialize_svelters(&ctx)?;
-        Svelters::build(runtime, rt, ctx, self.initializers)
+
+        let vm_ctx = rquickjs::Context::full(&rt)?;
+        let runtime = initialize_view_model_context(&vm_ctx)?;
+
+        Svelters::build(runtime, rt, self.initializers)
     }
 
     pub fn build_with<R, L>(self, resolver: R, loader: L) -> Result<Svelters>
@@ -56,9 +61,11 @@ impl SveltersBuilder {
         L: 'static + rquickjs::Loader,
     {
         let rt = rquickjs::Runtime::new()?;
-        let ctx = rquickjs::Context::full(&rt)?;
         rt.set_loader((self.resolver, resolver), (self.loader, loader));
-        let runtime = initialize_svelters(&ctx)?;
-        Svelters::build(runtime, rt, ctx, self.initializers)
+
+        let vm_ctx = rquickjs::Context::full(&rt)?;
+        let runtime = initialize_view_model_context(&vm_ctx)?;
+
+        Svelters::build(runtime, rt, self.initializers)
     }
 }

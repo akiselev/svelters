@@ -67,19 +67,19 @@ pub fn initialize_element_node_proto<'js>(obj: &Object<'js>) -> Result<()> {
     Ok(())
 }
 
-fn get_next_sibling<'js>(this: &ElementNode<'js>) -> Option<UINode<'js>> {
+fn get_next_sibling<'js>(this: &ElementNode<'js>) -> Option<VMNode<'js>> {
     this.borrow().node.next.clone()
 }
 
-fn get_prev_sibling<'js>(this: &ElementNode<'js>) -> Option<UINode<'js>> {
+fn get_prev_sibling<'js>(this: &ElementNode<'js>) -> Option<VMNode<'js>> {
     this.borrow().node.prev.clone()
 }
 
-fn get_parent<'js>(this: &ElementNode<'js>) -> Option<UINode<'js>> {
+fn get_parent<'js>(this: &ElementNode<'js>) -> Option<VMNode<'js>> {
     this.borrow().node.parent.clone()
 }
 
-fn get_children<'js>(this: &ElementNode<'js>) -> Option<Vec<UINode<'js>>> {
+fn get_children<'js>(this: &ElementNode<'js>) -> Option<Vec<VMNode<'js>>> {
     this.borrow().node.children.clone()
 }
 

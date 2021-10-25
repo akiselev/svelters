@@ -8,7 +8,7 @@ use crate::inner::*;
 pub struct Element<'js> {
     pub(in crate) _ctx: Ctx<'js>,
     pub(in crate) node: ElementNode<'js>,
-    pub(in crate) doc_cell: OnceCell<Runtime>,
+    pub(in crate) doc_cell: OnceCell<ViewModelRuntime>,
 }
 
 impl<'js> Element<'js> {
@@ -34,9 +34,9 @@ impl<'js> Element<'js> {
         })
     }
 
-    pub fn document(&self) -> Result<&Runtime> {
+    pub fn document(&self) -> Result<&ViewModelRuntime> {
         self.doc_cell.get_or_try_init(|| {
-            let doc: &Runtime = self._ctx.globals().get("document")?;
+            let doc: &ViewModelRuntime = self._ctx.globals().get("document")?;
             Result::Ok((*doc).clone())
         })
     }

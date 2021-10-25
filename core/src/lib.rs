@@ -36,11 +36,13 @@
 // #![feature(try_trait_v2)]
 
 pub mod prelude {
-    pub use crate::api::*;
     pub use crate::eldef::*;
+    pub use crate::svbuilder::*;
+    pub use crate::svelters::*;
     pub use crate::traits::*;
+    pub use crate::vm::*;
 
-    pub use crate::init::{cleanup_svelters, initialize_svelters};
+    pub use crate::init::{cleanup_view_model_context, initialize_view_model_context};
     pub use crate::metadata::Metadata;
 
     pub use crate::inner::Result;
@@ -51,14 +53,16 @@ pub use crate::utils::timing;
 
 // ----------------- INTERNAL -----------------
 
-mod api;
 mod eldef;
 pub(in crate) mod init;
 pub(in crate) mod macros;
 pub(in crate) mod metadata;
-pub(in crate) mod rt;
 pub(in crate) mod traits;
 pub(in crate) mod utils;
+pub(in crate) mod vm;
+
+pub(in crate) mod svbuilder;
+pub(in crate) mod svelters;
 
 #[allow(unused_imports)]
 pub(in crate) mod inner {
@@ -91,23 +95,29 @@ pub(in crate) mod inner {
     pub(in crate) use smallbox::{smallbox, space, SmallBox};
     pub(in crate) use typedmap::TypedMapKey;
 
-    pub(in crate) use crate::api::*;
     pub(in crate) use crate::traits::*;
     pub(in crate) use crate::utils::*;
+    pub(in crate) use crate::vm::*;
 
     pub(in crate) use crate::eldef::*;
     pub(in crate) use crate::macros::*;
     pub(in crate) use crate::metadata::*;
-    pub(in crate) use crate::rt::*;
+    pub(in crate) use crate::svbuilder::*;
+    pub(in crate) use crate::svelters::*;
     pub(in crate) use crate::utils;
+    pub(in crate) use crate::vm::*;
 
     pub(in crate) use crate::{build, build_class, check_member, exception};
 
     pub(in crate) struct Casters {
-        pub(in crate) obj_to_virt:
-            SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>, Rt, i32) -> Result<Value<'a>>, space::S8>,
-        pub(in crate) obj_to_impl:
-            SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>, Rt, i32) -> Result<Value<'a>>, space::S8>,
+        pub(in crate) obj_to_virt: SmallBox<
+            dyn for<'a> Fn(Ctx<'a>, Object<'a>, ViewModelRuntime, i32) -> Result<Value<'a>>,
+            space::S8,
+        >,
+        pub(in crate) obj_to_impl: SmallBox<
+            dyn for<'a> Fn(Ctx<'a>, Object<'a>, ViewModelRuntime, i32) -> Result<Value<'a>>,
+            space::S8,
+        >,
         pub(in crate) impl_to_impl:
             SmallBox<dyn for<'a> Fn(Ctx<'a>, Object<'a>) -> Result<Value<'a>>, space::S8>,
     }
@@ -115,8 +125,10 @@ pub(in crate) mod inner {
     impl Casters {
         pub(in crate) fn new<F1, F2, F3>(obj_to_virt: F1, obj_to_impl: F2, impl_to_impl: F3) -> Self
         where
-            F1: 'static + for<'a> Fn(Ctx<'a>, Object<'a>, Rt, i32) -> Result<Value<'a>>,
-            F2: 'static + for<'a> Fn(Ctx<'a>, Object<'a>, Rt, i32) -> Result<Value<'a>>,
+            F1: 'static
+                + for<'a> Fn(Ctx<'a>, Object<'a>, ViewModelRuntime, i32) -> Result<Value<'a>>,
+            F2: 'static
+                + for<'a> Fn(Ctx<'a>, Object<'a>, ViewModelRuntime, i32) -> Result<Value<'a>>,
             F3: 'static + for<'a> Fn(Ctx<'a>, Object<'a>) -> Result<Value<'a>>,
         {
             Self {

@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use cucumber_rust::Steps;
 use pretty_assertions::assert_eq;
-use svelters_core::prelude::{Document, initialize_svelters};
+use svelters_core::prelude::{initialize_gui_context, Document};
 
 use crate::CoreWorld;
 
@@ -19,7 +19,7 @@ pub fn steps() -> Steps<CoreWorld> {
             let key = world
                 .ctx
                 .with(|ctx| {
-                    initialize_svelters(ctx)?;
+                    initialize_gui_context(ctx)?;
                     let source = std::fs::read_to_string(
                         std::fs::canonicalize(path.clone())
                             .map_err(|err| anyhow::anyhow!("Path {:?} error: {}", path, err))?,

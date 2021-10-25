@@ -3,16 +3,16 @@ use std::cell::RefMut;
 use crate::inner::*;
 
 pub struct TypeBuilder<'a> {
-    pub(in crate) rt: RefMut<'a, SvRuntime>,
+    pub(in crate) rt: RefMut<'a, VMRuntime>,
 }
 
 impl<'a> TypeBuilder<'a> {
-    pub fn new(rt: RefMut<'a, SvRuntime>) -> Self {
+    pub fn new(rt: RefMut<'a, VMRuntime>) -> Self {
         TypeBuilder { rt }
     }
 
     pub fn from_ctx<'js: 'a>(ctx: Ctx<'js>) -> Result<Self> {
-        let rt: &Runtime = ctx.globals().get("document")?;
+        let rt: &ViewModelRuntime = ctx.globals().get("document")?;
         Ok(TypeBuilder {
             rt: rt.inner.borrow_mut(),
         })

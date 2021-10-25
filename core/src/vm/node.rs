@@ -9,8 +9,8 @@ use crate::inner::*;
 pub struct Node<'js> {
     pub(in crate) _ctx: Ctx<'js>,
     pub(in crate) obj: Object<'js>,
-    pub(in crate) this: UINode<'js>,
-    pub(in crate) doc_cell: OnceCell<Runtime>,
+    pub(in crate) this: VMNode<'js>,
+    pub(in crate) doc_cell: OnceCell<ViewModelRuntime>,
 }
 
 impl<'js> PartialEq for Node<'js> {
@@ -22,7 +22,7 @@ impl<'js> PartialEq for Node<'js> {
 impl<'js> PartialEq<ElementNode<'js>> for Node<'js> {
     fn eq(&self, other: &ElementNode<'js>) -> bool {
         match &self.this {
-            UINode::Element(this) => this == other,
+            VMNode::Element(this) => this == other,
             _ => false,
         }
     }
@@ -136,9 +136,9 @@ impl<'js> Node<'js> {
         self.this.with_node(func)
     }
 
-    pub fn document(&self) -> Result<&Runtime> {
+    pub fn document(&self) -> Result<&ViewModelRuntime> {
         self.doc_cell.get_or_try_init(|| {
-            let doc: &Runtime = self.ctx().globals().get("document")?;
+            let doc: &ViewModelRuntime = self.ctx().globals().get("document")?;
             Result::Ok((*doc).clone())
         })
     }
@@ -159,24 +159,24 @@ impl<'js> Node<'js> {
 }
 
 #[derive(Clone, Eq)]
-pub enum UINode<'js> {
+pub enum VMNode<'js> {
     Slot(SlotNode<'js>),
     Text(TextNode<'js>),
     Element(ElementNode<'js>),
 }
 
-impl<'js> UINode<'js> {
+impl<'js> VMNode<'js> {
     fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
         match self {
-            UINode::Slot(this) => {
+            VMNode::Slot(this) => {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
             }
-            UINode::Text(this) => {
+            VMNode::Text(this) => {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
             }
-            UINode::Element(this) => {
+            VMNode::Element(this) => {
                 let mut data = this.borrow_mut();
                 func(&mut data.node)
             }
@@ -184,30 +184,30 @@ impl<'js> UINode<'js> {
     }
 }
 
-impl<'js> From<ElementNode<'js>> for UINode<'js> {
+impl<'js> From<ElementNode<'js>> for VMNode<'js> {
     fn from(v: ElementNode<'js>) -> Self {
         Self::Element(v)
     }
 }
 
-impl<'js> From<SlotNode<'js>> for UINode<'js> {
+impl<'js> From<SlotNode<'js>> for VMNode<'js> {
     fn from(v: SlotNode<'js>) -> Self {
         Self::Slot(v)
     }
 }
 
-impl<'js> From<TextNode<'js>> for UINode<'js> {
+impl<'js> From<TextNode<'js>> for VMNode<'js> {
     fn from(v: TextNode<'js>) -> Self {
         Self::Text(v)
     }
 }
 
-impl<'js> PartialEq<UINode<'js>> for UINode<'js> {
-    fn eq(&self, other: &UINode<'js>) -> bool {
+impl<'js> PartialEq<VMNode<'js>> for VMNode<'js> {
+    fn eq(&self, other: &VMNode<'js>) -> bool {
         match (self, other) {
-            (UINode::Slot(left), UINode::Slot(right)) => left == right,
-            (UINode::Text(left), UINode::Text(right)) => left == right,
-            (UINode::Element(left), UINode::Element(right)) => left == right,
+            (VMNode::Slot(left), VMNode::Slot(right)) => left == right,
+            (VMNode::Text(left), VMNode::Text(right)) => left == right,
+            (VMNode::Element(left), VMNode::Element(right)) => left == right,
             _ => false,
         }
     }
@@ -215,10 +215,10 @@ impl<'js> PartialEq<UINode<'js>> for UINode<'js> {
 
 #[derive(Clone, Eq, PartialEq)]
 pub struct NodeData<'js> {
-    pub next: Option<UINode<'js>>,
-    pub prev: Option<UINode<'js>>,
-    pub parent: Option<UINode<'js>>,
-    pub children: Option<Vec<UINode<'js>>>,
+    pub next: Option<VMNode<'js>>,
+    pub prev: Option<VMNode<'js>>,
+    pub parent: Option<VMNode<'js>>,
+    pub children: Option<Vec<VMNode<'js>>>,
 }
 
 impl<'js> NodeData<'js> {
@@ -238,12 +238,12 @@ impl<'js> NodeData<'js> {
     }
 }
 
-impl<'js> HasRefs for UINode<'js> {
+impl<'js> HasRefs for VMNode<'js> {
     fn mark_refs(&self, marker: &RefsMarker) {
         match &self {
-            UINode::Slot(node) => node.mark_refs(marker),
-            UINode::Text(node) => node.mark_refs(marker),
-            UINode::Element(node) => <ElementNode<'js> as HasRefs>::mark_refs(&node, marker),
+            VMNode::Slot(node) => node.mark_refs(marker),
+            VMNode::Text(node) => node.mark_refs(marker),
+            VMNode::Element(node) => <ElementNode<'js> as HasRefs>::mark_refs(&node, marker),
         }
     }
 }
@@ -271,12 +271,12 @@ impl<'js> rquickjs::IntoJs<'js> for Node<'js> {
     }
 }
 
-impl<'js> rquickjs::IntoJs<'js> for UINode<'js> {
+impl<'js> rquickjs::IntoJs<'js> for VMNode<'js> {
     fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
         Ok(match self {
-            UINode::Slot(node) => node.into_js(ctx)?,
-            UINode::Text(node) => node.into_js(ctx)?,
-            UINode::Element(node) => node.into_js(ctx)?,
+            VMNode::Slot(node) => node.into_js(ctx)?,
+            VMNode::Text(node) => node.into_js(ctx)?,
+            VMNode::Element(node) => node.into_js(ctx)?,
         })
     }
 }
@@ -286,13 +286,13 @@ impl<'js, 'a> rquickjs::FromJs<'js> for Node<'js> {
         if let Some(obj) = value.as_object() {
             let this = match obj {
                 obj if obj.instance_of::<ElementNode<'js>>() => {
-                    UINode::Element(ElementNode::from_js_obj(_ctx, value.clone())?)
+                    VMNode::Element(ElementNode::from_js_obj(_ctx, value.clone())?)
                 }
                 obj if obj.instance_of::<SlotNode<'js>>() => {
-                    UINode::Slot(SlotNode::from_js_obj(_ctx, value.clone())?)
+                    VMNode::Slot(SlotNode::from_js_obj(_ctx, value.clone())?)
                 }
                 obj if obj.instance_of::<TextNode<'js>>() => {
-                    UINode::Text(TextNode::from_js_obj(_ctx, value.clone())?)
+                    VMNode::Text(TextNode::from_js_obj(_ctx, value.clone())?)
                 }
                 _ => return Err(Error::new_from_js("object", "Node")),
             };

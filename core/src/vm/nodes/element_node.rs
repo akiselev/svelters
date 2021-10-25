@@ -31,9 +31,9 @@ impl<'js> PartialEq for ElementNode<'js> {
 impl<'js> PartialEq<Node<'js>> for ElementNode<'js> {
     fn eq(&self, other: &Node<'js>) -> bool {
         match &other.this {
-            UINode::Slot(_) => false,
-            UINode::Text(_) => false,
-            UINode::Element(node) => self == node,
+            VMNode::Slot(_) => false,
+            VMNode::Text(_) => false,
+            VMNode::Element(node) => self == node,
         }
     }
 }

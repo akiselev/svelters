@@ -1,11 +1,10 @@
 use rquickjs::{ExecutorSpawner, IntoAtom};
 
-use crate::{init::cleanup_svelters, inner::*};
+use crate::inner::*;
 
 pub struct Svelters {
-    runtime: Runtime,
     quickjs: rquickjs::Runtime,
-    context: rquickjs::Context,
+    viewmodel: ViewModelRuntime,
 }
 
 impl Svelters {
@@ -18,16 +17,15 @@ impl Svelters {
     }
 
     pub fn with_ctx<F: FnOnce(&Context) -> R, R>(&self, func: F) -> R {
-        func(&self.context)
+        self.viewmodel.with_ctx(func)
     }
 
     pub fn with_js<F: for<'js> FnOnce(Ctx<'js>) -> R, R>(&self, func: F) -> R {
-        self.context.with(func)
+        self.viewmodel.with_js(func)
     }
 
     pub fn with_types<F: for<'js> FnOnce(TypeBuilder<'js>)>(&self, func: F) -> Result<()> {
-        self.context
-            .with(|ctx| Ok(func(TypeBuilder::from_ctx(ctx)?)))
+        self.viewmodel.with_types(func)
     }
 
     pub fn execute_pending_job(&self) -> Result<bool> {
@@ -48,31 +46,19 @@ impl Svelters {
         K: for<'js> IntoAtom<'js>,
         V: for<'js> IntoJs<'js>,
     {
-        self.context.with(move |ctx| ctx.globals().set(key, value))
+        self.viewmodel.set_global(key, value)
     }
 
     pub(crate) fn build(
-        runtime: Runtime,
+        viewmodel: ViewModelRuntime,
         quickjs: rquickjs::Runtime,
-        context: rquickjs::Context,
         initializers: Initializers,
     ) -> Result<Self> {
-        let svelters = Self {
-            runtime,
-            quickjs,
-            context,
-        };
+        let svelters = Self { viewmodel, quickjs };
 
         for init in initializers.into_iter() {
             init(&svelters)?;
         }
         Ok(svelters)
-    }
-}
-
-impl Drop for Svelters {
-    fn drop(&mut self) {
-        tracing::warn!("Droping svelters runtime");
-        cleanup_svelters(&self.context).expect("Failed to clean up Svelters runtime");
     }
 }

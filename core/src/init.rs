@@ -2,15 +2,25 @@ use std::borrow::BorrowMut;
 
 use crate::inner::*;
 
-pub fn initialize_svelters(ctx: &rquickjs::Context) -> Result<Runtime> {
+pub fn initialize_gui_context(ctx: &rquickjs::Context) -> Result<()> {
     let context = ctx.clone();
     ctx.with(move |ctx| {
         console::init(ctx)?;
         timing::init(ctx)?;
 
-        let runtime = Runtime::new(context);
-        rquickjs::Class::<Runtime>::register(ctx)?;
-        rquickjs::Class::<WeakRuntime>::register(ctx)?;
+        Result::<_>::Ok(())
+    })
+}
+
+pub fn initialize_view_model_context(ctx: &rquickjs::Context) -> Result<ViewModelRuntime> {
+    let context = ctx.clone();
+    ctx.with(move |ctx| {
+        console::init(ctx)?;
+        timing::init(ctx)?;
+
+        let runtime = ViewModelRuntime::new(context);
+        rquickjs::Class::<ViewModelRuntime>::register(ctx)?;
+        rquickjs::Class::<WeakVMRuntime>::register(ctx)?;
         rquickjs::Class::<SlotNode>::register(ctx)?;
         rquickjs::Class::<TextNode>::register(ctx)?;
         rquickjs::Class::<ElementNode>::register(ctx)?;
@@ -23,11 +33,11 @@ pub fn initialize_svelters(ctx: &rquickjs::Context) -> Result<Runtime> {
 }
 
 #[tracing::instrument(skip(ctx))]
-pub fn cleanup_svelters(ctx: &rquickjs::Context) -> Result<()> {
+pub fn cleanup_view_model_context(ctx: &rquickjs::Context) -> Result<()> {
     ctx.with(move |ctx| {
         ctx.clear_registery();
         tracing::info!("Cleaning up Svelters...");
-        let doc: &mut Runtime = ctx.globals().get("document")?;
+        let doc: &mut ViewModelRuntime = ctx.globals().get("document")?;
 
         ctx.globals().keys::<String>().for_each(|key| {
             ctx.globals().set(key.unwrap(), Value::new_undefined(ctx));
