@@ -4,6 +4,13 @@ import App from "./App.svelte";
 const start = () => {
     console.log(">>>>>, 1");
     window.appWindow = new ApplicationWindow();
+    window.appWindow.hideOnClose = true;
+    window.titlebar = new Button();
+    window.appWindow.titlebar = window.titlebar;
+    window.appWindow.titlebar.label = "TITLEBAR";
+    window.titlebar.connect_clicked(() => {
+        console.log("Titlebar clicked!");
+    });
     console.log(">>>>>, 2");
     const app = new App({ target: window.appWindow });
     console.log(">>>>>, 3");

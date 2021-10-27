@@ -30,3 +30,4 @@ zig-out/
 *.md
 *.txt
 *.toml
+core/

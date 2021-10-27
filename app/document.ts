@@ -47,6 +47,9 @@ document.createElement = (tagName: string): any => {
         case "hBox":
             ele = new HorizontalBox();
             break;
+        case "window":
+            ele = new Window();
+            break;
         case "vBox":
         default: {
             ele = new VerticalBox();
@@ -66,7 +69,7 @@ document.createElementNS = (namespace: string, tagName: string): any => {
 document.createTextNode = (data: string): string => {
     console.log(`[Document] createTextNode("${data}")`);
     // return { data };
-    return " ";
+    return { __isTextNode__: true, text: data };
 };
 
 document.getElementById = (id: string): any | null => {
