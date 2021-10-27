@@ -1,5 +1,6 @@
 mod element;
 mod node;
+mod root;
 mod runtime;
 mod types;
 
@@ -27,5 +28,6 @@ pub use element::*;
 pub use events::*;
 pub use node::*;
 pub use nodes::*;
+pub use root::*;
 pub use runtime::*;
 pub use types::*;

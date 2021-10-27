@@ -14,22 +14,27 @@ pub fn initialize_gui_context(ctx: &rquickjs::Context) -> Result<()> {
 
 pub fn initialize_view_model_context(ctx: &rquickjs::Context) -> Result<ViewModelRuntime> {
     let context = ctx.clone();
-    ctx.with(move |ctx| {
+    let runtime = ViewModelRuntime::new(context);
+    let runtime = ctx.with(move |ctx| {
         console::init(ctx)?;
         timing::init(ctx)?;
 
-        let runtime = ViewModelRuntime::new(context);
+        let globals = ctx.globals();
         rquickjs::Class::<ViewModelRuntime>::register(ctx)?;
+        globals.set("document", runtime.clone())?;
+
         rquickjs::Class::<WeakVMRuntime>::register(ctx)?;
         rquickjs::Class::<SlotNode>::register(ctx)?;
         rquickjs::Class::<TextNode>::register(ctx)?;
         rquickjs::Class::<ElementNode>::register(ctx)?;
         rquickjs::Class::<Event>::register(ctx)?;
         rquickjs::Class::<Dispatcher>::register(ctx)?;
-
-        ctx.globals().set("document", runtime.clone())?;
         Result::<_>::Ok(runtime)
-    })
+    })?;
+    runtime.with_types(|mut ty| {
+        ty.register_element("root", Rc::new(root_element));
+    });
+    Ok(runtime)
 }
 
 #[tracing::instrument(skip(ctx))]

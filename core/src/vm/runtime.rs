@@ -4,10 +4,11 @@ use std::{
     cell::Ref,
     marker::Unsize,
     mem::{align_of, size_of},
+    path::Path,
     rc::Weak,
 };
 
-use rquickjs::IntoAtom;
+use rquickjs::{Function as JsFunction, IntoAtom};
 use smallbox::{smallbox, SmallBox};
 
 use crate::{init::cleanup_view_model_context, inner::*};
@@ -58,6 +59,30 @@ impl ViewModelRuntime {
         V: for<'js> IntoJs<'js>,
     {
         self.context.with(move |ctx| ctx.globals().set(key, value))
+    }
+
+    pub fn set_viewmodel<N, S>(&self, path: N, src: S) -> Result<()>
+    where
+        N: Into<Vec<u8>>,
+        S: Into<Vec<u8>>,
+    {
+        self.with_js(move |ctx| {
+            let module = ctx.compile(path, src)?;
+            let component = module.get::<_, JsFunction>("default")?;
+            let globals = ctx.globals();
+
+            let doc: &mut ViewModelRuntime = globals.get("document")?;
+            let root = doc.create_element(ctx, "root".to_string())?;
+            globals.get::<_, Object>("document")?.set("root", root)?;
+            globals.set("RootViewModel", component.clone())?;
+
+            let opts = Object::new(ctx)?;
+            globals.set("rootViewModelOpts", opts.clone())?;
+            opts.set("target", globals.get::<_, Value>("document.root")?);
+            let instance = ctx.eval::<Object, _>("new RootViewModel(rootViewModelOpts)")?;
+            globals.set("rootViewModel", instance)?;
+            Result::Ok(())
+        })
     }
 
     pub(in crate) fn create_event<'js>(
@@ -124,7 +149,8 @@ impl ViewModelRuntime {
 impl Drop for ViewModelRuntime {
     fn drop(&mut self) {
         tracing::warn!("Droping viewmodel runtime");
-        cleanup_view_model_context(&self.context).expect("Failed to clean up viewmodel runtime");
+        // cleanup_view_model_context(&self.context).ok();
+        // .expect("Failed to clean up viewmodel runtime");
     }
 }
 

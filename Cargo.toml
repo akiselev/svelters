@@ -27,21 +27,20 @@ rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "backtrace",
     "tokio",
     # "frunk",
-    "dump-gc",
-    "dump-gc-free",
+    # "dump-gc",
+    # "dump-gc-free",
     # "dump-free",
     "dump-leaks",
-    "dump-mem",
-    "dump-objects",
-    "dump-atoms",
-    "dump-shapes",
-    "dump-module-resolve",
-    "dump-promise",
-    "dump-read-object",
+    # "dump-mem",
+    # "dump-objects",
+    # "dump-atoms",
+    # "dump-shapes",
+    # "dump-module-resolve",
+    # "dump-promise",
+    # "dump-read-object",
 ] }
-svelters-compiler = { version = "0.1.0", path = "./crates/compiler" }
-svelters-core = { version = "0.1.0", path = "./core" }
 svelters-zig = { version = "0.1.0", path = "./zig" }
+node-resolve = "2.2.0"
 anyhow = "1.0.40"
 notify = "4.0.17"
 tokio = { version = "1", features = ["full"] }
@@ -55,12 +54,18 @@ strip = true
 
 [workspace]
 members = [
-    "core",
     "zig",
     "crates/macros",
-    "crates/compiler",
+    # "crates/compiler",
     "crates/rquickjs",
     "crates/rquickjs/core",
     "crates/rquickjs/macro",
 ]
-exclude = ["codegen", "crates/oldqt", "crates/qt", "crates/rquickjs"]
+exclude = [
+    "core",
+    "codegen",
+    "crates/compiler",
+    "crates/oldqt",
+    "crates/qt",
+    "crates/rquickjs",
+]

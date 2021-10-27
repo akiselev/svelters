@@ -1,9 +1,18 @@
 import App from "./App.svelte";
-console.log(">>>>>, 1");
-window.App = new App({ target: window });
-console.log(">>>>>, 2");
-window.callMethod("present");
-console.log(">>>>>, 3");
+
+const start = () => {
+    console.log(">>>>>, 1");
+    window.appWindow = new ApplicationWindow();
+    console.log(">>>>>, 2");
+    const app = new App({ target: window.appWindow });
+    console.log(">>>>>, 3");
+    window.appWindow.show();
+    console.log(">>>>>, 4");
+    return app;
+};
+
+export default start;
+
 // console.log(">>>", "keyx".matchAll(/key/));
 
 // window.insertBefore

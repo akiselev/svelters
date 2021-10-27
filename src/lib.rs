@@ -19,57 +19,28 @@ use std::{
     time::Duration,
 };
 
-use rquickjs::{
-    bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, FromJs,
-    Func, Function, IntoAtom, IntoJs, ModuleLoader, NativeLoader, Object, Persistent,
-    Result as JsResult, Runtime as JsRuntime, ScriptLoader, Value,
-};
-
-use svelters_compiler::{compile_sync, SvelteCompiler};
-use svelters_core::prelude::*;
-
 pub mod logging;
-
-#[tracing::instrument(skip(svelters, compiler))]
-pub fn eval_file<P>(svelters: &Svelters, compiler: &SvelteCompiler, path: P) -> Result<()>
-where
-    P: std::fmt::Debug + AsRef<Path>,
-{
-    let modpath = path.as_ref().to_owned();
-    let src = compile_sync(compiler, path)?;
-
-    let res: Result<()> = svelters.with_ctx(|ctx| {
-        ctx.with(|ctx| {
-            let res = ctx.eval_global_module::<Value, _>(modpath, Some(src.into_bytes()));
-            match res {
-                Ok(ok) => {
-                    tracing::info!("Success! Result: {:?}", ok);
-                    Ok(())
-                }
-                Err(err) => {
-                    tracing::error!("Failure! Result: {}", err);
-                    Err(err)
-                }
-            }
-        })
-    });
-    res
+pub mod prelude {
+    pub use crate::svbuilder::SveltersBuilder;
+    pub use crate::svelters::Svelters;
 }
 
-pub struct CompiledSource {
-    pub path: PathBuf,
-    pub source: String,
+pub use svbuilder::SveltersBuilder;
+pub use svelters::Svelters;
+
+pub(crate) mod svbuilder;
+pub(crate) mod svelters;
+
+pub(crate) mod js_modules {
+    pub mod console;
+    pub mod loader;
+    pub mod timing;
 }
 
-#[tracing::instrument(skip(compiler))]
-pub fn compile_file<P>(compiler: &SvelteCompiler, path: P) -> Result<CompiledSource>
-where
-    P: std::fmt::Debug + AsRef<Path>,
-{
-    let modpath = path.as_ref().to_owned();
-    let source = compile_sync(compiler, path)?;
-    return Ok(CompiledSource {
-        path: modpath,
-        source,
-    });
+pub(crate) mod js {
+    pub use rquickjs::{
+        bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, FromJs,
+        Func, Function, IntoAtom, IntoJs, ModuleLoader, NativeLoader, Object, Persistent,
+        Result as JsResult, Runtime, ScriptLoader, Value,
+    };
 }

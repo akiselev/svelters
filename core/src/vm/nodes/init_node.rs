@@ -26,6 +26,11 @@ pub fn initialize_element_node_proto<'js>(obj: &Object<'js>) -> Result<()> {
     )?;
 
     obj.prop(
+        "tagName",
+        Accessor::new_get(rquickjs::Method(get_tag)).enumerable(),
+    )?;
+
+    obj.prop(
         "addEventListener",
         Func::new("addEventListener", rquickjs::Method(add_event_listener)),
     )?;
@@ -184,36 +189,45 @@ fn call_method<'js>(
 }
 
 fn insert_before<'js>(
-    this: &ElementNode<'js>,
+    obj: Value<'js>,
     ctx: Ctx<'js>,
-    node: ElementNode<'js>,
-    anchor: Opt<ElementNode<'js>>,
+    node: Node<'js>,
+    anchor: Opt<Node<'js>>,
 ) -> Result<()> {
-    let typedef = &this.r#type;
-    tracing::info!("Calling {}::insertBefore", typedef.tag_name);
-    if let Some(slot) = &typedef.slot {
-        slot.insert_before(&this, node, anchor.0)
+    let this: Node<'js> = Node::from_js(ctx, obj.clone())?;
+    tracing::info!(
+        "Calling {}::insertBefore",
+        obj.as_object().unwrap().get::<_, String>("tagName")?
+    );
+    if let Some(anchor) = anchor.0 {
+        this.insert_node(node, anchor);
+        Ok(())
     } else {
-        Err(exception!("{} does not support children", typedef.tag_name))
+        this.append_node(node);
+        Ok(())
     }
 }
 
-fn append_child<'js>(this: &ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
-    let typedef = &this.r#type;
-    tracing::info!("Calling {}::insertBefore", typedef.tag_name);
-    if let Some(slot) = &typedef.slot {
-        slot.append_child(&this, node)
-    } else {
-        Err(exception!("{} does not support children", typedef.tag_name))
-    }
+fn append_child<'js>(obj: Value<'js>, ctx: Ctx<'js>, node: Node<'js>) -> Result<()> {
+    let this: Node<'js> = Node::from_js(ctx, obj.clone())?;
+    tracing::info!(
+        "Calling {}::insertBefore",
+        obj.as_object().unwrap().get::<_, String>("tagName")?
+    );
+    this.append_node(node);
+    Ok(())
 }
 
-fn remove_child<'js>(this: &ElementNode<'js>, ctx: Ctx<'js>, node: ElementNode<'js>) -> Result<()> {
-    let typedef = &this.r#type;
-    tracing::info!("Calling {}::insertBefore", typedef.tag_name);
-    if let Some(slot) = &typedef.slot {
-        slot.remove_child(&this, node)
-    } else {
-        Err(exception!("{} does not support children", typedef.tag_name))
-    }
+fn remove_child<'js>(obj: Value<'js>, ctx: Ctx<'js>, node: Node<'js>) -> Result<()> {
+    let this: Node<'js> = Node::from_js(ctx, obj.clone())?;
+    tracing::info!(
+        "Calling {}::insertBefore",
+        obj.as_object().unwrap().get::<_, String>("tagName")?
+    );
+    this.remove_node(node);
+    Ok(())
+}
+
+fn get_tag<'js>(this: &ElementNode<'js>) -> Result<String> {
+    return Ok(this.r#type.tag_name.to_string());
 }

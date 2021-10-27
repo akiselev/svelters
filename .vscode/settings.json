@@ -3,25 +3,12 @@
         "unresolved-macro-call"
     ],
     "files.exclude": {
-        // "__test__": true,
-        // // ".*": true,
-        // ".cargo": true,
-        // ".github": true,
-        // ".idea/": true,
-        // // ".vscode": true,
-        // // "**/Cargo.lock": true,
         // "**/dist": true,
-        // "**/node_modules": true,
-        // "**/target": true,
-        // "crates/rquickjs2": true,
-        // // "app/": true,
-        // "crates/macros": true,
-        // "docs/": true,
-        // "schemagen/": true,
-        // "target2/": true,
-        // "vgcore.*": true,
-        // "yarn-error.log": true,
-        // "yarn.lock": true
+        "**/target": true,
+        "**/node_modules": true,
+        "core/tests": true,
+        // rust-analyzer set up to use target2 so it doesnt block builds
+        "**/target2": true,
     },
     "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix",
     "rust-analyzer.updates.channel": "stable",
@@ -32,5 +19,8 @@
     "rust-analyzer.checkOnSave.extraArgs": [
         "--target-dir",
         "target2"
-    ]
+    ],
+    "files.associations": {
+        "quickjs-debugger.h": "c"
+    }
 }

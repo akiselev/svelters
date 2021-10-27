@@ -1,30 +1,50 @@
-use std::{future, time::Duration};
+use std::fs::read_to_string;
 
-use svelters::svelters_eval_file;
-use svelters_compiler::SvelteCompiler;
-use svelters_core::prelude::Svelters;
-use svelters_zig::{initialize_svgtk, run_app, spawn_local};
+use rquickjs::Value;
+use svelters::Svelters;
+use svelters_zig::{initialize_gtk, spawn_local, start, GtkExecutor};
 
 #[tracing::instrument]
 fn main() {
     svelters::logging::init();
     tracing::info!("Starting GTK...");
-    run_app("org.svelters.gtk4.example", |app| {
-        let compiler = SvelteCompiler::new();
-        let sv = Svelters::new()
-            .with_initializer(initialize_svgtk)
-            .build_with(compiler.clone(), compiler.clone())
-            .expect("Could not start Svelters runtime");
-        // Testing to make sure we've managed memory in svelters-zig correctly
-        sv.gc();
+    let name = "org.svelters.gtk4.example";
+    let sv = Svelters::new()
+        .build()
+        .expect("Could not start Svelters runtime");
+    let app = sv
+        .with_ctx(|ctx| initialize_gtk(ctx, name))
+        .expect("Could not initialize GTK Application");
 
-        if let Err(err) = svelters_eval_file(&sv, &compiler, "./app/index.js") {
-            tracing::error!("Eval error: {}", err);
-        }
+    // Connect to "activate" signal of `app`
+    start(app, move |app| {
+        let sv = sv.clone();
+        tracing::info!("App::activate...");
+        sv.with_ctx(|ctx| {
+            let rt = ctx.runtime();
+            rt.spawn_executor(GtkExecutor);
+        });
+        sv.with_js(|ctx| {
+            let path = "./dist/index.js";
+            let module = ctx
+                .compile(path, read_to_string(path).unwrap())
+                .expect("Module compile Failed");
+            let start_fn: rquickjs::Function = module
+                .get("default")
+                .expect("Javascript entrypoint must export a default start function");
+            if let Err(err) = start_fn.call::<(), Value>(()) {
+                println!("ERROR: {}", err);
+                std::process::exit(1);
+            }
+        });
+        sv.with_ctx(|ctx| {
+            let rt = ctx.runtime();
+            while rt.execute_pending_job().unwrap() {}
+        });
         spawn_local(async move {
-            let _ = sv;
-            future::pending().await
-        })
+            sv.run().await.unwrap();
+        });
     });
+
     tracing::info!("Finished...");
 }

@@ -10,7 +10,6 @@ pub struct Node<'js> {
     pub(in crate) _ctx: Ctx<'js>,
     pub(in crate) obj: Object<'js>,
     pub(in crate) this: VMNode<'js>,
-    pub(in crate) doc_cell: OnceCell<ViewModelRuntime>,
 }
 
 impl<'js> PartialEq for Node<'js> {
@@ -134,13 +133,6 @@ impl<'js> Node<'js> {
 
     fn with_node<F: FnOnce(&mut NodeData<'js>) -> R, R>(&self, func: F) -> R {
         self.this.with_node(func)
-    }
-
-    pub fn document(&self) -> Result<&ViewModelRuntime> {
-        self.doc_cell.get_or_try_init(|| {
-            let doc: &ViewModelRuntime = self.ctx().globals().get("document")?;
-            Result::Ok((*doc).clone())
-        })
     }
 
     pub fn num_children(&self) -> usize {
@@ -300,7 +292,6 @@ impl<'js, 'a> rquickjs::FromJs<'js> for Node<'js> {
                 _ctx,
                 this,
                 obj: obj.clone(),
-                doc_cell: OnceCell::new(),
             })
         } else {
             Err(Error::new_from_js(value.type_name(), "Node"))

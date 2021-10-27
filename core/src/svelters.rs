@@ -1,10 +1,12 @@
 use rquickjs::{ExecutorSpawner, IntoAtom};
+use std::future;
 
 use crate::inner::*;
 
+#[derive(Debug, Clone)]
 pub struct Svelters {
     quickjs: rquickjs::Runtime,
-    viewmodel: ViewModelRuntime,
+    context: rquickjs::Context,
 }
 
 impl Svelters {
@@ -12,20 +14,35 @@ impl Svelters {
         SveltersBuilder::new()
     }
 
+    pub async fn run(self) -> Result<()> {
+        future::pending().await
+    }
+
     pub fn gc(&self) {
         self.quickjs.run_gc();
     }
-
-    pub fn with_ctx<F: FnOnce(&Context) -> R, R>(&self, func: F) -> R {
-        self.viewmodel.with_ctx(func)
+    pub(in crate) fn with_ctx<F: FnOnce(&Context) -> R, R>(&self, func: F) -> R {
+        func(&self.context)
     }
 
-    pub fn with_js<F: for<'js> FnOnce(Ctx<'js>) -> R, R>(&self, func: F) -> R {
-        self.viewmodel.with_js(func)
+    pub(in crate) fn with_js<F: for<'js> FnOnce(Ctx<'js>) -> R, R>(&self, func: F) -> R {
+        self.context.with(func)
     }
 
-    pub fn with_types<F: for<'js> FnOnce(TypeBuilder<'js>)>(&self, func: F) -> Result<()> {
-        self.viewmodel.with_types(func)
+    pub(in crate) fn with_types<F: for<'js> FnOnce(TypeBuilder<'js>)>(
+        &self,
+        func: F,
+    ) -> Result<()> {
+        self.context
+            .with(|ctx| Ok(func(TypeBuilder::from_ctx(ctx)?)))
+    }
+
+    pub fn set_global<K, V>(&self, key: K, value: V) -> Result<()>
+    where
+        K: for<'js> IntoAtom<'js>,
+        V: for<'js> IntoJs<'js>,
+    {
+        self.context.with(move |ctx| ctx.globals().set(key, value))
     }
 
     pub fn execute_pending_job(&self) -> Result<bool> {
@@ -39,14 +56,6 @@ impl Svelters {
 
     pub fn spawn_executor<A: ExecutorSpawner>(&self, executor: A) -> A::JoinHandle {
         self.quickjs.spawn_executor(executor)
-    }
-
-    pub fn set_global<K, V>(&self, key: K, value: V) -> Result<()>
-    where
-        K: for<'js> IntoAtom<'js>,
-        V: for<'js> IntoJs<'js>,
-    {
-        self.viewmodel.set_global(key, value)
     }
 
     pub(crate) fn build(

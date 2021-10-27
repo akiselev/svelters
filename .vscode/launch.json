@@ -11,7 +11,17 @@
             "program": "${workspaceFolder}/target/debug/svelters",
             "preLaunchTask": "build",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "QUICKJS_DEBUG_ADDRESS",
+                    "value": "127.0.0.1:5555"
+                },
+                {
+                    "name": "RUST_BACKTRACE",
+                    "value": "1",
+                }
+            ],
         },
         {
             "type": "lldb",
@@ -19,7 +29,33 @@
             "name": "Release",
             "program": "${workspaceFolder}/target/release/svelters",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "externalConsole": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "QUICKJS_DEBUG_ADDRESS",
+                    "value": "127.0.0.1:5555"
+                }
+            ],
+        },
+        {
+            "type": "quickjs",
+            "request": "launch",
+            "name": "Launch QuickJS",
+            "runtimeExecutable": "${workspaceFolder}/target/debug/svelters",
+            "windows": {
+                "runtimeExecutable": "${workspaceFolder}/target/debug/svelters.exe"
+            },
+            // "trace": true,
+            "program": "${workspaceFolder}/test.js"
+        },
+        {
+            "type": "quickjs",
+            "request": "attach",
+            "name": "Attach QuickJS",
+            "localRoot": "${workspaceFolder}/",
+            "mode": "listen",
+            "port": 5555
         }
     ]
 }
