@@ -1,3 +1,4 @@
+import "./document.ts";
 import App from "./App.svelte";
 
 const start = () => {

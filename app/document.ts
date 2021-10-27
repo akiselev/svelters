@@ -6,85 +6,82 @@ import { QMainWindow, QPushButton } from "./widgets";
 //     "svelte-qt",
 // ) as SvelteQt;
 
-export default class SvelteQtDocument {
-    document: this = this;
-    constructor() {
-        console.log(`created ${this}`);
-    }
+document.createEvent = (type: string) => {
+    console.log(`Creating event with type: "${type}"`);
+    let e: any = {};
+    e.initCustomEvent = (
+        type: string,
+        ignored1: boolean,
+        ignored2: boolean,
+        detail: any,
+    ) => {
+        e.type = type;
+        e.detail = detail;
+        e.eventName = type;
+    };
+    return e;
+};
 
-    createEvent(type: string) {
-        console.log(`Creating event with type: "${type}"`);
-        let e: any = {};
-        e.initCustomEvent = (
-            type: string,
-            ignored1: boolean,
-            ignored2: boolean,
-            detail: any,
-        ) => {
-            e.type = type;
-            e.detail = detail;
-            e.eventName = type;
-        };
-        return e;
-    }
+document.createComment = (data: string): { data: string } => {
+    console.log(`Creating comment with data: "${data}"`);
+    return { data };
+};
 
-    createComment(data: string): { data: string } {
-        console.log(`Creating comment with data: "${data}"`);
-        return { data };
-    }
+// createPropertyNode(tagName: string, propertyName: string): PropertyNode {
+//     console.log(`[SvelteNodeGUIDocument] createPropertyNode("${tagName}", "${propertyName}")`);
+//     return new PropertyNode(tagName, propertyName)
+// }
 
-    // createPropertyNode(tagName: string, propertyName: string): PropertyNode {
-    //     console.log(`[SvelteNodeGUIDocument] createPropertyNode("${tagName}", "${propertyName}")`);
-    //     return new PropertyNode(tagName, propertyName)
+document.createElement = (tagName: string): any => {
+    // if (tagName.indexOf(".") >= 0) {
+    //     let bits = tagName.split(".", 2);
+    //     return this.createPropertyNode(bits[0], bits[1]);
     // }
+    // return nodeOps.createElement(tagName) as NSVElement;
 
-    createElement(tagName: string): any {
-        // if (tagName.indexOf(".") >= 0) {
-        //     let bits = tagName.split(".", 2);
-        //     return this.createPropertyNode(bits[0], bits[1]);
-        // }
-        // return nodeOps.createElement(tagName) as NSVElement;
-
-        let ele: any;
-        switch (tagName) {
-            case "qMainWindow":
-                ele = new QMainWindow();
-                break;
-            case "qPushButton":
-            default: {
-                ele = new QPushButton();
-            }
+    let ele: any;
+    switch (tagName) {
+        case "button":
+            ele = new Button();
+            break;
+        case "hBox":
+            ele = new HorizontalBox();
+            break;
+        case "vBox":
+        default: {
+            ele = new VerticalBox();
         }
-        // if (tagName !== "document") {
-        //     ele.ownerDocument = this;
-        // }
-        return ele;
     }
+    // if (tagName !== "document") {
+    //     ele.ownerDocument = this;
+    // }
+    return ele;
+};
 
-    createElementNS(namespace: string, tagName: string): any {
-        return this.createElement(tagName);
-    }
+document.createElementNS = (namespace: string, tagName: string): any => {
+    console.log(`Creating ${tagName}  in ${namespace}`);
+    return document.createElement(tagName);
+};
 
-    createTextNode(data: string): string {
-        console.log(`[Document] createTextNode("${data}")`);
-        // return { data };
-        return " ";
-    }
+document.createTextNode = (data: string): string => {
+    console.log(`[Document] createTextNode("${data}")`);
+    // return { data };
+    return " ";
+};
 
-    getElementById(id: string): any | null {
-        // for (let el of elementIterator(this)) {
-        //     // console.log(`getElementById iterating over element <${(el as NSVElement).tagName ?? "node"}> ${(el as NSVElement).id}`);
-        //     if (
-        //         el.nodeType === NSVNodeTypes.ELEMENT &&
-        //         (el as NSVElement).id === id
-        //     ) {
-        //         return el as NSVElement;
-        //     }
-        // }
-        return null;
-    }
+document.getElementById = (id: string): any | null => {
+    // for (let el of elementIterator(this)) {
+    //     // console.log(`getElementById iterating over element <${(el as NSVElement).tagName ?? "node"}> ${(el as NSVElement).id}`);
+    //     if (
+    //         el.nodeType === NSVNodeTypes.ELEMENT &&
+    //         (el as NSVElement).id === id
+    //     ) {
+    //         return el as NSVElement;
+    //     }
+    // }
+    return null;
+};
 
-    dispatchEvent(event: any) {
-        //Svelte dev fires these for tool support
-    }
-}
+document.dispatchEvent = (event: any) => {
+    //Svelte dev fires these for tool support
+};

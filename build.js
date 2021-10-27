@@ -35,6 +35,11 @@ esbuild
                 preprocess: sveltePreprocess({
                     typescript: true,
                 }),
+                compileOptions: {
+                    dev: true,
+                    accessors: true,
+                    namespace: "foreign",
+                },
             }),
         ],
         watch: IS_WATCH

@@ -1,7 +1,10 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, afterUpdate } from "svelte";
     export let text;
 
+    afterUpdate(() => {
+        console.log("New text: " + text);
+    });
     const dispatch = createEventDispatcher();
 </script>
 
@@ -9,8 +12,7 @@
     label={text}
     hAlign="start"
     vAlign="end"
-    direction="rtl"
-    on:click={() => dispatch("click")}
+    on:clicked={() => dispatch("clicked")}
 />
 <!-- <slot />
 <svelte:options namespace="foreign" /> -->
