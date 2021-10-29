@@ -8,11 +8,6 @@
     const dispatch = createEventDispatcher();
 </script>
 
-<button
-    label={text}
-    hAlign="start"
-    vAlign="end"
-    on:clicked={() => dispatch("clicked")}
-/>
+<button label={text} name="btn" hAlign="start" vAlign="end" on:clicked />
 <!-- <slot />
 <svelte:options namespace="foreign" /> -->

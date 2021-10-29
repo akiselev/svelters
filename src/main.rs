@@ -36,6 +36,9 @@ fn main() {
                 println!("ERROR: {}", err);
                 std::process::exit(1);
             }
+            let global = ctx.globals();
+            global.set("module", module.clone()).unwrap();
+            global.set("start", start_fn.clone()).unwrap();
         });
         sv.with_ctx(|ctx| {
             let rt = ctx.runtime();

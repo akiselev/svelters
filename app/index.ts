@@ -1,24 +1,20 @@
-/// <reference path="./dom/dom.d.ts" />
+/// <reference path="./dom/domtypes.d.ts" />
 
 import "./dom/document.ts";
 import App from "./App.svelte";
 
 const start = () => {
     console.log(">>>>>, 1");
-    window.appWindow = new ApplicationWindow();
-    window.appWindow.hideOnClose = true;
-    window.titlebar = new Button();
-    window.appWindow.titlebar = window.titlebar;
-    window.appWindow.titlebar.label = "TITLEBAR";
-    window.titlebar.connect_clicked(() => {
-        console.log("Titlebar clicked!");
-    });
-    console.log(">>>>>, 2");
-    const app = new App({ target: window.appWindow });
-    console.log(">>>>>, 3");
-    window.appWindow.show();
-    console.log(">>>>>, 4");
-    return app;
+    document.app = new App({ target: document.root });
+    // const appWindow = document.createElement("appWindow");
+    // document.appWindow = appWindow;
+    // appWindow.instance.hideOnClose = true;
+    // console.log(">>>>>, 2");
+    // document.app = new App({ target: appWindow });
+    // console.log(">>>>>, 3");
+    // appWindow.instance.show();
+    // console.log(">>>>>, 4");
+    // return appWindow;
 };
 
 export default start;

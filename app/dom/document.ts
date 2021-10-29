@@ -1,8 +1,13 @@
-const ELEMENTS = {
-    button: Button,
-    hBox: HorizontalBox,
-    vBox: VerticalBox,
+import * as nodes from "./nodes";
+import { BoxWidget, Widget, Class } from "./nodes";
+
+const ELEMENTS: { [name: string]: () => any } = {
+    button: () => new Widget(new Button()),
+    hBox: () => new BoxWidget(new HorizontalBox()),
+    vBox: () => new BoxWidget(new VerticalBox()),
 };
+
+document.root = new nodes.Element();
 
 document.createEvent = (type: string) => {
     console.log(`Creating event with type: "${type}"`);
@@ -20,45 +25,42 @@ document.createEvent = (type: string) => {
     return e;
 };
 
-document.createComment = (data: string): { data: string } => {
+document.createComment = (data: string): nodes.Comment => {
     console.log(`Creating comment with data: "${data}"`);
-    return { data };
+    return new nodes.Comment(data);
 };
 
-// createPropertyNode(tagName: string, propertyName: string): PropertyNode {
-//     console.log(`[SvelteNodeGUIDocument] createPropertyNode("${tagName}", "${propertyName}")`);
-//     return new PropertyNode(tagName, propertyName)
-// }
-
 document.createElement = (tagName: string): any => {
-    let ele: any;
+    let ele: nodes.Node;
+    console.log(`Creating ${tagName}`);
     switch (tagName) {
-        case "button":
-            ele = new Button();
+        case "appWindow":
+            ele = new nodes.Window(new ApplicationWindow());
             break;
-        case "hBox":
-            ele = new HorizontalBox();
+        case "gtkWindow":
+            ele = new nodes.Window(new Window());
             break;
-        case "window":
-            ele = new Window();
+        case "child":
+            ele = new nodes.Child();
             break;
-        case "vBox":
-        default: {
-            ele = new VerticalBox();
-        }
+        default:
+            const func = ELEMENTS[tagName];
+            if (func) {
+                ele = func();
+            } else {
+                throw new Error(`No tag name "${tagName}" defined`);
+            }
     }
     return ele;
 };
 
 document.createElementNS = (namespace: string, tagName: string): any => {
-    console.log(`Creating ${tagName}  in ${namespace}`);
     return document.createElement(tagName);
 };
 
-document.createTextNode = (data: string): string => {
+document.createTextNode = (data: string): nodes.Text => {
     console.log(`[Document] createTextNode("${data}")`);
-    // return { data };
-    return { __isTextNode__: true, text: data };
+    return new nodes.Text(data);
 };
 
 document.getElementById = (id: string): any | null => {
