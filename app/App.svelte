@@ -4,10 +4,18 @@
     import Button from "./Button.svelte";
     let count2: number = 0;
     let titlebar = true;
+    let btn2 = null;
     let window: any;
     const onClick = () => {
         console.log("....");
         count2 += 1;
+        console.log("Count ", count2);
+        return "WTF";
+    };
+
+    const onClick2 = () => {
+        console.log("....");
+        count2 -= 1;
         console.log("Count ", count2);
         return "WTF";
     };
@@ -24,21 +32,23 @@
 >
     <hBox>
         {#if count2 == 0}
-            <Button text="Hello {count2}" on:clicked={onClick} />
+            <Button
+                text="Hello {count2}"
+                on:clicked={onClick}
+                bind:this={btn2}
+            />
         {/if}
         {#if count2 != 0}
             <button
                 vAlign="fill"
-                name="btn3"
+                id="btn3"
                 label="Pew pew"
-                on:clicked={() => {
-                    count2 -= 1;
-                }}
+                on:clicked={onClick2}
             />
         {/if}
-        <button vAlign="fill" name="btn2" label="Pew pew" />
+        <button vAlign="fill" id="btn2" label="Pew pew" class="btn" />
     </hBox>
-    <child name="titlebar">
+    <child id="titlebar">
         {#if titlebar}
             <button
                 label="TITLEBAR"
@@ -50,5 +60,12 @@
         {/if}
     </child>
 </appWindow>
-<!-- <Button text="Hello {count}" on:clicked={onClick} > -->
-<!-- </Button> -->
+
+<style>
+    .btn {
+        background-color: #444;
+    }
+    :global(.btn label) {
+        color: #f00;
+    }
+</style>

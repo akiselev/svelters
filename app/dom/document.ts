@@ -9,6 +9,10 @@ const ELEMENTS: { [name: string]: () => any } = {
 
 document.root = new nodes.Element();
 
+document.getRootNode = () => {
+    return document;
+};
+
 document.createEvent = (type: string) => {
     console.log(`Creating event with type: "${type}"`);
     let e: any = {};
@@ -43,6 +47,9 @@ document.createElement = (tagName: string): any => {
         case "child":
             ele = new nodes.Child();
             break;
+        case "style":
+            ele = new nodes.Style();
+            break;
         default:
             const func = ELEMENTS[tagName];
             if (func) {
@@ -63,8 +70,30 @@ document.createTextNode = (data: string): nodes.Text => {
     return new nodes.Text(data);
 };
 
+document.styles = {};
+document.host = {};
 document.getElementById = (id: string): any | null => {
-    return null;
+    return document.styles[id];
+};
+
+document.appendChild = (child: any) => {
+    if (child instanceof nodes.Style) {
+        console.log("Adding style elementt");
+        child.provider.mount(0);
+        document.styles[child.id] = child;
+    } else {
+        throw new Error(`Cannot append non-style children to document`);
+    }
+};
+
+document.removeChild = (child: any) => {
+    if (child instanceof nodes.Style) {
+        console.log("Removing style elementt");
+        document.styles[child.id]?.provider.unmount();
+        delete document.styles[child.id];
+    } else {
+        throw new Error(`Cannot remove non-style children from document`);
+    }
 };
 
 document.dispatchEvent = (event: any) => {

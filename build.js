@@ -27,19 +27,24 @@ esbuild
         bundle: true,
         minify: IS_PROD,
         splitting: false,
-        sourcemap: IS_PROD ? false : "inline",
+        sourcemap: false,
         // external: ["svelte", "svelte/*"],
         mainFields: ["svelte", "module"],
         plugins: [
             esbuildSvelte({
                 preprocess: sveltePreprocess({
                     typescript: true,
+                    sourceMap: false,
                 }),
                 compileOptions: {
                     dev: true,
                     accessors: true,
                     namespace: "foreign",
+                    css: true,
+                    sourcemap: false,
+                    enableSourcemap: { js: true, css: false },
                 },
+                // sourceMap: false,
             }),
         ],
         watch: IS_WATCH

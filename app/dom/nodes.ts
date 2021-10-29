@@ -2,7 +2,7 @@
 
 import { listen, time_ranges_to_array } from "svelte/internal";
 
-export type Node = Widget | Child | Element | Text | Comment;
+export type Node = Widget | Style | Child | Element | Text | Comment;
 export interface Parent extends NodeBase {}
 
 export interface IAttributes {
@@ -87,11 +87,42 @@ export class NodeBase implements IParent, IChild {
         return false;
     }
 
+    getRootNode = () => {
+        console.log("get roo node: ", JSON.stringify(document, null, 2));
+        return document;
+    };
+
     onSetParent = (_: Parent | null) => {};
 
     insertBefore = getInsertBefore.bind(this);
     appendChild = getAppendChild.bind(this);
     removeChild = getRemoveChild.bind(this);
+}
+
+export class Style {
+    id: string | null;
+    __text__: string | null;
+    provider: any;
+
+    constructor() {
+        this.provider = new CssProvider();
+        this.id = null;
+        this.__text__ = null;
+    }
+
+    get textContent() {
+        return this.__text__;
+    }
+
+    set textContent(value: string | null) {
+        this.__text__ = value;
+        this.provider.setCss(value ? value.replace(/\}/g, ";}") : "");
+    }
+
+    getRootNode = () => {
+        console.log("get roo node: ", JSON.stringify(document, null, 2));
+        return document;
+    };
 }
 
 export class Element extends NodeBase implements IAttributes, IEvents, IChild {
@@ -141,6 +172,11 @@ export class Element extends NodeBase implements IAttributes, IEvents, IChild {
             listeners.forEach((handler) => handler(event));
         }
     };
+
+    getRootNode = () => {
+        console.log("get roo node: ", JSON.stringify(document, null, 2));
+        return document;
+    };
 }
 
 export class Child extends Element {
@@ -169,11 +205,11 @@ export class Child extends Element {
     };
 
     get name() {
-        return this.getAttribute("name");
+        return this.getAttribute("id");
     }
 
     set name(value: string) {
-        this.setAttribute("name", value);
+        this.setAttribute("id", value);
     }
 
     insertBefore = (node: Node, anchor?: Node) => {
@@ -189,6 +225,11 @@ export class Child extends Element {
     removeChild = (node: Node) => {
         this.baseRemoveChild(node);
         this.onRemoveChild?.(node);
+    };
+
+    getRootNode = () => {
+        console.log("get roo node: ", JSON.stringify(document, null, 2));
+        return document;
     };
 
     get firstWidget(): Node | null {
@@ -236,11 +277,20 @@ export class Class extends NodeBase implements IAttributes, IEvents {
     }
 
     setAttribute = (name: string, value: any) => {
-        this.instance.setAttribute(name, value);
+        if (name === "class") {
+            console.log("setting classes: ", value);
+            this.instance.setAttribute("cssClasses", value.split(" "));
+        } else {
+            this.instance.setAttribute(name, value);
+        }
     };
 
     getAttribute = (name: string) => {
-        return this.instance.getAttribute(name);
+        if (name === "class") {
+            return this.instance.getAttribute("cssClasses").join(" ");
+        } else {
+            return this.instance.getAttribute(name);
+        }
     };
 
     removeAttribute = (name: string) => {
@@ -257,12 +307,35 @@ export class Class extends NodeBase implements IAttributes, IEvents {
     ): void => {
         this.instance.removeEventListener(type, listener);
     };
+
+    getRootNode = () => {
+        console.log("get roo node: ", JSON.stringify(document, null, 2));
+        return document;
+    };
 }
 
 export class Widget extends Class {
+    classList: {
+        add(name: string): void;
+        remove(name: string): void;
+    };
     constructor(instance: any) {
         super(instance);
+        this.classList = {
+            add: this.addClass.bind(this),
+            remove: this.removeClass.bind(this),
+        };
     }
+
+    addClass = (name: string) => {
+        console.log("adding class: ", name);
+        $(this).addClass(name);
+    };
+
+    removeClass = (name: string) => {
+        console.log("removing class: ", name);
+        $(this).removeClass(name);
+    };
 }
 
 export class Window extends Widget {
@@ -345,6 +418,11 @@ export class Window extends Widget {
             node.clearHooks();
         }
     };
+
+    getRootNode = () => {
+        console.log("get roo node: ", JSON.stringify(document, null, 2));
+        return document;
+    };
 }
 
 export class BoxWidget extends Widget {
@@ -367,14 +445,14 @@ export class BoxWidget extends Widget {
             if (isWidget(target)) {
                 console.log(
                     "Insert after target: ",
-                    node.getAttribute("name"),
-                    target.getAttribute("name"),
+                    node.getAttribute("id"),
+                    target.getAttribute("id"),
                     target instanceof Text,
                     target instanceof Widget,
                 );
                 $(this).insertChildAfter($(node), $(target));
             } else {
-                console.log("Prepending...", node.getAttribute("name"));
+                console.log("Prepending...", node.getAttribute("id"));
                 $(this).prepend($(node));
             }
         }
@@ -383,7 +461,7 @@ export class BoxWidget extends Widget {
     appendChild = (node: Node) => {
         this.baseAppendChild(node);
         if (isWidget(node)) {
-            console.log("Appending...", node.getAttribute("name"));
+            console.log("Appending...", node.getAttribute("id"));
             $(this).append($(node));
         }
     };
@@ -391,7 +469,7 @@ export class BoxWidget extends Widget {
     removeChild = (node: Node) => {
         this.baseRemoveChild(node);
         if (isWidget(node)) {
-            console.log("Removing child...", node.getAttribute("name"));
+            console.log("Removing child...", node.getAttribute("id"));
             $(this).remove($(node));
         }
     };

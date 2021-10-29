@@ -1,5 +1,5 @@
 .vscode/
-app/
+# app/
 core/tests/
 core/src/v1/
 
