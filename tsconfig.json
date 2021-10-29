@@ -10,8 +10,8 @@
     "declaration": true,
     "declarationDir": "dist/",
     "allowSyntheticDefaultImports": true,
-    "lib": ["ES2020"],
+    "noLib": true,
   },
-  "include": ["src/"],
+  "include": ["app/"],
   "exclude": ["node_modules"]
 }

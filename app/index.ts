@@ -1,4 +1,6 @@
-import "./document.ts";
+/// <reference path="./dom/dom.d.ts" />
+
+import "./dom/document.ts";
 import App from "./App.svelte";
 
 const start = () => {

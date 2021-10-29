@@ -1,10 +1,8 @@
-import { QMainWindow, QPushButton } from "./widgets";
-
-// const { QMainWindow, QPushButton, QWidget } = loadBinding(
-//     __dirname,
-//     "svelte-qt",
-//     "svelte-qt",
-// ) as SvelteQt;
+const ELEMENTS = {
+    button: Button,
+    hBox: HorizontalBox,
+    vBox: VerticalBox,
+};
 
 document.createEvent = (type: string) => {
     console.log(`Creating event with type: "${type}"`);
@@ -33,12 +31,6 @@ document.createComment = (data: string): { data: string } => {
 // }
 
 document.createElement = (tagName: string): any => {
-    // if (tagName.indexOf(".") >= 0) {
-    //     let bits = tagName.split(".", 2);
-    //     return this.createPropertyNode(bits[0], bits[1]);
-    // }
-    // return nodeOps.createElement(tagName) as NSVElement;
-
     let ele: any;
     switch (tagName) {
         case "button":
@@ -55,9 +47,6 @@ document.createElement = (tagName: string): any => {
             ele = new VerticalBox();
         }
     }
-    // if (tagName !== "document") {
-    //     ele.ownerDocument = this;
-    // }
     return ele;
 };
 
@@ -73,15 +62,6 @@ document.createTextNode = (data: string): string => {
 };
 
 document.getElementById = (id: string): any | null => {
-    // for (let el of elementIterator(this)) {
-    //     // console.log(`getElementById iterating over element <${(el as NSVElement).tagName ?? "node"}> ${(el as NSVElement).id}`);
-    //     if (
-    //         el.nodeType === NSVNodeTypes.ELEMENT &&
-    //         (el as NSVElement).id === id
-    //     ) {
-    //         return el as NSVElement;
-    //     }
-    // }
     return null;
 };
 
