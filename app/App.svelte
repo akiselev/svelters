@@ -11,6 +11,7 @@
         console.log("Count ", count2);
         return "WTF";
     };
+    let hasFocus = false;
 
     const onClick2 = () => {
         console.log("....");
@@ -31,11 +32,7 @@
 >
     <hBox>
         {#if count2 <= 0}
-            <button
-                label="Hello2222 {count2}"
-                vAlign="fill"
-                on:clicked={onClick}
-            />
+            <Button text="Hello2222 {count2}" on:clicked={onClick} />
         {/if}
         {#if count2 > 0}
             <button
@@ -64,7 +61,7 @@
     .btn {
         background-color: #444;
     }
-    :global(.btn label) {
+    .btn label {
         color: #f00;
     }
 </style>

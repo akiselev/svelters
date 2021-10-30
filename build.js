@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const esbuild = require("esbuild");
-const esbuildSvelte = require("esbuild-svelte");
+const esbuildSvelte = require("./dist/esbuild-svelte");
 const sveltePreprocess = require("svelte-preprocess");
 
 const DISTDIR = "./dist/";

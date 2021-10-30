@@ -11,7 +11,11 @@
     "declarationDir": "dist/",
     "allowSyntheticDefaultImports": true,
     "noLib": true,
+    "paths": {
+      "svelte/*": ["./crates/svelte/*"],
+    },
+    "baseUrl": "."
   },
-  "include": ["app/"],
+  "include": ["app/", "src/"],
   "exclude": ["node_modules"]
 }

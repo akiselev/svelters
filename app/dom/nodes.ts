@@ -91,7 +91,6 @@ export class Node implements INode {
     }
 
     getRootNode = () => {
-        console.log("get roo node: ", JSON.stringify(document, null, 2));
         return document;
     };
 
@@ -217,7 +216,7 @@ export class Style extends Node {
 
     set textContent(value: string | null) {
         this.__text__ = value;
-        this.provider.setCss(value ? value.replace(/\}/g, ";}") : "");
+        this.provider.setCss(value || "");
     }
 }
 

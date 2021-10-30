@@ -140,7 +140,6 @@ export class Window extends Widget {
     };
 
     getRootNode = () => {
-        console.log("get roo node: ", JSON.stringify(document, null, 2));
         return document;
     };
 }
