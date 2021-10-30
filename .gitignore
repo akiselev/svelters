@@ -160,3 +160,6 @@ docs/main.js
 # Zigmod
 .zigmod
 deps.zig
+
+# Ignore generated d.ts file
+app/dom/svelters.d.ts
