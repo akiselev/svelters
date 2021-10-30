@@ -4,7 +4,6 @@
     import Button from "./Button.svelte";
     let count2: number = 0;
     let titlebar = true;
-    let btn2 = null;
     let window: any;
     const onClick = () => {
         console.log("....");
@@ -20,7 +19,7 @@
         return "WTF";
     };
     onMount(() => {
-        window.instance.show();
+        window.$.show();
     });
 </script>
 
@@ -31,14 +30,14 @@
     bind:this={window}
 >
     <hBox>
-        {#if count2 == 0}
-            <Button
-                text="Hello {count2}"
+        {#if count2 <= 0}
+            <button
+                label="Hello2222 {count2}"
+                vAlign="fill"
                 on:clicked={onClick}
-                bind:this={btn2}
             />
         {/if}
-        {#if count2 != 0}
+        {#if count2 > 0}
             <button
                 vAlign="fill"
                 id="btn3"
@@ -48,7 +47,7 @@
         {/if}
         <button vAlign="fill" id="btn2" label="Pew pew" class="btn" />
     </hBox>
-    <child id="titlebar">
+    <!-- <child id="titlebar">
         {#if titlebar}
             <button
                 label="TITLEBAR"
@@ -58,7 +57,7 @@
                 }}
             />
         {/if}
-    </child>
+    </child> -->
 </appWindow>
 
 <style>

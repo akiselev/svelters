@@ -1,5 +1,8 @@
 import * as nodes from "./nodes";
-import { BoxWidget, Widget, Class } from "./nodes";
+import { isStyle } from "./nodes";
+import { Widget } from "./widget";
+import { BoxWidget } from "./layout";
+import * as window from "./window";
 
 const ELEMENTS: { [name: string]: () => any } = {
     button: () => new Widget(new Button()),
@@ -7,14 +10,14 @@ const ELEMENTS: { [name: string]: () => any } = {
     vBox: () => new BoxWidget(new VerticalBox()),
 };
 
-document.root = new nodes.Element();
+document.root = new nodes.Node();
 
 document.getRootNode = () => {
     return document;
 };
 
 document.createEvent = (type: string) => {
-    console.log(`Creating event with type: "${type}"`);
+    console.log(`[Document] createEvent("${type}")`);
     let e: any = {};
     e.initCustomEvent = (
         type: string,
@@ -30,19 +33,19 @@ document.createEvent = (type: string) => {
 };
 
 document.createComment = (data: string): nodes.Comment => {
-    console.log(`Creating comment with data: "${data}"`);
+    console.log(`[Document] createComment("${data}")`);
     return new nodes.Comment(data);
 };
 
 document.createElement = (tagName: string): any => {
     let ele: nodes.Node;
-    console.log(`Creating ${tagName}`);
+    console.log(`[Document] createElement("${tagName}")`);
     switch (tagName) {
         case "appWindow":
-            ele = new nodes.Window(new ApplicationWindow());
+            ele = new window.Window(new ApplicationWindow());
             break;
         case "gtkWindow":
-            ele = new nodes.Window(new Window());
+            ele = new window.Window(new Window());
             break;
         case "child":
             ele = new nodes.Child();
@@ -77,8 +80,8 @@ document.getElementById = (id: string): any | null => {
 };
 
 document.appendChild = (child: any) => {
-    if (child instanceof nodes.Style) {
-        console.log("Adding style elementt");
+    console.log(`[Document] appendChild("${child?.getAttribute("id")}")`);
+    if (isStyle(child) && child.id) {
         child.provider.mount(0);
         document.styles[child.id] = child;
     } else {
@@ -87,8 +90,8 @@ document.appendChild = (child: any) => {
 };
 
 document.removeChild = (child: any) => {
-    if (child instanceof nodes.Style) {
-        console.log("Removing style elementt");
+    console.log(`[Document] removeChild("${child?.getAttribute("id")}")`);
+    if (isStyle(child) && child.id) {
         document.styles[child.id]?.provider.unmount();
         delete document.styles[child.id];
     } else {

@@ -37,7 +37,7 @@ esbuild
                     sourceMap: false,
                 }),
                 compileOptions: {
-                    dev: true,
+                    // dev: true,
                     accessors: true,
                     namespace: "foreign",
                     css: true,
