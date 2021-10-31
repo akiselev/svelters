@@ -1,5 +1,11 @@
 import { Node, INode, Text } from "./nodes";
-import { WidgetConstructor, Widget, isWidget, getPrevWidget } from "./widget";
+import {
+    WidgetConstructor,
+    Widget,
+    isWidget,
+    getPrevWidget,
+    getNextWidget,
+} from "./widget";
 
 interface IBox {
     insertChildAfter(child: any, anchor: any): void;
@@ -16,23 +22,29 @@ export class BoxWidget extends Widget {
     }
 
     insertBefore = (node: INode, anchor?: INode) => {
+        node.parentNode = this;
         if (anchor) {
             node.prevSibling = anchor.prevSibling;
             node.nextSibling = anchor;
             anchor.prevSibling = node;
-            node.parentNode = this;
         } else {
             if (this.tail) {
                 node.prevSibling = this.tail;
                 this.tail.nextSibling = node;
             }
-            node.parentNode = this;
             this.tail = node;
         }
         node.mounted = true;
+
+        console.log(
+            "Insert before...",
+            node.getAttribute("id"),
+            anchor?.getAttribute?.("id"),
+            anchor?.prevSibling?.getAttribute?.("id"),
+            anchor?.prevSibling?.prevSibling?.getAttribute?.("id"),
+        );
         if (isWidget(node)) {
-            console.log("Insert before...");
-            let target = getPrevWidget(node);
+            let target = getNextWidget(node);
             if (isWidget(target)) {
                 console.log(
                     "Insert after target: ",
@@ -41,11 +53,13 @@ export class BoxWidget extends Widget {
                     target instanceof Text,
                     target instanceof Widget,
                 );
-                this.$.insertChildAfter(node.$, target.$);
+                this.$.insertChildAfter(node.$, target.$.prevSibling);
             } else {
-                console.log("Prepending...", node.getAttribute("id"));
-                this.$.prepend(node.$);
+                console.log("Appending...", node.getAttribute("id"));
+                this.$.append(node.$);
             }
+        } else {
+            console.log("Insert before nonwidget");
         }
     };
 
@@ -54,11 +68,14 @@ export class BoxWidget extends Widget {
             node.prevSibling = this.tail;
             this.tail.nextSibling = node;
         }
+        this.tail = node;
         node.parentNode = this;
         node.mounted = true;
         if (isWidget(node)) {
             console.log("Appending...", node.getAttribute("id"));
             this.$.append(node.$);
+        } else {
+            console.log("Appending nonwidget");
         }
     };
 
@@ -80,6 +97,8 @@ export class BoxWidget extends Widget {
         if (isWidget(node)) {
             console.log("Removing child...", node.getAttribute("id"));
             this.$.remove(node.$);
+        } else {
+            console.log("Removing nonwidget");
         }
     };
 }

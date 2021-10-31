@@ -119,7 +119,10 @@ export class Widget {
 
 export const getNextWidget = (node: INode): INode | null => {
     let next = node.nextSibling;
-    while (next && !isWidget(next)) {
+    while (next) {
+        if (isWidget(next) && next.mounted) {
+            break;
+        }
         next = next.nextSibling;
     }
     return isWidget(next) ? next : null;
