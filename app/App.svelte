@@ -11,7 +11,7 @@
         console.log("Count ", count2);
         return "WTF";
     };
-    let hasFocus = false;
+    let hasFocus: boolean;
 
     const onClick2 = () => {
         console.log("....");
@@ -31,18 +31,17 @@
     bind:this={window}
 >
     <hBox>
-        {#if count2 <= 0}
-            <Button text="Hello2222 {count2}" on:clicked={onClick} />
+        <Button text="Hello2222 {count2}" on:clicked={onClick} />
+        <button
+            vAlign="fill"
+            id="btn3"
+            label={hasFocus ? "Pew pew" : "_"}
+            bind:hasFocus
+            on:clicked={onClick2}
+        />
+        {#if count2 % 2 === 0}
+            <button vAlign="fill" id="btn2" label="Pew pew" class="btn" />
         {/if}
-        {#if count2 > 0}
-            <button
-                vAlign="fill"
-                id="btn3"
-                label="Pew pew"
-                on:clicked={onClick2}
-            />
-        {/if}
-        <button vAlign="fill" id="btn2" label="Pew pew" class="btn" />
     </hBox>
     <!-- <child id="titlebar">
         {#if titlebar}
