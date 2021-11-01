@@ -21,13 +21,14 @@ console.log(`[${new Date().toLocaleTimeString()}] Building...`);
 esbuild
     .build({
         entryPoints: ["app/index.ts"],
+        // outdir: DISTDIR,
         outfile: OUTFILE,
         format: "esm",
         target: "es2020",
         bundle: true,
-        minify: IS_PROD,
-        splitting: false,
+        minify: false,
         sourcemap: false,
+        // splitting: true,
         // external: ["svelte", "svelte/*"],
         mainFields: ["svelte", "module"],
         plugins: [
@@ -38,7 +39,7 @@ esbuild
                 }),
                 compileOptions: {
                     // dev: true,
-                    accessors: true,
+                    // accessors: true,
                     namespace: "foreign",
                     css: true,
                     sourcemap: false,

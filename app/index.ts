@@ -3,7 +3,10 @@
 import "./dom/document.ts";
 import App from "./App.svelte";
 
-const start = () => {
+const start = (reloaded: boolean) => {
+    if (reloaded) {
+        document.app.$destroy();
+    }
     document.app = new App({ target: document.root });
 };
 
