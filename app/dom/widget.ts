@@ -1,8 +1,5 @@
-import { Node, INode } from "./nodes";
-
-export const isWidget = (cls: any): cls is Widget & INode =>
-    cls instanceof Widget && cls?.$?.isGtkWidget;
-
+import { INode } from "./nodes";
+import { createLogger, createToString, str } from "./utils";
 export interface IGtkWidget {
     isGObject?: boolean;
     isGtkWidget?: boolean;
@@ -20,121 +17,127 @@ export interface WidgetConstructor<T = {}> {
 }
 
 export interface IWidget {
-    mounted?: boolean;
+    tagName: string;
+    mounted: boolean;
+    get isGtkWidget(): boolean;
+    get isGObject(): boolean;
 
     nextSibling: any;
     prevSibling: any;
     parentNode: any;
-    children: any;
+
+    get $(): any;
 }
 
-export class Widget {
-    classList: {
-        add(name: string): void;
-        remove(name: string): void;
-    };
+export function Widget<T>(tagName: string, $: any) {
+    const _ = {
+        $,
+        tagName,
+        mounted: false,
+        parentNode: null as IWidget | null,
+        nextSibling: null as IWidget | null,
+        prevSibling: null as IWidget | null,
+    } as any;
 
-    __parent__: INode | null;
-    __prev__: INode | null;
-    __next__: INode | null;
+    const log = createLogger(_);
 
-    __children__: Array<INode>;
+    return {
+        get $() {
+            return _.$;
+        },
 
-    __callbacks__: {
-        onInsertBefore?: (node: INode, anchor?: INode) => void;
-        onAppendChild?: (node: INode) => void;
-        onRemoveChild?: (node: INode) => void;
-    };
+        get tagName() {
+            return _.tagName;
+        },
 
-    get children() {
-        return this.__children__;
-    }
+        get isGtkWidget() {
+            return _.$.isGtkWidget;
+        },
 
-    get parentNode() {
-        return this.__parent__;
-    }
+        get isGObject() {
+            return _.$.isGObject;
+        },
 
-    set parentNode(value: INode | null) {
-        this.__parent__ = value;
-    }
+        get mounted() {
+            return _.mounted;
+        },
 
-    get nextSibling() {
-        return this.__next__;
-    }
+        set mounted(value: boolean) {
+            log(`${value ? "" : "un"}mounted`);
+            _.mounted = value;
+        },
 
-    set nextSibling(value: INode | null) {
-        this.__next__ = value;
-    }
+        get parentNode() {
+            return _.parentNode;
+        },
 
-    get prevSibling() {
-        return this.__prev__;
-    }
+        set parentNode(value: IWidget | null) {
+            log(`=> parentNode:`, str(value));
+            _.parentNode = value;
+        },
 
-    set prevSibling(value: INode | null) {
-        this.__prev__ = value;
-    }
+        get nextSibling() {
+            return _.nextSibling;
+        },
 
-    constructor(public $: any) {
-        this.__parent__ = null;
-        this.__prev__ = null;
-        this.__next__ = null;
-        this.__children__ = new Array();
-        this.__callbacks__ = {};
+        set nextSibling(value: IWidget | null) {
+            log(`=> nextSibling:`, str(value));
+            _.nextSibling = value;
+        },
 
-        this.classList = {
-            add: (name: string) => this.$.addClass(name),
-            remove: (name: string) => this.$.removeClass(name),
-        };
-    }
+        get prevSibling() {
+            return _.prevSibling;
+        },
 
-    setAttribute = (name: string, value: any) => {
-        if (name === "class") {
-            console.log("setting classes: ", value);
-            this.$.setAttribute("cssClasses", value.split(" "));
-        } else {
-            this.$.setAttribute(name, value);
-        }
-    };
+        set prevSibling(value: IWidget | null) {
+            log(`=> prevSibling:`, str(value));
+            _.prevSibling = value;
+        },
 
-    getAttribute = (name: string): any => {
-        if (name === "class") {
-            return this.$.getAttribute("cssClasses").join(" ");
-        } else {
-            return this.$.getAttribute(name);
-        }
-    };
+        toString: createToString(_),
 
-    removeAttribute = (name: string) => {
-        this.$.removeAttribute(name);
-    };
+        setAttribute(name: string, value: any) {
+            log(`=> ${name} =`, str(value));
+            if (name === "class") {
+                console.log("setting classes: ", value);
+                _.$.setAttribute("cssClasses", value.split(" "));
+            } else {
+                _.$.setAttribute(name, value);
+            }
+        },
 
-    addEventListener = (name: string, callback: (event: any) => void) => {
-        this.$.addEventListener(name, callback);
-    };
+        getAttribute(name: string): any {
+            if (name === "class") {
+                return _.$.getAttribute("cssClasses").join(" ");
+            } else {
+                return _.$.getAttribute(name);
+            }
+        },
 
-    removeEventListener = (name: string, callback: (event: any) => void) => {
-        this.$.removeEventListener(name, callback);
+        removeAttribute(name: string) {
+            log(`=> delete [${name}]`);
+            _.$.removeAttribute(name);
+        },
+
+        addEventListener(name: string, callback: (event: any) => void) {
+            log(`=> connect [${name}]`);
+            _.$.addEventListener(name, callback);
+        },
+
+        removeEventListener(name: string, callback: (event: any) => void) {
+            log(`=> disconnect [${name}]`);
+            _.$.removeEventListener(name, callback);
+        },
+
+        classList: {
+            add(name: string): void {
+                log(`=> addClass [${name}]`);
+                _.$.addClass(name);
+            },
+            remove(name: string): void {
+                log(`=> removeClass [${name}]`);
+                _.$.removeClass(name);
+            },
+        },
     };
 }
-
-export const getNextWidget = (node: INode): INode | null => {
-    let next = node.nextSibling;
-    while (next) {
-        if (isWidget(next) && next.mounted) {
-            break;
-        }
-        next = next.nextSibling;
-    }
-    return isWidget(next) ? next : null;
-};
-
-export const getPrevWidget = (node: INode): INode | null => {
-    let prev = node.prevSibling;
-    while (prev) {
-        if (isWidget(prev) && prev.mounted) {
-            break;
-        }
-        prev = prev.prevSibling;
-    }
-    return isWidget(prev) ? prev : null;
-};

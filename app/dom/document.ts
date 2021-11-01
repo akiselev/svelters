@@ -5,9 +5,9 @@ import { BoxWidget } from "./layout";
 import * as window from "./window";
 
 const ELEMENTS: { [name: string]: () => any } = {
-    button: () => new Widget(new Button()),
-    hBox: () => new BoxWidget(new HorizontalBox()),
-    vBox: () => new BoxWidget(new VerticalBox()),
+    button: () => Widget("button", new Button()),
+    hBox: () => BoxWidget("hBox", new HorizontalBox()),
+    vBox: () => BoxWidget("vBox", new VerticalBox()),
 };
 
 document.root = new nodes.Node();
@@ -38,14 +38,14 @@ document.createComment = (data: string): nodes.Comment => {
 };
 
 document.createElement = (tagName: string): any => {
-    let ele: nodes.Node;
+    let ele: any = null;
     console.log(`[Document] createElement("${tagName}")`);
     switch (tagName) {
         case "appWindow":
-            ele = new window.Window(new ApplicationWindow());
+            ele = window.Window("appWindow", new ApplicationWindow());
             break;
         case "gtkWindow":
-            ele = new window.Window(new Window());
+            ele = window.Window("gtkWindow", new Window());
             break;
         case "child":
             ele = new nodes.Child();
