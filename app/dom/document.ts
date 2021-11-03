@@ -1,16 +1,11 @@
+/// <reference path="./domtypes.d.ts" />
 import * as nodes from "./nodes";
-import { isStyle } from "./nodes";
-import { Widget } from "./widget";
-import { BoxWidget } from "./layout";
-import * as window from "./window";
+import { IWidget } from "./nodes";
+import { isStyle } from "./utils";
 
-const ELEMENTS: { [name: string]: () => any } = {
-    button: () => Widget("button", new Button()),
-    hBox: () => BoxWidget("hBox", new HorizontalBox()),
-    vBox: () => BoxWidget("vBox", new VerticalBox()),
-};
+import { ELEMENTS } from "./widgets";
 
-document.root = new nodes.Node();
+document.root = new nodes.Root();
 
 document.getRootNode = () => {
     return document;
@@ -41,15 +36,6 @@ document.createElement = (tagName: string): any => {
     let ele: any = null;
     console.log(`[Document] createElement("${tagName}")`);
     switch (tagName) {
-        case "appWindow":
-            ele = window.Window("appWindow", new ApplicationWindow());
-            break;
-        case "gtkWindow":
-            ele = window.Window("gtkWindow", new Window());
-            break;
-        case "child":
-            ele = new nodes.Child();
-            break;
         case "style":
             ele = new nodes.Style();
             break;
@@ -65,7 +51,11 @@ document.createElement = (tagName: string): any => {
 };
 
 document.createElementNS = (namespace: string, tagName: string): any => {
-    return document.createElement(tagName);
+    const el = document.createElement(tagName) as unknown as IWidget;
+    if (namespace.startsWith("https://")) {
+        return el;
+    }
+    return nodes.Child(namespace, el);
 };
 
 document.createTextNode = (data: string): nodes.Text => {

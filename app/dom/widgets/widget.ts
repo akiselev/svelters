@@ -1,42 +1,14 @@
-import { INode } from "./nodes";
-import { createLogger, createToString, str } from "./utils";
-export interface IGtkWidget {
-    isGObject?: boolean;
-    isGtkWidget?: boolean;
-    addClass(className: string): void;
-    removeClass(className: string): void;
-    setAttribute(name: string, value: any): void;
-    getAttribute(name: string): any;
-    removeAttribute(name: string): void;
-    addEventListener(type: string, listener: (event: any) => void): void;
-    removeEventListener(type: string, listener: (event: any) => void): void;
-}
+import { INode, IWidget } from "../nodes";
+import { createLogger, createToString, str } from "../utils";
 
-export interface WidgetConstructor<T = {}> {
-    new (...args: Array<any>): T & IGtkWidget;
-}
-
-export interface IWidget {
-    tagName: string;
-    mounted: boolean;
-    get isGtkWidget(): boolean;
-    get isGObject(): boolean;
-
-    nextSibling: any;
-    prevSibling: any;
-    parentNode: any;
-
-    get $(): any;
-}
-
-export function Widget<T>(tagName: string, $: any) {
+export function Widget<T>(tagName: string, $: any): IWidget {
     const _ = {
         $,
         tagName,
         mounted: false,
-        parentNode: null as IWidget | null,
-        nextSibling: null as IWidget | null,
-        prevSibling: null as IWidget | null,
+        parentNode: null as INode | null,
+        nextSibling: null as INode | null,
+        prevSibling: null as INode | null,
     } as any;
 
     const log = createLogger(_);
@@ -71,7 +43,7 @@ export function Widget<T>(tagName: string, $: any) {
             return _.parentNode;
         },
 
-        set parentNode(value: IWidget | null) {
+        set parentNode(value: INode | null) {
             log(`=> parentNode:`, str(value));
             _.parentNode = value;
         },
@@ -80,7 +52,7 @@ export function Widget<T>(tagName: string, $: any) {
             return _.nextSibling;
         },
 
-        set nextSibling(value: IWidget | null) {
+        set nextSibling(value: INode | null) {
             log(`=> nextSibling:`, str(value));
             _.nextSibling = value;
         },
@@ -89,7 +61,7 @@ export function Widget<T>(tagName: string, $: any) {
             return _.prevSibling;
         },
 
-        set prevSibling(value: IWidget | null) {
+        set prevSibling(value: INode | null) {
             log(`=> prevSibling:`, str(value));
             _.prevSibling = value;
         },
@@ -129,6 +101,10 @@ export function Widget<T>(tagName: string, $: any) {
             _.$.removeEventListener(name, callback);
         },
 
+        getRootNode() {
+            return document;
+        },
+
         classList: {
             add(name: string): void {
                 log(`=> addClass [${name}]`);
@@ -139,5 +115,5 @@ export function Widget<T>(tagName: string, $: any) {
                 _.$.removeClass(name);
             },
         },
-    };
+    } as IWidget;
 }

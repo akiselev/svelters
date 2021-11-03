@@ -1,22 +1,12 @@
 /// <reference path="./domtypes.d.ts" />
 
-export const isNode = (cls: any): cls is Node => cls && cls instanceof Node;
-export const isText = (cls: any): cls is Text => cls && cls instanceof Text;
-export const isChild = (cls: any): cls is Child => cls && cls instanceof Child;
-export const isComment = (cls: any): cls is Comment =>
-    cls && cls instanceof Comment;
-export const isStyle = (cls: any): cls is Style => cls && cls instanceof Style;
+import { isWidget } from "./utils";
 
 export interface INode {
-    mounted?: boolean;
-    isGObject?: boolean;
-    isGtkWidget?: boolean;
-    parentNode: any | null;
+    mounted: boolean;
+    parentNode: INode | null;
     prevSibling: INode | null;
     nextSibling: INode | null;
-    appendChild(node: INode): void;
-    removeChild(node: INode): void;
-    insertBefore(node: INode, anchor?: INode): void;
 
     getAttribute(name: string): any;
     removeAttribute(name: string): void;
@@ -25,37 +15,48 @@ export interface INode {
     removeEventListener(type: string, listener: (event: any) => void): void;
 }
 
+export interface IWidget extends INode {
+    readonly tagName: string;
+    get isGObject(): boolean;
+    get isGtkWidget(): boolean;
+
+    get $(): any;
+}
+
+export interface IContainer extends INode {
+    appendChild(node: INode): void;
+    removeChild(node: INode): void;
+    insertBefore(node: INode, anchor?: INode): void;
+}
+
+export interface IChild extends IWidget {
+    __name__: string;
+}
+
 export class Node implements INode {
     private __attr__: { [name: string]: any };
     private __listeners__: { [name: string]: any[] };
     protected __parent__: INode | null;
     protected __prev__: INode | null;
     protected __next__: INode | null;
-
-    protected __children__: Array<INode>;
-
-    protected __callbacks__: {
-        onInsertBefore?: (node: INode, anchor?: INode) => void;
-        onAppendChild?: (node: INode) => void;
-        onRemoveChild?: (node: INode) => void;
-    };
-
-    mounted: boolean;
+    protected __mounted__: boolean;
 
     constructor() {
         this.__parent__ = null;
         this.__prev__ = null;
         this.__next__ = null;
-        this.__children__ = new Array();
         this.__attr__ = {};
         this.__listeners__ = {};
-        this.__callbacks__ = {};
 
-        this.mounted = false;
+        this.__mounted__ = false;
     }
 
-    get children() {
-        return this.__children__;
+    get mounted() {
+        return this.__mounted__;
+    }
+
+    set mounted(value: boolean) {
+        this.__mounted__ = value;
     }
 
     get parentNode() {
@@ -131,10 +132,14 @@ export class Node implements INode {
             listeners.forEach((handler) => handler(event));
         }
     };
+}
 
-    clearHooks = () => {
-        this.__callbacks__ = {};
-    };
+export class Root extends Node {
+    __children__: INode[];
+    constructor() {
+        super();
+        this.__children__ = [];
+    }
 
     insertBefore = (node: INode, anchor?: INode): void => {
         if (anchor) {
@@ -161,7 +166,6 @@ export class Node implements INode {
             this.__children__.push(node);
         }
         node.mounted = true;
-        this.__callbacks__.onInsertBefore?.(node, anchor);
     };
 
     appendChild = (node: INode): void => {
@@ -171,7 +175,6 @@ export class Node implements INode {
         node.parentNode = this;
         node.mounted = true;
         this.__children__.push(node);
-        this.__callbacks__.onAppendChild?.(node);
     };
 
     removeChild = (node: INode): void => {
@@ -194,7 +197,6 @@ export class Node implements INode {
             );
         }
         node.mounted = false;
-        this.__callbacks__.onRemoveChild?.(node);
     };
 }
 
@@ -232,20 +234,9 @@ export class Comment extends Node {
     }
 }
 
-export class Child extends Node {
-    constructor() {
-        super();
-    }
-
-    get name() {
-        return this.getAttribute("id");
-    }
-
-    set name(value: string) {
-        this.setAttribute("id", value);
-    }
-
-    getRootNode = () => {
-        return document;
+export const Child = (name: string, widget: IWidget): IChild => {
+    return {
+        ...widget,
+        __name__: name,
     };
-}
+};

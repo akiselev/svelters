@@ -1,5 +1,7 @@
 /// <reference no-default-lib="true"/>
 /// <reference path="../../node_modules/typescript/lib/lib.es5.d.ts" />
+/// <reference path="../../node_modules/typescript/lib/lib.es2015.d.ts" />
+/// <reference path="svelters.d.ts" />
 /// <reference lib="es5" />
 /// <reference lib="es6" />
 /// <reference lib="es2015" />
@@ -40,30 +42,5 @@ declare global {
         removeAttribute(name: string): void;
         addEventListener(type: string, listener: (event: any) => void): void;
         removeEventListener(type: string, listener: (event: any) => void): void;
-    }
-
-    class ApplicationWindow extends GtkWidget {
-        new(): ApplicationWindow;
-    }
-    class Window extends GtkWidget {
-        new(): Window;
-    }
-    class GtkBox extends GtkWidget {
-        insertChildAfter(child: any, anchor: any): void;
-        append(child: any): void;
-        prepend(child: any): void;
-        remove(child: any): void;
-    }
-    class HorizontalBox extends GtkBox {
-        new(): HorizontalBox;
-    }
-    class VerticalBox extends GtkBox {
-        new(): VerticalBox;
-    }
-    class Button extends GtkWidget {
-        new(): Button;
-    }
-    class CssProvider extends GtkWidget {
-        new(): CssProvider;
     }
 }

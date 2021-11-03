@@ -1,10 +1,25 @@
-import { Node, INode, Text, Child, Comment, Style } from "./nodes";
-import type { IWidget } from "./widget";
+import {
+    Node,
+    INode,
+    Text,
+    Child,
+    Comment,
+    Style,
+    IWidget,
+    IChild,
+} from "./nodes";
 
 export const isWidget = (cls: any): cls is IWidget =>
-    !!cls?.isGtkWidget && !!cls?.isGObject && !!cls?.$;
+    cls && !!cls.isGtkWidget && !!cls.isGObject && !!cls.$;
+export const isNode = (cls: any): cls is Node => cls && cls instanceof Node;
+export const isText = (cls: any): cls is Text => cls && cls instanceof Text;
+export const isChild = (cls: any): cls is IChild =>
+    isWidget(cls) && typeof (cls as any).__name__ === "string";
+export const isComment = (cls: any): cls is Comment =>
+    cls && cls instanceof Comment;
+export const isStyle = (cls: any): cls is Style => cls && cls instanceof Style;
 
-export const getNextWidget = (node: INode): INode | null => {
+export const getNextWidget = (node: INode): IWidget | null => {
     let next = node.nextSibling;
     while (next) {
         if (isWidget(next) && next.mounted) {
@@ -41,13 +56,13 @@ export const str = (x: any): string => {
             res += ` id="${x.$.id}" `;
         }
         return `${res}>`;
-    } else if (x instanceof Text) {
+    } else if (isText(x)) {
         return `{text: "${x.text}"}`;
-    } else if (x instanceof Child) {
-        return `{child: ${x.name}}`;
-    } else if (x instanceof Comment) {
+    } else if (isChild(x)) {
+        return `{child: ${x.__name__}}`;
+    } else if (isComment(x)) {
         return `{comment: ${x.comment}}`;
-    } else if (x instanceof Style) {
+    } else if (isStyle(x)) {
         return `{comment: ${x.id}}`;
     } else {
         try {
