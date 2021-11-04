@@ -1,5 +1,5 @@
 import { ILayout, LayoutWidget } from "./layout";
-import { IContainer, IWidget } from "../nodes";
+import { IWidget } from "../nodes";
 
 interface ISingle {
     child: any;
@@ -9,7 +9,7 @@ export function Singleton<T extends ISingle>(
     tagName: string,
     $: T,
     opts: Partial<ILayout<T>> = {},
-): IWidget & IContainer {
+): IWidget {
     return LayoutWidget(tagName, $, {
         onInsertWidgetAfter: ($, node) => {
             if ($.child) {

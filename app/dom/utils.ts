@@ -9,12 +9,66 @@ import {
     IChild,
 } from "./nodes";
 
+interface State {
+    tail: INode | null;
+}
+
+export function insertChildBefore(
+    self: any,
+    state: State,
+    node: INode,
+    anchor?: INode,
+) {
+    node.parentNode = self;
+    if (anchor) {
+        node.prevSibling = anchor.prevSibling;
+        node.nextSibling = anchor;
+        anchor.prevSibling = node;
+    } else {
+        if (state.tail) {
+            node.prevSibling = state.tail;
+            state.tail.nextSibling = node;
+        }
+        state.tail = node;
+    }
+    node.mounted = true;
+}
+
+export function appendChild(self: any, state: State, node: INode) {
+    if (state.tail) {
+        node.prevSibling = state.tail;
+        state.tail.nextSibling = node;
+    }
+    state.tail = node;
+    node.parentNode = self;
+    node.mounted = true;
+}
+
+export function removeChild(self: any, state: State, node: INode) {
+    const prevSibling = node.prevSibling;
+    const nextSibling = node.nextSibling;
+    if (prevSibling) {
+        prevSibling.nextSibling = nextSibling;
+    }
+    if (nextSibling) {
+        nextSibling.prevSibling = prevSibling;
+    } else if (state.tail === node) {
+        state.tail = prevSibling;
+    }
+    node.nextSibling = null;
+    node.prevSibling = null;
+    node.parentNode = null;
+    node.mounted = false;
+}
+
+export const isClass = (cls: any): cls is IWidget => cls && !!cls.$;
 export const isWidget = (cls: any): cls is IWidget =>
     cls && !!cls.isGtkWidget && !!cls.isGObject && !!cls.$;
 export const isNode = (cls: any): cls is Node => cls && cls instanceof Node;
 export const isText = (cls: any): cls is Text => cls && cls instanceof Text;
 export const isChild = (cls: any): cls is IChild =>
-    isWidget(cls) && typeof (cls as any).__name__ === "string";
+    (isWidget(cls) || isClass(cls)) &&
+    typeof (cls as any).__name__ === "string";
 export const isComment = (cls: any): cls is Comment =>
     cls && cls instanceof Comment;
 export const isStyle = (cls: any): cls is Style => cls && cls instanceof Style;

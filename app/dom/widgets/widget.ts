@@ -1,7 +1,23 @@
 import { INode, IWidget } from "../nodes";
-import { createLogger, createToString, str } from "../utils";
+import {
+    createLogger,
+    createToString,
+    str,
+    insertChildBefore,
+    appendChild,
+    removeChild,
+    isChild,
+} from "../utils";
 
-export function Widget<T>(tagName: string, $: any): IWidget {
+type Hooks<T> = {
+    [name: string]: (self: T, child: any, remove?: boolean) => void;
+};
+
+export function Widget<T>(
+    tagName: string,
+    $: T,
+    hooks: Hooks<T> = {},
+): IWidget {
     const _ = {
         $,
         tagName,
@@ -10,10 +26,11 @@ export function Widget<T>(tagName: string, $: any): IWidget {
         nextSibling: null as INode | null,
         prevSibling: null as INode | null,
     } as any;
+    const state = { tail: null as INode | null };
 
     const log = createLogger(_);
 
-    return {
+    const self = {
         get $() {
             return _.$;
         },
@@ -101,6 +118,69 @@ export function Widget<T>(tagName: string, $: any): IWidget {
             _.$.removeEventListener(name, callback);
         },
 
+        insertBefore(node: INode, anchor?: INode) {
+            log(`=> insert`, str(node), `before`, str(anchor));
+            insertChildBefore(self, state, node, anchor);
+
+            if (isChild(node)) {
+                if (node.__name__ == "controller") {
+                    console.log("adding controller....");
+                    _.$.addController(node.$);
+                } else {
+                    const handler = hooks[node.__name__];
+                    if (handler) {
+                        handler(_.$, node);
+                    } else {
+                        throw new Error(
+                            `Widget ${tagName} does not support "${node.__name__}" children`,
+                        );
+                    }
+                }
+            }
+        },
+
+        appendChild(node: INode) {
+            log(`=> append`, str(node));
+            appendChild(self, state, node);
+
+            if (isChild(node)) {
+                if (node.__name__ == "controller") {
+                    console.log("adding controller....");
+                    _.$.addController(node.$);
+                } else {
+                    const handler = hooks[node.__name__];
+                    if (handler) {
+                        handler(_.$, node);
+                    } else {
+                        throw new Error(
+                            `Widget ${tagName} does not support "${node.__name__}" children`,
+                        );
+                    }
+                }
+            }
+        },
+
+        removeChild(node: INode) {
+            log(`=> remove`, str(node));
+            removeChild(self, state, node);
+
+            if (isChild(node)) {
+                if (node.__name__ == "controller") {
+                    console.log("removing controller....");
+                    _.$.removeController(node.$);
+                } else {
+                    const handler = hooks[node.__name__];
+                    if (handler) {
+                        handler(_.$, node, true);
+                    } else {
+                        throw new Error(
+                            `Widget ${tagName} does not support "${node.__name__}" children`,
+                        );
+                    }
+                }
+            }
+        },
+
         getRootNode() {
             return document;
         },
@@ -116,4 +196,5 @@ export function Widget<T>(tagName: string, $: any): IWidget {
             },
         },
     } as IWidget;
+    return self;
 }

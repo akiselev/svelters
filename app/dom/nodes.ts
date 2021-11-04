@@ -21,9 +21,7 @@ export interface IWidget extends INode {
     get isGtkWidget(): boolean;
 
     get $(): any;
-}
 
-export interface IContainer extends INode {
     appendChild(node: INode): void;
     removeChild(node: INode): void;
     insertBefore(node: INode, anchor?: INode): void;

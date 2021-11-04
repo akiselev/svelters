@@ -7,6 +7,43 @@ import { ELEMENTS } from "./widgets";
 
 document.root = new nodes.Root();
 
+document.createElement = (val: string): any => {
+    let ele: any = null;
+    const parts = val.split(":", 2);
+    if (parts.length > 1) {
+        const tagName = parts[1];
+        const func = ELEMENTS[tagName];
+        if (func) {
+            return nodes.Child(parts[0], func());
+        } else {
+            throw new Error(`No tag name "${tagName}" defined`);
+        }
+    }
+    const tagName = val;
+    console.log(`[Document] createElement("${tagName}")`);
+    switch (tagName) {
+        case "style":
+            ele = new nodes.Style();
+            break;
+        default:
+            const func = ELEMENTS[tagName];
+            if (func) {
+                ele = func();
+            } else {
+                throw new Error(`No tag name "${tagName}" defined`);
+            }
+    }
+    return ele;
+};
+
+document.createElementNS = (namespace: string, tagName: string): any => {
+    const el = document.createElement(tagName) as unknown as IWidget;
+    if (namespace.startsWith("https://")) {
+        return el;
+    }
+    return nodes.Child(namespace, el);
+};
+
 document.getRootNode = () => {
     return document;
 };
@@ -30,32 +67,6 @@ document.createEvent = (type: string) => {
 document.createComment = (data: string): nodes.Comment => {
     console.log(`[Document] createComment("${data}")`);
     return new nodes.Comment(data);
-};
-
-document.createElement = (tagName: string): any => {
-    let ele: any = null;
-    console.log(`[Document] createElement("${tagName}")`);
-    switch (tagName) {
-        case "style":
-            ele = new nodes.Style();
-            break;
-        default:
-            const func = ELEMENTS[tagName];
-            if (func) {
-                ele = func();
-            } else {
-                throw new Error(`No tag name "${tagName}" defined`);
-            }
-    }
-    return ele;
-};
-
-document.createElementNS = (namespace: string, tagName: string): any => {
-    const el = document.createElement(tagName) as unknown as IWidget;
-    if (namespace.startsWith("https://")) {
-        return el;
-    }
-    return nodes.Child(namespace, el);
 };
 
 document.createTextNode = (data: string): nodes.Text => {

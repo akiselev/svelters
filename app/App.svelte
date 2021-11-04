@@ -5,6 +5,7 @@
     import Inner from "./Inner.svelte";
     let isOpen = true;
     let window: any;
+    let hasFocus: boolean;
     const onClick = () => {
         console.log("....");
         isOpen = !isOpen;
@@ -29,8 +30,29 @@
         {#if isOpen}
             <Inner />
         {/if}
-        <button id="btn5" on:clicked={onClick} label="Toggle " hAlign="end" />
+        <button
+            id="btn5"
+            bind:hasFocus
+            on:clicked={onClick}
+            label="Toggle {hasFocus ? 'World' : ''}"
+            hAlign="end"
+            canFocus={true}
+            sensitive={true}
+            focusable={true}
+        >
+            <controller:motion
+                on:motion={(event) =>
+                    console.log(
+                        event.details[0].containsPointer,
+                        JSON.stringify(event, null, 2),
+                    )}
+            />
+        </button>
     </hBox>
+    <controller:keyboard
+        on:key-pressed={(event) =>
+            console.log(event.details[0], JSON.stringify(event, null, 2))}
+    />
     <!-- <child id="titlebar">
         {#if titlebar}
             <button

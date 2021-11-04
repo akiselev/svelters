@@ -1,18 +1,25 @@
-import { Node, INode, Text, IContainer, IWidget } from "../nodes";
+import { Node, INode, Text, IWidget } from "../nodes";
 import { createLogger, createToString, str } from "../utils";
 import { Widget } from "./widget";
-import { isWidget, isChild, getNextWidget } from "../utils";
+import {
+    isWidget,
+    isChild,
+    getNextWidget,
+    insertChildBefore,
+    appendChild,
+    removeChild,
+} from "../utils";
 
 export interface ILayout<T> {
     onInsertWidgetAfter(self: T, child: any, anchor?: any): void;
     onAppendWidget(self: T, child: any): void;
     onRemoveWidget(self: T, child: any): void;
     children?: {
-        [name: string]: (self: T, child: any | null) => void;
+        [name: string]: (self: T, child: any, remove?: boolean) => void;
     };
 }
 
-interface ILayoutWidget extends IWidget, IContainer {
+interface ILayoutWidget extends IWidget {
     get tail(): INode | null;
 }
 
@@ -21,7 +28,7 @@ export function LayoutWidget<T = any>(
     $: T,
     hooks: ILayout<T>,
 ): ILayoutWidget {
-    const _ = Widget(tagName, $);
+    const _ = Widget(tagName, $, hooks.children);
     const state = { tail: null as INode | null };
 
     const log = createLogger(_);
@@ -40,19 +47,7 @@ export function LayoutWidget<T = any>(
 
         insertBefore(node: INode, anchor?: INode) {
             log(`=> insert`, str(node), `before`, str(anchor));
-            node.parentNode = self;
-            if (anchor) {
-                node.prevSibling = anchor.prevSibling;
-                node.nextSibling = anchor;
-                anchor.prevSibling = node;
-            } else {
-                if (state.tail) {
-                    node.prevSibling = state.tail;
-                    state.tail.nextSibling = node;
-                }
-                state.tail = node;
-            }
-            node.mounted = true;
+            insertChildBefore(self, state, node, anchor);
 
             if (isWidget(node)) {
                 let target = getNextWidget(node);
@@ -79,13 +74,8 @@ export function LayoutWidget<T = any>(
 
         appendChild(node: INode) {
             log(`=> append`, str(node));
-            if (state.tail) {
-                node.prevSibling = state.tail;
-                state.tail.nextSibling = node;
-            }
-            state.tail = node;
-            node.parentNode = self;
-            node.mounted = true;
+            appendChild(self, state, node);
+
             if (isWidget(node)) {
                 hooks.onAppendWidget(_.$, node.$);
             } else if (isChild(node)) {
@@ -102,26 +92,14 @@ export function LayoutWidget<T = any>(
 
         removeChild(node: INode) {
             log(`=> remove`, str(node));
-            const prevSibling = node.prevSibling;
-            const nextSibling = node.nextSibling;
-            if (prevSibling) {
-                prevSibling.nextSibling = nextSibling;
-            }
-            if (nextSibling) {
-                nextSibling.prevSibling = prevSibling;
-            } else if (state.tail === node) {
-                state.tail = prevSibling;
-            }
-            node.nextSibling = null;
-            node.prevSibling = null;
-            node.parentNode = null;
-            node.mounted = false;
+            removeChild(self, state, node);
+
             if (isWidget(node)) {
                 hooks.onRemoveWidget(_.$, node.$);
             } else if (isChild(node)) {
                 const handler = hooks.children?.[node.__name__];
                 if (handler) {
-                    handler(_.$, null);
+                    handler(_.$, node.$, true);
                 } else {
                     throw new Error(
                         `Widget ${tagName} does not support "${node.__name__}" children`,
