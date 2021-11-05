@@ -1,6 +1,6 @@
 /// <reference path="./domtypes.d.ts" />
 
-import { isWidget } from "./utils";
+import { isWidget, unmountNode } from "./utils";
 
 export interface INode {
     mounted: boolean;
@@ -13,6 +13,8 @@ export interface INode {
     setAttribute(name: string, value: any): void;
     addEventListener(type: string, listener: (event: any) => void): void;
     removeEventListener(type: string, listener: (event: any) => void): void;
+
+    onUnmount?(): void;
 }
 
 export interface IWidget extends INode {
@@ -25,6 +27,7 @@ export interface IWidget extends INode {
     appendChild(node: INode): void;
     removeChild(node: INode): void;
     insertBefore(node: INode, anchor?: INode): void;
+    onUnmount(): void;
 }
 
 export interface IChild extends IWidget {
@@ -195,6 +198,7 @@ export class Root extends Node {
             );
         }
         node.mounted = false;
+        node?.onUnmount?.();
     };
 }
 

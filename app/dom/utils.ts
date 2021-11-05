@@ -10,7 +10,24 @@ import {
 } from "./nodes";
 
 interface State {
+    head: INode | null;
     tail: INode | null;
+}
+
+export function unmountNode(node: any) {
+    if (!node) return;
+    const nextSibling = node.nextSibling;
+    node.nextSibling = null;
+    const prevSibling = node.prevSibling;
+    node.prevSibling = null;
+    node.parentNode = null;
+    node.mounted = false;
+    if (nextSibling) {
+        unmountNode(nextSibling);
+    }
+    if (prevSibling) {
+        unmountNode(prevSibling);
+    }
 }
 
 export function insertChildBefore(
@@ -49,6 +66,8 @@ export function removeChild(self: any, state: State, node: INode) {
     const nextSibling = node.nextSibling;
     if (prevSibling) {
         prevSibling.nextSibling = nextSibling;
+    } else if (state.head === node) {
+        state.head = nextSibling;
     }
     if (nextSibling) {
         nextSibling.prevSibling = prevSibling;

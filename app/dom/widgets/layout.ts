@@ -1,5 +1,5 @@
 import { Node, INode, Text, IWidget } from "../nodes";
-import { createLogger, createToString, str } from "../utils";
+import { createLogger, createToString, str, unmountNode } from "../utils";
 import { Widget } from "./widget";
 import {
     isWidget,
@@ -29,7 +29,7 @@ export function LayoutWidget<T = any>(
     hooks: ILayout<T>,
 ): ILayoutWidget {
     const _ = Widget(tagName, $, hooks.children);
-    const state = { tail: null as INode | null };
+    const state = { head: null as INode | null, tail: null as INode | null };
 
     const log = createLogger(_);
 
@@ -43,6 +43,14 @@ export function LayoutWidget<T = any>(
         set tail(value: INode | null) {
             log(`=> tail:`, str(value));
             state.tail = value;
+        },
+
+        onUnmount() {
+            log(`=> onUnmount`);
+            unmountNode(state.head);
+            state.head = null;
+            unmountNode(state.tail);
+            state.tail = null;
         },
 
         insertBefore(node: INode, anchor?: INode) {
@@ -106,6 +114,7 @@ export function LayoutWidget<T = any>(
                     );
                 }
             }
+            node?.onUnmount?.();
         },
     };
     return self;

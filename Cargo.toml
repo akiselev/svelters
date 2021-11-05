@@ -28,7 +28,7 @@ rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "tokio",
     # "frunk",
     # "dump-gc",
-    "dump-gc-free",
+    # "dump-gc-free",
     # "dump-free",
     # "dump-leaks",
     # "dump-mem",

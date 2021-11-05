@@ -7,6 +7,7 @@ import {
     appendChild,
     removeChild,
     isChild,
+    unmountNode,
 } from "../utils";
 
 type Hooks<T> = {
@@ -26,7 +27,7 @@ export function Widget<T>(
         nextSibling: null as INode | null,
         prevSibling: null as INode | null,
     } as any;
-    const state = { tail: null as INode | null };
+    const state = { head: null as INode | null, tail: null as INode | null };
 
     const log = createLogger(_);
 
@@ -81,6 +82,14 @@ export function Widget<T>(
         set prevSibling(value: INode | null) {
             log(`=> prevSibling:`, str(value));
             _.prevSibling = value;
+        },
+
+        onUnmount() {
+            log(`=> onUnmount`);
+            unmountNode(state.head);
+            state.head = null;
+            unmountNode(state.tail);
+            state.tail = null;
         },
 
         toString: createToString(_),
@@ -179,6 +188,7 @@ export function Widget<T>(
                     }
                 }
             }
+            node?.onUnmount?.();
         },
 
         getRootNode() {
