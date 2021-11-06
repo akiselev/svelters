@@ -10,7 +10,6 @@ import {
 } from "./nodes";
 
 interface State {
-    head: INode | null;
     tail: INode | null;
 }
 
@@ -66,8 +65,6 @@ export function removeChild(self: any, state: State, node: INode) {
     const nextSibling = node.nextSibling;
     if (prevSibling) {
         prevSibling.nextSibling = nextSibling;
-    } else if (state.head === node) {
-        state.head = nextSibling;
     }
     if (nextSibling) {
         nextSibling.prevSibling = prevSibling;

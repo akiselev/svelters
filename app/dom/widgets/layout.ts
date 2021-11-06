@@ -29,7 +29,7 @@ export function LayoutWidget<T = any>(
     hooks: ILayout<T>,
 ): ILayoutWidget {
     const _ = Widget(tagName, $, hooks.children);
-    const state = { head: null as INode | null, tail: null as INode | null };
+    const state = { tail: null as INode | null };
 
     const log = createLogger(_);
 
@@ -47,8 +47,6 @@ export function LayoutWidget<T = any>(
 
         onUnmount() {
             log(`=> onUnmount`);
-            unmountNode(state.head);
-            state.head = null;
             unmountNode(state.tail);
             state.tail = null;
         },

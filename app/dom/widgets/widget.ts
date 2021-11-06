@@ -27,7 +27,7 @@ export function Widget<T>(
         nextSibling: null as INode | null,
         prevSibling: null as INode | null,
     } as any;
-    const state = { head: null as INode | null, tail: null as INode | null };
+    const state = { tail: null as INode | null };
 
     const log = createLogger(_);
 
@@ -86,8 +86,6 @@ export function Widget<T>(
 
         onUnmount() {
             log(`=> onUnmount`);
-            unmountNode(state.head);
-            state.head = null;
             unmountNode(state.tail);
             state.tail = null;
         },
