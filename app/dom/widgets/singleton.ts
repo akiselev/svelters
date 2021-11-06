@@ -1,15 +1,15 @@
 import { ILayout, LayoutWidget } from "./layout";
-import { IWidget } from "../nodes";
+import { Constructor, IWidget } from "../nodes";
 
 interface ISingle {
     child: any;
 }
 
-export function Singleton<T extends ISingle>(
+export function Singleton<T extends Constructor<GtkWidget>>(
     tagName: string,
     $: T,
-    opts: Partial<ILayout<T>> = {},
-): IWidget {
+    opts: Partial<ILayout> = {},
+): Constructor<IWidget> {
     return LayoutWidget(tagName, $, {
         onInsertWidgetAfter: ($, node) => {
             if ($.child) {

@@ -2,11 +2,13 @@
 
 import { isWidget, unmountNode } from "./utils";
 
+export type Constructor<T> = new (...args: any[]) => T;
+
 export interface INode {
-    mounted: boolean;
-    parentNode: INode | null;
-    prevSibling: INode | null;
-    nextSibling: INode | null;
+    __mounted__: boolean;
+    __parent__: INode | null;
+    __prev__: INode | null;
+    __next__: INode | null;
 
     getAttribute(name: string): any;
     removeAttribute(name: string): void;
@@ -22,8 +24,6 @@ export interface IWidget extends INode {
     get isGObject(): boolean;
     get isGtkWidget(): boolean;
 
-    get $(): any;
-
     appendChild(node: INode): void;
     removeChild(node: INode): void;
     insertBefore(node: INode, anchor?: INode): void;
@@ -35,53 +35,47 @@ export interface IChild extends IWidget {
 }
 
 export class Node implements INode {
-    private __attr__: { [name: string]: any };
-    private __listeners__: { [name: string]: any[] };
-    protected __parent__: INode | null;
-    protected __prev__: INode | null;
-    protected __next__: INode | null;
-    protected __mounted__: boolean;
+    __state__ = {
+        attr: {} as { [name: string]: any },
+        listeners: {} as { [name: string]: any[] },
+        parentNode: null as INode | null,
+        prevSibling: null as INode | null,
+        nextSibling: null as INode | null,
+        mounted: false,
+    };
 
-    constructor() {
-        this.__parent__ = null;
-        this.__prev__ = null;
-        this.__next__ = null;
-        this.__attr__ = {};
-        this.__listeners__ = {};
+    constructor() {}
 
-        this.__mounted__ = false;
+    get __mounted__() {
+        return this.__state__.mounted;
     }
 
-    get mounted() {
-        return this.__mounted__;
+    set __mounted__(value: boolean) {
+        this.__state__.mounted = value;
     }
 
-    set mounted(value: boolean) {
-        this.__mounted__ = value;
+    get __parent__() {
+        return this.__state__.parentNode;
     }
 
-    get parentNode() {
-        return this.__parent__;
+    set __parent__(value: INode | null) {
+        this.__state__.parentNode = value;
     }
 
-    set parentNode(value: INode | null) {
-        this.__parent__ = value;
+    get __next__() {
+        return this.__state__.nextSibling;
     }
 
-    get nextSibling() {
-        return this.__next__;
+    set __next__(value: INode | null) {
+        this.__state__.nextSibling = value;
     }
 
-    set nextSibling(value: INode | null) {
-        this.__next__ = value;
+    get __prev__() {
+        return this.__state__.prevSibling;
     }
 
-    get prevSibling() {
-        return this.__prev__;
-    }
-
-    set prevSibling(value: INode | null) {
-        this.__prev__ = value;
+    set __prev__(value: INode | null) {
+        this.__state__.prevSibling = value;
     }
 
     get isGtkWidget() {
@@ -97,38 +91,38 @@ export class Node implements INode {
     };
 
     setAttribute = (name: string, value: any) => {
-        this.__attr__[name] = value;
+        this.__state__.attr[name] = value;
     };
 
     getAttribute = (name: string) => {
-        return this.__attr__[name];
+        return this.__state__.attr[name];
     };
 
     removeAttribute = (name: string) => {
-        delete this.__attr__[name];
+        delete this.__state__.attr[name];
     };
 
     addEventListener = (type: string, listener: (event: any) => void): void => {
-        if (typeof this.__listeners__[type] == "undefined") {
-            this.__listeners__[type] = new Array();
+        if (typeof this.__state__.listeners[type] == "undefined") {
+            this.__state__.listeners[type] = new Array();
         }
-        this.__listeners__[type].push(listener);
+        this.__state__.listeners[type].push(listener);
     };
 
     removeEventListener = (
         type: string,
         listener: (event: any) => void,
     ): void => {
-        const list = this.__listeners__[type];
+        const list = this.__state__.listeners[type];
         if (typeof list != "undefined") {
-            this.__listeners__[type] = list.filter(
+            this.__state__.listeners[type] = list.filter(
                 (handler: any) => handler != listener,
             );
         }
     };
 
     dispatchEvent = (type: string, event: any) => {
-        const listeners = this.__listeners__[type];
+        const listeners = this.__state__.listeners[type];
         if (Array.isArray(listeners)) {
             listeners.forEach((handler) => handler(event));
         }
@@ -152,29 +146,28 @@ export class Root extends Node {
                 throw new Error("Anchor is not in children");
                 // this.appendChild(node);
             } else {
-                node.prevSibling = anchor.prevSibling;
-                node.nextSibling = anchor;
-                anchor.prevSibling = node;
-                node.parentNode = this;
+                node.__prev__ = anchor.__prev__;
+                node.__next__ = anchor;
+                anchor.__prev__ = node;
+                node.__parent__ = this;
                 this.__children__.splice(index, 0, node);
             }
         } else {
             if (this.__children__.length > 0) {
-                node.prevSibling =
-                    this.__children__[this.__children__.length - 1];
+                node.__prev__ = this.__children__[this.__children__.length - 1];
             }
-            node.parentNode = this;
+            node.__parent__ = this;
             this.__children__.push(node);
         }
-        node.mounted = true;
+        node.__mounted__ = true;
     };
 
     appendChild = (node: INode): void => {
         if (this.__children__.length > 0) {
-            node.prevSibling = this.__children__[this.__children__.length - 1];
+            node.__prev__ = this.__children__[this.__children__.length - 1];
         }
-        node.parentNode = this;
-        node.mounted = true;
+        node.__parent__ = this;
+        node.__mounted__ = true;
         this.__children__.push(node);
     };
 
@@ -182,22 +175,22 @@ export class Root extends Node {
         const index = this.__children__.indexOf(node);
         if (index === -1) {
         } else {
-            const prevSibling = node.prevSibling;
-            const nextSibling = node.nextSibling;
+            const prevSibling = node.__prev__;
+            const nextSibling = node.__next__;
             if (prevSibling) {
-                prevSibling.nextSibling = nextSibling;
+                prevSibling.__next__ = nextSibling;
             }
             if (nextSibling) {
-                nextSibling.prevSibling = prevSibling;
+                nextSibling.__prev__ = prevSibling;
             }
-            node.nextSibling = null;
-            node.prevSibling = null;
-            node.parentNode = null;
+            node.__next__ = null;
+            node.__prev__ = null;
+            node.__parent__ = null;
             this.__children__ = this.__children__.filter(
                 (target) => target !== node,
             );
         }
-        node.mounted = false;
+        node.__mounted__ = false;
         node?.onUnmount?.();
     };
 }

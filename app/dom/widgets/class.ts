@@ -1,7 +1,6 @@
 import { INode, IWidget } from "../nodes";
 import {
     createLogger,
-    createToString,
     str,
     insertChildBefore,
     appendChild,
@@ -19,7 +18,7 @@ export function Class<T>(tagName: string, $: any): INode {
         prevSibling: null as INode | null,
     } as any;
 
-    const log = createLogger(_);
+    const log = createLogger(`<${tagName}>`);
 
     const self = {
         get $() {
@@ -47,29 +46,29 @@ export function Class<T>(tagName: string, $: any): INode {
             _.mounted = value;
         },
 
-        get parentNode() {
+        get __parent__() {
             return _.parentNode;
         },
 
-        set parentNode(value: INode | null) {
+        set __parent__(value: INode | null) {
             log(`=> parentNode:`, str(value));
             _.parentNode = value;
         },
 
-        get nextSibling() {
+        get __next__() {
             return _.nextSibling;
         },
 
-        set nextSibling(value: INode | null) {
+        set __next__(value: INode | null) {
             log(`=> nextSibling:`, str(value));
             _.nextSibling = value;
         },
 
-        get prevSibling() {
+        get __prev__() {
             return _.prevSibling;
         },
 
-        set prevSibling(value: INode | null) {
+        set __prev__(value: INode | null) {
             log(`=> prevSibling:`, str(value));
             _.prevSibling = value;
         },

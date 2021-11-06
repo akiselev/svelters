@@ -1,6 +1,6 @@
-import { Node, INode, Text, IWidget } from "../nodes";
-import { createLogger, createToString, str, unmountNode } from "../utils";
-import { Widget } from "./widget";
+import { Node, INode, Text, IWidget, Constructor } from "../nodes";
+import { createLogger, str, unmountNode } from "../utils";
+import { WidgetCls } from "./widget";
 import {
     isWidget,
     isChild,
@@ -10,12 +10,12 @@ import {
     removeChild,
 } from "../utils";
 
-export interface ILayout<T> {
-    onInsertWidgetAfter(self: T, child: any, anchor?: any): void;
-    onAppendWidget(self: T, child: any): void;
-    onRemoveWidget(self: T, child: any): void;
+export interface ILayout {
+    onInsertWidgetAfter(self: any, child: any, anchor?: any): void;
+    onAppendWidget(self: any, child: any): void;
+    onRemoveWidget(self: any, child: any): void;
     children?: {
-        [name: string]: (self: T, child: any, remove?: boolean) => void;
+        [name: string]: (self: any, child: any, remove?: boolean) => void;
     };
 }
 
@@ -23,89 +23,87 @@ interface ILayoutWidget extends IWidget {
     get tail(): INode | null;
 }
 
-export function LayoutWidget<T = any>(
+export function LayoutWidget<T extends Constructor<GtkWidget>>(
     tagName: string,
     $: T,
-    hooks: ILayout<T>,
-): ILayoutWidget {
-    const _ = Widget(tagName, $, hooks.children);
-    const state = { tail: null as INode | null };
+    hooks: ILayout,
+): Constructor<ILayoutWidget> {
+    const _ = WidgetCls(tagName, $, hooks.children);
 
-    const log = createLogger(_);
+    const log = createLogger(`<${tagName}>`);
+    return class extends _ {
+        __state__ = { tail: null as INode | null };
 
-    const self = {
-        ..._,
+        constructor(...args: any) {
+            super(...args);
+        }
 
         get tail() {
-            return state.tail;
-        },
+            return this.__state__.tail;
+        }
 
         set tail(value: INode | null) {
             log(`=> tail:`, str(value));
-            state.tail = value;
-        },
+            this.__state__.tail = value;
+        }
 
         onUnmount() {
             log(`=> onUnmount`);
-            unmountNode(state.tail);
-            state.tail = null;
-        },
+            unmountNode(this.__state__.tail);
+            this.__state__.tail = null;
+        }
 
-        insertBefore(node: INode, anchor?: INode) {
+        insertBefore = (node: INode, anchor?: INode) => {
             log(`=> insert`, str(node), `before`, str(anchor));
-            insertChildBefore(self, state, node, anchor);
+            insertChildBefore(this, this.__state__, node, anchor);
 
             if (isWidget(node)) {
                 let target = getNextWidget(node);
                 if (isWidget(target)) {
-                    hooks.onInsertWidgetAfter(
-                        _.$,
-                        node.$,
-                        target.$.prevSibling,
-                    );
+                    hooks.onInsertWidgetAfter(this, node, target.__prev__);
                 } else {
-                    hooks.onAppendWidget(_.$, node.$);
+                    hooks.onAppendWidget(this, node);
                 }
             } else if (isChild(node)) {
                 const handler = hooks.children?.[node.__name__];
                 if (handler) {
-                    handler(_.$, node);
+                    handler(this, node);
                 } else {
                     throw new Error(
                         `Widget ${tagName} does not support "${node.__name__}" children`,
                     );
                 }
             }
-        },
+        };
 
-        appendChild(node: INode) {
+        appendChild = (node: INode) => {
             log(`=> append`, str(node));
-            appendChild(self, state, node);
+            appendChild(this, this.__state__, node);
 
             if (isWidget(node)) {
-                hooks.onAppendWidget(_.$, node.$);
+                hooks.onAppendWidget(this, node);
             } else if (isChild(node)) {
                 const handler = hooks.children?.[node.__name__];
                 if (handler) {
-                    handler(_.$, node);
+                    handler(this, node);
                 } else {
                     throw new Error(
                         `Widget ${tagName} does not support "${node.__name__}" children`,
                     );
                 }
             }
-        },
+        };
 
-        removeChild(node: INode) {
+        removeChild = (node: INode) => {
             log(`=> remove`, str(node));
-            removeChild(self, state, node);
+            removeChild(this, this.__state__, node);
 
             if (isWidget(node)) {
-                hooks.onRemoveWidget(_.$, node.$);
+                hooks.onRemoveWidget(this, node);
             } else if (isChild(node)) {
                 const handler = hooks.children?.[node.__name__];
                 if (handler) {
-                    handler(_.$, node.$, true);
+                    handler(this, node, true);
                 } else {
                     throw new Error(
                         `Widget ${tagName} does not support "${node.__name__}" children`,
@@ -113,7 +111,6 @@ export function LayoutWidget<T = any>(
                 }
             }
             node?.onUnmount?.();
-        },
+        };
     };
-    return self;
 }

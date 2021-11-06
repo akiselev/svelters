@@ -1,10 +1,13 @@
-import { Widget } from "./widget";
+import { WidgetCls } from "./widget";
 import { Singleton } from "./singleton";
 import { LayoutWidget } from "./layout";
-import { IWidget } from "../nodes";
+import { Constructor, IWidget } from "../nodes";
 
-const Layout = <T>(tagName: string, el: T): IWidget => {
-    return LayoutWidget(tagName, el as unknown as Box, {
+const Layout = <T extends Constructor<GtkWidget>>(
+    tagName: string,
+    el: T,
+): Constructor<IWidget> => {
+    return LayoutWidget(tagName, el, {
         onInsertWidgetAfter: ($, node, anchor) => {
             $.insertChildAfter(node, anchor);
         },
@@ -17,14 +20,17 @@ const Layout = <T>(tagName: string, el: T): IWidget => {
     });
 };
 
-const Paned = <T extends Paned>(tagName: string, el: T): IWidget => {
+const Paned = <T extends Constructor<GtkWidget>>(
+    tagName: string,
+    el: T,
+): Constructor<IWidget> => {
     const start = ($: any, node: any, remove: any) => {
         $.startChild = remove ? null : node;
     };
     const end = ($: any, node: any, remove: any) => {
         $.endChild = remove ? null : node;
     };
-    return Widget(tagName, el, {
+    return WidgetCls(tagName, el, {
         start,
         end,
         left: start,
@@ -34,44 +40,52 @@ const Paned = <T extends Paned>(tagName: string, el: T): IWidget => {
     });
 };
 
-const appWindow = () => {
-    return Singleton("appWindow", new ApplicationWindow(), {
-        children: {
-            titlebar: ($, node, remove) => {
-                $.titlebar = remove ? null : node;
-            },
-            controller: ($, node, remove) => {
-                remove ? $.removeController(node.$) : $.addController(node.$);
-            },
-        },
-    });
-};
-
-const gtkWindow = () => {
-    return Singleton("gtkWindow", new Window(), {
+const EL: { [name: string]: Constructor<{}> } = {
+    button: WidgetCls("button", Button),
+    label: WidgetCls("label", Label),
+    hBox: Layout("hBox", HorizontalBox),
+    vBox: Layout("vBox", VerticalBox),
+    hPaned: Paned("hPaned", HorizontalPaned),
+    vPaned: Paned("vPaned", VerticalPaned),
+    scrolled: Singleton("scrolled", ScrolledWindow),
+    viewport: Singleton("viewport", Viewport),
+    motion: WidgetCls("motion", EventControllerMotion),
+    keyboard: WidgetCls("keyboard", EventControllerKey),
+    focus: WidgetCls("focus", EventControllerFocus),
+    gtkWindow: Singleton("gtkWindow", Window, {
         children: {
             titlebar: ($, node) => {
                 $.titlebar = node;
             },
             controller: ($, node, remove) => {
-                remove ? $.removeController(node.$) : $.addController(node.$);
+                remove ? $.removeController(node) : $.addController(node);
             },
         },
-    });
+    }),
+    appWindow: Singleton("appWindow", ApplicationWindow, {
+        children: {
+            titlebar: ($, node, remove) => {
+                $.titlebar = remove ? null : node;
+            },
+            controller: ($, node, remove) => {
+                remove ? $.removeController(node) : $.addController(node);
+            },
+        },
+    }),
 };
 
 export const ELEMENTS: { [name: string]: () => any } = {
-    button: () => Widget("button", new Button()),
-    label: () => Widget("label", new Label()),
-    hBox: () => Layout("hBox", new HorizontalBox()),
-    vBox: () => Layout("vBox", new VerticalBox()),
-    hPaned: () => Paned("hPaned", new HorizontalPaned()),
-    vPaned: () => Paned("vPaned", new VerticalPaned()),
-    scrolled: () => Singleton("scrolled", new ScrolledWindow()),
-    viewport: () => Singleton("viewport", new Viewport()),
-    motion: () => Widget("motion", new EventControllerMotion()),
-    keyboard: () => Widget("keyboard", new EventControllerKey()),
-    focus: () => Widget("focus", new EventControllerFocus()),
-    appWindow,
-    gtkWindow,
+    button: () => new EL["button"](),
+    label: () => new EL["label"](),
+    hBox: () => new EL["hBox"](),
+    vBox: () => new EL["vBox"](),
+    hPaned: () => new EL["hPaned"](),
+    vPaned: () => new EL["vPaned"](),
+    scrolled: () => new EL["scrolled"](),
+    viewport: () => new EL["viewport"](),
+    motion: () => new EL["motion"](),
+    keyboard: () => new EL["keyboard"](),
+    focus: () => new EL["focus"](),
+    appWindow: () => new EL["appWindow"](),
+    gtkWindow: () => new EL["gtkWindow"](),
 };

@@ -13,10 +13,13 @@
     };
 
     onMount(() => {
-        window.$.show();
+        window.show();
+
+        const x = new JsValue({ test: "HELLO WORLD" });
+        console.log(">>>><<<<", x.value.test);
     });
     onDestroy(() => {
-        window.$.destroy();
+        window.destroy();
     });
 </script>
 
@@ -32,22 +35,13 @@
         {/if}
         <button
             id="btn5"
-            bind:hasFocus
             on:clicked={onClick}
             label="Toggle {hasFocus ? 'World' : ''}"
             hAlign="end"
             canFocus={true}
             sensitive={true}
             focusable={true}
-        >
-            <controller:motion
-                on:motion={(event) =>
-                    console.log(
-                        event.details[0].containsPointer,
-                        JSON.stringify(event, null, 2),
-                    )}
-            />
-        </button>
+        />
     </hBox>
     <controller:keyboard
         on:key-pressed={(event) =>

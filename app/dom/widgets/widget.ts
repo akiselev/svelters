@@ -1,7 +1,6 @@
-import { INode, IWidget } from "../nodes";
+import { Constructor, INode, IWidget } from "../nodes";
 import {
     createLogger,
-    createToString,
     str,
     insertChildBefore,
     appendChild,
@@ -10,133 +9,140 @@ import {
     unmountNode,
 } from "../utils";
 
-type Hooks<T> = {
-    [name: string]: (self: T, child: any, remove?: boolean) => void;
+type Hooks = {
+    [name: string]: (self: any, child: any, remove?: boolean) => void;
 };
 
-export function Widget<T>(
+export function WidgetCls<T extends Constructor<GtkWidget>>(
     tagName: string,
     $: T,
-    hooks: Hooks<T> = {},
-): IWidget {
-    const _ = {
-        $,
-        tagName,
-        mounted: false,
-        parentNode: null as INode | null,
-        nextSibling: null as INode | null,
-        prevSibling: null as INode | null,
-    } as any;
+    hooks: Hooks = {},
+): Constructor<IWidget> {
     const state = { tail: null as INode | null };
 
-    const log = createLogger(_);
+    const log = createLogger(`<${tagName}>`);
+    return class extends $ {
+        private __state__ = {
+            mounted: false,
+            parentNode: null as INode | null,
+            nextSibling: null as INode | null,
+            prevSibling: null as INode | null,
+        };
 
-    const self = {
-        get $() {
-            return _.$;
-        },
-
-        get tagName() {
-            return _.tagName;
-        },
+        constructor(...args: any) {
+            super(...args);
+            this.classList = {
+                add(name: string): void {
+                    log(`=> addClass [${name}]`);
+                    super.addClass(name);
+                },
+                remove(name: string): void {
+                    log(`=> removeClass [${name}]`);
+                    super.removeClass(name);
+                },
+            };
+        }
 
         get isGtkWidget() {
-            return _.$.isGtkWidget;
-        },
+            return true;
+        }
 
-        get isGObject() {
-            return _.$.isGObject;
-        },
+        get tagName() {
+            return tagName;
+        }
 
-        get mounted() {
-            return _.mounted;
-        },
+        get __mounted__() {
+            return this.__state__.mounted;
+        }
 
-        set mounted(value: boolean) {
+        set __mounted__(value: boolean) {
             log(`${value ? "" : "un"}mounted`);
-            _.mounted = value;
-        },
+            this.__state__.mounted = value;
+        }
 
-        get parentNode() {
-            return _.parentNode;
-        },
+        get __parent__() {
+            return this.__state__.parentNode;
+        }
 
-        set parentNode(value: INode | null) {
+        set __parent__(value: INode | null) {
             log(`=> parentNode:`, str(value));
-            _.parentNode = value;
-        },
+            this.__state__.parentNode = value;
+        }
 
-        get nextSibling() {
-            return _.nextSibling;
-        },
+        get __next__() {
+            return this.__state__.nextSibling;
+        }
 
-        set nextSibling(value: INode | null) {
-            log(`=> nextSibling:`, str(value));
-            _.nextSibling = value;
-        },
+        set __next__(value: INode | null) {
+            log(`=> __next__:`, str(value));
+            this.__state__.nextSibling = value;
+        }
 
-        get prevSibling() {
-            return _.prevSibling;
-        },
+        get __prev__() {
+            return this.__state__.prevSibling;
+        }
 
-        set prevSibling(value: INode | null) {
+        set __prev__(value: INode | null) {
             log(`=> prevSibling:`, str(value));
-            _.prevSibling = value;
-        },
+            this.__state__.prevSibling = value;
+        }
 
         onUnmount() {
             log(`=> onUnmount`);
             unmountNode(state.tail);
             state.tail = null;
-        },
+        }
 
-        toString: createToString(_),
+        toString = () => str(this);
 
-        setAttribute(name: string, value: any) {
+        setAttribute = (name: string, value: any) => {
             log(`=> ${name} =`, str(value));
             if (name === "class") {
                 console.log("setting classes: ", value);
-                _.$.setAttribute("cssClasses", value.split(" "));
+                super.setAttribute("cssClasses", value.split(" "));
             } else {
-                _.$.setAttribute(name, value);
+                super.setAttribute(name, value);
             }
-        },
+        };
 
-        getAttribute(name: string): any {
+        getAttribute = (name: string): any => {
             if (name === "class") {
-                return _.$.getAttribute("cssClasses").join(" ");
+                return super.getAttribute("cssClasses").join(" ");
             } else {
-                return _.$.getAttribute(name);
+                return super.getAttribute(name);
             }
-        },
+        };
 
-        removeAttribute(name: string) {
+        removeAttribute = (name: string) => {
             log(`=> delete [${name}]`);
-            _.$.removeAttribute(name);
-        },
+            super.removeAttribute(name);
+        };
 
-        addEventListener(name: string, callback: (event: any) => void) {
+        addEventListener = (name: string, callback: (event: any) => void) => {
             log(`=> connect [${name}]`);
-            _.$.addEventListener(name, callback);
-        },
+            super.addEventListener(name, callback);
+        };
 
-        removeEventListener(name: string, callback: (event: any) => void) {
+        removeEventListener = (
+            name: string,
+            callback: (event: any) => void,
+        ) => {
             log(`=> disconnect [${name}]`);
-            _.$.removeEventListener(name, callback);
-        },
+            super.removeEventListener(name, callback);
+        };
 
-        insertBefore(node: INode, anchor?: INode) {
+        insertBefore = (node: INode, anchor?: INode) => {
             log(`=> insert`, str(node), `before`, str(anchor));
-            insertChildBefore(self, state, node, anchor);
+            insertChildBefore(this, state, node, anchor);
 
             if (isChild(node)) {
                 if (node.__name__ == "controller") {
                     console.log("adding controller....");
-                    _.$.addController(node.$);
+                    super.addController(node);
                 } else {
                     const handler = hooks[node.__name__];
                     if (handler) {
-                        handler(_.$, node);
+                        handler(this, node);
                     } else {
                         throw new Error(
                             `Widget ${tagName} does not support "${node.__name__}" children`,
@@ -144,20 +150,20 @@ export function Widget<T>(
                     }
                 }
             }
-        },
+        };
 
-        appendChild(node: INode) {
+        appendChild = (node: INode) => {
             log(`=> append`, str(node));
-            appendChild(self, state, node);
+            appendChild(this, state, node);
 
             if (isChild(node)) {
                 if (node.__name__ == "controller") {
                     console.log("adding controller....");
-                    _.$.addController(node.$);
+                    super.addController(node);
                 } else {
                     const handler = hooks[node.__name__];
                     if (handler) {
-                        handler(_.$, node);
+                        handler(this, node);
                     } else {
                         throw new Error(
                             `Widget ${tagName} does not support "${node.__name__}" children`,
@@ -165,20 +171,20 @@ export function Widget<T>(
                     }
                 }
             }
-        },
+        };
 
-        removeChild(node: INode) {
+        removeChild = (node: INode) => {
             log(`=> remove`, str(node));
-            removeChild(self, state, node);
+            removeChild(this, state, node);
 
             if (isChild(node)) {
                 if (node.__name__ == "controller") {
                     console.log("removing controller....");
-                    _.$.removeController(node.$);
+                    super.removeController(node);
                 } else {
                     const handler = hooks[node.__name__];
                     if (handler) {
-                        handler(_.$, node, true);
+                        handler(this, node, true);
                     } else {
                         throw new Error(
                             `Widget ${tagName} does not support "${node.__name__}" children`,
@@ -187,22 +193,12 @@ export function Widget<T>(
                 }
             }
             node?.onUnmount?.();
-        },
+        };
 
         getRootNode() {
             return document;
-        },
+        }
 
-        classList: {
-            add(name: string): void {
-                log(`=> addClass [${name}]`);
-                _.$.addClass(name);
-            },
-            remove(name: string): void {
-                log(`=> removeClass [${name}]`);
-                _.$.removeClass(name);
-            },
-        },
-    } as IWidget;
-    return self;
+        classList: any;
+    };
 }

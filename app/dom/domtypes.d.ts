@@ -33,10 +33,12 @@ declare global {
     };
 
     class GtkWidget {
-        isGObject?: boolean;
-        isGtkWidget?: boolean;
+        get isGObject(): boolean;
+        get isGtkWidget(): boolean;
         addClass(className: string): void;
         removeClass(className: string): void;
+        addController(controller: any): void;
+        removeController(controller: any): void;
         setAttribute(name: string, value: any): void;
         getAttribute(name: string): any;
         removeAttribute(name: string): void;
