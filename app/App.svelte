@@ -45,11 +45,7 @@
                 <controller:motion on:motion={(event) => {}} />
             </button>
         </hBox>
-        <scrolled maxContentHeight={600}>
-            <viewport>
-                <ListView />
-            </viewport>
-        </scrolled>
+        <ListView />
     </vBox>
     <controller:keyboard
         on:key-pressed={(event) =>

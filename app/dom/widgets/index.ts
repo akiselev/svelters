@@ -63,10 +63,10 @@ const gtkWindow = () => {
 const listView = () => {
     return Widget("listView", new ListView(), {
         model: (self, child, remove) => {
-            self.model = remove ? null : child;
+            self.model = remove ? null : child.$;
         },
         factory: (self, child, remove) => {
-            self.factory = remove ? null : child;
+            self.factory = remove ? null : child.$;
         },
     });
 };
@@ -74,7 +74,7 @@ const listView = () => {
 const Selection = <T>(tagName: string, el: { model: any }): IWidget => {
     return Widget(tagName, el, {
         model: (self, child, remove) => {
-            self.model = remove ? null : child;
+            self.model = remove ? null : child.$;
         },
     });
 };

@@ -5,7 +5,12 @@ import App from "./App.svelte";
 
 const start = (reloaded: boolean) => {
     if (reloaded) {
-        document?.app?.$destroy?.();
+        try {
+            document?.app?.$destroy?.();
+        } catch (err) {
+            console.error("ERROR ON RELOAD: ", err);
+            console.error(err.stack);
+        }
     }
     document.app = new App({ target: document.root });
 };

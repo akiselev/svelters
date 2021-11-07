@@ -21,6 +21,7 @@
         "target2"
     ],
     "files.associations": {
-        "quickjs-debugger.h": "c"
+        "quickjs-debugger.h": "c",
+        "gjslistmodel.h": "c"
     }
 }
