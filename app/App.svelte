@@ -42,13 +42,7 @@
                 sensitive={true}
                 focusable={true}
             >
-                <controller:motion
-                    on:motion={(event) =>
-                        console.log(
-                            event.details[0].containsPointer,
-                            JSON.stringify(event, null, 2),
-                        )}
-                />
+                <controller:motion on:motion={(event) => {}} />
             </button>
         </hBox>
         <scrolled maxContentHeight={600}>

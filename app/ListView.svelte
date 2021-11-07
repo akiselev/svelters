@@ -39,6 +39,7 @@
 
     const onTeardown = ({ details: [factory, item] }: Event) => {
         console.log(`onTeardown #${item.position}`, model);
+
         if (item.item.value.component) {
             item.item.value.component.destroy();
         }
@@ -49,6 +50,7 @@
 </script>
 
 <listView vExpand={true}>
+    <model:noSelection {model} />
     <factory:signalListItemFactory
         on:bind={onBind}
         on:unbind={onUnbind}
