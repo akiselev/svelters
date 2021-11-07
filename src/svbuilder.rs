@@ -114,30 +114,30 @@ fn initialize_context(ctx: &Context) -> Result<()> {
 }
 
 pub(in crate) fn get_dev_dependencies() -> (BuiltinResolver, BuiltinLoader) {
-    let resolver = BuiltinResolver::default()
-        .with_module("svelte/internal")
-        .with_module("./internal/index.mjs")
-        .with_module("svelte");
-    let loader = BuiltinLoader::default()
-        .with_module(
-            "svelte/internal",
-            std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
-        )
-        .with_module(
-            Path::new("./node_modules/svelte/internal/index.mjs")
-                .canonicalize()
-                .unwrap()
-                .to_string_lossy(),
-            std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
-        )
-        .with_module(
-            "./internal/index.mjs",
-            std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
-        )
-        .with_module(
-            "svelte",
-            std::fs::read_to_string("./node_modules/svelte/index.mjs").unwrap(),
-        );
+    let resolver = BuiltinResolver::default();
+    // .with_module("svelte/internal")
+    // .with_module("./internal/index.mjs")
+    // .with_module("svelte");
+    let loader = BuiltinLoader::default();
+    // .with_module(
+    //     "svelte/internal",
+    //     std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
+    // )
+    // .with_module(
+    //     Path::new("./node_modules/svelte/internal/index.mjs")
+    //         .canonicalize()
+    //         .unwrap()
+    //         .to_string_lossy(),
+    //     std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
+    // )
+    // .with_module(
+    //     "./internal/index.mjs",
+    //     std::fs::read_to_string("./node_modules/svelte/internal/index.mjs").unwrap(),
+    // )
+    // .with_module(
+    //     "svelte",
+    //     std::fs::read_to_string("./node_modules/svelte/index.mjs").unwrap(),
+    // );
 
     (resolver, loader)
 }
