@@ -11,6 +11,7 @@
             "program": "${workspaceFolder}/target/debug/svelters",
             "preLaunchTask": "build",
             "args": [],
+            "externalConsole": false,
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
@@ -39,23 +40,37 @@
             ],
         },
         {
+            "name": "Launch QuickJS",
             "type": "quickjs",
             "request": "launch",
-            "name": "Launch QuickJS",
-            "runtimeExecutable": "${workspaceFolder}/target/debug/svelters",
-            "windows": {
-                "runtimeExecutable": "${workspaceFolder}/target/debug/svelters.exe"
-            },
-            // "trace": true,
-            "program": "${workspaceFolder}/test.js"
+			"mode": "listen",
+            "port": 5555,
+            "cwd": "${workspaceFolder}",
+            "localRoot": "${workspaceFolder}/",
+            "program": "${workspaceFolder}/dist/index.js",
+			"runtimeExecutable": "${workspaceFolder}/target/debug/svelters",
+            "console": "externalTerminal"
         },
         {
+            "name": "Attach QuickJS (connect)",
             "type": "quickjs",
-            "request": "attach",
-            "name": "Attach QuickJS",
+            "request": "launch",
+			"mode": "connect",
+			"attach": true,
+            "port": 5555,
             "localRoot": "${workspaceFolder}/",
-            "mode": "listen",
-            "port": 5555
+            "program": "${workspaceFolder}/dist/index.js",
+			"runtimeExecutable": "${workspaceFolder}/target/debug/svelters",
+        },
+        {
+            "name": "Attach QuickJS",
+            "type": "quickjs",
+            "request": "launch",
+			"attach": true,
+            "port": 5555,
+            "program": "${workspaceFolder}/dist/index.js",
+            "localRoot": "${workspaceFolder}/dist/",
+			"runtimeExecutable": "${workspaceFolder}/target/debug/svelters",
         }
     ]
 }

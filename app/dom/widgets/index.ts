@@ -60,6 +60,25 @@ const gtkWindow = () => {
     });
 };
 
+const listView = () => {
+    return Widget("listView", new ListView(), {
+        model: (self, child, remove) => {
+            self.model = remove ? null : child;
+        },
+        factory: (self, child, remove) => {
+            self.factory = remove ? null : child;
+        },
+    });
+};
+
+const Selection = <T>(tagName: string, el: { model: any }): IWidget => {
+    return Widget(tagName, el, {
+        model: (self, child, remove) => {
+            self.model = remove ? null : child;
+        },
+    });
+};
+
 export const ELEMENTS: { [name: string]: () => any } = {
     button: () => Widget("button", new Button()),
     label: () => Widget("label", new Label()),
@@ -72,6 +91,12 @@ export const ELEMENTS: { [name: string]: () => any } = {
     motion: () => Widget("motion", new EventControllerMotion()),
     keyboard: () => Widget("keyboard", new EventControllerKey()),
     focus: () => Widget("focus", new EventControllerFocus()),
+    signalListItemFactory: () =>
+        Widget("signalListItemFactory", new SignalListItemFactory()),
+    multiSelection: () => Selection("multiSelection", new MultiSelection()),
+    singleSelection: () => Selection("singleSelection", new SingleSelection()),
+    noSelection: () => Selection("noSelection", new NoSelection()),
     appWindow,
     gtkWindow,
+    listView,
 };
