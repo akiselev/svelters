@@ -20,7 +20,7 @@ document.createElement = (val: string): any => {
         }
     }
     const tagName = val;
-    console.log(`[Document] createElement("${tagName}")`);
+    //$console.log(`[Document] createElement("${tagName}")`);
     switch (tagName) {
         case "style":
             ele = new nodes.Style();
@@ -49,7 +49,7 @@ document.getRootNode = () => {
 };
 
 document.createEvent = (type: string) => {
-    console.log(`[Document] createEvent("${type}")`);
+    // console.log(`[Document] createEvent("${type}")`);
     let e: any = {};
     e.initCustomEvent = (
         type: string,

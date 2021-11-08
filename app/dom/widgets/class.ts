@@ -43,7 +43,7 @@ export function Class<T>(tagName: string, $: any): INode {
         },
 
         set mounted(value: boolean) {
-            log(`${value ? "" : "un"}mounted`);
+            //$log(`${value ? "" : "un"}mounted`);
             _.mounted = value;
         },
 
@@ -52,7 +52,7 @@ export function Class<T>(tagName: string, $: any): INode {
         },
 
         set parentNode(value: INode | null) {
-            log(`=> parentNode:`, str(value));
+            //$log(`=> parentNode:`, str(value));
             _.parentNode = value;
         },
 
@@ -61,7 +61,7 @@ export function Class<T>(tagName: string, $: any): INode {
         },
 
         set nextSibling(value: INode | null) {
-            log(`=> nextSibling:`, str(value));
+            //$log(`=> nextSibling:`, str(value));
             _.nextSibling = value;
         },
 
@@ -70,14 +70,14 @@ export function Class<T>(tagName: string, $: any): INode {
         },
 
         set prevSibling(value: INode | null) {
-            log(`=> prevSibling:`, str(value));
+            //$log(`=> prevSibling:`, str(value));
             _.prevSibling = value;
         },
 
         toString: createToString(_),
 
         setAttribute(name: string, value: any) {
-            log(`=> ${name} =`, str(value));
+            //$log(`=> ${name} =`, str(value));
             if (name === "class") {
                 console.log("setting classes: ", value);
                 _.$.setAttribute("cssClasses", value.split(" "));
@@ -95,17 +95,17 @@ export function Class<T>(tagName: string, $: any): INode {
         },
 
         removeAttribute(name: string) {
-            log(`=> delete [${name}]`);
+            //$log(`=> delete [${name}]`);
             _.$.removeAttribute(name);
         },
 
         addEventListener(name: string, callback: (event: any) => void) {
-            log(`=> connect [${name}]`);
+            //$log(`=> connect [${name}]`);
             _.$.addEventListener(name, callback);
         },
 
         removeEventListener(name: string, callback: (event: any) => void) {
-            log(`=> disconnect [${name}]`);
+            //$log(`=> disconnect [${name}]`);
             _.$.removeEventListener(name, callback);
         },
 

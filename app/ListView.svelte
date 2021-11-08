@@ -1,23 +1,27 @@
 <script lang="ts">
-    import { createEventDispatcher, afterUpdate, onMount } from "svelte";
+    import {
+        createEventDispatcher,
+        afterUpdate,
+        onMount,
+        onDestroy,
+    } from "svelte";
     import { ELEMENTS } from "./dom/widgets";
     import Item from "./Item.svelte";
 
     let model = new JsListModel((index?: number) => {
-        console.log(">>>>>>>>>>>>>>>. list model: ", index);
+        // console.log(">>>>>>>>>>>>>>>. list model: ", index);
         if (typeof index === "number") {
             return new JsValue({
                 text: `Hello world #${index}`,
                 index,
             });
         }
-        return 5;
+        return 500;
     });
 
     type Event = { details: [SignalListItemFactory, ListItem] };
 
     const onSetup = ({ details: [factory, item] }: Event) => {
-        console.log(`onSetup #${item.position}`, model);
         const box = ELEMENTS.hBox();
         if (!item.child) {
             item.child = box;
@@ -31,28 +35,28 @@
     };
 
     const onBind = ({ details: [factory, item] }: Event) => {
-        console.log(`onBind #${item.position}`, model);
         item.comp.$set({ data: item.item.value });
     };
 
     const onUnbind = ({ details: [factory, item] }: Event) => {
-        console.log(`onUnbind #${item.position}`, model);
         item.comp.$set({ data: null });
+        // item.item.dispose();
     };
 
     const onTeardown = ({ details: [factory, item] }: Event) => {
-        console.log(`onTeardown #${item.position}`, model);
-
         if (item.comp) {
-            item.comp.destroy();
+            item.comp.$destroy();
+            item.comp = null;
         }
         item.child = null;
+        // item.dispose();
     };
 
     const dispatch = createEventDispatcher();
 
     let listView: any;
     let selection: any;
+
     onMount(() => {
         let factory = new SignalListItemFactory();
         factory.addEventListener("bind", onBind);

@@ -17,6 +17,7 @@ path = "src/lib.rs"
 name = "svelters"
 
 [dependencies]
+gio = "0.14.8"
 tracing = "0.1.26"
 tracing-bunyan-formatter = "0.2.4"
 tracing-log = "0.1.2"
@@ -28,9 +29,9 @@ rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "tokio",
     # "frunk",
     # "dump-gc",
-    "dump-gc-free",
-    "dump-free",
-    # "dump-leaks",
+    # "dump-gc-free",
+    # "dump-free",
+    "dump-leaks",
     # "dump-mem",
     # "dump-objects",
     # "dump-atoms",
@@ -47,6 +48,10 @@ tokio = { version = "1", features = ["full"] }
 clap = "3.0.0-beta.5"
 flume = "0.10.9"
 hotwatch = "0.4.6"
+
+[dependencies.gtk4]
+version = "0.3.0"
+features = ["v4_2"]
 
 [profile.release]
 lto = true

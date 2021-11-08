@@ -5,11 +5,17 @@
     import Inner from "./Inner.svelte";
     import ListView from "./ListView.svelte";
     let isOpen = true;
+    let isOpen2 = true;
     let window: any;
     let hasFocus: boolean;
     const onClick = () => {
         console.log("....");
         isOpen = !isOpen;
+        return "WTF";
+    };
+    const onClick2 = () => {
+        console.log("....");
+        isOpen2 = !isOpen2;
         return "WTF";
     };
 
@@ -21,19 +27,14 @@
     });
 </script>
 
-<appWindow
-    title="Test Tittle"
-    decorated={true}
-    hideOnClose={true}
-    bind:this={window}
->
+<appWindow title="Test Tittle" decorated={true} bind:this={window}>
     <vBox>
         <hBox>
             {#if isOpen}
                 <Inner />
             {/if}
             <button
-                id="btn5"
+                id="btn35"
                 bind:hasFocus
                 on:clicked={onClick}
                 label="Toggle {hasFocus ? 'World' : ''}"
@@ -44,8 +45,21 @@
             >
                 <controller:motion on:motion={(event) => {}} />
             </button>
+            <button
+                id="btn5"
+                on:clicked={onClick2}
+                label="Toggle 2"
+                hAlign="end"
+                canFocus={true}
+                sensitive={true}
+                focusable={true}
+            >
+                <controller:motion on:motion={(event) => {}} />
+            </button>
         </hBox>
-        <ListView />
+        {#if isOpen2}
+            <ListView />
+        {/if}
     </vBox>
     <controller:keyboard
         on:key-pressed={(event) =>

@@ -10,9 +10,7 @@
     const dispatch = createEventDispatcher();
 </script>
 
-{#if data}
-    <button label={data.text} on:clicked={onClick} hExpand={true} />
-{/if}
+<button label={data?.text || "NONE"} on:clicked={onClick} hExpand={true} />
 
 <style>
     .btn {

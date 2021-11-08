@@ -41,18 +41,18 @@ export function LayoutWidget<T = any>(
         },
 
         set tail(value: INode | null) {
-            log(`=> tail:`, str(value));
+            //$log(`=> tail:`, str(value));
             state.tail = value;
         },
 
         onUnmount() {
-            log(`=> onUnmount`);
+            //$log(`=> onUnmount`);
             unmountNode(state.tail);
             state.tail = null;
         },
 
         insertBefore(node: INode, anchor?: INode) {
-            log(`=> insert`, str(node), `before`, str(anchor));
+            //$log(`=> insert`, str(node), `before`, str(anchor));
             insertChildBefore(self, state, node, anchor);
 
             if (isWidget(node)) {
@@ -79,7 +79,7 @@ export function LayoutWidget<T = any>(
         },
 
         appendChild(node: INode) {
-            log(`=> append`, str(node));
+            //$log(`=> append`, str(node));
             appendChild(self, state, node);
 
             if (isWidget(node)) {
@@ -97,7 +97,7 @@ export function LayoutWidget<T = any>(
         },
 
         removeChild(node: INode) {
-            log(`=> remove`, str(node));
+            //$log(`=> remove`, str(node));
             removeChild(self, state, node);
 
             if (isWidget(node)) {

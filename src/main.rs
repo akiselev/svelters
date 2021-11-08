@@ -1,10 +1,17 @@
 use std::fs::read_to_string;
 
+use gio::prelude::ApplicationExt;
+use gtk4::Application;
 use hotwatch::{Event, Hotwatch};
 use rquickjs::{Ctx, Value};
 
 use svelters::Svelters;
 use svelters_zig::{initialize_gtk, spawn_local, start, GtkExecutor};
+
+enum SvEvent {
+    Updated(Event),
+    Shutdown,
+}
 
 #[tracing::instrument]
 fn main() {
@@ -30,37 +37,59 @@ fn main() {
             tracing::error!("ERROR: {}", err)
             // std::process::exit(1);
         };
+        let (tx, rx) = flume::bounded::<SvEvent>(10);
+        let tx2 = tx.clone();
+        app.connect_shutdown(move |app| {
+            app.hold();
+            tx2.send(SvEvent::Shutdown).unwrap();
+        });
         sv.with_ctx(|ctx| {
             let rt = ctx.runtime();
             while rt.execute_pending_job().unwrap() {}
         });
-        spawn_local(async move { run(sv).await });
+        let app = app.clone();
+        spawn_local(async move { run(app, sv, tx, rx).await });
     });
 
     tracing::info!("Finished...");
 }
 
-async fn run(sv: Svelters) {
+async fn run(
+    app: Application,
+    sv: Svelters,
+    tx: flume::Sender<SvEvent>,
+    rx: flume::Receiver<SvEvent>,
+) {
     let path = "./dist/index.js";
-    let (tx, rx) = flume::bounded::<Event>(10);
 
     let mut hotwatch = Hotwatch::new().expect("hotwatch failed to initialize!");
     hotwatch
         .watch(path, move |event: Event| {
-            if let Err(error) = tx.send(event) {
+            if let Err(error) = tx.send(SvEvent::Updated(event)) {
                 tracing::error!("Failed sending file update event to main thread: {}", error);
             }
         })
         .expect("failed to watch file!");
 
     while let Ok(event) = rx.recv_async().await {
-        if let Event::Write(update_path) = event {
-            tracing::info!("File {:?} updated", update_path);
-            if let Err(error) = reload(&sv) {
-                tracing::error!("Reload error: {}", error);
-            };
+        match event {
+            SvEvent::Updated(event) => {
+                if let Event::Write(update_path) = event {
+                    tracing::info!("File {:?} updated", update_path);
+                    if let Err(error) = reload(&sv) {
+                        tracing::error!("Reload error: {}", error);
+                    };
+                }
+            }
+            SvEvent::Shutdown => {
+                sv.with_js(|ctx| {
+                    ctx.eval::<(), _>("document.cleanup()").unwrap();
+                });
+                break;
+            }
         }
     }
+    app.release();
     tracing::info!("Shutting down...");
 }
 
@@ -84,7 +113,11 @@ fn reload<'js>(sv: &Svelters) -> rquickjs::Result<()> {
         global.set("module", module.clone()).unwrap();
         global.set("start", start_fn.clone()).unwrap();
         rquickjs::Result::Ok(())
-    })
+    })?;
+    sv.with_ctx(|ctx| {
+        ctx.runtime().run_gc();
+    });
+    Ok(())
 }
 
 fn initialize<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {

@@ -53,7 +53,7 @@ export function Widget<T>(
         },
 
         set mounted(value: boolean) {
-            log(`${value ? "" : "un"}mounted`);
+            //$log(`${value ? "" : "un"}mounted`);
             _.mounted = value;
         },
 
@@ -62,7 +62,7 @@ export function Widget<T>(
         },
 
         set parentNode(value: INode | null) {
-            log(`=> parentNode:`, str(value));
+            //$log(`=> parentNode:`, str(value));
             _.parentNode = value;
         },
 
@@ -71,7 +71,7 @@ export function Widget<T>(
         },
 
         set nextSibling(value: INode | null) {
-            log(`=> nextSibling:`, str(value));
+            //$log(`=> nextSibling:`, str(value));
             _.nextSibling = value;
         },
 
@@ -80,12 +80,12 @@ export function Widget<T>(
         },
 
         set prevSibling(value: INode | null) {
-            log(`=> prevSibling:`, str(value));
+            //$log(`=> prevSibling:`, str(value));
             _.prevSibling = value;
         },
 
         onUnmount() {
-            log(`=> onUnmount`);
+            //$log(`=> onUnmount`);
             unmountNode(state.tail);
             state.tail = null;
         },
@@ -93,7 +93,7 @@ export function Widget<T>(
         toString: createToString(_),
 
         setAttribute(name: string, value: any) {
-            log(`=> ${name} =`, str(value));
+            //$log(`=> ${name} =`, str(value));
             if (name === "class") {
                 console.log("setting classes: ", value);
                 _.$.setAttribute("cssClasses", value.split(" "));
@@ -111,22 +111,22 @@ export function Widget<T>(
         },
 
         removeAttribute(name: string) {
-            log(`=> delete [${name}]`);
+            //$log(`=> delete [${name}]`);
             _.$.removeAttribute(name);
         },
 
         addEventListener(name: string, callback: (event: any) => void) {
-            log(`=> connect [${name}]`);
+            //$log(`=> connect [${name}]`);
             _.$.addEventListener(name, callback);
         },
 
         removeEventListener(name: string, callback: (event: any) => void) {
-            log(`=> disconnect [${name}]`);
+            //$log(`=> disconnect [${name}]`);
             _.$.removeEventListener(name, callback);
         },
 
         insertBefore(node: INode, anchor?: INode) {
-            log(`=> insert`, str(node), `before`, str(anchor));
+            //$log(`=> insert`, str(node), `before`, str(anchor));
             insertChildBefore(self, state, node, anchor);
 
             if (isChild(node)) {
@@ -147,7 +147,7 @@ export function Widget<T>(
         },
 
         appendChild(node: INode) {
-            log(`=> append`, str(node));
+            //$log(`=> append`, str(node));
             appendChild(self, state, node);
 
             if (isChild(node)) {
@@ -168,7 +168,7 @@ export function Widget<T>(
         },
 
         removeChild(node: INode) {
-            log(`=> remove`, str(node));
+            //$log(`=> remove`, str(node));
             removeChild(self, state, node);
 
             if (isChild(node)) {
@@ -195,11 +195,11 @@ export function Widget<T>(
 
         classList: {
             add(name: string): void {
-                log(`=> addClass [${name}]`);
+                //$log(`=> addClass [${name}]`);
                 _.$.addClass(name);
             },
             remove(name: string): void {
-                log(`=> removeClass [${name}]`);
+                //$log(`=> removeClass [${name}]`);
                 _.$.removeClass(name);
             },
         },
