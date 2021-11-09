@@ -13,11 +13,15 @@
 #![recursion_limit = "1024"]
 #![deny(clippy::all)]
 use std::{
-    ffi::CString,
+    cell::UnsafeCell,
+    error::Error,
+    ffi::{c_void, CString},
     os::raw::c_char,
     path::{Path, PathBuf},
     time::Duration,
 };
+
+use gobject_sys::GObject;
 
 pub mod logging;
 pub mod prelude {
@@ -25,9 +29,11 @@ pub mod prelude {
     pub use crate::svelters::Svelters;
 }
 
+pub use handle::SvHandle;
 pub use svbuilder::SveltersBuilder;
 pub use svelters::Svelters;
 
+pub(crate) mod handle;
 pub(crate) mod svbuilder;
 pub(crate) mod svelters;
 
@@ -43,4 +49,49 @@ pub(crate) mod js {
         Func, Function, IntoAtom, IntoJs, ModuleLoader, NativeLoader, Object, Persistent,
         Result as JsResult, Runtime, ScriptLoader, Value,
     };
+}
+
+pub enum SvEvent {
+    Gc,
+    Shutdown,
+    Updated(hotwatch::Event),
+    ScheduleCallback(Box<dyn FnOnce(&Svelters) -> rquickjs::Result<()>>),
+}
+
+#[no_mangle]
+pub extern "C" fn svelters_shutdown() {
+    sv().shutdown().check()
+}
+
+#[no_mangle]
+pub extern "C" fn svelters_gc() {
+    sv().gc().check()
+}
+
+#[no_mangle]
+pub extern "C" fn svelters_schedule_callback(
+    func: unsafe extern "C" fn(*mut c_void),
+    data: *mut c_void,
+) {
+    sv().schedule(move |_| unsafe {
+        func(data);
+        Ok(())
+    })
+    .check();
+}
+
+fn sv() -> SvHandle {
+    Svelters::handle()
+}
+
+trait CheckErr {
+    fn check(self);
+}
+
+impl<T, E: Error> CheckErr for Result<T, E> {
+    fn check(self) {
+        if let Err(err) = self {
+            tracing::error!("{}", err);
+        }
+    }
 }

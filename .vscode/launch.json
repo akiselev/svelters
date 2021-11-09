@@ -40,6 +40,34 @@
             ],
         },
         {
+            "name": "rr",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/target/debug/svelters",
+            "args": [],
+            "miDebuggerServerAddress": "localhost:50505",
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/",
+            "environment": [],
+            "externalConsole": true,
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Setup to resolve symbols",
+                        "text": "set sysroot /",
+                        "ignoreFailures": false
+                    }
+                ]
+            },
+            "osx": {
+                "MIMode": "gdb"
+            },
+            "windows": {
+                "MIMode": "gdb"
+            }
+        },
+        {
             "name": "Launch QuickJS",
             "type": "quickjs",
             "request": "launch",

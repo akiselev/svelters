@@ -22,13 +22,14 @@ tracing = "0.1.26"
 tracing-bunyan-formatter = "0.2.4"
 tracing-log = "0.1.2"
 tracing-subscriber = "0.2.18"
+gobject-sys = "0.14.0"
 lazy_static = "1.4.0"
 rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "full",
     "backtrace",
     "tokio",
     # "frunk",
-    # "dump-gc",
+    "dump-gc",
     # "dump-gc-free",
     # "dump-free",
     "dump-leaks",
