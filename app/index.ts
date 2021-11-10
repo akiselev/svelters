@@ -3,10 +3,6 @@
 import "./dom/document.ts";
 import App from "./App.svelte";
 
-const shutdown = () => {
-    document?.cleanup();
-};
-
 const start = (reloaded: boolean) => {
     let state = null;
     if (reloaded) {
@@ -23,8 +19,9 @@ const start = (reloaded: boolean) => {
         document.app.$inject_state(state);
     }
     document.cleanup = () => {
-        application.removeEventListener("shutdown", shutdown);
+        console.log("Cleaning up......");
         document?.app?.$destroy?.();
+        document.app = null;
     };
 };
 

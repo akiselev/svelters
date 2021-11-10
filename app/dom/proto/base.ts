@@ -7,12 +7,21 @@ import {
     removeChild,
     isChild,
     unmountNode,
-} from "../utils";
+    isWidget,
+    getNextWidget,
+} from "./utils";
 
 /// <reference path="../../../node_modules/typescript/lib/lib.es5.d.ts" />
 
+type Hooks = {
+    [name: string]: (self: any, child: any, remove?: boolean) => void;
+};
+
 export const initBaseNode = (name: string, CLS: any) => {
     const log = createLogger(name);
+    Object.defineProperty(CLS.prototype, "svTagName", {
+        value: name,
+    });
     Object.defineProperty(CLS.prototype, "setAttribute", {
         value: function (attr: string, value: any) {
             if (attr === "class") {
@@ -40,9 +49,6 @@ export const initBaseNode = (name: string, CLS: any) => {
     Object.defineProperty(CLS.prototype, "toString", {
         value: createToString(name),
     });
-    Object.defineProperty(CLS.prototype, "log", {
-        value: log,
-    });
     Object.defineProperty(CLS.prototype, "classList", {
         get() {
             return {
@@ -58,12 +64,10 @@ export const initBaseNode = (name: string, CLS: any) => {
         },
     });
 
-    Object.defineProperty(CLS.prototype, "$", {
-        get() {
-            return this;
-        },
+    Object.defineProperty(CLS.prototype, "svLog", {
+        value: log,
     });
-    Object.defineProperty(CLS.prototype, "name", {
+    Object.defineProperty(CLS.prototype, "svName", {
         get() {
             return this.svExtra.name;
         },
@@ -73,7 +77,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.name = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "mounted", {
+    Object.defineProperty(CLS.prototype, "svMounted", {
         get() {
             return this.svExtra.mounted;
         },
@@ -93,7 +97,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.parentNode = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "nextSibling", {
+    Object.defineProperty(CLS.prototype, "svNextSibling", {
         get() {
             return this.svExtra.nextSibling;
         },
@@ -103,7 +107,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.nextSibling = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "prevSibling", {
+    Object.defineProperty(CLS.prototype, "svPrevSibling", {
         get() {
             return this.svExtra.prevSibling;
         },
@@ -115,28 +119,69 @@ export const initBaseNode = (name: string, CLS: any) => {
     });
 };
 
-export const initSingleton = (CLS: any) => {
+export const initSingleton = (CLS: any, hooks: Hooks = {}) => {
     Object.defineProperty(CLS.prototype, "insertBefore", {
         value: function (node: any, anchor: any) {
-            this.child = node;
-            this.svChild = node;
+            if (isChild(node)) {
+                const handler = hooks[node.svName];
+                if (handler) {
+                    handler(this, node);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            } else {
+                this.child?.onUnmount?.();
+                this.child = node;
+                this.svChild = node;
+            }
         },
     });
     Object.defineProperty(CLS.prototype, "appendChild", {
         value: function (node: any) {
-            this.child = node;
-            this.svChild = node;
+            if (isChild(node)) {
+                const handler = hooks[node.svName];
+                if (handler) {
+                    handler(this, node);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            } else {
+                this.child?.onUnmount?.();
+                this.child = node;
+                this.svChild = node;
+            }
         },
     });
     Object.defineProperty(CLS.prototype, "removeChild", {
         value: function (node: any) {
-            if (this.svChild === node) {
+            if (isChild(node)) {
+                const handler = hooks[node.svName];
+                if (handler) {
+                    handler(this, node, true);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            } else if (this.svChild === node) {
+                this.child?.onUnmount?.();
                 this.child = null;
                 this.svChild = null;
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "child", {
+    Object.defineProperty(CLS.prototype, "onUnmount", {
+        value: function (node: any) {
+            this.child?.onUnmount?.();
+            this.child = null;
+            this.svChild = null;
+        },
+    });
+    Object.defineProperty(CLS.prototype, "svChild", {
         get() {
             return this.svExtra.child;
         },
@@ -144,6 +189,178 @@ export const initSingleton = (CLS: any) => {
         set(value: any) {
             this.svLog(`=> prevSibling:`, str(value));
             this.svExtra.child = value;
+        },
+    });
+};
+
+export const initWidget = (CLS: any, hooks: Hooks) => {
+    Object.defineProperty(CLS.prototype, "insertBefore", {
+        value: function (node: any, anchor: any) {
+            insertChildBefore(this, node, anchor);
+
+            if (isChild(node)) {
+                const handler = hooks[node.svName];
+                if (handler) {
+                    handler(this, node);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            }
+        },
+    });
+    Object.defineProperty(CLS.prototype, "appendChild", {
+        value: function (node: any) {
+            appendChild(this, node);
+
+            if (isChild(node)) {
+                const handler = hooks[node.svName];
+                if (handler) {
+                    handler(this, node);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            }
+        },
+    });
+    Object.defineProperty(CLS.prototype, "removeChild", {
+        value: function (node: any) {
+            removeChild(this, node);
+
+            if (isChild(node)) {
+                const handler = hooks[node.svName];
+                if (handler) {
+                    handler(this, node, true);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            }
+            node?.onUnmount?.();
+        },
+    });
+    Object.defineProperty(CLS.prototype, "onUnmount", {
+        value: function (node: any) {
+            unmountNode(this.svTail);
+        },
+    });
+    Object.defineProperty(CLS.prototype, "svChild", {
+        get() {
+            return this.svExtra.child;
+        },
+
+        set(value: any) {
+            this.svLog(`=> prevSibling:`, str(value));
+            this.svExtra.child = value;
+        },
+    });
+    Object.defineProperty(CLS.prototype, "svTail", {
+        get() {
+            return this.svExtra.tail;
+        },
+
+        set(value: any) {
+            this.svLog(`=> prevSibling:`, str(value));
+            this.svExtra.tail = value;
+        },
+    });
+};
+
+export interface ILayout {
+    onInsertWidgetAfter(self: any, child: any, anchor?: any): void;
+    onAppendWidget(self: any, child: any): void;
+    onRemoveWidget(self: any, child: any): void;
+    children?: {
+        [name: string]: (self: any, child: any, remove?: boolean) => void;
+    };
+}
+
+export const initLayout = (CLS: any, hooks: ILayout) => {
+    Object.defineProperty(CLS.prototype, "insertBefore", {
+        value: function (node: any, anchor: any) {
+            insertChildBefore(this, node, anchor);
+
+            if (isWidget(node)) {
+                let target = getNextWidget(node);
+                if (isWidget(target)) {
+                    hooks.onInsertWidgetAfter(this, node, target.prevSibling);
+                } else {
+                    hooks.onAppendWidget(this, node);
+                }
+            } else if (isChild(node)) {
+                const handler = hooks.children?.[node.svName];
+                if (handler) {
+                    handler(this, node);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            }
+        },
+    });
+    Object.defineProperty(CLS.prototype, "appendChild", {
+        value: function (node: any) {
+            appendChild(this, node);
+            if (isWidget(node)) {
+                hooks.onAppendWidget(this, node);
+            } else if (isChild(node)) {
+                const handler = hooks.children?.[node.svName];
+                if (handler) {
+                    handler(this, node);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            }
+        },
+    });
+    Object.defineProperty(CLS.prototype, "removeChild", {
+        value: function (node: any) {
+            removeChild(this, node);
+            if (isWidget(node)) {
+                hooks.onRemoveWidget(this, node);
+            } else if (isChild(node)) {
+                const handler = hooks.children?.[node.svName];
+                if (handler) {
+                    handler(this, node, true);
+                } else {
+                    throw new Error(
+                        `Widget ${this.svTagName} does not support "${node.svName}" children`,
+                    );
+                }
+            }
+            node?.onUnmount?.();
+        },
+    });
+    Object.defineProperty(CLS.prototype, "onUnmount", {
+        value: function (node: any) {
+            unmountNode(this.svTail);
+        },
+    });
+    Object.defineProperty(CLS.prototype, "svChild", {
+        get() {
+            return this.svExtra.child;
+        },
+
+        set(value: any) {
+            this.svLog(`=> prevSibling:`, str(value));
+            this.svExtra.child = value;
+        },
+    });
+    Object.defineProperty(CLS.prototype, "svTail", {
+        get() {
+            return this.svExtra.tail;
+        },
+
+        set(value: any) {
+            this.svLog(`=> prevSibling:`, str(value));
+            this.svExtra.tail = value;
         },
     });
 };

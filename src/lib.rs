@@ -55,7 +55,7 @@ pub enum SvEvent {
     Gc,
     Shutdown,
     Updated(hotwatch::Event),
-    ScheduleCallback(Box<dyn FnOnce(&Svelters) -> rquickjs::Result<()>>),
+    ScheduleCallback(Box<dyn Send + FnOnce(&Svelters) -> rquickjs::Result<()>>),
 }
 
 #[no_mangle]
@@ -73,11 +73,7 @@ pub extern "C" fn svelters_schedule_callback(
     func: unsafe extern "C" fn(*mut c_void),
     data: *mut c_void,
 ) {
-    sv().schedule(move |_| unsafe {
-        func(data);
-        Ok(())
-    })
-    .check();
+    sv().schedule_ffi_callback(func, data).check();
 }
 
 fn sv() -> SvHandle {

@@ -13,7 +13,7 @@ import * as nodes from "./nodes";
 
 declare global {
     var document: {
-        createElement(tagName: string): nodes.Node;
+        createElement(tagName: string): nodes.INode;
         createElementNS(namespace: string, tagName: string): any;
         createTextNode(data: string): nodes.Text;
         createComment(data: string): nodes.Comment;
@@ -35,10 +35,14 @@ declare global {
     class GtkWidget {
         isGObject?: boolean;
         isGtkWidget?: boolean;
+        extra: { [name: string]: any };
+        cast(...args: any): any;
         addClass(className: string): void;
         removeClass(className: string): void;
         setAttribute(name: string, value: any): void;
         getAttribute(name: string): any;
+        addController(controller: any): void;
+        removeController(controller: any): void;
         removeAttribute(name: string): void;
         addEventListener(type: string, listener: (event: any) => void): void;
         removeEventListener(type: string, listener: (event: any) => void): void;

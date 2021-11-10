@@ -37,7 +37,7 @@ impl SvHandle {
 
     pub(crate) fn schedule<F>(&self, func: F) -> Result<()>
     where
-        F: 'static + FnOnce(&Svelters) -> rquickjs::Result<()>,
+        F: 'static + Send + FnOnce(&Svelters) -> rquickjs::Result<()>,
     {
         self.tx.send(ScheduleCallback(Box::new(func)))
     }
@@ -47,8 +47,9 @@ impl SvHandle {
         func: unsafe extern "C" fn(*mut c_void),
         data: *mut c_void,
     ) -> Result<()> {
+        let func = FFIFunc { func, data };
         self.schedule(move |_| unsafe {
-            func(data);
+            (func.func)(func.data);
             Ok(())
         })
     }
@@ -60,3 +61,10 @@ impl SvHandle {
         })
     }
 }
+
+struct FFIFunc {
+    func: unsafe extern "C" fn(*mut c_void),
+    data: *mut c_void,
+}
+
+unsafe impl Send for FFIFunc {}

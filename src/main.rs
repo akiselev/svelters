@@ -51,9 +51,10 @@ fn run(app: Application, sv: Svelters) {
     let path = "./dist/index.js";
 
     let mut hotwatch = Hotwatch::new().expect("hotwatch failed to initialize!");
+    let handle = Svelters::handle();
     hotwatch
         .watch(path, move |event: Event| {
-            if let Err(error) = Svelters::handle().updated(event) {
+            if let Err(error) = handle.updated(event) {
                 tracing::error!("Failed sending file update event to main thread: {}", error);
             }
         })

@@ -1,12 +1,10 @@
 /// <reference path="./domtypes.d.ts" />
 
-import { isWidget, unmountNode } from "./utils";
-
 export interface INode {
-    mounted: boolean;
+    svMounted: boolean;
     parentNode: INode | null;
-    prevSibling: INode | null;
-    nextSibling: INode | null;
+    svPrevSibling: INode | null;
+    svNextSibling: INode | null;
 
     getAttribute(name: string): any;
     removeAttribute(name: string): void;
@@ -21,8 +19,8 @@ export interface IWidget extends INode {
     readonly tagName: string;
     get isGObject(): boolean;
     get isGtkWidget(): boolean;
-
-    get $(): any;
+    get extra(): { [name: string]: any };
+    svName: string;
 
     appendChild(node: INode): void;
     removeChild(node: INode): void;
@@ -35,53 +33,51 @@ export interface IChild extends IWidget {
 }
 
 export class Node implements INode {
-    private __attr__: { [name: string]: any };
-    private __listeners__: { [name: string]: any[] };
-    protected __parent__: INode | null;
-    protected __prev__: INode | null;
-    protected __next__: INode | null;
-    protected __mounted__: boolean;
+    extra: {
+        [name: string]: any;
+    };
 
     constructor() {
-        this.__parent__ = null;
-        this.__prev__ = null;
-        this.__next__ = null;
-        this.__attr__ = {};
-        this.__listeners__ = {};
-
-        this.__mounted__ = false;
+        this.extra = {
+            parent: null,
+            prev: null,
+            next: null,
+            attr: {},
+            listeners: {},
+            svMounted: false,
+        };
     }
 
-    get mounted() {
-        return this.__mounted__;
+    get svMounted() {
+        return this.extra.svMounted;
     }
 
-    set mounted(value: boolean) {
-        this.__mounted__ = value;
+    set svMounted(value: boolean) {
+        this.extra.svMounted = value;
     }
 
     get parentNode() {
-        return this.__parent__;
+        return this.extra.parent;
     }
 
     set parentNode(value: INode | null) {
-        this.__parent__ = value;
+        this.extra.parent = value;
     }
 
-    get nextSibling() {
-        return this.__next__;
+    get svNextSibling() {
+        return this.extra.next;
     }
 
-    set nextSibling(value: INode | null) {
-        this.__next__ = value;
+    set svNextSibling(value: INode | null) {
+        this.extra.next = value;
     }
 
-    get prevSibling() {
-        return this.__prev__;
+    get svPrevSibling() {
+        return this.extra.prev;
     }
 
-    set prevSibling(value: INode | null) {
-        this.__prev__ = value;
+    set svPrevSibling(value: INode | null) {
+        this.extra.prev = value;
     }
 
     get isGtkWidget() {
@@ -97,38 +93,38 @@ export class Node implements INode {
     };
 
     setAttribute = (name: string, value: any) => {
-        this.__attr__[name] = value;
+        this.extra.attr[name] = value;
     };
 
     getAttribute = (name: string) => {
-        return this.__attr__[name];
+        return this.extra.attr[name];
     };
 
     removeAttribute = (name: string) => {
-        delete this.__attr__[name];
+        delete this.extra.attr[name];
     };
 
     addEventListener = (type: string, listener: (event: any) => void): void => {
-        if (typeof this.__listeners__[type] == "undefined") {
-            this.__listeners__[type] = new Array();
+        if (typeof this.extra.listeners[type] == "undefined") {
+            this.extra.listeners[type] = new Array();
         }
-        this.__listeners__[type].push(listener);
+        this.extra.listeners[type].push(listener);
     };
 
     removeEventListener = (
         type: string,
         listener: (event: any) => void,
     ): void => {
-        const list = this.__listeners__[type];
+        const list = this.extra.listeners[type];
         if (typeof list != "undefined") {
-            this.__listeners__[type] = list.filter(
+            this.extra.listeners[type] = list.filter(
                 (handler: any) => handler != listener,
             );
         }
     };
 
     dispatchEvent = (type: string, event: any) => {
-        const listeners = this.__listeners__[type];
+        const listeners = this.extra.listeners[type];
         if (Array.isArray(listeners)) {
             listeners.forEach((handler) => handler(event));
         }
@@ -136,15 +132,14 @@ export class Node implements INode {
 }
 
 export class Root extends Node {
-    __children__: INode[];
     constructor() {
         super();
-        this.__children__ = [];
+        this.extra.children = [] as INode[];
     }
 
     insertBefore = (node: INode, anchor?: INode): void => {
         if (anchor) {
-            const index = this.__children__.indexOf(anchor);
+            const index = this.extra.children.indexOf(anchor);
             if (index === -1) {
                 console.log(
                     ">>>>>>>>>++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>++++++++++++++++++",
@@ -152,74 +147,74 @@ export class Root extends Node {
                 throw new Error("Anchor is not in children");
                 // this.appendChild(node);
             } else {
-                node.prevSibling = anchor.prevSibling;
-                node.nextSibling = anchor;
-                anchor.prevSibling = node;
+                node.svPrevSibling = anchor.svPrevSibling;
+                node.svNextSibling = anchor;
+                anchor.svPrevSibling = node;
                 node.parentNode = this;
-                this.__children__.splice(index, 0, node);
+                this.extra.children.splice(index, 0, node);
             }
         } else {
-            if (this.__children__.length > 0) {
-                node.prevSibling =
-                    this.__children__[this.__children__.length - 1];
+            if (this.extra.children.length > 0) {
+                node.svPrevSibling =
+                    this.extra.children[this.extra.children.length - 1];
             }
             node.parentNode = this;
-            this.__children__.push(node);
+            this.extra.children.push(node);
         }
-        node.mounted = true;
+        node.svMounted = true;
     };
 
     appendChild = (node: INode): void => {
-        if (this.__children__.length > 0) {
-            node.prevSibling = this.__children__[this.__children__.length - 1];
+        if (this.extra.children.length > 0) {
+            node.svPrevSibling =
+                this.extra.children[this.extra.children.length - 1];
         }
         node.parentNode = this;
-        node.mounted = true;
-        this.__children__.push(node);
+        node.svMounted = true;
+        this.extra.children.push(node);
     };
 
     removeChild = (node: INode): void => {
-        const index = this.__children__.indexOf(node);
+        const index = this.extra.children.indexOf(node);
         if (index === -1) {
         } else {
-            const prevSibling = node.prevSibling;
-            const nextSibling = node.nextSibling;
-            if (prevSibling) {
-                prevSibling.nextSibling = nextSibling;
+            const prev = node.svPrevSibling;
+            const next = node.svNextSibling;
+            if (prev) {
+                prev.svNextSibling = next;
             }
-            if (nextSibling) {
-                nextSibling.prevSibling = prevSibling;
+            if (next) {
+                next.svPrevSibling = prev;
             }
-            node.nextSibling = null;
-            node.prevSibling = null;
+            node.svNextSibling = null;
+            node.svPrevSibling = null;
             node.parentNode = null;
-            this.__children__ = this.__children__.filter(
-                (target) => target !== node,
+            this.extra.children = this.extra.children.filter(
+                (target: INode) => target !== node,
             );
         }
-        node.mounted = false;
+        node.svMounted = false;
         node?.onUnmount?.();
     };
 }
 
 export class Style extends Node {
     id: string | null;
-    __text__: string | null;
     provider: any;
 
     constructor() {
         super();
         this.provider = new CssProvider();
         this.id = null;
-        this.__text__ = null;
+        this.extra.text = null;
     }
 
     get textContent() {
-        return this.__text__;
+        return this.extra.text;
     }
 
     set textContent(value: string | null) {
-        this.__text__ = value;
+        this.extra.text = value;
         this.provider.setCss(value || "");
     }
 }
@@ -235,10 +230,3 @@ export class Comment extends Node {
         super();
     }
 }
-
-export const Child = (name: string, widget: IWidget): IChild => {
-    return {
-        ...widget,
-        __name__: name,
-    };
-};

@@ -5,7 +5,6 @@
         onMount,
         onDestroy,
     } from "svelte";
-    import { ELEMENTS } from "./dom/widgets";
     import Item from "./Item.svelte";
 
     let model = new JsListModel((index?: number) => {
@@ -22,34 +21,37 @@
     type Event = { details: [SignalListItemFactory, ListItem] };
 
     const onSetup = ({ details: [factory, item] }: Event) => {
-        const box = ELEMENTS.hBox();
+        let box;
         if (!item.child) {
+            box = new HorizontalBox();
             item.child = box;
+            item.svExtra.box = box;
+        } else {
+            box = item.child;
         }
         const comp = new Item({
             target: box,
             props: { data: null },
         });
-        item.box = box;
-        item.comp = comp;
+        item.svExtra.comp = comp;
     };
 
     const onBind = ({ details: [factory, item] }: Event) => {
-        item.comp.$set({ data: item.item.value });
+        item.svExtra.comp.$set({ data: item.value });
     };
 
     const onUnbind = ({ details: [factory, item] }: Event) => {
-        item.comp.$set({ data: null });
-        // item.item.dispose();
+        item.svExtra.comp.$set({ data: null });
     };
 
     const onTeardown = ({ details: [factory, item] }: Event) => {
-        if (item.comp) {
-            item.comp.$destroy();
-            item.comp = null;
+        if (item.svExtra.comp) {
+            item.svExtra.comp.$destroy();
+            item.svExtra.comp = null;
         }
+        item.svExtra.box = null;
         item.child = null;
-        // item.dispose();
+        item.item = null;
     };
 
     const dispatch = createEventDispatcher();
@@ -67,14 +69,14 @@
         let selection = new NoSelection(model);
         let view = new ListView(selection, factory);
         view.vExpand = true;
-        listView.$.child = view;
+        listView.child = view;
         // selection.model = model;
         // listView.factory = factory;
         // listView.model = selection;
         // model.itemsChanged(0, 0, 100);
-        // selection.$.itemsChanged(0, 0, 100);
+        // selection.itemsChanged(0, 0, 100);
         return () => {
-            listView.$.child = null;
+            listView.child = null;
             factory.removeEventListener("bind", onBind);
             factory.removeEventListener("unbind", onUnbind);
             factory.removeEventListener("setup", onSetup);

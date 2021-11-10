@@ -184,7 +184,7 @@ impl Svelters {
             if ptr.is_some() {
                 panic!("Svelters has already been initialized");
             }
-            let (tx, rx) = flume::bounded(10);
+            let (tx, rx) = flume::unbounded();
             *ptr = Some(tx);
             rx
         });

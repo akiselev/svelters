@@ -1,9 +1,9 @@
 /// <reference path="./domtypes.d.ts" />
 import * as nodes from "./nodes";
 import { IWidget } from "./nodes";
-import { isStyle } from "./utils";
+import { isStyle } from "./proto/utils";
 
-import { ELEMENTS } from "./widgets";
+import { ELEMENTS } from "./proto";
 
 document.root = new nodes.Root();
 
@@ -14,7 +14,9 @@ document.createElement = (val: string): any => {
         const tagName = parts[1];
         const func = ELEMENTS[tagName];
         if (func) {
-            return nodes.Child(parts[0], func());
+            const el = func();
+            el.svName = parts[0];
+            return el;
         } else {
             throw new Error(`No tag name "${tagName}" defined`);
         }
@@ -38,10 +40,11 @@ document.createElement = (val: string): any => {
 
 document.createElementNS = (namespace: string, tagName: string): any => {
     const el = document.createElement(tagName) as unknown as IWidget;
-    if (namespace.startsWith("https://")) {
+    if ((namespace as any).startsWith("https://")) {
         return el;
     }
-    return nodes.Child(namespace, el);
+    el.svName = namespace;
+    return el;
 };
 
 document.getRootNode = () => {

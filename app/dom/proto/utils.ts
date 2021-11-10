@@ -1,112 +1,93 @@
-import {
-    Node,
-    INode,
-    Text,
-    Child,
-    Comment,
-    Style,
-    IWidget,
-    IChild,
-} from "./nodes";
-
-interface State {
-    tail: INode | null;
-}
+import { Node, INode, Text, Comment, Style, IWidget, IChild } from "../nodes";
 
 export function unmountNode(node: any) {
     if (!node) return;
-    const nextSibling = node.nextSibling;
-    node.nextSibling = null;
-    const prevSibling = node.prevSibling;
-    node.prevSibling = null;
+    const svNextSibling = node.svNextSibling;
+    node.svNextSibling = null;
+    const svPrevSibling = node.svPrevSibling;
+    node.svPrevSibling = null;
     node.parentNode = null;
-    node.mounted = false;
-    if (nextSibling) {
-        unmountNode(nextSibling);
+    node.svMounted = false;
+    if (svNextSibling) {
+        unmountNode(svNextSibling);
     }
-    if (prevSibling) {
-        unmountNode(prevSibling);
+    if (svPrevSibling) {
+        unmountNode(svPrevSibling);
     }
 }
 
-export function insertChildBefore(
-    self: any,
-    state: State,
-    node: INode,
-    anchor?: INode,
-) {
+export function insertChildBefore(self: any, node: INode, anchor?: INode) {
     node.parentNode = self;
     if (anchor) {
-        node.prevSibling = anchor.prevSibling;
-        node.nextSibling = anchor;
-        anchor.prevSibling = node;
+        node.svPrevSibling = anchor.svPrevSibling;
+        node.svNextSibling = anchor;
+        anchor.svPrevSibling = node;
     } else {
-        if (state.tail) {
-            node.prevSibling = state.tail;
-            state.tail.nextSibling = node;
+        if (self.svExtra.tail) {
+            node.svPrevSibling = self.svExtra.tail;
+            self.svExtra.tail.svNextSibling = node;
         }
-        state.tail = node;
+        self.svExtra.tail = node;
     }
-    node.mounted = true;
+    node.svMounted = true;
 }
 
-export function appendChild(self: any, state: State, node: INode) {
-    if (state.tail) {
-        node.prevSibling = state.tail;
-        state.tail.nextSibling = node;
+export function appendChild(self: any, node: INode) {
+    if (self.svExtra.tail) {
+        node.svPrevSibling = self.svExtra.tail;
+        self.svExtra.tail.svNextSibling = node;
     }
-    state.tail = node;
+    self.svExtra.tail = node;
     node.parentNode = self;
-    node.mounted = true;
+    node.svMounted = true;
 }
 
-export function removeChild(self: any, state: State, node: INode) {
-    const prevSibling = node.prevSibling;
-    const nextSibling = node.nextSibling;
-    if (prevSibling) {
-        prevSibling.nextSibling = nextSibling;
+export function removeChild(self: any, node: INode) {
+    const svPrevSibling = node.svPrevSibling;
+    const svNextSibling = node.svNextSibling;
+    if (svPrevSibling) {
+        svPrevSibling.svNextSibling = svNextSibling;
     }
-    if (nextSibling) {
-        nextSibling.prevSibling = prevSibling;
-    } else if (state.tail === node) {
-        state.tail = prevSibling;
+    if (svNextSibling) {
+        svNextSibling.svPrevSibling = svPrevSibling;
+    } else if (self.svExtra.tail === node) {
+        self.svExtra.tail = svPrevSibling;
     }
-    node.nextSibling = null;
-    node.prevSibling = null;
+    node.svNextSibling = null;
+    node.svPrevSibling = null;
     node.parentNode = null;
-    node.mounted = false;
+    node.svMounted = false;
+    node.onUnmount?.();
 }
 
-export const isClass = (cls: any): cls is IWidget => cls && !!cls.$;
 export const isWidget = (cls: any): cls is IWidget =>
-    cls && !!cls.isGtkWidget && !!cls.isGObject && !!cls.$;
+    cls && !!cls.isGtkWidget && !!cls.isGObject;
 export const isNode = (cls: any): cls is Node => cls && cls instanceof Node;
 export const isText = (cls: any): cls is Text => cls && cls instanceof Text;
 export const isChild = (cls: any): cls is IChild =>
-    (isWidget(cls) || isClass(cls)) &&
-    typeof (cls as any).__name__ === "string";
+    typeof (cls as any).svName === "string";
 export const isComment = (cls: any): cls is Comment =>
     cls && cls instanceof Comment;
 export const isStyle = (cls: any): cls is Style => cls && cls instanceof Style;
 
 export const getNextWidget = (node: INode): IWidget | null => {
-    let next = node.nextSibling;
+    let next = node.svNextSibling;
     while (next) {
-        if (isWidget(next) && next.mounted) {
+        if (isWidget(next) && next.svMounted) {
             break;
         }
-        next = next.nextSibling;
+        next = next.svNextSibling;
     }
     return isWidget(next) ? next : null;
 };
 
 export const getPrevWidget = (node: INode): INode | null => {
-    let prev = node.prevSibling;
+    let prev = node.svPrevSibling;
     while (prev) {
-        if (isWidget(prev) && prev.mounted) {
+        if (isWidget(prev) && prev.svMounted) {
             break;
         }
-        prev = prev.prevSibling;
+        prev = prev.svPrevSibling;
     }
     return isWidget(prev) ? prev : null;
 };
@@ -123,7 +104,7 @@ export const str = (x: any): string => {
     } else if (typeof x?.tagName === "string") {
         let res = `<${x.tagName}`;
         if (x?.$?.hasOwnProperty?.("id")) {
-            res += ` id="${x.$.id}" `;
+            res += ` id="${x.id}" `;
         }
         return `${res}>`;
     } else if (isText(x)) {
@@ -153,5 +134,5 @@ export const createToString = (x: any) => () => str(x);
 export const createLogger =
     (_: any) =>
     (...msg: any) => {
-        console.log(`${str(_)}`, ...msg);
+        console.log(`<${_}>`, ...msg);
     };

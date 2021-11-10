@@ -1,84 +1,5 @@
-import { Widget } from "./widget";
-import { Singleton } from "./singleton";
-import { LayoutWidget } from "./layout";
-import { IWidget } from "../nodes";
-import { initBaseNode, initSingleton } from "./base";
-
-const Layout = <T>(tagName: string, el: T): IWidget => {
-    return LayoutWidget(tagName, el as unknown as Box, {
-        onInsertWidgetAfter: ($, node, anchor) => {
-            $.insertChildAfter(node, anchor);
-        },
-        onAppendWidget: ($, node) => {
-            $.append(node);
-        },
-        onRemoveWidget: ($, node) => {
-            $.remove(node);
-        },
-    });
-};
-
-const Paned = <T extends Paned>(tagName: string, el: T): IWidget => {
-    const start = ($: any, node: any, remove: any) => {
-        $.startChild = remove ? null : node;
-    };
-    const end = ($: any, node: any, remove: any) => {
-        $.endChild = remove ? null : node;
-    };
-    return Widget(tagName, el, {
-        start,
-        end,
-        left: start,
-        right: end,
-        top: start,
-        bottom: end,
-    });
-};
-
-const appWindow = () => {
-    return Singleton("appWindow", new ApplicationWindow(), {
-        children: {
-            titlebar: ($, node, remove) => {
-                $.titlebar = remove ? null : node;
-            },
-            controller: ($, node, remove) => {
-                remove ? $.removeController(node.$) : $.addController(node.$);
-            },
-        },
-    });
-};
-
-const gtkWindow = () => {
-    return Singleton("gtkWindow", new Window(), {
-        children: {
-            titlebar: ($, node) => {
-                $.titlebar = node;
-            },
-            controller: ($, node, remove) => {
-                remove ? $.removeController(node.$) : $.addController(node.$);
-            },
-        },
-    });
-};
-
-const listView = () => {
-    return Widget("listView", new ListView(), {
-        model: (self, child, remove) => {
-            self.model = remove ? null : child.$;
-        },
-        factory: (self, child, remove) => {
-            self.factory = remove ? null : child.$;
-        },
-    });
-};
-
-const Selection = <T>(tagName: string, el: { model: any }): IWidget => {
-    return Widget(tagName, el, {
-        model: (self, child, remove) => {
-            self.model = remove ? null : child.$;
-        },
-    });
-};
+import { initBaseNode, initSingleton, initWidget } from "./base";
+import * as w from "./widgets";
 
 let initialized = false;
 function initializeClasses() {
@@ -106,8 +27,27 @@ function initializeClasses() {
     /// Widgets with only one child
     initSingleton(ScrolledWindow);
     initSingleton(Viewport);
-    initSingleton(ApplicationWindow);
-    initSingleton(Window);
+    w.initAppWindow();
+    w.initGtkWindow();
+    w.initListView();
+    w.initSelection(MultiSelection);
+    w.initSelection(SingleSelection);
+    w.initSelection(NoSelection);
+    w.initPaned(HorizontalPaned);
+    w.initPaned(VerticalPaned);
+    w.initBox(HorizontalBox);
+    w.initBox(VerticalBox);
+
+    initWidget(Button, {
+        controller: (self, node, remove) => {
+            remove ? self.removeController(node) : self.addController(node);
+        },
+    });
+    initWidget(Label, {
+        controller: (self, node, remove) => {
+            remove ? self.removeController(node) : self.addController(node);
+        },
+    });
 
     initialized = true;
 }

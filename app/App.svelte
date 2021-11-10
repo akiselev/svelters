@@ -5,7 +5,7 @@
     import Inner from "./Inner.svelte";
     import ListView from "./ListView.svelte";
     let isOpen = true;
-    let isOpen2 = true;
+    let isOpen2 = false;
     let window: any;
     let hasFocus: boolean;
     const onClick = () => {
@@ -20,10 +20,11 @@
     };
 
     onMount(() => {
-        window.$.show();
+        window.show();
     });
     onDestroy(() => {
-        window.$.destroy();
+        console.log("Destroying window....");
+        // window.destroy();
     });
 </script>
 
@@ -35,7 +36,6 @@
             {/if}
             <button
                 id="btn35"
-                bind:hasFocus
                 on:clicked={onClick}
                 label="Toggle {hasFocus ? 'World' : ''}"
                 hAlign="end"
