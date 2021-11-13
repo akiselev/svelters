@@ -1,6 +1,6 @@
 use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
 
-use rquickjs::ClassDef;
+use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
 
 use super::common::*;
 
@@ -53,51 +53,41 @@ impl ClassDef for Object {
     }
 }
 
-trait Property {
-    type Ref;
-
-    fn name(&self) -> &str;
-
-    fn spec(&self, obj: &Self::Ref) -> &ParamSpec;
-
-    // fn set(&self, obj: &Self::Ref) -> &ParamSpec;
-}
-
-pub struct GParam<T> {
-    param_name: Cow<'static, str>,
-    spec: UnsafeCell<Option<ParamSpec>>,
-    marker: PhantomData<T>,
-}
-
-impl<T> GParam<T> {
-    pub fn new(name: &'static str) -> Self {
-        Self {
-            param_name: name.into(),
-            spec: UnsafeCell::new(None),
-            marker: PhantomData,
-        }
-    }
-}
-
-impl<T> Property for GParam<T>
+impl<T> From<T> for Object
 where
-    T: ObjectExt,
+    T: IsA<GObject> + Cast,
 {
-    type Ref = T;
-
-    fn name(&self) -> &str {
-        self.param_name.as_ref()
+    fn from(val: T) -> Self {
+        Object::new(val)
     }
+}
 
-    fn spec(&self, obj: &T) -> &ParamSpec {
-        unsafe {
-            let spec: &mut Option<ParamSpec> = &mut *self.spec.get();
-            if let Some(spec) = spec {
-                &*spec
-            } else {
-                *spec = obj.find_property(self.param_name.as_ref());
-                &*spec.as_ref().expect("Param not found")
-            }
-        }
+impl<'js> IntoJs<'js> for Object {
+    fn into_js(self, ctx: Ctx<'js>) -> Result<Value<'js>> {
+        self.into_js_obj(ctx)
+    }
+}
+
+impl<'js> FromJs<'js> for &'js Object {
+    fn from_js(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self> {
+        Object::from_js_ref(ctx, value)
+    }
+}
+
+impl<'js> FromJs<'js> for &'js mut Object {
+    fn from_js(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self> {
+        Object::from_js_mut(ctx, value)
+    }
+}
+
+impl<'js> FromJs<'js> for Object {
+    fn from_js(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self> {
+        Object::from_js_obj(ctx, value)
+    }
+}
+
+impl AsObject for Object {
+    fn as_object(&self) -> &GObject {
+        &self.0
     }
 }

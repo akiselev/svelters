@@ -22,6 +22,7 @@ rquickjs = { version = "0.1.2", path = "../crates/rquickjs", features = [
 ] }
 anyhow = "1.0.40"
 glib = "0.14.8"
+itertools = "0.10.1"
 
 [dependencies.gtk4]
 version = "0.3.1"

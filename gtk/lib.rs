@@ -1,22 +1,50 @@
-use std::{any::Any, borrow::Cow, future::Future, marker::PhantomData, rc::Rc, time::Duration};
+#![feature(backtrace)]
+#![feature(decl_macro)]
 
-use gio::{prelude::ApplicationExt, ApplicationFlags};
-use glib::{
-    translate::{Stash, ToGlibPtr},
-    MainContext,
-};
-use gtk4::{ffi::GtkApplication, prelude::*, Application};
+use std::future::Future;
 
-use rquickjs::{
-    qjs::{JSContext, JSValue},
-    Context, Executor, ExecutorSpawner, ObjectDef, Runtime,
-};
+use gio::prelude::ApplicationExt;
+use glib::MainContext;
+use gtk4::{prelude::*, Application};
+
+use rquickjs::{ClassDef, Context, Ctx, Executor, ExecutorSpawner, IntoJs, ObjectDef};
 
 pub(crate) mod common;
 
+mod core;
 mod object;
+mod types;
+mod widget;
 
 pub use object::*;
+pub use widget::*;
+
+pub struct Types;
+
+impl ObjectDef for Types {
+    fn init<'js>(ctx: rquickjs::Ctx<'js>, object: &rquickjs::Object<'js>) -> rquickjs::Result<()> {
+        ctx.register_type::<Object>("Object")?;
+        ctx.register_type::<Widget>("Widget")?;
+        ctx.register_type::<types::application::Application>("Application")?;
+        ctx.register_type::<types::windows::ApplicationWindow>("ApplicationWindow")?;
+        // ctx.register_type::<types::windows::Window>("Window")?;
+        ctx.register_type::<types::widgets::Button>("Button")?;
+        ctx.register_type::<types::layout::Box>("Box")?;
+        Ok(())
+    }
+}
+
+pub trait RegisterType {
+    fn register_type<T: ClassDef>(&self, name: &str) -> rquickjs::Result<()>;
+}
+
+impl<'js> RegisterType for Ctx<'js> {
+    fn register_type<T: ClassDef>(&self, name: &str) -> rquickjs::Result<()> {
+        rquickjs::Class::<T>::register(*self)?;
+        let proto = rquickjs::Class::<T>::prototype(*self)?;
+        self.globals().set(name, proto)
+    }
+}
 
 pub struct GtkExecutor;
 
@@ -45,7 +73,11 @@ pub fn initialize_gtk(ctx: &Context, name: &str) -> rquickjs::Result<Application
         // .flags(ApplicationFlags::HANDLES_OPEN | ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
     ctx.with(|ctx| {
-        ctx.globals().init_def::<Types>()?;
+        let globals = ctx.globals();
+        globals.init_def::<Types>()?;
+        globals.set("document", rquickjs::Object::new(ctx)?)?;
+        let app = types::application::Application::new(app.clone());
+        globals.set("application", app.into_js(ctx)?)?;
 
         rquickjs::Result::<_>::Ok(())
     })?;
@@ -59,12 +91,4 @@ pub fn start<FUNC: 'static + Fn(&Application)>(app: Application, func: FUNC) {
     });
 
     app.run();
-}
-
-pub struct Types;
-
-impl ObjectDef for Types {
-    fn init<'js>(ctx: rquickjs::Ctx<'js>, object: &rquickjs::Object<'js>) -> rquickjs::Result<()> {
-        todo!()
-    }
 }

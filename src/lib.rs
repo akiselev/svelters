@@ -58,28 +58,6 @@ pub enum SvEvent {
     ScheduleCallback(Box<dyn Send + FnOnce(&Svelters) -> rquickjs::Result<()>>),
 }
 
-#[no_mangle]
-pub extern "C" fn svelters_shutdown() {
-    sv().shutdown().check()
-}
-
-#[no_mangle]
-pub extern "C" fn svelters_gc() {
-    sv().gc().check()
-}
-
-#[no_mangle]
-pub extern "C" fn svelters_schedule_callback(
-    func: unsafe extern "C" fn(*mut c_void),
-    data: *mut c_void,
-) {
-    sv().schedule_ffi_callback(func, data).check();
-}
-
-fn sv() -> SvHandle {
-    Svelters::handle()
-}
-
 trait CheckErr {
     fn check(self);
 }
