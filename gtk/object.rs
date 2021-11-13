@@ -2,10 +2,52 @@ use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
 
 use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
 
-use super::common::*;
+use crate::common::*;
 
 #[derive(Clone)]
 pub struct Object(GObject);
+
+impl<'js, T> Interface<'js, T> for Object
+where
+    T: 'static + AsObject,
+    &'js T: FromJs<'js>,
+{
+    fn define(ty: &Type<'js, T>) -> Result<()> {
+        ty.custom_prop(
+            "asGObject",
+            rquickjs::Accessor::new_get(rquickjs::Method(as_object_getter::<'js, T>())),
+        )?;
+        Ok(())
+    }
+}
+
+fn as_object_getter<'js, T>() -> impl Fn(&T) -> Object
+where
+    T: 'static + AsObject,
+    &'js T: FromJs<'js>,
+{
+    return |this: &T| Object(this.as_object().clone());
+}
+
+impl rquickjs::ClassDef for Object {
+    const CLASS_NAME: &'static str = "Object";
+
+    unsafe fn class_id() -> &'static mut rquickjs::ClassId {
+        static mut CLASS_ID: rquickjs::ClassId = rquickjs::ClassId::new();
+        &mut CLASS_ID
+    }
+
+    const HAS_PROTO: bool = true;
+
+    fn init_proto<'js>(
+        ctx: rquickjs::Ctx<'js>,
+        proto: &rquickjs::Object<'js>,
+    ) -> rquickjs::Result<()> {
+        let ty = Type::<'js, Object>::new(ctx, proto.clone());
+        ty.implements::<Self>()?;
+        Ok(())
+    }
+}
 
 impl Object {
     pub fn new<T>(obj: T) -> Self
@@ -21,35 +63,6 @@ impl std::ops::Deref for Object {
 
     fn deref(&self) -> &Self::Target {
         &self.0
-    }
-}
-
-impl ClassDef for Object {
-    const CLASS_NAME: &'static str = "GObject";
-
-    unsafe fn class_id() -> &'static mut rquickjs::ClassId {
-        static mut CLASS_ID: rquickjs::ClassId = rquickjs::ClassId::new();
-        &mut CLASS_ID
-    }
-
-    const HAS_PROTO: bool = true;
-
-    const HAS_STATIC: bool = false;
-
-    const HAS_REFS: bool = false;
-
-    fn init_proto<'js>(
-        _ctx: rquickjs::Ctx<'js>,
-        _proto: &rquickjs::Object<'js>,
-    ) -> rquickjs::Result<()> {
-        Ok(())
-    }
-
-    fn init_static<'js>(
-        _ctx: rquickjs::Ctx<'js>,
-        _static: &rquickjs::Object<'js>,
-    ) -> rquickjs::Result<()> {
-        Ok(())
     }
 }
 

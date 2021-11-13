@@ -17,6 +17,30 @@ impl<T, N> Enum<T, N> {
     }
 }
 
+impl<T, N> ToValue for Enum<T, N>
+where
+    T: ToValue,
+{
+    fn to_value(&self) -> GValue {
+        self.0.to_value()
+    }
+
+    fn value_type(&self) -> Type {
+        self.0.value_type()
+    }
+}
+
+unsafe impl<'a, T, N> FromValue<'a> for Enum<T, N>
+where
+    T: FromValue<'a>,
+{
+    type Checker = <T as FromValue<'a>>::Checker;
+
+    unsafe fn from_value(value: &'a GValue) -> Self {
+        Enum(T::from_value(value), PhantomData)
+    }
+}
+
 impl<T, N> From<T> for Enum<T, N> {
     fn from(val: T) -> Self {
         Enum(val, PhantomData)

@@ -27,7 +27,7 @@ impl<'js, CLS, T> AsProperty<'js, T> for Prop<CLS, T>
 where
     CLS: 'static + AsObject,
     T: 'static + IntoJs<'js> + FromJs<'js> + for<'a> FromValue<'a> + ToValue,
-    for<'a> &'a CLS: FromJs<'js>,
+    &'js CLS: FromJs<'js>,
 {
     /// Property configuration
     ///
@@ -65,9 +65,9 @@ where
 
 impl<'js, CLS, T> AsFunction<'js, CLS, T> for Getter<CLS, T>
 where
-    T: for<'a> FromValue<'a> + IntoJs<'js>,
-    CLS: AsObject,
-    for<'a> &'a CLS: FromJs<'js>,
+    T: 'static + for<'a> FromValue<'a> + IntoJs<'js>,
+    CLS: 'static + AsObject,
+    &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
         0..0
@@ -123,8 +123,8 @@ where
 impl<'js, CLS, T> AsFunction<'js, CLS, T> for Setter<CLS, T>
 where
     T: ToValue + FromJs<'js>,
-    CLS: AsObject,
-    for<'a> &'a CLS: FromJs<'js>,
+    CLS: 'static + AsObject,
+    &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
         0..0

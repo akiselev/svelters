@@ -1,3 +1,4 @@
+#![feature(associated_type_bounds)]
 #![feature(backtrace)]
 #![feature(decl_macro)]
 
@@ -19,17 +20,19 @@ mod widget;
 pub use object::*;
 pub use widget::*;
 
+use common::Gtk;
+
 pub struct Types;
 
 impl ObjectDef for Types {
     fn init<'js>(ctx: rquickjs::Ctx<'js>, object: &rquickjs::Object<'js>) -> rquickjs::Result<()> {
         ctx.register_type::<Object>("Object")?;
-        ctx.register_type::<Widget>("Widget")?;
-        ctx.register_type::<types::application::Application>("Application")?;
-        ctx.register_type::<types::windows::ApplicationWindow>("ApplicationWindow")?;
-        // ctx.register_type::<types::windows::Window>("Window")?;
-        ctx.register_type::<types::widgets::Button>("Button")?;
-        ctx.register_type::<types::layout::Box>("Box")?;
+        ctx.register_type::<Gtk<gtk4::Widget>>("Widget")?;
+        ctx.register_type::<Gtk<gtk4::Application>>("Application")?;
+        ctx.register_type::<Gtk<gtk4::ApplicationWindow>>("ApplicationWindow")?;
+        // ctx.register_type::<Gtk<gtk4::Window>>("Window")?;
+        ctx.register_type::<Gtk<gtk4::Button>>("Button")?;
+        ctx.register_type::<Gtk<gtk4::Box>>("Box")?;
         Ok(())
     }
 }
