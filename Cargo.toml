@@ -41,7 +41,7 @@ rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     # "dump-promise",
     # "dump-read-object",
 ] }
-svelters-zig = { version = "0.1.0", path = "./zig" }
+svelters-gtk = { version = "0.1.0", path = "./gtk" }
 node-resolve = "2.2.0"
 anyhow = "1.0.40"
 notify = "4.0.17"
@@ -49,9 +49,10 @@ tokio = { version = "1", features = ["full"] }
 clap = "3.0.0-beta.5"
 flume = "0.10.9"
 hotwatch = "0.4.6"
+glib = "0.14.8"
 
 [dependencies.gtk4]
-version = "0.3.0"
+version = "0.3.1"
 features = ["v4_2"]
 
 [profile.release]
@@ -64,6 +65,7 @@ strip = true
 [workspace]
 members = [
     "zig",
+    "gtk",
     "crates/macros",
     # "crates/compiler",
     "crates/rquickjs",

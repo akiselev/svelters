@@ -6,7 +6,7 @@ use hotwatch::{Event, Hotwatch};
 use rquickjs::{Ctx, Value};
 
 use svelters::Svelters;
-use svelters_zig::{initialize_gtk, spawn_local, start, GtkExecutor};
+use svelters_gtk::*;
 
 #[tracing::instrument]
 fn main() {

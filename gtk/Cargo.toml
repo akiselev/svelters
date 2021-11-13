@@ -1,0 +1,28 @@
+[package]
+authors = ["Alexander Kiselev <svelters@akiselev.com>"]
+edition = "2018"
+name = "svelters-gtk"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+path = "lib.rs"
+name = "svelters_gtk"
+
+[dependencies]
+gio = "0.14.8"
+tracing = "0.1.26"
+gobject-sys = "0.14.0"
+lazy_static = "1.4.0"
+rquickjs = { version = "0.1.2", path = "../crates/rquickjs", features = [
+    "full",
+    "backtrace",
+    "tokio",
+] }
+anyhow = "1.0.40"
+glib = "0.14.8"
+
+[dependencies.gtk4]
+version = "0.3.1"
+features = ["v4_2"]
