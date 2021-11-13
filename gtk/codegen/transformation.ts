@@ -3,165 +3,182 @@
  * For example a function names should be transformed to lowerCamelCase for node-gtk but should keep their original name for gjs
  */
 
-import { Transformations, Environment, ConstructName, TypeSuffix, CTypeMap, GType, GenerateConfig } from './types'
-import Path from 'path'
-import { Utils } from './utils'
-import { Logger } from './logger'
+import {
+    Transformations,
+    Environment,
+    ConstructName,
+    TypeSuffix,
+    CTypeMap,
+    GType,
+    GenerateConfig,
+} from "./types";
+import Path from "path";
+import { Utils } from "./utils";
+import { Logger } from "./logger";
 
-export const POD_TYPE_MAP_ARRAY = (environment: Environment): { guint8: string; gint8: string; gunichar: string } => {
+export const POD_TYPE_MAP_ARRAY = (
+    environment: Environment,
+): { guint8: string; gint8: string; gunichar: string } => {
     return {
-        guint8: environment === 'gjs' ? 'Uint8Array' : 'any', // TODO
+        guint8: environment === "gjs" ? "Uint8Array" : "any", // TODO
         // Int8Array would probably be more appropriate for gint8, but Uint8Array is better supported
-        gint8: environment === 'gjs' ? 'Uint8Array' : 'any', // TODO
-        gunichar: 'string',
-    }
-}
+        gint8: environment === "gjs" ? "Uint8Array" : "any", // TODO
+        gunichar: "string",
+    };
+};
 
 export const POD_TYPE_MAP = {
-    utf8: 'string',
-    none: 'void',
-    double: 'number',
-    guint32: 'number',
-    guint16: 'number',
-    gint16: 'number',
-    gunichar: 'number',
-    gint8: 'number',
-    gint32: 'number',
-    gushort: 'number',
-    gfloat: 'number',
-    gboolean: 'boolean',
-    gpointer: 'object',
-    gchar: 'number',
-    guint: 'number',
-    glong: 'number',
-    gulong: 'number',
-    gint: 'number',
-    guint8: 'number',
-    guint64: 'number',
-    gint64: 'number',
-    gdouble: 'number',
-    gssize: 'number',
-    gsize: 'number',
-    long: 'number',
-    object: 'any',
-    gshort: 'number',
-    filename: 'string',
-    va_list: 'any',
-}
+    utf8: "string",
+    none: "void",
+    double: "number",
+    guint32: "number",
+    guint16: "number",
+    gint16: "number",
+    gunichar: "number",
+    gint8: "number",
+    gint32: "number",
+    gushort: "number",
+    gfloat: "number",
+    gboolean: "boolean",
+    gpointer: "object",
+    gchar: "number",
+    guint: "number",
+    glong: "number",
+    gulong: "number",
+    gint: "number",
+    guint8: "number",
+    guint64: "number",
+    gint64: "number",
+    gdouble: "number",
+    gssize: "number",
+    gsize: "number",
+    long: "number",
+    object: "any",
+    gshort: "number",
+    filename: "string",
+    va_list: "any",
+};
 
-export const C_TYPE_MAP = (targetFullName?: string, suffix: TypeSuffix = ''): CTypeMap => {
+export const C_TYPE_MAP = (
+    targetFullName?: string,
+    suffix: TypeSuffix = "",
+): CTypeMap => {
     return {
-        'char*': 'string',
-        'gchar*': 'string',
-        'gchar**': 'any', // FIXME
-        GType: ((targetFullName === 'GObject-2.0' ? 'Type' : 'GObject.Type') + suffix) as GType,
-    }
-}
+        "char*": "string",
+        "gchar*": "string",
+        "gchar**": "any", // FIXME
+        GType: ((targetFullName === "GObject-2.0" ? "Type" : "GObject.Type") +
+            suffix) as GType,
+    };
+};
 
 interface FullTypeMap {
-    'GObject.Value': string
-    'GObject.Closure': string
-    'GLib.ByteArray': string
-    'GLib.Bytes'?: string
+    "GObject.Value": string;
+    "GObject.Closure": string;
+    "GLib.ByteArray": string;
+    "GLib.Bytes"?: string;
 }
 
 // Gjs is permissive for byte-array in parameters but strict for out/return
 // See <https://discourse.gnome.org/t/gjs-bytearray-vs-glib-bytes/4900>
-export const FULL_TYPE_MAP = (environment: Environment, out = true): FullTypeMap => {
-    let ba: string
-    let gb: string | undefined
-    if (environment === 'gjs') {
-        ba = 'Uint8Array'
+export const FULL_TYPE_MAP = (
+    environment: Environment,
+    out = true,
+): FullTypeMap => {
+    let ba: string;
+    let gb: string | undefined;
+    if (environment === "gjs") {
+        ba = "Uint8Array";
         if (out === false) {
-            ba += ' | Gjs.byteArray.ByteArray'
-            gb = 'GLib.Bytes | Uint8Array | Gjs.byteArray.ByteArray'
+            ba += " | Gjs.byteArray.ByteArray";
+            gb = "GLib.Bytes | Uint8Array | Gjs.byteArray.ByteArray";
         } else {
-            gb = undefined // No transformation
+            gb = undefined; // No transformation
         }
     } else {
         // TODO
-        ba = 'any'
-        gb = 'any'
+        ba = "any";
+        gb = "any";
     }
     return {
-        'GObject.Value': 'any',
-        'GObject.Closure': 'Function',
-        'GLib.ByteArray': ba,
-        'GLib.Bytes': gb,
-    }
-}
+        "GObject.Value": "any",
+        "GObject.Closure": "Function",
+        "GLib.ByteArray": ba,
+        "GLib.Bytes": gb,
+    };
+};
 
 export const RESERVED_VARIABLE_NAMES = [
-    'in',
-    'function',
-    'true',
-    'false',
-    'break',
-    'arguments',
-    'eval',
-    'default',
-    'new',
-    'extends',
-    'with',
-    'var',
-    'class',
-    'delete',
-    'return',
-]
+    "in",
+    "function",
+    "true",
+    "false",
+    "break",
+    "arguments",
+    "eval",
+    "default",
+    "new",
+    "extends",
+    "with",
+    "var",
+    "class",
+    "delete",
+    "return",
+];
 
 export const RESERVED_CLASS_NAMES = [
-    'break',
-    'boolean',
-    'case',
-    'catch',
-    'class',
-    'const',
-    'continue',
-    'debugger',
-    'default',
-    'delete',
-    'do',
-    'else',
-    'enum',
-    'export',
-    'extends',
-    'false',
-    'finally',
-    'for',
-    'function',
-    'if',
-    'implements',
-    'import',
-    'in',
-    'instanceof',
-    'interface',
-    'let',
-    'new',
-    'number',
-    'package',
-    'private',
-    'protected',
-    'public',
-    'return',
-    'static',
-    'super',
-    'switch',
-    'string',
-    'this',
-    'throw',
-    'true',
-    'try',
-    'typeof',
-    'var',
-    'void',
-    'while',
-    'with',
-    'yield',
-]
+    "break",
+    "boolean",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "debugger",
+    "default",
+    "delete",
+    "do",
+    "else",
+    "enum",
+    "export",
+    "extends",
+    "false",
+    "finally",
+    "for",
+    "function",
+    "if",
+    "implements",
+    "import",
+    "in",
+    "instanceof",
+    "interface",
+    "let",
+    "new",
+    "number",
+    "package",
+    "private",
+    "protected",
+    "public",
+    "return",
+    "static",
+    "super",
+    "switch",
+    "string",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "var",
+    "void",
+    "while",
+    "with",
+    "yield",
+];
 
-export const RESERVED_FUNCTION_NAMES = ['false', 'true', 'break']
+export const RESERVED_FUNCTION_NAMES = ["false", "true", "break"];
 
-export const RESERVED_NAMESPACE_NAMES = {}
+export const RESERVED_NAMESPACE_NAMES = {};
 
 export class Transformation {
     /**
@@ -171,139 +188,103 @@ export class Transformation {
      */
     private transformations: Transformations = {
         functionName: {
-            node: {
-                transformation: 'lowerCamelCase',
-            },
-            gjs: {
-                transformation: 'original',
-            },
+            transformation: "lowerCamelCase",
         },
         enumName: {
-            node: {
-                transformation: 'original',
-            },
-            gjs: {
-                transformation: 'original',
-            },
+            transformation: "original",
         },
         enumValue: {
-            node: {
-                transformation: 'upperCase',
-            },
-            gjs: {
-                transformation: 'upperCase',
-            },
+            transformation: "upperCase",
         },
         signalName: {
-            node: {
-                transformation: 'original',
-            },
-            gjs: {
-                transformation: 'original',
-            },
+            transformation: "original",
         },
         // GJS always re-writes - to _ (I think?)
         propertyName: {
-            node: {
-                transformation: 'lowerCamelCase',
-            },
-            gjs: {
-                transformation: 'underscores',
-            },
+            transformation: "lowerCamelCase",
         },
         parameterName: {
-            node: {
-                transformation: 'lowerCamelCase',
-            },
-            gjs: {
-                transformation: 'underscores',
-            },
+            transformation: "lowerCamelCase",
         },
         fieldName: {
-            node: {
-                transformation: 'lowerCamelCase',
-            },
-            gjs: {
-                transformation: 'underscores',
-            },
+            transformation: "lowerCamelCase",
         },
         constantName: {
-            node: {
-                transformation: 'original',
-            },
-            gjs: {
-                transformation: 'original',
-            },
+            transformation: "original",
         },
         importName: {
-            node: {
-                transformation: 'upperCamelCase',
-            },
-            gjs: {
-                transformation: 'upperCamelCase',
-            },
+            transformation: "upperCamelCase",
         },
-    }
+    };
 
-    private log: Logger
+    private log: Logger;
 
-    constructor(moduleName = 'Transformation', private readonly config: GenerateConfig) {
-        this.log = new Logger(config.environment, config.verbose, moduleName)
+    constructor(
+        moduleName = "Transformation",
+        private readonly config: GenerateConfig,
+    ) {
+        this.log = new Logger(config.environment, config.verbose, moduleName);
     }
 
     public transformModuleNamespaceName(name: string): string {
-        name = this.transformNumericName(name)
-        name = this.transform('importName', name)
+        name = this.transformNumericName(name);
+        name = this.transform("importName", name);
 
         if (RESERVED_NAMESPACE_NAMES[name]) {
-            name = `${name}_`
+            name = `${name}_`;
         }
-        return name
+        return name;
     }
 
     public transformClassName(name: string): string {
-        const originalName = `${name}`
-        name = this.transformNumericName(name)
+        const originalName = `${name}`;
+        name = this.transformNumericName(name);
 
         if (RESERVED_CLASS_NAMES.includes(name)) {
-            name = `${name}_`
+            name = `${name}_`;
         }
         if (originalName !== name) {
-            this.log.warn(`Class name renamed from '${originalName}' to '${name}'`)
+            this.log.warn(
+                `Class name renamed from '${originalName}' to '${name}'`,
+            );
         }
-        return name
+        return name;
     }
 
     public transformEnumName(name: string): string {
-        name = this.transform('enumName', name)
-        const originalName = `${name}`
+        name = this.transform("enumName", name);
+        const originalName = `${name}`;
 
         // For an example enum starting with a number see https://gjs-docs.gnome.org/nm10~1.20.8/nm.80211mode
-        name = this.transformNumericName(name)
+        name = this.transformNumericName(name);
 
         if (RESERVED_CLASS_NAMES.includes(name)) {
-            name = `${name}_`
+            name = `${name}_`;
         }
         if (originalName !== name) {
-            this.log.warn(`Enum name renamed from '${originalName}' to '${name}'`)
+            this.log.warn(
+                `Enum name renamed from '${originalName}' to '${name}'`,
+            );
         }
-        return name
+        return name;
     }
 
     public transformFunctionName(name: string): string {
-        name = this.transform('functionName', name)
-        const originalName = `${name}`
+        name = this.transform("functionName", name);
+        const originalName = `${name}`;
 
-        name = this.transformNumericName(name)
+        name = this.transformNumericName(name);
 
         if (RESERVED_FUNCTION_NAMES.includes(name)) {
-            name = `${name}_TODO`
+            name = `${name}_TODO`;
         }
 
         if (originalName !== name) {
-            this.log.warn(`Function name renamed from '${originalName}' to '${name}'`)
+            this.log.warn(
+                `Function name renamed from '${originalName}' to '${name}'`,
+            );
         }
-        return name
+        return name;
     }
 
     /**
@@ -311,71 +292,77 @@ export class Transformation {
      * or NetworkManager-1.0 has methods starting with `80211`
      */
     public transformPropertyName(name: string, allowQuotes: boolean): string {
-        name = this.transform('propertyName', name)
-        const originalName = `${name}`
+        name = this.transform("propertyName", name);
+        const originalName = `${name}`;
 
         if (RESERVED_VARIABLE_NAMES.includes(name)) {
-            if (allowQuotes) name = `"${name}"`
-            else name = `${name}_`
+            if (allowQuotes) name = `"${name}"`;
+            else name = `${name}_`;
         }
 
-        name = this.transformNumericName(name, allowQuotes)
+        name = this.transformNumericName(name, allowQuotes);
 
         if (originalName !== name) {
             // this.log.warn(`Property name renamed from '${originalName}' to '${name}'`)
         }
-        return name
+        return name;
     }
 
     public transformConstantName(name: string, allowQuotes: boolean): string {
-        name = this.transform('constantName', name)
-        const originalName = `${name}`
+        name = this.transform("constantName", name);
+        const originalName = `${name}`;
 
         if (RESERVED_VARIABLE_NAMES.includes(name)) {
-            if (allowQuotes) name = `"${name}"`
-            else name = `${name}_`
+            if (allowQuotes) name = `"${name}"`;
+            else name = `${name}_`;
         }
 
-        name = this.transformNumericName(name, allowQuotes)
+        name = this.transformNumericName(name, allowQuotes);
         if (originalName !== name) {
-            this.log.warn(`Constant name renamed from '${originalName}' to '${name}'`)
+            this.log.warn(
+                `Constant name renamed from '${originalName}' to '${name}'`,
+            );
         }
-        return name
+        return name;
     }
 
     public transformFieldName(name: string, allowQuotes: boolean): string {
-        name = this.transform('fieldName', name)
-        const originalName = `${name}`
+        name = this.transform("fieldName", name);
+        const originalName = `${name}`;
 
         if (RESERVED_VARIABLE_NAMES.includes(name)) {
-            if (allowQuotes) name = `"${name}"`
-            else name = `${name}_`
+            if (allowQuotes) name = `"${name}"`;
+            else name = `${name}_`;
         }
 
-        name = this.transformNumericName(name, allowQuotes)
+        name = this.transformNumericName(name, allowQuotes);
         if (originalName !== name) {
-            this.log.warn(`Field name renamed from '${originalName}' to '${name}'`)
+            this.log.warn(
+                `Field name renamed from '${originalName}' to '${name}'`,
+            );
         }
-        return name
+        return name;
     }
 
     public transformParameterName(name: string, allowQuotes: boolean): string {
         // Such a variable name exists in `GConf-2.0.d.ts` class `Engine` method `change_set_from_current`
-        if (name === '...') {
-            return '...args'
+        if (name === "...") {
+            return "...args";
         }
-        name = this.transform('parameterName', name)
-        const originalName = `${name}`
+        name = this.transform("parameterName", name);
+        const originalName = `${name}`;
         if (RESERVED_VARIABLE_NAMES.includes(name)) {
-            if (allowQuotes) name = `"${name}"`
-            else name = `${name}_`
+            if (allowQuotes) name = `"${name}"`;
+            else name = `${name}_`;
         }
 
-        name = this.transformNumericName(name, allowQuotes)
+        name = this.transformNumericName(name, allowQuotes);
         if (originalName !== name) {
-            this.log.warn(`Parameter name renamed from '${originalName}' to '${name}'`)
+            this.log.warn(
+                `Parameter name renamed from '${originalName}' to '${name}'`,
+            );
         }
-        return name
+        return name;
     }
 
     /**
@@ -383,31 +370,31 @@ export class Transformation {
      * @param typeName
      */
     public transformTypeName(name: string): string {
-        name = this.transformNumericName(name)
-        return name
+        name = this.transformNumericName(name);
+        return name;
     }
 
     public transform(construct: ConstructName, transformMe: string): string {
-        const transformations = this.transformations[construct][this.config.environment].transformation
-        if (transformations === 'original') {
-            return transformMe
+        const transformations = this.transformations[construct].transformation;
+        if (transformations === "original") {
+            return transformMe;
         }
-        if (transformations === 'lowerCamelCase') {
-            return Utils.lowerCamelCase(transformMe)
+        if (transformations === "lowerCamelCase") {
+            return Utils.lowerCamelCase(transformMe);
         }
-        if (transformations === 'upperCamelCase') {
-            return Utils.upperCamelCase(transformMe)
+        if (transformations === "upperCamelCase") {
+            return Utils.upperCamelCase(transformMe);
         }
-        if (transformations === 'upperCase') {
-            return transformMe.toUpperCase()
+        if (transformations === "upperCase") {
+            return transformMe.toUpperCase();
         }
-        if (transformations === 'lowerCase') {
-            return transformMe.toLowerCase()
+        if (transformations === "lowerCase") {
+            return transformMe.toLowerCase();
         }
-        if (transformations === 'underscores') {
-            return transformMe.replace(/-|_/g, '_')
+        if (transformations === "underscores") {
+            return transformMe.replace(/-|_/g, "_");
         }
-        return transformMe
+        return transformMe;
     }
 
     /**
@@ -419,23 +406,29 @@ export class Transformation {
      */
     private transformNumericName(name: string, allowQuotes = false): string {
         if (Utils.isFirstCharNumeric(name)) {
-            if (allowQuotes) name = `"${name}"`
-            else name = `TODO_${name}`
+            if (allowQuotes) name = `"${name}"`;
+            else name = `TODO_${name}`;
         }
-        return name
+        return name;
     }
 
-    static getEnvironmentDir(environment: Environment, baseDir: string): string {
-        if (environment == 'gjs') {
-            return Path.join(baseDir, 'Gjs')
+    static getEnvironmentDir(
+        environment: Environment,
+        baseDir: string,
+    ): string {
+        if (environment == "gjs") {
+            return Path.join(baseDir, "Gjs");
         }
-        if (environment == 'node') {
-            return Path.join(baseDir, 'node-gtk')
+        if (environment == "node") {
+            return Path.join(baseDir, "node-gtk");
         }
-        return baseDir
+        return baseDir;
     }
 
     getEnvironmentDir(baseDir: string): string {
-        return Transformation.getEnvironmentDir(this.config.environment, baseDir)
+        return Transformation.getEnvironmentDir(
+            this.config.environment,
+            baseDir,
+        );
     }
 }

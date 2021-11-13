@@ -784,21 +784,21 @@ export class GirModule {
         return [desc, funcName];
     }
 
-    private getSignalFunc(e: GirFunction, clsName: string): string[] {
-        const sigName = this.transformation.transform("signalName", e.$.name);
-        const [retType, outArrayLengthIndex] = this.getReturnType(e);
-        const [params] = this.getParameters(outArrayLengthIndex, e.parameters);
-        const paramComma = params.length > 0 ? ", " : "";
+    // private getSignalFunc(e: GirFunction, clsName: string): string[] {
+    //     const sigName = this.transformation.transform("signalName", e.$.name);
+    //     const [retType, outArrayLengthIndex] = this.getReturnType(e);
+    //     const [params] = this.getParameters(outArrayLengthIndex, e.parameters);
+    //     const paramComma = params.length > 0 ? ", " : "";
 
-        return TemplateProcessor.generateSignalMethods(
-            this.config.environment,
-            sigName,
-            clsName,
-            paramComma,
-            params,
-            retType,
-        );
-    }
+    //     return TemplateProcessor.generateSignalMethods(
+    //         this.config.environment,
+    //         sigName,
+    //         clsName,
+    //         paramComma,
+    //         params,
+    //         retType,
+    //     );
+    // }
 
     private traverseInheritanceTree(
         girClass: GirClass,
