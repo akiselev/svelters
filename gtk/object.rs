@@ -44,6 +44,10 @@ where
                 rquickjs::Result::Ok(Object(this.as_object().clone()))
             })),
         )?;
+        ty.custom_prop(
+            "isGObject",
+            rquickjs::Accessor::new_get(|| rquickjs::Result::Ok(true)),
+        )?;
         define_sv_extra(ty)?;
         define_event_listeners(ty)?;
         Ok(())
@@ -95,6 +99,8 @@ where
               opts: Opt<Value<'js>>|
               -> Result<()> {
             let obj = this.as_object();
+            tracing::info!("Adding event listener for {}::{}", obj.type_().name(), name);
+
             let data = obj.try_get_or_create_data("svEvents", || -> Result<Events> {
                 Ok(Events {
                     ctx: Context::from_ctx(ctx)?,
@@ -103,12 +109,11 @@ where
             })?;
             let entry = data.map.entry(name.clone()).or_default();
             if entry.id.is_none() {
-                entry.id = Some(
-                    obj.connect(name.as_str(), false, handle_event(name.clone()))
-                        .map_err(|err| {
-                            exception!("Could not connect to signal {}: {}", name, err)
-                        })?,
-                );
+                tracing::info!("Connecting {}::{}", obj.type_().name(), name);
+                let id = obj
+                    .connect(name.as_str(), false, handle_event(name.clone()))
+                    .map_err(|err| exception!("Could not connect to signal {}: {}", name, err))?;
+                entry.id = Some(id);
             }
             entry.callbacks.push(func.into_value().into_js_value());
 
@@ -125,12 +130,18 @@ where
               opts: Opt<Value<'js>>|
               -> Result<()> {
             let obj = this.as_object();
+            tracing::info!(
+                "Removing event listener for {}::{}",
+                obj.type_().name(),
+                name
+            );
             let func = func.into_value();
             if let Some(data) = obj.get_data::<Events>("svEvents") {
                 if let Some(conn) = data.map.get_mut(&name) {
                     conn.callbacks
                         .retain(|val| unsafe { Value::from_js_value_const(ctx, *val) != func });
                     if conn.callbacks.len() == 0 {
+                        tracing::info!("Disconnecting {}::{}", obj.type_().name(), name);
                         obj.disconnect(conn.id.take().unwrap());
                     }
                     return Result::Ok(());
@@ -151,6 +162,8 @@ where
         "svExtra",
         rquickjs::Accessor::new_get(rquickjs::Method(|this: &'js T, ctx: Ctx<'js>| unsafe {
             let obj = this.as_object();
+            tracing::info!("Getting {}::svExtra", obj.type_().name());
+
             if let Some(data) = obj.data::<ExtraData>("svExtra") {
                 rquickjs::Result::Ok(Value::from_js_value_const(ctx, data.as_ref().value))
             } else {
@@ -202,6 +215,10 @@ impl Object {
         T: IsA<GObject> + Cast,
     {
         Object(obj.upcast::<GObject>())
+    }
+
+    pub fn inner(self) -> GObject {
+        self.0
     }
 }
 

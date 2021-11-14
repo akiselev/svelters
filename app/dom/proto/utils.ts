@@ -17,6 +17,7 @@ export function unmountNode(node: any) {
 }
 
 export function insertChildBefore(self: any, node: INode, anchor?: INode) {
+    self.svLog(`=> insertChildBefore(${node}, ${anchor})`);
     node.parentNode = self;
     if (anchor) {
         node.svPrevSibling = anchor.svPrevSibling;
@@ -33,6 +34,7 @@ export function insertChildBefore(self: any, node: INode, anchor?: INode) {
 }
 
 export function appendChild(self: any, node: INode) {
+    self.svLog(`=> appendChild(${node})`);
     if (self.svExtra.tail) {
         node.svPrevSibling = self.svExtra.tail;
         self.svExtra.tail.svNextSibling = node;
@@ -43,6 +45,7 @@ export function appendChild(self: any, node: INode) {
 }
 
 export function removeChild(self: any, node: INode) {
+    self.svLog(`=> removeChild(${node})`);
     const svPrevSibling = node.svPrevSibling;
     const svNextSibling = node.svNextSibling;
     if (svPrevSibling) {
@@ -101,7 +104,7 @@ export const str = (x: any): string => {
         return x;
     } else if (typeof x === "number") {
         return `${x}`;
-    } else if (typeof x?.tagName === "string") {
+    } else if (typeof x?.svTagName === "string") {
         let res = `<${x.tagName}`;
         if (x?.$?.hasOwnProperty?.("id")) {
             res += ` id="${x.id}" `;

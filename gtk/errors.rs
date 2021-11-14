@@ -29,7 +29,14 @@ impl HandleParamError for ValueTypeMismatchOrNoneError {
     ) -> rquickjs::Result<Value<'js>> {
         match self {
             ValueTypeMismatchOrNoneError::WrongValueType(err) => err.handle_param_error(ctx, param),
-            ValueTypeMismatchOrNoneError::UnexpectedNone => Ok(Value::new_undefined(ctx)),
+            ValueTypeMismatchOrNoneError::UnexpectedNone => {
+                tracing::warn!(
+                    "Returning null for prop {}::{}",
+                    param.owner_type().name(),
+                    param.name()
+                );
+                Ok(Value::new_undefined(ctx))
+            }
         }
     }
 }
@@ -40,6 +47,12 @@ impl HandleParamError for ValueTypeMismatchError {
         ctx: Ctx<'js>,
         param: &ParamSpec,
     ) -> rquickjs::Result<Value<'js>> {
+        tracing::error!(
+            "Value Type Mismatch error for prop {}::{}: {}",
+            param.owner_type().name(),
+            param.name(),
+            self
+        );
         Err(exception!(
             "Value type mismatch error on prop {}::{}: expected {}, found {}",
             param.owner_type().name(),

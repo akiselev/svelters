@@ -9,7 +9,7 @@ use crate::common::*;
 pub fn define<'js, T, CLS>(ty: &Type<'js, CLS>) -> Result<()>
 where
     T: IsClass + StaticType,
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     &'js CLS: FromJs<'js>,
 {
     let cls = Class::<GObject>::from_type(T::static_type()).unwrap();

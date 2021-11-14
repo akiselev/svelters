@@ -24,7 +24,7 @@ impl<CLS, T> EnumProp<CLS, T> {
 
 impl<'js, CLS, T> AsProperty<'js, T> for EnumProp<CLS, T>
 where
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     T: 'static + IntoJs<'js> + FromJs<'js> + for<'a> FromValue<'a> + ToValue,
     &'js CLS: FromJs<'js>,
 {
@@ -58,7 +58,7 @@ where
 impl<'js, CLS, T> AsFunction<'js, CLS, T> for Getter<CLS, T>
 where
     T: 'static + for<'a> FromValue<'a> + IntoJs<'js>,
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -68,6 +68,8 @@ where
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
         let acc = input.access();
         let this = acc.this::<&CLS>()?;
+        let _ = this.span().enter();
+        self.param.log_getter();
         let value = match this.as_object().property(self.param.name()) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not get property: {}", err.message)),
@@ -96,7 +98,7 @@ where
 impl<'js, CLS, T> AsFunction<'js, CLS, T> for Setter<CLS, T>
 where
     T: ToValue + FromJs<'js>,
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -105,10 +107,12 @@ where
 
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
         let mut acc = input.access();
+        let this = acc.this::<&CLS>()?;
+        let _ = this.span().enter();
+        self.param.log_setter();
         if acc.len() < 1 {
             return Err(exception!("Setter must have at least one argument"));
         }
-        let this = acc.this::<&CLS>()?;
         let value = enum_nick_from_js(
             acc.ctx(),
             acc.arg::<Value>()?,

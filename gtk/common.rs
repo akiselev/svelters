@@ -22,9 +22,10 @@ pub use gtk4::Widget as GtkWidget;
 pub type Result<T> = rquickjs::Result<T>;
 
 pub use crate::core::from_gtype::define;
+pub use crate::core::logging::*;
 pub use crate::errors::HandleParamError;
 pub use crate::exception;
-pub use crate::newtype::Gtk;
+pub use crate::newtype::{Gtk, GtkRef};
 pub use crate::obj_data::ObjectData;
 pub use crate::traits::*;
 

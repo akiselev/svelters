@@ -40,6 +40,7 @@ class_def!(
     Button as "Button" | ty | {
         define::<gtk4::Button, _>(&ty)?;
         ty.implements::<Button>()?;
+        ty.implements::<crate::Widget>()?;
         ty.implements::<crate::Object>()?;
         ty.register_as::<gtk4::Button>()?;
     }

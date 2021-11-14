@@ -24,7 +24,7 @@ impl<CLS> ObjectProp<CLS> {
 
 impl<'js, CLS> AsProperty<'js, ()> for ObjectProp<CLS>
 where
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     &'js CLS: FromJs<'js>,
 {
     fn config(self, ctx: Ctx<'js>) -> Result<(c_int, Value<'js>, Value<'js>, Value<'js>)> {
@@ -56,7 +56,7 @@ where
 
 impl<'js, CLS> AsFunction<'js, CLS, ()> for Getter<CLS>
 where
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -65,8 +65,11 @@ where
 
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
         let acc = input.access();
-        let ctx = acc.ctx();
         let this = acc.this::<&CLS>()?;
+        let _ = this.span().enter();
+        self.param.log_getter();
+
+        let ctx = acc.ctx();
         let value = match this.as_object().property(self.param.name()) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not get property: {}", err.message)),
@@ -103,7 +106,7 @@ where
 
 impl<'js, CLS> AsFunction<'js, CLS, ()> for Setter<CLS>
 where
-    CLS: 'static + AsObject,
+    CLS: 'static + AsObject + LogClass,
     &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
@@ -112,12 +115,16 @@ where
 
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
         let mut acc = input.access();
+        let this = acc.this::<&CLS>()?;
+        let _ = this.span().enter();
+        self.param.log_setter();
+
         if acc.len() < 1 {
             return Err(exception!("Setter must have at least one argument"));
         }
-        let this = acc.this::<&CLS>()?;
         let value = acc.arg::<Value<'js>>()?;
         let value = if value.is_null() || value.is_undefined() {
+            tracing::warn!("Object GValue is null or undefined");
             self.param.default_value().clone()
         } else {
             let value = value.as_object().ok_or_else(|| {

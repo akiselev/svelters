@@ -163,3 +163,7 @@ deps.zig
 
 # Ignore generated d.ts file
 app/dom/svelters.d.ts
+
+
+gtk4/
+gtk/codegen/data/
