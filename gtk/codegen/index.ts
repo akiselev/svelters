@@ -2,56 +2,60 @@ import OS from "os";
 import fs from "fs";
 import * as xml2js from "xml2js";
 
-import { Utils } from "./utils";
 import { GirModule } from "./gir-module";
-import { ParsedGir } from "./types";
+import { GirConstruct, InheritanceTable, ParsedGir } from "./types";
+import { Utils } from "./utils";
+import { ModuleLoader } from "./module-loader";
 
 const GIR_DIRECTORY =
     OS.platform() === "darwin"
         ? "/usr/local/share/gir-1.0"
         : "/usr/share/gir-1.0";
 
-const generate = async (packageName: string, config: any = {}) => {
-    const file = Utils.findFileInDirs([GIR_DIRECTORY], packageName + ".gir");
-    if (!file.exists || file.path === null) {
-        return null;
-    }
-    console.log(`Parsing ${file.path}...`);
-    const fileContents = fs.readFileSync(file.path, "utf8");
-    const result = (await xml2js.parseStringPromise(fileContents)) as ParsedGir;
-    const gi = new GirModule(result, {
-        environments: ["gjs", "node"],
-        pretty: false,
-        print: false,
-        outdir: "@types",
-        girDirectories: [
-            OS.platform() === "darwin"
-                ? "/usr/local/share/gir-1.0"
-                : "/usr/share/gir-1.0",
-        ],
-        modules: ["*"],
-        ignore: [],
-        verbose: true,
-        ignoreConflicts: false,
-        exportDefault: false,
-    });
+export class Generator {
+    types: { [name: string]: GirConstruct | null } = {};
+    inheritance: InheritanceTable = {};
 
-    const types = {};
-    gi.loadTypes(types);
-    console.log(types["Gtk.Application"]);
-    fs.writeFileSync(
-        "GtkApplication.json",
-        JSON.stringify(types["Gtk.Application"], stripJson, 4),
-        { encoding: "utf8" },
-    );
-};
+    loader: ModuleLoader = new ModuleLoader(defaultConfig as any);
 
-generate("Gtk-4.0");
+    constructor(private packages: string[]) {}
 
-const STRIP = ["_module", "_ns"];
-const stripJson = (key: string, value: any): any => {
-    if (STRIP.indexOf(key) > -1) {
-        return undefined;
-    }
-    return value;
+    initialize = async () => {
+        const { grouped } = await this.loader.getModules(this.packages);
+        Object.values(grouped).forEach(({ modules }) =>
+            modules.forEach(({ module }) => module.loadTypes(this.types)),
+        );
+        Object.values(grouped).forEach(({ modules }) =>
+            modules.forEach(({ module }) =>
+                module.loadInheritance(this.inheritance),
+            ),
+        );
+    };
+
+    inherits = (cls: string, target: string) => {
+        return this.getParents(cls).indexOf(target) > -1;
+    };
+
+    getParents = (cls: string): string[] => {
+        let out = [];
+        for (const parent of this.inheritance[cls] || []) {
+            out = [...out, parent, ...this.getParents(parent)];
+        }
+        return out;
+    };
+
+    generateInterfaces = () => {};
+}
+
+const defaultConfig = {
+    environment: "node",
+    pretty: false,
+    outdir: "@types",
+    girDirectories: [
+        OS.platform() === "darwin"
+            ? "/usr/local/share/gir-1.0"
+            : "/usr/share/gir-1.0",
+    ],
+    verbose: true,
+    exportDefault: false,
 };

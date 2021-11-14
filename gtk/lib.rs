@@ -17,8 +17,10 @@ pub(crate) mod common;
 
 mod core;
 pub(crate) mod errors;
+pub(crate) mod newtype;
 pub(crate) mod obj_data;
 mod object;
+pub(crate) mod traits;
 mod types;
 mod widget;
 

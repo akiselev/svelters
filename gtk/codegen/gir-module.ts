@@ -25,6 +25,7 @@ import {
     POD_TYPE_MAP,
     POD_TYPE_MAP_ARRAY,
 } from "./transformation";
+import TemplateProcessor from "./template-processor";
 import { Logger } from "./logger";
 import { Utils } from "./utils";
 
@@ -784,21 +785,21 @@ export class GirModule {
         return [desc, funcName];
     }
 
-    // private getSignalFunc(e: GirFunction, clsName: string): string[] {
-    //     const sigName = this.transformation.transform("signalName", e.$.name);
-    //     const [retType, outArrayLengthIndex] = this.getReturnType(e);
-    //     const [params] = this.getParameters(outArrayLengthIndex, e.parameters);
-    //     const paramComma = params.length > 0 ? ", " : "";
+    private getSignalFunc(e: GirFunction, clsName: string): string[] {
+        const sigName = this.transformation.transform("signalName", e.$.name);
+        const [retType, outArrayLengthIndex] = this.getReturnType(e);
+        const [params] = this.getParameters(outArrayLengthIndex, e.parameters);
+        const paramComma = params.length > 0 ? ", " : "";
 
-    //     return TemplateProcessor.generateSignalMethods(
-    //         this.config.environment,
-    //         sigName,
-    //         clsName,
-    //         paramComma,
-    //         params,
-    //         retType,
-    //     );
-    // }
+        return TemplateProcessor.generateSignalMethods(
+            this.config.environment,
+            sigName,
+            clsName,
+            paramComma,
+            params,
+            retType,
+        );
+    }
 
     private traverseInheritanceTree(
         girClass: GirClass,
@@ -1365,34 +1366,34 @@ export class GirModule {
         return this.exportOverloadableMethods(fnMap, explicits);
     }
 
-    // private generateSignalMethods(
-    //     cls: GirClass,
-    //     propertyNames: string[],
-    //     callbackObjectName: string,
-    // ): string[] {
-    //     const def: string[] = [];
-    //     const isDerivedFromGObject = this.isDerivedFromGObject(cls);
-    //     if (isDerivedFromGObject) {
-    //         let prefix = "GObject.";
-    //         if (this.name === "GObject") prefix = "";
-    //         for (const prop of propertyNames) {
-    //             def.push(
-    //                 ...TemplateProcessor.generateGObjectSignalMethods(
-    //                     this.config.environment,
-    //                     prop,
-    //                     callbackObjectName,
-    //                     prefix,
-    //                 ),
-    //             );
-    //         }
-    //         def.push(
-    //             ...TemplateProcessor.generateGeneralSignalMethods(
-    //                 this.config.environment,
-    //             ),
-    //         );
-    //     }
-    //     return def;
-    // }
+    private generateSignalMethods(
+        cls: GirClass,
+        propertyNames: string[],
+        callbackObjectName: string,
+    ): string[] {
+        const def: string[] = [];
+        const isDerivedFromGObject = this.isDerivedFromGObject(cls);
+        if (isDerivedFromGObject) {
+            let prefix = "GObject.";
+            if (this.name === "GObject") prefix = "";
+            for (const prop of propertyNames) {
+                def.push(
+                    ...TemplateProcessor.generateGObjectSignalMethods(
+                        this.config.environment,
+                        prop,
+                        callbackObjectName,
+                        prefix,
+                    ),
+                );
+            }
+            def.push(
+                ...TemplateProcessor.generateGeneralSignalMethods(
+                    this.config.environment,
+                ),
+            );
+        }
+        return def;
+    }
 
     /**
      * Static methods, <constructor> and <function>
@@ -1686,7 +1687,7 @@ export class GirModule {
             def.push(...this.processSignals(cls, name)),
         );
 
-        // def.push(...this.generateSignalMethods(girClass, propertyNames, name));
+        def.push(...this.generateSignalMethods(girClass, propertyNames, name));
 
         // TODO: Records have fields
 
@@ -1740,201 +1741,194 @@ export class GirModule {
         return this.exportClassInternal(girClass, false);
     }
 
-    // public exportJs(): void {
-    //     const templateProcessor = new TemplateProcessor(
-    //         {
-    //             name: this.name,
-    //             version: this.version,
-    //             importName: this.importName,
-    //         },
-    //         this.packageName || undefined,
-    //         this.config,
-    //     );
-    //     const template = this.config.exportDefault
-    //         ? "esmodule.js"
-    //         : "module.js";
-    //     if (this.config.outdir) {
-    //         templateProcessor.create(
-    //             template,
-    //             this.config.outdir,
-    //             `${this.packageName}.js`,
-    //         );
-    //     } else {
-    //         const moduleContent = templateProcessor.load(template);
-    //         this.log.log(moduleContent);
-    //     }
-    // }
+    public exportJs(): string {
+        const templateProcessor = new TemplateProcessor(
+            {
+                name: this.name,
+                version: this.version,
+                importName: this.importName,
+            },
+            this.packageName || undefined,
+            this.config,
+        );
+        // const template = this.config.exportDefault
+        //     ? "esmodule.js"
+        //     : "module.js";
+        // if (this.config.outdir) {
+        //     templateProcessor.create(
+        //         template,
+        //         this.config.outdir,
+        //         `${this.packageName}.js`,
+        //     );
+        // } else {
+        return templateProcessor.load("esmodule.js");
 
-    // public export(
-    //     outStream: NodeJS.WritableStream,
-    //     outputPath: string | null,
-    // ): void {
-    //     const out: string[] = [];
+        // }
+    }
 
-    //     out.push(
-    //         ...TemplateProcessor.generateTSDocComment(`${this.packageName}`),
-    //     );
+    public export(): string {
+        const out: string[] = [];
 
-    //     out.push("");
+        out.push(
+            ...TemplateProcessor.generateTSDocComment(`${this.packageName}`),
+        );
 
-    //     const deps: string[] = this.transitiveDependencies;
+        out.push("");
 
-    //     // Always pull in GObject-2.0, as we may need it for e.g. GObject-2.0.type
-    //     if (this.packageName !== "GObject-2.0") {
-    //         if (!Utils.find(deps, (x) => x === "GObject-2.0")) {
-    //             deps.push("GObject-2.0");
-    //         }
-    //     }
+        const deps: string[] = this.transitiveDependencies;
 
-    //     // Add missing dependencies
-    //     if (this.packageName === "UnityExtras-7.0") {
-    //         if (!Utils.find(deps, (x) => x === "Unity-7.0")) {
-    //             deps.push("Unity-7.0");
-    //         }
-    //     }
-    //     if (this.packageName === "UnityExtras-6.0") {
-    //         if (!Utils.find(deps, (x) => x === "Unity-6.0")) {
-    //             deps.push("Unity-6.0");
-    //         }
-    //     }
-    //     if (this.packageName === "GTop-2.0") {
-    //         if (!Utils.find(deps, (x) => x === "GLib-2.0")) {
-    //             deps.push("GLib-2.0");
-    //         }
-    //     }
+        // Always pull in GObject-2.0, as we may need it for e.g. GObject-2.0.type
+        if (this.packageName !== "GObject-2.0") {
+            if (!Utils.find(deps, (x) => x === "GObject-2.0")) {
+                deps.push("GObject-2.0");
+            }
+        }
 
-    //     // Module dependencies as type references or imports
-    //     if (this.config.environment === "gjs") {
-    //         out.push(
-    //             ...TemplateProcessor.generateModuleDependenciesImport(
-    //                 "Gjs",
-    //                 "Gjs",
-    //                 false,
-    //                 this.config,
-    //             ),
-    //         );
-    //     } else {
-    //         out.push(
-    //             ...TemplateProcessor.generateModuleDependenciesImport(
-    //                 "node",
-    //                 "node",
-    //                 true,
-    //                 this.config,
-    //             ),
-    //         );
-    //     }
-    //     for (const dep of deps) {
-    //         // Don't reference yourself as a dependency
-    //         if (this.packageName !== dep) {
-    //             const girFilename = `${dep}.gir`;
-    //             const { name } = Utils.splitModuleName(dep);
-    //             const depFile = Utils.findFileInDirs(
-    //                 this.config.girDirectories,
-    //                 girFilename,
-    //             );
-    //             if (depFile.exists) {
-    //                 out.push(
-    //                     ...TemplateProcessor.generateModuleDependenciesImport(
-    //                         name,
-    //                         dep,
-    //                         false,
-    //                         this.config,
-    //                     ),
-    //                 );
-    //             } else {
-    //                 out.push(`// WARN: Dependency not found: '${dep}'`);
-    //                 this.log.error(
-    //                     `Dependency gir file not found: '${girFilename}'`,
-    //                 );
-    //             }
-    //         }
-    //     }
+        // Add missing dependencies
+        if (this.packageName === "UnityExtras-7.0") {
+            if (!Utils.find(deps, (x) => x === "Unity-7.0")) {
+                deps.push("Unity-7.0");
+            }
+        }
+        if (this.packageName === "UnityExtras-6.0") {
+            if (!Utils.find(deps, (x) => x === "Unity-6.0")) {
+                deps.push("Unity-6.0");
+            }
+        }
+        if (this.packageName === "GTop-2.0") {
+            if (!Utils.find(deps, (x) => x === "GLib-2.0")) {
+                deps.push("GLib-2.0");
+            }
+        }
 
-    //     // START Namespace
-    //     if (this.config.buildType === "types") {
-    //         out.push("");
-    //         out.push(`declare namespace ${this.name} {`);
-    //     } else if (this.config.exportDefault) {
-    //         out.push("");
-    //         out.push(`export namespace ${this.name} {`);
-    //     }
+        // Module dependencies as type references or imports
+        if (this.config.environment === "gjs") {
+            out.push(
+                ...TemplateProcessor.generateModuleDependenciesImport(
+                    "Gjs",
+                    "Gjs",
+                    false,
+                    this.config,
+                ),
+            );
+        } else {
+            out.push(
+                ...TemplateProcessor.generateModuleDependenciesImport(
+                    "node",
+                    "node",
+                    true,
+                    this.config,
+                ),
+            );
+        }
+        for (const dep of deps) {
+            // Don't reference yourself as a dependency
+            if (this.packageName !== dep) {
+                const girFilename = `${dep}.gir`;
+                const { name } = Utils.splitModuleName(dep);
+                const depFile = Utils.findFileInDirs(
+                    this.config.girDirectories,
+                    girFilename,
+                );
+                if (depFile.exists) {
+                    out.push(
+                        ...TemplateProcessor.generateModuleDependenciesImport(
+                            name,
+                            dep,
+                            false,
+                            this.config,
+                        ),
+                    );
+                } else {
+                    out.push(`// WARN: Dependency not found: '${dep}'`);
+                    this.log.error(
+                        `Dependency gir file not found: '${girFilename}'`,
+                    );
+                }
+            }
+        }
 
-    //     // Newline
-    //     out.push("");
+        // START Namespace
+        if (this.config.buildType === "types") {
+            out.push("");
+            out.push(`declare namespace ${this.name} {`);
+        } else if (this.config.exportDefault) {
+            out.push("");
+            out.push(`export namespace ${this.name} {`);
+        }
 
-    //     if (this.ns.enumeration)
-    //         for (const e of this.ns.enumeration)
-    //             out.push(...this.exportEnumeration(e));
+        // Newline
+        out.push("");
 
-    //     if (this.ns.bitfield)
-    //         for (const e of this.ns.bitfield)
-    //             out.push(...this.exportEnumeration(e));
+        if (this.ns.enumeration)
+            for (const e of this.ns.enumeration)
+                out.push(...this.exportEnumeration(e));
 
-    //     if (this.ns.constant)
-    //         for (const e of this.ns.constant)
-    //             out.push(...this.exportConstant(e));
+        if (this.ns.bitfield)
+            for (const e of this.ns.bitfield)
+                out.push(...this.exportEnumeration(e));
 
-    //     if (this.ns.function)
-    //         for (const e of this.ns.function)
-    //             out.push(...this.exportFunction(e));
+        if (this.ns.constant)
+            for (const e of this.ns.constant)
+                out.push(...this.exportConstant(e));
 
-    //     if (this.ns.callback)
-    //         for (const e of this.ns.callback)
-    //             out.push(...this.exportCallback(e));
+        if (this.ns.function)
+            for (const e of this.ns.function)
+                out.push(...this.exportFunction(e));
 
-    //     if (this.ns.interface)
-    //         for (const e of this.ns.interface)
-    //             out.push(...this.exportClassInternal(e));
+        if (this.ns.callback)
+            for (const e of this.ns.callback)
+                out.push(...this.exportCallback(e));
 
-    //     const templateProcessor = new TemplateProcessor(
-    //         { name: this.name, version: this.version },
-    //         this.packageName,
-    //         this.config,
-    //     );
+        if (this.ns.interface)
+            for (const e of this.ns.interface)
+                out.push(...this.exportClassInternal(e));
 
-    //     // Extra interfaces if a template with the module name  (e.g. '../templates/GObject-2.0.d.ts') is found
-    //     // E.g. used for GObject-2.0 to help define GObject classes in js;
-    //     // these aren't part of gi.
-    //     if (templateProcessor.exists(`${this.packageName}.d.ts`)) {
-    //         const patches = templateProcessor.load(`${this.packageName}.d.ts`);
-    //         out.push(patches);
-    //     }
+        const templateProcessor = new TemplateProcessor(
+            { name: this.name, version: this.version },
+            this.packageName,
+            this.config,
+        );
 
-    //     if (this.ns.class)
-    //         for (const e of this.ns.class)
-    //             out.push(...this.exportClassInternal(e, false));
+        // Extra interfaces if a template with the module name  (e.g. '../templates/GObject-2.0.d.ts') is found
+        // E.g. used for GObject-2.0 to help define GObject classes in js;
+        // these aren't part of gi.
+        if (templateProcessor.exists(`${this.packageName}.d.ts`)) {
+            const patches = templateProcessor.load(`${this.packageName}.d.ts`);
+            out.push(patches);
+        }
 
-    //     if (this.ns.record)
-    //         for (const e of this.ns.record)
-    //             out.push(...this.exportClassInternal(e, true));
+        if (this.ns.class)
+            for (const e of this.ns.class)
+                out.push(...this.exportClassInternal(e, false));
 
-    //     if (this.ns.union)
-    //         for (const e of this.ns.union)
-    //             out.push(...this.exportClassInternal(e, true));
+        if (this.ns.record)
+            for (const e of this.ns.record)
+                out.push(...this.exportClassInternal(e, true));
 
-    //     if (this.ns.alias)
-    //         // GType is not a number in GJS
-    //         for (const e of this.ns.alias)
-    //             if (this.packageName !== "GObject-2.0" || e.$.name !== "Type")
-    //                 out.push(...this.exportAlias(e));
+        if (this.ns.union)
+            for (const e of this.ns.union)
+                out.push(...this.exportClassInternal(e, true));
 
-    //     if (this.packageName === "GObject-2.0")
-    //         out.push("export interface Type {", "    name: string", "}");
+        if (this.ns.alias)
+            // GType is not a number in GJS
+            for (const e of this.ns.alias)
+                if (this.packageName !== "GObject-2.0" || e.$.name !== "Type")
+                    out.push(...this.exportAlias(e));
 
-    //     // END Namespace
-    //     if (this.config.buildType === "types" || this.config.exportDefault) {
-    //         out.push(`}`);
-    //     }
+        if (this.packageName === "GObject-2.0")
+            out.push("export interface Type {", "    name: string", "}");
 
-    //     if (this.config.exportDefault) {
-    //         out.push(`export default ${this.name}`);
-    //     }
+        // END Namespace
+        if (this.config.buildType === "types" || this.config.exportDefault) {
+            out.push(`}`);
+        }
 
-    //     // End of file
-    //     outStream.write(out.join("\n"));
+        if (this.config.exportDefault) {
+            out.push(`export default ${this.name}`);
+        }
 
-    //     if (outputPath) {
-    //         templateProcessor.prettify(outputPath);
-    //     }
-    // }
+        // End of file
+        return out.join("\n");
+    }
 }

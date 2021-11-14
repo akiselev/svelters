@@ -6,12 +6,6 @@ use glib::value::{
     ValueTypeMismatchOrNoneError,
 };
 use glib::{ObjectType, ToValue};
-pub use gtk4::prelude::{ObjectExt, WidgetExt};
-
-pub use gtk4::glib::{Cast, IsA, ParamFlags, ParamSpec, StaticType};
-pub use gtk4::glib::{Object as GObject, Value as GValue};
-pub use gtk4::Widget as GtkWidget;
-
 use rquickjs::{
     AsFunction, AsProperty, ClassDef, Constructor, Ctx, FromInput, FromJs, IntoAtom, IntoJs,
     Object as JsObject, ObjectDef, This, TypedMapKey, Value,
@@ -20,15 +14,19 @@ use rquickjs::{
 use crate::core::method::InterfaceMethod;
 use crate::core::{enum_prop::EnumProp, obj_prop::ObjectProp, property::Prop};
 
-pub use crate::exception;
+pub use gtk4::glib::{Cast, IsA, ParamFlags, ParamSpec, StaticType};
+pub use gtk4::glib::{Object as GObject, Value as GValue};
+pub use gtk4::prelude::{ObjectExt, WidgetExt};
+pub use gtk4::Widget as GtkWidget;
 
 pub type Result<T> = rquickjs::Result<T>;
 
-pub use crate::errors::HandleParamError;
-
 pub use crate::core::from_gtype::define;
-
+pub use crate::errors::HandleParamError;
+pub use crate::exception;
+pub use crate::newtype::Gtk;
 pub use crate::obj_data::ObjectData;
+pub use crate::traits::*;
 
 pub struct JsConverter {
     pub type_: glib::types::Type,
@@ -40,14 +38,6 @@ pub struct TypeKey(pub glib::types::Type);
 
 impl TypedMapKey for TypeKey {
     type Value = JsConverter;
-}
-
-pub trait AsObject {
-    fn as_object(&self) -> &GObject;
-}
-
-pub trait Interface<'js, T> {
-    fn define(ty: &Type<'js, T>) -> Result<()>;
 }
 
 pub struct Type<'js, T> {
@@ -250,106 +240,4 @@ macro_rules! exception {
             }
         }
     };
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Gtk<T>(pub T);
-
-impl<T> Gtk<T> {
-    pub fn new(val: T) -> Self {
-        Gtk(val)
-    }
-}
-
-pub trait CastRef<T> {
-    fn cast_ref(&self) -> Option<&T>;
-}
-
-impl<T, U> CastRef<U> for Gtk<T>
-where
-    U: ObjectType,
-    T: Cast,
-{
-    fn cast_ref(&self) -> Option<&U> {
-        self.0.dynamic_cast_ref::<U>()
-    }
-}
-
-impl<T> From<T> for Gtk<T> {
-    fn from(val: T) -> Self {
-        Gtk(val)
-    }
-}
-
-unsafe impl<'a, T> FromValue<'a> for Gtk<T>
-where
-    T: FromValue<'a>,
-{
-    type Checker = <T as FromValue<'a>>::Checker;
-
-    unsafe fn from_value(value: &'a glib::Value) -> Self {
-        Gtk(T::from_value(value))
-    }
-}
-
-impl<'a, T> ValueType for Gtk<T>
-where
-    T: ValueType,
-{
-    type Type = <T as ValueType>::Type;
-}
-
-impl<T> ToValue for Gtk<T>
-where
-    T: ToValue,
-{
-    fn to_value(&self) -> glib::Value {
-        self.0.to_value()
-    }
-
-    fn value_type(&self) -> glib::Type {
-        self.0.value_type()
-    }
-}
-
-impl<T> ToValueOptional for Gtk<T>
-where
-    T: ToValueOptional,
-{
-    fn to_value_optional(s: Option<&Self>) -> glib::Value {
-        T::to_value_optional(s.map(|inner| &inner.0))
-    }
-}
-
-impl<T> UnsafeFrom<ObjectRef> for Gtk<T>
-where
-    T: UnsafeFrom<ObjectRef>,
-{
-    unsafe fn unsafe_from(t: ObjectRef) -> Self {
-        Gtk(T::unsafe_from(t))
-    }
-}
-
-impl<T> Into<ObjectRef> for Gtk<T>
-where
-    T: Into<ObjectRef>,
-{
-    fn into(self) -> ObjectRef {
-        self.0.into()
-    }
-}
-
-impl<T> StaticType for Gtk<T>
-where
-    T: StaticType,
-{
-    fn static_type() -> glib::Type {
-        T::static_type()
-    }
-}
-
-impl<T: IsA<GObject>> AsObject for Gtk<T> {
-    fn as_object(&self) -> &GObject {
-        &self.0.upcast_ref::<GObject>()
-    }
 }

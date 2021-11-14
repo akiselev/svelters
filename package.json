@@ -38,6 +38,7 @@
     "chalk": "^4.1.2",
     "cosmiconfig": "^7.0.1",
     "cross-env": "^7.0.3",
+    "ejs": "^3.1.6",
     "esbuild": "^0.13.9",
     "esbuild-svelte": "^0.5.6",
     "eslint": "^7.27.0",
