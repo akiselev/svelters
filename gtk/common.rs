@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
 use glib::object::{ObjectRef, UnsafeFrom};
-use glib::translate::ToGlibPtr;
 use glib::value::{
     FromValue, FromValueOptional, ToValueOptional, ValueType, ValueTypeChecker,
     ValueTypeMismatchOrNoneError,
@@ -9,16 +8,39 @@ use glib::value::{
 use glib::{ObjectType, ToValue};
 pub use gtk4::prelude::{ObjectExt, WidgetExt};
 
-pub use gtk4::glib::Object as GObject;
 pub use gtk4::glib::{Cast, IsA, ParamFlags, ParamSpec, StaticType};
+pub use gtk4::glib::{Object as GObject, Value as GValue};
 pub use gtk4::Widget as GtkWidget;
 
-use crate::core::property::Prop;
+use rquickjs::{
+    AsFunction, AsProperty, ClassDef, Constructor, Ctx, FromInput, FromJs, IntoAtom, IntoJs,
+    Object as JsObject, ObjectDef, This, TypedMapKey, Value,
+};
+
+use crate::core::method::InterfaceMethod;
+use crate::core::{enum_prop::EnumProp, obj_prop::ObjectProp, property::Prop};
+
 pub use crate::exception;
 
 pub type Result<T> = rquickjs::Result<T>;
 
-use rquickjs::{AsProperty, Ctx, FromJs, IntoAtom, IntoJs, Object as JsObject, ObjectDef, Value};
+pub use crate::errors::HandleParamError;
+
+pub use crate::core::from_gtype::define;
+
+pub use crate::obj_data::ObjectData;
+
+pub struct JsConverter {
+    pub type_: glib::types::Type,
+    pub construct: Box<dyn for<'js> Fn(Ctx<'js>, GObject) -> Result<Value<'js>>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct TypeKey(pub glib::types::Type);
+
+impl TypedMapKey for TypeKey {
+    type Value = JsConverter;
+}
 
 pub trait AsObject {
     fn as_object(&self) -> &GObject;
@@ -29,35 +51,119 @@ pub trait Interface<'js, T> {
 }
 
 pub struct Type<'js, T> {
+    name: &'static str,
     ctx: Ctx<'js>,
-    proto: JsObject<'js>,
+    pub proto: JsObject<'js>,
     marker: PhantomData<T>,
 }
 
-impl<'js, T> Type<'js, T> {
-    pub fn new(ctx: Ctx<'js>, proto: JsObject<'js>) -> Self {
+impl<'js, T> Type<'js, T>
+where
+    T: 'static,
+{
+    pub fn new(ctx: Ctx<'js>, proto: JsObject<'js>, name: &'static str) -> Self {
         Self {
+            name,
             ctx,
             proto,
             marker: PhantomData,
         }
     }
 
-    pub fn custom_prop<V, P>(&self, name: &'static str, prop: V) -> Result<()>
+    pub fn register_as<U>(&self) -> Result<()>
+    where
+        U: StaticType + ObjectType,
+        T: From<U> + for<'a> IntoJs<'a>,
+    {
+        let type_ = U::static_type();
+        self.ctx.insert_typed(
+            TypeKey(type_),
+            JsConverter {
+                type_,
+                construct: Box::new(move |ctx, val| {
+                    let this = match val.dynamic_cast::<U>() {
+                        Ok(val) => val,
+                        Err(_) => {
+                            return Err(exception!("Could not cast Object to {}", type_.name()));
+                        }
+                    };
+                    let this = T::from(this);
+                    this.into_js(ctx)
+                }),
+            },
+        );
+        Ok(())
+    }
+
+    pub fn custom_prop<V, P>(&self, name: &str, prop: V) -> Result<()>
     where
         V: AsProperty<'js, P>,
     {
         self.proto.prop(name, prop)
     }
 
-    pub fn prop<P>(&self, name: &'static str, param_name: &'static str) -> Result<()>
+    pub fn method<FN, A, R, X>(&self, name: &str, func: FN) -> Result<()>
+    where
+        FN: Fn<A, Output = R> + 'static,
+        R: IntoJs<'js>,
+        T: 'static + CastRef<X>,
+        &'js T: FromInput<'js>,
+        X: 'static,
+        InterfaceMethod<T, X, FN>: AsFunction<'js, A, R>,
+    {
+        let method = InterfaceMethod(func, PhantomData::<(T, X)>);
+        self.proto.set(name, rquickjs::Func::new(name, method))
+    }
+
+    pub fn raw_method<FN, A, R>(&self, name: &str, func: FN) -> Result<()>
+    where
+        FN: 'static + Fn<A, Output = R>,
+        rquickjs::Method<FN>: AsFunction<'js, A, R>,
+    {
+        self.proto
+            .set(name, rquickjs::Func::new(name, rquickjs::Method(func)))
+    }
+
+    pub fn raw_prop<V, P>(&self, name: &str, prop: V) -> Result<()>
+    where
+        V: AsProperty<'js, P>,
+    {
+        self.proto.prop(name, prop)
+    }
+
+    pub fn set<V>(&self, name: &str, prop: V) -> Result<()>
+    where
+        V: IntoJs<'js>,
+    {
+        self.proto.set(name, prop)
+    }
+
+    pub fn param<P>(&self, name: &str, spec: ParamSpec) -> Result<()>
     where
         T: 'static + AsObject,
         P: 'static + IntoJs<'js> + FromJs<'js> + for<'a> FromValue<'a> + ToValue,
         &'js T: FromJs<'js>,
         Prop<T, P>: AsProperty<'js, P>,
     {
-        self.proto.prop(name, Prop::<T, P>::new(param_name))
+        self.proto.prop(name, Prop::<T, P>::new(spec))
+    }
+
+    pub fn enum_prop(&self, name: &str, spec: ParamSpec) -> Result<()>
+    where
+        T: 'static + AsObject,
+        &'js T: FromJs<'js>,
+        EnumProp<T, String>: AsProperty<'js, String>,
+    {
+        self.proto.prop(name, EnumProp::<T, String>::new(spec))
+    }
+
+    pub fn obj_prop(&self, name: &str, spec: ParamSpec) -> Result<()>
+    where
+        T: 'static + AsObject,
+        &'js T: FromJs<'js>,
+        ObjectProp<T>: AsProperty<'js, ()>,
+    {
+        self.proto.prop(name, ObjectProp::<T>::new(spec))
     }
 
     pub fn implements<I>(&self) -> Result<()>
@@ -68,11 +174,9 @@ impl<'js, T> Type<'js, T> {
     }
 }
 
-// pub fn define_params<T: IsClass + StaticType>()
-
 pub macro interface {
-    ($cls:ty |$bld:ident| { $($tail:tt)* }) => {
-        impl<'js, T> Interface<'js, T> for $cls where T: 'static + AsObject, &'js T: FromJs<'js> {
+    ($cls:ty as $inner:ty |$bld:ident| { $($tail:tt)* }) => {
+        impl<'js, T> Interface<'js, T> for $cls where T: 'static + ClassDef + CastRef<$inner>, &'js T: FromJs<'js> {
             fn define($bld: &Type<'js, T>) -> Result<()> {
                 $($tail)*
                 Ok(())
@@ -97,7 +201,7 @@ pub macro class_def {
                 ctx: rquickjs::Ctx<'js>,
                 proto: &rquickjs::Object<'js>,
             ) -> rquickjs::Result<()> {
-                let $bld = Type::<'js, $cls>::new(ctx, proto.clone());
+                let $bld = Type::<'js, $cls>::new(ctx, proto.clone(), $name);
                 $($tail)*
                 Ok(())
             }
@@ -157,6 +261,26 @@ impl<T> Gtk<T> {
     }
 }
 
+pub trait CastRef<T> {
+    fn cast_ref(&self) -> Option<&T>;
+}
+
+impl<T, U> CastRef<U> for Gtk<T>
+where
+    U: ObjectType,
+    T: Cast,
+{
+    fn cast_ref(&self) -> Option<&U> {
+        self.0.dynamic_cast_ref::<U>()
+    }
+}
+
+impl<T> From<T> for Gtk<T> {
+    fn from(val: T) -> Self {
+        Gtk(val)
+    }
+}
+
 unsafe impl<'a, T> FromValue<'a> for Gtk<T>
 where
     T: FromValue<'a>,
@@ -194,26 +318,6 @@ where
 {
     fn to_value_optional(s: Option<&Self>) -> glib::Value {
         T::to_value_optional(s.map(|inner| &inner.0))
-    }
-}
-
-impl<'a, T, U> ToGlibPtr<'a, *mut U> for Gtk<T>
-where
-    T: ObjectType,
-    T: ToGlibPtr<'a, *mut U>,
-{
-    type Storage = <T as ToGlibPtr<'a, *mut U>>::Storage;
-
-    fn to_glib_none(&'a self) -> glib::translate::Stash<'a, *mut U, Self> {
-        self.to_glib_none()
-    }
-
-    fn to_glib_container(&'a self) -> glib::translate::Stash<'a, *mut U, Self> {
-        self.to_glib_container()
-    }
-
-    fn to_glib_full(&self) -> *mut U {
-        self.to_glib_full()
     }
 }
 

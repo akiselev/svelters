@@ -1,36 +1,182 @@
-use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
+use std::{borrow::Cow, cell::UnsafeCell, collections::HashMap, marker::PhantomData};
 
-use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
+use glib::{value::FromValue, ObjectType, SignalHandlerId};
+use rquickjs::{qjs, ClassDef, Context, Ctx, FromJs, Function, IntoJs, Method, MutFn, Opt, Value};
 
 use crate::common::*;
+
+struct ExtraData {
+    ctx: Context,
+    value: qjs::JSValue,
+}
+
+struct Events {
+    ctx: Context,
+    map: HashMap<String, Connection>,
+}
+
+struct Connection {
+    id: Option<SignalHandlerId>,
+    callbacks: Vec<qjs::JSValue>,
+}
+
+impl Default for Connection {
+    fn default() -> Self {
+        Self {
+            id: Default::default(),
+            callbacks: Default::default(),
+        }
+    }
+}
 
 #[derive(Clone)]
 pub struct Object(GObject);
 
 impl<'js, T> Interface<'js, T> for Object
 where
-    T: 'static + AsObject,
+    T: 'static + AsObject + CastRef<GObject>,
     &'js T: FromJs<'js>,
 {
     fn define(ty: &Type<'js, T>) -> Result<()> {
         ty.custom_prop(
             "asGObject",
-            rquickjs::Accessor::new_get(rquickjs::Method(as_object_getter::<'js, T>())),
+            rquickjs::Accessor::new_get(rquickjs::Method(|this: &'js T| {
+                rquickjs::Result::Ok(Object(this.as_object().clone()))
+            })),
         )?;
+        define_sv_extra(ty)?;
+        define_event_listeners(ty)?;
         Ok(())
     }
 }
 
-fn as_object_getter<'js, T>() -> impl Fn(&T) -> Object
+fn handle_event(name: String) -> impl Fn(&[GValue]) -> Option<GValue> {
+    move |args| {
+        if args.len() == 0 {
+            panic!("Signal handler received no arguments");
+        }
+        let this: GObject = args[0]
+            .get::<GObject>()
+            .expect("Could not get signal target");
+        let events = this
+            .get_data::<Events>("svEvents")
+            .expect("No event data found");
+        if let Some(conn) = events.map.get(&name) {
+            events.ctx.with(|ctx| {
+                let event = rquickjs::Object::new(ctx).unwrap();
+                event.set("type", &name).unwrap();
+                for cb in conn.callbacks.iter() {
+                    let func = unsafe { Value::from_js_value_const(ctx, *cb) };
+                    let func = func.as_function().expect("Callback is not a function");
+                    if let Err(err) = func.call::<_, Value>((event.clone(),)) {
+                        tracing::error!("Callback error in {}: {}", name, err);
+                    }
+                }
+            })
+        } else {
+            tracing::error!("Could not find connection for {}", name);
+        }
+        // let args = &args[1..];
+        None
+    }
+}
+
+fn define_event_listeners<'js, T>(ty: &Type<'js, T>) -> Result<()>
+where
+    T: 'static + AsObject + CastRef<GObject>,
+    &'js T: FromJs<'js>,
+{
+    ty.raw_method(
+        "addEventListener",
+        move |this: &'js T,
+              ctx: Ctx<'js>,
+              name: String,
+              func: Function<'js>,
+              opts: Opt<Value<'js>>|
+              -> Result<()> {
+            let obj = this.as_object();
+            let data = obj.try_get_or_create_data("svEvents", || -> Result<Events> {
+                Ok(Events {
+                    ctx: Context::from_ctx(ctx)?,
+                    map: Default::default(),
+                })
+            })?;
+            let entry = data.map.entry(name.clone()).or_default();
+            if entry.id.is_none() {
+                entry.id = Some(
+                    obj.connect(name.as_str(), false, handle_event(name.clone()))
+                        .map_err(|err| {
+                            exception!("Could not connect to signal {}: {}", name, err)
+                        })?,
+                );
+            }
+            entry.callbacks.push(func.into_value().into_js_value());
+
+            Result::Ok(())
+        },
+    )?;
+
+    ty.raw_method(
+        "removeEventListener",
+        move |this: &'js T,
+              ctx: Ctx<'js>,
+              name: String,
+              func: Function<'js>,
+              opts: Opt<Value<'js>>|
+              -> Result<()> {
+            let obj = this.as_object();
+            let func = func.into_value();
+            if let Some(data) = obj.get_data::<Events>("svEvents") {
+                if let Some(conn) = data.map.get_mut(&name) {
+                    conn.callbacks
+                        .retain(|val| unsafe { Value::from_js_value_const(ctx, *val) != func });
+                    if conn.callbacks.len() == 0 {
+                        obj.disconnect(conn.id.take().unwrap());
+                    }
+                    return Result::Ok(());
+                }
+            }
+            tracing::warn!("Event {} is not connected", name);
+            Result::Ok(())
+        },
+    )
+}
+
+fn define_sv_extra<'js, T>(ty: &Type<'js, T>) -> Result<()>
 where
     T: 'static + AsObject,
     &'js T: FromJs<'js>,
 {
-    return |this: &T| Object(this.as_object().clone());
+    ty.custom_prop(
+        "svExtra",
+        rquickjs::Accessor::new_get(rquickjs::Method(|this: &'js T, ctx: Ctx<'js>| unsafe {
+            let obj = this.as_object();
+            if let Some(data) = obj.data::<ExtraData>("svExtra") {
+                rquickjs::Result::Ok(Value::from_js_value_const(ctx, data.as_ref().value))
+            } else {
+                let value = rquickjs::Object::new(ctx)?;
+                let data = ExtraData {
+                    ctx: Context::from_ctx(ctx)?,
+                    value: value.clone().into_value().into_js_value(),
+                };
+                obj.set_data("svExtra", data);
+                rquickjs::Result::Ok(value.into_value())
+            }
+        })),
+    )
+}
+
+impl<U> CastRef<U> for Object
+where
+    U: ObjectType,
+{
+    fn cast_ref(&self) -> Option<&U> {
+        self.0.dynamic_cast_ref::<U>()
+    }
 }
 
 impl rquickjs::ClassDef for Object {
-    const CLASS_NAME: &'static str = "Object";
+    const CLASS_NAME: &'static str = "GObject";
 
     unsafe fn class_id() -> &'static mut rquickjs::ClassId {
         static mut CLASS_ID: rquickjs::ClassId = rquickjs::ClassId::new();
@@ -43,8 +189,9 @@ impl rquickjs::ClassDef for Object {
         ctx: rquickjs::Ctx<'js>,
         proto: &rquickjs::Object<'js>,
     ) -> rquickjs::Result<()> {
-        let ty = Type::<'js, Object>::new(ctx, proto.clone());
+        let ty = Type::<'js, Object>::new(ctx, proto.clone(), "GObject");
         ty.implements::<Self>()?;
+        ty.register_as::<GObject>()?;
         Ok(())
     }
 }

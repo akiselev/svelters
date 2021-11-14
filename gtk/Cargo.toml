@@ -23,6 +23,9 @@ rquickjs = { version = "0.1.2", path = "../crates/rquickjs", features = [
 anyhow = "1.0.40"
 glib = "0.14.8"
 itertools = "0.10.1"
+convert_case = "0.4.0"
+typedmap = "0.1.1"
+gdk4 = "0.3.1"
 
 [dependencies.gtk4]
 version = "0.3.1"

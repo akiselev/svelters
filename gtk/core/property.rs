@@ -1,23 +1,25 @@
 use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
 
-use glib::{value::FromValue, ToValue};
+use glib::{
+    value::{FromValue, ValueTypeChecker, ValueTypeMismatchError, ValueTypeMismatchOrNoneError},
+    ToValue,
+};
 use rquickjs::{
-    qjs, qjs::c_int, AsFunction, AsProperty, ClassDef, Ctx, FromJs, Function, IntoJs, Value,
+    qjs, qjs::c_int, AsFunction, AsProperty, ClassDef, Ctx, FromJs, Function, InputAccessor,
+    IntoJs, Value,
 };
 
 use crate::common::*;
 
 pub struct Prop<CLS, T> {
-    param_name: &'static str,
-    spec: UnsafeCell<Option<ParamSpec>>,
+    spec: ParamSpec,
     marker: PhantomData<(CLS, T)>,
 }
 
 impl<CLS, T> Prop<CLS, T> {
-    pub fn new(param_name: &'static str) -> Self {
+    pub fn new(spec: ParamSpec) -> Self {
         Self {
-            param_name,
-            spec: UnsafeCell::new(None),
+            spec,
             marker: PhantomData,
         }
     }
@@ -26,7 +28,11 @@ impl<CLS, T> Prop<CLS, T> {
 impl<'js, CLS, T> AsProperty<'js, T> for Prop<CLS, T>
 where
     CLS: 'static + AsObject,
-    T: 'static + IntoJs<'js> + FromJs<'js> + for<'a> FromValue<'a> + ToValue,
+    T: 'static
+        + IntoJs<'js>
+        + FromJs<'js>
+        + for<'a> FromValue<'a, Checker: ValueTypeChecker<Error: HandleParamError>>
+        + ToValue,
     &'js CLS: FromJs<'js>,
 {
     /// Property configuration
@@ -38,16 +44,17 @@ where
     /// - setter or undefined if the property hasn't setter
     fn config(self, ctx: Ctx<'js>) -> Result<(c_int, Value<'js>, Value<'js>, Value<'js>)> {
         Ok((
-            (qjs::JS_PROP_HAS_GET | qjs::JS_PROP_HAS_SET | qjs::JS_PROP_HAS_ENUMERABLE) as c_int,
+            (qjs::JS_PROP_HAS_GET | qjs::JS_PROP_HAS_SET | qjs::JS_PROP_ENUMERABLE) as c_int,
             Value::new_undefined(ctx),
-            Function::new::<_, CLS, T>(ctx, Getter::<CLS, T>::new(self.param_name)).into_js(ctx)?,
-            Function::new::<_, CLS, T>(ctx, Setter::<CLS, T>::new(self.param_name)).into_js(ctx)?,
+            Function::new::<_, CLS, T>(ctx, Getter::<CLS, T>::new(self.spec.clone()))
+                .into_js(ctx)?,
+            Function::new::<_, CLS, T>(ctx, Setter::<CLS, T>::new(self.spec)).into_js(ctx)?,
         ))
     }
 }
 
 pub struct Getter<CLS, T> {
-    param_name: &'static str,
+    spec: ParamSpec,
     marker: PhantomData<(CLS, T)>,
 }
 
@@ -55,9 +62,9 @@ impl<CLS, T> Getter<CLS, T>
 where
     CLS: AsObject,
 {
-    pub fn new(param_name: &'static str) -> Self {
+    pub fn new(spec: ParamSpec) -> Self {
         Self {
-            param_name,
+            spec,
             marker: PhantomData,
         }
     }
@@ -65,7 +72,9 @@ where
 
 impl<'js, CLS, T> AsFunction<'js, CLS, T> for Getter<CLS, T>
 where
-    T: 'static + for<'a> FromValue<'a> + IntoJs<'js>,
+    T: 'static
+        + for<'a> FromValue<'a, Checker: ValueTypeChecker<Error: HandleParamError>>
+        + IntoJs<'js>,
     CLS: 'static + AsObject,
     &'js CLS: FromJs<'js>,
 {
@@ -74,23 +83,22 @@ where
     }
 
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
-        let mut acc = input.access();
+        let acc = input.access();
         let this = acc.this::<&CLS>()?;
-        let value = match this.as_object().property(self.param_name) {
+        let value = match this.as_object().property(self.spec.name()) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not get property: {}", err.message)),
         };
         let value = match value.get::<T>() {
             Ok(val) => val,
-            Err(err) => return Err(exception!("Could not get property: {}", err)),
+            Err(err) => return err.handle_param_error(acc.ctx(), &self.spec),
         };
         value.into_js(acc.ctx())
     }
 }
 
 pub struct Setter<CLS, T> {
-    param_name: &'static str,
-    spec: UnsafeCell<Option<ParamSpec>>,
+    spec: ParamSpec,
     marker: PhantomData<(CLS, T)>,
 }
 
@@ -98,24 +106,10 @@ impl<CLS, T> Setter<CLS, T>
 where
     CLS: AsObject,
 {
-    pub fn new(param_name: &'static str) -> Self {
+    pub fn new(spec: ParamSpec) -> Self {
         Self {
-            param_name,
-            spec: UnsafeCell::new(None),
+            spec,
             marker: PhantomData,
-        }
-    }
-
-    fn spec(&self, this: &CLS) -> &ParamSpec {
-        unsafe {
-            let spec: &mut Option<ParamSpec> = &mut *self.spec.get();
-            if let Some(spec) = spec {
-                &*spec
-            } else {
-                let obj = this.as_object();
-                *spec = obj.find_property(self.param_name.as_ref());
-                &*spec.as_ref().expect("Param not found")
-            }
         }
     }
 }
@@ -137,7 +131,7 @@ where
         }
         let this = acc.this::<&CLS>()?;
         let value = acc.arg::<T>()?;
-        match this.as_object().set_property(self.param_name, value) {
+        match this.as_object().set_property(self.spec.name(), value) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not set property: {}", err.message)),
         };

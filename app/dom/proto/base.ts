@@ -18,38 +18,43 @@ type Hooks = {
 };
 
 export const initBaseNode = (name: string, CLS: any) => {
+    const proto = CLS.prototype || CLS;
     const log = createLogger(name);
-    Object.defineProperty(CLS.prototype, "svTagName", {
+    Object.defineProperty(proto, "svTagName", {
         value: name,
     });
-    Object.defineProperty(CLS.prototype, "setAttribute", {
+    Object.defineProperty(proto, "setAttribute", {
         value: function (attr: string, value: any) {
             if (attr === "class") {
                 console.log("setting classes: ", value);
-                this.svSetAttribute("cssClasses", value.split(" "));
+                this.cssClasses = value.split(" ");
             } else {
-                this.svSetAttribute(attr, value);
+                this[attr] = value;
+                // } else if (this.hasOwnProperty(attr)) {
+                // throw new Error(`Attribute ${attr} does not exist on ${name}`);
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "getAttribute", {
+    Object.defineProperty(proto, "getAttribute", {
         value: function (attr: string) {
             if (attr === "class") {
-                return this.svGetAttribute("cssClasses").join(" ");
+                return this.cssClasses.join(" ");
             } else {
-                return this.svGetAttribute(attr);
+                return this[attr];
+                // } else if (this.hasOwnProperty(attr)) {
+                // throw new Error(`Attribute ${attr} does not exist on ${name}`);
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "getRootNode", {
+    Object.defineProperty(proto, "getRootNode", {
         value: function () {
             return document;
         },
     });
-    Object.defineProperty(CLS.prototype, "toString", {
+    Object.defineProperty(proto, "toString", {
         value: createToString(name),
     });
-    Object.defineProperty(CLS.prototype, "classList", {
+    Object.defineProperty(proto, "classList", {
         get() {
             return {
                 add(name: string): void {
@@ -64,10 +69,10 @@ export const initBaseNode = (name: string, CLS: any) => {
         },
     });
 
-    Object.defineProperty(CLS.prototype, "svLog", {
+    Object.defineProperty(proto, "svLog", {
         value: log,
     });
-    Object.defineProperty(CLS.prototype, "svName", {
+    Object.defineProperty(proto, "svName", {
         get() {
             return this.svExtra.name;
         },
@@ -77,7 +82,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.name = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "svMounted", {
+    Object.defineProperty(proto, "svMounted", {
         get() {
             return this.svExtra.mounted;
         },
@@ -87,7 +92,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.mounted = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "parentNode", {
+    Object.defineProperty(proto, "parentNode", {
         get() {
             return this.svExtra.parentNode;
         },
@@ -97,7 +102,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.parentNode = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "svNextSibling", {
+    Object.defineProperty(proto, "svNextSibling", {
         get() {
             return this.svExtra.nextSibling;
         },
@@ -107,7 +112,7 @@ export const initBaseNode = (name: string, CLS: any) => {
             this.svExtra.nextSibling = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "svPrevSibling", {
+    Object.defineProperty(proto, "svPrevSibling", {
         get() {
             return this.svExtra.prevSibling;
         },
@@ -120,7 +125,8 @@ export const initBaseNode = (name: string, CLS: any) => {
 };
 
 export const initSingleton = (CLS: any, hooks: Hooks = {}) => {
-    Object.defineProperty(CLS.prototype, "insertBefore", {
+    const proto = CLS.prototype || CLS;
+    Object.defineProperty(proto, "insertBefore", {
         value: function (node: any, anchor: any) {
             if (isChild(node)) {
                 const handler = hooks[node.svName];
@@ -138,7 +144,7 @@ export const initSingleton = (CLS: any, hooks: Hooks = {}) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "appendChild", {
+    Object.defineProperty(proto, "appendChild", {
         value: function (node: any) {
             if (isChild(node)) {
                 const handler = hooks[node.svName];
@@ -156,7 +162,7 @@ export const initSingleton = (CLS: any, hooks: Hooks = {}) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "removeChild", {
+    Object.defineProperty(proto, "removeChild", {
         value: function (node: any) {
             if (isChild(node)) {
                 const handler = hooks[node.svName];
@@ -174,14 +180,14 @@ export const initSingleton = (CLS: any, hooks: Hooks = {}) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "onUnmount", {
+    Object.defineProperty(proto, "onUnmount", {
         value: function (node: any) {
             this.child?.onUnmount?.();
             this.child = null;
             this.svChild = null;
         },
     });
-    Object.defineProperty(CLS.prototype, "svChild", {
+    Object.defineProperty(proto, "svChild", {
         get() {
             return this.svExtra.child;
         },
@@ -194,7 +200,8 @@ export const initSingleton = (CLS: any, hooks: Hooks = {}) => {
 };
 
 export const initWidget = (CLS: any, hooks: Hooks) => {
-    Object.defineProperty(CLS.prototype, "insertBefore", {
+    const proto = CLS.prototype || CLS;
+    Object.defineProperty(proto, "insertBefore", {
         value: function (node: any, anchor: any) {
             insertChildBefore(this, node, anchor);
 
@@ -210,7 +217,7 @@ export const initWidget = (CLS: any, hooks: Hooks) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "appendChild", {
+    Object.defineProperty(proto, "appendChild", {
         value: function (node: any) {
             appendChild(this, node);
 
@@ -226,7 +233,7 @@ export const initWidget = (CLS: any, hooks: Hooks) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "removeChild", {
+    Object.defineProperty(proto, "removeChild", {
         value: function (node: any) {
             removeChild(this, node);
 
@@ -243,12 +250,12 @@ export const initWidget = (CLS: any, hooks: Hooks) => {
             node?.onUnmount?.();
         },
     });
-    Object.defineProperty(CLS.prototype, "onUnmount", {
+    Object.defineProperty(proto, "onUnmount", {
         value: function (node: any) {
             unmountNode(this.svTail);
         },
     });
-    Object.defineProperty(CLS.prototype, "svChild", {
+    Object.defineProperty(proto, "svChild", {
         get() {
             return this.svExtra.child;
         },
@@ -258,7 +265,7 @@ export const initWidget = (CLS: any, hooks: Hooks) => {
             this.svExtra.child = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "svTail", {
+    Object.defineProperty(proto, "svTail", {
         get() {
             return this.svExtra.tail;
         },
@@ -280,7 +287,8 @@ export interface ILayout {
 }
 
 export const initLayout = (CLS: any, hooks: ILayout) => {
-    Object.defineProperty(CLS.prototype, "insertBefore", {
+    const proto = CLS.prototype || CLS;
+    Object.defineProperty(proto, "insertBefore", {
         value: function (node: any, anchor: any) {
             insertChildBefore(this, node, anchor);
 
@@ -303,7 +311,7 @@ export const initLayout = (CLS: any, hooks: ILayout) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "appendChild", {
+    Object.defineProperty(proto, "appendChild", {
         value: function (node: any) {
             appendChild(this, node);
             if (isWidget(node)) {
@@ -320,7 +328,7 @@ export const initLayout = (CLS: any, hooks: ILayout) => {
             }
         },
     });
-    Object.defineProperty(CLS.prototype, "removeChild", {
+    Object.defineProperty(proto, "removeChild", {
         value: function (node: any) {
             removeChild(this, node);
             if (isWidget(node)) {
@@ -338,12 +346,12 @@ export const initLayout = (CLS: any, hooks: ILayout) => {
             node?.onUnmount?.();
         },
     });
-    Object.defineProperty(CLS.prototype, "onUnmount", {
+    Object.defineProperty(proto, "onUnmount", {
         value: function (node: any) {
             unmountNode(this.svTail);
         },
     });
-    Object.defineProperty(CLS.prototype, "svChild", {
+    Object.defineProperty(proto, "svChild", {
         get() {
             return this.svExtra.child;
         },
@@ -353,7 +361,7 @@ export const initLayout = (CLS: any, hooks: ILayout) => {
             this.svExtra.child = value;
         },
     });
-    Object.defineProperty(CLS.prototype, "svTail", {
+    Object.defineProperty(proto, "svTail", {
         get() {
             return this.svExtra.tail;
         },
