@@ -124,21 +124,19 @@ ${inherits.map((ty) => `        ty.implements::<${ty}>()?;`).join("\n")}
 
 const gen = new Generator(constants.MAIN_PACKAGES);
 gen.initialize().then(() => {
-    let output = "use crate::RegisterType;\n\n";
+    let output = "use crate::Registry;\nuse glib::StaticType;\n\n";
     let types = [];
     Object.keys(gen.types).forEach((cls) => {
         if (gen.implements(cls, "GObject.Object") && gen.canGenerate(cls)) {
             const name = cls.split(".", 2)[1];
             const g = `${gen.getRustPrefix(cls)}${name}`;
-            output += "\n" + gen.generateClass(cls);
-            types.push(
-                `ctx.register_type::<crate::newtype::Gtk<${g}>>("${name}")?;`,
-            );
+            // output += "\n" + gen.generateClass(cls);
+            types.push(`ctx.initialize(${g}::static_type())?;`);
         }
     });
 
     output += `
-fn initialize_objects<'js>(ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<()> {
+pub fn initialize_types<'js>(ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<()> {
 ${types.map((ty) => `    ${ty}`).join("\n")}
     Ok(())
 }

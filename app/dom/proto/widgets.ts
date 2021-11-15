@@ -33,7 +33,7 @@ export const initPaned = (el: any) => {
 };
 
 export const initAppWindow = () => {
-    initSingleton(ApplicationWindow, {
+    initSingleton(GtkApplicationWindow, {
         titlebar: (self, node, remove) => {
             self.titlebar = remove ? null : node;
         },
@@ -44,7 +44,7 @@ export const initAppWindow = () => {
 };
 
 export const initGtkWindow = () => {
-    initSingleton(Window, {
+    initSingleton(GtkWindow, {
         titlebar: (self, node, remove) => {
             self.titlebar = remove ? null : node;
         },
@@ -55,7 +55,7 @@ export const initGtkWindow = () => {
 };
 
 export const initListView = () => {
-    initWidget(ListView, {
+    initWidget(GtkListView, {
         model: (self, child, remove) => {
             self.model = remove ? null : child.self;
         },

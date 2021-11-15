@@ -1,65 +1,108 @@
 use std::os::raw::{c_long, c_ulong};
 
 use convert_case::{Case, Casing};
-use glib::{object::IsClass, Class};
-use rquickjs::FromJs;
+use glib::{object::IsClass, Class, EnumClass, EnumValue};
+use rquickjs::{FromJs, IntoJs};
 
-use crate::common::*;
+use crate::{common::*, errors::HandleValueError, registry::Registry};
 
-pub fn define<'js, T, CLS>(ty: &Type<'js, CLS>) -> Result<()>
-where
-    T: IsClass + StaticType,
-    CLS: 'static + AsObject,
-    &'js CLS: FromJs<'js>,
-{
-    let cls = Class::<GObject>::from_type(T::static_type()).unwrap();
-    let params = cls.list_properties();
-    let cls_name = std::any::type_name::<T>();
-    for param in params.into_iter() {
-        let param_ty = param.value_type();
-        let prop_name = param.name().to_case(Case::Camel);
+impl<'js> IntoJs<'js> for G<glib::Value> {
+    fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+        G(&self.0).into_js(ctx)
+    }
+}
+
+impl<'a, 'js> IntoJs<'js> for G<&'a glib::Value> {
+    fn into_js(self, ctx: rquickjs::Ctx<'js>) -> rquickjs::Result<rquickjs::Value<'js>> {
+        let value = self.0;
+        let param_ty = value.type_();
+
         use glib::types::Type;
         if param_ty.is_a(Type::I8) {
-            ty.param::<i8>(prop_name.as_str(), param)?;
+            match value.get::<i8>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::U8) {
-            ty.param::<u8>(prop_name.as_str(), param)?;
+            match value.get::<u8>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::BOOL) {
-            ty.param::<bool>(prop_name.as_str(), param)?;
+            match value.get::<bool>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::I32) {
-            ty.param::<i32>(prop_name.as_str(), param)?;
+            match value.get::<i32>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::U32) {
-            ty.param::<u32>(prop_name.as_str(), param)?;
+            match value.get::<u32>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::I_LONG) {
-            ty.param::<c_long>(prop_name.as_str(), param)?;
+            match value.get::<c_long>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::U_LONG) {
-            ty.param::<c_ulong>(prop_name.as_str(), param)?;
+            match value.get::<c_ulong>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::I64) {
-            ty.param::<i64>(prop_name.as_str(), param)?;
+            match value.get::<i64>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::U64) {
-            ty.param::<u64>(prop_name.as_str(), param)?;
+            match value.get::<u64>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::F32) {
-            ty.param::<f32>(prop_name.as_str(), param)?;
+            match value.get::<f32>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::F64) {
-            ty.param::<f64>(prop_name.as_str(), param)?;
+            match value.get::<f64>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::STRING) {
-            ty.param::<String>(prop_name.as_str(), param)?;
+            match value.get::<String>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Vec::<String>::static_type()) {
-            ty.param::<Vec<String>>(prop_name.as_str(), param)?;
-        } else if param_ty.is_a(Type::POINTER) {
-            println!();
-        } else if param_ty.is_a(Type::VARIANT) {
-        } else if param_ty.is_a(Type::INTERFACE) {
+            match value.get::<Vec<String>>() {
+                Ok(val) => val.into_js(ctx),
+                Err(err) => err.handle_value_error(ctx, param_ty),
+            }
         } else if param_ty.is_a(Type::ENUM) {
-            ty.enum_prop(prop_name.as_str(), param)?;
-        } else if param_ty.is_a(Type::FLAGS) {
+            let cls = EnumClass::new(param_ty).expect("Not an enum class");
+            let value = EnumValue::from_value(&value).ok_or_else(|| {
+                exception!(
+                    "Could not convert glib Value to EnumValue for enum {}",
+                    param_ty.name()
+                )
+            })?;
+            value.nick().into_js(ctx)
         } else if param_ty.is_a(Type::OBJECT) {
-            ty.obj_prop(prop_name.as_str(), param)?;
+            match value.get::<GObject>() {
+                Ok(obj) => ctx.marshall(obj),
+                Err(_) => Ok(rquickjs::Value::new_null(ctx)),
+            }
+        // } else if param_ty.is_a(Type::POINTER) {
+        // } else if param_ty.is_a(Type::VARIANT) {
+        // } else if param_ty.is_a(Type::INTERFACE) {
+        // } else if param_ty.is_a(Type::FLAGS) {
         } else {
-            panic!(
-                ">>>>>> Type::??? not implemented for prop {}::{}",
-                cls_name, prop_name
-            );
+            panic!(">>>>>> IntoJs not implemented for type {}",);
         }
     }
-    Ok(())
 }

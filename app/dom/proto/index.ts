@@ -5,38 +5,36 @@ let initialized = false;
 function initializeClasses() {
     if (initialized) return;
     /// Basic getters and setters
-    initBaseNode("Button", Button);
-    // initBaseNode("Label", Label);
-    initBaseNode("Box", Box);
-    // initBaseNode("Paned", Paned);
-    // initBaseNode("scrolled", ScrolledWindow);
-    // initBaseNode("viewport", Viewport);
-    // initBaseNode("motion", EventControllerMotion);
-    // initBaseNode("keyboard", EventControllerKey);
-    // initBaseNode("focus", EventControllerFocus);
-    // initBaseNode("signalListItemFactory", SignalListItemFactory);
-    // initBaseNode("multiSelection", MultiSelection);
-    // initBaseNode("singleSelection", SingleSelection);
-    // initBaseNode("noSelection", NoSelection);
-    initBaseNode("AppWindow", ApplicationWindow);
-    // initBaseNode("gtkWindow", Window);
-    // initBaseNode("listView", ListView);
+    initBaseNode("Button", GtkButton);
+    // initBaseNode("Label", GtkLabel);
+    initBaseNode("Box", GtkBox);
+    // initBaseNode("Paned", GtkPaned);
+    // initBaseNode("scrolled", GtkScrolledWindow);
+    // initBaseNode("viewport", GtkViewport);
+    // initBaseNode("motion", GtkEventControllerMotion);
+    // initBaseNode("keyboard", GtkEventControllerKey);
+    // initBaseNode("focus", GtkEventControllerFocus);
+    // initBaseNode("signalListItemFactory", GtkSignalListItemFactory);
+    // initBaseNode("multiSelection", GtkMultiSelection);
+    // initBaseNode("singleSelection", GtkSingleSelection);
+    // initBaseNode("noSelection", GtkNoSelection);
+    initBaseNode("AppWindow", GtkApplicationWindow);
+    // initBaseNode("gtkWindow", GtkWindow);
+    // initBaseNode("listView", GtkListView);
 
     /// Widgets with only one child
-    // initSingleton(ScrolledWindow);
-    // initSingleton(Viewport);
+    initSingleton(GtkScrolledWindow);
+    initSingleton(GtkViewport);
     w.initAppWindow();
-    // w.initGtkWindow();
-    // w.initListView();
-    // w.initSelection(MultiSelection);
-    // w.initSelection(SingleSelection);
-    // w.initSelection(NoSelection);
-    // w.initPaned(HorizontalPaned);
-    // w.initPaned(VerticalPaned);
-    // w.initBox(HorizontalBox);
-    w.initBox(Box);
+    w.initGtkWindow();
+    w.initListView();
+    w.initSelection(GtkMultiSelection);
+    w.initSelection(GtkSingleSelection);
+    w.initSelection(GtkNoSelection);
+    w.initPaned(GtkPaned);
+    w.initBox(GtkBox);
 
-    initWidget(Button, {
+    initWidget(GtkButton, {
         controller: (self, node, remove) => {
             remove ? self.removeController(node) : self.addController(node);
         },
@@ -53,10 +51,10 @@ function initializeClasses() {
 initializeClasses();
 
 export const ELEMENTS: { [name: string]: () => any } = {
-    button: () => new Button(),
+    button: () => new GtkButton(),
     // label: () => new Label(),
-    hBox: () => new Box("horizontal"),
-    vBox: () => new Box("vertical"),
+    hBox: () => new GtkBox("horizontal"),
+    vBox: () => new GtkBox("vertical"),
     // hPaned: () => new Paned("horizontal"),
     // vPaned: () => new Paned("vertical"),
     // scrolled: () => new ScrolledWindow(),
@@ -68,7 +66,7 @@ export const ELEMENTS: { [name: string]: () => any } = {
     // multiSelection: () => new MultiSelection(),
     // singleSelection: () => new SingleSelection(),
     // noSelection: () => new NoSelection(),
-    appWindow: () => new ApplicationWindow(),
+    appWindow: () => new GtkApplicationWindow(),
     // gtkWindow: () => new Window(),
     // listView: () => new ListView(),
 };

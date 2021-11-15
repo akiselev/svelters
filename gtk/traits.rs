@@ -1,6 +1,5 @@
 use glib::Object as GObject;
-
-use crate::common::Type;
+use rquickjs::{AsFunction, ClassDef, Constructor, Ctx};
 
 pub trait CastRef<T> {
     fn cast_ref(&self) -> Option<&T>;
@@ -8,8 +7,4 @@ pub trait CastRef<T> {
 
 pub trait AsObject {
     fn as_object(&self) -> &GObject;
-}
-
-pub trait Interface<'js, T> {
-    fn define(ty: &Type<'js, T>) -> rquickjs::Result<()>;
 }

@@ -1,6 +1,7 @@
 use std::fs::read_to_string;
 
 use gio::prelude::ApplicationExt;
+use glib::{Cast, StaticType};
 use gtk4::Application;
 use hotwatch::{Event, Hotwatch};
 use rquickjs::{Ctx, Value};

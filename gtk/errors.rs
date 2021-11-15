@@ -62,3 +62,40 @@ impl HandleParamError for ValueTypeMismatchError {
         ))
     }
 }
+
+pub trait HandleValueError {
+    fn handle_value_error<'js>(self, ctx: Ctx<'js>, ty: glib::Type)
+        -> rquickjs::Result<Value<'js>>;
+}
+
+impl HandleValueError for ValueTypeMismatchOrNoneError {
+    fn handle_value_error<'js>(
+        self,
+        ctx: Ctx<'js>,
+        ty: glib::Type,
+    ) -> rquickjs::Result<Value<'js>> {
+        match self {
+            ValueTypeMismatchOrNoneError::WrongValueType(err) => err.handle_value_error(ctx, ty),
+            ValueTypeMismatchOrNoneError::UnexpectedNone => {
+                tracing::warn!("Returning null for {}", ty.name());
+                Ok(Value::new_undefined(ctx))
+            }
+        }
+    }
+}
+
+impl HandleValueError for ValueTypeMismatchError {
+    fn handle_value_error<'js>(
+        self,
+        ctx: Ctx<'js>,
+        ty: glib::Type,
+    ) -> rquickjs::Result<Value<'js>> {
+        tracing::error!("Value Type Mismatch error for {}: {}", ty.name(), self);
+        Err(exception!(
+            "Value type mismatch error for {}: expected {}, found {}",
+            ty.name(),
+            self.requested_type().name(),
+            self.actual_type().name()
+        ))
+    }
+}

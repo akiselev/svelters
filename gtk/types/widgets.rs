@@ -3,48 +3,40 @@ use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
 use gtk4::prelude::*;
 use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
 
-use crate::common::*;
+use crate::{common::*, core::enums::Enum};
 
 pub type CssProvider = Gtk<gtk4::CssProvider>;
 
 interface!(
-    CssProvider as gtk4::CssProvider | ty | {
-        ty.method("setCss", |this: &gtk4::CssProvider, val: String| {
-            this.load_from_data(val.as_bytes());
-        })?;
-        ty.method("mount", |this: &gtk4::CssProvider, priority: u32| {
-            let display = gdk4::Display::default().unwrap();
-            gtk4::StyleContext::add_provider_for_display(&display, this, priority);
-        })?;
-        ty.method("unmount", |this: &gtk4::CssProvider| {
-            let display = gdk4::Display::default().unwrap();
-            gtk4::StyleContext::remove_provider_for_display(&display, this);
-        })?;
-    }
-);
+    gtk4::CssProvider {
+        fn constructor() {
+            Gtk(gtk4::CssProvider::new())
+        }
 
-class_def!(
-    CssProvider as "CssProvider" | ty | {
-        define::<gtk4::CssProvider, _>(&ty)?;
-        ty.implements::<CssProvider>()?;
-        ty.implements::<crate::Object>()?;
-        ty.register_as::<gtk4::CssProvider>()?;
+        fn setCss(this: Gtk<gtk4::CssProvider>, val: String) {
+            this.load_from_data(val.as_bytes());
+        }
+
+        fn mount(this: Gtk<gtk4::CssProvider>, priority: u32) {
+            let display = gdk4::Display::default().unwrap();
+            gtk4::StyleContext::add_provider_for_display(&display, &*this, priority);
+        }
+
+        fn unmount(this: Gtk<gtk4::CssProvider>) {
+            let display = gdk4::Display::default().unwrap();
+            gtk4::StyleContext::remove_provider_for_display(&display, &*this);
+        }
     }
 );
 
 pub type Button = Gtk<gtk4::Button>;
 
-interface!(Button as gtk4::Button | ty | {});
-
-class_def!(
-    Button as "Button" | ty | {
-        define::<gtk4::Button, _>(&ty)?;
-        ty.implements::<Button>()?;
-        ty.implements::<crate::Widget>()?;
-        ty.implements::<crate::Object>()?;
-        ty.register_as::<gtk4::Button>()?;
+interface!(gtk4::Button {
+    fn constructor() {
+        Gtk(gtk4::Button::new())
     }
-);
+
+});
 
 #[rquickjs::bind(module, public)]
 mod x {

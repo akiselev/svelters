@@ -204,7 +204,7 @@ export class Style extends Node {
 
     constructor() {
         super();
-        this.provider = new CssProvider();
+        this.provider = new GtkCssProvider();
         this.id = null;
         this.extra.text = null;
     }

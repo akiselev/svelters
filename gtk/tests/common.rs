@@ -8,7 +8,9 @@ pub fn eval(src: &str) -> rquickjs::Result<()> {
     ctx.with(|ctx| {
         setup(ctx)?;
 
-        ctx.eval::<(), _>(src)
+        let res = ctx.eval::<(), _>(src);
+        cleanup(ctx)?;
+        res
     })
 }
 
@@ -18,7 +20,9 @@ pub fn eval_result<T: for<'js> FromJs<'js>>(src: &str) -> rquickjs::Result<T> {
     ctx.with(|ctx| {
         setup(ctx)?;
 
-        ctx.eval::<T, _>(src)
+        let res = ctx.eval::<T, _>(src);
+        cleanup(ctx)?;
+        res
     })
 }
 
@@ -34,7 +38,9 @@ where
         let src = read_to_string(path).unwrap();
         let module = ctx.compile(path, src).unwrap();
         let func = module.get::<_, Function>(func_name).unwrap();
-        func.call::<T, ()>(args)
+        let res = func.call::<T, ()>(args);
+        cleanup(ctx)?;
+        res
     })
 }
 
@@ -57,8 +63,8 @@ macro_rules! exception {
 
 fn setup<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
     gtk4::init().unwrap();
+    svelters_gtk::initialize_types(ctx)?;
     let globals = ctx.globals();
-    globals.init_def::<svelters_gtk::Types>()?;
     globals.set("document", rquickjs::Object::new(ctx)?)?;
     globals.set("application", rquickjs::Object::new(ctx)?)?;
     globals.set("assert_eq", rquickjs::Function::new(ctx, assert_eq)?)?;
@@ -103,4 +109,20 @@ fn assert<'js>(val: Value<'js>, msg: Opt<String>) -> rquickjs::Result<()> {
         return Err(exception!("AssertionError"));
     }
     Ok(())
+}
+
+pub fn cleanup<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
+    ctx.clear_registery();
+    tracing::info!("Cleaning up Svelters...");
+    ctx.globals().keys::<String>().for_each(|key| {
+        ctx.globals()
+            .set(key.unwrap(), Value::new_undefined(ctx))
+            .ok();
+    });
+    ctx.globals().set("document", Value::new_undefined(ctx))?;
+    ctx.globals().set("window", Value::new_undefined(ctx))?;
+    ctx.globals().set("setTimeout", Value::new_undefined(ctx))?;
+    ctx.globals().set("console", Value::new_undefined(ctx))?;
+    tracing::info!("Done cleaning up Svelters...");
+    rquickjs::Result::Ok(())
 }

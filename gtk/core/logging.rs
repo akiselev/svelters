@@ -1,4 +1,4 @@
-use glib::{ParamSpec, StaticType};
+use glib::{ObjectExt, ParamSpec, StaticType};
 use tracing::Span;
 
 pub trait LogClass {
@@ -9,11 +9,11 @@ pub trait LogClass {
 
 impl LogClass for crate::Object {
     fn span(&self) -> Span {
-        tracing::info_span!("In Object", name = "Object")
+        tracing::info_span!("In Object", r#type = self.type_().name())
     }
 }
 
-impl<T> LogClass for crate::Gtk<T>
+impl<T> LogClass for crate::newtype::Gtk<T>
 where
     T: StaticType,
 {

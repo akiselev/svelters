@@ -9,14 +9,14 @@ use rquickjs::{
     IntoJs, Value,
 };
 
-use crate::common::*;
+use crate::{common::*, Object};
 
-pub struct Prop<CLS, T> {
+pub struct Prop<T> {
     param: ParamSpec,
-    marker: PhantomData<(CLS, T)>,
+    marker: PhantomData<T>,
 }
 
-impl<CLS, T> Prop<CLS, T> {
+impl<T> Prop<T> {
     pub fn new(param: ParamSpec) -> Self {
         Self {
             param,
@@ -25,15 +25,13 @@ impl<CLS, T> Prop<CLS, T> {
     }
 }
 
-impl<'js, CLS, T> AsProperty<'js, T> for Prop<CLS, T>
+impl<'js, T> AsProperty<'js, T> for Prop<T>
 where
-    CLS: 'static + AsObject + LogClass,
     T: 'static
         + IntoJs<'js>
         + FromJs<'js>
         + for<'a> FromValue<'a, Checker: ValueTypeChecker<Error: HandleParamError>>
         + ToValue,
-    &'js CLS: FromJs<'js>,
 {
     /// Property configuration
     ///
@@ -46,22 +44,18 @@ where
         Ok((
             (qjs::JS_PROP_HAS_GET | qjs::JS_PROP_HAS_SET | qjs::JS_PROP_ENUMERABLE) as c_int,
             Value::new_undefined(ctx),
-            Function::new::<_, CLS, T>(ctx, Getter::<CLS, T>::new(self.param.clone()))
-                .into_js(ctx)?,
-            Function::new::<_, CLS, T>(ctx, Setter::<CLS, T>::new(self.param)).into_js(ctx)?,
+            Function::new::<_, (), T>(ctx, Getter::<T>::new(self.param.clone())).into_js(ctx)?,
+            Function::new::<_, (), T>(ctx, Setter::<T>::new(self.param)).into_js(ctx)?,
         ))
     }
 }
 
-pub struct Getter<CLS, T> {
+pub struct Getter<T> {
     param: ParamSpec,
-    marker: PhantomData<(CLS, T)>,
+    marker: PhantomData<T>,
 }
 
-impl<CLS, T> Getter<CLS, T>
-where
-    CLS: AsObject,
-{
+impl<T> Getter<T> {
     pub fn new(param: ParamSpec) -> Self {
         Self {
             param,
@@ -70,13 +64,11 @@ where
     }
 }
 
-impl<'js, CLS, T> AsFunction<'js, CLS, T> for Getter<CLS, T>
+impl<'js, T> AsFunction<'js, (), T> for Getter<T>
 where
     T: 'static
         + for<'a> FromValue<'a, Checker: ValueTypeChecker<Error: HandleParamError>>
         + IntoJs<'js>,
-    CLS: 'static + AsObject + LogClass,
-    &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
         0..0
@@ -84,7 +76,7 @@ where
 
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
         let acc = input.access();
-        let this = acc.this::<&CLS>()?;
+        let this = acc.this::<&Object>()?;
         let _ = this.span().enter();
         self.param.log_getter();
         let value = match this.as_object().property(self.param.name()) {
@@ -99,15 +91,12 @@ where
     }
 }
 
-pub struct Setter<CLS, T> {
+pub struct Setter<T> {
     param: ParamSpec,
-    marker: PhantomData<(CLS, T)>,
+    marker: PhantomData<T>,
 }
 
-impl<CLS, T> Setter<CLS, T>
-where
-    CLS: AsObject,
-{
+impl<T> Setter<T> {
     pub fn new(param: ParamSpec) -> Self {
         Self {
             param,
@@ -116,11 +105,9 @@ where
     }
 }
 
-impl<'js, CLS, T> AsFunction<'js, CLS, T> for Setter<CLS, T>
+impl<'js, T> AsFunction<'js, (), T> for Setter<T>
 where
     T: ToValue + FromJs<'js>,
-    CLS: 'static + AsObject + LogClass,
-    &'js CLS: FromJs<'js>,
 {
     fn num_args() -> std::ops::Range<usize> {
         0..0
@@ -128,7 +115,7 @@ where
 
     fn call(&self, input: &rquickjs::Input<'js>) -> rquickjs::Result<Value<'js>> {
         let mut acc = input.access();
-        let this = acc.this::<&CLS>()?;
+        let this = acc.this::<&Object>()?;
         let _ = this.span().enter();
         self.param.log_setter();
         if acc.len() < 1 {

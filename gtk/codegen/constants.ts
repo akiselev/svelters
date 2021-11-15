@@ -50,16 +50,6 @@ export const IGNORE_TYPES = [
     "CustomLayout",
     "PasswordEntryBuffer",
 
-    // Manually written
-    "Application",
-    "CssProvider",
-    "Widget",
-    "Object",
-    "Button",
-    "Box",
-    "ApplicationWindow",
-    "Window",
-
     // Name collision between GTK and GDK
     "Snapshot",
 ];

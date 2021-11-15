@@ -2,6 +2,7 @@
 #![feature(backtrace)]
 #![feature(decl_macro)]
 #![feature(unboxed_closures)]
+#![feature(const_fn_fn_ptr_basics)]
 
 use std::future::Future;
 
@@ -9,9 +10,7 @@ use gio::prelude::ApplicationExt;
 use glib::MainContext;
 use gtk4::{prelude::*, Application};
 
-use rquickjs::{
-    AsFunction, ClassDef, Constructor, Context, Ctx, Executor, ExecutorSpawner, IntoJs, ObjectDef,
-};
+use rquickjs::{Context, Ctx, Executor, ExecutorSpawner, IntoJs};
 
 pub(crate) mod common;
 
@@ -20,71 +19,13 @@ pub(crate) mod errors;
 pub(crate) mod newtype;
 pub(crate) mod obj_data;
 mod object;
+pub mod registry;
 pub(crate) mod traits;
 mod types;
-mod widget;
 
 pub use object::*;
-pub use widget::*;
 
-use crate::core::enums::Enum;
-use common::Gtk;
-
-pub struct Types;
-
-impl ObjectDef for Types {
-    fn init<'js>(ctx: rquickjs::Ctx<'js>, object: &rquickjs::Object<'js>) -> rquickjs::Result<()> {
-        ctx.register_type::<Object>("GObject")?;
-        ctx.register_type::<Gtk<gtk4::Widget>>("Widget")?;
-        ctx.register_type::<Gtk<gtk4::Application>>("Application")?;
-        ctx.register_constructor("CssProvider", || Ok(Gtk(gtk4::CssProvider::new())))?;
-        ctx.register_constructor("Button", || Ok(Gtk(gtk4::Button::new())))?;
-        ctx.register_constructor("Window", || Ok(Gtk(gtk4::Window::new())))?;
-        ctx.register_constructor("ApplicationWindow", |ctx: Ctx<'js>| {
-            let globals = ctx.globals();
-            let app = globals.get::<_, Gtk<Application>>("application")?;
-            Ok(Gtk(gtk4::ApplicationWindow::new(&app.0)))
-        })?;
-        ctx.register_constructor("Box", |orientation: Enum<gtk4::Orientation>| {
-            Ok(Gtk(gtk4::Box::new(orientation.into(), 0)))
-        })?;
-        types::generated::initialize_objects(ctx)?;
-        types::interfaces::initialize_interfaces(ctx)?;
-        // ctx.register_type::<Gtk<gtk4::Window>>("Window")?;
-        Ok(())
-    }
-}
-
-pub trait RegisterType<'js> {
-    fn register_type<T: ClassDef>(&self, name: &str) -> rquickjs::Result<()>;
-
-    fn register_constructor<FN, A, T>(&self, name: &str, func: FN) -> rquickjs::Result<()>
-    where
-        T: 'static + ClassDef,
-        FN: 'static + Fn<A, Output = rquickjs::Result<T>>,
-        Constructor<T, FN>: AsFunction<'js, A, rquickjs::Result<T>>;
-}
-
-impl<'js> RegisterType<'js> for Ctx<'js> {
-    fn register_type<T: ClassDef>(&self, name: &str) -> rquickjs::Result<()> {
-        rquickjs::Class::<T>::register(*self)?;
-        let proto = rquickjs::Class::<T>::prototype(*self)?;
-        self.globals().set(name, proto)
-    }
-
-    fn register_constructor<FN, A, T>(&self, name: &str, func: FN) -> rquickjs::Result<()>
-    where
-        T: 'static + ClassDef,
-        FN: 'static + Fn<A, Output = rquickjs::Result<T>>,
-        Constructor<T, FN>: AsFunction<'js, A, rquickjs::Result<T>>,
-    {
-        rquickjs::Class::<T>::register(*self)?;
-        self.globals().set(
-            name,
-            rquickjs::Func::new(name, rquickjs::Class::<T>::constructor(func)),
-        )
-    }
-}
+pub use crate::registry::Registry;
 
 pub struct GtkExecutor;
 
@@ -113,8 +54,8 @@ pub fn initialize_gtk(ctx: &Context, name: &str) -> rquickjs::Result<Application
         // .flags(ApplicationFlags::HANDLES_OPEN | ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
     ctx.with(|ctx| {
+        initialize_types(ctx)?;
         let globals = ctx.globals();
-        globals.init_def::<Types>()?;
         globals.set("document", rquickjs::Object::new(ctx)?)?;
         let app = types::application::Application::new(app.clone());
         globals.set("application", app.into_js(ctx)?)?;
@@ -123,6 +64,14 @@ pub fn initialize_gtk(ctx: &Context, name: &str) -> rquickjs::Result<Application
     })?;
 
     Ok(app)
+}
+
+pub fn initialize_types<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
+    for decl in inventory::iter::<InterfaceDeclaration> {
+        (decl.func)(ctx);
+    }
+    types::generated::initialize_types(ctx)?;
+    Ok(())
 }
 
 pub fn start<FUNC: 'static + Fn(&Application)>(app: Application, func: FUNC) {
@@ -136,3 +85,14 @@ pub fn start<FUNC: 'static + Fn(&Application)>(app: Application, func: FUNC) {
 
     app.run();
 }
+
+pub struct InterfaceDeclaration {
+    func: for<'x> fn(Ctx<'x>),
+}
+
+impl InterfaceDeclaration {
+    pub const fn new(func: for<'x> fn(Ctx<'x>)) -> Self {
+        Self { func: func }
+    }
+}
+inventory::collect!(InterfaceDeclaration);
