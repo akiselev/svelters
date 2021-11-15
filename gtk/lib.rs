@@ -67,7 +67,7 @@ pub fn initialize_gtk(ctx: &Context, name: &str) -> rquickjs::Result<Application
     Ok(app)
 }
 
-pub fn initialize_types<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
+pub fn initialize_types(ctx: Ctx) -> rquickjs::Result<()> {
     for decl in inventory::iter::<InterfaceDeclaration> {
         (decl.func)(ctx);
     }
@@ -89,7 +89,7 @@ pub struct InterfaceDeclaration {
 
 impl InterfaceDeclaration {
     pub const fn new(func: for<'x> fn(Ctx<'x>)) -> Self {
-        Self { func: func }
+        Self { func }
     }
 }
 inventory::collect!(InterfaceDeclaration);

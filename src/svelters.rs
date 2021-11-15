@@ -51,7 +51,7 @@ impl Svelters {
                 return false;
             }
         }
-        return true;
+        true
     }
 
     fn handle_event(&self, event: SvEvent) -> bool {
@@ -73,7 +73,7 @@ impl Svelters {
             }
         }
         // Tell the caller to continue
-        return true;
+        true
     }
 
     fn on_schedule_func(
@@ -98,7 +98,7 @@ impl Svelters {
         Ok(())
     }
 
-    fn reload<'js>(&self) -> rquickjs::Result<()> {
+    fn reload(&self) -> rquickjs::Result<()> {
         let path = "./dist/index.js";
         self.with_js(|ctx| {
             let module = ctx
@@ -125,6 +125,7 @@ impl Svelters {
         Ok(())
     }
 
+    #[allow(clippy::new_ret_no_self)]
     pub fn new() -> SveltersBuilder {
         SveltersBuilder::new()
     }

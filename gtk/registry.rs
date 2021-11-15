@@ -73,6 +73,7 @@ struct Type {
 }
 
 impl Type {
+    #[allow(clippy::mut_from_ref)]
     fn get<'js: 'a, 'a>(ctx: &'a Ctx<'js>, r#type: glib::Type) -> &'a mut Self {
         if !r#type.is_a(GObject::static_type()) {
             panic!("Type {} is not a GObject", r#type.name());
@@ -87,7 +88,7 @@ impl Type {
             proto_key: None,
         };
 
-        ctx.insert_typed(key.clone(), ty.clone());
+        ctx.insert_typed(key.clone(), ty);
 
         ctx.get_typed_mut(&key).unwrap()
     }
@@ -187,14 +188,17 @@ impl Type {
     }
 }
 
+type ProtoFn = dyn for<'js> Fn(Ctx<'js>, &JsObject<'js>) -> Result<()>;
+
 #[allow(dead_code)]
 struct Iface {
     r#type: glib::Type,
-    set_proto: Option<Box<dyn for<'js> Fn(Ctx<'js>, &JsObject<'js>) -> Result<()>>>,
+    set_proto: Option<Box<ProtoFn>>,
     constructor: Option<RegisteryKey>,
 }
 
 impl Iface {
+    #[allow(clippy::mut_from_ref)]
     fn get<'js: 'a, 'a>(ctx: &'a Ctx<'js>, r#type: glib::Type) -> &'a mut Self {
         let key = InterfaceKey(r#type);
         if let Some(desc) = ctx.get_typed_mut(&key) {

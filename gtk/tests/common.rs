@@ -62,7 +62,7 @@ macro_rules! exception {
     };
 }
 
-fn setup<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
+fn setup(ctx: Ctx) -> rquickjs::Result<()> {
     gtk4::init().unwrap();
     svelters_gtk::initialize_types(ctx)?;
     let globals = ctx.globals();
@@ -83,7 +83,7 @@ fn assert_eq<'js>(left: Value<'js>, right: Value<'js>, msg: Opt<String>) -> rqui
     Ok(())
 }
 
-fn assert<'js>(val: Value<'js>, msg: Opt<String>) -> rquickjs::Result<()> {
+fn assert(val: Value, msg: Opt<String>) -> rquickjs::Result<()> {
     let mut failed = false;
     if val.is_null() || val.is_undefined() {
         failed = true;
@@ -94,7 +94,7 @@ fn assert<'js>(val: Value<'js>, msg: Opt<String>) -> rquickjs::Result<()> {
         }
     }
     if let Some(val) = val.as_string() {
-        if val.to_string().unwrap().len() == 0 {
+        if val.to_string().unwrap().is_empty() {
             failed = true;
         }
     }
@@ -112,7 +112,7 @@ fn assert<'js>(val: Value<'js>, msg: Opt<String>) -> rquickjs::Result<()> {
     Ok(())
 }
 
-pub fn cleanup<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
+pub fn cleanup(ctx: Ctx) -> rquickjs::Result<()> {
     ctx.clear_registery();
     tracing::info!("Cleaning up Svelters...");
     ctx.globals().keys::<String>().for_each(|key| {

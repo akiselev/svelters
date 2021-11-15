@@ -1,3 +1,4 @@
+#![allow(clippy::module_inception)]
 use rquickjs::{bind, Ctx, Rest, Result as JsResult};
 
 #[bind(object)]
@@ -6,7 +7,7 @@ pub mod console {
 
     use super::*;
 
-    pub fn log<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn log(_ctx: Ctx, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -17,7 +18,7 @@ pub mod console {
         Ok(())
     }
 
-    pub fn error<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn error(_ctx: Ctx, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -28,7 +29,7 @@ pub mod console {
         Ok(())
     }
 
-    pub fn warn<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn warn(_ctx: Ctx, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -39,7 +40,7 @@ pub mod console {
         Ok(())
     }
 
-    pub fn debug<'js>(_ctx: Ctx<'js>, args: Rest<Coerced<String>>) -> JsResult<()> {
+    pub fn debug(_ctx: Ctx, args: Rest<Coerced<String>>) -> JsResult<()> {
         let args: Vec<Coerced<String>> = args.into_inner();
         let line = args
             .into_iter()
@@ -51,7 +52,7 @@ pub mod console {
     }
 }
 
-pub fn init<'js>(ctx: Ctx<'js>) -> JsResult<()> {
+pub fn init(ctx: Ctx) -> JsResult<()> {
     tracing::info!("Initializing console");
     let glob = ctx.globals();
     glob.init_def::<Console>()?;

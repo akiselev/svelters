@@ -27,7 +27,7 @@ fn main() {
             let rt = ctx.runtime();
             rt.spawn_executor(GtkExecutor);
         });
-        if let Err(err) = sv.with_js(|ctx| initialize(ctx)) {
+        if let Err(err) = sv.with_js(initialize) {
             tracing::error!("ERROR: {}", err)
             // std::process::exit(1);
         };
@@ -69,7 +69,7 @@ fn run(app: Application, sv: Svelters) {
     });
 }
 
-fn initialize<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
+fn initialize(ctx: Ctx) -> rquickjs::Result<()> {
     let path = "./dist/index.js";
     let module = ctx
         .compile(path, read_to_string(path).unwrap())

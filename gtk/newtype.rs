@@ -107,11 +107,12 @@ where
     fn from_js(ctx: Ctx<'js>, value: Value<'js>) -> rquickjs::Result<Self> {
         let obj = crate::Object::from_js(ctx, value)?;
         let ty = obj.type_();
-        if let Some(target) = obj.inner().dynamic_cast::<T>().ok() {
-            Ok(Gtk(target))
-        } else {
-            let target_ty = T::static_type();
-            Err(exception!("Failed to convert type {} to {}", ty, target_ty))
+        match obj.inner().dynamic_cast::<T>() {
+            Ok(target) => Ok(Gtk(target)),
+            Err(_) => {
+                let target_ty = T::static_type();
+                Err(exception!("Failed to convert type {} to {}", ty, target_ty))
+            }
         }
     }
 }

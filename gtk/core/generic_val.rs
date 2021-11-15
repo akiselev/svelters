@@ -83,7 +83,7 @@ impl<'a, 'js> IntoJs<'js> for G<&'a glib::Value> {
                 Err(err) => err.handle_value_error(ctx, param_ty),
             }
         } else if param_ty.is_a(Type::ENUM) {
-            let value = EnumValue::from_value(&value).ok_or_else(|| {
+            let value = EnumValue::from_value(value).ok_or_else(|| {
                 exception!(
                     "Could not convert glib Value to EnumValue for enum {}",
                     param_ty.name()

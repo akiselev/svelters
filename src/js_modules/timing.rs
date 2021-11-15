@@ -22,7 +22,7 @@ pub fn set_timeout<'js>(_ctx: Ctx<'js>, _func: Function<'js>, _ms: u64) -> Resul
     Ok(())
 }
 
-pub fn init<'js>(ctx: Ctx<'js>) -> Result<()> {
+pub fn init(ctx: Ctx) -> Result<()> {
     let global = ctx.globals();
     global.init_def::<SetTimeout>()?;
     Ok(())

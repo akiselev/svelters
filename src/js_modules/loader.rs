@@ -20,7 +20,7 @@ impl SvResolver {
 impl Resolver for SvResolver {
     fn resolve<'js>(&mut self, _ctx: Ctx<'js>, base: &str, name: &str) -> rquickjs::Result<String> {
         tracing::info!(%base, %name, "Resolving {} from {}",  name, base);
-        let base = if base.starts_with("/") {
+        let base = if base.starts_with('/') {
             match std::fs::canonicalize(base) {
                 Ok(path) if path.is_file() => path.parent().unwrap().to_owned(),
                 Ok(path) => path,

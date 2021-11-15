@@ -17,7 +17,7 @@ use crate::{
 pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> Result<()> {
     let cls = Class::<GObject>::from_type(ty).unwrap();
     let params = cls.list_properties();
-    // let cls_name = ty.name();
+    let cls_name = ty.name();
     // println!("Props for {}:", cls_name);
     for param in params.into_iter() {
         let param_ty = param.value_type();
@@ -90,21 +90,21 @@ pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> 
             // println!("    {} ({}): string[]", prop_name, param.name(),);
 
             proto.prop(prop_name.as_str(), Prop::<Vec<String>>::new(param))?;
-        } else if param_ty.is_a(Type::POINTER) {
-            // println!(
-            //     ">>>>>> Type::POINTER not implemented for prop {}::{}",
-            //     cls_name, prop_name
-            // );
-        } else if param_ty.is_a(Type::VARIANT) {
-            // println!(
-            //     ">>>>>> Type::VARIANT not implemented for prop {}::{}",
-            //     cls_name, prop_name
-            // );
-        } else if param_ty.is_a(Type::INTERFACE) {
-            // println!(
-            //     ">>>>>> Type::INTERFACE not implemented for prop {}::{}",
-            //     cls_name, prop_name
-            // );
+        // } else if param_ty.is_a(Type::POINTER) {
+        //     // println!(
+        //     //     ">>>>>> Type::POINTER not implemented for prop {}::{}",
+        //     //     cls_name, prop_name
+        //     // );
+        // } else if param_ty.is_a(Type::VARIANT) {
+        //     // println!(
+        //     //     ">>>>>> Type::VARIANT not implemented for prop {}::{}",
+        //     //     cls_name, prop_name
+        //     // );
+        // } else if param_ty.is_a(Type::INTERFACE) {
+        //     // println!(
+        //     //     ">>>>>> Type::INTERFACE not implemented for prop {}::{}",
+        //     //     cls_name, prop_name
+        //     // );
         } else if param_ty.is_a(Type::ENUM) {
             // println!("    {} ({}): {}", prop_name, param.name(), param_ty.name());
             proto.prop::<_, _, String>(prop_name.as_str(), EnumProp::new(param))?;
@@ -119,10 +119,10 @@ pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> 
             // println!("    {} ({}): {}", prop_name, param.name(), param_ty.name());
             // ty.obj_prop(prop_name.as_str(), param)?;
         } else {
-            // println!(
-            //     ">>>>>> Type::??? not implemented for prop {}::{}",
-            //     cls_name, prop_name
-            // );
+            println!(
+                ">>>>>> Type::??? not implemented for prop {}::{}",
+                cls_name, prop_name
+            );
         }
     }
     if ty.is_a(GObject::static_type()) {
@@ -146,23 +146,15 @@ struct Events {
     map: HashMap<String, Connection>,
 }
 
+#[derive(Default)]
 struct Connection {
     id: Option<SignalHandlerId>,
     callbacks: Vec<qjs::JSValue>,
 }
 
-impl Default for Connection {
-    fn default() -> Self {
-        Self {
-            id: Default::default(),
-            callbacks: Default::default(),
-        }
-    }
-}
-
 fn handle_event(name: String) -> impl Fn(&[GValue]) -> Option<GValue> {
     move |args| {
-        if args.len() == 0 {
+        if args.is_empty() {
             panic!("Signal handler received no arguments");
         }
         let this: GObject = args[0]
@@ -275,7 +267,7 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
                             conn.callbacks.retain(|val| unsafe {
                                 Value::from_js_value_const(ctx, *val) != func
                             });
-                            if conn.callbacks.len() == 0 {
+                            if conn.callbacks.is_empty() {
                                 tracing::info!("Disconnecting {}::{}", this.type_().name(), name);
                                 this.disconnect(conn.id.take().unwrap());
                             }

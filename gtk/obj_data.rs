@@ -7,6 +7,7 @@ pub trait ObjectData {
     where
         T: 'static;
 
+    #[allow(clippy::mut_from_ref)]
     fn get_or_create_data<T, FN>(&self, name: &str, func: FN) -> &mut T
     where
         T: 'static,

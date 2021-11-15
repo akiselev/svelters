@@ -17,8 +17,8 @@ pub struct SveltersBuilder {
     initializers: Initializers,
 }
 
-impl SveltersBuilder {
-    pub fn new() -> SveltersBuilder {
+impl Default for SveltersBuilder {
+    fn default() -> Self {
         let (resolver, loader) = get_dev_dependencies();
         SveltersBuilder {
             resolver,
@@ -26,6 +26,12 @@ impl SveltersBuilder {
             module_loader: ModuleLoader::default(),
             initializers: vec![],
         }
+    }
+}
+
+impl SveltersBuilder {
+    pub fn new() -> SveltersBuilder {
+        Default::default()
     }
 
     pub fn with_initializer<F: 'static + FnOnce(&Svelters) -> Result<()>>(

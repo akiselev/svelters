@@ -32,23 +32,3 @@ interface!(gtk4::Button {
     }
 
 });
-
-#[rquickjs::bind(module, public)]
-mod x {
-    pub struct T {
-        pub x: u32,
-        #[quickjs(readonly)]
-        pub y: u32,
-    }
-
-    impl T {
-        #[quickjs(constructor)]
-        pub fn new() -> T {
-            T { x: 100, y: 200 }
-        }
-
-        pub fn start(&self) {
-            println!("start!");
-        }
-    }
-}
