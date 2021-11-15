@@ -70,10 +70,12 @@ pub fn initialize_gtk(ctx: &Context, name: &str) -> rquickjs::Result<Application
 }
 
 pub fn initialize_types(ctx: Ctx) -> rquickjs::Result<()> {
+    rquickjs::Class::<crate::Object>::register(ctx)?;
+    types::generated::initialize_types(ctx)?;
     for decl in inventory::iter::<InterfaceDeclaration> {
         (decl.func)(ctx);
     }
-    types::generated::initialize_types(ctx)?;
+    types::generated::initialize_global(ctx)?;
     Ok(())
 }
 

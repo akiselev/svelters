@@ -38,6 +38,9 @@ impl<'js> Registry<'js> for Ctx<'js> {
     fn set_constructor<FN: IntoJs<'js>>(self, r#type: glib::Type, func: FN) {
         let iface = Iface::get(&self, r#type);
         let key = self.register(func.into_js(self).expect("Failed to create constructor"));
+        if let Some(key) = iface.constructor {
+            self.deregister(key);
+        }
         iface.constructor = Some(key);
     }
 
@@ -51,7 +54,7 @@ impl<'js> Registry<'js> for Ctx<'js> {
             }),
         )
         .expect("Failed to create constructor");
-        // constructor.set_constructor(true);
+        constructor.set_constructor(true);
         self.set_constructor(r#type, constructor);
     }
 
