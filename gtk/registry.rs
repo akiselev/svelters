@@ -1,8 +1,4 @@
-use std::{ffi::CString, ptr};
-
-use rquickjs::{
-    qjs, ClassId, Ctx, Function, IntoJs, Object as JsObject, RegisteryKey, Rest, TypedMapKey, Value,
-};
+use rquickjs::{Ctx, Function, IntoJs, Object as JsObject, RegisteryKey, Rest, TypedMapKey, Value};
 
 use crate::{common::*, core::from_gtype::init_gtype};
 
@@ -94,10 +90,6 @@ impl Type {
         ctx.insert_typed(key.clone(), ty.clone());
 
         ctx.get_typed_mut(&key).unwrap()
-    }
-
-    pub fn name(&self) -> &str {
-        self.r#type.name()
     }
 
     pub fn proto<'js>(&mut self, ctx: Ctx<'js>) -> Result<JsObject<'js>> {
@@ -194,6 +186,8 @@ impl Type {
         Ok(proto)
     }
 }
+
+#[allow(dead_code)]
 struct Iface {
     r#type: glib::Type,
     set_proto: Option<Box<dyn for<'js> Fn(Ctx<'js>, &JsObject<'js>) -> Result<()>>>,

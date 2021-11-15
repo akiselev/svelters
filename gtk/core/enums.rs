@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use glib::{
-    types::Type, value::FromValue, EnumClass, EnumValue, IsA, StaticType, ToValue, Value as GValue,
+    types::Type, value::FromValue, EnumClass, EnumValue, StaticType, ToValue, Value as GValue,
 };
 use itertools::Itertools;
 use rquickjs::{Ctx, FromJs, IntoJs, Value};
@@ -75,9 +75,8 @@ where
 {
     fn into_js(self, ctx: Ctx<'js>) -> Result<Value<'js>> {
         let name = T::static_type().name();
-        let cls = get_enum_class(T::static_type())?;
         let value = self.to_value();
-        enum_nick_to_js(ctx, value, name, cls)
+        enum_nick_to_js(ctx, value, name)
     }
 }
 
@@ -101,9 +100,8 @@ where
 {
     fn into_js(self, ctx: Ctx<'js>) -> Result<Value<'js>> {
         let name = T::static_type().name();
-        let cls = get_enum_class(T::static_type())?;
         let value = self.to_value();
-        enum_name_to_js(ctx, value, name, cls)
+        enum_name_to_js(ctx, value, name)
     }
 }
 
@@ -155,12 +153,7 @@ fn enum_name_from_js<'js>(
     }
 }
 
-fn enum_nick_to_js<'js>(
-    ctx: Ctx<'js>,
-    value: GValue,
-    name: &'static str,
-    cls: EnumClass,
-) -> Result<Value<'js>> {
+fn enum_nick_to_js<'js>(ctx: Ctx<'js>, value: GValue, name: &'static str) -> Result<Value<'js>> {
     let value = EnumValue::from_value(&value).ok_or_else(|| {
         exception!(
             "Could not convert glib Value to EnumValue for enum {}",
@@ -170,12 +163,7 @@ fn enum_nick_to_js<'js>(
     value.nick().into_js(ctx)
 }
 
-fn enum_name_to_js<'js>(
-    ctx: Ctx<'js>,
-    value: GValue,
-    name: &'static str,
-    cls: EnumClass,
-) -> Result<Value<'js>> {
+fn enum_name_to_js<'js>(ctx: Ctx<'js>, value: GValue, name: &'static str) -> Result<Value<'js>> {
     let value = EnumValue::from_value(&value).ok_or_else(|| {
         exception!(
             "Could not convert glib Value to EnumValue for enum {}",

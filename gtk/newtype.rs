@@ -1,17 +1,11 @@
-use std::marker::PhantomData;
-
 use glib::object::Object as GObject;
-use glib::value::{
-    FromValue, FromValueOptional, ToValueOptional, ValueType, ValueTypeChecker,
-    ValueTypeMismatchOrNoneError,
-};
+use glib::value::{FromValue, ToValueOptional, ValueType};
 use glib::{Cast, IsA, ObjectType, StaticType, ToValue};
 pub use gtk4::prelude::{ObjectExt, WidgetExt};
-use rquickjs::{Ctx, FromJs, IntoJs, Opt, Value};
+use rquickjs::{Ctx, FromJs, IntoJs, Value};
 
 use crate::common::*;
 use crate::registry::Registry;
-use crate::traits::*;
 
 pub struct G<T>(pub T);
 
@@ -39,16 +33,6 @@ impl<T> Gtk<T> {
 impl<T> AsRef<T> for Gtk<T> {
     fn as_ref(&self) -> &T {
         &self.0
-    }
-}
-
-impl<T, U> CastRef<U> for Gtk<T>
-where
-    U: ObjectType,
-    T: Cast,
-{
-    fn cast_ref(&self) -> Option<&U> {
-        self.0.dynamic_cast_ref::<U>()
     }
 }
 
@@ -104,12 +88,6 @@ where
 {
     fn static_type() -> glib::Type {
         T::static_type()
-    }
-}
-
-impl<T: IsA<GObject>> AsObject for Gtk<T> {
-    fn as_object(&self) -> &GObject {
-        &self.0.upcast_ref::<GObject>()
     }
 }
 

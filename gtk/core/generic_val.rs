@@ -1,8 +1,7 @@
 use std::os::raw::{c_long, c_ulong};
 
-use convert_case::{Case, Casing};
-use glib::{object::IsClass, Class, EnumClass, EnumValue};
-use rquickjs::{FromJs, IntoJs};
+use glib::EnumValue;
+use rquickjs::IntoJs;
 
 use crate::{common::*, errors::HandleValueError, registry::Registry};
 
@@ -84,7 +83,6 @@ impl<'a, 'js> IntoJs<'js> for G<&'a glib::Value> {
                 Err(err) => err.handle_value_error(ctx, param_ty),
             }
         } else if param_ty.is_a(Type::ENUM) {
-            let cls = EnumClass::new(param_ty).expect("Not an enum class");
             let value = EnumValue::from_value(&value).ok_or_else(|| {
                 exception!(
                     "Could not convert glib Value to EnumValue for enum {}",
@@ -102,7 +100,7 @@ impl<'a, 'js> IntoJs<'js> for G<&'a glib::Value> {
         // } else if param_ty.is_a(Type::INTERFACE) {
         // } else if param_ty.is_a(Type::FLAGS) {
         } else {
-            panic!(">>>>>> IntoJs not implemented for type {}",);
+            panic!(">>>>>> IntoJs not implemented for type {}", param_ty.name());
         }
     }
 }

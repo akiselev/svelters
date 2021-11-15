@@ -1,7 +1,5 @@
-use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
-
 use gtk4::prelude::*;
-use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Opt, Value};
+use rquickjs::Opt;
 
 use crate::{common::*, core::enums::Enum};
 

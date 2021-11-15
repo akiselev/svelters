@@ -1,13 +1,10 @@
-use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
+use std::marker::PhantomData;
 
 use glib::{
-    value::{FromValue, ValueTypeChecker, ValueTypeMismatchError, ValueTypeMismatchOrNoneError},
+    value::{FromValue, ValueTypeChecker},
     ToValue,
 };
-use rquickjs::{
-    qjs, qjs::c_int, AsFunction, AsProperty, ClassDef, Ctx, FromJs, Function, InputAccessor,
-    IntoJs, Value,
-};
+use rquickjs::{qjs, qjs::c_int, AsFunction, AsProperty, Ctx, FromJs, Function, IntoJs, Value};
 
 use crate::{common::*, Object};
 
@@ -79,7 +76,7 @@ where
         let this = acc.this::<&Object>()?;
         let _ = this.span().enter();
         self.param.log_getter();
-        let value = match this.as_object().property(self.param.name()) {
+        let value = match this.property(self.param.name()) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not get property: {}", err.message)),
         };
@@ -122,7 +119,7 @@ where
             return Err(exception!("Setter must have at least one argument"));
         }
         let value = acc.arg::<T>()?;
-        match this.as_object().set_property(self.param.name(), value) {
+        match this.set_property(self.param.name(), value) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not set property: {}", err.message)),
         };

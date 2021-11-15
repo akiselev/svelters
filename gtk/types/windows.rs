@@ -1,9 +1,7 @@
-use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
-
 use gtk4::prelude::GtkWindowExt;
-use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
+use rquickjs::Ctx;
 
-use crate::{common::*, core::property::Prop, types::application::Application};
+use crate::{common::*, types::application::Application};
 
 pub type ApplicationWindow = Gtk<gtk4::ApplicationWindow>;
 

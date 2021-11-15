@@ -1,6 +1,7 @@
+#![allow(dead_code)]
 use std::fs::read_to_string;
 
-use rquickjs::{AsArguments, Context, Ctx, FromJs, Function, Module, Opt, Runtime, Value};
+use rquickjs::{AsArguments, Context, Ctx, FromJs, Function, Opt, Runtime, Value};
 
 pub fn eval(src: &str) -> rquickjs::Result<()> {
     let rt = Runtime::new().unwrap();

@@ -1,8 +1,6 @@
-use glib::{value::FromValue, EnumClass, ToValue, Value as GValue};
-use itertools::Itertools;
-use rquickjs::{
-    qjs, qjs::c_int, AsFunction, AsProperty, ClassDef, Ctx, FromJs, Function, IntoJs, Value,
-};
+use glib::ToValue;
+
+use rquickjs::{qjs, qjs::c_int, AsFunction, AsProperty, Ctx, FromJs, Function, IntoJs, Value};
 
 use crate::{common::*, registry::Registry, Object};
 
@@ -49,7 +47,7 @@ impl<'js> AsFunction<'js, (), ()> for Getter {
         self.param.log_getter();
 
         let ctx = acc.ctx();
-        let value = match this.as_object().property(self.param.name()) {
+        let value = match this.property(self.param.name()) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not get property: {}", err.message)),
         };
@@ -96,13 +94,10 @@ impl<'js> AsFunction<'js, (), ()> for Setter {
             };
             obj.to_value()
         };
-        match this.as_object().set_property(self.param.name(), value) {
+        match this.set_property(self.param.name(), value) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not set property: {}", err.message)),
         };
         Ok(Value::new_undefined(acc.ctx()))
     }
 }
-
-pub struct Nick;
-pub struct Name;

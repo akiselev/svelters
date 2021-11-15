@@ -1,9 +1,4 @@
-use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
-
-use gtk4::prelude::*;
-use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
-
-use crate::{common::*, core::enums::Enum};
+use crate::common::*;
 
 pub type CssProvider = Gtk<gtk4::CssProvider>;
 

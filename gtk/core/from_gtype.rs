@@ -4,11 +4,8 @@ use std::{
 };
 
 use convert_case::{Case, Casing};
-use glib::{object::IsClass, Class, SignalHandlerId};
-use rquickjs::{
-    qjs, ClassId, Context, Ctx, FromJs, Function, IntoJs, Object as JsObject, Opt, RegisteryKey,
-    TypedMapKey, Value,
-};
+use glib::{Class, SignalHandlerId};
+use rquickjs::{qjs, Context, Ctx, Function, IntoJs, Object as JsObject, Opt, Value};
 
 use crate::{
     common::*,
@@ -20,8 +17,8 @@ use crate::{
 pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> Result<()> {
     let cls = Class::<GObject>::from_type(ty).unwrap();
     let params = cls.list_properties();
-    let cls_name = ty.name();
-    println!("Props for {}:", cls_name);
+    // let cls_name = ty.name();
+    // println!("Props for {}:", cls_name);
     for param in params.into_iter() {
         let param_ty = param.value_type();
         let prop_name = param.name().to_case(Case::Camel);
@@ -140,7 +137,7 @@ pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> 
 }
 
 struct ExtraData {
-    ctx: Context,
+    _ctx: Context,
     value: qjs::JSValue,
 }
 
@@ -190,9 +187,10 @@ fn handle_event(name: String) -> impl Fn(&[GValue]) -> Option<GValue> {
                         Err(err) => {
                             details.push(Value::new_undefined(ctx));
                             tracing::error!(
-                                "Could not convert Value of type {} to JS Value in {} handler",
+                                "Could not convert Value of type {} to JS Value in {} handler: {}",
                                 arg.type_().name(),
-                                name
+                                name,
+                                err
                             );
                         }
                     }
@@ -209,7 +207,6 @@ fn handle_event(name: String) -> impl Fn(&[GValue]) -> Option<GValue> {
         } else {
             tracing::error!("Could not find connection for {}", name);
         }
-        // let args = &args[1..];
         None
     }
 }
@@ -224,12 +221,15 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
                       ctx: Ctx<'js>,
                       name: String,
                       func: Function<'js>,
-                      opts: Opt<Value<'js>>|
+                      _opts: Opt<Value<'js>>|
                       -> Result<()> {
-                    let obj = this.as_object();
-                    tracing::info!("Adding event listener for {}::{}", obj.type_().name(), name);
+                    tracing::info!(
+                        "Adding event listener for {}::{}",
+                        this.type_().name(),
+                        name
+                    );
 
-                    let data = obj.try_get_or_create_data("svEvents", || -> Result<Events> {
+                    let data = this.try_get_or_create_data("svEvents", || -> Result<Events> {
                         Ok(Events {
                             ctx: Context::from_ctx(ctx)?,
                             map: Default::default(),
@@ -237,8 +237,8 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
                     })?;
                     let entry = data.map.entry(name.clone()).or_default();
                     if entry.id.is_none() {
-                        tracing::info!("Connecting {}::{}", obj.type_().name(), name);
-                        let id = obj
+                        tracing::info!("Connecting {}::{}", this.type_().name(), name);
+                        let id = this
                             .connect(name.as_str(), false, handle_event(name.clone()))
                             .map_err(|err| {
                                 exception!("Could not connect to signal {}: {}", name, err)
@@ -262,23 +262,22 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
                       ctx: Ctx<'js>,
                       name: String,
                       func: Function<'js>,
-                      opts: Opt<Value<'js>>|
+                      _opts: Opt<Value<'js>>|
                       -> Result<()> {
-                    let obj = this.as_object();
                     tracing::info!(
                         "Removing event listener for {}::{}",
-                        obj.type_().name(),
+                        this.type_().name(),
                         name
                     );
                     let func = func.into_value();
-                    if let Some(data) = obj.get_data::<Events>("svEvents") {
+                    if let Some(data) = this.get_data::<Events>("svEvents") {
                         if let Some(conn) = data.map.get_mut(&name) {
                             conn.callbacks.retain(|val| unsafe {
                                 Value::from_js_value_const(ctx, *val) != func
                             });
                             if conn.callbacks.len() == 0 {
-                                tracing::info!("Disconnecting {}::{}", obj.type_().name(), name);
-                                obj.disconnect(conn.id.take().unwrap());
+                                tracing::info!("Disconnecting {}::{}", this.type_().name(), name);
+                                this.disconnect(conn.id.take().unwrap());
                             }
                             return Result::Ok(());
                         }
@@ -291,23 +290,22 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
     )
 }
 
-fn define_sv_extra<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<()> {
+fn define_sv_extra<'js>(_ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<()> {
     proto.prop(
         "svExtra",
         rquickjs::Accessor::new_get(rquickjs::Method(
             |this: &'js Object, ctx: Ctx<'js>| unsafe {
-                let obj = this.as_object();
-                tracing::info!("Getting {}::svExtra", obj.type_().name());
+                tracing::info!("Getting {}::svExtra", this.type_().name());
 
-                if let Some(data) = obj.data::<ExtraData>("svExtra") {
+                if let Some(data) = this.data::<ExtraData>("svExtra") {
                     rquickjs::Result::Ok(Value::from_js_value_const(ctx, data.as_ref().value))
                 } else {
                     let value = rquickjs::Object::new(ctx)?;
                     let data = ExtraData {
-                        ctx: Context::from_ctx(ctx)?,
+                        _ctx: Context::from_ctx(ctx)?,
                         value: value.clone().into_value().into_js_value(),
                     };
-                    obj.set_data("svExtra", data);
+                    this.set_data("svExtra", data);
                     rquickjs::Result::Ok(value.into_value())
                 }
             },

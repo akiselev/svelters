@@ -1,15 +1,9 @@
 use glib::{
-    value::{
-        FromValue, FromValueOptional, ToValueOptional, ValueType, ValueTypeChecker,
-        ValueTypeMismatchError, ValueTypeMismatchOrNoneError,
-    },
+    value::{ValueTypeMismatchError, ValueTypeMismatchOrNoneError},
     ParamSpec,
 };
 
-use rquickjs::{
-    AsFunction, AsProperty, ClassDef, Constructor, Ctx, FromInput, FromJs, IntoAtom, IntoJs,
-    Object as JsObject, ObjectDef, This, TypedMapKey, Value,
-};
+use rquickjs::{Ctx, Value};
 
 use crate::exception;
 
@@ -44,7 +38,7 @@ impl HandleParamError for ValueTypeMismatchOrNoneError {
 impl HandleParamError for ValueTypeMismatchError {
     fn handle_param_error<'js>(
         self,
-        ctx: Ctx<'js>,
+        _ctx: Ctx<'js>,
         param: &ParamSpec,
     ) -> rquickjs::Result<Value<'js>> {
         tracing::error!(
@@ -87,7 +81,7 @@ impl HandleValueError for ValueTypeMismatchOrNoneError {
 impl HandleValueError for ValueTypeMismatchError {
     fn handle_value_error<'js>(
         self,
-        ctx: Ctx<'js>,
+        _ctx: Ctx<'js>,
         ty: glib::Type,
     ) -> rquickjs::Result<Value<'js>> {
         tracing::error!("Value Type Mismatch error for {}: {}", ty.name(), self);

@@ -1,10 +1,6 @@
-use std::{borrow::Cow, cell::UnsafeCell, marker::PhantomData};
-
-use glib::{value::FromValue, EnumClass, EnumValue, ToValue, Value as GValue};
+use glib::{EnumClass, EnumValue, Value as GValue};
 use itertools::Itertools;
-use rquickjs::{
-    qjs, qjs::c_int, AsFunction, AsProperty, ClassDef, Ctx, FromJs, Function, IntoJs, Value,
-};
+use rquickjs::{qjs, qjs::c_int, AsFunction, AsProperty, Ctx, FromJs, Function, IntoJs, Value};
 
 use crate::{common::*, Object};
 
@@ -48,7 +44,7 @@ impl<'js> AsFunction<'js, (), ()> for Getter {
         let this = acc.this::<&Object>()?;
         let _ = this.span().enter();
         self.param.log_getter();
-        let value = match this.as_object().property(self.param.name()) {
+        let value = match this.property(self.param.name()) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not get property: {}", err.message)),
         };
@@ -85,7 +81,7 @@ impl<'js> AsFunction<'js, (), ()> for Setter {
             self.param.name(),
             get_enum_class(self.param.value_type())?,
         )?;
-        match this.as_object().set_property(self.param.name(), value) {
+        match this.set_property(self.param.name(), value) {
             Ok(val) => val,
             Err(err) => return Err(exception!("Could not set property: {}", err.message)),
         };
@@ -119,28 +115,6 @@ fn enum_nick_from_js<'js>(
     }
 }
 
-fn enum_name_from_js<'js>(
-    ctx: Ctx<'js>,
-    value: rquickjs::Value<'js>,
-    name: &'static str,
-    cls: EnumClass,
-) -> Result<GValue> {
-    if !value.is_string() {
-        return Err(exception!("Enum {} must be a string", name));
-    }
-    let value = String::from_js(ctx, value)?;
-    if let Some(val) = cls.to_value_by_name(value.as_str()) {
-        Ok(val)
-    } else {
-        Err(exception!(
-            "\"{}\" is not a valid for enum {} (\"{}\")",
-            value,
-            name,
-            cls.values().iter().map(|val| val.name()).join("\", \"")
-        ))
-    }
-}
-
 fn enum_nick_to_js<'js>(ctx: Ctx<'js>, value: GValue, name: &'static str) -> Result<Value<'js>> {
     let value = EnumValue::from_value(&value).ok_or_else(|| {
         exception!(
@@ -150,16 +124,3 @@ fn enum_nick_to_js<'js>(ctx: Ctx<'js>, value: GValue, name: &'static str) -> Res
     })?;
     value.nick().into_js(ctx)
 }
-
-fn enum_name_to_js<'js>(ctx: Ctx<'js>, value: GValue, name: &'static str) -> Result<Value<'js>> {
-    let value = EnumValue::from_value(&value).ok_or_else(|| {
-        exception!(
-            "Could not convert glib Value to EnumValue for enum {}",
-            name
-        )
-    })?;
-    value.name().into_js(ctx)
-}
-
-pub struct Nick;
-pub struct Name;

@@ -20,10 +20,11 @@ pub(crate) mod newtype;
 pub(crate) mod obj_data;
 mod object;
 pub mod registry;
-pub(crate) mod traits;
 mod types;
 
 pub use object::*;
+
+pub use crate::types::*;
 
 pub use crate::registry::Registry;
 
@@ -75,10 +76,6 @@ pub fn initialize_types<'js>(ctx: Ctx<'js>) -> rquickjs::Result<()> {
 }
 
 pub fn start<FUNC: 'static + Fn(&Application)>(app: Application, func: FUNC) {
-    app.connect_startup(move |app| {
-        // func(app);
-    });
-
     app.connect_activate(move |app| {
         func(app);
     });

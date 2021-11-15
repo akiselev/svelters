@@ -1,21 +1,9 @@
-use std::{borrow::Cow, cell::UnsafeCell, collections::HashMap, marker::PhantomData};
-
-use glib::{value::FromValue, ObjectType, SignalHandlerId};
-use rquickjs::{qjs, ClassDef, Context, Ctx, FromJs, Function, IntoJs, Method, MutFn, Opt, Value};
+use rquickjs::{ClassDef, Ctx, FromJs, IntoJs, Value};
 
 use crate::common::*;
 
 #[derive(Clone)]
 pub struct Object(GObject);
-
-impl<U> CastRef<U> for Object
-where
-    U: ObjectType,
-{
-    fn cast_ref(&self) -> Option<&U> {
-        self.0.dynamic_cast_ref::<U>()
-    }
-}
 
 impl rquickjs::ClassDef for Object {
     const CLASS_NAME: &'static str = "GObject";
@@ -78,11 +66,5 @@ impl<'js> FromJs<'js> for &'js mut Object {
 impl<'js> FromJs<'js> for Object {
     fn from_js(ctx: Ctx<'js>, value: Value<'js>) -> Result<Self> {
         Object::from_js_obj(ctx, value)
-    }
-}
-
-impl AsObject for Object {
-    fn as_object(&self) -> &GObject {
-        &self.0
     }
 }
