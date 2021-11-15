@@ -2,7 +2,6 @@ use std::cell::Cell;
 use std::{cell::UnsafeCell, fs::read_to_string};
 
 use rquickjs::{ExecutorSpawner, IntoAtom};
-use std::future;
 
 use crate::SvEvent::{self, *};
 use crate::{js::*, svbuilder::Initializers, SvHandle, SveltersBuilder};

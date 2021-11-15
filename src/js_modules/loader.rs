@@ -1,5 +1,5 @@
 use node_resolve::Resolver as NodeResolver;
-use rquickjs::{BuiltinResolver, Loader, ModuleDef, ModuleLoader, Resolver};
+use rquickjs::Resolver;
 
 use crate::js::*;
 
@@ -18,7 +18,7 @@ impl SvResolver {
 }
 
 impl Resolver for SvResolver {
-    fn resolve<'js>(&mut self, ctx: Ctx<'js>, base: &str, name: &str) -> rquickjs::Result<String> {
+    fn resolve<'js>(&mut self, _ctx: Ctx<'js>, base: &str, name: &str) -> rquickjs::Result<String> {
         tracing::info!(%base, %name, "Resolving {} from {}",  name, base);
         let base = if base.starts_with("/") {
             match std::fs::canonicalize(base) {

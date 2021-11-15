@@ -1,6 +1,4 @@
-use std::path::Path;
-
-use rquickjs::{BuiltinResolver, Loader, ModuleDef, ModuleLoader, Resolver};
+use rquickjs::{BuiltinResolver, ModuleDef, ModuleLoader};
 
 use crate::{
     js::*,

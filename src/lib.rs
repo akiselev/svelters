@@ -12,16 +12,7 @@
 #![allow(incomplete_features)]
 #![recursion_limit = "1024"]
 #![deny(clippy::all)]
-use std::{
-    cell::UnsafeCell,
-    error::Error,
-    ffi::{c_void, CString},
-    os::raw::c_char,
-    path::{Path, PathBuf},
-    time::Duration,
-};
-
-use gobject_sys::GObject;
+use std::error::Error;
 
 pub mod logging;
 pub mod prelude {

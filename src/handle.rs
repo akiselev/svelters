@@ -1,9 +1,6 @@
 use std::{cell::UnsafeCell, ffi::c_void};
 
-use rquickjs::{ExecutorSpawner, IntoAtom};
-use std::future;
-
-use crate::{js::*, SvEvent, Svelters};
+use crate::{SvEvent, Svelters};
 
 use SvEvent::*;
 
