@@ -29,17 +29,6 @@ where
     }
 }
 
-unsafe impl<'a, T, N> FromValue<'a> for Enum<T, N>
-where
-    T: FromValue<'a>,
-{
-    type Checker = <T as FromValue<'a>>::Checker;
-
-    unsafe fn from_value(value: &'a GValue) -> Self {
-        Enum(T::from_value(value), PhantomData)
-    }
-}
-
 impl<T, N> From<T> for Enum<T, N> {
     fn from(val: T) -> Self {
         Enum(val, PhantomData)

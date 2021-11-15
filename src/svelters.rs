@@ -215,7 +215,7 @@ fn cleanup_context(ctx: &rquickjs::Context) -> Result<()> {
     ctx.with(move |ctx| {
         ctx.clear_registery();
         tracing::info!("Cleaning up Svelters...");
-        ctx.eval::<(), _>("document.cleanup()")?;
+        ctx.eval::<(), _>("document?.cleanup?.()")?;
         ctx.globals().keys::<String>().for_each(|key| {
             ctx.globals()
                 .set(key.unwrap(), Value::new_undefined(ctx))

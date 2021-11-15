@@ -41,24 +41,6 @@ impl<T> From<T> for Gtk<T> {
     }
 }
 
-unsafe impl<'a, T> FromValue<'a> for Gtk<T>
-where
-    T: FromValue<'a>,
-{
-    type Checker = <T as FromValue<'a>>::Checker;
-
-    unsafe fn from_value(value: &'a glib::Value) -> Self {
-        Gtk(T::from_value(value))
-    }
-}
-
-impl<'a, T> ValueType for Gtk<T>
-where
-    T: ValueType,
-{
-    type Type = <T as ValueType>::Type;
-}
-
 impl<T> ToValue for Gtk<T>
 where
     T: ToValue,
