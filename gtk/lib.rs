@@ -12,8 +12,9 @@ use gtk4::{prelude::*, Application};
 
 use rquickjs::{Context, Ctx, Executor, ExecutorSpawner, IntoJs};
 
-pub(crate) mod common;
+mod macros;
 
+pub(crate) mod common;
 mod core;
 pub(crate) mod errors;
 pub(crate) mod newtype;
@@ -24,6 +25,7 @@ mod types;
 
 pub use object::*;
 
+pub use crate::macros::*;
 pub use crate::types::*;
 
 pub use crate::registry::Registry;

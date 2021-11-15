@@ -7,7 +7,6 @@ use itertools::Itertools;
 use rquickjs::{Ctx, FromJs, IntoJs, Value};
 
 use crate::common::*;
-use crate::exception;
 
 pub struct Enum<T, N = Nick>(pub T, PhantomData<N>);
 

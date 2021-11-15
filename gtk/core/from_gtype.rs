@@ -10,6 +10,7 @@ use rquickjs::{qjs, Context, Ctx, Function, IntoJs, Object as JsObject, Opt, Val
 use crate::{
     common::*,
     core::{enum_prop::EnumProp, obj_prop::ObjectProp, property::Prop},
+    exception,
     registry::Registry,
     Object,
 };

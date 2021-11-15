@@ -5,7 +5,6 @@ pub use gtk4::prelude::{ObjectExt, WidgetExt};
 use rquickjs::{Ctx, FromJs, IntoJs, Value};
 
 use crate::common::*;
-use crate::registry::Registry;
 
 pub struct G<T>(pub T);
 
