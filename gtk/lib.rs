@@ -48,6 +48,8 @@ impl ObjectDef for Types {
         ctx.register_constructor("Box", |orientation: Enum<gtk4::Orientation>| {
             Ok(Gtk(gtk4::Box::new(orientation.into(), 0)))
         })?;
+        types::generated::initialize_objects(ctx)?;
+        types::interfaces::initialize_interfaces(ctx)?;
         // ctx.register_type::<Gtk<gtk4::Window>>("Window")?;
         Ok(())
     }

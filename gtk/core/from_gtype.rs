@@ -114,7 +114,7 @@ where
             println!("    {} ({}): {}", prop_name, param.name(), param_ty.name());
             ty.obj_prop(prop_name.as_str(), param)?;
         } else {
-            panic!(
+            println!(
                 ">>>>>> Type::??? not implemented for prop {}::{}",
                 cls_name, prop_name
             );
