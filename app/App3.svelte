@@ -23,7 +23,7 @@
         id="btn35"
         on:clicked={onClick}
         label="Toggle {count}"
-        hAlign="end"
+        halign="end"
         canFocus={true}
         sensitive={true}
         focusable={true}

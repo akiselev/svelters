@@ -1,7 +1,7 @@
 /// <reference path="./dom/domtypes.d.ts" />
 
 import "./dom/document.ts";
-import App from "./App.svelte";
+import App from "./App2.svelte";
 
 const start = (reloaded: boolean) => {
     let state = null;
@@ -19,7 +19,6 @@ const start = (reloaded: boolean) => {
         document.app.$inject_state(state);
     }
     document.cleanup = () => {
-        console.log("Cleaning up......");
         document?.app?.$destroy?.();
         document.app = null;
     };

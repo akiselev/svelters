@@ -48,7 +48,10 @@ function initializeClasses() {
     initialized = true;
 }
 
-initializeClasses();
+if (!application.isInitialized) {
+    initializeClasses();
+    application.isInitialized = true;
+}
 
 export const ELEMENTS: { [name: string]: () => any } = {
     button: () => new GtkButton(),

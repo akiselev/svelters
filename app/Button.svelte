@@ -9,7 +9,7 @@
     const dispatch = createEventDispatcher();
 </script>
 
-<button class="btn" label={text} {id} hAlign="start" vAlign="end" on:clicked />
+<button class="btn" label={text} {id} halign="start" valign="end" on:clicked />
 
 <style>
     .btn {

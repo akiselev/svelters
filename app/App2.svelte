@@ -28,7 +28,7 @@
                 id="btn35"
                 on:clicked={onClick}
                 label="Toggle {hasFocus ? 'World' : ''}"
-                hAlign="end"
+                halign="end"
                 canFocus={true}
                 sensitive={true}
                 focusable={true}
@@ -37,7 +37,7 @@
                 <button
                     id="btn5"
                     label="Toggle 2"
-                    hAlign="end"
+                    halign="end"
                     canFocus={true}
                     sensitive={true}
                     focusable={true}

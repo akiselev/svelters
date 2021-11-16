@@ -12,7 +12,7 @@
 </script>
 
 <button
-    vAlign="fill"
+    valign="fill"
     id="btn1"
     label="Pew pew"
     class="btn"
@@ -20,7 +20,7 @@
 />
 
 <!-- <button
-    vAlign="fill"
+    valign="fill"
     id="btn3"
     label={hasFocus ? "Pew pew" : "_"}
     bind:hasFocus
