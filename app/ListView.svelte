@@ -5,12 +5,13 @@
         onMount,
         onDestroy,
     } from "svelte";
+    import { writable } from "svelte/store";
     import Item from "./Item.svelte";
 
-    let model = new JsListModel((index?: number) => {
+    let model = new CallbackListModel((index?: number) => {
         // console.log(">>>>>>>>>>>>>>>. list model: ", index);
         if (typeof index === "number") {
-            return new JsValue({
+            return new ListItemValue({
                 text: `Hello world #${index}`,
                 index,
             });
@@ -18,65 +19,55 @@
         return 500;
     });
 
-    type Event = { details: [SignalListItemFactory, ListItem] };
+    type Event = { details: [GtkSignalListItemFactory, GtkListItem] };
+    let items: Set<any> = new Set();
+    let count = 0;
 
-    const onSetup = ({ details: [factory, item] }: Event) => {
+    const onSetup = ({ details: [item] }: Event) => {
         let box;
         if (!item.child) {
-            box = new HorizontalBox();
+            box = new GtkBox("horizontal");
             item.child = box;
-            item.svExtra.box = box;
-        } else {
-            box = item.child;
+            item.svExtra.id = count;
+            items.add(item);
+            items = items;
+            count += 1;
         }
-        const comp = new Item({
-            target: box,
-            props: { data: null },
-        });
-        item.svExtra.comp = comp;
     };
 
-    const onBind = ({ details: [factory, item] }: Event) => {
-        item.svExtra.comp.$set({ data: item.value });
+    const onBind = ({ details: [item] }: Event) => {
+        // To preserve GTK Object identity between calls
+        item.svExtra.item = item.item;
+        items = items;
     };
 
-    const onUnbind = ({ details: [factory, item] }: Event) => {
-        item.svExtra.comp.$set({ data: null });
+    const onUnbind = ({ details: [item] }: Event) => {
+        item.svExtra.item = null;
+        items = items;
     };
 
-    const onTeardown = ({ details: [factory, item] }: Event) => {
-        if (item.svExtra.comp) {
-            item.svExtra.comp.$destroy();
-            item.svExtra.comp = null;
-        }
-        item.svExtra.box = null;
+    const onTeardown = ({ details: [item] }: Event) => {
         item.child = null;
         item.item = null;
+        items.delete(item);
+        items = items;
     };
 
-    const dispatch = createEventDispatcher();
-
-    let listView: any;
-    let selection: any;
+    let scrolled: any;
 
     onMount(() => {
-        let factory = new SignalListItemFactory();
+        let factory = new GtkSignalListItemFactory();
         factory.addEventListener("bind", onBind);
         factory.addEventListener("unbind", onUnbind);
         factory.addEventListener("setup", onSetup);
         factory.addEventListener("teardown", onTeardown);
 
-        let selection = new NoSelection(model);
-        let view = new ListView(selection, factory);
+        let selection = new GtkNoSelection(model);
+        let view = new GtkListView(selection, factory);
         view.vExpand = true;
-        listView.child = view;
-        // selection.model = model;
-        // listView.factory = factory;
-        // listView.model = selection;
-        // model.itemsChanged(0, 0, 100);
-        // selection.itemsChanged(0, 0, 100);
+        scrolled.child = view;
         return () => {
-            listView.child = null;
+            scrolled.child = null;
             factory.removeEventListener("bind", onBind);
             factory.removeEventListener("unbind", onUnbind);
             factory.removeEventListener("setup", onSetup);
@@ -85,10 +76,10 @@
     });
 </script>
 
-<scrolled maxContentHeight={600} bind:this={listView} />
+<scrolled maxContentHeight={600} vexpand={true} bind:this={scrolled} />
 
-<style>
-    .btn {
-        background-color: black;
-    }
-</style>
+{#each [...items.values()] as item (item.svExtra.id)}
+    <listViewProxy child={item.child}>
+        <slot item={item.svExtra.item.value} />
+    </listViewProxy>
+{/each}

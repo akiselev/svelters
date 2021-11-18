@@ -153,9 +153,6 @@ impl Drop for ExtraData {
             let rt = self.ctx.runtime().ptr();
             qjs::JS_FreeValueRT(rt, self.value);
         }
-        // self.ctx.with(|ctx| {
-        //     let _ = unsafe { Value::from_js_value(ctx, self.value) };
-        // })
     }
 }
 
@@ -176,14 +173,6 @@ impl Drop for Events {
                 }
             }
         }
-
-        // self.ctx.with(|ctx| {
-        //     for (key, conn) in self.map.iter() {
-        //         for func in conn.callbacks.iter() {
-        //             let _ = unsafe { Value::from_js_value(ctx, *func) };
-        //         }
-        //     }
-        // })
     }
 }
 

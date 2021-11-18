@@ -14,10 +14,13 @@
 <button
     valign="fill"
     id="btn1"
-    label="Pew pew"
+    label="Pew pew {count2} {$$props?.test}"
     class="btn"
     on:clicked={onClick}
 />
+{#if count2 % 2 == 0}
+    <slot />
+{/if}
 
 <!-- <button
     valign="fill"
@@ -30,6 +33,24 @@
     <Button id="btn4" text="Hello2222 {count2}" />
 {/if} -->
 <style>
+    .btn {
+        background-color: #444;
+    }
+    .btn label {
+        color: #f00;
+    }
+    .btn {
+        background-color: #444;
+    }
+    .btn label {
+        color: #f00;
+    }
+    .btn {
+        background-color: #444;
+    }
+    .btn label {
+        color: #f00;
+    }
     .btn {
         background-color: #444;
     }

@@ -53,16 +53,12 @@ impl<'js> Registry<'js> for Ctx<'js> {
     }
 
     fn set_default_constructor(self, r#type: glib::Type) {
-        let constructor = Function::new(
-            self,
-            rquickjs::Class::<'js, crate::Object>::constructor(move |ctx: Ctx<'js>| {
-                let obj = GObject::with_type(r#type, &[])
-                    .map_err(|err| exception!("Could not create {}: {}", r#type.name(), err))?;
-                ctx.marshall(obj)
-            }),
-        )
+        let constructor = Function::new(self, move |ctx: Ctx<'js>| {
+            let obj = GObject::with_type(r#type, &[])
+                .map_err(|err| exception!("Could not create {}: {}", r#type.name(), err))?;
+            ctx.marshall(obj)
+        })
         .expect("Failed to create constructor");
-        constructor.set_constructor(true);
         self.set_constructor(r#type, constructor);
     }
 

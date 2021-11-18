@@ -262,7 +262,7 @@ pub fn initialize_types(ctx: rquickjs::Ctx) -> rquickjs::Result<()> {
     Ok(())
 }
 
-pub fn initialize_global(ctx: rquickjs::Ctx) -> rquickjs::Result<()> {
+pub fn initialize_globals(ctx: rquickjs::Ctx) -> rquickjs::Result<()> {
     ctx.initialize(gdk4::AppLaunchContext::static_type())?;
     ctx.initialize(gdk4::CairoContext::static_type())?;
     ctx.initialize(gdk4::Clipboard::static_type())?;

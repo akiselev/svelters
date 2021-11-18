@@ -24,7 +24,7 @@
     });
     onDestroy(() => {
         console.log("Destroying window....");
-        // window.destroy();
+        window.destroy();
     });
 </script>
 
@@ -43,7 +43,7 @@
                 sensitive={true}
                 focusable={true}
             >
-                <controller:motion on:motion={(event) => {}} />
+                <!-- <controller:motion on:motion={(event) => {}} /> -->
             </button>
             <button
                 id="btn5"
@@ -54,17 +54,20 @@
                 sensitive={true}
                 focusable={true}
             >
-                <controller:motion on:motion={(event) => {}} />
+                <!-- <controller:motion on:motion={(event) => {}} /> -->
             </button>
         </hBox>
-        {#if isOpen2}
-            <ListView />
-        {/if}
+        <ListView let:item>
+            <button
+                label={item.text}
+                on:clicked={() => console.log(item.text)}
+            />
+        </ListView>
     </vBox>
-    <controller:keyboard
+    <!-- <controller:keyboard
         on:key-pressed={(event) =>
             console.log(event.details[0], JSON.stringify(event, null, 2))}
-    />
+    /> -->
     <!-- <child id="titlebar">
         {#if titlebar}
             <button

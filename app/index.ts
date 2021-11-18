@@ -1,7 +1,10 @@
 /// <reference path="./dom/domtypes.d.ts" />
 
 import "./dom/document.ts";
-import App from "./App2.svelte";
+import App from "./App.svelte";
+
+let win = new GtkScrolledWindow();
+console.log("win: ", win.getAttribute);
 
 const start = (reloaded: boolean) => {
     let state = null;

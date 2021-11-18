@@ -128,7 +128,6 @@ impl SveltersApplication {
             tracing::warn!("Cleaning up Svelters...");
             ctx.eval::<(), _>("document?.cleanup?.()").log_error();
             ctx.eval::<(), _>("document?.cleanupStyles?.()").log_error();
-            // Causes a use after free(?) and unaligned fast bin chunk crash w/ CssProvider
             ctx.globals()
                 .set("document", rquickjs::Value::new_undefined(ctx))
                 .log_error();
@@ -150,18 +149,22 @@ impl SveltersApplication {
         })
         .log_error();
         tracing::warn!("Running gc again...");
-        ctx.runtime().run_gc();
+        for i in 0..10 {
+            ctx.runtime().run_gc();
+        }
     }
 }
 
 pub fn initialize_types(ctx: Ctx) -> rquickjs::Result<()> {
     rquickjs::Class::<crate::Object>::register(ctx)?;
     types::generated::initialize_types(ctx)?;
+    initialize_custom_types(ctx)?;
     for decl in inventory::iter::<InterfaceDeclaration> {
         (decl.func)(ctx);
     }
     ctx.initialize(SveltersApplication::static_type())?;
-    types::generated::initialize_global(ctx)?;
+    types::generated::initialize_globals(ctx)?;
+    initialize_custom_globals(ctx)?;
     Ok(())
 }
 

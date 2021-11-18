@@ -17,35 +17,41 @@ type Hooks = {
     [name: string]: (self: any, child: any, remove?: boolean) => void;
 };
 
-export const initBaseNode = (name: string, CLS: any) => {
+export const initBaseNode = (
+    name: string,
+    CLS: any,
+    includeAttr: boolean = true,
+) => {
     const proto = CLS.prototype || CLS;
     const log = createLogger(name);
     Object.defineProperty(proto, "svTagName", {
         value: name,
     });
-    Object.defineProperty(proto, "setAttribute", {
-        value: function (attr: string, value: any) {
-            if (attr === "class") {
-                console.log("setting classes: ", value);
-                this.cssClasses = value.split(" ");
-            } else {
-                this[attr] = value;
-                // } else if (this.hasOwnProperty(attr)) {
-                // throw new Error(`Attribute ${attr} does not exist on ${name}`);
-            }
-        },
-    });
-    Object.defineProperty(proto, "getAttribute", {
-        value: function (attr: string) {
-            if (attr === "class") {
-                return this.cssClasses.join(" ");
-            } else {
-                return this[attr];
-                // } else if (this.hasOwnProperty(attr)) {
-                // throw new Error(`Attribute ${attr} does not exist on ${name}`);
-            }
-        },
-    });
+    if (includeAttr) {
+        Object.defineProperty(proto, "setAttribute", {
+            value: function (attr: string, value: any) {
+                if (attr === "class") {
+                    console.log("setting classes: ", value);
+                    this.cssClasses = value.split(" ");
+                } else {
+                    this[attr] = value;
+                    // } else if (this.hasOwnProperty(attr)) {
+                    // throw new Error(`Attribute ${attr} does not exist on ${name}`);
+                }
+            },
+        });
+        Object.defineProperty(proto, "getAttribute", {
+            value: function (attr: string) {
+                if (attr === "class") {
+                    return this.cssClasses.join(" ");
+                } else {
+                    return this[attr];
+                    // } else if (this.hasOwnProperty(attr)) {
+                    // throw new Error(`Attribute ${attr} does not exist on ${name}`);
+                }
+            },
+        });
+    }
     Object.defineProperty(proto, "getRootNode", {
         value: function () {
             return document;

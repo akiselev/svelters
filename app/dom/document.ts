@@ -22,7 +22,7 @@ document.createElement = (val: string): any => {
         }
     }
     const tagName = val;
-    //$console.log(`[Document] createElement("${tagName}")`);
+    console.log(`[Document] createElement("${tagName}")`);
     switch (tagName) {
         case "style":
             ele = new nodes.Style();
@@ -86,7 +86,7 @@ document.getElementById = (id: string): any | null => {
 document.appendChild = (child: any) => {
     console.log(`[Document] appendChild("${child?.getAttribute("id")}")`);
     if (isStyle(child) && child.id) {
-        child.provider.mount(0);
+        child.provider.mount(1000);
         document.styles[child.id] = child;
     } else {
         throw new Error(`Cannot append non-style children to document`);
@@ -101,6 +101,13 @@ document.removeChild = (child: any) => {
     } else {
         throw new Error(`Cannot remove non-style children from document`);
     }
+};
+
+document.cleanupStyles = () => {
+    Object.values(document.styles).forEach((style) =>
+        style?.provider?.unmount(),
+    );
+    // document.styles = null;
 };
 
 document.dispatchEvent = (event: any) => {

@@ -55,6 +55,11 @@ export const initGtkWindow = () => {
 };
 
 export const initListView = () => {
+    Object.defineProperty(ListItemValue.prototype, "value", {
+        get() {
+            return this.getValue();
+        },
+    });
     initWidget(GtkListView, {
         model: (self, child, remove) => {
             self.model = remove ? null : child.self;

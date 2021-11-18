@@ -13,41 +13,46 @@ static PATH: &str = "./dist/index.js";
 #[tracing::instrument]
 fn main() {
     svelters::logging::init();
-    tracing::info!("Starting our Application...");
+    {
+        tracing::info!("Starting our Application...");
 
-    let name = "org.svelters.gtk4.example";
-    let app = SveltersApplication::new(name);
+        let name = "org.svelters.gtk4.example";
+        let app = SveltersApplication::new(name);
 
-    // If we put it in connect_activate, it will get dropped so we alloc here
-    let hotwatch = Rc::new(RefCell::new(
-        Hotwatch::new().expect("hotwatch failed to initialize!"),
-    ));
+        // If we put it in connect_activate, it will get dropped so we alloc here
+        let hotwatch = Rc::new(RefCell::new(
+            Hotwatch::new().expect("hotwatch failed to initialize!"),
+        ));
 
-    app.connect_activate(move |app| {
-        tracing::info!("App::activate...");
-        tracing::info!(
-            "Sizeof JSValue: {}",
-            std::mem::size_of::<rquickjs::qjs::JSValue>()
-        );
-        let app = app.downcast_ref::<SveltersApplication>().unwrap();
+        app.connect_activate(move |app| {
+            tracing::info!("App::activate...");
+            tracing::info!(
+                "Sizeof JSValue: {}",
+                std::mem::size_of::<rquickjs::qjs::JSValue>()
+            );
+            let app = app.downcast_ref::<SveltersApplication>().unwrap();
 
-        app.with(|ctx| initialize(ctx, PATH, false)).unwrap();
-        let handle = app.handle();
-        hotwatch
-            .borrow_mut()
-            .watch(PATH, move |event: Event| {
-                tracing::warn!("{} updated", PATH);
-                if let Err(error) = handle.with(|ctx| initialize(ctx, PATH, true)) {
-                    tracing::error!("Failed sending file update event to main thread: {}", error);
-                }
-            })
-            .expect("failed to watch file!");
-    });
+            app.with(|ctx| initialize(ctx, PATH, false)).unwrap();
+            let handle = app.handle();
+            hotwatch
+                .borrow_mut()
+                .watch(PATH, move |event: Event| {
+                    tracing::warn!("{} updated", PATH);
+                    if let Err(error) = handle.with(|ctx| initialize(ctx, PATH, true)) {
+                        tracing::error!(
+                            "Failed sending file update event to main thread: {}",
+                            error
+                        );
+                    }
+                })
+                .expect("failed to watch file!");
+        });
 
-    app.run();
+        app.run();
 
-    tracing::info!("Cleaning up app...");
-    app.cleanup();
+        tracing::info!("Cleaning up app...");
+        app.cleanup();
+    }
 
     tracing::info!("Finished...");
 }

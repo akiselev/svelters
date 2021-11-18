@@ -1,5 +1,6 @@
 import { initBaseNode, initSingleton, initWidget } from "./base";
 import * as w from "./widgets";
+import { ListViewProxy } from "./proxies";
 
 let initialized = false;
 function initializeClasses() {
@@ -8,19 +9,21 @@ function initializeClasses() {
     initBaseNode("Button", GtkButton);
     // initBaseNode("Label", GtkLabel);
     initBaseNode("Box", GtkBox);
-    // initBaseNode("Paned", GtkPaned);
-    // initBaseNode("scrolled", GtkScrolledWindow);
-    // initBaseNode("viewport", GtkViewport);
-    // initBaseNode("motion", GtkEventControllerMotion);
-    // initBaseNode("keyboard", GtkEventControllerKey);
-    // initBaseNode("focus", GtkEventControllerFocus);
-    // initBaseNode("signalListItemFactory", GtkSignalListItemFactory);
-    // initBaseNode("multiSelection", GtkMultiSelection);
-    // initBaseNode("singleSelection", GtkSingleSelection);
-    // initBaseNode("noSelection", GtkNoSelection);
+    initBaseNode("Paned", GtkPaned);
+    initBaseNode("Scrolled", GtkScrolledWindow);
+    initBaseNode("Viewport", GtkViewport);
+    initBaseNode("Motion", GtkEventControllerMotion);
+    initBaseNode("Keyboard", GtkEventControllerKey);
+    initBaseNode("Focus", GtkEventControllerFocus);
+    initBaseNode("SignalListItemFactory", GtkSignalListItemFactory);
+    initBaseNode("MultiSelection", GtkMultiSelection);
+    initBaseNode("SingleSelection", GtkSingleSelection);
+    initBaseNode("NoSelection", GtkNoSelection);
     initBaseNode("AppWindow", GtkApplicationWindow);
-    // initBaseNode("gtkWindow", GtkWindow);
-    // initBaseNode("listView", GtkListView);
+    initBaseNode("GtkWindow", GtkWindow);
+    initBaseNode("ListView", GtkListView);
+    initBaseNode("CallbackListModel", CallbackListModel);
+    initBaseNode("ListItemValue", ListItemValue);
 
     /// Widgets with only one child
     initSingleton(GtkScrolledWindow);
@@ -58,18 +61,19 @@ export const ELEMENTS: { [name: string]: () => any } = {
     // label: () => new Label(),
     hBox: () => new GtkBox("horizontal"),
     vBox: () => new GtkBox("vertical"),
-    // hPaned: () => new Paned("horizontal"),
-    // vPaned: () => new Paned("vertical"),
-    // scrolled: () => new ScrolledWindow(),
-    // viewport: () => new Viewport(),
-    // motion: () => new EventControllerMotion(),
-    // keyboard: () => new EventControllerKey(),
-    // focus: () => new EventControllerFocus(),
-    // signalListItemFactory: () => new SignalListItemFactory(),
-    // multiSelection: () => new MultiSelection(),
-    // singleSelection: () => new SingleSelection(),
-    // noSelection: () => new NoSelection(),
+    hPaned: () => new GtkPaned("horizontal"),
+    vPaned: () => new GtkPaned("vertical"),
+    scrolled: () => new GtkScrolledWindow(),
+    viewport: () => new GtkViewport(),
+    motion: () => new GtkEventControllerMotion(),
+    keyboard: () => new GtkEventControllerKey(),
+    focus: () => new GtkEventControllerFocus(),
+    signalListItemFactory: () => new GtkSignalListItemFactory(),
+    multiSelection: () => new GtkMultiSelection(),
+    singleSelection: () => new GtkSingleSelection(),
+    noSelection: () => new GtkNoSelection(),
     appWindow: () => new GtkApplicationWindow(),
-    // gtkWindow: () => new Window(),
-    // listView: () => new ListView(),
+    gtkWindow: () => new GtkWindow(),
+    listView: () => new GtkListView(),
+    listViewProxy: () => new ListViewProxy(),
 };

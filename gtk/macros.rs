@@ -1,18 +1,18 @@
 use crate::registry::Registry;
 
 pub macro interface {
-    (($ctx:ident, $ty:ty) => fn constructor($($args:tt)*) $code:block $($tail:tt)*) => {
-        let constructor = rquickjs::Function::new($ctx, |$($args)*| {
+    (($ctx:ident, $ty:ty$([$li:lifetime])?) => fn constructor($($args:tt)*) $code:block $($tail:tt)*) => {
+        let constructor = rquickjs::Function$(::<$li>)?::new($ctx, |$($args)*| {
             $code
         }).expect("Could not convert constructor into Javascript Function");
         constructor.set_constructor(true);
         $ctx.set_constructor(<$ty as glib::StaticType>::static_type(), constructor);
         interface!(($ctx, $ty) => $($tail)*);
     },
-    (($ctx:ident, $ty:ty) => $skip:tt $($tail:tt)*) => {
-        interface!(($ctx, $ty) => $($tail)*);
+    (($ctx:ident, $ty:ty$([$li:lifetime])?) => $skip:tt $($tail:tt)*) => {
+        interface!(($ctx, $ty$(<$li>)?) => $($tail)*);
     },
-    (($ctx:ident, $ty:ty) => ) => {},
+    (($ctx:ident, $ty:ty$([$li:lifetime])?) => ) => {},
 
     (($ctx:ident, $proto:ident): fn constructor($($args:tt)*) $code:block $($tail:tt)*) => {
         interface!(($ctx, $proto): $($tail)*);
@@ -28,14 +28,14 @@ pub macro interface {
     // Empty interface (usually a placeholder)
     (($ctx:ident, $proto:ident): ) => {},
 
-    ($ty:ty { $($tail:tt)* }) => {
+    ($ty:ty[$li:lifetime] { $($tail:tt)* }) => {
         #[allow(unused_variables)]
-        fn init_proto<'js>(ctx: rquickjs::Ctx<'js>, proto: &rquickjs::Object<'js>) -> rquickjs::Result<()> {
+        fn init_proto<$li>(ctx: rquickjs::Ctx<$li>, proto: &rquickjs::Object<$li>) -> rquickjs::Result<()> {
             interface!((ctx, proto): $($tail)*);
             Ok(())
         }
 
-        fn init<'js>(ctx: rquickjs::Ctx<'js>) {
+        fn init<$li>(ctx: rquickjs::Ctx<$li>) {
             crate::Registry::set_proto(ctx, <$ty as glib::StaticType>::static_type(), init_proto);
             interface!((ctx, $ty) => $($tail)*);
         }
@@ -43,6 +43,9 @@ pub macro interface {
         inventory::submit! {
             crate::InterfaceDeclaration::new(init)
         }
+    },
+    ($ty:ty { $($tail:tt)* }) => {
+        interface!($ty['js] { $($tail)* });
     }
 }
 
