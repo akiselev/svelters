@@ -24,7 +24,7 @@ impl HandleParamError for ValueTypeMismatchOrNoneError {
         match self {
             ValueTypeMismatchOrNoneError::WrongValueType(err) => err.handle_param_error(ctx, param),
             ValueTypeMismatchOrNoneError::UnexpectedNone => {
-                tracing::warn!(
+                tracing::debug!(
                     "Returning null for prop {}::{}",
                     param.owner_type().name(),
                     param.name()
@@ -66,7 +66,7 @@ impl HandleValueError for ValueTypeMismatchOrNoneError {
         match self {
             ValueTypeMismatchOrNoneError::WrongValueType(err) => err.handle_value_error(ctx, ty),
             ValueTypeMismatchOrNoneError::UnexpectedNone => {
-                tracing::warn!("Returning null for {}", ty.name());
+                tracing::debug!("Returning null for {}", ty.name());
                 Ok(Value::new_undefined(ctx))
             }
         }

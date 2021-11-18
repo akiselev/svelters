@@ -15,18 +15,6 @@
 use std::error::Error;
 
 pub mod logging;
-pub mod prelude {
-    pub use crate::svbuilder::SveltersBuilder;
-    pub use crate::svelters::Svelters;
-}
-
-pub use handle::SvHandle;
-pub use svbuilder::SveltersBuilder;
-pub use svelters::Svelters;
-
-pub(crate) mod handle;
-pub(crate) mod svbuilder;
-pub(crate) mod svelters;
 
 pub(crate) mod js_modules {
     pub mod console;
@@ -40,13 +28,6 @@ pub(crate) mod js {
         Func, Function, IntoAtom, IntoJs, ModuleLoader, NativeLoader, Object, Persistent,
         Result as JsResult, Runtime, ScriptLoader, Value,
     };
-}
-
-pub enum SvEvent {
-    Gc,
-    Shutdown,
-    Updated(hotwatch::Event),
-    ScheduleCallback(Box<dyn Send + FnOnce(&Svelters) -> rquickjs::Result<()>>),
 }
 
 trait CheckErr {

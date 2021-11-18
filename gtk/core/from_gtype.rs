@@ -4,15 +4,18 @@ use std::{
 };
 
 use convert_case::{Case, Casing};
-use glib::{Class, SignalHandlerId};
-use rquickjs::{qjs, Context, Ctx, Function, IntoJs, Object as JsObject, Opt, Value};
+use glib::{subclass::SignalId, Class, SignalHandlerId};
+use rquickjs::{qjs, Context, Ctx, FromJs, Function, IntoJs, Object as JsObject, Opt, Value};
 
 use crate::{
     common::*,
-    core::{enum_prop::EnumProp, obj_prop::ObjectProp, property::Prop},
+    core::{
+        enum_prop::EnumProp, generic_val::return_value_from_js, obj_prop::ObjectProp,
+        property::Prop,
+    },
     exception,
     registry::Registry,
-    Object,
+    LogError, Object,
 };
 
 pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> Result<()> {
@@ -127,8 +130,8 @@ pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> 
         }
     }
     if ty.is_a(GObject::static_type()) {
-        define_event_listeners(ctx, proto)?;
-        define_sv_extra(ctx, proto)?;
+        define_event_listeners(ty, ctx, proto)?;
+        define_sv_extra(ty, ctx, proto)?;
         proto.prop("isGObject", rquickjs::Accessor::new_get(|| true))?;
     }
     if ty.is_a(gtk4::Widget::static_type()) {
@@ -138,13 +141,50 @@ pub fn init_gtype<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>, ty: glib::Type) -> 
 }
 
 struct ExtraData {
-    _ctx: Context,
+    r#type: glib::Type,
+    ctx: Context,
     value: qjs::JSValue,
 }
 
+impl Drop for ExtraData {
+    fn drop(&mut self) {
+        tracing::error!("Dropping extra data for {}", self.r#type.name());
+        unsafe {
+            let rt = self.ctx.runtime().ptr();
+            qjs::JS_FreeValueRT(rt, self.value);
+        }
+        // self.ctx.with(|ctx| {
+        //     let _ = unsafe { Value::from_js_value(ctx, self.value) };
+        // })
+    }
+}
+
 struct Events {
+    r#type: glib::Type,
     ctx: Context,
     map: HashMap<String, Connection>,
+}
+
+impl Drop for Events {
+    fn drop(&mut self) {
+        tracing::error!("Dropping events for {}", self.r#type.name());
+        unsafe {
+            let rt = self.ctx.runtime().ptr();
+            for (key, conn) in self.map.iter() {
+                for func in conn.callbacks.iter() {
+                    qjs::JS_FreeValueRT(rt, *func);
+                }
+            }
+        }
+
+        // self.ctx.with(|ctx| {
+        //     for (key, conn) in self.map.iter() {
+        //         for func in conn.callbacks.iter() {
+        //             let _ = unsafe { Value::from_js_value(ctx, *func) };
+        //         }
+        //     }
+        // })
+    }
 }
 
 #[derive(Default)]
@@ -168,6 +208,14 @@ fn handle_event(name: String) -> impl Fn(&[GValue]) -> Option<GValue> {
         if let Some(conn) = events.map.get(&name) {
             events.ctx.with(|ctx| {
                 let event = rquickjs::Object::new(ctx).unwrap();
+                let signal_id = if let Some((signal_id, _)) =
+                    SignalId::parse_name(name.as_str(), this.type_(), false)
+                {
+                    signal_id
+                } else {
+                    tracing::error!("Unknown signal in event handler");
+                    return None;
+                };
                 event.set("type", &name).unwrap();
                 event
                     .set("target", ctx.marshall(this.clone()).unwrap())
@@ -189,22 +237,48 @@ fn handle_event(name: String) -> impl Fn(&[GValue]) -> Option<GValue> {
                     }
                 }
                 event.set("details", details).unwrap();
+                let signal = signal_id.query();
+                let mut result = None;
                 for cb in conn.callbacks.iter() {
                     let func = unsafe { Value::from_js_value_const(ctx, *cb) };
                     let func = func.as_function().expect("Callback is not a function");
-                    if let Err(err) = func.call::<_, Value>((event.clone(),)) {
-                        tracing::error!("Callback error in {}: {}", name, err);
+                    match func.call::<_, Value>((event.clone(),)) {
+                        Ok(val) if val.is_undefined() => {}
+                        Ok(val) => result = Some(val),
+                        Err(err) => {
+                            tracing::error!("Callback error in {}: {}", name, err);
+                        }
                     }
+                }
+                if let Some(res) = result {
+                    match return_value_from_js(signal.return_type().type_(), ctx, res) {
+                        Ok(val) => Some(val),
+                        Err(err) => {
+                            tracing::error!(
+                                "Error in {}::{} handler: {}",
+                                this.type_().name(),
+                                name,
+                                err
+                            );
+                            None
+                        }
+                    }
+                } else {
+                    None
                 }
             })
         } else {
             tracing::error!("Could not find connection for {}", name);
+            None
         }
-        None
     }
 }
 
-fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<()> {
+fn define_event_listeners<'js>(
+    r#type: glib::Type,
+    ctx: Ctx<'js>,
+    proto: &JsObject<'js>,
+) -> Result<()> {
     proto.set(
         "addEventListener",
         Function::new(
@@ -224,6 +298,7 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
 
                     let data = this.try_get_or_create_data("svEvents", || -> Result<Events> {
                         Ok(Events {
+                            r#type,
                             ctx: Context::from_ctx(ctx)?,
                             map: Default::default(),
                         })
@@ -283,11 +358,11 @@ fn define_event_listeners<'js>(ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<(
     )
 }
 
-fn define_sv_extra<'js>(_ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<()> {
+fn define_sv_extra<'js>(r#type: glib::Type, _ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<()> {
     proto.prop(
         "svExtra",
         rquickjs::Accessor::new_get(rquickjs::Method(
-            |this: &'js Object, ctx: Ctx<'js>| unsafe {
+            move |this: &'js Object, ctx: Ctx<'js>| unsafe {
                 tracing::info!("Getting {}::svExtra", this.type_().name());
 
                 if let Some(data) = this.data::<ExtraData>("svExtra") {
@@ -295,7 +370,8 @@ fn define_sv_extra<'js>(_ctx: Ctx<'js>, proto: &JsObject<'js>) -> Result<()> {
                 } else {
                     let value = rquickjs::Object::new(ctx)?;
                     let data = ExtraData {
-                        _ctx: Context::from_ctx(ctx)?,
+                        r#type,
+                        ctx: Context::from_ctx(ctx)?,
                         value: value.clone().into_value().into_js_value(),
                     };
                     this.set_data("svExtra", data);

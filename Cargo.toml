@@ -28,18 +28,12 @@ rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
     "full",
     "backtrace",
     "tokio",
-    # "frunk",
-    # "dump-gc",
-    # "dump-gc-free",
+    "rust-alloc",
+    "dump-gc",
+    "dump-gc-free",
     # "dump-free",
     "dump-leaks",
     # "dump-mem",
-    # "dump-objects",
-    # "dump-atoms",
-    # "dump-shapes",
-    # "dump-module-resolve",
-    # "dump-promise",
-    # "dump-read-object",
 ] }
 svelters-gtk = { version = "0.1.0", path = "./gtk" }
 node-resolve = "2.2.0"
@@ -66,7 +60,6 @@ strip = true
 members = [
     "zig",
     "gtk",
-    "crates/macros",
     # "crates/compiler",
     "crates/rquickjs",
     "crates/rquickjs/core",

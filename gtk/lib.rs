@@ -4,13 +4,13 @@
 #![feature(unboxed_closures)]
 #![feature(const_fn_fn_ptr_basics)]
 
-use std::future::Future;
+use std::sync::mpsc::SendError;
 
-use gio::prelude::ApplicationExt;
+use application::Svelters;
 use glib::MainContext;
-use gtk4::{prelude::*, Application};
+use gtk4::{glib::subclass::prelude::*, prelude::*, Application};
 
-use rquickjs::{Context, Ctx, Executor, ExecutorSpawner, IntoJs};
+use rquickjs::{Context, Ctx};
 
 mod macros;
 
@@ -29,44 +29,123 @@ pub use crate::macros::*;
 pub use crate::types::*;
 
 pub use crate::registry::Registry;
+use gio::ApplicationFlags;
+use gtk4::{gio, glib};
 
-pub struct GtkExecutor;
+mod application;
 
-impl ExecutorSpawner for GtkExecutor {
-    type JoinHandle = ();
+// Due to name collision in types::Box
+type StdBox<T> = std::boxed::Box<T>;
 
-    fn spawn_executor(self, task: Executor) -> Self::JoinHandle {
-        let ctx = MainContext::default();
-        ctx.spawn_local(task)
+pub enum SvEvent {
+    WithJs(StdBox<dyn Send + for<'js> FnOnce(Ctx<'js>) -> rquickjs::Result<()>>),
+}
+
+pub struct Handle {
+    tx: glib::Sender<SvEvent>,
+}
+
+impl Handle {
+    pub fn with<FN>(&self, func: FN) -> Result<(), SendError<SvEvent>>
+    where
+        FN: 'static + Send + for<'js> FnOnce(Ctx<'js>) -> rquickjs::Result<()>,
+    {
+        self.tx.send(SvEvent::WithJs(StdBox::new(func)))
     }
 }
 
-pub fn spawn(fut: impl 'static + Future<Output = ()> + Send) {
-    let ctx = MainContext::default();
-    ctx.spawn(fut)
+glib::wrapper! {
+    pub struct SveltersApplication(ObjectSubclass<application::Svelters>)
+        @extends gio::Application, gtk4::Application;
 }
 
-pub fn spawn_local(fut: impl 'static + Future<Output = ()>) {
-    let ctx = MainContext::default();
-    ctx.spawn_local(fut)
-}
+impl SveltersApplication {
+    #[allow(clippy::new_without_default)]
+    pub fn new(app_name: &str) -> Self {
+        glib::Object::new(&[
+            ("application-id", &app_name),
+            ("flags", &ApplicationFlags::empty()),
+        ])
+        .expect("Failed to create SveltersApplication")
+    }
 
-pub fn initialize_gtk(ctx: &Context, name: &str) -> rquickjs::Result<Application> {
-    let app = Application::builder()
-        .application_id(name)
-        // .flags(ApplicationFlags::HANDLES_OPEN | ApplicationFlags::HANDLES_COMMAND_LINE)
-        .build();
-    ctx.with(|ctx| {
-        initialize_types(ctx)?;
-        let globals = ctx.globals();
-        globals.set("document", rquickjs::Object::new(ctx)?)?;
-        let app = types::application::Application::new(app.clone());
-        globals.set("application", app.into_js(ctx)?)?;
+    pub fn runtime(&self) -> &rquickjs::Runtime {
+        let inner = Svelters::from_instance(&self);
+        inner.runtime()
+    }
 
-        rquickjs::Result::<_>::Ok(())
-    })?;
+    pub fn context(&self) -> &rquickjs::Context {
+        let inner = Svelters::from_instance(&self);
+        inner.context()
+    }
 
-    Ok(app)
+    pub fn set_loader<R, L>(self, resolver: R, loader: L)
+    where
+        R: 'static + rquickjs::Resolver,
+        L: 'static + rquickjs::Loader,
+    {
+        let inner = Svelters::from_instance(&self);
+        inner.runtime().set_loader(resolver, loader);
+    }
+
+    pub fn with<R, FN>(&self, func: FN) -> R
+    where
+        FN: 'static + for<'js> FnOnce(Ctx<'js>) -> R,
+    {
+        let inner = Svelters::from_instance(self);
+        inner.context().with(func)
+    }
+
+    pub fn handle(&self) -> Handle {
+        let app = (*self).downgrade();
+        let (tx, rx) = MainContext::channel::<SvEvent>(glib::Priority::default());
+        rx.attach(None, move |msg| {
+            let app = app.upgrade().unwrap();
+            match msg {
+                SvEvent::WithJs(func) => {
+                    if let Err(err) = app.with(func) {
+                        tracing::error!("Javascript Error: {}", err);
+                    }
+                }
+            }
+            glib::Continue(true)
+        });
+        Handle { tx }
+    }
+
+    #[tracing::instrument(skip(self))]
+    pub fn cleanup(&self) {
+        let ctx = self.context();
+        tracing::warn!("Running gc...");
+        ctx.runtime().run_gc();
+        ctx.with(move |ctx| {
+            tracing::warn!("Cleaning up Svelters...");
+            ctx.eval::<(), _>("document?.cleanup?.()").log_error();
+            ctx.eval::<(), _>("document?.cleanupStyles?.()").log_error();
+            // Causes a use after free(?) and unaligned fast bin chunk crash w/ CssProvider
+            ctx.globals()
+                .set("document", rquickjs::Value::new_undefined(ctx))
+                .log_error();
+            ctx.globals()
+                .set("application", rquickjs::Value::new_undefined(ctx))
+                .log_error();
+            ctx.globals()
+                .set("window", rquickjs::Value::new_undefined(ctx))
+                .log_error();
+            ctx.globals()
+                .set("setTimeout", rquickjs::Value::new_undefined(ctx))
+                .log_error();
+            ctx.globals()
+                .set("console", rquickjs::Value::new_undefined(ctx))
+                .log_error();
+            ctx.clear_registery();
+            tracing::warn!("Done cleaning up Svelters...");
+            rquickjs::Result::Ok(())
+        })
+        .log_error();
+        tracing::warn!("Running gc again...");
+        ctx.runtime().run_gc();
+    }
 }
 
 pub fn initialize_types(ctx: Ctx) -> rquickjs::Result<()> {
@@ -75,16 +154,9 @@ pub fn initialize_types(ctx: Ctx) -> rquickjs::Result<()> {
     for decl in inventory::iter::<InterfaceDeclaration> {
         (decl.func)(ctx);
     }
+    ctx.initialize(SveltersApplication::static_type())?;
     types::generated::initialize_global(ctx)?;
     Ok(())
-}
-
-pub fn start<FUNC: 'static + Fn(&Application)>(app: Application, func: FUNC) {
-    app.connect_activate(move |app| {
-        func(app);
-    });
-
-    app.run();
 }
 
 pub struct InterfaceDeclaration {
@@ -97,3 +169,15 @@ impl InterfaceDeclaration {
     }
 }
 inventory::collect!(InterfaceDeclaration);
+
+pub trait LogError {
+    fn log_error(self);
+}
+impl<T, E: std::error::Error> LogError for Result<T, E> {
+    fn log_error(self) {
+        match self {
+            Ok(_) => {}
+            Err(err) => tracing::error!("Svelters Error: {}", err),
+        }
+    }
+}

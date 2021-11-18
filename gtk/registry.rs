@@ -1,4 +1,8 @@
-use rquickjs::{Ctx, Function, IntoJs, Object as JsObject, RegisteryKey, Rest, TypedMapKey, Value};
+use std::ffi::CString;
+
+use rquickjs::{
+    qjs, ClassId, Ctx, Function, IntoJs, Object as JsObject, RegisteryKey, Rest, TypedMapKey, Value,
+};
 
 use crate::{common::*, core::from_gtype::init_gtype};
 
@@ -18,12 +22,16 @@ pub trait Registry<'js> {
 
 impl<'js> Registry<'js> for Ctx<'js> {
     fn marshall<T: IsA<GObject> + Cast>(self, obj: T) -> Result<Value<'js>> {
-        let obj = obj.upcast::<GObject>();
-        let ty = obj.type_();
-        let obj = crate::Object::new(obj);
-        let ty = Type::get(&self, ty);
+        let obj = obj.upcast_ref::<GObject>();
+        let r#type = obj.type_();
+        let obj = crate::Object::new(obj.clone());
+        let ty = Type::get(&self, r#type);
 
-        rquickjs::WithProto(obj, ty.proto(self)?).into_js(self)
+        tracing::error!(">>>>> Marshall {}", r#type.name());
+        let obj = obj.into_js(self)?;
+        obj.as_object().unwrap().set_prototype(&ty.proto(self)?)?;
+
+        Ok(obj)
     }
 
     fn set_proto<FN: 'static + for<'x> Fn(Ctx<'x>, &JsObject<'x>) -> Result<()>>(
@@ -186,9 +194,33 @@ impl Type {
         constructor.set_constructor(true);
         constructor.set_prototype(&proto);
 
+        // GC keeps destroying the prototypes and causing use after free
+        let mut class_id = ClassId::new();
+        class_id.init();
+        let class_name = CString::new(self.r#type.name())?;
+        let class_def = qjs::JSClassDef {
+            class_name: class_name.as_ptr(),
+            finalizer: None,
+            gc_mark: Some(gc_mark),
+            call: None,
+            exotic: std::ptr::null_mut(),
+        };
+        let context = rquickjs::Context::from_ctx(ctx)?;
+        if 0 != unsafe { qjs::JS_NewClass(context.runtime().ptr(), class_id.get(), &class_def) } {
+            return Err(rquickjs::Error::Unknown);
+        }
+        unsafe { qjs::JS_SetClassProto(ctx.ctx, class_id.get(), (*proto).clone().into_js_value()) }
+
         self.proto_key = Some(ctx.register(proto.clone().into_value()));
         Ok(proto)
     }
+}
+
+unsafe extern "C" fn gc_mark(
+    _rt: *mut qjs::JSRuntime,
+    _val: qjs::JSValue,
+    mark_fn: Option<unsafe extern "C" fn(*mut qjs::JSRuntime, *mut qjs::JSGCObjectHeader)>,
+) {
 }
 
 type ProtoFn = dyn for<'js> Fn(Ctx<'js>, &JsObject<'js>) -> Result<()>;
