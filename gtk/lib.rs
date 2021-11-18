@@ -34,6 +34,12 @@ use gtk4::{gio, glib};
 
 mod application;
 
+pub(crate) mod modules {
+    pub(crate) mod console;
+    // pub(crate) mod loader;
+    // pub(crate) mod timing;
+}
+
 // Due to name collision in types::Box
 type StdBox<T> = std::boxed::Box<T>;
 

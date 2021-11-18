@@ -16,12 +16,6 @@ use std::error::Error;
 
 pub mod logging;
 
-pub(crate) mod js_modules {
-    pub mod console;
-    pub mod loader;
-    pub mod timing;
-}
-
 pub(crate) mod js {
     pub use rquickjs::{
         bind, BuiltinLoader, BuiltinResolver, Context, Ctx, ExecutorSpawner, FileResolver, FromJs,

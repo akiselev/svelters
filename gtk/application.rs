@@ -9,7 +9,6 @@ use gtk4::subclass::prelude::*;
 use once_cell::unsync::OnceCell;
 use rquickjs::{Context, Ctx, Executor, ExecutorSpawner, IntoJs, Runtime};
 
-use crate::js_modules::{console, timing};
 use crate::{initialize_types, LogError};
 
 #[derive(Default)]
@@ -89,8 +88,7 @@ impl ApplicationImpl for Svelters {
         let inner = Svelters::from_instance(app);
         inner.runtime().spawn_executor(GtkExecutor);
         let res = inner.context().with(|ctx| {
-            console::init(ctx)?;
-            timing::init(ctx)?;
+            crate::modules::console::init(ctx)?;
             initialize_types(ctx)?;
             let globals = ctx.globals();
             globals.set("document", rquickjs::Object::new(ctx)?)?;
