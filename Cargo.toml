@@ -58,7 +58,6 @@ strip = true
 
 [workspace]
 members = [
-    "zig",
     "gtk",
     # "crates/compiler",
     "crates/rquickjs",

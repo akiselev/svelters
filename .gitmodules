@@ -4,6 +4,3 @@
 [submodule "crates/svelte"]
 	path = crates/svelte
 	url = ssh://git@github.com:/akiselev/svelte.git
-[submodule "zig"]
-	path = zig
-	url = git@github.com:akiselev/svelters-zig
