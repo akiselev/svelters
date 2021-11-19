@@ -1,0 +1,6 @@
+[submodule "lib/rquickjs"]
+	path = lib/rquickjs
+	url = git@github.com:akiselev/rquickjs
+[submodule "lib/svelte"]
+	path = lib/svelte
+	url = git@github.com:akiselev/svelte
