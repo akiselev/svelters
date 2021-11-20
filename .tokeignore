@@ -3,12 +3,12 @@
 core/tests/
 core/src/v1/
 
-crates/rquickjs/
-crates/rquickjs2/
-crates/macros/
-crates/compiler/js/
-crates/compiler/typescript.rs
-crates/svelte/
+lib/rquickjs/
+lib/rquickjs2/
+lib/macros/
+lib/compiler/js/
+lib/compiler/typescript.rs
+lib/svelte/
 dist/
 docs/
 node_modules/

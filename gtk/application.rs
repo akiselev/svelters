@@ -87,6 +87,8 @@ impl ApplicationImpl for Svelters {
         let app = app.downcast_ref::<super::SveltersApplication>().unwrap();
         let inner = Svelters::from_instance(app);
         inner.runtime().spawn_executor(GtkExecutor);
+        crate::tools::initialize(inner.context()).expect("Could not initialize tooling");
+
         let res = inner.context().with(|ctx| {
             crate::modules::console::init(ctx)?;
             initialize_types(ctx)?;
@@ -94,6 +96,7 @@ impl ApplicationImpl for Svelters {
             globals.set("document", rquickjs::Object::new(ctx)?)?;
             let app = crate::newtype::Gtk::new((*app).clone());
             globals.set("application", app.into_js(ctx)?)?;
+            globals.set("globals", globals.clone()).log_error();
 
             let obj = rquickjs::Object::new(ctx)?;
             globals.set("window", obj)?;

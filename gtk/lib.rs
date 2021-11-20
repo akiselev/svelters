@@ -21,6 +21,7 @@ pub(crate) mod newtype;
 pub(crate) mod obj_data;
 mod object;
 pub mod registry;
+pub(crate) mod tools;
 mod types;
 
 pub use object::*;
