@@ -24,7 +24,7 @@ tracing-log = "0.1.2"
 tracing-subscriber = "0.2.18"
 gobject-sys = "0.14.0"
 lazy_static = "1.4.0"
-rquickjs = { version = "0.1.2", path = "./crates/rquickjs", features = [
+rquickjs = { version = "0.1.2", path = "./lib/rquickjs", features = [
     "full",
     "backtrace",
     "tokio",
@@ -58,17 +58,12 @@ strip = true
 
 [workspace]
 members = [
+    "qt",
     "gtk",
-    # "crates/compiler",
-    "crates/rquickjs",
-    "crates/rquickjs/core",
-    "crates/rquickjs/macro",
+    "node-gtk",
+    # "lib/compiler",
+    "lib/rquickjs",
+    "lib/rquickjs/core",
+    "lib/rquickjs/macro",
 ]
-exclude = [
-    "core",
-    "codegen",
-    "crates/compiler",
-    "crates/oldqt",
-    "crates/qt",
-    "crates/rquickjs",
-]
+exclude = ["lib/compiler", "lib/rquickjs"]
