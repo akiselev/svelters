@@ -26,10 +26,6 @@ fn main() {
 
         app.connect_activate(move |app| {
             tracing::info!("App::activate...");
-            tracing::info!(
-                "Sizeof JSValue: {}",
-                std::mem::size_of::<rquickjs::qjs::JSValue>()
-            );
             let app = app.downcast_ref::<SveltersApplication>().unwrap();
 
             app.with(|ctx| initialize(ctx, PATH, false)).unwrap();
@@ -37,12 +33,14 @@ fn main() {
             hotwatch
                 .borrow_mut()
                 .watch(PATH, move |event: Event| {
-                    tracing::warn!("{} updated", PATH);
-                    if let Err(error) = handle.with(|ctx| initialize(ctx, PATH, true)) {
-                        tracing::error!(
-                            "Failed sending file update event to main thread: {}",
-                            error
-                        );
+                    println!("{} updated", PATH);
+                    if let Event::Write(_) = event {
+                        if let Err(error) = handle.with(|ctx| initialize(ctx, PATH, true)) {
+                            tracing::error!(
+                                "Failed sending file update event to main thread: {}",
+                                error
+                            );
+                        }
                     }
                 })
                 .expect("failed to watch file!");

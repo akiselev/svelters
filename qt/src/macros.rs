@@ -1,0 +1,79 @@
+use crate::registry::Registry;
+
+pub macro interface {
+    (($ctx:ident, $ty:ty$([$li:lifetime])?) => fn constructor($($args:tt)*) $code:block $($tail:tt)*) => {
+        let constructor = rquickjs::Function$(::<$li>)?::new($ctx, |$($args)*| {
+            $code
+        }).expect("Could not convert constructor into Javascript Function");
+        constructor.set_constructor(true);
+        $ctx.set_constructor(<$ty as glib::StaticType>::static_type(), constructor);
+        interface!(($ctx, $ty) => $($tail)*);
+    },
+    (($ctx:ident, $ty:ty$([$li:lifetime])?) => $skip:tt $($tail:tt)*) => {
+        interface!(($ctx, $ty$(<$li>)?) => $($tail)*);
+    },
+    (($ctx:ident, $ty:ty$([$li:lifetime])?) => ) => {},
+
+    (($ctx:ident, $proto:ident): fn constructor($($args:tt)*) $code:block $($tail:tt)*) => {
+        interface!(($ctx, $proto): $($tail)*);
+    },
+
+    (($ctx:ident, $proto:ident): fn $name:ident($($args:tt)*) $code:block $($tail:tt)*) => {
+        $proto.set(stringify!($name), rquickjs::Function::new($ctx, rquickjs::Method(|$($args)*| {
+            $code
+        })))?;
+        interface!(($ctx, $proto): $($tail)*);
+    },
+
+    // Empty interface (usually a placeholder)
+    (($ctx:ident, $proto:ident): ) => {},
+
+    ($ty:ty[$li:lifetime] { $($tail:tt)* }) => {
+        #[allow(unused_variables)]
+        fn init_proto<$li>(ctx: rquickjs::Ctx<$li>, proto: &rquickjs::Object<$li>) -> rquickjs::Result<()> {
+            interface!((ctx, proto): $($tail)*);
+            Ok(())
+        }
+
+        fn init<$li>(ctx: rquickjs::Ctx<$li>) {
+            crate::Registry::set_proto(ctx, <$ty as glib::StaticType>::static_type(), init_proto);
+            interface!((ctx, $ty) => $($tail)*);
+        }
+
+        inventory::submit! {
+            crate::InterfaceDeclaration::new(init)
+        }
+    },
+    ($ty:ty { $($tail:tt)* }) => {
+        interface!($ty['js] { $($tail)* });
+    }
+}
+
+pub macro methods {
+    (($ctx:ident, $proto:ident): fn $name:ident($($args:tt)*) { $($tt:tt)* }) => {
+        $proto.set(stringify!($name), rquickjs::Function::new(rquickjs::Method(|$($args)*| {
+            $(tt)*
+        })))?;
+    },
+
+    ($ab:tt => fn $name:ident($($args:tt)*) { $($tt:tt)* } $($tail:tt)*) => {
+        methods!($ab: fn $name($($args)*) { $($tt)* });
+        methods!($ab => $($tail)*);
+    }
+}
+
+pub macro exception($($tokens:tt)*) {
+    {
+        let backtrace = std::backtrace::Backtrace::capture().to_string();
+        use std::convert::TryInto;
+        rquickjs::Error::Exception {
+            message: format!(
+                $($tokens)*
+            ),
+            file: file!().to_string(),
+            line: line!().try_into().unwrap(),
+            stack: backtrace.clone(),
+            rust_stack: Some(backtrace),
+        }
+    }
+}
