@@ -35,6 +35,7 @@
                 <Inner />
             {/if}
             <button
+                tooltipText="test"
                 id="btn35"
                 on:clicked={onClick}
                 label="Toggle {hasFocus ? 'World' : ''}"
@@ -48,7 +49,7 @@
             <button
                 id="btn5"
                 on:clicked={onClick2}
-                label="Toggle 2"
+                label="Toggle "
                 hAlign="end"
                 canFocus={true}
                 sensitive={true}

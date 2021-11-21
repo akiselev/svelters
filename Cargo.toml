@@ -9,8 +9,12 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-path = "src/main.rs"
-name = "svelters"
+path = "src/gtk_main.rs"
+name = "svgtk"
+
+[[bin]]
+path = "src/qt_main.rs"
+name = "svqt"
 
 [lib]
 path = "src/lib.rs"
@@ -36,6 +40,7 @@ rquickjs = { version = "0.1.2", path = "./lib/rquickjs", features = [
     # "dump-mem",
 ] }
 svelters-gtk = { version = "0.1.0", path = "./gtk" }
+svelters-qt = { version = "0.1.0", path = "./qt" }
 node-resolve = "2.2.0"
 anyhow = "1.0.40"
 notify = "4.0.17"
@@ -60,7 +65,6 @@ strip = true
 members = [
     "qt",
     "gtk",
-    "node-gtk",
     # "lib/compiler",
     "lib/rquickjs",
     "lib/rquickjs/core",

@@ -1,6 +1,6 @@
 /// <reference no-default-lib="true"/>
 /// <reference path="../../node_modules/typescript/lib/lib.es5.d.ts" />
-/// <reference path="../../node_modules/typescript/lib/lib.es2015.d.ts" />
+/// <reference path="../../node_modules/typescript/lib/lib.es6.d.ts" />
 /// <reference path="../../node_modules/typescript/lib/lib.es2015.d.ts" />
 
 /// <reference path="../../node_modules/typescript/lib/lib.es2015.core.d.ts" />

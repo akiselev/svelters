@@ -1,4 +1,5 @@
 <script lang="ts">
+    /// <reference path="../node_modules/typescript/lib/lib.es2015.collection.d.ts" />
     import {
         createEventDispatcher,
         afterUpdate,
@@ -6,7 +7,8 @@
         onDestroy,
     } from "svelte";
     import { writable } from "svelte/store";
-    import Item from "./Item.svelte";
+    import { JsMap } from "./dom/proto/utils";
+    import ItemProxy from "./ItemProxy.svelte";
 
     let model = new CallbackListModel((index?: number) => {
         // console.log(">>>>>>>>>>>>>>>. list model: ", index);
@@ -20,7 +22,7 @@
     });
 
     type Event = { details: [GtkSignalListItemFactory, GtkListItem] };
-    let items: Set<any> = new Set();
+    let items: Map<number, any> = new JsMap();
     let count = 0;
 
     const onSetup = ({ details: [item] }: Event) => {
@@ -29,27 +31,25 @@
             box = new GtkBox("horizontal");
             item.child = box;
             item.svExtra.id = count;
-            items.add(item);
+            item.svExtra.store = writable(null);
+            items.set(count, item);
             items = items;
             count += 1;
         }
     };
 
     const onBind = ({ details: [item] }: Event) => {
-        // To preserve GTK Object identity between calls
-        item.svExtra.item = item.item;
-        items = items;
+        item.svExtra.store.set(item.item.value);
     };
 
     const onUnbind = ({ details: [item] }: Event) => {
-        item.svExtra.item = null;
-        items = items;
+        item.svExtra.store.set(null);
     };
 
     const onTeardown = ({ details: [item] }: Event) => {
         item.child = null;
         item.item = null;
-        items.delete(item);
+        items.delete(item.svExtra.id);
         items = items;
     };
 
@@ -79,7 +79,5 @@
 <scrolled maxContentHeight={600} vexpand={true} bind:this={scrolled} />
 
 {#each [...items.values()] as item (item.svExtra.id)}
-    <listViewProxy child={item.child}>
-        <slot item={item.svExtra.item.value} />
-    </listViewProxy>
+    <ItemProxy target={item.child} store={item.svExtra.store} />
 {/each}

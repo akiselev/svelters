@@ -13,14 +13,14 @@ export class ListViewProxy {
         return this.extra;
     }
 
-    get child() {
+    get target() {
         return this._child;
     }
 
-    set child(child: any) {
-        this._child = child;
+    set target(target: any) {
+        this._child = target;
         if (this._pending.length > 0) {
-            this._pending.forEach((func) => func(child));
+            this._pending.forEach((func) => func(target));
             this._pending = [];
         }
     }
@@ -31,7 +31,7 @@ export class ListViewProxy {
             if (this._child) {
                 this._child[funcName](...args);
             } else {
-                this._pending.push((child) => child[funcName](...args));
+                this._pending.push((target) => target[funcName](...args));
             }
         };
 

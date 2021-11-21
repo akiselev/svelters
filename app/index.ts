@@ -5,7 +5,7 @@ import App from "./App.svelte";
 
 let win = new GtkScrolledWindow();
 console.log("win: ", win.getAttribute);
-
+let x = new Map();
 const start = (reloaded: boolean) => {
     let state = null;
     if (reloaded) {

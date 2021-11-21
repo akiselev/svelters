@@ -139,3 +139,5 @@ export const createLogger =
     (...msg: any) => {
         console.log(`<${_}>`, ...msg);
     };
+
+export const JsMap = Map;

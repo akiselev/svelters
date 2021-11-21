@@ -15,6 +15,7 @@
     });
     onDestroy(() => {
         window.destroy();
+        window = null;
     });
 </script>
 
@@ -22,7 +23,16 @@
     <vBox>
         <hBox>
             {#if isOpen}
-                <Inner />
+                <Inner>
+                    <button
+                        id="btn5"
+                        label="Toggle 2"
+                        halign="end"
+                        canFocus={true}
+                        sensitive={true}
+                        focusable={true}
+                    />
+                </Inner>
             {/if}
             <button
                 id="btn35"
@@ -48,6 +58,24 @@
 </appWindow>
 
 <style>
+    .btn {
+        background-color: #444;
+    }
+    .btn label {
+        color: #f00;
+    }
+    .btn {
+        background-color: #444;
+    }
+    .btn label {
+        color: #f00;
+    }
+    .btn {
+        background-color: #444;
+    }
+    .btn label {
+        color: #f00;
+    }
     .btn {
         background-color: #444;
     }
