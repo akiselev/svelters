@@ -3,6 +3,7 @@ import OS from "os";
 import * as constants from "./constants";
 import { GirConstruct, InheritanceTable, ParsedGir } from "./types";
 import { ModuleLoader } from "./module-loader";
+import { GirModule } from "./gir-module";
 
 const GIR_DIRECTORY =
     OS.platform() === "darwin"
@@ -11,6 +12,8 @@ const GIR_DIRECTORY =
 
 export class Generator {
     types: { [name: string]: GirConstruct | null } = {};
+    cTypes: { [name: string]: GirConstruct | null };
+    modules: { [name: string]: GirModule } = {};
     inheritance: InheritanceTable = {};
 
     loader: ModuleLoader = new ModuleLoader(constants.DEFAULT_CONFIG as any);
@@ -20,12 +23,26 @@ export class Generator {
     initialize = async () => {
         const { grouped } = await this.loader.getModules(this.packages);
         Object.values(grouped).forEach(({ modules }) =>
-            modules.forEach(({ module }) => module.loadTypes(this.types)),
+            modules.forEach(({ module }) => {
+                console.log(module.name.toLowerCase());
+                this.modules[module.name.toLowerCase()] = module;
+                module.loadTypes(this.types);
+            }),
         );
         Object.values(grouped).forEach(({ modules }) =>
             modules.forEach(({ module }) =>
                 module.loadInheritance(this.inheritance),
             ),
+        );
+        this.cTypes = Object.fromEntries(
+            Object.entries(this.types)
+                .filter(([key, ty]) => typeof ty.$["c:type"] === "string")
+                .map(([key, ty]) => {
+                    if (this.inherits(key, "GObject.Object")) {
+                        return [`ty.$["c:type"]*`, ty];
+                    }
+                    return [ty.$["c:type"], ty];
+                }),
         );
     };
 

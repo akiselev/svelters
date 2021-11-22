@@ -1,6 +1,6 @@
-import { GirVariable } from './gir-variable'
+import { GirVariable } from "./gir-variable";
 
 export interface GirParameter {
-    parameter?: GirVariable[]
-    'instance-parameter'?: GirVariable[]
+    parameter?: GirVariable[];
+    "instance-parameter"?: GirVariable[];
 }

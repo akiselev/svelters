@@ -3,6 +3,7 @@
 #![feature(decl_macro)]
 #![feature(unboxed_closures)]
 #![feature(const_fn_fn_ptr_basics)]
+#![feature(generic_associated_types)]
 
 use std::sync::mpsc::SendError;
 
@@ -17,6 +18,7 @@ mod macros;
 pub(crate) mod common;
 mod core;
 pub(crate) mod errors;
+pub mod marshall;
 pub(crate) mod newtype;
 pub(crate) mod obj_data;
 mod object;

@@ -30,6 +30,8 @@ export const MAIN_PACKAGES = [
     "Gtk-4.0",
 ];
 
+export const GTK_PACKAGE = ["Gtk-4.0"];
+
 export const DEFAULT_CONFIG = {
     environment: "node",
     pretty: false,
