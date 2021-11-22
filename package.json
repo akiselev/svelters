@@ -18,8 +18,10 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production node build.js && yarn build:rust",
+    "build:codegen": "cross-env NODE_ENV=production node build-codegen.js",
     "build:esbuild:svelte": "cross-env NODE_ENV=production node build-esbuild-svelte.js",
     "build:rust": "cargo build --release",
+    "codegen": "node dist/codegen/index.js",
     "docs": "serve target/doc",
     "start": "cargo run",
     "format": "run-p format:md format:json format:yaml format:source format:rs",
@@ -29,6 +31,7 @@
     "format:source": "prettier --config ./package.json --write './**/*.{js,ts}'",
     "lint": "eslint . -c ./.eslintrc.yml './**/*.{ts,tsx,js}'",
     "watch": "cross-env NODE_ENV=watch node build.js",
+    "watch:codegen": "cross-env NODE_ENV=watch node build-codegen.js",
     "watch:rust": "cargo watch -w . -x 'build' -C . -c -d .2",
     "watch:rust:run": "cargo watch -w . -x 'run' -C . -c -d .2",
     "watch:rust:check": "cargo watch -w . -C . -c -d .2"
@@ -37,6 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
     "chalk": "^4.1.2",
+    "cmd-ts": "^0.7.0",
     "cosmiconfig": "^7.0.1",
     "cross-env": "^7.0.3",
     "ejs": "^3.1.6",
