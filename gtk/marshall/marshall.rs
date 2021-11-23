@@ -17,94 +17,57 @@ pub trait Marshall<'a, T>: Sized {
     }
 }
 
-pub trait InitMarshallArg<'i, 'js, const IDX: usize>: Sized {
+pub trait MarshallState<const IDX: isize>: Sized {
     type Output;
-    fn init_marshall_arg(input: &mut InputAccessor<'i, 'js>) -> Result<Self::Output>;
+    fn marshall_state(&self) -> &Self::Output;
 }
 
-pub trait InitMarshallResult<'i, 'js>: Sized {
-    fn init_marshall_result(input: &mut InputAccessor<'i, 'js>) -> Result<Self>;
+pub trait InitMarshall<'i, 'js>: Sized {
+    type Output;
+    fn init_marshall_state(input: &mut InputAccessor<'i, 'js>) -> Result<Self::Output>;
 }
 
-pub trait MarshallResult<'js> {
+pub trait MarshallResult<'js, M> {
     type Type;
-    type Marshall<'a>: IntoJs<'js>;
-    fn marshall_result<'a>(self, value: Self::Type) -> Result<Self::Marshall<'a>>;
+    type Marshall<'a>: IntoJs<'js>
+    where
+        M: 'a;
+    fn marshall_result<'a>(state: &'a M, value: Self::Type) -> Result<Self::Marshall<'a>>;
 }
 
-pub trait MarshallArgument<'js> {
+/// IDX is the index of the argument (1 indexed). 0 is used for return values
+pub trait MarshallArgument<'js, M, const IDX: isize> {
     type Type;
-    type Marshall<'a>: Marshall<'a, Self::Type>;
-    fn marshall_arg<'a>(self) -> Result<Self::Marshall<'a>>;
-}
-
-pub struct DefaultMarshall<C, T>(PhantomData<(C, T)>);
-
-impl<'i, 'js, C, T> InitMarshallResult<'i, 'js> for DefaultMarshall<C, T> {
-    fn init_marshall_result(input: &mut InputAccessor<'i, 'js>) -> Result<Self> {
-        Ok(DefaultMarshall(PhantomData))
-    }
-}
-
-impl<'js, C, T> MarshallResult<'js> for DefaultMarshall<C, T>
-where
-    T: IntoJs<'js>,
-    C: for<'a> Marshall<'a, T>,
-{
-    type Type = C;
-
-    type Marshall<'a> = DefaultMarshallInner<C, T>;
-
-    fn marshall_result<'a>(self, value: Self::Type) -> Result<Self::Marshall<'a>> {
-        Ok(DefaultMarshallInner(value, PhantomData))
-    }
-}
-
-pub struct DefaultMarshallInner<C, T>(C, PhantomData<T>);
-
-impl<'js, C, T> IntoJs<'js> for DefaultMarshallInner<C, T>
-where
-    T: IntoJs<'js>,
-    C: for<'a> Marshall<'a, T>,
-{
-    fn into_js(self, ctx: Ctx<'js>) -> rquickjs::Result<Value<'js>> {
-        let res = if self.0.use_ref() {
-            self.0.marshall_as_ref()
-        } else {
-            self.0.marshall_as_owned()
-        }?;
-        res.into_js(ctx)
-    }
+    type Marshall<'a>: Marshall<'a, Self::Type>
+    where
+        M: 'a;
+    fn marshall_arg<'a>(state: &'a M) -> Result<Self::Marshall<'a>>;
 }
 
 macro_rules! arg_impls {
-    ($($arg:ident)*: $t:ident=$num:literal) => {
-        impl<'i, 'js $(, $arg)*> InitMarshallArg<'i, 'js, $num> for ($($arg,)*)
+    ($($arg:ident)*) => {
+        impl<'i, 'js $(, $arg)*> InitMarshall<'i, 'js> for ($($arg,)*)
         where
-            $t: InitMarshallArg<'i, 'js, 0>
+            $($arg: InitMarshall<'i, 'js>),*
         {
-            type Output = <$t as InitMarshallArg<'i, 'js, 0>>::Output;
-            fn init_marshall_arg(input: &mut InputAccessor<'i, 'js>) -> Result<Self::Output> {
-                <$t>::init_marshall_arg(input)
+            type Output = ($(<$arg as InitMarshall<'i, 'js>>::Output,)*);
+            fn init_marshall_state(input: &mut InputAccessor<'i, 'js>) -> Result<Self::Output> {
+                Ok(($(<$arg>::init_marshall_state(input)?,)*))
             }
         }
     };
-    ($($arg:ident)*: $t:ident=$num:literal $($tt:tt)*) => {
-        arg_impls!($($arg)*: $t=$num);
-        arg_impls!($($arg)*: $($tt)*);
-    };
-    ($($($arg:ident)*: ($($tt:tt)*),)*) => {
+    ($($($arg:ident)*,)*) => {
         $(
-            arg_impls!($($arg)*: $($tt)*);
+            arg_impls!($($arg)*);
         )*
     }
 }
 
 arg_impls! {
-    A: (A=0),
-    A B: (A=0 B=1),
-    A B D: (A=0 B=1 D=2),
-    A B D E: (A=0 B=1 D=2 E=3),
-    A B D E G: (A=0 B=1 D=2 E=3 G=4),
-    A B D E G H: (A=0 B=1 D=2 E=3 G=4 H=5),
+    A,
+    A B,
+    A B D,
+    A B D E,
+    A B D E G,
+    A B D E G H,
 }
