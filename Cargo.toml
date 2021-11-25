@@ -12,9 +12,9 @@ version = "0.1.0"
 path = "src/gtk_main.rs"
 name = "svgtk"
 
-[[bin]]
-path = "src/qt_main.rs"
-name = "svqt"
+# [[bin]]
+# path = "src/qt_main.rs"
+# name = "svqt"
 
 [lib]
 path = "src/lib.rs"
@@ -40,7 +40,7 @@ rquickjs = { version = "0.1.2", path = "./lib/rquickjs", features = [
     # "dump-mem",
 ] }
 svelters-gtk = { version = "0.1.0", path = "./gtk" }
-svelters-qt = { version = "0.1.0", path = "./qt" }
+# svelters-qt = { version = "0.1.0", path = "./qt" }
 node-resolve = "2.2.0"
 anyhow = "1.0.40"
 notify = "4.0.17"
@@ -63,11 +63,11 @@ strip = true
 
 [workspace]
 members = [
-    "qt",
+    # "qt",
     "gtk",
     # "lib/compiler",
     "lib/rquickjs",
     "lib/rquickjs/core",
     "lib/rquickjs/macro",
 ]
-exclude = ["lib/compiler", "lib/rquickjs"]
+exclude = ["lib/compiler", "lib/rquickjs", "qt"]
