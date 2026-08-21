@@ -1,6 +1,6 @@
 # SVR06 - embedded Vite environment, HMR, and diagnostics
 
-References: `plans/architecture/runtime-stack.md`.
+References: `plans/architecture/runtime-stack.md`, `plans/architecture/ecosystem-integrations.md`.
 
 ## Goal
 
@@ -23,7 +23,9 @@ file change
  -> backend repaint/mutations
 ```
 
-Implement a local authenticated dev transport (Unix socket/named pipe preferred; loopback TCP fallback) with protocol versioning, module update messages, error reporting, runtime logs, full reload, and health/ping. Do not expose an unauthenticated network listener by default.
+Implement the simplest local authenticated dev transport that satisfies the requirements: Unix socket/named pipe preferred, loopback TCP fallback. It has protocol versioning, module update messages, error reporting, runtime logs, full reload, and health/ping. Do not expose an unauthenticated network listener by default.
+
+Do not introduce a resident daemon into this phase. `daemonkit` is deliberately deferred to SVR21 and is adopted only if measurements later show that a persistent `svelters-devd` materially improves startup, cache reuse or multi-app development.
 
 Preserve Svelte's upstream HMR wrapper and adapt only node-anchor operations required by the native runtime.
 
@@ -37,4 +39,5 @@ Add an HMR performance harness measuring file-event-to-first-native-patch latenc
 - component-local HMR preserves state where upstream Svelte HMR semantics say it should;
 - syntax/type/runtime errors point at original `.svelte`/`.ts` source;
 - dev server restart and app reconnect recover cleanly;
+- no daemon/supervisor dependency is needed for the baseline workflow;
 - recorded median HMR latency becomes a regression benchmark.
