@@ -4,7 +4,9 @@ This file is the only global mutable progress ledger. Keep it small so an autono
 
 States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`.
 
-| Phase | State | PR | Notes |
+Implementation work lands directly on `master`; there are no per-phase or routine compatibility PRs. The `Commit` column records the master commit that completed a phase. Detailed evidence belongs in the current phase file under `## Completion record` and, for large generated evidence, in Artifactum/CI artifacts.
+
+| Phase | State | Commit | Notes |
 | --- | --- | --- | --- |
 | SVR00 | QUEUED | | |
 | SVR01 | QUEUED | | |
@@ -31,4 +33,4 @@ States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`.
 | SVR22 | QUEUED | | |
 | SVR23 | QUEUED | | |
 
-When a phase completes, replace its note with concise acceptance evidence, for example `428 runtime fixtures, GTK smoke app, size baseline recorded`. Detailed evidence belongs in the implementation PR.
+When a phase completes, record its final master commit and concise acceptance evidence, for example `428 runtime fixtures; GTK smoke app; size baseline recorded`.
