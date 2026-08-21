@@ -1,6 +1,6 @@
 # Svelters v2 resurrection plan
 
-Status: proposed execution plan
+Status: adopted execution plan
 
 Svelters v2 is a Svelte 5 native application runtime. Normal application code remains Svelte/TypeScript, executes in embedded QuickJS-NG, and renders through pluggable native backends. The first supported backends are GTK4, QtWidgets, and egui. The design must retain the full native-toolkit escape hatch without recreating the old all-bindings-generated-into-Rust binary and compile-time explosion.
 
@@ -37,11 +37,11 @@ The compiler is not forked initially. Svelte 5 already supports `generate: "clie
 
 ## Modern toolchain decisions
 
-The old repository currently contains Svelte 3.44, TypeScript 4.3, esbuild 0.13, a hand-written esbuild Svelte plugin, an embedded Svelte compiler running inside QuickJS, a vendored/forked SWC TypeScript stripping pass, `rquickjs` 0.1.2, Node-12-era build scripts, and Rust 2018-era crates. None of these are retained as the v2 build pipeline.
+The old repository contains Svelte 3.44, TypeScript 4.3, esbuild 0.13, a hand-written esbuild Svelte plugin, an embedded Svelte compiler running inside QuickJS, a vendored/forked SWC TypeScript stripping pass, `rquickjs` 0.1.2, Node-12-era build scripts, and Rust 2018-era crates. None of these are retained as the v2 build pipeline.
 
 The v2 baseline is:
 
-- Svelte 5 pinned exactly in the lockfile, initially current 5.x; update by automated compatibility PRs.
+- Svelte 5 pinned exactly in the lockfile, initially current 5.x; candidate updates pass the SVR22 compatibility gate before landing directly on `master`.
 - `@sveltejs/vite-plugin-svelte` and Vite 8 with Rolldown/Oxc. No custom esbuild Svelte plugin.
 - ESM-only JS packages. No hand-written ESM-to-CJS rewriting.
 - Oxc/Vite handles syntax-only JS/TS transforms. Svelte's `vitePreprocess({ script: true })` handles TS constructs that emit JS when needed.
@@ -69,6 +69,8 @@ See `plans/architecture/runtime-stack.md`.
 8. All expensive generated API databases and binding packs are content-addressed and reproducible; Artifactum is the preferred cache/provenance layer.
 9. Shiboken/PySide is a build-time Qt knowledge source, never a Svelters runtime dependency.
 10. Dynamic native calls are explicit and auditable; broad wildcard roots are warned on in release builds.
+11. Cross-project integration happens at explicit semantic interfaces. Svelters does not absorb another project's runtime merely because both are desktop-adjacent.
+12. `master` is the execution branch. Phase and routine compatibility work lands directly after its acceptance gate; GitHub PRs are not part of the execution protocol.
 
 ## Q1: native binding linker
 
@@ -99,34 +101,44 @@ Each phase has exactly one implementation-plan file under `plans/phases/`. Agent
 | SVR12 | QtWidgets renderer and selective C++ thunk generator | SVR05, SVR08, SVR11 |
 | SVR13 | Portable widget semantics and structural policies | SVR10, SVR12 |
 | SVR14 | egui renderer and immediate-mode adaptation | SVR05, SVR13 |
-| SVR15 | Switchyard renderer/plugin generations and fast path | SVR10, SVR12, SVR14 |
+| SVR15 | Switchyard renderer/plugin generations and shared hot-reload substrate | SVR10, SVR12, SVR14 |
 | SVR16 | Model/view subsystem and virtualization | SVR13, SVR15 |
 | SVR17 | Styling and native style escape hatches | SVR13, SVR15 |
 | SVR18 | Broad native API escape hatch, callbacks, async | SVR08, SVR15 |
-| SVR19 | Custom widget/plugin SDK | SVR15, SVR18 |
-| SVR20 | Devtools, graph/native inspector, profiling | SVR06, SVR15 |
-| SVR21 | Artifactum caches, Outboard tooling, packaging | SVR15, SVR18 |
-| SVR22 | Upstream Svelte/toolkit update automation | SVR20, SVR21 |
-| SVR23 | Production hardening and release readiness | all prior |
+| SVR19 | Custom widget/plugin SDK and egui-workbench dogfood | SVR15, SVR18 |
+| SVR20 | Devtools, graph/native inspector, accessibility/agent E2E | SVR06, SVR15 |
+| SVR21 | Platform services, Artifactum/Outboard tooling, optional dev daemon, packaging | SVR15, SVR18 |
+| SVR22 | Upstream Svelte/toolkit compatibility automation | SVR20, SVR21 |
+| SVR23 | Production hardening, deterministic stress, release readiness | all prior |
 
 SVR02 and SVR03 can run in parallel after SVR01. SVR09 and SVR11 can run in parallel after SVR07. Qt and GTK renderer work may run in parallel once SVR08 exists. egui deliberately lands after both retained backends have established the portable structural contract so it can challenge, not accidentally define, that contract.
 
 ## Agent execution protocol
 
-- One implementation PR per phase. Do not split a phase into multiple PRs unless the phase file explicitly permits parallel child work.
-- Before coding, update `plans/STATUS.md` to `IN PROGRESS` in the implementation branch and record the intended PR URL once created.
+- There are no implementation PRs. Work from the latest `master`; a local temporary branch/worktree is fine for isolation, but accepted work is fast-forwarded or committed directly to `master` after the phase gate.
+- Default to one active phase at a time. Parallel phases are allowed only where the dependency graph explicitly says so and the agents coordinate disjoint files/APIs.
+- Before coding, mark the phase `IN PROGRESS` in `plans/STATUS.md` if the status update can be committed without disrupting another active phase.
 - Read only the current phase plus referenced architecture files. If another phase contains needed information, add an explicit cross-reference rather than loading the entire plan tree.
-- Preserve the public behavior of completed phases. A later phase may evolve an API only with migration in the same PR.
-- Every phase PR must include its acceptance evidence: commands, fixture counts, benchmark deltas, generated artifact hashes, screenshots only when a visual claim is relevant, and known unsupported cases.
-- Do not mark a phase `DONE` on unit tests alone when its phase file requires an end-to-end run.
-- If research invalidates an architectural invariant, stop implementation, update the architecture document and PLAN in the same PR, and explain the change. Do not silently route around the design.
-- Keep generated output out of git unless the phase explicitly identifies it as a checked-in compatibility fixture. Prefer Artifactum/CAS for large derived data.
+- Preserve the public behavior of completed phases. A later phase may evolve an API only with migration in the same master commit or contiguous validated commit series.
+- Run every acceptance command before landing the completion commit. Unit tests alone are insufficient when the phase requires end-to-end or observational validation.
+- Append a concise `## Completion record` to the current phase file with exact commands, fixture counts, benchmark deltas, generated artifact hashes and known unsupported cases. Put large evidence in Artifactum/CI and link its identity from the record.
+- Mark the phase `DONE` only in the commit that records its accepted implementation, and put that master commit SHA plus a short evidence summary in `plans/STATUS.md`.
+- If research invalidates an architectural invariant, update the relevant architecture document, current phase, and PLAN as part of the validated master change. Do not silently route around the design.
+- A failed candidate never mutates `master`; keep the last green master and preserve diagnostics/artifacts outside the branch until the problem is resolved.
+- Keep generated output out of git unless a phase explicitly identifies it as a checked-in compatibility fixture. Prefer Artifactum/CAS for large derived data.
 - Do not revive the old `lib/rquickjs`, `lib/svelte`, old SWC strip fork, old esbuild plugin, or Qt libuv dispatcher as foundations. They are archaeology inputs only.
 
 ## Cross-project responsibilities
 
-- `switchyard`: generation-safe native/static/process/Wasm plugin lifecycle. SVR15 may add an optional native fast-path extension descriptor useful beyond Svelters.
-- `artifactum`: reproducible storage for extracted API databases, generated typings, fat dev bridges, and thin binding packs.
+See `plans/architecture/ecosystem-integrations.md` for the detailed boundaries.
+
+- `switchyard`: shared generation-safe native/static/process/Wasm plugin lifecycle. Generic staged publication, generation identity, uninstall, watch/build diagnostics and the optional native extension mechanism belong there rather than in Svelters.
+- `egui-workbench`: design sibling and dogfood consumer, not a core dependency. Align stable widget identity, last-known-good publication, deferred events and Switchyard substrate; later mount Svelters inside a Workbench pane.
+- `appfs`: optional application-platform storage service after its own compile/black-box validation. Use it for semantic Config/Data/State/Cache/Logs/Resources/External storage rather than inventing another filesystem facade.
+- `desktop-cli`: GPL external black-box accessibility/agent test harness only; never link it into the permissive Svelters core.
+- `deterministic-rs`: optional late-stage replay/fault testing for timers, event ordering and reload races; not a production dependency or early critical path.
+- `daemonkit`: optional lifecycle owner for a resident development helper if measurement justifies one; not the renderer or HMR substrate.
+- `artifactum`: reproducible storage for extracted API databases, generated typings, fat dev bridges, thin binding packs and compatibility evidence.
 - `outboard`: independently installed build/extractor/packager tooling plugins. It is not the renderer hot path.
 
 ## Research snapshot, 2026-08-21
