@@ -1,10 +1,10 @@
 # SVR12 - QtWidgets renderer and selective C++ thunks
 
-References: `plans/architecture/qt-shiboken.md`, `plans/architecture/native-binding-linker.md`.
+References: `plans/architecture/qt-shiboken.md`, `plans/architecture/native-binding-linker.md`, and `plans/architecture/semantic-graph.md`.
 
 ## Goal
 
-Deliver a real QtWidgets backend with full ordinary-method access through selective generated C++ thunks. Qt Quick is explicitly out of scope.
+Deliver a real QtWidgets backend with full ordinary-method access through selective generated C++ thunks and realize the foundational semantic graph into Qt's native accessibility surface. Qt Quick is explicitly out of scope.
 
 ## Native architecture
 
@@ -13,6 +13,8 @@ Use `QApplication::exec()` as the authoritative loop. Remove the old 10 ms `proc
 Maintain a typed QObject/native-value handle registry. QObject deletion invalidates handles. Parent ownership changes update the registry according to API IR semantics.
 
 Use QMetaObject for properties/signals/invokable methods where appropriate, but ordinary C++ API coverage comes from generated thunks selected by the binding manifest.
+
+For every widget supported by this phase, map the canonical semantic role/name/description/value/state/actions/relations into `QAccessible`-visible behavior/events. The logical semantic graph is authoritative; do not derive portable semantics back from QObject properties. Record unsupported mappings as backend capability diagnostics.
 
 ## Thin generator
 
@@ -24,6 +26,8 @@ Separately generate/cache a fat development bridge per Qt/API/toolchain fingerpr
 
 QApplication, QWidget/QDialog, QMainWindow, common layouts, QLabel, QPushButton, QLineEdit/QTextEdit, check/radio, splitter, scroll area, tabs, menus/actions/status bar, and enough item-view support for pre-SVR16 smoke tests.
 
+Add semantic fixtures for labelled/editable inputs, checked/mixed controls, focus/disabled state, menus/actions, and a simple list/tree shape. Their canonical TestHost semantic snapshots must match the information intended for `QAccessible` projection.
+
 ## Acceptance
 
 - port the old Qt Svelte counter behavior to v2;
@@ -31,4 +35,6 @@ QApplication, QWidget/QDialog, QMainWindow, common layouts, QLabel, QPushButton,
 - call at least one ordinary non-Q_INVOKABLE Qt method from Svelte through a generated binding;
 - adding that call in dev does not rebuild C++ when the fat bridge already covers it;
 - release manifest/thin bridge contains it and omits an unreachable control method;
+- representative controls expose the canonical role/name/state/actions through Qt accessibility;
+- an intentionally unsupported semantic mapping produces a capability diagnostic rather than silently disappearing;
 - QObject deletion/parent-transfer/lifetime tests pass under ASan/UBSan where supported.
