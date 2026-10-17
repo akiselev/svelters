@@ -2,28 +2,22 @@
 verify_subject: {borrowed: {tag: scale, getter: get_adjustment}}
 properties:
   - name: lower
-    js_name: lower
     sample: 5.0
     provenance: "GtkAdjustment:lower (Gtk 4 docs)"
   - name: upper
-    js_name: upper
     sample: 80.0
     provenance: "GtkAdjustment:upper (Gtk 4 docs)"
   - name: value
-    js_name: value
     sample: 42.0
     setup: 'h.set_f64(o, "upper", 100.0).unwrap();'
     provenance: "GtkAdjustment:value (Gtk 4 docs); clamped into [lower, upper - page-size]"
   - name: step-increment
-    js_name: stepIncrement
     sample: 3.0
     provenance: "GtkAdjustment:step-increment (Gtk 4 docs)"
   - name: page-increment
-    js_name: pageIncrement
     sample: 25.0
     provenance: "GtkAdjustment:page-increment (Gtk 4 docs)"
   - name: page-size
-    js_name: pageSize
     sample: 10.0
     setup: 'h.set_f64(o, "upper", 100.0).unwrap();'
     provenance: "GtkAdjustment:page-size (Gtk 4 docs)"

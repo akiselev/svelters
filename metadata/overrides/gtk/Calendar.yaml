@@ -2,26 +2,20 @@ properties:
   - name: date
     provenance: "GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test"
   - name: day
-    js_name: day
     sample: 15
     echo_suppress: ["notify::day", day-selected]
     provenance: "GtkCalendar:day (Gtk 4 docs)"
   - name: month
-    js_name: month
     sample: 5
     provenance: "GtkCalendar:month, 0-based (Gtk 4 docs)"
   - name: year
-    js_name: year
     sample: 2030
     provenance: "GtkCalendar:year (Gtk 4 docs)"
   - name: show-heading
-    js_name: showHeading
     provenance: "GtkCalendar:show-heading (Gtk 4 docs)"
   - name: show-day-names
-    js_name: showDayNames
     provenance: "GtkCalendar:show-day-names (Gtk 4 docs)"
   - name: show-week-numbers
-    js_name: showWeekNumbers
     provenance: "GtkCalendar:show-week-numbers (Gtk 4 docs)"
 signals:
   - name: next-month

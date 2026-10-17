@@ -112,7 +112,7 @@ pub(crate) struct Inner {
     frames_by_clock: Cell<u32>,
     /// State of the `gio-file` services (see `extras.rs`).
     files: RefCell<HashMap<u64, extras::FileState>>,
-    /// `virtuallist` widgets (see `vlist.rs`).
+    /// `virtual-list` widgets (see `vlist.rs`).
     vlists: RefCell<HashMap<u64, Rc<vlist::VList>>>,
     /// Menu and action nodes (see `menus.rs`).
     menus: RefCell<HashMap<u64, menus::Node>>,
@@ -184,7 +184,7 @@ impl Inner {
         Ok((e.obj.upgrade().ok_or_else(|| format!("handle {h} was destroyed"))?, self.table_kind(e.kind)))
     }
 
-    /// The kind the generated tables use for `kind`: a `virtuallist` is a `ScrolledWindow` there.
+    /// The kind the generated tables use for `kind`: a `virtual-list` is a `ScrolledWindow` there.
     fn table_kind(&self, kind: u32) -> u32 {
         if kind == vlist::KIND_VLIST {
             lookup::kind_by_name("ScrolledWindow")
@@ -1343,7 +1343,7 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
     let bytes = unsafe { std::slice::from_raw_parts(name as *const u8, len) };
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     match what {
-        SVL_KIND if name == "virtuallist" => vlist::KIND_VLIST,
+        SVL_KIND if name == "virtual-list" => vlist::KIND_VLIST,
         SVL_KIND => match (menus::kind_by_name(name), extras::kind_by_name(name)) {
             (0, 0) => lookup::kind_by_name(name),
             (0, k) | (k, _) => k,

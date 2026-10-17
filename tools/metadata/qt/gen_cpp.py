@@ -36,6 +36,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "common"))
+import naming  # noqa: E402
 import svmeta  # noqa: E402
 from tsvalues import write_values_dts  # noqa: E402
 
@@ -117,6 +118,44 @@ def enum_member_names(members: list[dict]) -> dict[str, str]:
     return out
 
 
+def element_tag(el: dict) -> str:
+    """The tag of an annotated element: its class's tag, or for a plain QWidget carrying a layout,
+    the layout's (`QWidget` + `QGridLayout` -> `grid-layout`)."""
+    c = el["construct"]
+    lay = (c.get("composite") or {}).get("layout", {}).get("class")
+    return naming.tag_for("qt", lay if c["class"] == "QWidget" and lay else c["class"])
+
+
+def native_js(r: dict, key: str) -> str | None:
+    """The JS name a prop or signal record must have: kebab(native); an accessor prop is named after its
+    setter (`setSeparator` -> `separator`). None for synthetic records (dynamic props, event-filter signals)."""
+    if r.get("native"):
+        return naming.kebab(r["native"])
+    if key == "props" and r.get("setter", "").startswith("set"):
+        return naming.kebab(r["setter"][3:])
+    return None
+
+
+def check_names(file: str, el: dict, block: bool = False) -> list[str]:
+    """Names follow the shared rule: tags and prop/signal/child-attribute names are derived from the native
+    API; a synthetic name must still be kebab-case."""
+    errs = []
+    if not block:
+        want = element_tag(el)
+        if el.get("tag") != want and not el.get("tag_reason"):
+            errs.append(f"{file}: element {el.get('tag')!r} must be tagged {want!r} (or give a tag_reason)")
+    for key in ("props", "signals"):
+        for r in el.get(key, []) or []:
+            want = native_js(r, key) or naming.kebab(r["js"])
+            if r["js"] != want:
+                errs.append(f"{file}: {el.get('tag')} {key[:-1]} {r['js']!r} must be named {want!r}")
+    for sl in (el.get("children") or {}).get("slots", []) or []:
+        for a in sl.get("attrs", []) or []:
+            if a["name"] != naming.kebab(a["name"]):
+                errs.append(f"{file}: {el.get('tag')} attr {a['name']!r} must be kebab-case")
+    return errs
+
+
 # Parameter types an `out:` / `inout:` annotation may name: the C++ core type -> neutral ref.
 OUT_PRIM = {"bool": "bool", "int": "i32", "uint": "u32", "unsigned int": "u32", "qint64": "i64", "qreal": "f64",
             "double": "f64", "float": "f32", "QString": "string"}
@@ -190,8 +229,10 @@ class Model:
             if self.kind(cls) is None:
                 raise GenError(f"{p.name}: no metadata/qt/{cls}.json (file names are class names)")
             if ov.get("inherit"):
+                errs += check_names(p.name, {"tag": f"inherit:{cls}", **ov["inherit"]}, block=True)
                 self.inherit[cls] = ov["inherit"]
             for el in ov.get("elements", []):
+                errs += check_names(p.name, el)
                 if only and el["tag"] not in only:
                     continue
                 el = dict(el)
@@ -199,6 +240,8 @@ class Model:
                 if el["cls"] != cls:
                     raise GenError(f"{p.name}: element {el['tag']} constructs {el['cls']}, expected {cls}")
                 self.elements.append(el)
+        if errs:
+            raise GenError("naming rule (tools/metadata/common/naming.py):\n  " + "\n  ".join(errs))
         self.elements.sort(key=lambda e: e["tag"])
         tags = [e["tag"] for e in self.elements]
         if len(set(tags)) != len(tags):
@@ -354,6 +397,18 @@ class Model:
             self.use(ref, f"{tag}.{p['js']}", p["values"])
             p["decl_ref"], p["ref"], p["cat"] = "enum", ref, "enum"
             p["direct"] = True
+            return
+        if not p.get("native") and p.get("getter") and p.get("setter"):
+            # Accessors without a Q_PROPERTY (QAction::isSeparator / setSeparator): typed by the getter.
+            self._need_method(tag, tcls, p["setter"], 1)
+            _, g = self._need_method(tag, tcls, p["getter"], 0)
+            ref = g["returns"]["ref"]
+            cat, _ = classify(ref)
+            if cat not in ("bool", "int", "float", "string", "enum"):
+                raise GenError(f"{tag}: accessor prop {p['js']} getter returns {ref}")
+            self.use(ref, f"{tag}.{p['js']}")
+            p.update({"native": None, "decl_cls": tcls, "prop": {"access": {"write": True}}, "decl_ref": ref, "ref": ref,
+                      "qprop": False, "cat": cat, "direct": True})
             return
         dcls, prop = self.find(tcls, "properties", lambda r: r["name"] == p["native"])
         if not prop:
@@ -1853,7 +1908,7 @@ class Tests:
         """`context_menu` elements attach to the widget they are inserted into (menus.hpp.in)."""
         t = e["tag"]
         self.add(f"construct/{t}.context_menu", "\n".join([
-            f'  svl_handle w = mk("box"); svl_handle m = mk("{t}");',
+            f'  svl_handle w = mk("box-layout"); svl_handle m = mk("{t}");',
             "  auto *wd = static_cast<QWidget *>(O(w)); auto *menu = qobject_cast<QMenu *>(O(m));",
             "  CHECK(B->insert(B->self, w, m, 0, 0) == 0);",
             "  CHECK(wd->contextMenuPolicy() == Qt::CustomContextMenu && menu->parentWidget() == wd);  // owned by the widget",
@@ -2041,7 +2096,8 @@ class Tests:
         self.add(f"slot/{t}.{sn}/default_slot_is_slot_0", "\n".join(mk + [
             "  CHECK(B->insert(B->self, p, a0, 0, 0) == 0);", f"  CHECK({acts('p')} == {lst('a0')});", clean]))
         self.add(f"slot/{t}.{sn}/separator_and_submenu", "\n".join(mk + [
-            '  svl_handle sep = mk("menuseparator"); svl_handle sub = mk("menu");',
+            '  svl_handle sep = mk("action"); svl_handle sub = mk("menu");',
+            '  { svl_value on = vbool(true); CHECK(B->set_prop(B->self, sep, P("action", "separator"), &on) == 0); }  // separator={true}',
             f"  CHECK(B->insert(B->self, p, a0, 0, {sid}) == 0);",
             f"  CHECK(B->insert(B->self, p, sep, 0, {sid}) == 0);",
             f"  CHECK(B->insert(B->self, p, sub, 0, {sid}) == 0);",
@@ -2201,6 +2257,11 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
 # --------------------------------------------------------------------------------------------
 # typings
 
+def ts_key(name: str) -> str:
+    """A TS property key: bare when it is an identifier, else quoted (`"minimum-width"`)."""
+    return name if name.isidentifier() else '"' + name + '"'
+
+
 def ts_type(m: Model, ref: str) -> str:
     cat, pay = classify(ref)
     return ts_leaf(cat, pay, m)
@@ -2211,7 +2272,7 @@ def gen_dts(m: Model) -> str:
            "import type { Boxed, DateParts, Insets, Point, Rect, Size, TimeParts, Color, Variant } from './values';", "",
            "export interface QtElementDescriptors {"]
     for e in m.elements:
-        out.append(f"  {e['tag']}: {{")
+        out.append(f"  {ts_key(e['tag'])}: {{")
         out.append("    props: {")
         for p in e.get("props", []):
             if p["direct"]:
@@ -2219,12 +2280,12 @@ def gen_dts(m: Model) -> str:
             else:
                 ty = {"string": "string", "bool": "boolean"}.get(p["decl_ref"], "number")
             ro = "readonly " if p.get("readonly") else ""
-            out.append(f"      {ro}{p['js']}?: {ty};")
+            out.append(f"      {ro}{ts_key(p['js'])}?: {ty};")
         out.append("    };")
         out.append("    events: {")
         for s in e.get("signals", []):
             args = ", ".join(f"{a['name']}: {ts_type(m, a['ref'])}" for a in s["args"])
-            key = s["js"] if s["js"].isidentifier() else '"' + s["js"] + '"'
+            key = ts_key(s["js"])
             out.append(f"      {key}: ({args}) => void;")
         out.append("    };")
         out.append("    methods: {")

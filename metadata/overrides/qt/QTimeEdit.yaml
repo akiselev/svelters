@@ -1,11 +1,11 @@
 elements:
-  - tag: timeedit
+  - tag: time-edit
     construct: { class: QTimeEdit }
     props:
       - { js: time, native: time, suppress_signals: true, provenance: "QTimeEdit::time (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: displayFormat, native: displayFormat, sample: "HH:mm", provenance: "QTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumTime, native: minimumTime, provenance: "QTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: maximumTime, native: maximumTime, provenance: "QTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: display-format, native: displayFormat, sample: "HH:mm", provenance: "QTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum-time, native: minimumTime, provenance: "QTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum-time, native: maximumTime, provenance: "QTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
     bindings:
       - name: time
         direction: two_way

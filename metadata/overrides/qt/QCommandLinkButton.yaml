@@ -1,5 +1,5 @@
 elements:
-  - tag: commandlinkbutton
+  - tag: command-link-button
     construct: { class: QCommandLinkButton }
     exclude: [checked]
     props:

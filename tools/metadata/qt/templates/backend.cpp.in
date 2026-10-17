@@ -57,6 +57,7 @@
 #include <QtGui/QActionGroup>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QGraphicsEffect>
@@ -717,7 +718,7 @@ T from_int(int v) {
 
 svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t len) {
   std::string_view n(name, len);
-  if (what == SVL_KIND && n == "virtuallist") return kVListKind;
+  if (what == SVL_KIND && n == "virtual-list") return kVListKind;
   if (what == SVL_KIND && n == "canvas") return kCanvasKind;
   if (kind == kVListKind) return vl_resolve(what, n);
   if (kind == kCanvasKind) return cv_resolve(what, n);
@@ -784,7 +785,7 @@ int b_insert(void *, svl_handle parent, svl_handle child, svl_handle before, svl
     return 0;
   }
   svl_id used = slot;
-  int rc = gen_is_context(c->kind) ? ctx_attach(p->obj.data(), c->obj.data()) : gen_insert(*p, c->obj.data(), b, used);
+  int rc = gen_is_context(c->kind) && ctx_role(p->obj.data()) ? ctx_attach(p->obj.data(), c->obj.data()) : gen_insert(*p, c->obj.data(), b, used);
   if (rc == 0) {
     c->placed = parent;
     c->slot = used;
@@ -807,7 +808,7 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
     c->placed = 0;
     return 0;
   }
-  int rc = gen_is_context(c->kind) ? ctx_detach(p->obj.data(), c->obj.data()) : gen_remove(*p, c->obj.data());
+  int rc = gen_is_context(c->kind) && ctx_role(p->obj.data()) ? ctx_detach(p->obj.data(), c->obj.data()) : gen_remove(*p, c->obj.data());
   if (rc == 0) {
     c->placed = 0;
     c->slot = 0;

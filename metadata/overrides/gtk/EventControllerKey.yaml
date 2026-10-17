@@ -1,6 +1,6 @@
 # X8: event controllers are declarative children. A controller element inserted into a widget is attached
 # with gtk_widget_add_controller (X2, `insert` of any slot); removing it detaches it.
-element: {tag: keycontroller}
+element: {}
 signals:
   - name: key-pressed
     js_event: key-pressed

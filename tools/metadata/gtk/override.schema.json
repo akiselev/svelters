@@ -9,13 +9,15 @@
     "element": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "tag"
-      ],
+      "description": "Exposes this kind as an element. The tag is derived (tools/metadata/common/naming.py: the GIR name in kebab-case); `tag` may only restate it, or differ with a `tag_reason`.",
       "properties": {
         "tag": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "tag_reason": {
+          "type": "string",
+          "minLength": 3
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
@@ -197,9 +199,6 @@
           "type": "string"
         },
         "id": {
-          "type": "string"
-        },
-        "js_name": {
           "type": "string"
         },
         "new": {
@@ -727,8 +726,8 @@
       "properties": {
         "name": {
           "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "JS name, camelCase."
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "JS name: the native name in kebab-case (tools/metadata/common/naming.py)."
         },
         "type": {
           "enum": [

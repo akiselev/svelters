@@ -1,9 +1,9 @@
 inherit:
   props:
-    - { js: label, native: text, provenance: "QAbstractButton::text (qdoc)" }
+    - { js: text, native: text, provenance: "QAbstractButton::text (qdoc)" }
     - { js: checkable, native: checkable, provenance: "QAbstractButton::checkable (qdoc)" }
-    - { js: autoRepeat, native: autoRepeat, provenance: "QAbstractButton::autoRepeat (qdoc)" }
-    - { js: autoExclusive, native: autoExclusive, provenance: "QAbstractButton::autoExclusive (qdoc)" }
+    - { js: auto-repeat, native: autoRepeat, provenance: "QAbstractButton::autoRepeat (qdoc)" }
+    - { js: auto-exclusive, native: autoExclusive, provenance: "QAbstractButton::autoExclusive (qdoc)" }
     - { js: shortcut, native: shortcut, provenance: "QAbstractButton::shortcut (qdoc)" }
     - { js: checked, native: checked, suppress_signals: true, provenance: "QAbstractButton::checked (qdoc)" }
   signals:

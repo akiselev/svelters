@@ -3,13 +3,13 @@
 # (setWidget(nullptr) + setParent(nullptr) on the child) therefore also runs on the old child before a replace (G15).
 # Main-window dock areas need child attributes (gap:G1).
 elements:
-  - tag: dockwidget
+  - tag: dock-widget
     construct: { class: QDockWidget }
     props:
       - { js: features, native: features, provenance: "QDockWidget::features (qdoc); flags (ABI v3)" }
-      - { js: allowedAreas, native: allowedAreas, provenance: "QDockWidget::allowedAreas (qdoc); flags (ABI v3)" }
+      - { js: allowed-areas, native: allowedAreas, provenance: "QDockWidget::allowedAreas (qdoc); flags (ABI v3)" }
       - { js: floating, native: floating, provenance: "QDockWidget::floating (qdoc)" }
-      - { js: windowTitle, native: windowTitle, provenance: "QWidget::windowTitle (qdoc)" }
+      - { js: window-title, native: windowTitle, provenance: "QWidget::windowTitle (qdoc)" }
     signals:
       - js: top-level-changed
         native: topLevelChanged

@@ -3,14 +3,14 @@
 # Place it in a vertical box like any widget (QMainWindow::addToolBar areas are gap G1); the element is a plain
 # QToolBar there.
 elements:
-  - tag: toolbar
+  - tag: tool-bar
     construct: { class: QToolBar }
     props:
       - { js: movable, native: movable, provenance: "QToolBar::movable (qdoc)" }
       - { js: floatable, native: floatable, provenance: "QToolBar::floatable (qdoc)" }
       - { js: orientation, native: orientation, provenance: "QToolBar::orientation (qdoc); enum typed by the S1 value model (ABI v3)" }
-      - { js: toolButtonStyle, native: toolButtonStyle, provenance: "QToolBar::toolButtonStyle (qdoc); enum typed by the S1 value model (ABI v3)" }
-      - { js: iconSize, native: iconSize, provenance: "QToolBar::iconSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tool-button-style, native: toolButtonStyle, provenance: "QToolBar::toolButtonStyle (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: icon-size, native: iconSize, provenance: "QToolBar::iconSize (qdoc); typed by the S1 value model (ABI v3)" }
     signals:
       - js: movable-changed
         native: movableChanged

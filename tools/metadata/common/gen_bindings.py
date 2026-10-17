@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import naming  # noqa: E402
 import svmeta  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -233,7 +234,7 @@ def winui_toplevels() -> dict[str, dict]:
         if el.get("lifetime") != "toplevel":
             continue
         short = data["class"].rsplit(".", 1)[1]
-        tag = el.get("tag") or "".join(("-" + c.lower()) if c.isupper() and i else c.lower() for i, c in enumerate(short))
+        tag = el.get("tag") or naming.tag_for("winui", short)
         out[tag] = {"open": ["activate"], "modeless": ["activate"], "modalProp": False, "dialog": False}
     return out
 
@@ -309,8 +310,58 @@ def js_toplevels(top: dict) -> str:
     for tag in sorted(top):
         f = top[tag]
         fields = ", ".join(f"{k}: {json.dumps(f[k])}" for k in ("open", "modeless", "modalProp", "dialog", "toolkits"))
-        o.append(f"  {tag}: {{ {fields} }},\n")
+        o.append(f"  {key(tag)}: {{ {fields} }},\n")
     o.append("};\n")
+    return "".join(o)
+
+
+def key(name: str) -> str:
+    """A JS/TS object key: bare when it is an identifier, else quoted (`"check-box"`)."""
+    return name if name.isidentifier() else json.dumps(name)
+
+
+SEMANTICS = ROOT / "metadata/semantics"
+
+
+def text_props() -> dict[str, list[str]]:
+    """tag -> candidate props that Text children fold into (`text_content`): GTK and Qt from the semantic
+    specs (metadata/semantics/{gtk,qt}.json), WinUI from its overrides. Candidates in toolkit order; the
+    first one the host resolves wins, so a tag several toolkits share (`label`: GTK `label`, Qt `text`) works."""
+    out: dict[str, list[str]] = {}
+    for tk in ("gtk", "qt"):
+        spec = json.loads((SEMANTICS / f"{tk}.json").read_text())
+        for tag, kid in sorted(spec["tags"].items()):
+            tc = spec["kinds"][kid].get("text_content")
+            if tc and tc not in out.setdefault(tag, []):
+                out[tag].append(tc)
+    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
+        data = svmeta.load_yaml(path)
+        el = data.get("element") or {}
+        if el.get("text_content"):
+            tag = el.get("tag") or naming.tag_for("winui", data["class"])
+            tc = naming.kebab(el["text_content"])
+            if tc not in out.setdefault(tag, []):
+                out[tag].append(tc)
+    return {t: v for t, v in sorted(out.items()) if v}
+
+
+def row_outlets() -> list[str]:
+    """Candidate tags of the per-row outlet of virtualized lists (`row_outlet` of each semantic spec)."""
+    out = []
+    for tk in ("gtk", "qt"):
+        t = json.loads((SEMANTICS / f"{tk}.json").read_text()).get("row_outlet")
+        if t and t not in out:
+            out.append(t)
+    return out
+
+
+def js_text(tp: dict, outlets: list[str]) -> str:
+    o = ["\n// Tags whose Text children fold into a prop: candidate prop names, the first one the host resolves wins.\n",
+         "export const TEXT_PROPS = {\n"]
+    o += [f"  {key(t)}: {json.dumps(v)},\n" for t, v in tp.items()]
+    o.append("};\n")
+    o.append("\n// Candidate tags of the container a virtualized list renders each row into (the first the host resolves).\n")
+    o.append(f"export const ROW_OUTLETS = {json.dumps(outlets)};\n")
     return "".join(o)
 
 
@@ -318,11 +369,11 @@ def js(table: dict) -> str:
     o = [HEADER, "// tag -> bind:<name> -> descriptor. `signal` is the JS event name of the change signal.\n"]
     o.append("export const BINDINGS = {\n")
     for tag in sorted(table):
-        o.append(f"  {tag}: {{\n")
+        o.append(f"  {key(tag)}: {{\n")
         for name in sorted(table[tag]):
             f = table[tag][name]
             fields = ", ".join(f"{k}: {json.dumps(f[k])}" for k in ("prop", "signal", "type", "direction", "compare", "readBack", "valueFrom", "toolkits"))
-            o.append(f"    {name}: {{ {fields} }},\n")
+            o.append(f"    {key(name)}: {{ {fields} }},\n")
         o.append("  },\n")
     o.append("};\n")
     return "".join(o)
@@ -332,11 +383,11 @@ def dts(table: dict, top: dict) -> str:
     ts = {v[0]: v[1] for v in TYPES.values()}
     o = [HEADER, "// `bind:<name>` targets per element tag; two-way unless marked read-only.\n", "export interface BindableProps {\n"]
     for tag in sorted(table):
-        o.append(f"  {tag}: {{\n")
+        o.append(f"  {key(tag)}: {{\n")
         for name in sorted(table[tag]):
             f = table[tag][name]
             ro = "readonly " if f["direction"] == "read_only" else ""
-            o.append(f"    {ro}{name}: {f['tsType']}; // {'/'.join(f['toolkits'])}\n")
+            o.append(f"    {ro}{key(name)}: {f['tsType']}; // {'/'.join(f['toolkits'])}\n")
         o.append("  };\n")
     o.append("}\n")
     o.append("\n// Toplevel kinds (windows and dialogs) may be declared anywhere in a component; `show` is their JS-only policy.\n")
@@ -359,7 +410,7 @@ def main() -> int:
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1
-    outs = {OUT_JS: js(table) + js_toplevels(top), OUT_DTS: dts(table, top)}
+    outs = {OUT_JS: js(table) + js_toplevels(top) + js_text(text_props(), row_outlets()), OUT_DTS: dts(table, top)}
     stale = [p for p, text in outs.items() if not p.exists() or p.read_text() != text]
     if args.check:
         for p in stale:

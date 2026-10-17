@@ -1,7 +1,5 @@
 properties:
   - name: enabled
-    js_name: enabled
     provenance: "GtkGraphicsOffload:enabled (Gtk 4 docs)"
   - name: black-background
-    js_name: blackBackground
     provenance: "GtkGraphicsOffload:black-background (Gtk 4 docs)"

@@ -18,7 +18,6 @@ properties:
     provenance: "GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)"
   - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:lower"
     name: lower
-    js_name: lower
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -33,7 +32,6 @@ properties:
     provenance: "GtkAdjustment:lower through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
   - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:upper"
     name: upper
-    js_name: upper
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -48,7 +46,6 @@ properties:
     provenance: "GtkAdjustment:upper through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
   - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:stepIncrement"
     name: stepIncrement
-    js_name: stepIncrement
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -63,7 +60,6 @@ properties:
     provenance: "GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
   - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:pageIncrement"
     name: pageIncrement
-    js_name: pageIncrement
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}

@@ -1,20 +1,20 @@
 elements:
-  - tag: datetimeedit
+  - tag: date-time-edit
     construct: { class: QDateTimeEdit }
     props:
-      - { js: dateTime, native: dateTime, suppress_signals: true, provenance: "QDateTimeEdit::dateTime (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: displayFormat, native: displayFormat, sample: "yyyy-MM-dd HH:mm", provenance: "QDateTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: calendarPopup, native: calendarPopup, provenance: "QDateTimeEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumDate, native: minimumDate, provenance: "QDateTimeEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: maximumDate, native: maximumDate, provenance: "QDateTimeEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumTime, native: minimumTime, provenance: "QDateTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: maximumTime, native: maximumTime, provenance: "QDateTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumDateTime, native: minimumDateTime, provenance: "QDateTimeEdit::minimumDateTime (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: maximumDateTime, native: maximumDateTime, provenance: "QDateTimeEdit::maximumDateTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: date-time, native: dateTime, suppress_signals: true, provenance: "QDateTimeEdit::dateTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: display-format, native: displayFormat, sample: "yyyy-MM-dd HH:mm", provenance: "QDateTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: calendar-popup, native: calendarPopup, provenance: "QDateTimeEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum-date, native: minimumDate, provenance: "QDateTimeEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum-date, native: maximumDate, provenance: "QDateTimeEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum-time, native: minimumTime, provenance: "QDateTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum-time, native: maximumTime, provenance: "QDateTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum-date-time, native: minimumDateTime, provenance: "QDateTimeEdit::minimumDateTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum-date-time, native: maximumDateTime, provenance: "QDateTimeEdit::maximumDateTime (qdoc); typed by the S1 value model (ABI v3)" }
     bindings:
-      - name: dateTime
+      - name: date-time
         direction: two_way
-        property: dateTime
+        property: date-time
         type: { ref: datetime, nullable: false }
         change: { signal: date-time-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: true }    # clamped to the minimum..maximum range

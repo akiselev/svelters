@@ -1,4 +1,4 @@
-//! The `virtuallist` kind: a JS-backed model behind `GtkListView`/`GtkGridView`
+//! The `virtual-list` kind: a JS-backed model behind `GtkListView`/`GtkGridView`
 //! (plans/architecture/backend-abi.md, "Model-view protocol (M5)").
 //!
 //! The widget is a `GtkScrolledWindow` around the view. The model is a `GListModel` of ids

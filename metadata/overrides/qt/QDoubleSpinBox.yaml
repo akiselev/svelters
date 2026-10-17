@@ -1,24 +1,24 @@
 elements:
-  - tag: doublespinbox
+  - tag: double-spin-box
     construct: { class: QDoubleSpinBox }
     props:
       - { js: value, native: value, suppress_signals: true, provenance: "QDoubleSpinBox::value (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: decimals, native: decimals, provenance: "QDoubleSpinBox::decimals (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: minimum, native: minimum, provenance: "QDoubleSpinBox::minimum (qdoc)" }
       - { js: maximum, native: maximum, provenance: "QDoubleSpinBox::maximum (qdoc)" }
-      - { js: singleStep, native: singleStep, provenance: "QDoubleSpinBox::singleStep (qdoc)" }
+      - { js: single-step, native: singleStep, provenance: "QDoubleSpinBox::singleStep (qdoc)" }
     bindings:
       - name: value
         direction: two_way
         property: value
         type: { ref: f64, nullable: false }
-        change: { signal: valueChanged, role: any_change, value: arg0 }
+        change: { signal: value-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: true }
         echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["valueChanged(double)"] }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "setValue emits valueChanged only on change (qdoc); values are rounded to decimals and clamped"
     signals:
-      - js: valueChanged
+      - js: value-changed
         native: valueChanged
         connect: "valueChanged(double)"
         args: [{ name: d, type: f64 }]

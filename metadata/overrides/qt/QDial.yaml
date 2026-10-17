@@ -3,21 +3,21 @@ elements:
     construct: { class: QDial }
     props:
       - { js: value, native: value, suppress_signals: true, provenance: "QAbstractSlider::value (qdoc); declared on the element so bind:value resolves it" }
-      - { js: notchesVisible, native: notchesVisible, provenance: "QDial::notchesVisible (qdoc)" }
+      - { js: notches-visible, native: notchesVisible, provenance: "QDial::notchesVisible (qdoc)" }
       - { js: wrapping, native: wrapping, provenance: "QDial::wrapping (qdoc)" }
-      - { js: notchTarget, native: notchTarget, provenance: "QDial::notchTarget (qdoc)" }
+      - { js: notch-target, native: notchTarget, provenance: "QDial::notchTarget (qdoc)" }
     bindings:
       - name: value
         direction: two_way
         property: value
         type: { ref: i32, nullable: false }
-        change: { signal: valueChanged, role: any_change, value: arg0 }
+        change: { signal: value-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: false }
         echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["valueChanged(int)"] }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "setValue emits valueChanged only on change (qdoc)"
     signals:
-      - js: valueChanged
+      - js: value-changed
         native: valueChanged
         connect: "valueChanged(int)"
         args: [{ name: value, type: i32 }]

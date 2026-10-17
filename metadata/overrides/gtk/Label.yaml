@@ -4,7 +4,6 @@ properties:
   - name: wrap-mode
     provenance: "GtkLabel:wrap-mode, PangoWrapMode (Gtk 4 docs)"
   - name: label
-    js_name: label
     provenance: "GtkLabel:label (Gtk 4 docs); P prop"
   - name: use-markup
     provenance: "GtkLabel:use-markup (Gtk 4 docs)"

@@ -121,6 +121,17 @@ def aliases(rules: dict, where: str, signal_exists) -> dict:
     return dict(sorted(al.items()))
 
 
+def row_outlet(rules: dict, where: str, tags) -> str | None:
+    """The tag of the container a virtualized list renders each row into (lists.rs, @svelters/lists)."""
+    t = rules.get("row_outlet")
+    if t is None:
+        return None
+    need_prov(where + ".row_outlet", {"provenance": rules.get("row_outlet_provenance")})
+    if t not in tags:
+        fail(f"{where}.row_outlet: no element {t!r}")
+    return t
+
+
 ECHO_STRATEGY = {"host_suppressed": "backend_blocks", "compare": "runtime_compare", "none": "none"}
 DIRECTIONS = {"two_way", "read_only"}
 
@@ -258,7 +269,8 @@ def parse_gtk_tables() -> dict:
 def gtk_spec() -> dict:
     m = gen_backend.Model()
     rules = svmeta.load_yaml(RULES / "gtk.yaml")
-    check_keys("gtk rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "kinds", "defaults"})
+    check_keys("gtk rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "kinds", "defaults",
+                                    "row_outlet", "row_outlet_provenance"})
     tables = parse_gtk_tables()
     by_id = {gir_id(d["id"]): d for d in m.kinds}
     gid = {d["id"]: gir_id(d["id"]) for d in m.kinds}
@@ -474,6 +486,7 @@ def gtk_spec() -> dict:
     style = style_table.build("gtk", style_table.load("gtk"), tags, kinds)
     al = aliases(rules, "gtk rules", lambda s: any(s in kinds[k]["signals"] for k in kinds))
     return {"schema": SCHEMA, "backend": "gtk", "framework": rules["framework"], "event_aliases": al,
+            "row_outlet": row_outlet(rules, "gtk rules", tags),
             "tags": tags, "kinds": kinds, "style": style,
             # `methods` lists the annotated (verified) calls; any other GIR method of the kind is
             # still callable through GIRepository at runtime (X1), unchecked.
@@ -502,7 +515,7 @@ def qt_spec() -> dict:
     m = gen_cpp.Model(ROOT / "metadata/qt", ROOT / "metadata/overrides/qt", [])
     rules = svmeta.load_yaml(RULES / "qt.yaml")
     check_keys("qt rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "signal_defaults", "kinds",
-                                   "defaults", "element_hints"})
+                                   "defaults", "element_hints", "row_outlet", "row_outlet_provenance"})
     sd = rules.get("signal_defaults") or {}
     check_keys("qt rules signal_defaults", sd, {"disconnect_on_drop", "provenance"})
     need_prov("qt rules signal_defaults", sd)
@@ -637,6 +650,7 @@ def qt_spec() -> dict:
     style = style_table.build("qt", style_table.load("qt"), {t: t for t in kinds}, kinds)
     al = aliases(rules, "qt rules", lambda s: any(s in kd["signals"] for kd in kinds.values()))
     return {"schema": SCHEMA, "backend": "qt", "framework": rules["framework"], "event_aliases": al,
+            "row_outlet": row_outlet(rules, "qt rules", kinds),
             "tags": {t: t for t in sorted(kinds)}, "kinds": kinds, "style": style, "element_hints": hints,
             # only annotated methods exist at runtime
             "method_lookup": "annotated",

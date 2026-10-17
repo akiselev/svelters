@@ -1,6 +1,6 @@
 # Element `scrolledwindow` (name shared with GTK, used by the keyed-list fixture).
 elements:
-  - tag: scrolledwindow
+  - tag: scroll-area
     construct:
       class: QScrollArea
       init:
@@ -27,6 +27,6 @@ elements:
               effects: { child: unparented }
           provenance: [{ origin: uic, ref: "WriteInitialization::acceptWidget" }, { origin: probe, ref: qt_slot_ownership_probe.py }]
     props:
-      - { js: widgetResizable, native: widgetResizable, provenance: "QScrollArea::widgetResizable (qdoc)" }
-      - { js: horizontalScrollBarPolicy, native: horizontalScrollBarPolicy, provenance: "QAbstractScrollArea::horizontalScrollBarPolicy (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: verticalScrollBarPolicy, native: verticalScrollBarPolicy, provenance: "QAbstractScrollArea::verticalScrollBarPolicy (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: widget-resizable, native: widgetResizable, provenance: "QScrollArea::widgetResizable (qdoc)" }
+      - { js: horizontal-scroll-bar-policy, native: horizontalScrollBarPolicy, provenance: "QAbstractScrollArea::horizontalScrollBarPolicy (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: vertical-scroll-bar-policy, native: verticalScrollBarPolicy, provenance: "QAbstractScrollArea::verticalScrollBarPolicy (qdoc); typed by the S1 value model (ABI v3)" }

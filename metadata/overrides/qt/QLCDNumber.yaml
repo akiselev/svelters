@@ -1,12 +1,12 @@
 elements:
-  - tag: lcdnumber
+  - tag: lcd-number
     construct: { class: QLCDNumber }
     props:
-      - { js: digitCount, native: digitCount, provenance: "QLCDNumber::digitCount (qdoc)" }
-      - { js: intValue, native: intValue, provenance: "QLCDNumber::intValue (qdoc)" }
+      - { js: digit-count, native: digitCount, provenance: "QLCDNumber::digitCount (qdoc)" }
+      - { js: int-value, native: intValue, provenance: "QLCDNumber::intValue (qdoc)" }
       - { js: value, native: value, provenance: "QLCDNumber::value (qdoc)" }
       - { js: mode, native: mode, provenance: "QLCDNumber::mode (qdoc)" }
-      - { js: segmentStyle, native: segmentStyle, provenance: "QLCDNumber::segmentStyle (qdoc)" }
+      - { js: segment-style, native: segmentStyle, provenance: "QLCDNumber::segmentStyle (qdoc)" }
     signals:
       - js: overflow
         native: overflow

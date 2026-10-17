@@ -5,9 +5,9 @@ elements:
       - js: orientation
         native: orientation
         provenance: "QSplitter::orientation (qdoc); typed by the S1 value model (ABI v3)"
-      - { js: childrenCollapsible, native: childrenCollapsible, provenance: "QSplitter::childrenCollapsible (qdoc)" }
-      - { js: handleWidth, native: handleWidth, provenance: "QSplitter::handleWidth (qdoc)" }
-      - { js: opaqueResize, native: opaqueResize, provenance: "QSplitter::opaqueResize (qdoc)" }
+      - { js: children-collapsible, native: childrenCollapsible, provenance: "QSplitter::childrenCollapsible (qdoc)" }
+      - { js: handle-width, native: handleWidth, provenance: "QSplitter::handleWidth (qdoc)" }
+      - { js: opaque-resize, native: opaqueResize, provenance: "QSplitter::opaqueResize (qdoc)" }
     signals:
       - js: splitter-moved
         native: splitterMoved

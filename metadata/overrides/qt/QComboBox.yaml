@@ -1,16 +1,16 @@
 elements:
-  - tag: combobox
+  - tag: combo-box
     construct: { class: QComboBox }
     props:
       - { js: count, native: count, provenance: "QComboBox::count (qdoc); typed by the S1 value model (ABI v3)" }              # read-only
-      - { js: currentData, native: currentData, provenance: "QComboBox::currentData (qdoc); typed by the S1 value model (ABI v3)" }  # a QVariant, read-only
+      - { js: current-data, native: currentData, provenance: "QComboBox::currentData (qdoc); typed by the S1 value model (ABI v3)" }  # a QVariant, read-only
       - { js: editable, native: editable, provenance: "QComboBox::editable (qdoc)" }
-      - { js: currentIndex, native: currentIndex, sample: 1, setup: '$w->addItems({"a", "b", "c"})', suppress_signals: true, provenance: "QComboBox::currentIndex (qdoc); the test adds three items first" }
-      - { js: currentText, native: currentText, sample: "b", setup: '$w->addItems({"a", "b", "c"})', provenance: "QComboBox::currentText (qdoc); on a non-editable box this selects the matching item" }
-      - { js: maxVisibleItems, native: maxVisibleItems, provenance: "QComboBox::maxVisibleItems (qdoc)" }
-      - { js: placeholderText, native: placeholderText, provenance: "QComboBox::placeholderText (qdoc)" }
-      - { js: insertPolicy, native: insertPolicy, provenance: "QComboBox::insertPolicy (qdoc)" }
-      - { js: duplicatesEnabled, native: duplicatesEnabled, provenance: "QComboBox::duplicatesEnabled (qdoc)" }
+      - { js: current-index, native: currentIndex, sample: 1, setup: '$w->addItems({"a", "b", "c"})', suppress_signals: true, provenance: "QComboBox::currentIndex (qdoc); the test adds three items first" }
+      - { js: current-text, native: currentText, sample: "b", setup: '$w->addItems({"a", "b", "c"})', provenance: "QComboBox::currentText (qdoc); on a non-editable box this selects the matching item" }
+      - { js: max-visible-items, native: maxVisibleItems, provenance: "QComboBox::maxVisibleItems (qdoc)" }
+      - { js: placeholder-text, native: placeholderText, provenance: "QComboBox::placeholderText (qdoc)" }
+      - { js: insert-policy, native: insertPolicy, provenance: "QComboBox::insertPolicy (qdoc)" }
+      - { js: duplicates-enabled, native: duplicatesEnabled, provenance: "QComboBox::duplicatesEnabled (qdoc)" }
     methods:
       - { js: addItem, native: addItem, params: [string, variant], provenance: "QComboBox::addItem (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: itemData, native: itemData, params: [i32, i32], provenance: "QComboBox::itemData (qdoc); typed by the S1 value model (ABI v3)" }   # (index, role); Qt::UserRole is 256
@@ -18,24 +18,24 @@ elements:
       - { js: removeItem, native: removeItem, params: [i32], provenance: "QComboBox::removeItem(int) (qdoc)" }
       - { js: clear, native: clear, expect: "$w->count() == 0", provenance: "QComboBox::clear() slot (qdoc)" }
     bindings:
-      - name: currentIndex
+      - name: current-index
         direction: two_way
-        property: currentIndex
+        property: current-index
         type: { ref: i32, nullable: false }
-        change: { signal: changed, role: any_change, value: arg0 }
+        change: { signal: current-index-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: false }
         echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentIndexChanged(int)"] }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "QComboBox::setCurrentIndex emits currentIndexChanged only on change (qdoc)"
     signals:
-      - js: changed
+      - js: current-index-changed
         native: currentIndexChanged
         connect: "currentIndexChanged(int)"
         args: [{ name: index, type: i32 }]
         trigger: 'if ($w->count() == 0) $w->addItem("a"); else { $w->addItem("b"); $w->setCurrentIndex($w->count() - 1); }'
         expect_args: ["0"]
         provenance: "QComboBox::currentIndexChanged(int) (qdoc)"
-      - js: text-changed
+      - js: current-text-changed
         native: currentTextChanged
         connect: "currentTextChanged(QString)"
         args: [{ name: text, type: string }]

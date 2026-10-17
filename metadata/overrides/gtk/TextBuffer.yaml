@@ -1,12 +1,10 @@
 # Not an element: reached through GtkTextView:buffer (a borrowed handle).
-verify_subject: {borrowed: {tag: textview, getter: get_buffer}}
+verify_subject: {borrowed: {tag: text-view, getter: get_buffer}}
 properties:
   - name: text
-    js_name: text
     sample: "buffer text"
     provenance: "GtkTextBuffer:text (Gtk 4 docs)"
   - name: enable-undo
-    js_name: enableUndo
     provenance: "GtkTextBuffer:enable-undo (Gtk 4 docs)"
 signals:
   - name: changed

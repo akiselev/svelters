@@ -1,22 +1,15 @@
 properties:
   - name: program-name
-    js_name: programName
     provenance: "GtkAboutDialog:program-name (Gtk 4 docs)"
   - name: version
-    js_name: version
     provenance: "GtkAboutDialog:version (Gtk 4 docs)"
   - name: comments
-    js_name: comments
     provenance: "GtkAboutDialog:comments (Gtk 4 docs)"
   - name: website
-    js_name: website
     provenance: "GtkAboutDialog:website (Gtk 4 docs)"
   - name: copyright
-    js_name: copyright
     provenance: "GtkAboutDialog:copyright (Gtk 4 docs)"
   - name: license-type
-    js_name: licenseType
     provenance: "GtkAboutDialog:license-type (Gtk 4 docs)"
   - name: wrap-license
-    js_name: wrapLicense
     provenance: "GtkAboutDialog:wrap-license (Gtk 4 docs)"

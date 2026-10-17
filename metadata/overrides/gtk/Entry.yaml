@@ -1,6 +1,5 @@
 properties:
   - name: placeholder-text
-    js_name: placeholder
     provenance: "GtkEntry:placeholder-text (Gtk 4 docs); P prop, JS name 'placeholder'"
   - name: visibility
     provenance: "GtkEntry:visibility (Gtk 4 docs)"
