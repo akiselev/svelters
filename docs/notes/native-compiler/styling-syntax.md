@@ -1,10 +1,20 @@
 # NC1 native styling: accepted `<style>` syntax
 
+**ST1 (2026-10-17).** A `<style>` holds two kinds of declarations, decided by the backend's style
+table (`metadata/style/<backend>.yaml`, the `style` section of `metadata/semantics/*.json`):
+setter / child-attr properties are the compiler's, CSS properties go to the X6 translator in the
+Vite plugin (Svelte scopes them; `--css-scope` gives the compiler the scope class).
+`style::parse_style` reads the whole sheet but reports a problem below only when it touches a
+setter declaration: a CSS-only rule, value or at-rule is never reported here. `#id` selectors are
+accepted (specificity is `(ids, classes + states, types)`), units are `px` or none, and a rule with
+setter declarations must use one compound selector without states (`style_unsupported_combinator`,
+`style_state_unsupported` from the lowering). `@media` or nesting around a setter property is
+`style_unsupported_at_rule` / `style_unsupported_nesting`. See docs/notes/st1-style-unification.md.
+
 `<style>` in a native component is not browser CSS. `style::parse_style` (crate
-`svelters-compiler`, `src/style.rs`) parses only the subset that the lowering pass can map to
-native widget properties (the `style:` sections of `metadata/semantics/rules/*.yaml`). Everything
-else is an error with a precise span; the parser recovers and continues with the next
-declaration or rule. Spans are absolute byte offsets into the `.svelte` source.
+`svelters-compiler`, `src/style.rs`) parses the subset that the lowering pass can map to native
+widget properties. The parser recovers and continues with the next declaration or rule. Spans are
+absolute byte offsets into the `.svelte` source.
 
 ## Grammar
 
@@ -31,7 +41,7 @@ compounds of a selector; `ComplexSelector::subject()` is the last compound.
 
 | Code | Cause |
 | --- | --- |
-| `style_unsupported_selector` | `#id`, `*`, `[attr]`, `::pseudo-element`, `:not(...)` / `:global(...)` and other functional pseudo-classes, `&` |
+| `style_unsupported_selector` | `*`, `[attr]`, `::pseudo-element`, `:not(...)` / `:global(...)` and other functional pseudo-classes, `&` |
 | `style_unsupported_combinator` | `+`, `~` |
 | `style_unsupported_at_rule` | any `@rule` (`@media`, `@import`, `@keyframes`, ...), at top level or in a block |
 | `style_unsupported_nesting` | a rule inside a rule's block |

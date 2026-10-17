@@ -1,34 +1,45 @@
-// The styling guide's support matrix must say what the translator does: this reads the table from
-// docs/site and compares it with MATRIX, so the page cannot drift from the code.
+// The styling guide must say what the style tables say: its setter-property tables are read from
+// docs/site and compared with STYLE_TABLES (generated from metadata/style/<toolkit>.yaml), and
+// the generated reference pages list every property, so the docs cannot drift from the code.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
+import { STYLE_TABLES } from '../src/props.generated.js';
 import { DEFAULT_TOKENS } from '../src/tokens.js';
-import { MATRIX } from '../src/vocab.js';
+import { appliedThrough, renderStylingPages } from '../../../docs/site/scripts/lib/styling.mjs';
 
 const page = fs.readFileSync(new URL('../../../docs/site/src/content/docs/guides/styling.md', import.meta.url), 'utf8');
 
-function matrixRows() {
-  const start = page.indexOf('## Support matrix');
-  const end = page.indexOf('`yes` is translated', start);
-  assert.ok(start > 0 && end > start, 'support matrix section found');
+/** Rows `| `name` | applied through | applies to |` of the guide section `heading`. */
+function tableRows(heading) {
+  const start = page.indexOf(`\n${heading}\n`);
+  assert.ok(start > 0, `section ${heading} found`);
+  const end = page.indexOf('\n#', start + heading.length + 2);
   return page
-    .slice(start, end)
+    .slice(start, end < 0 ? undefined : end)
     .split('\n')
     .filter((l) => l.startsWith('| `'))
     .map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
 }
 
-test('the documented support matrix equals MATRIX', () => {
-  const documented = {};
-  for (const [props, gtk, qt, note] of matrixRows()) {
-    for (const m of props.matchAll(/`([^`]+)`/g)) documented[m[1]] = { gtk, qt, note };
-  }
-  assert.deepEqual(Object.keys(documented).sort(), Object.keys(MATRIX).sort(), 'same property set');
-  for (const [name, row] of Object.entries(MATRIX)) {
-    assert.equal(documented[name].gtk, row.gtk, `${name}: gtk`);
-    assert.equal(documented[name].qt, row.qt, `${name}: qt`);
-    assert.equal(documented[name].note, row.note ?? '', `${name}: note`);
+for (const [tk, heading] of [['gtk', '### GTK setter properties'], ['qt', '### Qt setter properties']]) {
+  test(`the guide's ${tk} setter properties equal the ${tk} style table`, () => {
+    const documented = Object.fromEntries(tableRows(heading).map(([n, via, kinds]) => [n.replace(/`/g, ''), { via, kinds }]));
+    const table = Object.entries(STYLE_TABLES[tk].props).filter(([, e]) => e.via !== 'css');
+    assert.deepEqual(Object.keys(documented).sort(), table.map(([n]) => n).sort(), 'same property set');
+    for (const [n, e] of table) {
+      assert.equal(documented[n].via, appliedThrough(tk, e), `${n}: applied through`);
+      assert.equal(documented[n].kinds, (e.via === 'setter' ? e.kinds : e.parents).map((k) => `\`${k}\``).join(', '), `${n}: applies to`);
+    }
+  });
+}
+
+test('the generated reference pages list every property of their toolkit', () => {
+  const pages = renderStylingPages();
+  for (const [tk, t] of Object.entries(STYLE_TABLES)) {
+    const md = pages.get(`api/styling/${tk}.md`);
+    assert.ok(md, `api/styling/${tk}.md`);
+    for (const [n, e] of Object.entries(t.props)) assert.ok(md.includes(`| \`${n}\` | ${appliedThrough(tk, e)} |`), `${tk}: ${n}`);
   }
 });
 

@@ -75,7 +75,9 @@ One JSON object; `kinds` and `tags` have one entry per line.
     Qt QIcon/QKeySequence/QUrl/QFont/Color): static attributes pass the text.
   - `provenance`: where each rule-derived fact on the kind came from.
 - `style.units.<unit>` `{scale}`; `style.declarations.<name>`: `applies_to` (kind or class, `is_a`),
-  `contract`: `common` (`prop` + `value` kind `enum|length|bool`) or `native_intent`
+  (superseded by ST1: `style` is now the style table of metadata/style/<backend>.yaml, `{dialect,
+  setter_selectors, units, properties: {name: {via: css|setter|child-attr, prop|attr, type, tags,
+  values?}}}`; there are no intents.) `contract`: `common` (`prop` + `value` kind `enum|length|bool`) or `native_intent`
   (`intents.<name>` = actions `[{op: set, prop, value} | {op: add_token, prop, token}]`, plus
   `unsupported.<name>` = reason). Lengths need a unit (except `0`) and are scaled, range-checked
   and must be whole for integer props.
