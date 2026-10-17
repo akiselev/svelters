@@ -41,13 +41,16 @@ for (const backend of BACKENDS) {
       console.log(`SKIP ${tag}: rejected at compile time`);
       continue;
     }
-    const ours = run(backend, dir, c.script, path.join(dir, 'native.json'), path.join(dir, 'native.png'));
+    // scripts with `sync`/`deferred` steps (toolkit callbacks the driver cannot cause) have a
+    // clicks-only twin for the real toolkits; the toolkit then calls setup/bind/... itself
+    const script = c.nativeScript ?? c.script;
+    const ours = run(backend, dir, script, path.join(dir, 'native.json'), path.join(dir, 'native.png'));
     const problems = [];
     if (!ours.ok) problems.push(`run failed: ${JSON.stringify(ours.failures ?? ours.errors)}`);
     if (ours.errors?.length) problems.push(`host errors: ${JSON.stringify(ours.errors)}`);
     let against = '';
     if (!c.own) {
-      const theirs = run(backend, path.join(repo, 'fixtures', c.name), c.script, path.join(dir, 'native-js.json'), null);
+      const theirs = run(backend, path.join(repo, 'fixtures', c.name), script, path.join(dir, 'native-js.json'), null);
       if (!theirs.ok) problems.push(`JS pipeline run failed on ${backend}: ${JSON.stringify(theirs.failures ?? theirs.errors)}`);
       else if (JSON.stringify(tree(ours)) !== JSON.stringify(tree(theirs))) {
         problems.push(`native tree differs from the JS pipeline's:\n  ours:   ${JSON.stringify(tree(ours))}\n  theirs: ${JSON.stringify(tree(theirs))}`);

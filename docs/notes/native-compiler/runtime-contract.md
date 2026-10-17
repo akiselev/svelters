@@ -75,7 +75,7 @@ the alias `svelte/internal/client/reactivity/effects` -> Svelte's effects file).
 | `snippet(container, getSnippet, ...args)` | `{@render f(...)}` whose callee reads reactive state (a snippet prop). A `block` effect tracks `getSnippet()`; a different function replaces the branch (`fn(anchor, ...args)`, new first, then the old one disposed), a nullish one renders nothing. `args` are thunks. |
 | `await_block(container, input, pending, then, catch)` | Svelte 5's `{#await}` resolution order. A non-promise shows `then(anchor, value)` synchronously. A promise (any thenable) shows nothing synchronously; `pending(anchor)` is shown from a microtask unless the promise settled first (so an already-resolved promise never shows `pending`); on settlement `then`/`catch(anchor, error)` replaces it and the update is flushed (`$.flush()`, as Svelte's `flushSync`). Settling into the branch already shown only sets its value source (no rebuild). A newer input or teardown makes earlier promises stale (ignored). A rejection without `catch` shows no branch and is rethrown from the rejection handler (an unhandled rejection, as in Svelte). `value`/`error` are sources (`$.get(v)` in the branch). Branch switches happen inside a second block effect that reads a status source, so branches are always built within the effect tree, never from a promise callback. Any branch may be null. |
 | `classes(value)` | The class set of a dynamic `class` value: `Set` of the names in Svelte's `clsx(value)` (strings, arrays, objects of booleans). |
-| `mount(Component, { props })` | Installs `__svelters_dispatch` / `__svelters_gone`, creates the root container, runs `Component(root, props)` in Svelte's `component_root` (the component does its own `$.push`/`$.pop`), returns `unmount()` (destroys effects, then natives), with `unmount.exports` holding the component's exports (what Svelte's `mount` returns). Optional `target`: an existing host handle to mount into; `transformError`: Svelte's mount option, applied to errors caught by `<svelte:boundary>`. |
+| `mount(Component, { props })` | Installs `__svelters_dispatch` / `__svelters_gone`, creates the root container, runs `Component(root, props)` in Svelte's `component_root` (the component does its own `$.push`/`$.pop`), returns `unmount()` (destroys effects, then natives), with `unmount.exports` holding the component's exports (what Svelte's `mount` returns). Optional `target`: an existing host handle (or a runtime node, e.g. a list row outlet) to mount into; `transformError`: Svelte's mount option, applied to errors caught by `<svelte:boundary>`. |
 
 ## Ownership and teardown
 
@@ -177,3 +177,97 @@ silently (other declaration errors are still reported).
 (and `{:else if}` chains) whose branches hold only text and expressions fold into the one text
 prop: `` `${(a) ? `x` : `y`} / ${n ?? ''}` ``. Branch edges are trimmed (Svelte's whitespace rules);
 anything else is `text_content_children`.
+
+## Virtualized lists (`@svelters/native-runtime/lists`)
+
+A container of widgets and a virtualized native list are different abstractions, and the source
+says which one it wants:
+
+```svelte
+<script>
+  import { ListView } from '@svelters/lists';
+  let rows = $state.raw([...]);
+  let selected = $state(-1);
+</script>
+
+<!-- eager: one native subtree per item, children of the box -->
+<box orientation="vertical">
+  {#each rows as r (r.id)}<label>{r.text}</label>{/each}
+</box>
+
+<!-- virtualized: a native list view; the toolkit asks for the rows it shows -->
+<ListView items={rows} key={(r) => r.id} bind:selected onactivate={(item, pos) => ...}>
+  {#snippet row(item, index)}<label>{index}: {item.text}</label>{/snippet}
+</ListView>
+```
+
+`{#each}` never virtualizes and `<ListView>` never builds rows eagerly. `<ListView>` is the JS
+pipeline's component (`packages/lists`, M5); `nativeConfig` resolves `@svelters/lists` to
+`@svelters/native-runtime/lists` (`src/lists.js`), which has the same props, the same
+exports and the same host protocol (`plans/architecture/backend-abi.md` "Model-view protocol
+(M5)"), so a component written for the JS pipeline compiles unchanged and both pipelines produce
+the same op log for the same script (only the order of destroys inside a teardown differs). The
+native `virtuallist` element itself is a backend extra kind (not in the generated specs) and is not
+authorable directly.
+
+Props: `items` (array or iterable), `key(item, index)` (default: the index), `row` snippet
+`(item, index)`, `layout` (`list` | `grid`), `selection` (`none` | `single`), `bind:selected`
+(position, -1 for none), `rowHeight` (Qt's uniform row height, default 32), `onactivate(item, pos)`;
+any other prop is set on the native `virtuallist` unchanged (`vexpand`, `minHeight`, ...).
+`bind:this` gives the exports `{ scrollTo(index), controller() }`.
+
+Compile-time checks (`lower/lists.rs`, for a `ListView` imported from `@svelters/lists` under any
+local name): `list_row_missing` (no `row` snippet or prop), `list_row_params` (more than
+`(item, index)`), `list_children` (content other than snippets: the list renders only `row`),
+`list_row_toplevel` and the spec's `place_child` codes (each root element of an inline `row` must
+be placeable in the row outlet, a `box`), `list_bind_invalid` (only `bind:selected`/`bind:this`),
+`list_prop_invalid` (static `layout`/`selection` values). Fixture:
+`experiments/native-compiler/fixtures/lists-diagnostics`.
+
+### Semantics, and how they differ from `{#each}`
+
+| | `{#each items as item (key)}` | `<ListView items key row>` |
+| --- | --- | --- |
+| Natives | one subtree per item, inserted into the parent's slot | one `virtuallist`; row content only for row slots the toolkit creates (about the visible rows plus a margin) |
+| Item identity | the key; duplicate keys throw | the key; each key gets a native **id** (integer, from 1, per list instance) that the native model holds for as long as the key stays in the list; a key that leaves and comes back gets a new id. Keys must be unique (the diff assumes it) |
+| Updates | keyed reconcile: dispose removed, move the LIS complement (`host.remove` + `insert`), build new | the same LIS diff over keys (`diffKeys`, shared with the JS pipeline) gives `splice(pos, removed, ids)` calls: removals last-first, then insertions; more than 16 splices collapse into one range replace. A replaced item object with the same key is no native op: only bound rows update |
+| What is reused | an item's natives live exactly as long as its key | a **row slot** (GTK `GtkListItem`, Qt pooled viewport widget) is reused for different items as the view scrolls; its natives stay, `item`/`index` change |
+| State in the row | per item: `$state` in the body belongs to that key | per **slot**: `$state` inside the row (or a component in it), `bind:this` targets and native widget state (focus, typed text, scroll) survive a rebind to another item and are *not* reset. Keep per-item state in the item (or a map by key), not in the row |
+| `index` | the item's position, updated on moves | the bound position; updated without a rebind when splices shift a bound row |
+| Lifetime | built when the item appears, destroyed when it leaves or the block goes | `setup(row)`: the slot gets an outlet (`box`, its own root, `setRow(row, outlet)`); first `bind(row, pos, id, gen)`: the `row` snippet is mounted into the outlet with reactive `item`/`index`; later binds swap them; `unbind(row, gen)`: the slot is idle (its natives keep the last content, hidden or off-screen); `teardown(row)`: content and outlet destroyed. Removing the `<ListView>` tears down every slot, then the view |
+| Context | the enclosing component's | the `<ListView>`'s (captured at init, set on each row root) |
+| Effects and errors | inside the block's effect tree | each row is a separate root (`mount` into the outlet): row effects are not children of the list's effects; destroying the list destroys them explicitly |
+
+**Delivery.** The model (`n_items`/`get_item`/`rowCount`/`data`) is answered natively from the id
+snapshot and never calls JS. Row lifecycle signals are sync signals delivered with `call_sync`
+(`__svelters_dispatch_sync`, handlers receive `(event, ...args)`): the content is in place before
+the toolkit paints the row (`bind` ends with `$.flush()`). When JS is busy (our own `splice`, a
+toplevel's first layout during `present`) the host queues them and delivers them later as
+`__svelters_dispatch(h, signal, args, deferred = true)`; the runtime accepts both argument shapes.
+A deferred `bind` whose position is stale (more splices happened since) is resolved by its id; a
+bind whose id is gone is ignored; `gen` increments on every bind of a slot, so a late `unbind` of
+an older binding is ignored. `src/lists.js` installs a minimal `__svelters_dispatch_sync` when the
+runtime has none (result: `event.result`, else `true` after `preventDefault`/`stopPropagation`,
+else `null`).
+
+**Selection and activation.** A native `select(pos)` writes `selected` without echoing it back; an
+app write of `selected` sets the native `selected` prop. `activate(pos)` calls
+`onactivate(item, pos)`. GTK's selection model follows splices itself (it may report a shifted
+selection); Qt keeps the position.
+
+**Tests.** `packages/native-runtime/test/lists.test.mjs` (protocol, minimal splices, slot reuse,
+deferred delivery, teardown); compiled harness cases `virtual-list`, `lists-stress`,
+`lists-recycle` (+ `script.deferred.json`, run live on both pipelines) and `lists-diagnostics`;
+real toolkits through `native.mjs` with clicks-only twins of the scripts
+(`experiments/native-compiler/compiled/scripts/*.native.json`); timings: `bench-lists.mjs`.
+
+**Timings** (`bench-lists.mjs`, debug `counter`, Xvfb, median of 3, ms from the click to idle,
+10 ms poll granularity; JS pipeline / compiled). `<ListView>` (lists-stress): GTK fill 1k 134 / 84,
+fill 10k 199 / 183, append 49 / 51, prepend 85 / 66, reverse 10k 230 / 197, sortDesc 166 / 144,
+odd filter 221 / 177, scroll to end 36 / 22; Qt fill 1k 14 / 13, fill 10k 71 / 75, reverse 83 / 86,
+sortDesc 121 / 123, scroll 11 / 11. The eager `{#each}` baseline (bench/keyed-bench, 1000 rows of
+box + label + button): GTK fill 362 / 478, reverse 237 / 57; Qt fill 452 / 573, reverse 871 / 701.
+So a 10k `<ListView>` fills in about half the time of a 1k `{#each}`, and the two pipelines are
+within noise for lists (the work is the key pass, the diff and the toolkit, which are the same
+code); the compiled `{#each}` is faster on reverse (no Svelte `reconcile` scan) and slower on fill
+and clear (per-item region/scope bookkeeping).

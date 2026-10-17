@@ -12,6 +12,12 @@ export const EFFECTS_SPECIFIER = 'svelte/internal/client/reactivity/effects';
 /** Absolute path of this package's runtime entry. */
 export const runtimePath = fileURLToPath(new URL('./src/index.js', import.meta.url));
 
+/**
+ * The native implementation of `@svelters/lists` (`ListView`): compiled components that import
+ * the JS pipeline's list package get the same component API over the same host protocol.
+ */
+export const listsPath = fileURLToPath(new URL('./src/lists.js', import.meta.url));
+
 /** Absolute path of Svelte's effects module (hidden by the package's exports map). */
 export const effectsPath = path.join(
   path.dirname(createRequire(import.meta.url).resolve('svelte/internal/client')),
@@ -22,8 +28,12 @@ export const effectsPath = path.join(
 export const TASK_SPECIFIER = 'svelte/internal/client/dom/task';
 export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
 
-/** Every hidden Svelte module src/index.js imports: specifier -> absolute path. */
-export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath };
+/** Svelte's component context (`getAllContexts` / `setContext` for list rows, src/lists.js). */
+export const CONTEXT_SPECIFIER = 'svelte/internal/client/context';
+export const contextPath = path.join(path.dirname(effectsPath), '../context.js');
+
+/** Every hidden Svelte module src/ imports: specifier -> absolute path. */
+export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath, [CONTEXT_SPECIFIER]: contextPath };
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
@@ -40,8 +50,12 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
       alias: [
         { find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath },
         { find: /^svelte\/internal\/client\/dom\/task(\.js)?$/, replacement: taskPath },
+        { find: /^svelte\/internal\/client\/context(\.js)?$/, replacement: contextPath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
+        // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native
+        // implementation (same component API and host protocol, see src/lists.js)
+        { find: /^@svelters\/(native-runtime\/)?lists$/, replacement: listsPath },
       ],
       dedupe: ['svelte'],
     },

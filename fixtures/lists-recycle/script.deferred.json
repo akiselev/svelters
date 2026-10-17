@@ -1,0 +1,8 @@
+[{"checkpoint": true},
+ {"deferred": [10, "setup", [1]]}, {"deferred": [10, "bind", [1, 0, 1, 1]]}, {"checkpoint": true},
+ {"event": [4, "clicked", []]}, {"checkpoint": true},
+ {"deferred": [10, "bind", [1, 2, 3, 2]]}, {"deferred": [10, "unbind", [1, 1]]}, {"checkpoint": true},
+ {"event": [5, "clicked", []]}, {"checkpoint": true},
+ {"event": [14, "clicked", []]}, {"checkpoint": true},
+ {"deferred": [10, "unbind", [1, 2]]}, {"deferred": [10, "teardown", [1]]}, {"checkpoint": true},
+ {"event": [8, "clicked", []]}, {"checkpoint": true}]

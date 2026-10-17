@@ -12,6 +12,7 @@
 //! native slot of the parent element without creating a native.
 
 pub mod ir;
+mod lists;
 
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
@@ -43,6 +44,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a 
         forced_slot: None,
         const_ok: false,
         snippet_roots,
+        list_views: lists::list_view_names(root),
     };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
@@ -97,6 +99,8 @@ struct Lower<'a, 's, 'd> {
     /// Snippets declared in this component by name: their root elements (None: the name is
     /// declared more than once, so render sites are not checked statically).
     snippet_roots: HashMap<String, Option<Vec<&'a AstElement>>>,
+    /// Local names of `ListView` imported from `@svelters/lists` (virtualized lists, `lists.rs`).
+    list_views: HashSet<String>,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -949,6 +953,9 @@ impl<'a> Lower<'a, '_, '_> {
     }
 
     fn component_parts(&mut self, el: TagParts<'a>, node: Option<&'a AstElement>, this: Option<&'a Expression>, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
+        if node.is_some() && self.list_views.contains(el.name) {
+            self.check_list_view(&el);
+        }
         let mut props = Vec::new();
         let mut binds = Vec::new();
         let mut slot = None;

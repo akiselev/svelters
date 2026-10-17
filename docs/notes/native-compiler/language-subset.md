@@ -28,6 +28,22 @@ behavioural fixtures `experiments/native-compiler/fixtures/runes-*`.
 | `.svelte.ts`, `<script lang="ts">` | no | TypeScript parser not ported yet |
 | Legacy mode (`export let`, `$:`, stores as state) | no | `legacy_export_invalid`; runes mode is forced |
 
+## Lists: `{#each}` vs `<ListView>`
+
+Two different things, chosen explicitly in the source (semantics: `runtime-contract.md`
+"Virtualized lists"):
+
+| | Status | Output |
+| --- | --- | --- |
+| `{#each items as item, i (key)}{:else}` | yes | `$n.each_block`: eager, one native subtree per item in the parent's slot; state per key |
+| `import { ListView } from '@svelters/lists'` + `<ListView items key row bind:selected onactivate layout selection rowHeight>` with `{#snippet row(item, index)}` | yes | a component call; the build resolves the import to `@svelters/native-runtime/lists` (native `virtuallist`, same protocol as the JS pipeline): rows only for visible slots, row slots recycled, state per slot |
+| `<virtuallist>` written directly | no | `unknown_element` (a backend extra kind, driven only by `ListView`) |
+| Sort / filter / sections in the native model | no | sort or filter the array in JS (`$derived`); the keyed diff sends minimal splices |
+
+Checked at compile time: `list_row_missing`, `list_row_params`, `list_children`,
+`list_row_toplevel`, `list_bind_invalid`, `list_prop_invalid`, plus the spec's placement codes for
+the `row` snippet's root elements in the row outlet (`box`).
+
 Validation (Svelte codes and messages): `state_invalid_placement`, `props_invalid_placement`,
 `props_id_invalid_placement`, `props_duplicate`, `bindable_invalid_location`,
 `effect_invalid_placement`, `inspect_trace_invalid_placement`, `host_invalid_placement`,

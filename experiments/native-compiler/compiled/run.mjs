@@ -65,13 +65,33 @@ for (const backend of BACKENDS) {
       console.log(`${ok ? 'PASS' : 'FAIL'} ${tag}: ${ok ? 'op log matches' : 'op log differs from ' + path.basename(exp)}`);
       continue;
     }
-    const hand = fs.readFileSync(c.handwritten, 'utf8');
+    const hand = c.handwritten ? fs.readFileSync(c.handwritten, 'utf8') : null;
     const theirs = fs.readFileSync(c.jsExpected, 'utf8');
     const r = compare(theirs, actual, { defaults: DEFAULTS });
-    const sameShape = c.handwrittenStale || actual === hand;
+    const sameShape = c.handwrittenStale || hand === null || actual === hand;
     if (!sameShape || !r.equal) failed = true;
-    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${c.handwrittenStale ? 'hand-written outdated' : sameShape ? 'op log == hand-written' : 'op log != hand-written'}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
+    const shape = c.handwrittenStale ? 'hand-written outdated' : hand === null ? 'no hand-written equivalent' : sameShape ? 'op log == hand-written' : 'op log != hand-written';
+    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${shape}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
     for (const p of r.problems) console.log(`  ${p}`);
+    // extra scripts: both pipelines' bundles run live with the same steps, compared by state
+    for (const extra of c.extraScripts ?? []) {
+      const steps = JSON.parse(fs.readFileSync(extra, 'utf8'));
+      const xtag = `${tag} [${path.basename(extra)}]`;
+      let js, ours;
+      try {
+        js = await runBundle({ bundlePath: path.join(path.dirname(c.jsExpected), 'dist/app.js'), script: steps });
+        ours = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script: steps });
+      } catch (e) {
+        failed = true;
+        console.log(`FAIL ${xtag}: runtime error: ${e.stack ?? e}`);
+        continue;
+      }
+      fs.writeFileSync(path.join(dir, `actual.${path.basename(extra, '.json')}.oplog`), ours);
+      const x = compare(js, ours, { defaults: DEFAULTS });
+      if (!x.equal) failed = true;
+      console.log(`${x.equal ? 'PASS' : 'FAIL'} ${xtag}: ${ours === js ? 'identical to' : x.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${x.boundaries} boundaries, ops ${x.opsB} / ${x.opsA})`);
+      for (const p of x.problems) console.log(`  ${p}`);
+    }
   }
 }
 process.exit(failed ? 1 : 0);

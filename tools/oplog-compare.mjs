@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Compares two op logs (plans/architecture/backend-abi.md "Op-log format") by the native state
 // they produce, not by their text: each log is replayed into a tree, and the states are compared
-// before every `event` / `gone` line and at the end. A state is: live handles with kind, props,
+// before every `event` / `sync` / `deferred` / `gone` line and at the end (the values JS returned for `sync`
+// lines, the `result` lines, are part of the state). A state is: live handles with kind, props,
 // children per slot (in order), listened signals and the methods called on them.
 //
 // Usage: node tools/oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]...
@@ -61,6 +62,15 @@ function parseLine(line) {
       const [, n, reason] = sp(line, 3);
       return { op, h: h(n), reason };
     }
+    case 'deferred':
+    case 'sync': {
+      const [, n, signal, json] = sp(line, 4);
+      return { op, h: h(n), signal, args: JSON.parse(json) };
+    }
+    case 'result': {
+      const [, n, json] = sp(line, 3);
+      return { op, h: h(n), value: JSON.parse(json) };
+    }
     default:
       throw new Error(`unknown op: ${line}`);
   }
@@ -100,10 +110,12 @@ export function replay(text, { defaults = {} } = {}) {
       const slots = Object.fromEntries([...n.slots].sort(([a], [b]) => (a < b ? -1 : 1)));
       return { h, kind: n.kind, props, slots, listening: [...n.listening].sort(), calls: n.calls };
     });
+    if (results.length) out.push({ h: 'results', results });
     return JSON.stringify(out);
   };
 
   const boundaries = [];
+  const results = []; // sync results, in order
   const lines = text.split('\n').filter(Boolean);
   for (const line of lines) {
     const o = parseLine(line);
@@ -148,14 +160,20 @@ export function replay(text, { defaults = {} } = {}) {
         if (o.on) get(o.h, line).listening.add(o.signal);
         else get(o.h, line).listening.delete(o.signal);
         break;
+      case 'result':
+        // the value JS returned to the toolkit for the preceding `sync`: part of the next state
+        results.push(`${o.h} ${JSON.stringify(o.value)}`);
+        break;
       case 'event':
+      case 'sync':
+      case 'deferred':
       case 'gone':
         boundaries.push({ line, state: snapshot() });
         if (o.op === 'gone') kill(o.h);
         break;
     }
   }
-  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|gone) /.test(l)).length };
+  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|deferred|result|gone) /.test(l)).length };
 }
 
 function firstDiff(a, b) {
