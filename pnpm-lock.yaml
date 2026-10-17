@@ -247,6 +247,25 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/styles:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/renderer':
+        specifier: workspace:*
+        version: link:../../packages/renderer
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/sync-handlers:
     dependencies:
       svelte:
@@ -309,6 +328,9 @@ importers:
       '@svelters/renderer':
         specifier: workspace:*
         version: link:../renderer
+      '@svelters/style':
+        specifier: workspace:*
+        version: link:../style
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -333,6 +355,9 @@ importers:
 
   packages/renderer:
     dependencies:
+      '@svelters/style':
+        specifier: workspace:*
+        version: link:../style
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -346,6 +371,12 @@ importers:
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
+
+  packages/style:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
 
   packages/testhost: {}
 

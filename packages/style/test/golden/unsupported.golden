@@ -1,0 +1,94 @@
+=== gtk ===
+.a.svelte-unsupported {
+  color: red;
+}
+.x.svelte-unsupported + .y.svelte-unsupported {
+  color: green;
+}
+.x.svelte-unsupported ~ .y.svelte-unsupported {
+  color: green;
+}
+.b.svelte-unsupported {
+  background-color: oklch(0.6 0.1 250);
+  color: #123;
+}
+.b.svelte-unsupported {
+  box-shadow: 0 1px 2px #000;
+  transition: color 150ms;
+}
+.b.svelte-unsupported {
+  --local: 1px;
+  padding: calc(1px + 2px);
+  margin: var(--other);
+}
+.x.svelte-unsupported:first-child {
+  color: #111;
+}
+.y.svelte-unsupported:focus-visible {
+  color: #222;
+}
+.a.svelte-unsupported {
+  opacity: 0.8;
+  font-family: serif;
+  background: linear-gradient(red, blue);
+}
+checkbutton.cb.svelte-unsupported {
+  color: #444;
+}
+window.sv-k-window.w.svelte-unsupported {
+  color: var(--sv-unknown);
+}
+@keyframes svelte-unsupported-pulse { from { color: red; } to { color: blue; } }
+@media (prefers-reduced-motion: reduce) {
+.a.svelte-unsupported {
+  color: red;
+}
+}
+
+=== qt ===
+.a.svelte-unsupported {
+  color: red;
+}
+.b.svelte-unsupported {
+  color: #123;
+}
+.y.svelte-unsupported:focus {
+  color: #222;
+}
+.a.svelte-unsupported {
+  font-family: serif;
+}
+.QMainWindow.w.svelte-unsupported {
+  color: ${--sv-unknown};
+}
+
+=== qt dark ===
+
+=== diagnostics ===
+warning [gtk] property 'display' is not supported (layout is done with widget props and container kinds, not CSS)
+warning [gtk] property 'width' is not supported (use the width-request prop (or a layout prop))
+warning [gtk] property 'text-align' is not supported (use the xalign / justify prop)
+error [gtk] pseudo-element ::before is not supported; rule dropped (parts need @native gtk { })
+warning [gtk] token --sv-unknown is not in the default token set; define it with setTokens() before use
+error [gtk] @media (min-width: 600px) is not supported on gtk (only prefers-color-scheme, prefers-contrast, prefers-reduced-motion)
+warning [qt] property 'display' is not supported (layout is done with widget props and container kinds, not CSS)
+warning [qt] property 'width' is not supported (use the width-request prop (or a layout prop))
+warning [qt] property 'text-align' is not supported (use the xalign / justify prop)
+error [qt] combinator '+' never matches in QSS; rule dropped
+error [qt] combinator '~' never matches in QSS; rule dropped
+error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
+warning [qt] property 'box-shadow' is not supported on qt
+warning [qt] property 'transition' is not supported on qt: QSS has no transitions
+error [qt] custom property --local cannot be declared in QSS; define tokens with setTokens() or the token set
+error [qt] value 'calc(1px + 2px)' for padding uses 'calc(', which QSS cannot parse
+error [qt] var(--other) in margin: only --sv-* tokens exist on Qt (QSS has no variables)
+error [qt] pseudo-class :first-child is not supported on qt; rule dropped
+warning [qt] :focus-visible is approximated by :focus
+error [qt] pseudo-element ::before is not supported; rule dropped (parts need @native qt { })
+warning [qt] property 'opacity' is not supported on qt: QSS has no opacity: Qt honours it for style= / style: only (QGraphicsOpacityEffect)
+error [qt] value 'linear-gradient(red, blue)' for background uses 'gradient(', which QSS cannot parse
+warning [qt] <checkbutton> is not an element on qt; rule dropped
+warning [qt] token --sv-unknown is not in the default token set; define it with setTokens() before use
+warning [qt] @keyframes svelte-unsupported-pulse dropped: QSS has no animations
+error [qt] @media (min-width: 600px) is not supported on qt (only prefers-color-scheme: dark)
+error [qt] @media (prefers-reduced-motion: reduce) is not supported on qt (only prefers-color-scheme: dark)

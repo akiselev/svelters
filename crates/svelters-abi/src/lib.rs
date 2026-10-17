@@ -86,6 +86,21 @@ pub const SVL_LISTEN_CAPTURE: u32 = 2;
 pub const SVL_SIGNAL_FLAGS_SHIFT: u32 = 28;
 pub const SVL_SIGNAL_ID_MASK: u32 = (1 << SVL_SIGNAL_FLAGS_SHIFT) - 1;
 
+/// ABI v2.3 `style` ops (X6 styling). Payloads are UTF-8 strings; see plans/architecture/backend-abi.md.
+pub const SVL_STYLE_TARGET: u32 = 0;
+pub const SVL_STYLE_CLASSES: u32 = 1;
+pub const SVL_STYLE_NAME: u32 = 2;
+pub const SVL_STYLE_INLINE: u32 = 3;
+pub const SVL_STYLE_OPACITY: u32 = 4;
+pub const SVL_STYLE_SHEET: u32 = 5;
+pub const SVL_STYLE_SCHEME: u32 = 6;
+/// `SVL_STYLE_TARGET` answers: the dialect the backend's sheets use.
+pub const SVL_STYLE_TARGET_NONE: i32 = 0;
+pub const SVL_STYLE_TARGET_CSS: i32 = 1;
+pub const SVL_STYLE_TARGET_QSS: i32 = 2;
+/// Separator between the fields of a `style` payload string.
+pub const SVL_STYLE_SEP: char = '\u{1}';
+
 pub const SVL_LIFE_OWNED: u32 = 1;
 pub const SVL_LIFE_TOPLEVEL: u32 = 2;
 pub const SVL_LIFE_BORROWED: u32 = 3;
@@ -282,6 +297,9 @@ pub struct svl_backend {
     >,
     /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags. Optional.
     pub listen_ex: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool, u32) -> c_int>,
+    /// ABI v2.3: styling (classes, widget name, inline declarations, opacity, sheets, scheme). Optional.
+    /// `v` is `SVL_STR` or `SVL_NULL`; the result is `>= 0` on success (`SVL_STYLE_TARGET` returns the dialect).
+    pub style: Option<unsafe extern "C" fn(*mut c_void, u32, svl_handle, *const svl_value) -> c_int>,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.
