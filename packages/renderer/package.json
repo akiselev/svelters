@@ -7,7 +7,9 @@
   "exports": {
     ".": "./src/index.js",
     "./install": "./src/install.js",
-    "./types": { "types": "./types/index.d.ts" }
+    "./types": {
+      "types": "./types/index.d.ts"
+    }
   },
   "dependencies": {
     "svelte": "5.57.2"
@@ -16,6 +18,8 @@
     "test": "node --conditions=custom-renderer --test test/renderer.test.mjs"
   },
   "devDependencies": {
-    "@svelters/testhost": "workspace:*"
+    "@svelters/testhost": "workspace:*",
+    "svelte-check": "^4.7.7",
+    "typescript": "~6.0.3"
   }
 }
