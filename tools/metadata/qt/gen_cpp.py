@@ -1142,7 +1142,8 @@ def gen_dts(m: Model) -> str:
         out.append("    events: {")
         for s in e.get("signals", []):
             args = ", ".join(f"{a['name']}: {ts_type(m, a['ref'])}" for a in s["args"])
-            out.append(f"      {s['js']}: ({args}) => void;")
+            key = s["js"] if s["js"].isidentifier() else '"' + s["js"] + '"'
+            out.append(f"      {key}: ({args}) => void;")
         out.append("    };")
         out.append("    methods: {")
         for me in e.get("methods", []):
