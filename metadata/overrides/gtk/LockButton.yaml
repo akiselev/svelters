@@ -1,0 +1,11 @@
+properties:
+  - name: text-lock
+    provenance: "GtkLockButton:text-lock (Gtk 4 docs)"
+  - name: text-unlock
+    provenance: "GtkLockButton:text-unlock (Gtk 4 docs)"
+  - name: tooltip-lock
+    provenance: "GtkLockButton:tooltip-lock (Gtk 4 docs)"
+  - name: tooltip-unlock
+    provenance: "GtkLockButton:tooltip-unlock (Gtk 4 docs)"
+  - name: tooltip-not-authorized
+    provenance: "GtkLockButton:tooltip-not-authorized (Gtk 4 docs)"

@@ -89,6 +89,7 @@ macro_rules! gallery_page {
 
 // ---- GTK pages (fixtures/gallery-gtk/src/pages) ----
 gallery_page!(gtk_00_overview, "gtk", "00-overview", ["GtkEntry", "GtkButton", "GtkLabel"]);
+gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButton", "GtkCheckButton", "GtkSwitch", "GtkLinkButton", "GtkLockButton", "GtkMenuButton", "GtkScaleButton", "GtkVolumeButton"]);
 
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
 gallery_page!(qt_00_overview, "qt", "00-overview", ["QLineEdit", "QPushButton", "QLabel"]);

@@ -290,11 +290,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_menu_button_popdown (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "h.get(o, \"active\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:popdown",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "popdown",
       "name": "popdown",
       "native": "gtk_menu_button_popdown",
       "origin": "gir",
@@ -305,14 +318,28 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "let w = h.widget(o); let win = gtk::Window::new(); win.set_child(Some(&w)); win.present(); let mb = w.downcast_ref::<gtk::MenuButton>().unwrap(); mb.set_popover(Some(&gtk::Popover::new())); mb.popup(); std::mem::forget(win);",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_menu_button_popup (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "h.get(o, \"active\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:popup",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "popup",
       "name": "popup",
       "native": "gtk_menu_button_popup",
       "origin": "gir",
@@ -323,6 +350,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "let w = h.widget(o); let win = gtk::Window::new(); win.set_child(Some(&w)); win.present(); let mb = w.downcast_ref::<gtk::MenuButton>().unwrap(); mb.set_popover(Some(&gtk::Popover::new())); std::mem::forget(win);",
       "unsupported_reason": null
     },
     {
@@ -470,11 +498,27 @@
       "unsupported_reason": "callback_scope"
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_menu_button_set_direction (Gtk 4 docs); enum nick argument (S1)"
+      },
+      "args": [
+        "up"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"direction\") == V::Str(\"up\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_direction",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_direction",
       "name": "set_direction",
       "native": "gtk_menu_button_set_direction",
       "origin": "gir",
@@ -738,6 +782,11 @@
         "get": "gtk_menu_button_get_always_show_arrow",
         "set": "gtk_menu_button_set_always_show_arrow"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:always-show-arrow (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:always-show-arrow",
       "invocation": "reflected",
@@ -778,6 +827,11 @@
       "accessors": {
         "get": "gtk_menu_button_get_can_shrink",
         "set": "gtk_menu_button_set_can_shrink"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:can-shrink (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:can-shrink",
@@ -861,6 +915,11 @@
         "get": "gtk_menu_button_get_direction",
         "set": "gtk_menu_button_set_direction"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:direction (Gtk 4 docs)"
+      },
       "default": "down",
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:direction",
       "invocation": "reflected",
@@ -900,6 +959,11 @@
       "accessors": {
         "get": "gtk_menu_button_get_has_frame",
         "set": "gtk_menu_button_set_has_frame"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:has-frame (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:has-frame",
@@ -941,6 +1005,11 @@
         "get": "gtk_menu_button_get_icon_name",
         "set": "gtk_menu_button_set_icon_name"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:icon-name (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:icon-name",
       "invocation": "reflected",
@@ -980,6 +1049,11 @@
       "accessors": {
         "get": "gtk_menu_button_get_label",
         "set": "gtk_menu_button_set_label"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:label (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:label",
@@ -1099,6 +1173,11 @@
         "get": "gtk_menu_button_get_primary",
         "set": "gtk_menu_button_set_primary"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:primary (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:primary",
       "invocation": "reflected",
@@ -1140,6 +1219,11 @@
         "get": "gtk_menu_button_get_use_underline",
         "set": "gtk_menu_button_set_use_underline"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkMenuButton:use-underline (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:use-underline",
       "invocation": "reflected",
@@ -1173,6 +1257,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkMenuButton::activate is an action signal with void return (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1205,7 +1298,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/MenuButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

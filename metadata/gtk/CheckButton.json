@@ -9,6 +9,47 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "toggled",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "toggled",
+          "notify::active"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:binding:active",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "active",
+      "origin": "manual",
+      "property": "active",
+      "provenance": "GtkCheckButton set_active emits toggled and notify::active only on change (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -175,11 +216,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_check_button_get_label (Gtk 4 docs); string return through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Str(\"hello\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:method:get_label",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_label",
       "name": "get_label",
       "native": "gtk_check_button_get_label",
       "origin": "gir",
@@ -190,6 +246,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "setup": "h.set_str(o, \"label\", \"hello\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -289,11 +346,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_check_button_set_inconsistent (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"inconsistent\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:method:set_inconsistent",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_inconsistent",
       "name": "set_inconsistent",
       "native": "gtk_check_button_set_inconsistent",
       "origin": "gir",
@@ -386,7 +459,19 @@
         "get": "gtk_check_button_get_active",
         "set": "gtk_check_button_set_active"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCheckButton:active (Gtk 4 docs)"
+      },
       "default": false,
+      "echo_suppress": [
+        "toggled",
+        "notify::active"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:active",
       "invocation": "reflected",
       "js_name": "active",
@@ -505,6 +590,11 @@
         "get": "gtk_check_button_get_inconsistent",
         "set": "gtk_check_button_set_inconsistent"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCheckButton:inconsistent (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:inconsistent",
       "invocation": "reflected",
@@ -545,6 +635,11 @@
         "get": "gtk_check_button_get_label",
         "set": "gtk_check_button_set_label"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCheckButton:label (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:label",
       "invocation": "reflected",
@@ -584,6 +679,11 @@
       "accessors": {
         "get": "gtk_check_button_get_use_underline",
         "set": "gtk_check_button_set_use_underline"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCheckButton:use-underline (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:use-underline",
@@ -644,6 +744,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCheckButton::toggled, run-first, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -665,7 +775,68 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "active",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkCheckButton:active"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "active"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::active",
+      "name": "notify::active",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "active",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
     }
   ],
   "source": {
@@ -674,7 +845,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/CheckButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
