@@ -126,8 +126,8 @@ importers:
   fixtures/native-close:
     dependencies:
       svelte:
-        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
-        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
     devDependencies:
       '@svelters/build':
         specifier: workspace:*
