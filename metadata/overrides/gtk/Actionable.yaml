@@ -1,0 +1,4 @@
+verify_subject: {tag: button}
+properties:
+  - name: action-name
+    provenance: "GtkActionable:action-name (Gtk 4 docs); P prop; interface-owned, tested through GtkButton"

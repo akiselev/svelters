@@ -71,6 +71,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-name",
+   "fingerprint": "b68e8f30e14a0e96",
+   "kind": "Actionable",
+   "name": "action-name",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_actionable_action_name"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Box:prop:spacing",
    "fingerprint": "07e95a5cde874007",
    "kind": "Box",
@@ -111,6 +121,26 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:delete-text",
+   "fingerprint": "eca700401b1819ac",
+   "kind": "Editable",
+   "name": "delete-text",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_editable_delete_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:insert-text",
+   "fingerprint": "3bcd36bcc419f53b",
+   "kind": "Editable",
+   "name": "insert-text",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_editable_insert_text"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:notify::text",
    "fingerprint": "3136d888ea897ce9",
    "kind": "Editable",
@@ -118,6 +148,36 @@
    "section": "signals",
    "tests": [
     "generated::verify::signal_editable_notify_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:editable",
+   "fingerprint": "94148966d0b242e4",
+   "kind": "Editable",
+   "name": "editable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editable_editable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:enable-undo",
+   "fingerprint": "3222a1bacd4e1e26",
+   "kind": "Editable",
+   "name": "enable-undo",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editable_enable_undo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:max-width-chars",
+   "fingerprint": "d515fe5c0955efb6",
+   "kind": "Editable",
+   "name": "max-width-chars",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editable_max_width_chars"
    ]
   },
   {
@@ -129,6 +189,26 @@
    "tests": [
     "generated::verify::prop_editable_text",
     "generated::verify::echo_editable_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:width-chars",
+   "fingerprint": "051cc972be468167",
+   "kind": "Editable",
+   "name": "width-chars",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editable_width_chars"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:xalign",
+   "fingerprint": "1a69a61fda4f5ae7",
+   "kind": "Editable",
+   "name": "xalign",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editable_xalign"
    ]
   },
   {
@@ -179,6 +259,226 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_orientable_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+   "fingerprint": "3baef8c111b03b77",
+   "kind": "Widget",
+   "name": "hide",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_widget_hide"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+   "fingerprint": "5ca4d8ecf639dd34",
+   "kind": "Widget",
+   "name": "show",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_widget_show"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+   "fingerprint": "17edf9026f962c94",
+   "kind": "Widget",
+   "name": "can-focus",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_can_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+   "fingerprint": "f0a82d5912493967",
+   "kind": "Widget",
+   "name": "focusable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_focusable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+   "fingerprint": "0b3926d17cbb1708",
+   "kind": "Widget",
+   "name": "halign",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_halign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+   "fingerprint": "0b61a5c45a8e6e2f",
+   "kind": "Widget",
+   "name": "height-request",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_height_request"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+   "fingerprint": "515ce9e543b22260",
+   "kind": "Widget",
+   "name": "hexpand",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_hexpand"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+   "fingerprint": "9717549640e7fcae",
+   "kind": "Widget",
+   "name": "margin-bottom",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_margin_bottom"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+   "fingerprint": "b2b973435572b0ee",
+   "kind": "Widget",
+   "name": "margin-end",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_margin_end"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+   "fingerprint": "3ad8a9be487eb037",
+   "kind": "Widget",
+   "name": "margin-start",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_margin_start"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+   "fingerprint": "4a0e223437ce68d0",
+   "kind": "Widget",
+   "name": "margin-top",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_margin_top"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+   "fingerprint": "9d1811f72274ca54",
+   "kind": "Widget",
+   "name": "name",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+   "fingerprint": "28377b3e0adf3487",
+   "kind": "Widget",
+   "name": "opacity",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_opacity"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+   "fingerprint": "d38059aa940e3c18",
+   "kind": "Widget",
+   "name": "sensitive",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_sensitive"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+   "fingerprint": "f9674beaa13502df",
+   "kind": "Widget",
+   "name": "tooltip-markup",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_tooltip_markup"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+   "fingerprint": "62a7b73b8a16d23c",
+   "kind": "Widget",
+   "name": "tooltip-text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_tooltip_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+   "fingerprint": "0a3d949ca7f6793d",
+   "kind": "Widget",
+   "name": "valign",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_valign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+   "fingerprint": "3ffa519e91c68004",
+   "kind": "Widget",
+   "name": "vexpand",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_vexpand"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+   "fingerprint": "79975396d3e3c0ee",
+   "kind": "Widget",
+   "name": "visible",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_visible"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+   "fingerprint": "47546faca9524aae",
+   "kind": "Widget",
+   "name": "width-request",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_width_request"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+   "fingerprint": "6d12c65104642e99",
+   "kind": "Widget",
+   "name": "queue_draw",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_widget_queue_draw"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+   "fingerprint": "324f36e12d7cb872",
+   "kind": "Widget",
+   "name": "queue_resize",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_widget_queue_resize"
    ]
   },
   {

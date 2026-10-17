@@ -1,0 +1,61 @@
+verify_subject: {tag: label}
+properties:
+  - name: visible
+    provenance: "GtkWidget:visible (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: sensitive
+    provenance: "GtkWidget:sensitive (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: tooltip-text
+    provenance: "GtkWidget:tooltip-text (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: tooltip-markup
+    provenance: "GtkWidget:tooltip-markup (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: hexpand
+    provenance: "GtkWidget:hexpand (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: vexpand
+    provenance: "GtkWidget:vexpand (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: halign
+    provenance: "GtkWidget:halign (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: valign
+    provenance: "GtkWidget:valign (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: margin-start
+    provenance: "GtkWidget:margin-start (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: margin-end
+    provenance: "GtkWidget:margin-end (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: margin-top
+    provenance: "GtkWidget:margin-top (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: margin-bottom
+    provenance: "GtkWidget:margin-bottom (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: width-request
+    provenance: "GtkWidget:width-request (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: height-request
+    provenance: "GtkWidget:height-request (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: opacity
+    sample: 0.0   # GTK quantises opacity to 8 bits; 0.5 reads back as 0.50196
+    provenance: "GtkWidget:opacity (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: can-focus
+    provenance: "GtkWidget:can-focus (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: focusable
+    provenance: "GtkWidget:focusable (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: name
+    provenance: "GtkWidget:name (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+signals:
+  - name: show
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.set_property("visible", false); o.set_property("visible", true);', values: [a, b, c]}
+    provenance: "GtkWidget::show, void, run-first (Gtk 4 docs); emitted when visible becomes true"
+  - name: hide
+    handler_result: none
+    sync_required: false
+    trigger: {property: visible, values: [false, true, false]}
+    provenance: "GtkWidget::hide, void, run-first (Gtk 4 docs); emitted when visible becomes false"
+methods:
+  - name: queue_draw
+    js_name: queueDraw
+    dispatch: zero_arg
+    expect: "w.is_visible()"
+    provenance: "gtk_widget_queue_draw (Gtk 4 docs); no observable state change, postcondition only checks the widget is intact"
+  - name: queue_resize
+    js_name: queueResize
+    dispatch: zero_arg
+    expect: "w.is_visible()"
+    provenance: "gtk_widget_queue_resize (Gtk 4 docs); no observable state change, postcondition only checks the widget is intact"
