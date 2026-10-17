@@ -90,6 +90,8 @@ macro_rules! gallery_page {
 // ---- GTK pages (fixtures/gallery-gtk/src/pages) ----
 gallery_page!(gtk_00_overview, "gtk", "00-overview", ["GtkEntry", "GtkButton", "GtkLabel"]);
 
+gallery_page!(gtk_05_containers, "gtk", "05-containers", ["GtkCenterBox", "GtkPaned", "GtkFrame", "GtkExpander", "GtkRevealer", "GtkAspectFrame", "GtkOverlay", "GtkWindowHandle", "GtkViewport", "GtkScrolledWindow", "GtkSearchBar"]);
+
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
 gallery_page!(qt_00_overview, "qt", "00-overview", ["QLineEdit", "QPushButton", "QLabel"]);
 gallery_page!(qt_01_widget, "qt", "01-widget", ["QWidget", "QPushButton", "QLineEdit", "QLabel"]);

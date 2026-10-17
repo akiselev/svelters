@@ -18,3 +18,33 @@ children:
         remove: {native: "GtkScrolledWindow::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
       verify: {}
       provenance: [{origin: gir, ref: "gtk_scrolled_window_set_child"}, {origin: manual, ref: "docs: a non-scrollable child is wrapped in a GtkViewport automatically"}]
+properties:
+  - name: hscrollbar-policy
+    provenance: "GtkScrolledWindow:hscrollbar-policy (Gtk 4 docs); P prop"
+  - name: vscrollbar-policy
+    provenance: "GtkScrolledWindow:vscrollbar-policy (Gtk 4 docs); P prop"
+  - name: has-frame
+    provenance: "GtkScrolledWindow:has-frame (Gtk 4 docs); P prop"
+  - name: min-content-width
+    provenance: "GtkScrolledWindow:min-content-width (Gtk 4 docs); P prop"
+  - name: min-content-height
+    provenance: "GtkScrolledWindow:min-content-height (Gtk 4 docs); P prop"
+  - name: max-content-width
+    provenance: "GtkScrolledWindow:max-content-width (Gtk 4 docs); P prop"
+  - name: max-content-height
+    provenance: "GtkScrolledWindow:max-content-height (Gtk 4 docs); P prop"
+  - name: propagate-natural-height
+    provenance: "GtkScrolledWindow:propagate-natural-height (Gtk 4 docs); P prop"
+  - name: propagate-natural-width
+    provenance: "GtkScrolledWindow:propagate-natural-width (Gtk 4 docs); P prop"
+  - name: kinetic-scrolling
+    provenance: "GtkScrolledWindow:kinetic-scrolling (Gtk 4 docs); P prop"
+  - name: overlay-scrolling
+    provenance: "GtkScrolledWindow:overlay-scrolling (Gtk 4 docs); P prop"
+signals:
+  - name: edge-reached
+    js_event: edge-reached
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("edge-reached", &[&gtk::PositionType::Bottom]);', values: [a, b, c]}
+    provenance: "GtkScrolledWindow::edge-reached, run-last, void; delivery only, emitted by name (real emission needs scrolling with an allocation) (Gtk 4 docs)"

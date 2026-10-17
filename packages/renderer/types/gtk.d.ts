@@ -643,6 +643,7 @@ export interface GtkExpanderProps extends GtkWidgetProps {
   useMarkup?: boolean;
   useUnderline?: boolean;
   onactivate?: SvlHandler;
+  "onnotify::expanded"?: SvlHandler;
 }
 export interface GtkExpressionProps {
 }

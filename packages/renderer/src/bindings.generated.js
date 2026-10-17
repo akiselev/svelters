@@ -4,6 +4,9 @@ export const BINDINGS = {
   entry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk", "qt"] },
   },
+  expander: {
+    expanded: { prop: "expanded", signal: "notify::expanded", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
   stackedwidget: {
     currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },

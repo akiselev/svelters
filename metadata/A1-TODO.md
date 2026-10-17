@@ -120,7 +120,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - B: Expander `bind:expanded` (notify::expanded); Revealer `bind:reveal-child`? (one-way: read_only `child-revealed`).
 - Gallery: `05-containers.svelte`.
 - Tests `<re>`: `_(centerbox|paned|frame|expander|revealer|aspectframe|overlay|windowhandle|viewport|scrolledwindow|searchbar)_`.
-- Status: todo
+- Status: done (79 facts verified across gtk ledger incl. 63 batch tests; dropped: Viewport.scroll_to and SearchBar.connect_entry (need object/adjustment args, not useful), Revealer bind (child-revealed read-only), Overlay get-child-position (needs sync value result, G5), Paned/Frame/Expander child attributes (G1); edge-reached delivery-only via emit_by_name; one test flaky once, passed on rerun)
 
 ### gtk-containers-b: multi-child layouts and pages
 

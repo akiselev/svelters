@@ -22,9 +22,232 @@
         "start-widget"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "center",
+    "policy": "named_slots",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_center_box_set_start_widget"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:start",
+        "name": "start",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkCenterBox::get_start_widget() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkCenterBox::set_start_widget(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkCenterBox::set_start_widget(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_center_box_set_center_widget"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:center",
+        "name": "center",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkCenterBox::get_center_widget() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkCenterBox::set_center_widget(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkCenterBox::set_center_widget(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_center_box_set_end_widget"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:end",
+        "name": "end",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkCenterBox::get_end_widget() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkCenterBox::set_end_widget(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkCenterBox::set_end_widget(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -328,6 +551,11 @@
         "get": "gtk_center_box_get_baseline_position",
         "set": "gtk_center_box_set_baseline_position"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCenterBox:baseline-position (Gtk 4 docs); P prop"
+      },
       "default": "center",
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:baseline-position",
       "invocation": "reflected",
@@ -450,6 +678,11 @@
         "get": "gtk_center_box_get_shrink_center_last",
         "set": "gtk_center_box_set_shrink_center_last"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCenterBox:shrink-center-last (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:shrink-center-last",
       "invocation": "reflected",
@@ -530,7 +763,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/CenterBox.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
