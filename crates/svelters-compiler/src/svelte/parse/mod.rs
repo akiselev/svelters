@@ -15,6 +15,7 @@
 
 pub mod acorn;
 pub mod read;
+pub mod remove_typescript_nodes;
 pub mod shared;
 pub mod state;
 pub mod utils;

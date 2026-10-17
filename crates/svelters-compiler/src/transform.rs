@@ -39,6 +39,8 @@ pub struct ScopeRewriter<'a> {
     an: &'a ComponentScopeAnalysis<'a>,
     script: Edits,
     pub diags: RefCell<Diagnostics>,
+    /// TypeScript to remove from the emitted text (`svelte::ts`; empty for JavaScript).
+    ts_strip: crate::svelte::ts::TsStrip,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -68,7 +70,7 @@ fn classify(arena: &ScopeArena<'_>, id: &Identifier) -> Class {
 
 impl<'a> ScopeRewriter<'a> {
     pub fn new(src: &'a str, root: &'a Root, an: &'a ComponentScopeAnalysis<'a>, diags: Diagnostics) -> ScopeRewriter<'a> {
-        let mut rw = ScopeRewriter { src, root, an, script: Edits::new(), diags: RefCell::new(diags) };
+        let mut rw = ScopeRewriter { src, root, an, script: Edits::new(), diags: RefCell::new(diags), ts_strip: Default::default() };
         if let Some(script) = &root.instance {
             let mut edits = Edits::new();
             let mut v = Rw::new(rw.an, rw.src, &mut edits, Mode::Read, &rw.diags, Some(an.instance.scope));
@@ -88,6 +90,12 @@ impl<'a> ScopeRewriter<'a> {
         rw
     }
 
+    /// Removes the TypeScript found by `svelte::ts::strip` from everything this rewriter emits.
+    pub fn strip_typescript(&mut self, strip: crate::svelte::ts::TsStrip) {
+        strip.apply(&mut self.script, None);
+        self.ts_strip = strip;
+    }
+
     pub fn into_diagnostics(self) -> Diagnostics {
         self.diags.into_inner()
     }
@@ -95,6 +103,7 @@ impl<'a> ScopeRewriter<'a> {
 
 impl Rewriter for ScopeRewriter<'_> {
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits) {
+        self.ts_strip.apply(edits, Some(e.span()));
         let mut v = Rw::new(self.an, self.src, edits, mode, &self.diags, Some(self.an.instance.scope));
         Walker::walk(expr_ref(e), &(), &mut v);
     }
@@ -149,7 +158,8 @@ impl Rewriter for ScopeRewriter<'_> {
             let s = stmt.span();
             match (hoist, stmt) {
                 (true, Statement::ImportDeclaration(_)) => {
-                    w.copy(self.src, s.start, s.end);
+                    // (edits here are only TypeScript removals: `import { type A, B }`)
+                    self.script.emit(w, self.src, s.start, s.end);
                     w.write("\n");
                 }
                 (false, Statement::ImportDeclaration(_)) | (true, _) => {}
