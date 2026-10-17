@@ -110,30 +110,42 @@ impl Inner {
 
     /// A toplevel was destroyed by GTK (close, `gtk_window_destroy`). Its descendants are
     /// invalidated with it: GTK leaves them alive but orphaned, and the handle table would
-    /// otherwise keep reporting them live. Descendants are reported first.
+    /// otherwise keep reporting them live. The window is reported first, then its descendants in
+    /// pre-order. Descendants come from the slot records (GTK has already unparented the children
+    /// by the time `destroy` is emitted), plus anything still parented below the window.
     fn native_destroyed(&self, h: u64, win: &gtk::Widget) {
-        let mut gone: Vec<(u64, Entry)> = {
+        let gone: Vec<(u64, Entry)> = {
             let mut st = self.state.borrow_mut();
-            let kids: Vec<u64> = st
+            let mut order: Vec<u64> = vec![h];
+            let mut i = 0;
+            while i < order.len() {
+                let parent = order[i];
+                i += 1;
+                let mut kids: Vec<u64> = st.entries.iter().filter(|(k, e)| e.slot.is_some_and(|(p, _)| p == parent) && !order.contains(k)).map(|(k, _)| *k).collect();
+                kids.sort_unstable();
+                // pre-order: a child's own descendants follow it directly
+                for (n, k) in kids.into_iter().enumerate() {
+                    order.insert(i + n, k);
+                }
+            }
+            let mut orphans: Vec<u64> = st
                 .entries
                 .iter()
                 .filter(|(k, e)| {
-                    **k != h && e.obj.upgrade().and_then(|o| o.downcast::<gtk::Widget>().ok()).is_some_and(|w| w.is_ancestor(win))
+                    !order.contains(k) && e.obj.upgrade().and_then(|o| o.downcast::<gtk::Widget>().ok()).is_some_and(|w| w.is_ancestor(win))
                 })
                 .map(|(k, _)| *k)
                 .collect();
-            let mut v: Vec<(u64, Entry)> = kids.into_iter().filter_map(|k| st.entries.remove(&k).map(|e| (k, e))).collect();
-            v.sort_by_key(|(k, _)| std::cmp::Reverse(*k));
-            if let Some(e) = st.entries.remove(&h) {
-                v.push((h, e));
-            }
+            orphans.sort_unstable();
+            order.extend(orphans);
+            let v: Vec<(u64, Entry)> = order.into_iter().filter_map(|k| st.entries.remove(&k).map(|e| (k, e))).collect();
             for (_, e) in &v {
                 st.by_obj.remove(&e.ptr);
             }
             v
         };
         let host = self.host.load(Ordering::Acquire);
-        for (k, e) in gone.drain(..) {
+        for (k, e) in gone {
             // The window itself is being disposed: its handlers go with it.
             if k != h {
                 if let Some(obj) = e.obj.upgrade() {
@@ -144,15 +156,20 @@ impl Inner {
             }
             drop(e.hold);
             if !host.is_null() {
-                unsafe { ((*host).on_destroyed)((*host).self_, k, SVL_GONE_UNKNOWN) };
+                let reason = if k == h { SVL_GONE_CLOSED } else { SVL_GONE_PARENT };
+                unsafe { ((*host).on_destroyed)((*host).self_, k, reason) };
             }
         }
     }
 
+    /// Idempotent: the handle is stale as soon as this returns, and a second call (or a call on a
+    /// handle that already died) does nothing. Nothing is finalized synchronously, because the
+    /// caller may be inside a signal emission: a toplevel is hidden now and destroyed from an
+    /// idle, and the table's strong reference is dropped from an idle.
     fn destroy(&self, h: u64) -> Res<()> {
         let entry = {
             let mut st = self.state.borrow_mut();
-            let e = st.entries.remove(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
+            let Some(e) = st.entries.remove(&h) else { return Ok(()) };
             st.by_obj.remove(&e.ptr);
             e
         };
@@ -161,10 +178,14 @@ impl Inner {
                 obj.disconnect(id);
             }
             if let Some(win) = obj.downcast_ref::<gtk::Window>() {
-                win.destroy();
+                win.set_visible(false);
+                let win = win.clone();
+                glib::idle_add_local_once(move || win.destroy());
             }
         }
-        drop(entry.hold);
+        if let Some(hold) = entry.hold {
+            glib::idle_add_local_once(move || drop(hold));
+        }
         Ok(())
     }
 
@@ -339,6 +360,11 @@ impl Inner {
                 }
             }
             unsafe { ((*host).post_event)((*host).self_, h, signal, args.as_ptr(), args.len()) };
+        }
+        // onRequestClose: a JS listener on close-request owns the decision, so veto the native
+        // close; the app destroys the window when its state says so.
+        if sig.name == "close-request" {
+            return Some(true.to_value());
         }
         match sig.handler_result {
             1 => Some(false.to_value()),
@@ -541,6 +567,8 @@ unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {
     let c = unsafe { ctl(p) };
     c.host.store(host as *mut svl_host, Ordering::Release);
     let hostp = c.host.clone();
+    // The host decides when the app quits (`quit`), so closing the last window must not.
+    let _hold = c.local.app.hold();
     c.local.app.connect_activate(move |_| {
         let h = hostp.load(Ordering::Acquire);
         if !h.is_null() {

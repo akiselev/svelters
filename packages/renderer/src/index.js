@@ -9,7 +9,7 @@ import { createRenderer } from 'svelte/renderer';
 export const LABEL_KINDS = new Set(['label', 'button']);
 
 /** DOM-ish event name -> native signal. Anything not listed passes through unchanged. */
-export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed' };
+export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed', close: 'close-request' };
 const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
 const signalFor = (type) => EVENT_TO_SIGNAL[type] ?? type;
 const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
@@ -53,6 +53,7 @@ class WNode {
       this.slot = null; // from data-slot / slot
       this.h = null; // native handle once realized
       this.np = null; // native parent this element is inserted under
+      this.dead = null; // reason the native object died (see `gone`), cleared when re-realized
       this.lastLabel = '';
     }
   }
@@ -148,6 +149,7 @@ function updateLabel(el) {
 function realize(el) {
   if (el.h != null) return;
   const hs = host();
+  el.dead = null;
   el.h = hs.create(el.tag);
   byHandle.set(el.h, el);
   for (const [k, v] of el.props) hs.setProp(el.h, k, v);
@@ -232,7 +234,7 @@ function detach(n) {
     const pl = places[i];
     if (!pl.parent || t.h == null) return;
     if (pl.parent === root) markDetached(t);
-    else if (t.np === pl.parent) {
+    else if (t.np === pl.parent && pl.parent.h != null) {
       host().remove(pl.parent.h, t.h);
       t.np = null;
       markDetached(t);
@@ -339,6 +341,22 @@ const renderer = createRenderer({
 });
 
 export default renderer;
+
+/**
+ * The host reports that the native object behind handle `h` died (`reason`: 'closed' | 'parent' |
+ * 'owner' | 'replaced' | 'shutdown' | 'unknown'). The node stays in the JS tree but loses its
+ * handle, so nothing further is sent for it: no remove, no destroy. The backend reports every
+ * descendant separately. Unknown handles (already destroyed here) are ignored.
+ */
+export function gone(h, reason) {
+  const el = byHandle.get(h);
+  if (!el) return;
+  byHandle.delete(h);
+  el.h = null;
+  el.np = null;
+  el.lastLabel = '';
+  el.dead = reason;
+}
 
 /**
  * Deliver a native signal to JS. Handlers registered for the signal (`onclicked`) and for its

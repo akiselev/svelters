@@ -174,6 +174,13 @@ class Model:
 
     def _resolve_signal(self, el: dict, s: dict) -> None:
         tag, cls = el["tag"], el["cls"]
+        if s.get("synthetic"):
+            # Raised by the backend itself, not by a QObject signal. Only `close_request` exists.
+            if s["synthetic"] != "close_request":
+                raise GenError(f"{tag}: unknown synthetic signal {s['synthetic']}")
+            s.setdefault("args", [])
+            s["decl_cls"], s["rec"], s["qparams"] = None, None, []
+            return
         c, rec = self.find(cls, "signals", lambda r: r["name"] == s["native"])
         if not rec:
             raise GenError(f"{tag}: signal {s['native']} not found on {cls}")
@@ -586,6 +593,10 @@ def emit_listen(m: Model) -> str:
         out.append(f"    case K_{t}:\n      switch (sig) {{")
         for s in e["signals"]:
             sid = f"G_{t}_{cident(s['js'])}"
+            if s.get("synthetic"):
+                # onRequestClose: while listened, the backend vetoes the native close and posts it.
+                out.append(f"        case {sid}: {{ e.close_listen = on; e.close_sig = sig; return 0; }}")
+                continue
             ptypes = ", ".join(tn for _, tn in s["qparams"])
             lam_params = ", ".join(f"{tn} a{i}" for i, (_, tn) in enumerate(s["qparams"]))
             out.append(f"        case {sid}: {{")
@@ -623,7 +634,8 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
         if e["layout_cls"]:
             classes.add(e["layout_cls"])
         for s in e.get("signals", []):
-            classes.add(s["decl_cls"])
+            if s["decl_cls"]:
+                classes.add(s["decl_cls"])
         for s in (e.get("children") or {}).get("slots", []):
             classes.update(s["accepts"])
     parts = {
@@ -718,6 +730,8 @@ class Tests:
     def signals(self, e):
         t = e["tag"]
         for s in e.get("signals", []):
+            if s.get("synthetic"):
+                continue  # covered by the hand-written close tests in verify.cpp.in
             trig = lambda i: s["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", str(i))
             expect = s.get("expect_args", [])
             lines = [f'  svl_handle h = mk("{t}");', f'  svl_id sig = G("{t}", "{s["js"]}");',

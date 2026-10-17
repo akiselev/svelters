@@ -414,3 +414,59 @@ fn host_starts_no_timer_thread() {
     host.run().unwrap();
     drop(host);
 }
+
+fn console_text(r: &svelters_host::testing::RunReport) -> Vec<String> {
+    r.console.iter().map(|c| c.text.clone()).collect()
+}
+
+#[test]
+fn native_death_cascades_and_dead_handles_explain_themselves() {
+    let (cfg, opts) = fixture_config();
+    let steps = script(r#"[{"gone":[1,"closed"]},{"checkpoint":true}]"#);
+    let r = run_bundle(&js("lifetime.js"), steps, cfg, opts).unwrap();
+    assert!(r.errors.is_empty(), "{:?}", r.errors);
+    let out = console_text(&r);
+    let has = |needle: &str| out.iter().any(|l| l.contains(needle));
+    let line = |prefix: &str| {
+        out.iter()
+            .find(|l| l.starts_with(prefix))
+            .unwrap_or_else(|| panic!("no console line starting with {prefix:?}: {out:#?}"))
+            .clone()
+    };
+
+    // destroy twice is fine; afterwards reads say why, writes are no-ops, unknown handles differ.
+    assert!(line("get destroyed:").contains("handle #4 was destroyed (destroyed by the app)"));
+    assert_eq!(line("set destroyed:"), "set destroyed: ok");
+    assert!(line("get never issued:").contains("stale or foreign handle 9999"));
+
+    // The cascade reaches JS in order, window first.
+    let gone: Vec<&String> = out.iter().filter(|l| l.starts_with("gone ")).collect();
+    assert_eq!(gone, ["gone #1 closed", "gone #2 parent", "gone #3 parent"]);
+
+    assert!(line("get descendant:").contains("handle #3 was destroyed (its parent was destroyed)"));
+    assert_eq!(line("set descendant:"), "set descendant: ok");
+    assert_eq!(line("listen off descendant:"), "listen off descendant: ok");
+    assert!(line("listen on descendant:").contains("was destroyed"));
+    assert_eq!(line("destroy descendant:"), "destroy descendant: ok");
+    assert_eq!(line("destroy descendant again:"), "destroy descendant again: ok");
+    assert_eq!(line("remove dead:"), "remove dead: ok");
+    assert!(line("insert dead:").contains("was destroyed"));
+    assert!(line("call dead:").contains("handle #1 was destroyed (its window was closed)"));
+    assert!(has("gone #3 parent"));
+
+    // Dead handles never reach the backend: only the one real destroy is logged, and every
+    // cascaded handle is logged exactly once as `gone`.
+    assert_eq!(r.oplog.matches("destroy #").count(), 1, "{}", r.oplog);
+    assert!(r.oplog.ends_with("gone #1 closed\ngone #2 parent\ngone #3 parent\n"), "{}", r.oplog);
+}
+
+#[test]
+fn handles_are_never_reused_and_the_dead_ring_is_bounded() {
+    let (cfg, opts) = fixture_config();
+    let r = run_bundle(&js("dead_ring.js"), vec![], cfg, opts).unwrap();
+    assert!(r.errors.is_empty(), "{:?}", r.errors);
+    let out = console_text(&r);
+    // 5000 handles went through a ring of 4096: the oldest was forgotten, the newest is explained.
+    assert!(out[0].contains("stale or foreign handle"), "{out:?}");
+    assert!(out[1].contains("was destroyed (destroyed by the app)"), "{out:?}");
+}

@@ -43,7 +43,13 @@ fn counter_on_screen() {
         // Native close: the host is told, and the handle goes stale.
         h.widget(win).downcast::<gtk::Window>().unwrap().destroy();
         pump(100);
-        assert_eq!(h.take_destroyed(), vec![win]);
+        // The window is reported first (closed), then every handle that was inserted below it.
+        let gone = h.take_gone();
+        assert_eq!(gone[0], (win, svelters_abi::SVL_GONE_CLOSED));
+        assert!(gone[1..].iter().all(|(_, r)| *r == svelters_abi::SVL_GONE_PARENT), "{gone:?}");
+        let mut all: Vec<u64> = gone.iter().map(|(h, _)| *h).collect();
+        all.sort_unstable();
+        assert_eq!(all, vec![win, bx, label, button]);
         assert!(h.set_str(win, "title", "x").is_err(), "stale handle is an error");
     });
 }

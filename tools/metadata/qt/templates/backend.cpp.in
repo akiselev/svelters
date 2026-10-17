@@ -47,6 +47,9 @@ struct Entry {
   QPointer<QObject> obj;
   svl_id kind = 0;
   QMetaObject::Connection destroyed;
+  bool toplevel = false;      // a parentless widget: lifetime class TOPLEVEL
+  bool close_listen = false;  // JS listens for close-request: veto the close and post it
+  svl_id close_sig = 0;
 };
 
 struct Core {
@@ -98,6 +101,8 @@ void ensure_app() {
     static char *argv[] = {arg0, nullptr};
     static QApplication *app = new QApplication(argc, argv);
     (void)app;
+    // The host decides when the app ends (`quit`), not the toolkit.
+    QApplication::setQuitOnLastWindowClosed(false);
   }
   if (!g.waker.load()) {
     g.waker.store(new QObject(QCoreApplication::instance()));
@@ -121,13 +126,71 @@ void drop_listeners(svl_handle h) {
   g.listeners.erase(lo, hi);
 }
 
-void native_destroyed(svl_handle h) {
+void report_gone(svl_handle h, uint32_t reason) {
+  if (g.host && g.host->on_destroyed) g.host->on_destroyed(g.host->self, h, reason);
+}
+
+// A QObject we hold a handle for was deleted underneath us (its parent died, an owner replaced it).
+// The entry is erased before the host hears about it. Qt emits `destroyed` before the children of
+// a QWidget go, so a child can be reported before or after its parent: the host copes with both.
+void native_destroyed(svl_handle h, QObject *o) {
   auto it = g.table.find(h);
   if (it == g.table.end()) return;
   g.table.erase(it);
   drop_listeners(h);
-  if (g.host && g.host->on_destroyed) g.host->on_destroyed(g.host->self, h, SVL_GONE_UNKNOWN);
+  report_gone(h, o && o->parent() ? SVL_GONE_PARENT : SVL_GONE_UNKNOWN);
 }
+
+// The user (or `close()`) closed a toplevel that JS is not controlling. Every handle at or below
+// the window is forgotten here, while the object tree is still intact, and reported: the window
+// as closed, the rest as `parent`. The widgets themselves are deleted later from the event loop.
+void native_closed(svl_handle h, QObject *win) {
+  std::vector<svl_handle> below;
+  for (auto &kv : g.table) {
+    if (kv.first == h || kv.second.obj.isNull()) continue;
+    for (QObject *p = kv.second.obj->parent(); p; p = p->parent())
+      if (p == win) {
+        below.push_back(kv.first);
+        break;
+      }
+  }
+  std::sort(below.begin(), below.end());
+  below.insert(below.begin(), h);
+  for (svl_handle x : below) {
+    auto it = g.table.find(x);
+    if (it == g.table.end()) continue;
+    QObject::disconnect(it->second.destroyed);
+    g.table.erase(it);
+    drop_listeners(x);
+  }
+  for (svl_handle x : below) report_gone(x, x == h ? SVL_GONE_CLOSED : SVL_GONE_PARENT);
+  win->deleteLater();
+}
+
+svl_handle handle_of(QObject *o) {
+  for (auto &kv : g.table)
+    if (kv.second.obj.data() == o) return kv.first;
+  return 0;
+}
+
+// onRequestClose for toplevels (see backend-abi.md, ABI v2): while JS listens for close-request the
+// close is vetoed and posted as an event; otherwise the window is closed for good.
+struct CloseFilter : QObject {
+  bool eventFilter(QObject *o, QEvent *ev) override {
+    if (ev->type() != QEvent::Close) return false;
+    svl_handle h = handle_of(o);
+    if (!h) return false;
+    Entry &e = g.table[h];
+    if (e.close_listen) {
+      ev->ignore();
+      if (g.host && g.host->post_event) g.host->post_event(g.host->self, h, e.close_sig, nullptr, 0);
+      return true;
+    }
+    ev->accept();
+    native_closed(h, o);
+    return true;
+  }
+};
 
 void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
   if (g.host && g.host->post_event) g.host->post_event(g.host->self, h, sig, args, n);
@@ -259,7 +322,12 @@ svl_handle b_create(void *, svl_id kind) {
   Entry e;
   e.obj = o;
   e.kind = kind;
-  e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *) { native_destroyed(h); });
+  e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *obj) { native_destroyed(h, obj); });
+  if (auto *w = qobject_cast<QWidget *>(o); w && w->isWindow()) {
+    e.toplevel = true;
+    static CloseFilter *filter = new CloseFilter;
+    w->installEventFilter(filter);
+  }
   g.table.emplace(h, std::move(e));
   return h;
 }
@@ -296,7 +364,11 @@ void b_destroy(void *, svl_handle h) {
   QObject::disconnect(it->second.destroyed);
   g.table.erase(it);
   drop_listeners(h);
-  if (o) o->deleteLater();
+  // Never delete synchronously: the caller may be inside one of this object's signals.
+  if (o) {
+    if (auto *w = qobject_cast<QWidget *>(o); w && w->isWindow()) w->hide();
+    o->deleteLater();
+  }
 }
 
 int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
@@ -333,7 +405,7 @@ int b_handle_info(void *, svl_handle h, svl_handle_info *out) {
   Entry *e = find(h);
   if (!e) return fail("handle_info: stale or unknown handle");
   out->kind = e->kind;
-  out->lifetime = SVL_LIFE_OWNED;
+  out->lifetime = e->toplevel ? SVL_LIFE_TOPLEVEL : SVL_LIFE_OWNED;
   out->flags = 0;
   return 0;
 }

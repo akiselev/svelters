@@ -15,7 +15,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use svelters_abi::{
-    Backend, BackendVtable, HostRef, NameKind, SVL_LIFE_OWNED, Value, Waker, svl_handle, svl_handle_info, svl_id,
+    Backend, BackendVtable, HostRef, NameKind, SVL_LIFE_OWNED, SVL_LIFE_TOPLEVEL, Value, Waker,
+    SVL_GONE_PARENT, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
 };
 
 /// One scripted interaction step.
@@ -26,11 +27,17 @@ pub enum Step {
         signal: String,
         args: Vec<Value>,
     },
+    /// The native object behind `handle` dies for `reason` (an `SVL_GONE_*` code), taking its
+    /// descendants with it. Logs `gone #h <reason>` for each and reports them to the host.
+    Gone {
+        handle: svl_handle,
+        reason: u32,
+    },
     Checkpoint,
 }
 
-/// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args]}` and
-/// `{"checkpoint": true}` steps.
+/// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args]}`,
+/// `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
@@ -70,10 +77,16 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
             signal,
             args,
         })
+    } else if let Some(g) = obj.get("gone") {
+        let g = g.as_array().ok_or("gone: expected [handle, reason]")?;
+        let handle = g.first().and_then(|h| h.as_u64()).ok_or("gone: bad handle")?;
+        let name = g.get(1).and_then(|s| s.as_str()).ok_or("gone: bad reason")?;
+        let reason = gone_from_name(name).ok_or_else(|| format!("gone: unknown reason `{name}`"))?;
+        Ok(Step::Gone { handle, reason })
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
-        Err("unknown step (expected `event` or `checkpoint`)".into())
+        Err("unknown step (expected `event`, `gone` or `checkpoint`)".into())
     }
 }
 
@@ -300,6 +313,35 @@ impl LogBackend {
         host.checkpoint();
     }
 
+    /// Kills `h` and its descendants (pre-order): logs `gone #x <reason>` for each (`reason` for
+    /// `h`, `parent` below it) and forgets them. Returns the list in report order.
+    fn kill(&self, h: svl_handle, reason: u32) -> Vec<(svl_handle, u32)> {
+        let mut st = self.shared.lock();
+        let mut dying = Vec::new();
+        let mut stack = vec![(h, reason)];
+        while let Some((x, why)) = stack.pop() {
+            dying.push((x, why));
+            if let Some(kids) = st.children.get(&x) {
+                stack.extend(kids.iter().rev().map(|c| (*c, SVL_GONE_PARENT)));
+            }
+        }
+        if let Some(p) = st.parent.remove(&h) {
+            if let Some(c) = st.children.get_mut(&p) {
+                c.retain(|x| *x != h);
+            }
+        }
+        for (x, why) in &dying {
+            let _ = writeln!(st.log, "gone #{x} {}", gone_name(*why));
+        }
+        for (x, _) in &dying {
+            st.live.remove(x);
+            st.parent.remove(x);
+            st.children.remove(x);
+            st.props.retain(|(ph, _), _| ph != x);
+        }
+        dying
+    }
+
     fn take_wake(&self) -> bool {
         std::mem::take(&mut self.shared.lock().wake_pending)
     }
@@ -439,9 +481,10 @@ impl Backend for LogBackend {
 
     fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
         let kind = self.check_live(h)?;
+        let toplevel = self.shared.lock().names.name(kind) == "window";
         Ok(svl_handle_info {
             kind,
-            lifetime: SVL_LIFE_OWNED,
+            lifetime: if toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
             flags: 0,
         })
     }
@@ -465,6 +508,13 @@ impl Backend for LogBackend {
             }
             match step {
                 Step::Checkpoint => self.checkpoint(host),
+                Step::Gone { handle, reason } => {
+                    self.check_live(handle)?;
+                    for (h, why) in self.kill(handle, reason) {
+                        host.on_destroyed(h, why);
+                    }
+                    self.checkpoint(host);
+                }
                 Step::Event {
                     handle,
                     signal,

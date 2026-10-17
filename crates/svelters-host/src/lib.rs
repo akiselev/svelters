@@ -57,8 +57,12 @@ impl HostCallbacks for Callbacks {
         Err("call_sync is not supported yet (M4)".into())
     }
 
-    fn on_destroyed(&self, h: svl_handle, _reason: u32) {
-        self.core.forget_handle(h);
+    fn on_destroyed(&self, h: svl_handle, reason: u32) {
+        self.core.native_gone(h, reason);
+        // Delivering the death is a checkpoint's job; a live backend needs one scheduled.
+        if !self.core.cfg.scripted {
+            self.core.backend().wake();
+        }
     }
 }
 
