@@ -2,9 +2,9 @@ elements:
   - tag: button
     construct: { class: QPushButton }
     props:
-      - { js: label, native: text }
+      - { js: label, native: text, provenance: "QAbstractButton::text Q_PROPERTY (qdoc); P prop" }
     methods:
-      - { js: click, native: click }
+      - { js: click, native: click, provenance: "QAbstractButton::click() slot (qdoc)" }
     signals:
       - js: clicked
         native: clicked
@@ -13,3 +13,4 @@ elements:
         connect: "clicked(bool)"
         args: []
         trigger: "$w->click()"
+        provenance: "QAbstractButton::clicked(bool) (qdoc); overloads collapsed (signals-and-slots-semantics.md)"

@@ -5,7 +5,7 @@ import { createTestHost } from '@svelters/testhost';
 
 const th = createTestHost();
 globalThis.__svelters_host = th.host;
-const { default: r, root, dispatch, StaleHandleError, BINDINGS } = await import('../src/index.js');
+const { default: r, root, dispatch, gone, StaleHandleError, BINDINGS } = await import('../src/index.js');
 
 const el = (tag, attrs = {}) => {
   const e = r.createElement(tag);
@@ -309,6 +309,47 @@ test('bind: unsupported names and kinds throw with the element kind', () => {
   assert.throws(() => r.bind(lbl, 'text', () => '', () => {}), /bind:text is not supported on <label> \(it has no bindable properties\)/);
   const e = el('entry');
   assert.throws(() => r.bind(e, 'value', () => '', () => {}), /bind:value is not supported on <entry> \(bindable: text\)/);
+});
+
+test('bind: valueFrom prop reads the property when the change signal has no value', async () => {
+  BINDINGS.checkbutton = { active: { prop: 'active', signal: 'toggled', type: 'bool', direction: 'two_way', compare: true, readBack: false, valueFrom: 'prop', toolkits: ['gtk'] } };
+  const win = el('window');
+  const c = el('checkbutton');
+  r.insert(win, c, null);
+  r.insert(root, win, null);
+  take();
+  try {
+    const seen = [];
+    r.bind(c, 'active', () => false, (v) => seen.push(v));
+    th.host.setProp(c.handle, 'active', true); // the user toggles it natively
+    dispatch(c.handle, 'toggled', []);
+    assert.deepEqual(seen, [true]);
+  } finally {
+    delete BINDINGS.checkbutton;
+  }
+  r.remove(win);
+  await tick();
+  take();
+});
+
+test('bind:this node of a natively dead widget reports the ABI v2 death reason', async () => {
+  const win = el('window');
+  const lbl = el('label');
+  r.insert(win, lbl, null);
+  r.insert(root, win, null);
+  take();
+  const { handle: wh } = win;
+  const { handle: lh } = lbl;
+  gone(wh, 'closed');
+  gone(lh, 'parent');
+  for (const [node, why] of [[win, 'closed'], [lbl, 'parent']]) {
+    assert.throws(() => node.getProp('title'), (err) => err instanceof StaleHandleError && err.reason === why && err.message.includes(why));
+  }
+  // the app removing the dead subtree afterwards keeps the native reason and sends nothing
+  r.remove(win);
+  await tick();
+  assert.equal(take(), '');
+  assert.equal(lbl.dead, 'parent');
 });
 
 test('bind: read-back reports a value the native side changed', async () => {

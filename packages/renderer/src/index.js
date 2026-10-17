@@ -329,7 +329,10 @@ function bind(el, name, get, set) {
   }
   const twoWay = spec.direction === 'two_way';
   const handler = (arg) => {
-    const value = nativeIn[spec.type](arg);
+    // `valueFrom: 'prop'`: the change signal carries no value (GTK `toggled`, `notify::*`), so
+    // read the property back from the widget that just changed.
+    const raw = spec.valueFrom === 'prop' ? (el.h != null ? host().getProp(el.h, spec.prop) : undefined) : arg;
+    const value = nativeIn[spec.type](raw);
     if (spec.compare) el.props.set(spec.prop, value);
     set(value);
   };

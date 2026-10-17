@@ -50,6 +50,15 @@ struct Entry {
   bool toplevel = false;      // a parentless widget: lifetime class TOPLEVEL
   bool close_listen = false;  // JS listens for close-request: veto the close and post it
   svl_id close_sig = 0;
+  int suppress = 0;           // > 0 while JS writes an echo-suppressed property: posts are dropped
+};
+
+// Echo suppression for programmatic sets: our own connections drop their posts for this handle
+// while the guard lives. Other observers of the widget still see the signal (never QSignalBlocker).
+struct Suppress {
+  Entry &e;
+  explicit Suppress(Entry &x) : e(x) { ++e.suppress; }
+  ~Suppress() { --e.suppress; }
 };
 
 struct Core {
@@ -193,6 +202,7 @@ struct CloseFilter : QObject {
 };
 
 void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
+  if (auto it = g.table.find(h); it != g.table.end() && it->second.suppress > 0) return;
   if (g.host && g.host->post_event) g.host->post_event(g.host->self, h, sig, args, n);
 }
 

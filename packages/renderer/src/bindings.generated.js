@@ -2,6 +2,6 @@
 // tag -> bind:<name> -> descriptor. `signal` is the JS event name of the change signal.
 export const BINDINGS = {
   entry: {
-    text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, toolkits: ["gtk", "qt"] },
+    text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk", "qt"] },
   },
 };

@@ -289,7 +289,7 @@ fn native_close(backend: &str) {
     );
     let r = run_script(backend, "native-close", &script, &[]);
     r.assert_clean();
-    assert_eq!(r.labels(), ["child closed"]);
+    assert_eq!(r.labels(), ["child closed (parent)"], "the bound child label reports the native death reason");
 }
 
 #[test]

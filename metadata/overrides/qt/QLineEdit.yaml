@@ -2,8 +2,8 @@ elements:
   - tag: entry
     construct: { class: QLineEdit }
     props:
-      - { js: text, native: text, suppress_signals: true }
-      - { js: placeholder, native: placeholderText }
+      - { js: text, native: text, suppress_signals: true, provenance: "QLineEdit::text Q_PROPERTY (qdoc); P prop; setText emits textChanged (qt_sync_probe.py)" }
+      - { js: placeholder, native: placeholderText, provenance: "QLineEdit::placeholderText Q_PROPERTY (qdoc); P prop" }
     bindings:
       # Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6).
       - name: text
@@ -26,3 +26,4 @@ elements:
         args: [{ name: text, type: string }]
         trigger: '$w->setText(QStringLiteral("v") + QString::number($i))'
         expect_args: ["v0"]
+        provenance: "QLineEdit::textChanged(const QString &) (qdoc); emitted for programmatic and user edits"

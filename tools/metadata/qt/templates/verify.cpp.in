@@ -41,10 +41,20 @@ struct Rec {
   void clear() { events.clear(); destroyed.clear(); reasons.clear(); checkpoints = 0; }
 } rec;
 
+// Signal args and property values as strings, so tests compare any type the same way.
+std::string valstr(const svl_value &v) {
+  switch (v.tag) {
+    case SVL_STR: return std::string(v.u.s.ptr, v.u.s.len);
+    case SVL_BOOL: return v.u.b ? "true" : "false";
+    case SVL_I64: return std::to_string(v.u.i);
+    case SVL_F64: { char b[64]; std::snprintf(b, sizeof b, "%g", v.u.f); return b; }
+    default: return std::string();
+  }
+}
+
 void h_post(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n) {
   Ev e{h, sig, {}, n};
-  for (size_t i = 0; i < n; ++i)
-    e.strs.push_back(args[i].tag == SVL_STR ? std::string(args[i].u.s.ptr, args[i].u.s.len) : std::string());
+  for (size_t i = 0; i < n; ++i) e.strs.push_back(valstr(args[i]));
   rec.events.push_back(std::move(e));
 }
 void h_checkpoint(void *) { rec.checkpoints++; }
@@ -88,6 +98,18 @@ svl_value vi64(int64_t i) {
   svl_value v{};
   v.tag = SVL_I64;
   v.u.i = i;
+  return v;
+}
+[[maybe_unused]] svl_value vbool(bool b) {
+  svl_value v{};
+  v.tag = SVL_BOOL;
+  v.u.b = b;
+  return v;
+}
+[[maybe_unused]] svl_value vf64(double f) {
+  svl_value v{};
+  v.tag = SVL_F64;
+  v.u.f = f;
   return v;
 }
 bool was_destroyed(svl_handle h) { return std::find(rec.destroyed.begin(), rec.destroyed.end(), h) != rec.destroyed.end(); }

@@ -16,7 +16,8 @@ elements:
         values:
           horizontal: QBoxLayout::LeftToRight
           vertical: QBoxLayout::TopToBottom
-      - { js: spacing, target: layout, native: spacing }
+        provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
+      - { js: spacing, target: layout, native: spacing, provenance: "QLayout::spacing Q_PROPERTY (qdoc); P prop" }
     children:
       policy: layout_managed
       default_slot: children

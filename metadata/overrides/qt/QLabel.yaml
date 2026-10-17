@@ -2,4 +2,4 @@ elements:
   - tag: label
     construct: { class: QLabel }
     props:
-      - { js: label, native: text }
+      - { js: label, native: text, provenance: "QLabel::text Q_PROPERTY (qdoc); P prop" }
