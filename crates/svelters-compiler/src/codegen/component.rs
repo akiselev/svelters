@@ -29,6 +29,10 @@ pub trait Rewriter {
     fn assign(&self, target: &Expression, value: &str) -> String;
     /// Emits the instance script: (hoisted import text, component-body text), both mapped.
     fn script(&self, w: &mut Writer, hoist: bool);
+    /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
+    fn epilogue(&self, w: &mut Writer) {
+        w.write("$.pop();");
+    }
 }
 
 pub struct Codegen<'a, 's> {
@@ -51,7 +55,7 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
     rw.script(&mut g.w, false);
     g.fragment(&comp.root, "$$anchor");
     g.w.newline();
-    g.w.write("$.pop();");
+    rw.epilogue(&mut g.w);
     g.w.dedent();
     g.w.newline();
     g.w.write("}\n");

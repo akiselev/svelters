@@ -1,0 +1,12 @@
+props_invalid_placement: `$props()` can only be used at the top level of components as a variable declaration initializer @6:17
+props_id_invalid_placement: `$props.id()` can only be used at the top level of components as a variable declaration initializer @7:18
+state_invalid_placement: `$state(...)` can only be used as a variable declaration initializer, a class field declaration, or the first assignment to a class field at the top level of the constructor. @8:12
+effect_invalid_placement: `$effect()` can only be used as an expression statement @10:17
+rune_invalid_arguments_length: `$state` must be called with zero or one arguments @11:11
+rune_invalid_arguments_length: `$derived` must be called with exactly one argument @12:11
+bindable_invalid_location: `$bindable()` can only be used inside a `$props()` declaration @13:11
+rune_invalid_arguments: `$effect.tracking` cannot be called with arguments @14:3
+constant_assignment: Cannot assign to constant @16:5
+inspect_trace_invalid_placement: `$inspect.trace(...)` must be the first statement of a function body @18:5
+constant_assignment: Cannot assign to import @20:19
+each_item_invalid_assignment: Cannot reassign or bind to each block argument in runes mode. Use the array and index variables instead (e.g. `array[i] = value` instead of `entry = value`, or `bind:value={array[i]}` instead of `bind:value={entry}`) @24:27
