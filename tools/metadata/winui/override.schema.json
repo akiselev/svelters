@@ -16,7 +16,7 @@
         "tag": { "type": "string", "description": "Defaults to the class name in kebab-case; anything else needs tag_reason" },
         "tag_reason": { "type": "string" },
         "lifetime": { "enum": ["owned", "toplevel"], "default": "owned" },
-        "text_content": { "type": "string", "description": "Native prop that Text children of the element set" }
+        "text_prop": { "type": "string", "description": "Native prop that Text children of the element set (`<button>Save</button>` sets Content); the compiler and the renderer fold static and {expr} text into it" }
       }
     },
     "props": {
@@ -107,6 +107,26 @@
         "required": ["name", "provenance"],
         "properties": {
           "name": { "type": "string" },
+          "provenance": { "type": "string" }
+        }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "description": "`bind:<name>` targets in the GTK/Qt binding format (docs/notes/fork-bindings.md section 6), read by tools/metadata/common/gen_bindings.py and tools/metadata/semantics/gen_semantics.py. The name and property are the kebab-case JS prop name; change.signal is the kebab-case event name.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "direction", "property", "type", "change", "echo", "lifetime", "provenance"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "direction": { "enum": ["two_way", "read_only"] },
+          "property": { "type": "string" },
+          "type": { "type": "object", "additionalProperties": false, "required": ["ref"], "properties": { "ref": { "type": "string" }, "nullable": { "type": "boolean" } } },
+          "change": { "type": "object", "additionalProperties": false, "required": ["signal"], "properties": { "signal": { "type": "string" }, "role": { "enum": ["any_change", "user_edit"] }, "value": { "enum": ["arg0", "prop"] } } },
+          "write": { "type": "object" },
+          "echo": { "type": "object", "additionalProperties": false, "required": ["strategy"], "properties": { "strategy": { "enum": ["host_suppressed", "compare", "none"] }, "compare_before_set": { "type": "boolean" }, "read_back": { "type": "boolean" }, "sync_signals_on_set": { "type": "array", "items": { "type": "string" } } } },
+          "lifetime": { "type": "object" },
           "provenance": { "type": "string" }
         }
       }

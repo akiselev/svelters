@@ -16,6 +16,8 @@ export const BACKENDS = ['gtk', 'qt'];
 export const TARGETS = [
   { name: 'gtk', backend: 'gtk' },
   { name: 'qt', backend: 'qt' },
+  { name: 'appkit', backend: 'appkit' },
+  { name: 'winui', backend: 'winui' },
   { name: 'testhost', backend: 'gtk', spec: path.join(here, 'out/testhost.spec.json'), overlay: path.join(here, 'testhost-overlay.json') },
 ];
 
@@ -59,6 +61,8 @@ export function cases() {
     'listen-phases': { gtk: 'unknown_event', qt: 'unknown_event' },
     'bind-this': {},
     'borrowed-walk': {},
+    // FX1: setter-rule precedence (explicit > style:/style= > rules > native), the same on both pipelines
+    'style-precedence': {},
   };
   for (const [name, rejectOn] of Object.entries(jsOnly)) {
     out.push({
@@ -69,6 +73,20 @@ export function cases() {
       handwritten: null,
       rejectOn,
       targets: ['gtk', 'qt', 'testhost'],
+    });
+  }
+  // AppKit / WinUI counters (fixtures/counter-{mac,win}): compiled for their own backend only and
+  // run on a TestHost that resolves names like that toolkit (`toolkit`, from metadata/semantics),
+  // compared with the JS pipeline's op log of the same fixture.
+  for (const [name, target] of [['counter-mac', 'appkit'], ['counter-win', 'winui']]) {
+    out.push({
+      name,
+      source: path.join(repo, 'fixtures', name, 'src/App.svelte'),
+      script: path.join(repo, 'fixtures', name, 'script.json'),
+      jsExpected: path.join(repo, 'fixtures', name, 'expected.oplog'),
+      handwritten: null,
+      toolkit: target,
+      targets: [target],
     });
   }
   const own = path.join(here, '../fixtures');

@@ -3,6 +3,7 @@ element:
   tag: button
   lifetime: owned
   construct: new
+  text_prop: title
   provenance: "NSButton.h: -init gives a push button (NSButtonTypeMomentaryPushIn, NSBezelStyleRounded on current macOS). A checkbox is button-type switch, a radio button is button-type radio."
 props:
   - name: title
@@ -42,6 +43,11 @@ methods:
     provenance: "NSButton.h / NSControl.h: simulates a click, sending the action"
 bindings:
   - name: state
+    direction: two_way
     property: state
-    signal: action
-    provenance: "two-way bind:state for checkboxes: the action fires after a user click toggled the state; setting state never sends the action"
+    type: { ref: enum<NSControlStateValue>, nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "two-way bind:state for checkboxes (button-type switch): the action fires after a user click toggled the state and carries no value, so the state is read back; setting state never sends the action"

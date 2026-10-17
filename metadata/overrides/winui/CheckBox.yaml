@@ -1,3 +1,13 @@
 class: Microsoft.UI.Xaml.Controls.CheckBox
 element:
-  text_content: Content
+  text_prop: Content
+bindings:
+  - name: is-checked
+    direction: two_way
+    property: is-checked
+    type: { ref: bool, nullable: true }
+    change: { signal: click, role: user_edit, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "ToggleButton.OnClick toggles IsChecked before ButtonBase raises Click (Click follows the state change), so Click reads the new IsChecked back; programmatic sets raise only Checked/Unchecked, not Click: no echo. IsChecked is IReference<bool>: null (indeterminate) reads as false"

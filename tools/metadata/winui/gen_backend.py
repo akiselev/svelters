@@ -292,13 +292,13 @@ class Model:
         raise GenError(f"{where}: no property {prop} on {cls} or its bases")
 
     def kind_text_content(self, k: dict) -> str | None:
-        tc = k["el"].get("text_content")
+        tc = k["el"].get("text_prop")
         if not tc:
             return None
         for p in self.props:
             if p["native"] == tc and p["class"] in k["chain"] and p["write"]:
                 return p["name"]
-        raise GenError(f"<{k['tag']}>: text_content {tc} is not an exposed writable prop of its chain")
+        raise GenError(f"<{k['tag']}>: text_prop {tc} is not an exposed writable prop of its chain")
 
     def kind_default_slot(self, k: dict) -> int:
         for c in k["chain"]:

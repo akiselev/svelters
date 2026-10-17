@@ -51,6 +51,8 @@ export default defineConfig({
             { label: 'Qt 6 types', slug: 'api/qt/types' },
             { label: 'GTK 4 styling properties', slug: 'api/styling/gtk' },
             { label: 'Qt 6 styling properties', slug: 'api/styling/qt' },
+            { label: 'AppKit styling properties', slug: 'api/styling/appkit' },
+            { label: 'WinUI 3 styling properties', slug: 'api/styling/winui' },
             guide('coverage', 'Coverage dashboard'),
           ],
         },

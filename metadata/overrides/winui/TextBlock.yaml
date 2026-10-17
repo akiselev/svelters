@@ -1,6 +1,6 @@
 class: Microsoft.UI.Xaml.Controls.TextBlock
 element:
-  text_content: Text
+  text_prop: Text
 props:
   - { name: Text, test: "Count: 1", provenance: "TextBlock.Text DP (winmd ITextBlock)" }
   - { name: FontSize, test: 18.0, provenance: "TextBlock.FontSize DP (winmd)" }

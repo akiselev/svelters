@@ -51,7 +51,7 @@ for (const c of cases()) {
     const script = JSON.parse(fs.readFileSync(c.script, 'utf8'));
     let actual;
     try {
-      actual = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script });
+      actual = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, toolkit: c.toolkit });
     } catch (e) {
       failed = true;
       console.log(`FAIL ${tag}: runtime error: ${e.stack ?? e}`);
@@ -68,7 +68,7 @@ for (const c of cases()) {
     }
     const hand = c.handwritten ? fs.readFileSync(c.handwritten, 'utf8') : null;
     const theirs = fs.readFileSync(c.jsExpected, 'utf8');
-    const r = compare(theirs, actual, { defaults: DEFAULTS });
+    const r = compare(theirs, actual, { defaults: { ...DEFAULTS, ...c.defaults?.[backend] } });
     const sameShape = c.handwrittenStale || hand === null || actual === hand;
     if (!sameShape || !r.equal) failed = true;
     const shape = c.handwrittenStale ? 'hand-written outdated' : hand === null ? 'no hand-written equivalent' : sameShape ? 'op log == hand-written' : 'op log != hand-written';

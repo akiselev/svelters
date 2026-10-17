@@ -126,6 +126,23 @@
       "items": {
         "$ref": "#/$defs/binding"
       }
+    },
+    "text_prop": {
+      "description": "Prop that Text children of the element set (`<button>Save</button>`), native or JS name; the compiler and the renderer fold static and {expr} text into it. Inherited along the kind chain (Button applies to ToggleButton). Not merged into metadata/gtk: tools/metadata/semantics/gen_semantics.py reads it from here.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "provenance"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
     }
   },
   "$defs": {

@@ -20,12 +20,7 @@ kinds:
   window:
     present: present
     provenance: "QMainWindow.yaml methods: present = show(); runtime-contract.md element(kind, present)"
-  label:
-    text_content: label
-    provenance: "@svelters/renderer LABEL_KINDS"
-  button:
-    text_content: label
-    provenance: "@svelters/renderer LABEL_KINDS"
+  # Text children (`text_content`) come from `elements[].text_prop` in metadata/overrides/qt.
   # entry bind:text comes from the `bindings` annotation in metadata/overrides/qt/QLineEdit.yaml.
 
 # Qt metaobject dumps carry no defaults for these properties; values from the Qt 6 docs.

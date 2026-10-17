@@ -52,3 +52,6 @@ methods:
     setup: 'h.set_str(o, "label", "shown").unwrap();'
     expect: 'r == V::Str("shown".into())'
     provenance: "gtk_label_get_text (Gtk 4 docs); called through GIRepository (X1)"
+text_prop:
+  name: label
+  provenance: "GtkLabel:label holds the text (Gtk 4 docs); text children fold into it, as @svelters/renderer always did"

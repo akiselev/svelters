@@ -1,6 +1,7 @@
 elements:
   - tag: button
     construct: { class: QPushButton }
+    text_prop: text   # QAbstractButton::text (qdoc); text children fold into it
     exclude: [checked]   # not checkable by default: isChecked() stays false, so the inherited checked prop test cannot pass here
     props:
       - { js: label, native: text, provenance: "QAbstractButton::text Q_PROPERTY (qdoc); P prop" }

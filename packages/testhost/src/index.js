@@ -11,7 +11,45 @@ const defaultSchema = JSON.parse(fs.readFileSync(new URL('./schema.json', import
  * renderer coerces attribute strings the same way on this host as on the native one. The default is
  * generated from the GTK metadata (`tools/metadata/gtk/gen_backend.py`).
  */
-export function createTestHost({ schema = defaultSchema } = {}) {
+const COARSE = { i32: 'integer', u32: 'integer', i64: 'integer', f64: 'number', bool: 'boolean', string: 'string', enum: 'enum', flags: 'flags', record: 'record' };
+
+/**
+ * A toolkit's member tables from its semantic spec (metadata/semantics/<toolkit>.json): per tag,
+ * the props, signals and methods of the kind chain, plus the coarse prop types (`schema`).
+ */
+export function toolkitTables(toolkit) {
+  const spec = JSON.parse(fs.readFileSync(new URL(`../../../metadata/semantics/${toolkit}.json`, import.meta.url), 'utf8'));
+  const tags = {};
+  const schema = {};
+  for (const [tag, kid] of Object.entries(spec.tags)) {
+    const t = (tags[tag] = { props: new Set(), signals: new Set(), methods: new Set() });
+    const types = (schema[tag] = {});
+    for (const c of spec.kinds[kid].chain) {
+      const k = spec.kinds[c];
+      if (!k) continue;
+      for (const p of Object.values(k.props)) {
+        for (const n of [p.js, p.native]) {
+          t.props.add(n);
+          if (COARSE[p.type] && !(n in types)) types[n] = COARSE[p.type];
+        }
+      }
+      for (const sg of Object.values(k.signals)) t.signals.add(sg.name).add(sg.js_event);
+      for (const m of Object.keys(k.methods ?? {})) t.methods.add(m);
+    }
+  }
+  return { tags, schema };
+}
+
+/**
+ * `toolkit` (`gtk`, `qt`, `appkit`, `winui`): resolve names like that toolkit's backend does
+ * (toolkitTables): `propId`/`signalId`/`methodId` answer null for a name the kind does not have,
+ * so the renderer picks the toolkit's own candidates (text props, binding variants, `click` vs
+ * `clicked`). Without it every name resolves (the GTK-shaped default).
+ */
+export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
+  const tables = toolkit ? toolkitTables(toolkit) : null;
+  const schema = schemaOpt ?? tables?.schema ?? defaultSchema;
+  const knows = (kid, set, name) => !tables || tables.tags[kindNames[kid]]?.[set].has(name) === true;
   const lines = [];
   // Ids exist only to exercise the renderer's id path; the log always prints names.
   const kindNames = [null];
@@ -45,6 +83,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       return kindIds.get(tag);
     },
     propId(kid, name) {
+      if (!knows(kid, 'props', name)) return null;
       const key = `${kid}:${name}`;
       if (!propIdOf.has(key)) {
         const id = propIdOf.size + 1;
@@ -54,6 +93,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       return propIdOf.get(key);
     },
     methodId(kid, name) {
+      if (!knows(kid, 'methods', name)) return null;
       const key = `${kid}:${name}`;
       if (!methodIdOf.has(key)) {
         const id = methodIdOf.size + 1;
@@ -62,6 +102,8 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       }
       return methodIdOf.get(key);
     },
+    // Only with a toolkit: signals have no ids, so this answers whether the kind has `name`.
+    ...(tables ? { signalId: (kid, name) => (knows(kid, 'signals', name) ? name : null) } : {}),
     propType(kid, pid) {
       return schema[kindNames[kid]]?.[nameOf(propNames, kid, pid)] ?? null;
     },
@@ -271,8 +313,8 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
  */
-export async function runBundle({ bundlePath, script, styleDialect }) {
-  const th = createTestHost();
+export async function runBundle({ bundlePath, script, styleDialect, toolkit }) {
+  const th = createTestHost({ toolkit });
   if (styleDialect === 'qss') {
     // answer the Qt dialect (style target 2), so the bundle applies the Qt style table
     const style = th.host.style;

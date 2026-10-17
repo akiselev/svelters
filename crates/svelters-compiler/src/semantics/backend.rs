@@ -6,6 +6,8 @@ use std::path::Path;
 
 const GTK_JSON: &str = include_str!("../../../../metadata/semantics/gtk.json");
 const QT_JSON: &str = include_str!("../../../../metadata/semantics/qt.json");
+const APPKIT_JSON: &str = include_str!("../../../../metadata/semantics/appkit.json");
+const WINUI_JSON: &str = include_str!("../../../../metadata/semantics/winui.json");
 
 #[derive(Debug, Clone)]
 pub struct SpecBackend {
@@ -23,12 +25,14 @@ impl SpecBackend {
         SpecBackend::from_json(&text)
     }
 
-    /// The checked-in spec of a built-in backend (`gtk` or `qt`), embedded at build time.
+    /// The checked-in spec of a built-in backend (`gtk`, `qt`, `appkit` or `winui`), embedded at build time.
     pub fn builtin(backend: &str) -> Result<SpecBackend, String> {
         match backend {
             "gtk" => SpecBackend::from_json(GTK_JSON),
             "qt" => SpecBackend::from_json(QT_JSON),
-            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt)")),
+            "appkit" => SpecBackend::from_json(APPKIT_JSON),
+            "winui" => SpecBackend::from_json(WINUI_JSON),
+            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui)")),
         }
     }
 
@@ -70,10 +74,10 @@ impl SpecBackend {
     }
 
     fn only_annotated(&self) -> &'static str {
-        if self.spec.backend == "qt" {
-            " (only annotated properties exist on qt: metadata/overrides/qt)"
-        } else {
-            ""
+        match self.spec.backend.as_str() {
+            "qt" => " (only annotated properties exist on qt: metadata/overrides/qt)",
+            "winui" => " (only annotated properties exist on winui: metadata/overrides/winui)",
+            _ => "",
         }
     }
 

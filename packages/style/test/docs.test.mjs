@@ -43,6 +43,17 @@ test('the generated reference pages list every property of their toolkit', () =>
   }
 });
 
+for (const tk of ['appkit', 'winui']) {
+  test(`${tk} has setters only and a generated reference page`, () => {
+    const t = STYLE_TABLES[tk];
+    assert.equal(t.dialect, 'none');
+    const vias = Object.values(t.props).map((e) => e.via);
+    assert.ok(vias.length > 0 && !vias.includes('css'), 'no CSS properties on a toolkit without a styling dialect');
+    const md = renderStylingPages().get(`api/styling/${tk}.md`);
+    assert.match(md, /Native styling dialect: none \(setters only\)/);
+  });
+}
+
 test('the documented default tokens equal the built-in sets', () => {
   const start = page.indexOf('| Token | Light | Dark |');
   const rows = page

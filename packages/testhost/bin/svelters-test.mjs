@@ -30,7 +30,9 @@ for (const [re, what] of forbidden) {
 }
 
 const script = JSON.parse(fs.readFileSync(path.join(dir, 'script.json'), 'utf8'));
-const actual = await runBundle({ bundlePath, script });
+// `"svelters": { "toolkit": "appkit" }` in the fixture's package.json: resolve names like that toolkit
+const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+const actual = await runBundle({ bundlePath, script, toolkit: pkg.svelters?.toolkit });
 
 if (update) {
   fs.writeFileSync(expectedPath, actual);

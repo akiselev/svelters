@@ -41,3 +41,10 @@ test('defaults: a prop written with its default value counts as unset', () => {
   assert.equal(compare(base, extra).equal, false);
   assert.equal(compare(base, extra, { defaults: { label: '' } }).equal, true);
 });
+
+test('style lines: the widget name is state, classes and sheets are not; a null write counts as unset', () => {
+  const named = base.replace('create label #2\n', 'create label #2\nstyle #2 name "a"\nstyle #2 classes "x svelte-1"\nstyle sheet "s" null\n');
+  assert.equal(compare(named, named.replace('classes "x svelte-1"', 'classes "x"')).equal, true);
+  assert.equal(compare(named, named.replace('name "a"', 'name "b"')).equal, false);
+  assert.equal(compare(base, base.replace('set #2 label "a"\n', 'set #2 label "a"\nset #2 width null\n')).equal, true);
+});

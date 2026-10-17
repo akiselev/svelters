@@ -4,3 +4,13 @@ props:
   - { name: StepFrequency, test: 5.0, provenance: "Slider.StepFrequency DP (winmd)" }
   - { name: Orientation, test: Vertical, provenance: "Slider.Orientation DP (winmd)" }
   - { name: Header, as: string, test: "Volume", provenance: "Slider.Header: object (winmd); text header as boxed HSTRING" }
+bindings:
+  - name: value
+    direction: two_way
+    property: value
+    type: { ref: f64, nullable: false }
+    change: { signal: value-changed, role: user_edit, value: arg0 }
+    write: { natively_normalizes: false }
+    echo: { strategy: compare, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "RangeBase.ValueChanged carries NewValue (payload arg0) and is raised for programmatic sets too: the renderer compares before setting, so the echo is a no-op"
