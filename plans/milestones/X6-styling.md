@@ -28,3 +28,32 @@ Goal: Svelte `class`, `class:`, `style:`, `style=` and component `<style>` block
 - Integration on GTK and Qt: native read-back of computed colours (GTK `gtk_widget_get_color` / style context; Qt palette and `grab()` pixels), class toggling, inline style, runtime token change, scheme switch.
 - Gallery: a styled page and its themed (dark) variant on each toolkit with screenshot tests.
 - Gates: `pnpm test`, `pnpm docs:test`, `cargo-slot xvfb-run -a cargo nextest run --workspace`.
+
+## Completion record
+
+State: DONE on branch `worktree-agent-a9423c9b161b6f8f8` (not merged; master untouched).
+
+What landed, by step (commits on the branch):
+
+1. Plan, ABI v2.3 section, notes.
+2. `@svelters/style` (`packages/style`): vocabulary and support matrix (`vocab.js`), declaration translator (`decls.js`), sheet translator (`translate.js`), tokens (`tokens.js`), generated kinds table (`kinds.generated.js` from `tools/metadata/style/gen_kinds.py`), 10 node tests with goldens (`test/golden/*.golden`) and a docs-vs-matrix test.
+3. ABI member `style` (header, Rust ABI crate, host `op_style`, QuickJS `host.style`, log backend, TestHost), renderer `class`/`style`/`id` forwarding and the `@svelters/renderer/style` API (`registerStyles`, `setTokens`, `getTokens`, `setColorScheme`, `getColorScheme`), build plugin `packages/build/style-plugin.js`, `fixtures/styles`.
+4. GTK backend (`crates/svelters-gtk/src/backend/style.rs`).
+5. Qt backend (`tools/metadata/qt/templates/backend.cpp.in`, styling section plus test hooks `svl_qt_pixel`, `svl_qt_palette_color`, `svl_qt_app_stylesheet`, `svl_qt_opacity`).
+6. Tests (below), gallery pages, screenshots.
+7. Styling guide in `docs/site` and the docs tests that tie it to the code.
+
+Tests added:
+
+| Layer | Count | Where |
+| --- | --- | --- |
+| translator goldens, inline, tokens, docs matrix | 10 | `packages/style/test/` |
+| renderer ops (diffing, coalescing, tokens, scheme) | 4 | `packages/renderer/test/style.test.mjs` |
+| fixture op log | 1 | `fixtures/styles` (also replayed on GTK and Qt by `oplog_replay`) |
+| GTK backend, native read-back (`style_context().color()`, rendered pixel, css classes, parse errors) | 14 | `crates/svelters-gtk/tests/style.rs` |
+| Qt backend, native read-back (palette, `grab()` pixels, class property, app stylesheet) | 11 | `examples/counter-qt/tests/style.rs` |
+| host end to end (Svelte -> pixels, tokens, scheme) | 2 | `crates/svelters-gtk/tests/host_style.rs`, `examples/counter-qt/tests/host_style.rs` |
+| gallery screenshot tests with exact-colour checks | 4 | `examples/counter/tests/gallery.rs` (`gtk_10_styling`, `gtk_11_styling_dark`, `qt_11_styling`, `qt_12_styling_dark`) |
+| kinds table consistency | 3 | `tools/metadata/style/test_gen_kinds.py` |
+
+Gates at the end: `pnpm test` ok, `pnpm docs:test` 14 pass / 1 skip (the built-site smoke test needs `pnpm docs:build`, which also passed: 881 pages, 122008 internal references resolve), `cargo-slot xvfb-run -a cargo nextest run --workspace` 638 passed, 1 flaky (`counter::integration bind_value_gtk`, unrelated to styling, passed on retry).
