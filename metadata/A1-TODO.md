@@ -278,7 +278,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - M: QProgressBar `reset`; QLCDNumber `display(int)`/`display(double)` (pick one).
 - B: QSpinBox/QDoubleSpinBox `bind:value` (valueChanged, arg0, suppress_signals); sliders inherit QAbstractSlider's.
 - Gallery: `04-ranges.svelte`.
-- Status: todo
+- Status: done (205 generated tests pass across slider, dial, scrollbar, spinbox, doublespinbox, progressbar, lcdnumber; bind:value on 5 elements; inherited QAbstractSlider/QAbstractSpinBox facts now exercised; dropped: none; note: gen_bindings does not resolve inherited props/signals, so slider/dial/scrollbar redeclare value + valueChanged on the element)
 
 ### qt-containers-a: frames, group boxes, splitters, stacks, tabs, tool boxes
 

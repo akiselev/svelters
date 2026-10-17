@@ -104,6 +104,7 @@ gallery_page!(gtk_04_ranges, "gtk", "04-ranges", ["GtkProgressBar", "GtkLevelBar
 gallery_page!(qt_00_overview, "qt", "00-overview", ["QLineEdit", "QPushButton", "QLabel"]);
 gallery_page!(qt_01_widget, "qt", "01-widget", ["QWidget", "QPushButton", "QLineEdit", "QLabel"]);
 gallery_page!(qt_02_buttons, "qt", "02-buttons", ["QPushButton", "QCheckBox", "QRadioButton", "QToolButton", "QCommandLinkButton"]);
+gallery_page!(qt_04_ranges, "qt", "04-ranges", ["QSlider", "QDial", "QScrollBar", "QSpinBox", "QDoubleSpinBox", "QProgressBar", "QLCDNumber"]);
 gallery_page!(qt_05_containers, "qt", "05-containers", ["QFrame", "QGroupBox", "QScrollArea", "QSplitter", "QStackedWidget", "QTabWidget", "QToolBox"]);
 gallery_page!(qt_07_selection, "qt", "07-selection", ["QComboBox", "QFontComboBox", "QListWidget"]);
 gallery_page!(qt_08_bars, "qt", "08-bars", ["QTabBar", "QDialogButtonBox", "QStatusBar", "QMenuBar", "QToolBar"]);
