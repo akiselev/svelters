@@ -80,6 +80,12 @@ class WNode {
     return this.h ?? null;
   }
 
+  /** Set a native property through the bound node (`bind:this`); throws StaleHandleError when dead. */
+  setProp(name, value) {
+    const hs = host();
+    hs.setProp(liveHandle(this), propRef(hs, this.tag, name), value);
+  }
+
   /** Call a native method through the bound node (`bind:this`); throws StaleHandleError when dead. */
   call(method, ...args) {
     return host().call(liveHandle(this), method, args);
@@ -159,7 +165,26 @@ function placement(n) {
 function isAttached(el) {
   let n = el;
   while (n.parent) n = n.parent;
-  return n === root;
+  return n === root || n.outlet === true;
+}
+
+/**
+ * A realized element that is not part of the window tree: a mount target for content a backend
+ * hosts itself (a recycled list row). Its children are inserted natively as they are mounted, and
+ * it is never swept. The owner passes it to a native call (`view.call('setRow', row, outlet)`) and
+ * ends it with `releaseOutlet`.
+ */
+export function outlet(tag = 'box') {
+  const el = new WNode('element', tag);
+  el.outlet = true;
+  realize(el);
+  return el;
+}
+
+/** Destroys an outlet and everything mounted in it (the native widget handles are released). */
+export function releaseOutlet(el) {
+  el.outlet = false;
+  destroyTree(el);
 }
 
 const enqueue = (fn) => {
