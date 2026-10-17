@@ -1,7 +1,7 @@
 # Hand-written GTK kinds (crates/svelters-gtk/src/backend/menus.rs): they have no GIR class, so they
 # have no ingested metadata. This file lists their members for the cross-checks of
-# tools/metadata/common/gen_bindings.py and the typings; the facts themselves are tested by
-# crates/svelters-gtk/tests/menus.rs.
+# tools/metadata/common/gen_bindings.py and holds their facts for the verified ledger
+# (tools/metadata/ledger.py).
 elements:
   - tag: action
     props: [label, icon, shortcut, tooltip, enabled, visible, checkable, checked, group]
@@ -16,3 +16,18 @@ elements:
         echo: { strategy: compare, compare_before_set: true, read_back: false }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "menus.rs: a JS write sets the action state without emitting change-state; only a user activation posts `toggled`"
+
+# `tests` are `<test binary>::<test function>` of crates/svelters-gtk/tests. The fingerprint covers the
+# fact record and the source of the test files, so a changed test must be re-verified.
+facts:
+  - { id: "action:props", provenance: "menus.rs: label, icon, shortcut, tooltip, enabled, visible, checkable, checked, group", tests: [menus::a_menubar_follows_inserts_removes_and_reorders, menus::shortcuts_run_the_action_and_show_in_the_model, menus::a_toolbar_shows_one_button_per_action] }
+  - { id: "action:signal:activate", provenance: "GSimpleAction::activate -> activate(checked)", tests: [menus::activating_an_action_posts_activate_and_a_disabled_one_does_not, host_menus::the_menus_fixture_drives_native_menus_both_ways] }
+  - { id: "action:signal:toggled", provenance: "change-state of a bool or string state -> toggled(checked)", tests: [menus::check_actions_toggle_natively_and_js_writes_do_not_echo, menus::radio_groups_are_exclusive_and_keep_one_checked_flag_per_action] }
+  - { id: "action:binding:checked", provenance: "bind:checked: no echo on JS writes, native toggles reach JS", tests: [menus::check_actions_toggle_natively_and_js_writes_do_not_echo, host_menus::the_menus_fixture_drives_native_menus_both_ways] }
+  - { id: "action:group", provenance: "radio groups: one string-state action per (parent, group)", tests: [menus::radio_groups_are_exclusive_and_keep_one_checked_flag_per_action] }
+  - { id: "action:shortcut", provenance: "global GtkShortcutController on the root widget; accel attribute in the model", tests: [menus::shortcuts_run_the_action_and_show_in_the_model, host_menus::the_menus_fixture_drives_native_menus_both_ways] }
+  - { id: "menu:slot:items", provenance: "insert/remove/reorder of actions, separators and submenus update the GMenu", tests: [menus::a_menubar_follows_inserts_removes_and_reorders, menus::sections_split_at_separators, menus::errors_are_reported_not_crashed] }
+  - { id: "menubar:kind", provenance: "GtkPopoverMenuBar over the root GMenu", tests: [menus::a_menubar_follows_inserts_removes_and_reorders, host_menus::the_menus_fixture_drives_native_menus_both_ways] }
+  - { id: "toolbar:kind", provenance: "GtkBox of buttons per action node", tests: [menus::a_toolbar_shows_one_button_per_action] }
+  - { id: "contextmenu:kind", provenance: "GtkPopoverMenu parented to the target widget; popup/popdown methods", tests: [menus::a_contextmenu_attaches_to_its_parent_widget_and_pops_up, host_menus::the_menus_fixture_drives_native_menus_both_ways] }
+  - { id: "menubutton:slot:menu", provenance: "GtkMenuButton:menu-model", tests: [menus::a_menubutton_takes_a_menu_child] }
