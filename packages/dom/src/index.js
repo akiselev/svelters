@@ -254,8 +254,20 @@ export function createDom(host) {
       else ref.before(n);
       return n;
     }
-    before(...ns) { const p = this.parentNode; if (p) p._ins(ns, p._c.indexOf(this)); }
-    after(...ns) { const p = this.parentNode; if (p) p._ins(ns, p._c.indexOf(this) + 1); }
+    // Detach the moved nodes first: removing a node that sits before `this` in the same parent
+    // shifts `this`, so the index must be computed afterwards (keyed {#each} reorders hit this).
+    before(...ns) {
+      const p = this.parentNode;
+      if (!p) return;
+      for (const n of ns) if (n !== this && n.nodeType !== 11) n.remove();
+      p._ins(ns, p._c.indexOf(this));
+    }
+    after(...ns) {
+      const p = this.parentNode;
+      if (!p) return;
+      for (const n of ns) if (n !== this && n.nodeType !== 11) n.remove();
+      p._ins(ns, p._c.indexOf(this) + 1);
+    }
     remove() {
       const p = this.parentNode;
       if (!p) return;
