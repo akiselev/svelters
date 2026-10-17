@@ -404,11 +404,14 @@ const nativeIn = {
   string: (v) => (typeof v === 'string' ? v : v !== null && typeof v === 'object' ? String(v.detail ?? '') : String(v ?? '')),
   bool: Boolean,
   number: Number,
+  // Structured values (dates, records): passed through; the host's descriptors convert them.
+  value: (v) => v,
 };
 const nativeOut = {
   string: (v) => (v == null ? '' : String(v)),
   bool: Boolean,
   number: (v) => (v == null ? 0 : Number(v)),
+  value: (v) => v,
 };
 
 // `bind:<name>` on a native element (the fork's renderer.bind hook). The descriptor comes from the

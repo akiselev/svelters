@@ -2,11 +2,21 @@ elements:
   - tag: dateedit
     construct: { class: QDateEdit }
     props:
-      - { js: date, native: date, provenance: "QDateEdit::date (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: date, native: date, suppress_signals: true, provenance: "QDateEdit::date (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: displayFormat, native: displayFormat, sample: "yyyy-MM-dd", provenance: "QDateEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: calendarPopup, native: calendarPopup, provenance: "QDateEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: minimumDate, native: minimumDate, provenance: "QDateEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: maximumDate, native: maximumDate, provenance: "QDateEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
+    bindings:
+      - name: date
+        direction: two_way
+        property: date
+        type: { ref: date, nullable: false }
+        change: { signal: date-changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: true }    # clamped to minimumDate..maximumDate
+        echo: { strategy: host_suppressed, compare_before_set: false, read_back: false, sync_signals_on_set: ["dateChanged(QDate)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QDateEdit::setDate emits dateChanged only on change and clamps to the range (qdoc); no-echo test for non-scalar props (A1-GAPS G16)"
     signals:
       - js: date-changed
         native: dateChanged

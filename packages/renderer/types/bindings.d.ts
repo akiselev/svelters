@@ -13,6 +13,9 @@ export interface BindableProps {
   combobox: {
     currentIndex: number; // qt
   };
+  dateedit: {
+    date: { year: number; month: number; day: number }; // qt
+  };
   dial: {
     value: number; // qt
   };

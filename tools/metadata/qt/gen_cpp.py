@@ -1668,6 +1668,22 @@ class Tests:
             sigs = [sg for sg in e.get("signals", []) if not sg.get("synthetic")]
             if not sigs or not sigs[0].get("trigger"):
                 raise GenError(f"{pn}: suppress_signals needs a signal with a trigger on the element")
+            if cat not in SCALAR:
+                # Non-scalar values (dates, records): no literal sample. Read the value, change it natively
+                # with nothing listening (no backend output is produced, so `out` stays valid), then write the
+                # first value back through the backend while listening: nothing may be posted (A1-GAPS G16).
+                trig = lambda i: sigs[0]["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", str(i))
+                lines = [f'  svl_handle h = mk("{t}");', f"  {trig(0)};", "  svl_value out{};",
+                         f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0);", f"  {trig(1)};"]
+                for sg in sigs:
+                    lines.append(f'  CHECK(B->listen(B->self, h, G("{t}", "{sg["js"]}"), true) == 0);')
+                lines += [f"  CHECK(B->set_prop(B->self, h, {P_}, &out) == 0);",
+                          "  CHECK(rec.events.empty());  // no echo for programmatic sets",
+                          f"  {trig(2)};",
+                          "  CHECK(!rec.events.empty());  // native changes are still delivered",
+                          "  B->destroy(B->self, h);"]
+                self.add(f"signal/{t}.{pn}/no_echo_on_set_prop", "\n".join(lines))
+                return
             decl, _, _ = self.sample(p)
             lines = [f'  svl_handle h = mk("{t}");', f"  {decl}"]
             for sg in sigs:

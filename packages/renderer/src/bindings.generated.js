@@ -13,6 +13,9 @@ export const BINDINGS = {
   combobox: {
     currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  dateedit: {
+    date: { prop: "date", signal: "date-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   dial: {
     value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
