@@ -328,6 +328,28 @@ fn bind_this_qt() {
     bind_this("qt");
 }
 
+// ---- borrowed handles: getters return renderer nodes with stable identity ----
+
+fn borrowed_walk(backend: &str) {
+    // Walk: entry.getParent() is the bound box (twice the same node), getRoot() is the window,
+    // the parent chain has two steps (box, window), and the scrolled window's native viewport is
+    // one stable borrowed node whose parent is the bound scrolled window. Drop removes the
+    // scrolled window; the borrowed viewport dies with it (reason `owner`) and Probe sees that.
+    let r = run_fixture(backend, "borrowed-walk");
+    r.assert_clean();
+    assert_eq!(r.labels(), ["same: true", "root: true", "depth: 2", "inner: true", "stale: StaleHandleError: owner"]);
+}
+
+#[test]
+fn borrowed_walk_gtk() {
+    borrowed_walk("gtk");
+}
+
+#[test]
+fn borrowed_walk_qt() {
+    borrowed_walk("qt");
+}
+
 // ---- bind:text: echo suppression, verified natively ----
 
 fn changes(r: &Run) -> u32 {

@@ -72,6 +72,9 @@ pub(crate) trait JsReader {
     fn bytes(&self, v: &Self::V, guards: &mut Vec<Guard>) -> Result<(*const u8, usize), String>;
     /// `(handle, type id)` when `v` is a boxed-value wrapper that has not been disposed.
     fn boxed(&self, v: &Self::V) -> Result<Option<(svl_handle, svl_id)>, String>;
+    /// A renderer node standing for a native handle: `None` when `v` is not a node, `Some(None)`
+    /// for a node that has no live native object.
+    fn node_handle(&self, v: &Self::V) -> Result<Option<Option<f64>>, String>;
 }
 
 /// What async native methods need from a JS engine.
@@ -95,6 +98,8 @@ pub(crate) trait JsWriter {
     fn bytes(&self, b: &[u8]) -> Result<Self::V, String>;
     fn date(&self, ms: f64) -> Result<Self::V, String>;
     fn boxed(&self, handle: svl_handle, ty: svl_id, type_name: &str) -> Result<Self::V, String>;
+    /// A native object handle: the renderer's node for it when one is installed, else the number.
+    fn handle(&self, h: svl_handle) -> Result<Self::V, String>;
     fn native_error(&self, domain: &str, code: Self::V, message: &str) -> Result<Self::V, String>;
 }
 
@@ -364,10 +369,17 @@ fn encode_at<R: JsReader>(
                 // An object that has a canonical string form (a shortcut trigger, a file path).
                 return encode_str(r, v, kind, slot, cx, ar);
             }
-            if kind != JsKind::Number {
+            let n = if kind == JsKind::Object {
+                match r.node_handle(v)? {
+                    Some(Some(n)) => n,
+                    Some(None) => return Err(ConvError::type_("node has no live native object (not created yet, or already dead)".to_string())),
+                    None => return Err(expected(r, v, "object handle")),
+                }
+            } else if kind == JsKind::Number {
+                r.number(v)
+            } else {
                 return Err(expected(r, v, "object handle"));
-            }
-            let n = r.number(v);
+            };
             if !(n.is_finite() && n >= 1.0 && n.fract() == 0.0 && n < MAX_SAFE) {
                 return Err(ConvError::type_(format!("invalid handle {}", describe(r, v))));
             }
@@ -812,6 +824,10 @@ fn dynamic<R: JsReader>(
         }
         JsKind::Object => match r.boxed(v)? {
             Some((h, ty)) => Ok(svl_value::typed(SVL_BOXED, ty, svl_value_u { h })),
+            None if r.node_handle(v)?.is_some() => match r.node_handle(v)? {
+                Some(Some(n)) if n >= 1.0 && n.fract() == 0.0 && n < MAX_SAFE => Ok(svl_value::new(SVL_HANDLE, svl_value_u { h: n as u64 })),
+                _ => Err(ConvError::type_("node has no live native object (not created yet, or already dead)".to_string())),
+            },
             // A plain object in a variant slot is a string-keyed map.
             None if variant => encode_map(r, v, kind, cx, ar, depth),
             None => Err(ConvError::type_(
@@ -854,7 +870,7 @@ fn decode_at<W: JsWriter>(w: &W, v: &Value, types: &dyn TypeSource, depth: u32) 
         Value::F64(f) => w.number(*f),
         Value::DateTime(ms) => w.date(*ms),
         Value::Str(s) => w.string(s),
-        Value::Handle(h) => w.number(*h as f64),
+        Value::Handle(h) => w.handle(*h),
         Value::List(items) => {
             let vs = items
                 .iter()

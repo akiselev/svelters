@@ -75,6 +75,11 @@ class WNode {
     return this.h ?? null;
   }
 
+  /** What the host converts a node argument to (`call(h, 'set_child', [node])`); null when dead. */
+  get svlHandle() {
+    return this.h ?? null;
+  }
+
   /** Call a native method through the bound node (`bind:this`); throws StaleHandleError when dead. */
   call(method, ...args) {
     return host().call(liveHandle(this), method, args);
@@ -88,10 +93,44 @@ class WNode {
 
 const host = () => globalThis.__svelters_host;
 const byHandle = new Map(); // handle -> WNode, realized elements only
+const borrowedNodes = new Map(); // handle -> WeakRef<WNode> for native objects the app did not create
 const sweepSet = new Set(); // elements natively detached since the last sweep
 let sweepQueued = false;
 
 export const root = new WNode('element', 'svelters-root');
+
+// Borrowed handles (native objects a getter or call returned, such as a parent, a root or an
+// entry's inner text) are wrapped in nodes that are never part of the tree. They are held weakly
+// and forgotten natively once the node is collected; a handle that already has a realized element
+// (an object we created) resolves to that element, so identity holds across getters.
+const releaseBorrowed = (h) => {
+  if (borrowedNodes.get(h)?.deref()) return; // a newer wrapper took over the handle
+  borrowedNodes.delete(h);
+  try {
+    host().destroy(h);
+  } catch {
+    // the host is shutting down
+  }
+};
+const borrowedRegistry = typeof FinalizationRegistry === 'function' ? new FinalizationRegistry(releaseBorrowed) : null;
+
+/** The node for native handle `h`: the realized element, or a borrowed node (one per handle). */
+export function nodeFor(h) {
+  const el = byHandle.get(h);
+  if (el) return el;
+  const live = borrowedNodes.get(h)?.deref();
+  if (live) return live;
+  const n = new WNode('element', 'borrowed');
+  n.borrowed = true;
+  n.h = h;
+  borrowedNodes.set(h, typeof WeakRef === 'function' ? new WeakRef(n) : { deref: () => n });
+  borrowedRegistry?.register(n, h);
+  return n;
+}
+
+const noBorrowed = (what) => {
+  throw new Error(`a borrowed native object cannot be ${what} through the tree`);
+};
 
 const isProxy = (n) => n.kind === 'element' && n.tag === PROXY_TAG;
 const proxySlot = (n) => (typeof n.attrs.name === 'string' ? n.attrs.name : null);
@@ -391,7 +430,9 @@ const renderer = createRenderer({
       for (const c of nodes) c.parent = c.prev = c.next = null;
       node.first = node.last = null;
     }
+    if (parent.borrowed) noBorrowed('inserted into');
     for (const n of nodes) {
+      if (n.borrowed) noBorrowed('inserted');
       detach(n);
       if (anchor && anchor.parent !== parent) throw new Error('insert: anchor is not a child of parent');
       const before = anchor ?? null;
@@ -408,6 +449,7 @@ const renderer = createRenderer({
   },
   remove: (node) => detach(node),
   addEventListener(target, type, handler) {
+    if (target.borrowed) throw new Error('events of a borrowed native object cannot be listened to through the renderer');
     (target.listeners[type] ??= []).push(handler);
     bumpListener(target, type, 1);
   },
@@ -431,7 +473,8 @@ export default renderer;
  * descendant separately. Unknown handles (already destroyed here) are ignored.
  */
 export function gone(h, reason) {
-  const el = byHandle.get(h);
+  const el = byHandle.get(h) ?? borrowedNodes.get(h)?.deref();
+  borrowedNodes.delete(h);
   if (!el) return;
   byHandle.delete(h);
   el.h = null;

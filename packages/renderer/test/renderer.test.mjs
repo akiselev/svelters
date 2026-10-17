@@ -252,6 +252,49 @@ test('bind:this node: call and getProp reach the host, dead nodes throw StaleHan
   take();
 });
 
+// ---- borrowed handles: nodes for native objects the app did not create ----
+
+test('nodeFor: owned handles resolve to their element, borrowed ones to one stable node', async () => {
+  const { nodeFor, gone } = await import('../src/index.js');
+  const win = el('window');
+  const e = el('entry');
+  r.insert(win, e, null);
+  r.insert(root, win, null);
+  take();
+  assert.equal(nodeFor(e.handle), e, 'an object we created keeps its bound node');
+
+  const h = 9001; // a handle the backend minted for a native-made object
+  const b = nodeFor(h);
+  assert.equal(b.borrowed, true);
+  assert.equal(b.handle, h);
+  assert.equal(b.svlHandle, h);
+  assert.equal(nodeFor(h), b, 'one node per handle');
+  assert.equal(b.parent, null, 'never part of the tree');
+});
+
+test('borrowed nodes cannot be inserted, removed through the tree or listened to', async () => {
+  const { nodeFor } = await import('../src/index.js');
+  const b = nodeFor(9002);
+  const box = el('box');
+  assert.throws(() => r.insert(box, b, null), /borrowed native object cannot be inserted/);
+  assert.throws(() => r.insert(b, box, null), /borrowed native object cannot be inserted into/);
+  assert.throws(() => r.addEventListener(b, 'clicked', () => {}), /borrowed/);
+  assert.equal(b.parent, null);
+});
+
+test('a native death marks a borrowed node dead with the reason', async () => {
+  const { nodeFor, gone } = await import('../src/index.js');
+  const b = nodeFor(9003);
+  gone(9003, 'owner');
+  assert.equal(b.dead, 'owner');
+  assert.equal(b.handle, null);
+  for (const f of [() => b.call('x'), () => b.getProp('y')]) {
+    assert.throws(f, (err) => err instanceof StaleHandleError && err.reason === 'owner');
+  }
+  assert.notEqual(nodeFor(9003), b, 'a handle that died is never wrapped by the dead node again');
+  gone(9999, 'owner'); // unknown handles are ignored
+});
+
 // ---- bind hook ----
 
 test('bind:text: update, native change, compare before set, destroy', async () => {

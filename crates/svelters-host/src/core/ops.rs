@@ -481,7 +481,31 @@ impl Core {
         }
     }
 
+    /// Handles that come back inside a result and are new to the host (the backend minted them
+    /// for native objects it did not create) join the handle table with the kind and lifetime
+    /// class the backend reports. Known handles (an object we created) are left alone.
+    fn adopt_handles(&self, v: &Value) {
+        match v {
+            Value::Handle(h) => {
+                if self.st.borrow().handles.contains_key(h) || *h >= MAX_HANDLE {
+                    return;
+                }
+                if let Ok(info) = self.backend.handle_info(*h) {
+                    let mut st = self.st.borrow_mut();
+                    st.handles.insert(*h, info.kind);
+                    if info.lifetime == SVL_LIFE_TOPLEVEL {
+                        st.toplevels.insert(*h);
+                        st.top_seen = true;
+                    }
+                }
+            }
+            Value::List(items) => items.iter().for_each(|i| self.adopt_handles(i)),
+            _ => {}
+        }
+    }
+
     fn decode_result<W: JsWriter>(&self, w: &W, v: &Value) -> Result<W::V, OpError> {
+        self.adopt_handles(v);
         convert::decode(w, v, self).map_err(|m| match m.strip_prefix("RangeError: ") {
             Some(rest) => OpError {
                 kind: OpKind::Range,

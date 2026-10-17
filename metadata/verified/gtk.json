@@ -17,6 +17,7 @@
 {"fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation", "fingerprint": "63d313dbd2010718", "result": "pass", "test": "generated::verify::prop_orientable_orientation", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:slot:child", "fingerprint": "b9d6357bfda0e1a9", "result": "pass", "test": "generated::verify::slot_scrolledwindow_child", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:Window:method:present", "fingerprint": "a154546dac56aeba", "result": "pass", "test": "generated::verify::method_window_present", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Window:method:set_default_size", "fingerprint": "c9de176c84bdc057", "result": "pass", "test": "generated::verify::method_window_set_default_size", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:title", "fingerprint": "69ad40a290a938fe", "result": "pass", "test": "generated::verify::prop_window_title", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child", "fingerprint": "7d9b09269591c309", "result": "pass", "test": "generated::verify::slot_window_child", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar", "fingerprint": "b07557021d29c57c", "result": "pass", "test": "generated::verify::slot_window_titlebar", "version": "4.22.4"}

@@ -137,7 +137,7 @@ impl From<glib::Error> for CallErr {
     }
 }
 
-fn args_of<'a>(args: *const svl_value, n: usize) -> &'a [svl_value] {
+pub(super) fn args_of<'a>(args: *const svl_value, n: usize) -> &'a [svl_value] {
     if args.is_null() || n == 0 { &[] } else { unsafe { std::slice::from_raw_parts(args, n) } }
 }
 
@@ -161,9 +161,12 @@ impl Inner {
         let mut st = self.state.borrow_mut();
         st.next += 1;
         let h = st.next;
-        st.by_obj.insert(obj.as_ptr() as usize, h);
-        st.entries.insert(h, Entry { obj: obj.downgrade(), hold: Some(obj.clone()), ptr: obj.as_ptr() as usize, kind, signals: HashMap::new(), slot: None });
+        st.entries.insert(
+            h,
+            Entry { obj: obj.downgrade(), hold: Some(obj.clone()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None },
+        );
         drop(st);
+        self.tag_object(&obj, h);
         self.files.borrow_mut().insert(h, FileState::default());
         Ok(h)
     }

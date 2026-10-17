@@ -1,6 +1,7 @@
 //! Name and chain lookups over the generated tables.
 
 use crate::generated::tables::*;
+use gtk::prelude::StaticType;
 
 fn kind(k: u32) -> Option<&'static KindInfo> {
     KINDS.get((k as usize).checked_sub(1)?)
@@ -84,3 +85,29 @@ pub fn default_slot(k: u32) -> u32 {
     }
     0
 }
+
+/// GType name -> generated kind id.
+pub fn kind_for_gtype(name: &str) -> u32 {
+    static MAP: std::sync::OnceLock<std::collections::HashMap<&'static str, u32>> = std::sync::OnceLock::new();
+    MAP.get_or_init(|| KINDS.iter().enumerate().map(|(i, k)| (k.gtype, i as u32 + 1)).collect()).get(name).copied().unwrap_or(0)
+}
+
+/// The kind of the nearest ancestor type that has a generated kind (0 when there is none).
+/// Objects of this type travel as handles (owned or borrowed): widgets and types that have a
+/// generated kind. Other objects are opaque `BOXED` values.
+pub fn is_handle_type(t: gtk::glib::Type) -> bool {
+    kind_for_gtype(t.name()) != 0 || t.is_a(gtk::Widget::static_type())
+}
+
+pub fn nearest_kind(t: gtk::glib::Type) -> u32 {
+    let mut cur = Some(t);
+    while let Some(ty) = cur {
+        let k = kind_for_gtype(ty.name());
+        if k != 0 {
+            return k;
+        }
+        cur = ty.parent();
+    }
+    0
+}
+

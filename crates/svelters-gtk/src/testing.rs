@@ -241,7 +241,11 @@ impl Harness {
     }
 
     fn kind_of(&self, h: u64) -> u32 {
-        self.kinds.borrow().get(&h).copied().unwrap_or(0)
+        match self.kinds.borrow().get(&h) {
+            Some(k) => *k,
+            // Borrowed handles are minted by the backend: ask it.
+            None => self.handle_info(h).map(|i| i.kind).unwrap_or(0),
+        }
     }
 
     pub fn insert(&self, parent: u64, child: u64, before: Option<u64>, slot: Option<&str>) -> Result<(), String> {
@@ -377,6 +381,66 @@ impl Harness {
         let vt = self.vt();
         let mut out = svl_value::null();
         self.check(unsafe { (vt.call)(vt.self_, h, id, std::ptr::null(), 0, &mut out) })
+    }
+    /// Encodes `v` for a descriptor slot the way the host does: enum and flags members by name.
+    fn encode_arg(&self, slot: &SlotDesc, v: &V) -> Result<Value, String> {
+        let members = |names: Vec<&str>| -> Result<i64, String> {
+            let t = self.type_desc(slot.ty).ok_or("no type descriptor")?;
+            let mut bits = 0i64;
+            for n in names {
+                bits |= t.members.iter().find(|m| m.name == n).ok_or_else(|| format!("'{n}' is not a member of {}", t.name))?.value;
+            }
+            Ok(bits)
+        };
+        Ok(match (slot.tag, v) {
+            (SVL_ENUM, V::Str(n)) => Value::Enum { ty: slot.ty, value: members(vec![n.as_str()])? },
+            (SVL_ENUM, V::I64(i)) => Value::Enum { ty: slot.ty, value: *i },
+            (SVL_FLAGS, V::Str(n)) => Value::Flags { ty: slot.ty, mask: members(n.split('|').collect())? as u64 },
+            (SVL_FLAGS, V::List(l)) => {
+                let names = l.iter().map(|x| if let V::Str(s) = x { Ok(s.as_str()) } else { Err("flag names are strings".to_string()) }).collect::<Result<Vec<_>, _>>()?;
+                Value::Flags { ty: slot.ty, mask: members(names)? as u64 }
+            }
+            (SVL_FLAGS, V::I64(i)) => Value::Flags { ty: slot.ty, mask: *i as u64 },
+            (_, V::Null) => Value::Null,
+            (_, V::Bool(b)) => Value::Bool(*b),
+            (_, V::I64(i)) => Value::I64(*i),
+            (_, V::F64(f)) => Value::F64(*f),
+            (_, V::Str(s)) => Value::Str(s.clone()),
+            (_, V::Handle(h)) => Value::Handle(*h),
+            (_, V::Boxed(h)) => Value::Boxed { ty: slot.ty, handle: *h },
+            (_, V::List(l)) => Value::List(l.iter().map(|x| self.encode_arg(&SlotDesc::new(SVL_NULL), x)).collect::<Result<_, _>>()?),
+            (_, V::Record(_)) => return Err("records are not supported by call_args".into()),
+        })
+    }
+
+    /// Call a method (generated or typelib) with arguments and return its result. Arguments are
+    /// encoded with the method's descriptor, like the host does (enum and flags by name).
+    pub fn call_args(&self, h: u64, method: &str, args: &[V]) -> Result<V, String> {
+        let k = self.kind_of(h);
+        let id = self.resolve(SVL_METHOD, k, method);
+        if id == 0 {
+            return Err(format!("unknown method {method}"));
+        }
+        let desc = self.backend_ref().describe(NameKind::Method, k, id);
+        let mut vals = Vec::new();
+        for (i, a) in args.iter().enumerate() {
+            let slot = desc.as_ref().and_then(|d| d.params.get(i).cloned()).unwrap_or_else(|| SlotDesc::new(SVL_NULL));
+            vals.push(self.encode_arg(&slot, a)?);
+        }
+        match self.backend_ref().call(h, id, &vals) {
+            Ok(v) => Ok(self.name_value(&v)),
+            Err(e) => Err(e.message),
+        }
+    }
+    /// The descriptor of a method as the host would see it.
+    pub fn method_desc(&self, h: u64, method: &str) -> Option<MemberDesc> {
+        let k = self.kind_of(h);
+        let id = self.resolve(SVL_METHOD, k, method);
+        self.backend_ref().describe(NameKind::Method, k, id)
+    }
+    /// The id `resolve(SVL_METHOD)` gives `method` on `h`'s kind (0: unknown).
+    pub fn resolve_method(&self, h: u64, method: &str) -> u32 {
+        self.resolve(SVL_METHOD, self.kind_of(h), method)
     }
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
         let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);

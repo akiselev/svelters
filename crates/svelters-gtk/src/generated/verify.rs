@@ -968,3 +968,17 @@ fn method_window_present() {
         assert!(w.is_visible(), "postcondition: w.is_visible()");
     });
 }
+
+/// method Window.set_default_size (dynamic GI call): gtk_window_set_default_size (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_window_set_default_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let r = h.call_args(o, "set_default_size", &[V::I64(600), V::I64(400)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "default-width") == V::I64(600) && h.get(o, "default-height") == V::I64(400), "postcondition: h.get(o, 'default-width') == V::I64(600) && h.get(o, 'default-height') == V::I64(400)");
+    });
+}
