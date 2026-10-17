@@ -1,0 +1,743 @@
+{
+  "abstract": true,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "ActualHeightProperty",
+    "ActualThemeProperty",
+    "ActualWidthProperty",
+    "AllowFocusOnInteractionProperty",
+    "AllowFocusWhenDisabledProperty",
+    "DataContextProperty",
+    "FlowDirectionProperty",
+    "FocusVisualMarginProperty",
+    "FocusVisualPrimaryBrushProperty",
+    "FocusVisualPrimaryThicknessProperty",
+    "FocusVisualSecondaryBrushProperty",
+    "FocusVisualSecondaryThicknessProperty",
+    "HeightProperty",
+    "HorizontalAlignmentProperty",
+    "LanguageProperty",
+    "MarginProperty",
+    "MaxHeightProperty",
+    "MaxWidthProperty",
+    "MinHeightProperty",
+    "MinWidthProperty",
+    "NameProperty",
+    "RequestedThemeProperty",
+    "StyleProperty",
+    "TagProperty",
+    "VerticalAlignmentProperty",
+    "WidthProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FindName",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "name",
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "SetBinding",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "dp",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyProperty",
+            "ref": "object<Microsoft.UI.Xaml.DependencyProperty>"
+          }
+        },
+        {
+          "name": "binding",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Data.BindingBase",
+            "ref": "object<Microsoft.UI.Xaml.Data.BindingBase>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "GetBindingExpression",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "dp",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyProperty",
+            "ref": "object<Microsoft.UI.Xaml.DependencyProperty>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.Data.BindingExpression",
+        "ref": "object<Microsoft.UI.Xaml.Data.BindingExpression>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.FrameworkElement",
+    "namespace": "Microsoft.UI.Xaml",
+    "short": "FrameworkElement"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "ActualHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "ActualTheme",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ElementTheme",
+        "ref": "enum<Microsoft.UI.Xaml.ElementTheme>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "ActualWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "AllowFocusOnInteraction",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "AllowFocusWhenDisabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "BaseUri",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Uri",
+        "ref": "object<Windows.Foundation.Uri>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "DataContext",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FlowDirection",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.FlowDirection",
+        "ref": "enum<Microsoft.UI.Xaml.FlowDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FocusVisualMargin",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FocusVisualPrimaryBrush",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FocusVisualPrimaryThickness",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FocusVisualSecondaryBrush",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "FocusVisualSecondaryThickness",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Height",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "HorizontalAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.HorizontalAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "IsLoaded",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Language",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Margin",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "MaxHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "MaxWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "MinHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "MinWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Name",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Parent",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "RequestedTheme",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ElementTheme",
+        "ref": "enum<Microsoft.UI.Xaml.ElementTheme>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Resources",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ResourceDictionary",
+        "ref": "object<Microsoft.UI.Xaml.ResourceDictionary>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Style",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Tag",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Triggers",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TriggerCollection",
+        "ref": "object<Microsoft.UI.Xaml.TriggerCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "VerticalAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.VerticalAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Width",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, object>",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "ActualThemeChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.FrameworkElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DataContextChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DataContextChangedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DataContextChangedEventArgs",
+          "name": "NewValue",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, Microsoft.UI.Xaml.DataContextChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "DataContextChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.FrameworkElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs",
+          "name": "BringIntoViewDistanceX",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs",
+          "name": "BringIntoViewDistanceY",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs",
+          "name": "EffectiveViewport",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Rect",
+            "ref": "value<Windows.Foundation.Rect>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs",
+          "name": "MaxViewport",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Rect",
+            "ref": "value<Windows.Foundation.Rect>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "EffectiveViewportChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.FrameworkElement"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "LayoutUpdated",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Loaded",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, object>",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Loading",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.FrameworkElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.SizeChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.SizeChangedEventArgs",
+          "name": "NewSize",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Size",
+            "ref": "value<Windows.Foundation.Size>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.SizeChangedEventArgs",
+          "name": "PreviousSize",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Size",
+            "ref": "value<Windows.Foundation.Size>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.SizeChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "SizeChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+      "name": "Unloaded",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

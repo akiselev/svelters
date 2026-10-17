@@ -1,0 +1,6 @@
+class: Microsoft.UI.Xaml.Controls.StackPanel
+element: {}
+props:
+  - { name: Orientation, test: Horizontal, provenance: "StackPanel.Orientation DP (winmd); enum Microsoft.UI.Xaml.Controls.Orientation" }
+  - { name: Spacing, test: 8.0, provenance: "StackPanel.Spacing DP (winmd)" }
+  - { name: Padding, test: "2,4", provenance: "StackPanel.Padding DP: Thickness (winmd)" }

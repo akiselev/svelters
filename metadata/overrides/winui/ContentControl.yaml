@@ -1,0 +1,11 @@
+class: Microsoft.UI.Xaml.Controls.ContentControl
+props:
+  - name: Content
+    as: string
+    test: "hello"
+    provenance: "ContentControl.Content: object (winmd). Text content is a boxed HSTRING (PropertyValue.CreateString); elements go through the `content` slot"
+slots:
+  - name: content
+    prop: Content
+    default: true
+    provenance: "[ContentProperty(Name=\"Content\")] on ContentControl (winmd); single child, put_Content(null) clears"

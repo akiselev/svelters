@@ -1,0 +1,680 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:default",
+      "native": "IActivationFactory.ActivateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Inlines",
+  "content_property_declared": "Inlines",
+  "dependency_properties": [
+    "CharacterSpacingProperty",
+    "FontFamilyProperty",
+    "FontSizeProperty",
+    "FontStretchProperty",
+    "FontStyleProperty",
+    "FontWeightProperty",
+    "ForegroundProperty",
+    "HorizontalTextAlignmentProperty",
+    "IsColorFontEnabledProperty",
+    "IsTextScaleFactorEnabledProperty",
+    "IsTextSelectionEnabledProperty",
+    "IsTextTrimmedProperty",
+    "LineHeightProperty",
+    "LineStackingStrategyProperty",
+    "MaxLinesProperty",
+    "OpticalMarginAlignmentProperty",
+    "PaddingProperty",
+    "SelectedTextProperty",
+    "SelectionFlyoutProperty",
+    "SelectionHighlightColorProperty",
+    "TextAlignmentProperty",
+    "TextDecorationsProperty",
+    "TextLineBoundsProperty",
+    "TextProperty",
+    "TextReadingOrderProperty",
+    "TextTrimmingProperty",
+    "TextWrappingProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectAll",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "Select",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "start",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Documents.TextPointer",
+            "ref": "object<Microsoft.UI.Xaml.Documents.TextPointer>"
+          }
+        },
+        {
+          "name": "end",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Documents.TextPointer",
+            "ref": "object<Microsoft.UI.Xaml.Documents.TextPointer>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "GetAlphaMask",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "Microsoft.UI.Composition.CompositionBrush",
+        "ref": "object<Microsoft.UI.Composition.CompositionBrush>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "CopySelectionToClipboard",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.TextBlock",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "TextBlock"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "BaselineOffset",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "CharacterSpacing",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "ContentEnd",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Documents.TextPointer",
+        "ref": "object<Microsoft.UI.Xaml.Documents.TextPointer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "ContentStart",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Documents.TextPointer",
+        "ref": "object<Microsoft.UI.Xaml.Documents.TextPointer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "FontFamily",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.FontFamily",
+        "ref": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "FontSize",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "FontStretch",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.FontStretch",
+        "ref": "enum<Windows.UI.Text.FontStretch>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "FontStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.FontStyle",
+        "ref": "enum<Windows.UI.Text.FontStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "FontWeight",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.FontWeight",
+        "ref": "value<Windows.UI.Text.FontWeight>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "Foreground",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "HorizontalTextAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.TextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "Inlines",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Documents.InlineCollection",
+        "ref": "object<Microsoft.UI.Xaml.Documents.InlineCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "IsColorFontEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "IsTextScaleFactorEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "IsTextSelectionEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "IsTextTrimmed",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "LineHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "LineStackingStrategy",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.LineStackingStrategy",
+        "ref": "enum<Microsoft.UI.Xaml.LineStackingStrategy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "MaxLines",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "OpticalMarginAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.OpticalMarginAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.OpticalMarginAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "Padding",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectedText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectionEnd",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Documents.TextPointer",
+        "ref": "object<Microsoft.UI.Xaml.Documents.TextPointer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectionFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectionHighlightColor",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+        "ref": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectionStart",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Documents.TextPointer",
+        "ref": "object<Microsoft.UI.Xaml.Documents.TextPointer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "Text",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.TextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextDecorations",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.TextDecorations",
+        "ref": "flags<Windows.UI.Text.TextDecorations>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextHighlighters",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Documents.TextHighlighter>",
+        "ref": "list<object<Microsoft.UI.Xaml.Documents.TextHighlighter>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextLineBounds",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextLineBounds",
+        "ref": "enum<Microsoft.UI.Xaml.TextLineBounds>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextReadingOrder",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextReadingOrder",
+        "ref": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextTrimming",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextTrimming",
+        "ref": "enum<Microsoft.UI.Xaml.TextTrimming>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "TextWrapping",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextWrapping",
+        "ref": "enum<Microsoft.UI.Xaml.TextWrapping>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "CursorLeft",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "CursorTop",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.ContextMenuOpeningEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "ContextMenuOpening",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.IsTextTrimmedChangedEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBlock, Microsoft.UI.Xaml.Controls.IsTextTrimmedChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "IsTextTrimmedChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBlock"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

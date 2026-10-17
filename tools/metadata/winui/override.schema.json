@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "svelters:winui-override/v0",
+  "title": "WinUI 3 override (metadata/overrides/winui/<Class>.yaml)",
+  "description": "Per-class annotations for the WinUI backend. Members are named by their native winmd names; the generator derives JS names (kebab-case) and checks every name against metadata/winui. Members of a class apply to every element kind whose base chain contains it. Every manual fact carries provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["class"],
+  "properties": {
+    "class": { "type": "string", "pattern": "^Microsoft\\.UI\\.[A-Za-z.]+$", "description": "Full native class name" },
+    "element": {
+      "type": "object",
+      "description": "Present when the class is an element kind (must be constructible per winmd)",
+      "additionalProperties": false,
+      "properties": {
+        "tag": { "type": "string", "description": "Defaults to the class name in kebab-case; anything else needs tag_reason" },
+        "tag_reason": { "type": "string" },
+        "lifetime": { "enum": ["owned", "toplevel"], "default": "owned" },
+        "text_content": { "type": "string", "description": "Native prop that Text children of the element set" }
+      }
+    },
+    "props": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "provenance"],
+        "properties": {
+          "name": { "type": "string", "description": "Native property name (winmd get_/put_ accessor)" },
+          "as": { "enum": ["string"], "description": "Expose an object-typed prop as a boxed value of this type" },
+          "custom": { "type": "string", "pattern": "^[a-z_]+$", "description": "Hand-written converter <custom>_set/_get in crates/svelters-winui/src/custom.rs" },
+          "test": { "description": "Value the generated test writes and reads back" },
+          "provenance": { "type": "string" }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "provenance"],
+        "properties": {
+          "name": { "type": "string", "description": "Native event name (winmd add_ accessor)" },
+          "sync": { "type": "boolean", "description": "Deliver through host->call_sync while the native handler runs" },
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["prop"],
+            "properties": { "prop": { "type": "string", "description": "Settable bool on the args set to true when the handler answers true (preventDefault)" } }
+          },
+          "close": { "type": "boolean", "description": "The window close rule of ABI v2: veto (args.Handled) and post while JS listens, else report SVL_GONE_CLOSED" },
+          "payload": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["from", "prop", "name"],
+              "properties": {
+                "from": { "enum": ["args", "sender"] },
+                "prop": { "type": "string" },
+                "name": { "type": "string", "description": "Argument name in docs and typings" }
+              }
+            }
+          },
+          "trigger": { "type": "string", "pattern": "^(invoke|set:[A-Za-z]+=.*)$", "description": "How the generated test raises the event: automation-peer invoke, or setting a prop" },
+          "asynchronous": { "type": "boolean", "description": "The toolkit raises the event later, not inside the triggering call" },
+          "provenance": { "type": "string" }
+        }
+      }
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "prop", "provenance"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z-]*$" },
+          "prop": { "type": "string", "description": "Native property: a single child (object/UIElement) or a UIElementCollection" },
+          "default": { "type": "boolean" },
+          "provenance": { "type": "string" }
+        }
+      }
+    },
+    "attached": {
+      "type": "array",
+      "description": "Attached properties of this class used as per-child attributes of a slot (ABI v2.2 child attrs)",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "slot", "default", "provenance"],
+        "properties": {
+          "name": { "type": "string", "description": "Attached property name (static Get<Name>/Set<Name> in winmd)" },
+          "slot": { "type": "string" },
+          "default": { "type": "integer" },
+          "test": { "type": "integer" },
+          "provenance": { "type": "string" }
+        }
+      }
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "provenance"],
+        "properties": {
+          "name": { "type": "string" },
+          "provenance": { "type": "string" }
+        }
+      }
+    }
+  }
+}

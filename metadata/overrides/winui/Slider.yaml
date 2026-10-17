@@ -1,0 +1,6 @@
+class: Microsoft.UI.Xaml.Controls.Slider
+element: {}
+props:
+  - { name: StepFrequency, test: 5.0, provenance: "Slider.StepFrequency DP (winmd)" }
+  - { name: Orientation, test: Vertical, provenance: "Slider.Orientation DP (winmd)" }
+  - { name: Header, as: string, test: "Volume", provenance: "Slider.Header: object (winmd); text header as boxed HSTRING" }

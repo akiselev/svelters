@@ -1,0 +1,365 @@
+{
+  "facts": {
+    "winui:ButtonBase:event:Click": {
+      "fingerprint": "9f8ab3898e7d899c",
+      "tests": [
+        "event_button_click"
+      ]
+    },
+    "winui:ContentControl:prop:Content": {
+      "fingerprint": "f0089c701748bb47",
+      "tests": [
+        "prop_button_content"
+      ]
+    },
+    "winui:ContentControl:slot:content": {
+      "fingerprint": "46cb887f99b7bed3",
+      "tests": [
+        "slot_button_content"
+      ]
+    },
+    "winui:Control:prop:FontSize": {
+      "fingerprint": "671aa0bd7aff7603",
+      "tests": [
+        "prop_button_font_size"
+      ]
+    },
+    "winui:Control:prop:IsEnabled": {
+      "fingerprint": "6f53325ceefe69cb",
+      "tests": [
+        "prop_button_is_enabled"
+      ]
+    },
+    "winui:Control:prop:Padding": {
+      "fingerprint": "feb2ccd5fd522ddd",
+      "tests": [
+        "prop_button_padding"
+      ]
+    },
+    "winui:FrameworkElement:prop:Height": {
+      "fingerprint": "14cbb682a391f3dd",
+      "tests": [
+        "prop_button_height"
+      ]
+    },
+    "winui:FrameworkElement:prop:HorizontalAlignment": {
+      "fingerprint": "bc21ac05d322879f",
+      "tests": [
+        "prop_button_horizontal_alignment"
+      ]
+    },
+    "winui:FrameworkElement:prop:Margin": {
+      "fingerprint": "c27c41a5a7fdbe7e",
+      "tests": [
+        "prop_button_margin"
+      ]
+    },
+    "winui:FrameworkElement:prop:MinHeight": {
+      "fingerprint": "12c0ed1b8fc6792b",
+      "tests": [
+        "prop_button_min_height"
+      ]
+    },
+    "winui:FrameworkElement:prop:MinWidth": {
+      "fingerprint": "c73460b282e91f58",
+      "tests": [
+        "prop_button_min_width"
+      ]
+    },
+    "winui:FrameworkElement:prop:Name": {
+      "fingerprint": "3644246a47aaebeb",
+      "tests": [
+        "prop_button_name"
+      ]
+    },
+    "winui:FrameworkElement:prop:VerticalAlignment": {
+      "fingerprint": "63dc1bd66287aacf",
+      "tests": [
+        "prop_button_vertical_alignment"
+      ]
+    },
+    "winui:FrameworkElement:prop:Width": {
+      "fingerprint": "dae65ad55cf8b4a7",
+      "tests": [
+        "prop_button_width"
+      ]
+    },
+    "winui:Grid:attr:Column": {
+      "fingerprint": "7b6d80893ec8f756",
+      "tests": [
+        "attr_grid_column"
+      ]
+    },
+    "winui:Grid:attr:ColumnSpan": {
+      "fingerprint": "deded422f94310a8",
+      "tests": [
+        "attr_grid_column_span"
+      ]
+    },
+    "winui:Grid:attr:Row": {
+      "fingerprint": "c6934b410b037a11",
+      "tests": [
+        "attr_grid_row"
+      ]
+    },
+    "winui:Grid:attr:RowSpan": {
+      "fingerprint": "e14c52eac7975a79",
+      "tests": [
+        "attr_grid_row_span"
+      ]
+    },
+    "winui:Grid:prop:ColumnDefinitions": {
+      "fingerprint": "e52a5726cdc417ce",
+      "tests": [
+        "prop_grid_column_definitions"
+      ]
+    },
+    "winui:Grid:prop:ColumnSpacing": {
+      "fingerprint": "40fe67074e041f26",
+      "tests": [
+        "prop_grid_column_spacing"
+      ]
+    },
+    "winui:Grid:prop:Padding": {
+      "fingerprint": "205e59675814d5be",
+      "tests": [
+        "prop_grid_padding"
+      ]
+    },
+    "winui:Grid:prop:RowDefinitions": {
+      "fingerprint": "cd0229cdfa1d3233",
+      "tests": [
+        "prop_grid_row_definitions"
+      ]
+    },
+    "winui:Grid:prop:RowSpacing": {
+      "fingerprint": "90ba80066a5771aa",
+      "tests": [
+        "prop_grid_row_spacing"
+      ]
+    },
+    "winui:Panel:slot:children": {
+      "fingerprint": "85d5267e7ed9bb7a",
+      "tests": [
+        "slot_grid_children"
+      ]
+    },
+    "winui:RangeBase:event:ValueChanged": {
+      "fingerprint": "ab751c35ab2cbdc9",
+      "tests": [
+        "event_slider_value_changed"
+      ]
+    },
+    "winui:RangeBase:prop:LargeChange": {
+      "fingerprint": "bd114fdc3f1d7213",
+      "tests": [
+        "prop_slider_large_change"
+      ]
+    },
+    "winui:RangeBase:prop:Maximum": {
+      "fingerprint": "cefe25d741c10f95",
+      "tests": [
+        "prop_slider_maximum"
+      ]
+    },
+    "winui:RangeBase:prop:Minimum": {
+      "fingerprint": "d7d5bf303fa7a6f2",
+      "tests": [
+        "prop_slider_minimum"
+      ]
+    },
+    "winui:RangeBase:prop:SmallChange": {
+      "fingerprint": "4f560891a4ddea9c",
+      "tests": [
+        "prop_slider_small_change"
+      ]
+    },
+    "winui:RangeBase:prop:Value": {
+      "fingerprint": "389d1fb9e2d7e23a",
+      "tests": [
+        "prop_slider_value"
+      ]
+    },
+    "winui:Slider:prop:Header": {
+      "fingerprint": "8e701406f38873a3",
+      "tests": [
+        "prop_slider_header"
+      ]
+    },
+    "winui:Slider:prop:Orientation": {
+      "fingerprint": "062db52c226cc5aa",
+      "tests": [
+        "prop_slider_orientation"
+      ]
+    },
+    "winui:Slider:prop:StepFrequency": {
+      "fingerprint": "320d7ab924c5ff3a",
+      "tests": [
+        "prop_slider_step_frequency"
+      ]
+    },
+    "winui:StackPanel:prop:Orientation": {
+      "fingerprint": "c78ac3775ec25764",
+      "tests": [
+        "prop_stack_panel_orientation"
+      ]
+    },
+    "winui:StackPanel:prop:Padding": {
+      "fingerprint": "b9bfd6af0b695661",
+      "tests": [
+        "prop_stack_panel_padding"
+      ]
+    },
+    "winui:StackPanel:prop:Spacing": {
+      "fingerprint": "1f639d6eccdf13e2",
+      "tests": [
+        "prop_stack_panel_spacing"
+      ]
+    },
+    "winui:TextBlock:prop:FontSize": {
+      "fingerprint": "ff3355004c63d6cf",
+      "tests": [
+        "prop_text_block_font_size"
+      ]
+    },
+    "winui:TextBlock:prop:IsTextSelectionEnabled": {
+      "fingerprint": "73180b55cf82d451",
+      "tests": [
+        "prop_text_block_is_text_selection_enabled"
+      ]
+    },
+    "winui:TextBlock:prop:MaxLines": {
+      "fingerprint": "772ae808d46a36ab",
+      "tests": [
+        "prop_text_block_max_lines"
+      ]
+    },
+    "winui:TextBlock:prop:Text": {
+      "fingerprint": "025f5ebe585d66a3",
+      "tests": [
+        "prop_text_block_text"
+      ]
+    },
+    "winui:TextBlock:prop:TextWrapping": {
+      "fingerprint": "7df61aa8ca1b0701",
+      "tests": [
+        "prop_text_block_text_wrapping"
+      ]
+    },
+    "winui:TextBox:event:BeforeTextChanging": {
+      "fingerprint": "9739807e49b786dd",
+      "tests": [
+        "event_text_box_before_text_changing"
+      ]
+    },
+    "winui:TextBox:event:TextChanged": {
+      "fingerprint": "51051d0d4c45a329",
+      "tests": [
+        "event_text_box_text_changed"
+      ]
+    },
+    "winui:TextBox:prop:AcceptsReturn": {
+      "fingerprint": "42124a53c1fc7385",
+      "tests": [
+        "prop_text_box_accepts_return"
+      ]
+    },
+    "winui:TextBox:prop:Header": {
+      "fingerprint": "02e1feb90b6e0fdb",
+      "tests": [
+        "prop_text_box_header"
+      ]
+    },
+    "winui:TextBox:prop:IsReadOnly": {
+      "fingerprint": "0100b185b5cc863a",
+      "tests": [
+        "prop_text_box_is_read_only"
+      ]
+    },
+    "winui:TextBox:prop:MaxLength": {
+      "fingerprint": "d4f1beca3ca0305c",
+      "tests": [
+        "prop_text_box_max_length"
+      ]
+    },
+    "winui:TextBox:prop:PlaceholderText": {
+      "fingerprint": "ee12c1092f208419",
+      "tests": [
+        "prop_text_box_placeholder_text"
+      ]
+    },
+    "winui:TextBox:prop:Text": {
+      "fingerprint": "611aeb2819ee91b1",
+      "tests": [
+        "prop_text_box_text"
+      ]
+    },
+    "winui:TextBox:prop:TextWrapping": {
+      "fingerprint": "5c3a886f306cf7fd",
+      "tests": [
+        "prop_text_box_text_wrapping"
+      ]
+    },
+    "winui:ToggleButton:event:Checked": {
+      "fingerprint": "84d194929fd8572c",
+      "tests": [
+        "event_check_box_checked"
+      ]
+    },
+    "winui:ToggleButton:event:Unchecked": {
+      "fingerprint": "227db61d5d16cd21",
+      "tests": [
+        "event_check_box_unchecked"
+      ]
+    },
+    "winui:ToggleButton:prop:IsChecked": {
+      "fingerprint": "585487dd1f466804",
+      "tests": [
+        "prop_check_box_is_checked"
+      ]
+    },
+    "winui:ToggleButton:prop:IsThreeState": {
+      "fingerprint": "68f7ffd6c1e6d8a2",
+      "tests": [
+        "prop_check_box_is_three_state"
+      ]
+    },
+    "winui:UIElement:prop:IsHitTestVisible": {
+      "fingerprint": "d1e20560acb773e9",
+      "tests": [
+        "prop_button_is_hit_test_visible"
+      ]
+    },
+    "winui:UIElement:prop:Opacity": {
+      "fingerprint": "b8f9a6b3e3fbc880",
+      "tests": [
+        "prop_button_opacity"
+      ]
+    },
+    "winui:UIElement:prop:Visibility": {
+      "fingerprint": "514587a72ce8393c",
+      "tests": [
+        "prop_button_visibility"
+      ]
+    },
+    "winui:Window:event:Closed": {
+      "fingerprint": "d7c526ba1b94c042",
+      "tests": [
+        "event_window_closed"
+      ]
+    },
+    "winui:Window:prop:Title": {
+      "fingerprint": "609a20f0e3912f6e",
+      "tests": [
+        "prop_window_title"
+      ]
+    },
+    "winui:Window:slot:content": {
+      "fingerprint": "c538e3698a65a9d8",
+      "tests": [
+        "slot_window_content"
+      ]
+    }
+  },
+  "toolkit": "winui"
+}

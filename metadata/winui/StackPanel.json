@@ -1,0 +1,303 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Panel",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IStackPanelFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Children",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AreScrollSnapPointsRegularProperty",
+    "BackgroundSizingProperty",
+    "BorderBrushProperty",
+    "BorderThicknessProperty",
+    "CornerRadiusProperty",
+    "OrientationProperty",
+    "PaddingProperty",
+    "SpacingProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+      "name": "GetIrregularSnapPoints",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "orientation",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Orientation",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+          }
+        },
+        {
+          "name": "alignment",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Windows.Foundation.Collections.IVectorView<f32>",
+        "ref": "list<f32>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+      "name": "GetRegularSnapPoints",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "orientation",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Orientation",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+          }
+        },
+        {
+          "name": "alignment",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+          }
+        },
+        {
+          "name": "offset",
+          "type": {
+            "native": "out f32",
+            "ref": "object<out f32>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "f32",
+        "ref": "f32"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IInsertionPanel",
+      "name": "GetInsertionIndexes",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "position",
+          "type": {
+            "native": "Windows.Foundation.Point",
+            "ref": "value<Windows.Foundation.Point>"
+          }
+        },
+        {
+          "name": "first",
+          "type": {
+            "native": "out i32",
+            "ref": "object<out i32>"
+          }
+        },
+        {
+          "name": "second",
+          "type": {
+            "native": "out i32",
+            "ref": "object<out i32>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.StackPanel",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "StackPanel"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+      "name": "AreHorizontalSnapPointsRegular",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "AreScrollSnapPointsRegular",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+      "name": "AreVerticalSnapPointsRegular",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "BackgroundSizing",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.BackgroundSizing",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "BorderBrush",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "BorderThickness",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "CornerRadius",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.CornerRadius",
+        "ref": "value<Microsoft.UI.Xaml.CornerRadius>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "Orientation",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Orientation",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "Padding",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+      "name": "Spacing",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+      "name": "HorizontalSnapPointsChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+      "name": "VerticalSnapPointsChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

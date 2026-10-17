@@ -1,0 +1,5 @@
+class: Microsoft.UI.Xaml.Controls.Primitives.ButtonBase
+events:
+  - name: Click
+    trigger: invoke
+    provenance: "ButtonBase.Click: RoutedEventHandler (winmd IButtonBase); raised by ButtonAutomationPeer.Invoke"

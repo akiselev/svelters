@@ -1,0 +1,12 @@
+class: Microsoft.UI.Xaml.FrameworkElement
+props:
+  - { name: Width, test: 120.0, provenance: "FrameworkElement.Width DP (winmd IFrameworkElement); NaN = auto" }
+  - { name: Height, test: 40.0, provenance: "FrameworkElement.Height DP (winmd IFrameworkElement); NaN = auto" }
+  - { name: MinWidth, test: 10.0, provenance: "FrameworkElement.MinWidth DP (winmd)" }
+  - { name: MinHeight, test: 10.0, provenance: "FrameworkElement.MinHeight DP (winmd)" }
+  - { name: Margin, test: "1,2,3,4", provenance: "FrameworkElement.Margin DP: Microsoft.UI.Xaml.Thickness (winmd)" }
+  - { name: HorizontalAlignment, test: Center, provenance: "FrameworkElement.HorizontalAlignment DP: enum (winmd)" }
+  - { name: VerticalAlignment, test: Bottom, provenance: "FrameworkElement.VerticalAlignment DP: enum (winmd)" }
+  - { name: Name, test: "first", provenance: "FrameworkElement.Name DP (winmd); the x:Name analogue, reserved for style selectors (#id)" }
+  - { name: ActualWidth, provenance: "FrameworkElement.ActualWidth (winmd, read-only)" }
+  - { name: ActualHeight, provenance: "FrameworkElement.ActualHeight (winmd, read-only)" }

@@ -1,0 +1,118 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IContentControlFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": "Content",
+  "dependency_properties": [
+    "ContentProperty",
+    "ContentTemplateProperty",
+    "ContentTemplateSelectorProperty",
+    "ContentTransitionsProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ContentControl",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ContentControl"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IContentControl",
+      "name": "Content",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IContentControl",
+      "name": "ContentTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IContentControl",
+      "name": "ContentTemplateRoot",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IContentControl",
+      "name": "ContentTemplateSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.DataTemplateSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.DataTemplateSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IContentControl",
+      "name": "ContentTransitions",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Animation.TransitionCollection",
+        "ref": "object<Microsoft.UI.Xaml.Media.Animation.TransitionCollection>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

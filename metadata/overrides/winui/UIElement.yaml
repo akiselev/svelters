@@ -1,0 +1,13 @@
+# WinUI override format: tools/metadata/winui/override.schema.json. One file per native class.
+# Members listed here are exposed on every element kind whose base chain contains the class.
+class: Microsoft.UI.Xaml.UIElement
+props:
+  - { name: Visibility, test: Collapsed, provenance: "UIElement.Visibility DP (winmd IUIElement); enum Microsoft.UI.Xaml.Visibility" }
+  - { name: Opacity, test: 0.5, provenance: "UIElement.Opacity DP (winmd IUIElement)" }
+  - { name: IsHitTestVisible, test: false, provenance: "UIElement.IsHitTestVisible DP (winmd IUIElement)" }
+events:
+  - name: KeyDown
+    sync: true
+    result: { prop: Handled }
+    payload: [{ from: args, prop: Key, name: key }]
+    provenance: "UIElement.KeyDown: KeyEventHandler(sender, KeyRoutedEventArgs) (winmd); KeyRoutedEventArgs.Handled is settable, so preventDefault() marks the key handled"

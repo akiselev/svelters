@@ -1,0 +1,21 @@
+class: Microsoft.UI.Xaml.Controls.Grid
+element: {}
+props:
+  - { name: RowSpacing, test: 4.0, provenance: "Grid.RowSpacing DP (winmd)" }
+  - { name: ColumnSpacing, test: 4.0, provenance: "Grid.ColumnSpacing DP (winmd)" }
+  - { name: Padding, test: "8", provenance: "Grid.Padding DP: Thickness (winmd)" }
+  - name: RowDefinitions
+    custom: grid_rows
+    test: "Auto, *, 2*, 40"
+    provenance: "Grid.RowDefinitions: RowDefinitionCollection (winmd, read-only collection). Exposed as a comma-separated GridLength list (Auto, *, n*, pixels); setting replaces the collection's content"
+  - name: ColumnDefinitions
+    custom: grid_columns
+    test: "*, *"
+    provenance: "Grid.ColumnDefinitions: ColumnDefinitionCollection (winmd); same string form as row-definitions"
+attached:
+  # Grid.Row etc. are attached DPs: static Grid.GetRow/SetRow(FrameworkElement, i32) in winmd. They are
+  # per-child attributes of a grid's `children` slot.
+  - { name: Row, slot: children, default: 0, test: 1, provenance: "Grid.GetRow/SetRow statics + RowProperty (winmd)" }
+  - { name: Column, slot: children, default: 0, test: 1, provenance: "Grid.GetColumn/SetColumn statics (winmd)" }
+  - { name: RowSpan, slot: children, default: 1, test: 2, provenance: "Grid.GetRowSpan/SetRowSpan statics (winmd)" }
+  - { name: ColumnSpan, slot: children, default: 1, test: 2, provenance: "Grid.GetColumnSpan/SetColumnSpan statics (winmd)" }

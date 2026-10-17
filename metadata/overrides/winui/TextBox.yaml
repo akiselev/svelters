@@ -1,0 +1,25 @@
+class: Microsoft.UI.Xaml.Controls.TextBox
+element: {}
+props:
+  - { name: Text, test: "typed", provenance: "TextBox.Text DP (winmd ITextBox)" }
+  - { name: PlaceholderText, test: "Name", provenance: "TextBox.PlaceholderText DP (winmd)" }
+  - { name: IsReadOnly, test: true, provenance: "TextBox.IsReadOnly DP (winmd)" }
+  - { name: MaxLength, test: 12, provenance: "TextBox.MaxLength DP: i32 (winmd)" }
+  - { name: AcceptsReturn, test: true, provenance: "TextBox.AcceptsReturn DP (winmd)" }
+  - { name: TextWrapping, test: Wrap, provenance: "TextBox.TextWrapping DP (winmd)" }
+  - { name: Header, as: string, test: "Your name", provenance: "TextBox.Header: object (winmd); text header as boxed HSTRING" }
+events:
+  - name: TextChanged
+    payload: [{ from: sender, prop: Text, name: text }]
+    trigger: "set:Text=abc"
+    asynchronous: true
+    provenance: "TextBox.TextChanged: TextChangedEventHandler (winmd). Raised asynchronously after Text changes, including programmatic sets (docs); the payload reads the sender's Text"
+  - name: BeforeTextChanging
+    sync: true
+    result: { prop: Cancel }
+    payload: [{ from: args, prop: NewText, name: newText }]
+    trigger: "set:Text=abc"
+    provenance: "TextBox.BeforeTextChanging: TypedEventHandler<TextBox, TextBoxBeforeTextChangingEventArgs{NewText, Cancel rw}> (winmd); Cancel must be set synchronously"
+methods:
+  - { name: SelectAll, provenance: "TextBox.SelectAll() (winmd ITextBox)" }
+  - { name: Select, provenance: "TextBox.Select(start: i32, length: i32) (winmd ITextBox)" }

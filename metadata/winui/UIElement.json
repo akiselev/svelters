@@ -1,0 +1,3649 @@
+{
+  "abstract": true,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AccessKeyProperty",
+    "AccessKeyScopeOwnerProperty",
+    "AllowDropProperty",
+    "CacheModeProperty",
+    "CanBeScrollAnchorProperty",
+    "CanDragProperty",
+    "ClipProperty",
+    "CompositeModeProperty",
+    "ContextFlyoutProperty",
+    "ExitDisplayModeOnAccessKeyInvokedProperty",
+    "FocusStateProperty",
+    "HighContrastAdjustmentProperty",
+    "IsAccessKeyScopeProperty",
+    "IsDoubleTapEnabledProperty",
+    "IsHitTestVisibleProperty",
+    "IsHoldingEnabledProperty",
+    "IsRightTapEnabledProperty",
+    "IsTabStopProperty",
+    "IsTapEnabledProperty",
+    "KeyTipHorizontalOffsetProperty",
+    "KeyTipPlacementModeProperty",
+    "KeyTipTargetProperty",
+    "KeyTipVerticalOffsetProperty",
+    "KeyboardAcceleratorPlacementModeProperty",
+    "KeyboardAcceleratorPlacementTargetProperty",
+    "LightsProperty",
+    "ManipulationModeProperty",
+    "OpacityProperty",
+    "PointerCapturesProperty",
+    "ProjectionProperty",
+    "RenderTransformOriginProperty",
+    "RenderTransformProperty",
+    "ShadowProperty",
+    "TabFocusNavigationProperty",
+    "TabIndexProperty",
+    "Transform3DProperty",
+    "TransitionsProperty",
+    "UseLayoutRoundingProperty",
+    "UseSystemFocusVisualsProperty",
+    "VisibilityProperty",
+    "XYFocusDownNavigationStrategyProperty",
+    "XYFocusDownProperty",
+    "XYFocusKeyboardNavigationProperty",
+    "XYFocusLeftNavigationStrategyProperty",
+    "XYFocusLeftProperty",
+    "XYFocusRightNavigationStrategyProperty",
+    "XYFocusRightProperty",
+    "XYFocusUpNavigationStrategyProperty",
+    "XYFocusUpProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Measure",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "availableSize",
+          "type": {
+            "native": "Windows.Foundation.Size",
+            "ref": "value<Windows.Foundation.Size>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Arrange",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "finalRect",
+          "type": {
+            "native": "Windows.Foundation.Rect",
+            "ref": "value<Windows.Foundation.Rect>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CapturePointer",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "value",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ReleasePointerCapture",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "value",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ReleasePointerCaptures",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AddHandler",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "routedEvent",
+          "type": {
+            "native": "Microsoft.UI.Xaml.RoutedEvent",
+            "ref": "object<Microsoft.UI.Xaml.RoutedEvent>"
+          }
+        },
+        {
+          "name": "handler",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "name": "handledEventsToo",
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RemoveHandler",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "routedEvent",
+          "type": {
+            "native": "Microsoft.UI.Xaml.RoutedEvent",
+            "ref": "object<Microsoft.UI.Xaml.RoutedEvent>"
+          }
+        },
+        {
+          "name": "handler",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "TransformToVisual",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "visual",
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.Media.GeneralTransform",
+        "ref": "object<Microsoft.UI.Xaml.Media.GeneralTransform>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "InvalidateMeasure",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "InvalidateArrange",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "UpdateLayout",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CancelDirectManipulations",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "StartDragAsync",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "pointerPoint",
+          "type": {
+            "native": "Microsoft.UI.Input.PointerPoint",
+            "ref": "object<Microsoft.UI.Input.PointerPoint>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Windows.Foundation.IAsyncOperation<Windows.ApplicationModel.DataTransfer.DataPackageOperation>",
+        "ref": "object<Windows.Foundation.IAsyncOperation>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "StartBringIntoView",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "StartBringIntoView",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "options",
+          "type": {
+            "native": "Microsoft.UI.Xaml.BringIntoViewOptions",
+            "ref": "object<Microsoft.UI.Xaml.BringIntoViewOptions>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "TryInvokeKeyboardAccelerator",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "args",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+            "ref": "object<Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Focus",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "value",
+          "type": {
+            "native": "Microsoft.UI.Xaml.FocusState",
+            "ref": "enum<Microsoft.UI.Xaml.FocusState>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "StartAnimation",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "animation",
+          "type": {
+            "native": "Microsoft.UI.Composition.ICompositionAnimationBase",
+            "ref": "object<Microsoft.UI.Composition.ICompositionAnimationBase>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "StopAnimation",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "animation",
+          "type": {
+            "native": "Microsoft.UI.Composition.ICompositionAnimationBase",
+            "ref": "object<Microsoft.UI.Composition.ICompositionAnimationBase>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Composition.IAnimationObject",
+      "name": "PopulatePropertyInfo",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "propertyName",
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        },
+        {
+          "name": "propertyInfo",
+          "type": {
+            "native": "Microsoft.UI.Composition.AnimationPropertyInfo",
+            "ref": "object<Microsoft.UI.Composition.AnimationPropertyInfo>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Composition.IVisualElement2",
+      "name": "GetVisualInternal",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "Microsoft.UI.Composition.Visual",
+        "ref": "object<Microsoft.UI.Composition.Visual>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.UIElement",
+    "namespace": "Microsoft.UI.Xaml",
+    "short": "UIElement"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AccessKey",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AccessKeyScopeOwner",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ActualOffset",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Vector3",
+        "ref": "value<Windows.Foundation.Numerics.Vector3>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ActualSize",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Vector2",
+        "ref": "value<Windows.Foundation.Numerics.Vector2>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AllowDrop",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CacheMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.CacheMode",
+        "ref": "object<Microsoft.UI.Xaml.Media.CacheMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CanBeScrollAnchor",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CanDrag",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CenterPoint",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Vector3",
+        "ref": "value<Windows.Foundation.Numerics.Vector3>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Clip",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.RectangleGeometry",
+        "ref": "object<Microsoft.UI.Xaml.Media.RectangleGeometry>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CompositeMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.ElementCompositeMode",
+        "ref": "enum<Microsoft.UI.Xaml.Media.ElementCompositeMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ContextFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DesiredSize",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Size",
+        "ref": "value<Windows.Foundation.Size>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ExitDisplayModeOnAccessKeyInvoked",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "FocusState",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.FocusState",
+        "ref": "enum<Microsoft.UI.Xaml.FocusState>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "HighContrastAdjustment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ElementHighContrastAdjustment",
+        "ref": "flags<Microsoft.UI.Xaml.ElementHighContrastAdjustment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsAccessKeyScope",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsDoubleTapEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsHitTestVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsHoldingEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsRightTapEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsTabStop",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "IsTapEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyTipHorizontalOffset",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyTipPlacementMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.KeyTipPlacementMode",
+        "ref": "enum<Microsoft.UI.Xaml.Input.KeyTipPlacementMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyTipTarget",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyTipVerticalOffset",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyboardAcceleratorPlacementMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode",
+        "ref": "enum<Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyboardAcceleratorPlacementTarget",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyboardAccelerators",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Input.KeyboardAccelerator>",
+        "ref": "list<object<Microsoft.UI.Xaml.Input.KeyboardAccelerator>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Lights",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.XamlLight>",
+        "ref": "list<object<Microsoft.UI.Xaml.Media.XamlLight>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ManipulationMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.ManipulationModes",
+        "ref": "flags<Microsoft.UI.Xaml.Input.ManipulationModes>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Opacity",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "OpacityTransition",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ScalarTransition",
+        "ref": "object<Microsoft.UI.Xaml.ScalarTransition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerCaptures",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Xaml.Input.Pointer>",
+        "ref": "list<object<Microsoft.UI.Xaml.Input.Pointer>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Projection",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Projection",
+        "ref": "object<Microsoft.UI.Xaml.Media.Projection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RasterizationScale",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RenderSize",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Size",
+        "ref": "value<Windows.Foundation.Size>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RenderTransform",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Transform",
+        "ref": "object<Microsoft.UI.Xaml.Media.Transform>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RenderTransformOrigin",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Point",
+        "ref": "value<Windows.Foundation.Point>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Rotation",
+      "origin": "winmd",
+      "type": {
+        "native": "f32",
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RotationAxis",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Vector3",
+        "ref": "value<Windows.Foundation.Numerics.Vector3>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RotationTransition",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ScalarTransition",
+        "ref": "object<Microsoft.UI.Xaml.ScalarTransition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Scale",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Vector3",
+        "ref": "value<Windows.Foundation.Numerics.Vector3>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ScaleTransition",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Vector3Transition",
+        "ref": "object<Microsoft.UI.Xaml.Vector3Transition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Shadow",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Shadow",
+        "ref": "object<Microsoft.UI.Xaml.Media.Shadow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "TabFocusNavigation",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.KeyboardNavigationMode",
+        "ref": "enum<Microsoft.UI.Xaml.Input.KeyboardNavigationMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "TabIndex",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Transform3D",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Media3D.Transform3D",
+        "ref": "object<Microsoft.UI.Xaml.Media.Media3D.Transform3D>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "TransformMatrix",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Matrix4x4",
+        "ref": "value<Windows.Foundation.Numerics.Matrix4x4>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Transitions",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Animation.TransitionCollection",
+        "ref": "object<Microsoft.UI.Xaml.Media.Animation.TransitionCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Translation",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Numerics.Vector3",
+        "ref": "value<Windows.Foundation.Numerics.Vector3>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "TranslationTransition",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Vector3Transition",
+        "ref": "object<Microsoft.UI.Xaml.Vector3Transition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "UseLayoutRounding",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "UseSystemFocusVisuals",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Visibility",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Visibility",
+        "ref": "enum<Microsoft.UI.Xaml.Visibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusDown",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusDownNavigationStrategy",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+        "ref": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusKeyboardNavigation",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode",
+        "ref": "enum<Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusLeft",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusLeftNavigationStrategy",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+        "ref": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusRight",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusRightNavigationStrategy",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+        "ref": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusUp",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XYFocusUpNavigationStrategy",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+        "ref": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "XamlRoot",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.XamlRoot",
+        "ref": "object<Microsoft.UI.Xaml.XamlRoot>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AccessKeyDisplayDismissed",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs",
+          "name": "PressedKeys",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AccessKeyDisplayRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "AccessKeyInvoked",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "AnimationDesired",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "HorizontalAlignmentRatio",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "HorizontalOffset",
+          "settable": true,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "TargetElement",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "TargetRect",
+          "settable": true,
+          "type": {
+            "native": "Windows.Foundation.Rect",
+            "ref": "value<Windows.Foundation.Rect>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "VerticalAlignmentRatio",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+          "name": "VerticalOffset",
+          "settable": true,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "BringIntoViewRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs",
+          "name": "Character",
+          "settable": false,
+          "type": {
+            "native": "char16",
+            "ref": "char16"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs",
+          "name": "KeyStatus",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Core.CorePhysicalKeyStatus",
+            "ref": "value<Windows.UI.Core.CorePhysicalKeyStatus>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "CharacterReceived",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.RoutedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ContextCanceled",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs",
+      "args_methods": [
+        "TryGetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ContextRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs",
+      "args_methods": [
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.DoubleTappedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DoubleTapped",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Data",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DataView",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackageView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUIOverride",
+            "ref": "object<Microsoft.UI.Xaml.DragUIOverride>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DragEnter",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Data",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DataView",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackageView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUIOverride",
+            "ref": "object<Microsoft.UI.Xaml.DragUIOverride>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DragLeave",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Data",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DataView",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackageView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUIOverride",
+            "ref": "object<Microsoft.UI.Xaml.DragUIOverride>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DragOver",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragStartingEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragStartingEventArgs",
+          "name": "AllowedOperations",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragStartingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragStartingEventArgs",
+          "name": "Data",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragStartingEventArgs",
+          "name": "DragUI",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUI",
+            "ref": "object<Microsoft.UI.Xaml.DragUI>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.DragStartingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DragStarting",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Data",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DataView",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackageView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUIOverride",
+            "ref": "object<Microsoft.UI.Xaml.DragUIOverride>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Drop",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DropCompletedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DropCompletedEventArgs",
+          "name": "DropResult",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.DropCompletedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "DropCompleted",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+      "args_methods": [
+        "TryCancel",
+        "TrySetNewFocusedElement"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "CorrelationId",
+          "settable": false,
+          "type": {
+            "native": "System.Guid",
+            "ref": "object<System.Guid>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "Direction",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+            "ref": "enum<Microsoft.UI.Xaml.Input.FocusNavigationDirection>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "FocusState",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.FocusState",
+            "ref": "enum<Microsoft.UI.Xaml.FocusState>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "InputDevice",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+            "ref": "enum<Microsoft.UI.Xaml.Input.FocusInputDeviceKind>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "NewFocusedElement",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+          "name": "OldFocusedElement",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.GettingFocusEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "GettingFocus",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "GotFocus",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs",
+      "args_methods": [
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs",
+          "name": "HoldingState",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.HoldingState",
+            "ref": "enum<Microsoft.UI.Input.HoldingState>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.HoldingEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Holding",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "DeviceId",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Key",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "KeyStatus",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Core.CorePhysicalKeyStatus",
+            "ref": "value<Windows.UI.Core.CorePhysicalKeyStatus>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "OriginalKey",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyDown",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "DeviceId",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Key",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "KeyStatus",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Core.CorePhysicalKeyStatus",
+            "ref": "value<Windows.UI.Core.CorePhysicalKeyStatus>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "OriginalKey",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "KeyUp",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+      "args_methods": [
+        "TryCancel",
+        "TrySetNewFocusedElement"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "CorrelationId",
+          "settable": false,
+          "type": {
+            "native": "System.Guid",
+            "ref": "object<System.Guid>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "Direction",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+            "ref": "enum<Microsoft.UI.Xaml.Input.FocusNavigationDirection>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "FocusState",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.FocusState",
+            "ref": "enum<Microsoft.UI.Xaml.FocusState>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "InputDevice",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+            "ref": "enum<Microsoft.UI.Xaml.Input.FocusInputDeviceKind>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "NewFocusedElement",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+          "name": "OldFocusedElement",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.LosingFocusEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "LosingFocus",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "LostFocus",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "Container",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "Cumulative",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationDelta",
+            "ref": "value<Microsoft.UI.Input.ManipulationDelta>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "IsInertial",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "Position",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Point",
+            "ref": "value<Windows.Foundation.Point>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+          "name": "Velocities",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationVelocities",
+            "ref": "value<Microsoft.UI.Input.ManipulationVelocities>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.ManipulationCompletedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ManipulationCompleted",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+      "args_methods": [
+        "Complete"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "Container",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "Cumulative",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationDelta",
+            "ref": "value<Microsoft.UI.Input.ManipulationDelta>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "Delta",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationDelta",
+            "ref": "value<Microsoft.UI.Input.ManipulationDelta>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "IsInertial",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "Position",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Point",
+            "ref": "value<Windows.Foundation.Point>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+          "name": "Velocities",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationVelocities",
+            "ref": "value<Microsoft.UI.Input.ManipulationVelocities>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.ManipulationDeltaEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ManipulationDelta",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "Container",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "Cumulative",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationDelta",
+            "ref": "value<Microsoft.UI.Input.ManipulationDelta>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "Delta",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationDelta",
+            "ref": "value<Microsoft.UI.Input.ManipulationDelta>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "ExpansionBehavior",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior",
+            "ref": "object<Microsoft.UI.Xaml.Input.InertiaExpansionBehavior>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "RotationBehavior",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.InertiaRotationBehavior",
+            "ref": "object<Microsoft.UI.Xaml.Input.InertiaRotationBehavior>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "TranslationBehavior",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior",
+            "ref": "object<Microsoft.UI.Xaml.Input.InertiaTranslationBehavior>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+          "name": "Velocities",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationVelocities",
+            "ref": "value<Microsoft.UI.Input.ManipulationVelocities>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ManipulationInertiaStarting",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+      "args_methods": [
+        "Complete"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+          "name": "Container",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+          "name": "Cumulative",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.ManipulationDelta",
+            "ref": "value<Microsoft.UI.Input.ManipulationDelta>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+          "name": "Position",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Point",
+            "ref": "value<Windows.Foundation.Point>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.ManipulationStartedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ManipulationStarted",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+          "name": "Container",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+          "name": "Mode",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.ManipulationModes",
+            "ref": "flags<Microsoft.UI.Xaml.Input.ManipulationModes>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+          "name": "Pivot",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.ManipulationPivot",
+            "ref": "object<Microsoft.UI.Xaml.Input.ManipulationPivot>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.ManipulationStartingEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ManipulationStarting",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs",
+          "name": "Direction",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+            "ref": "enum<Microsoft.UI.Xaml.Input.FocusNavigationDirection>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs",
+          "name": "InputDevice",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+            "ref": "enum<Microsoft.UI.Xaml.Input.FocusInputDeviceKind>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "NoFocusCandidateFound",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerCanceled",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerCaptureLost",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerEntered",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerExited",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerMoved",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerPressed",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerReleased",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+      "args_methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "IsGenerated",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+          "name": "Pointer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.Pointer",
+            "ref": "object<Microsoft.UI.Xaml.Input.Pointer>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PointerWheelChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "DeviceId",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Key",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "KeyStatus",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Core.CorePhysicalKeyStatus",
+            "ref": "value<Windows.UI.Core.CorePhysicalKeyStatus>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "OriginalKey",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PreviewKeyDown",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "DeviceId",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "Key",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "KeyStatus",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Core.CorePhysicalKeyStatus",
+            "ref": "value<Windows.UI.Core.CorePhysicalKeyStatus>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+          "name": "OriginalKey",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "PreviewKeyUp",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+          "name": "Key",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKey",
+            "ref": "enum<Windows.System.VirtualKey>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.System.VirtualKeyModifiers",
+            "ref": "flags<Windows.System.VirtualKeyModifiers>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "ProcessKeyboardAccelerators",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs",
+      "args_methods": [
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.RightTappedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "RightTapped",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs",
+      "args_methods": [
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs",
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Input.PointerDeviceType",
+            "ref": "enum<Microsoft.UI.Input.PointerDeviceType>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Input.TappedEventHandler",
+      "interface": "Microsoft.UI.Xaml.IUIElement",
+      "name": "Tapped",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}
