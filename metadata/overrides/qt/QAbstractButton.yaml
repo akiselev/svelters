@@ -1,0 +1,39 @@
+inherit:
+  props:
+    - { js: label, native: text, provenance: "QAbstractButton::text (qdoc)" }
+    - { js: checkable, native: checkable, provenance: "QAbstractButton::checkable (qdoc)" }
+    - { js: autoRepeat, native: autoRepeat, provenance: "QAbstractButton::autoRepeat (qdoc)" }
+    - { js: autoExclusive, native: autoExclusive, provenance: "QAbstractButton::autoExclusive (qdoc)" }
+    - { js: shortcut, native: shortcut, provenance: "QAbstractButton::shortcut (qdoc)" }
+    - { js: checked, native: checked, suppress_signals: true, provenance: "QAbstractButton::checked (qdoc)" }
+  signals:
+    - js: pressed
+      native: pressed
+      connect: "pressed()"
+      args: []
+      trigger: "{ QMouseEvent p(QEvent::MouseButtonPress, QPointF(2, 2), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &p); }"
+      provenance: "pressed() (qdoc)"
+    - js: released
+      native: released
+      connect: "released()"
+      args: []
+      trigger: "{ QMouseEvent p(QEvent::MouseButtonPress, QPointF(2, 2), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &p); QMouseEvent r(QEvent::MouseButtonRelease, QPointF(2, 2), Qt::LeftButton, Qt::NoButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &r); }"
+      provenance: "released() (qdoc)"
+    - js: toggled
+      native: toggled
+      connect: "toggled(bool)"
+      args: [{ name: checked, type: bool }]
+      trigger: "$w->setCheckable(true); $w->setChecked(($i % 2) == 0)"
+      expect_args: ["true"]
+      provenance: "toggled(bool) (qdoc)"
+    - js: clicked
+      native: clicked
+      collapses: ["clicked()", "clicked(bool)"]
+      connect: "clicked(bool)"
+      args: []
+      trigger: "$w->click()"
+      provenance: "QAbstractButton::clicked(bool) (qdoc); overloads collapsed"
+  methods:
+    - { js: click, native: click, provenance: "QAbstractButton::click() slot (qdoc)" }
+    - { js: toggle, native: toggle, expect: "$w->isChecked() || !$w->isCheckable()", provenance: "QAbstractButton::toggle() slot (qdoc)" }
+    - { js: animateClick, native: animateClick, provenance: "QAbstractButton::animateClick() slot (qdoc)" }
