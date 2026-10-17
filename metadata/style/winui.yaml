@@ -1,0 +1,31 @@
+# Style properties of the WinUI 3 backend. Format: metadata/style/gtk.yaml.
+# WinUI has no stylesheet language we can feed at run time, so every property is a setter (a
+# DependencyProperty written with setProp) or a child attribute (an attached property written with
+# setChildAttr). `prop` / `attr` are the backend's kebab-case names (tools/metadata/winui).
+# Not yet wired into tools/metadata/style/style_table.py: that needs metadata/semantics/winui.json,
+# which the WinUI generator does not emit yet (docs/notes/win1-winui.md).
+toolkit: winui
+dialect: none
+setter_selectors: [type, class, id]
+units:
+  px: { scale: 1, provenance: "XAML sizes are effective (device-independent) pixels" }
+
+properties:
+  width: { via: setter, prop: width, type: length, kinds: [FrameworkElement] }
+  height: { via: setter, prop: height, type: length, kinds: [FrameworkElement] }
+  min-width: { via: setter, prop: min-width, type: length, kinds: [FrameworkElement] }
+  min-height: { via: setter, prop: min-height, type: length, kinds: [FrameworkElement] }
+  margin: { via: setter, prop: margin, type: insets, kinds: [FrameworkElement], note: "Thickness; XAML order left, top, right, bottom" }
+  padding: { via: setter, prop: padding, type: insets, kinds: [Control, StackPanel, Grid] }
+  opacity: { via: setter, prop: opacity, type: number, kinds: [UIElement] }
+  visibility: { via: setter, prop: visibility, type: enum, kinds: [UIElement] }
+  horizontal-alignment: { via: setter, prop: horizontal-alignment, type: enum, kinds: [FrameworkElement] }
+  vertical-alignment: { via: setter, prop: vertical-alignment, type: enum, kinds: [FrameworkElement] }
+  font-size: { via: setter, prop: font-size, type: length, kinds: [Control, TextBlock] }
+  spacing: { via: setter, prop: spacing, type: length, kinds: [StackPanel] }
+  row-spacing: { via: setter, prop: row-spacing, type: length, kinds: [Grid] }
+  column-spacing: { via: setter, prop: column-spacing, type: length, kinds: [Grid] }
+  row: { via: child-attr, attr: row, type: int, parents: [Grid], note: "Grid.Row attached property" }
+  column: { via: child-attr, attr: column, type: int, parents: [Grid], note: "Grid.Column attached property" }
+  row-span: { via: child-attr, attr: row-span, type: int, parents: [Grid] }
+  column-span: { via: child-attr, attr: column-span, type: int, parents: [Grid] }
