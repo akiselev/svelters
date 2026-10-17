@@ -7,6 +7,12 @@ export interface BindableProps {
   checkbutton: {
     active: boolean; // gtk
   };
+  dial: {
+    value: number; // qt
+  };
+  doublespinbox: {
+    value: number; // qt
+  };
   editablelabel: {
     editing: boolean; // gtk
   };
@@ -19,8 +25,17 @@ export interface BindableProps {
   passwordentry: {
     text: string; // gtk
   };
+  scrollbar: {
+    value: number; // qt
+  };
   searchentry: {
     text: string; // gtk
+  };
+  slider: {
+    value: number; // qt
+  };
+  spinbox: {
+    value: number; // qt
   };
   spinner: {
     spinning: boolean; // gtk

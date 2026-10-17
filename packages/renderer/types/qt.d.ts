@@ -207,6 +207,44 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  dial: {
+    props: {
+      value?: number;
+      notchesVisible?: boolean;
+      wrapping?: boolean;
+      notchTarget?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   dialog: {
     props: {
       title?: string;
@@ -245,6 +283,9 @@ export interface QtElementDescriptors {
     props: {
       value?: number;
       decimals?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -263,6 +304,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      valueChanged: (d: number) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -546,6 +588,41 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  lcdnumber: {
+    props: {
+      digitCount?: number;
+      intValue?: number;
+      value?: number;
+      mode?: "bin" | "dec" | "hex" | "oct";
+      segmentStyle?: "filled" | "flat" | "outline";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      overflow: () => void;
+    };
+    methods: {
+      display(num: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   menu: {
     props: {
       enabled?: boolean;
@@ -634,6 +711,39 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  progressbar: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      format?: string;
+      textVisible?: boolean;
+      orientation?: "horizontal" | "vertical";
+      invertedAppearance?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+    };
+    methods: {
+      reset(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   progressdialog: {
     props: {
       value?: number;
@@ -677,6 +787,41 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  scrollbar: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   scrolledwindow: {
     props: {
       widgetResizable?: boolean;
@@ -708,12 +853,51 @@ export interface QtElementDescriptors {
     };
     slots: "child";
   };
+  slider: {
+    props: {
+      value?: number;
+      tickPosition?: "no-ticks" | "ticks-above" | "ticks-below" | "ticks-both-sides" | "ticks-left" | "ticks-right";
+      tickInterval?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   spinbox: {
     props: {
       value?: number;
       minimum?: number;
       maximum?: number;
       singleStep?: number;
+      suffix?: string;
+      displayIntegerBase?: number;
       prefix?: string;
       readOnly?: boolean;
       wrapping?: boolean;
@@ -733,6 +917,8 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      valueChanged: (i: number) => void;
+      textChanged: (text: string) => void;
       editingFinished: () => void;
     };
     methods: {
