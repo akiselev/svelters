@@ -6,7 +6,8 @@
   "description": "Svelte's own runtime-runes tests compiled by the experimental Rust compiler (NC1) for a DOM test backend and run on a jsdom host",
   "scripts": {
     "conformance": "node run.mjs",
-    "test": "node run.mjs --check"
+    "test": "node run.mjs --check --skip-missing",
+    "test:compiler": "(cd ../../.. && tools/dev/cargo-slot cargo build -p svelters-compiler --bin svelters-compile) && node run.mjs --check"
   },
   "dependencies": {
     "@svelters/native-runtime": "workspace:*",

@@ -37,11 +37,26 @@ const filters = args.filter((a) => !a.startsWith('--'));
 process.env.SVELTE_NO_ASYNC ??= 'true';
 const asyncMode = process.env.SVELTE_NO_ASYNC !== 'true';
 
+// `pnpm test` passes --skip-missing: without the upstream samples or a built compiler the run is
+// skipped with a message instead of failing (`pnpm run test:compiler` builds the compiler first).
+const skipMissing = args.includes('--skip-missing');
+const missing = (what) => {
+  if (!skipMissing) return false;
+  console.log(`SKIP conformance: ${what}`);
+  return true;
+};
 if (!fs.existsSync(samplesDir)) {
+  if (missing(`no Svelte samples at ${samplesDir} (clone sveltejs/svelte @ f3de3f2 into $UPSTREAM/svelte)`)) process.exit(0);
   console.error(`no Svelte samples at ${samplesDir} (clone sveltejs/svelte @ f3de3f2 into $UPSTREAM/svelte)`);
   process.exit(2);
 }
-const bin = compilerPath();
+let bin;
+try {
+  bin = compilerPath();
+} catch (e) {
+  if (missing(`${e.message}; \`pnpm run test:compiler\` builds it through tools/dev/cargo-slot`)) process.exit(0);
+  throw e;
+}
 
 // ---------------------------------------------------------------------------------------------
 // Which samples have a `dom` variant (shared.ts runtime_suite), from the config text: importing
