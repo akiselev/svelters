@@ -2331,6 +2331,23 @@ def gen_dts(m: Model) -> str:
 
 # --------------------------------------------------------------------------------------------
 
+def gen_schema(m: Model) -> str:
+    """Element tag -> prop -> coarse type for hosts without a backend (packages/testhost), like the GTK
+    schema.json: only the types attribute coercion acts on (booleans and numbers)."""
+    schema = {}
+    for e in m.elements:
+        props = {}
+        for p in e.get("props", []):
+            if p.get("readonly"):
+                continue
+            cat = p.get("cat")
+            c = {"bool": "boolean", "int": "integer", "float": "number"}.get(cat)
+            if c:
+                props[p["js"]] = c
+        schema[e["tag"]] = dict(sorted(props.items()))
+    return json.dumps(schema, indent=2, sort_keys=True) + "\n"
+
+
 def write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists() and path.read_text() == text:
@@ -2344,6 +2361,7 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--dts", help="also write the .d.ts to this stable path (only rewritten when it changes)")
     ap.add_argument("--facts", help="write the fact manifest (fact id -> test names + fingerprint) to this path")
+    ap.add_argument("--schema", help="write the TestHost coarse-type schema (packages/testhost/src/schema.qt.json) to this path")
     a = ap.parse_args()
     cfgp = Path(a.config).resolve()
     cfg = tomllib.loads(cfgp.read_text())
@@ -2361,6 +2379,8 @@ def main() -> int:
         if a.facts:
             write_text(Path(a.facts), json.dumps(facts, indent=1, sort_keys=True) + "\n")
         write_text(out / o["dts"], gen_dts(m))
+        if a.schema:
+            write_text(Path(a.schema), gen_schema(m))
         if a.dts:
             write_text(Path(a.dts), gen_dts(m))
             write_values_dts(Path(a.dts).parent / "values.d.ts")
