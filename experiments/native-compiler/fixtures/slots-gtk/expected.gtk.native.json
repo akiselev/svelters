@@ -1,0 +1,17 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Slots"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 1,
+  "text": "2 saves"
+ },
+ {
+  "class": "GtkHeaderBar",
+  "d": 1,
+  "text": ""
+ }
+]

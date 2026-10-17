@@ -1,6 +1,8 @@
 <script>
   // The styling demo shared by the "styling" and "styling dark" pages: scoped component styles,
   // class:, style:, --sv-* tokens. The dark page only switches the colour scheme and a token.
+  // The last row uses setter properties (written with setProp / setChildAttr, not CSS): the
+  // names are the toolkit's own, so each gallery has its own row.
   let count = $state(0);
   let warn = $state(false);
 </script>
@@ -15,6 +17,11 @@
       <button class="ghost" class:active={warn} onclick={() => (warn = !warn)}>Toggle warning</button>
     </box>
     <entry class="field" />
+    <box class="setters" class:dense={warn}>
+      <label class="caption" style="valign: center">Setters</label>
+      <button class="grow">hexpand</button>
+      <button style="width-request: 120px">width-request</button>
+    </box>
   </box>
 </box>
 
@@ -31,4 +38,8 @@
   button.ghost.active { border-color: var(--sv-danger); }
   entry.field { color: var(--sv-fg); }
   entry.field:focus { border-color: var(--sv-accent); }
+  .setters { spacing: 16px; orientation: horizontal; margin-top: 4px; }
+  .setters.dense { spacing: 2px; }
+  .grow { hexpand: true; }
+  .caption { color: var(--sv-muted); }
 </style>

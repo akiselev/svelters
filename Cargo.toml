@@ -7,6 +7,7 @@ members = [
     "crates/svelters-gtk",
     "crates/svelters-qt-build",
     "crates/svelters-winui",
+    "crates/svelters-compiler",
     "examples/counter",
     "examples/counter-qt",
 ]

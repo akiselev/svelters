@@ -1,0 +1,42 @@
+# Hand-written native semantics for the GTK 4 backend: facts that no upstream source encodes, or
+# contracts our own backend adds. Merged over metadata/gtk/*.json by
+# tools/metadata/semantics/gen_semantics.py into metadata/semantics/gtk.json.
+# Every fact carries a provenance. See docs/notes/native-compiler/semantic-spec.md.
+framework: "GTK 4 (svelters-gtk, gtk4-rs)"
+
+# DOM-style event names accepted in `on<event>` attributes, as @svelters/renderer maps them.
+event_aliases:
+  click: clicked
+  change: changed
+  close: close-request
+event_aliases_provenance: "@svelters/renderer EVENT_TO_SIGNAL"
+
+# Kind rules are inherited along the kind chain (a rule on Gtk.Window applies to every window kind).
+kinds:
+  Gtk.Window:
+    lifetime: toplevel
+    present: present
+    provenance: "backend-abi.md ABI v2 'As implemented': GTK toplevel is GtkWindow; present is the zero-arg method in METHODS"
+  Gtk.Label:
+    text_content: label
+    provenance: "@svelters/renderer LABEL_KINDS: text children fold into the label property"
+  Gtk.Button:
+    text_content: label
+    provenance: "@svelters/renderer LABEL_KINDS"
+  Gtk.Editable:
+    signals:
+      changed:
+        args: [{ name: text, type: string }]
+        provenance: "svelters-gtk backend contract (P5 fix 2): `changed` delivers [text], matching Qt"
+    # bind:text comes from the `bindings` annotation in metadata/overrides/gtk/Entry.yaml.
+  Gtk.TextView:
+    signals:
+      changed:
+        args: [{ name: text, type: string }]
+        provenance: "svelters-gtk backend contract (backend.rs deliver): TextView `changed` is its buffer's (X7 forwarding) and delivers [text] like an entry"
+    # bind:text comes from the `bindings` annotation in metadata/overrides/gtk/TextView.yaml.
+
+# GTK defaults come from GParamSpec (metadata/gtk/*.json); entries here override or fill gaps.
+defaults: {}
+
+# Style properties (setters, child attributes, native CSS) live in metadata/style/gtk.yaml.

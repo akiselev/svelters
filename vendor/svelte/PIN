@@ -1,5 +1,5 @@
 upstream:      https://github.com/sveltejs/svelte
-branch:        svelters/renderer   (local fork branch, not pushed; /projects/svelte-fork)
+branch:        svelters/renderer   (pushed to github.com/akiselev/svelte; local checkout /projects/svelte-fork)
 base:          f3de3f236bd586c764fd48bab04f41c54c5ff80d   "chore: force `custom-renderer` custom condition" (top of the upstream stack, head of PR #18511, branch `custom-condition`)
 commit:        27b7dfb706dc650e5376d8b0d9dedbb1ffd2c655   "feat: element bind:this and a renderer bind hook under customRenderer"   (1 local commit on top of the base)
 local patches:

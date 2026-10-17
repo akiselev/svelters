@@ -1,0 +1,134 @@
+create window #1
+set #1 title "Lists recycle"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 4
+create box #3
+set #3 orientation "horizontal"
+set #3 spacing 4
+create button #4
+listen #4 clicked on
+set #4 label "removeFirst"
+insert #3 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "rename"
+insert #3 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "select2"
+insert #3 #6 before=end slot=default
+create button #7
+listen #7 clicked on
+set #7 label "scrollEnd"
+insert #3 #7 before=end slot=default
+create button #8
+listen #8 clicked on
+set #8 label "toggle"
+insert #3 #8 before=end slot=default
+create label #9
+set #9 label "selected=-1 activated=-"
+insert #3 #9 before=end slot=default
+insert #2 #3 before=end slot=default
+create virtuallist #10
+set #10 layout "list"
+set #10 selection "single"
+set #10 rowHeight 32
+set #10 minHeight 200
+listen #10 setup on
+listen #10 bind on
+listen #10 unbind on
+listen #10 teardown on
+listen #10 activate on
+listen #10 select on
+insert #2 #10 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+call #10 splice [0,0,[1,2,3,4,5,6,7,8]]
+sync #10 setup [1]
+create box #11
+call #10 setRow [1,11]
+result #10 null
+sync #10 setup [2]
+create box #12
+call #10 setRow [2,12]
+result #10 null
+sync #10 bind [1,0,1,1]
+create box #13
+set #13 orientation "horizontal"
+set #13 spacing 6
+create label #14
+set #14 label "ctx 0: Item 1"
+insert #13 #14 before=end slot=default
+create button #15
+listen #15 clicked on
+set #15 label "clicks 0"
+insert #13 #15 before=end slot=default
+insert #11 #13 before=end slot=default
+result #10 null
+sync #10 bind [2,1,2,1]
+create box #16
+set #16 orientation "horizontal"
+set #16 spacing 6
+create label #17
+set #17 label "ctx 1: Item 2"
+insert #16 #17 before=end slot=default
+create button #18
+listen #18 clicked on
+set #18 label "clicks 0"
+insert #16 #18 before=end slot=default
+insert #12 #16 before=end slot=default
+result #10 null
+event #15 clicked []
+set #15 label "clicks 1"
+sync #10 unbind [1,1]
+result #10 null
+sync #10 bind [1,5,6,2]
+set #14 label "ctx 5: Item 6"
+result #10 null
+event #10 activate [5]
+event #10 select [5]
+set #9 label "selected=5 activated=5:6"
+event #6 clicked []
+set #9 label "selected=2 activated=5:6"
+set #10 selected 2
+event #4 clicked []
+call #10 splice [0,1,[]]
+set #14 label "ctx 4: Item 6"
+set #17 label "ctx 0: Item 2"
+event #5 clicked []
+set #14 label "ctx 4: Item 6!"
+event #7 clicked []
+call #10 scrollTo [6]
+sync #10 unbind [2,1]
+result #10 null
+sync #10 teardown [2]
+remove #12 #16
+destroy #12
+result #10 null
+destroy #17
+destroy #18
+destroy #16
+event #8 clicked []
+remove #2 #10
+remove #11 #13
+destroy #11
+destroy #10
+destroy #14
+destroy #15
+destroy #13
+event #8 clicked []
+create virtuallist #19
+set #19 layout "list"
+set #19 selection "single"
+set #19 rowHeight 32
+set #19 minHeight 200
+listen #19 setup on
+listen #19 bind on
+listen #19 unbind on
+listen #19 teardown on
+listen #19 activate on
+listen #19 select on
+insert #2 #19 before=end slot=default
+call #19 splice [0,0,[1,2,3,4,5,6,7]]
+set #19 selected 2

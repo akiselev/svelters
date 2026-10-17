@@ -1,0 +1,3 @@
+legacy_export_invalid: Cannot use `export let` in runes mode — use `$props()` instead @3:3
+derived_invalid_export: Cannot export derived state from a module. To expose the current derived value, export a function returning its value @4:3
+module_illegal_default_export: A component cannot have a default export @5:3

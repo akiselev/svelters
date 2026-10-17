@@ -1,0 +1,32 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Todos!"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "Todos!: 1/2 left (next #3)"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Add"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Toggle first"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Rename"
+ }
+]

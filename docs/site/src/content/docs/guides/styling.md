@@ -1,9 +1,9 @@
 ---
 title: Styling
-description: "Style native widgets from Svelte: class, class:, style:, scoped style blocks, --sv-* design tokens and dark mode, translated to GTK CSS and Qt stylesheets."
+description: "Style native widgets from Svelte: class, class:, style:, scoped style blocks, --sv-* design tokens and dark mode. CSS properties become GTK CSS and Qt stylesheets; layout properties become widget setters."
 ---
 
-Svelte's `class`, `class:`, `style:` and `style` work on native elements, and a component's `<style>` block styles them. The build translates the stylesheet into GTK CSS and Qt stylesheets (QSS) and reports everything it had to drop, naming the toolkit. Colours and sizes can come from `--sv-*` tokens that switch with the colour scheme at runtime.
+Svelte's `class`, `class:`, `style:` and `style` work on native elements, and a component's `<style>` block styles them. Every property in a declaration is one of the toolkit's own, under its native name in kebab-case, and the toolkit's style table says how it is applied: CSS properties are translated into GTK CSS or Qt stylesheets (QSS), setter properties (`spacing`, `hexpand`, `minimum-width`, ...) are written to the widget with `setProp`. The build reports everything it had to drop, naming the toolkit. Colours and sizes can come from `--sv-*` tokens that switch with the colour scheme at runtime.
 
 ```svelte
 <script>
@@ -35,41 +35,121 @@ The same component, light and dark, on both toolkits (the `styling` and `styling
 | GTK 4 | ![GTK, light scheme](../../../assets/styling/gtk-light.png) | ![GTK, dark scheme with an amber accent token](../../../assets/styling/gtk-dark.png) |
 | Qt 6 | ![Qt, light scheme](../../../assets/styling/qt-light.png) | ![Qt, dark scheme with an amber accent token](../../../assets/styling/qt-dark.png) |
 
-The Qt window stretches the page vertically because `QVBoxLayout` distributes spare height; that is layout, which CSS never controls (see [Layout stays in props](#layout-stays-in-props)).
+The Qt window stretches the page vertically because `QVBoxLayout` distributes spare height; that is layout, which CSS never controls (see [How each platform styles](#how-each-platform-styles)).
 
 ## Four layers
 
 | Layer | What | Where |
 | --- | --- | --- |
-| Layout | spacing, alignment, expand, size requests, wrapping, ellipsizing | widget props, never CSS |
-| Portable style | `<style>`, `class`, `class:`, `style:`, `style` limited to a defined vocabulary | translated to GTK CSS and QSS |
+| Native styling | `<style>`, `class`, `class:`, `style:`, `style` with the toolkit's CSS properties | translated to GTK CSS and QSS |
+| Setter properties | the same places, with the toolkit's layout and widget properties (`spacing`, `hexpand`, `width-request` on GTK; `spacing`, `minimum-width`, `stretch` on Qt) | written with `setProp` / `setChildAttr`, matched by the renderer |
 | Native escape | `@native gtk { }` and `@native qt { }` inside `<style>` | passed through verbatim to one toolkit |
 | Tokens | `--sv-*` custom properties and the colour scheme | one token set mapped per toolkit |
+
+Widget props set as attributes (`<box spacing={8}>`) still work and win over any style.
 
 ## How it works
 
 ```text
 <style> in App.svelte
   | Svelte compile (css: 'external'): scoped hash on selectors and on the elements' class
-  | svelters:style Vite plugin -> @svelters/style translator
+  | svelters:style Vite plugin -> @svelters/style: each declaration looked up in the style table
   v
-registerStyles("src/App.svelte", { gtk, qt, qtDark })      (data in the bundle, no <style> tag)
+registerStyles("src/App.svelte", { gtk, qt, qtDark, rules })   (data in the bundle, no <style> tag)
   v
-renderer: class / id / style attributes + sheets + tokens -> host.style(op, handle, text)   (ABI v2.3)
+renderer: class / id / style -> host.style(op, handle, text)      (ABI v2.3)
+          setter rules matched on class / id changes -> setProp / setChildAttr
   v
 GTK: one GtkCssProvider per component, widget css classes          Qt: one application stylesheet, class property
 ```
 
 - **Scoping.** Svelte appends its hash class (`svelte-1n46o8q`) to every selector and every element that carries a class, so a component's rules only match its own elements. The renderer forwards the class string unchanged.
 - **Type selectors use Svelters element names** (`button`, `label`, `entry`), not toolkit names. The translator maps them: `button` becomes the CSS node `button` on GTK and `.QPushButton` on Qt. Kinds that share a toolkit name with another kind (for instance `button`, `togglebutton` and `linkbutton` are all the CSS node `button`) get a marker class `sv-k-<tag>` from the renderer, and the selector uses it, so `button` never matches a toggle button. An element that does not exist on a toolkit (`togglebutton` on Qt) drops the rule there with a warning.
-- **Classes are cheap and local.** GTK adds and removes only the classes the app set (the widget keeps its own `text-button` or `toggle`). Qt sets the dynamic property `class` to `"<QtClass> your classes"`, so `.QPushButton` keeps matching, and re-polishes that one widget.
+- **Classes are cheap and local.** GTK adds and removes only the classes the app set (the widget keeps its own `text-button` or `toggle`). Nothing writes the whole `css-classes` list. Qt sets the dynamic property `class` to `"<QtClass> your classes"`, so `.QPushButton` keeps matching, and re-polishes that one widget.
 - **`id`** sets the widget name (GTK) or object name (Qt), so `#id` selectors match.
+
+## How each platform styles
+
+Each toolkit has a table, generated from `metadata/style/<toolkit>.yaml` and checked against the toolkit's metadata (a setter must be a writable property of every element it applies to). The reference pages list every property: [GTK 4](/api/styling/gtk/), [Qt 6](/api/styling/qt/).
+
+- **GTK 4.** GTK CSS styles the widget's CSS nodes (`button`, `entry > text`, `scale > trough`) and its classes. Layout is not CSS in GTK: spacing, expansion, alignment and size requests are `GtkWidget` and container properties, so they are setter properties under their GObject names (`width-request`, `hexpand`, `halign`, `margin-start`, `spacing`). GTK CSS keeps `min-width` and `min-height` (a CSS minimum) and the CSS box `margin`; `margin-top` and `margin-bottom` are the widget margins, like `margin-start` and `margin-end`.
+- **Qt 6.** QSS styles widgets by class (`.QPushButton`) and the dynamic `class` property. Layout belongs to `QLayout`: `spacing` and `contents-margins` are setters on `box`, and a child's `stretch` and `align` in its layout are child attributes of the parent (the same as `parent:stretch`). `minimum-width`, `maximum-height` and friends are the `QWidget` properties; `min-width` is the QSS one.
+- **Planned toolkits.** WinUI 3 and UIKit have no stylesheet language Svelters can target, so their tables will be setters only (`dialect: none`), and their setter rules take element names, `.class` and, where the platform supports it, `#id`.
+
+Names are never translated between toolkits: `minimum-width` on GTK is reported as a Qt property, not mapped to `width-request`. A component that targets both toolkits writes both names; each toolkit applies its own and warns about the other's.
+
+## Setter rules
+
+A rule whose declarations include setter properties becomes a setter rule for those properties; its CSS declarations still go to the stylesheet.
+
+```svelte
+<box class="toolbar" class:dense>
+  <button class="grow">Save</button>
+</box>
+
+<style>
+  .toolbar { spacing: 8px; orientation: horizontal; color: var(--sv-fg); }
+  .toolbar.dense { spacing: 2px; }
+  .grow { hexpand: true; }          /* GTK */
+  .grow { stretch: 1; }             /* Qt: a child attribute of the box */
+</style>
+```
+
+- **Selectors.** One compound of an element name, `.class` and `#id`. A combinator (`.toolbar .grow`), a state (`:hover`), `@media` or a nested rule around a setter property is an error naming the property: the toolkit has no way to re-evaluate them, so they stay CSS-only.
+- **Matching.** The renderer matches setter rules when an element is created and again whenever its `class` or `id` changes, so `class:` toggles them. It writes only the difference.
+- **Precedence.** An explicit attribute (`<box spacing={4}>`) wins over `style:` and `style=`, which win over rules; rules are ordered by specificity (ids, classes, element names), then source order; the native value is last. Removing the attribute or the inline declaration brings the next layer back.
+- **Restoring.** Before a rule first overrides a property, the renderer reads its current value with `getProp`; when no rule sets the property any more, that value is written back. A child attribute goes back to `null` (the parent's default).
+- **Values.** Lengths are unitless or in `px`; booleans are `true` and `false`; enumerations are the property's own values (`halign: center`); `contents-margins` takes 1 to 4 lengths in CSS order. `var()` is not available in setter properties.
+- A rule that matches an element its property does not apply to (`.toolbar { spacing: 8px }` on a label) skips that property; with an element name in the selector it is an error at build time.
+
+### GTK setter properties
+
+| Property | Applied through | Applies to |
+| --- | --- | --- |
+| `column-homogeneous` | setter `columnHomogeneous` | `Gtk.Grid` |
+| `column-spacing` | setter `columnSpacing` | `Gtk.Grid`, `Gtk.FlowBox` |
+| `halign` | setter `halign` | `Gtk.Widget` |
+| `height-request` | setter `heightRequest` | `Gtk.Widget` |
+| `hexpand` | setter `hexpand` | `Gtk.Widget` |
+| `homogeneous` | setter `homogeneous` | `Gtk.Box`, `Gtk.FlowBox` |
+| `justify` | setter `justify` | `Gtk.Label` |
+| `margin-bottom` | setter `marginBottom` | `Gtk.Widget` |
+| `margin-end` | setter `marginEnd` | `Gtk.Widget` |
+| `margin-start` | setter `marginStart` | `Gtk.Widget` |
+| `margin-top` | setter `marginTop` | `Gtk.Widget` |
+| `orientation` | setter `orientation` | `Gtk.Orientable` |
+| `row-homogeneous` | setter `rowHomogeneous` | `Gtk.Grid` |
+| `row-spacing` | setter `rowSpacing` | `Gtk.Grid`, `Gtk.FlowBox` |
+| `sensitive` | setter `sensitive` | `Gtk.Widget` |
+| `spacing` | setter `spacing` | `Gtk.Box` |
+| `valign` | setter `valign` | `Gtk.Widget` |
+| `vexpand` | setter `vexpand` | `Gtk.Widget` |
+| `width-request` | setter `widthRequest` | `Gtk.Widget` |
+| `wrap` | setter `wrap` | `Gtk.Label` |
+| `xalign` | setter `xalign` | `Gtk.Label` |
+| `yalign` | setter `yalign` | `Gtk.Label` |
+
+### Qt setter properties
+
+| Property | Applied through | Applies to |
+| --- | --- | --- |
+| `align` | child attribute `align` | `box` |
+| `contents-margins` | setter `contentsMargins` | `box` |
+| `enabled` | setter `enabled` | `QWidget` |
+| `maximum-height` | setter `maximumHeight` | `QWidget` |
+| `maximum-width` | setter `maximumWidth` | `QWidget` |
+| `minimum-height` | setter `minimumHeight` | `QWidget` |
+| `minimum-width` | setter `minimumWidth` | `QWidget` |
+| `orientation` | setter `orientation` | `box` |
+| `spacing` | setter `spacing` | `box` |
+| `stretch` | child attribute `stretch` | `box` |
 
 ## `style` and `style:`
 
-Inline style is parsed in JavaScript, checked against the [support matrix](#support-matrix) and sent to the backend as declarations in its dialect. Raw toolkit CSS is not accepted in `style`; use `@native`.
+Inline style is parsed in JavaScript and split the same way: CSS declarations are sent to the backend in its dialect, setter declarations are written with `setProp` above every rule. Raw toolkit CSS is not accepted in `style`; use `@native`.
 
-- GTK deduplicates by content: each distinct declaration set becomes a shared class `sv-s<n>` in one append-only provider, flushed once per main-loop turn. Changing a widget to an already seen style is a class swap. Inline rules sit above component rules, as inline style does on the web.
+- `style:spacing={8}` and `style="spacing: 8px"` take the same path. A number or boolean is written as it is; a string is parsed like a declaration value.
+- GTK deduplicates CSS by content: each distinct declaration set becomes a shared class `sv-s<n>` in one append-only provider, flushed once per main-loop turn. Changing a widget to an already seen style is a class swap. Inline rules sit above component rules, as inline style does on the web.
 - Qt gives the widget its own stylesheet, wrapped in the widget's exact class (a bare declaration list would leak to its descendants).
 - `opacity` in `style` never goes through CSS: it is `gtk_widget_set_opacity` on GTK and a `QGraphicsOpacityEffect` on Qt, which is also why Qt supports `opacity` only inline.
 - Several `style:` directives that change in one update arrive as one operation.
@@ -77,6 +157,8 @@ Inline style is parsed in JavaScript, checked against the [support matrix](#supp
 Continuously animated values (`style:opacity={t}` every frame) are better driven through props or `opacity`; every new distinct style string is a new GTK class, and a Qt widget sheet re-polishes its widget.
 
 ## Selectors
+
+For CSS properties (setter properties take one compound of element name, `.class` and `#id`, see [Setter rules](#setter-rules)):
 
 | Selector | GTK | Qt |
 | --- | --- | --- |
@@ -95,22 +177,9 @@ Continuously animated values (`style:opacity={t}` every frame) are better driven
 
 An unsupported selector drops the whole rule and reports an error. Svelte's own `:where(.svelte-h)` on later compounds is flattened, because GTK rejects the whole rule otherwise.
 
-## Support matrix
+## CSS properties
 
-Properties the translator accepts, per toolkit. Everything else is dropped with a warning that names the toolkit and, for layout properties, the prop to use instead.
-
-| Property | GTK | Qt | Notes |
-| --- | --- | --- | --- |
-| `color`, `background-color`, `border`, `border-width`, `border-style`, `border-color`, `border-radius`, `padding`, `font-family`, `font-size`, `font-weight`, `font-style`, `min-width`, `min-height`, `border-top`, `padding-top`, `border-top-width`, `border-top-style`, `border-top-color`, `border-right`, `padding-right`, `border-right-width`, `border-right-style`, `border-right-color`, `border-bottom`, `padding-bottom`, `border-bottom-width`, `border-bottom-style`, `border-bottom-color`, `border-left`, `padding-left`, `border-left-width`, `border-left-style`, `border-left-color`, `border-top-left-radius`, `border-top-right-radius`, `border-bottom-left-radius`, `border-bottom-right-radius` | yes | yes | |
-| `background` | yes | yes | colour only on Qt: gradients are not translated |
-| `margin`, `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | yes | yes | layout: prefer widget props (margin-start, spacing, ...) |
-| `opacity` | yes | inline | QSS has no opacity: Qt honours it for style= / style: only (QGraphicsOpacityEffect) |
-| `text-decoration` | yes | no | QSS has text-decoration on some widgets only; not translated |
-| `letter-spacing`, `box-shadow`, `text-shadow` | yes | no | |
-| `transition`, `transition-property`, `transition-duration`, `transition-timing-function`, `transition-delay` | yes | no | QSS has no transitions |
-| `animation`, `animation-name`, `animation-duration`, `animation-timing-function`, `animation-delay`, `animation-iteration-count`, `animation-direction`, `animation-fill-mode`, `animation-play-state` | yes | no | QSS has no animations |
-
-`yes` is translated, `inline` means only in `style=` and `style:`, `no` is dropped with a warning.
+The CSS properties of each toolkit are listed in its reference page ([GTK 4](/api/styling/gtk/), [Qt 6](/api/styling/qt/)). A name that is not in the toolkit's table is dropped with a warning that names the toolkit, says when another toolkit has it, and suggests the closest names (`width` on GTK: `width-request`, `border-width`, `min-width`).
 
 Values are checked per toolkit. Qt is strict because QSS clobbers earlier declarations with a value it cannot parse: `oklch()`, `color-mix()`, `calc()`, `rem` units, percentages, gradients and `!important` are errors there. GTK rejects `!important` and percentage padding.
 
@@ -119,18 +188,9 @@ Two compensations are applied for you:
 - **Qt boxes.** A QSS background on a button, combo box or spin box only paints once the box is customised, so `border: none` is added to a rule that sets a background but no border (not on labels, frames and windows).
 - **GTK themes.** The theme paints buttons and entries with a `background-image` gradient that hides `background-color`, so `background-image: none` is added next to it.
 
-### Layout stays in props
+## Compiled components
 
-`width`, `height`, `max-width`, `max-height`, `display`, `position`, `flex`, `gap`, `text-align` and `cursor` are refused with a pointer to the right tool. GTK CSS has no layout properties, QSS's are per widget and fight layouts, and the other planned toolkits have no CSS at all.
-
-| You want | Use |
-| --- | --- |
-| space between children | the container's `spacing` prop |
-| children the same size | `homogeneous` |
-| grow to fill | `hexpand`, `vexpand`, `halign`, `valign` (and per-child attributes such as `parent:column`) |
-| fixed size | `width-request`, `height-request` (`min-width`, `min-height` in CSS only set a minimum) |
-| text alignment, wrapping, ellipsis | `xalign`, `justify`, `wrap`, `ellipsize` |
-| outer spacing | the margin props; CSS `margin` is accepted but is a layout property in disguise |
+Components compiled by the experimental native compiler (`svelters-compile`, NC1) use the same tables. Setter rules are matched at compile time (dynamic classes become runtime conditions); the CSS half of `<style>` is scoped by Svelte and translated by @svelters/style in the Vite plugin, and classes, `id` and inline style reach the widget through the same `host.style` operations. Differences: setter declarations of a dynamic `style={...}` are applied at runtime above everything (the compiled runtime does not track explicit attributes), `style:<setter>={undefined}` writes `null` instead of falling back to the rules, and a dynamic `id` matches no `#id` setter rule.
 
 ## Diagnostics
 
@@ -215,7 +275,7 @@ Calls in the same job are batched, and a token set that did not change sends not
 - Nothing in a native block is validated or scoped to the component: Svelte would prune the toolkit's own selectors (`entry > text`) as unused, so the blocks are lifted out before the compile. Use your own classes to limit them.
 - Qt token placeholders (`${--sv-accent}`) are filled; everything else is verbatim, and QSS stops parsing at the first construct it does not understand, so a typo in a Qt block can disable every rule after it.
 - GTK reports a native block's parse errors on stderr (`[svelters-gtk] css parse error`).
-- Use native blocks for internal nodes (`entry > text`, `scale > trough > slider`), Qt sub-controls (`::indicator`, `::handle`), gradients, shadows and anything outside the vocabulary.
+- Use native blocks for internal nodes (`entry > text`, `scale > trough > slider`), Qt sub-controls (`::indicator`, `::handle`), gradients, shadows and anything outside the style tables. Setter properties have no place in them.
 
 ## Performance notes
 
@@ -228,10 +288,10 @@ Measurements: `docs/notes/styling-gtk-css-qss.md`.
 
 ## Limits and open items
 
-- Parts (`scale::slider`, `checkbutton::indicator`) are not in the portable vocabulary yet; use `@native`.
+- Parts (`scale::slider`, `checkbutton::indicator`) are not in the style tables yet; use `@native`.
 - No libadwaita: tokens are literal values on both toolkits, so the system accent colour is not followed.
 - The scheme is chosen by the app, not read from the system.
 - Svelte's `transition:` and `animate:` stay compile errors; CSS `transition` works on GTK only.
 - Unscoped `@native` content is global to its toolkit.
 
-Sources: `docs/notes/styling-gtk-css-qss.md`, `docs/notes/x6-styling.md`, `plans/milestones/X6-styling.md`, `plans/architecture/backend-abi.md` (ABI v2.3).
+Sources: `docs/notes/styling-gtk-css-qss.md`, `docs/notes/x6-styling.md`, `docs/notes/st1-style-unification.md`, `plans/milestones/X6-styling.md`, `plans/milestones/ST1-style-unification.md`, `plans/architecture/backend-abi.md` (ABI v2.3).

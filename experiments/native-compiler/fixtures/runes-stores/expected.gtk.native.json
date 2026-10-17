@@ -1,0 +1,37 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Stores"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "0 x2=0 Ada!"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Inc"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Triple"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Shout"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Reset"
+ }
+]

@@ -1,0 +1,27 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Styled"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Save"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Toggle"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Plain"
+ }
+]

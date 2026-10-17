@@ -7,10 +7,21 @@
 //
 // Nothing is sent until an app uses styling (a sheet is registered, or an element has a class,
 // style or id), so apps without styles keep their op logs unchanged.
+//
+// Setter properties (the style table: `spacing`, `hexpand`, `minimum-width`, ...) are not CSS.
+// Stylesheets carry them as setter rules (`registerStyles(id, { ..., rules })`), matched here
+// against each element's tag, classes and id whenever those change; `style=` / `style:` carry them
+// inline. They are written with setProp (setChildAttr for child attributes). Precedence: an explicit
+// attribute > style= / style: > rules (specificity, then source order) > the native value, which
+// is read with getProp before a rule first overrides it and written back when no rule sets it.
 import {
   KINDS,
   SEP,
+  appliesTo,
+  byPrecedence,
   formatDiagnostic,
+  propOf,
+  ruleMatches,
   inlineToNative,
   paletteOf,
   renderGtkTokens,
@@ -28,7 +39,10 @@ const state = {
   /** undefined: not asked yet; 'css' | 'qss' | null (no styling support). */
   target: undefined,
   init: false,
-  sheets: new Map(), // id -> { gtk, qt, qtDark, sent }
+  sheets: new Map(), // id -> { gtk, qt, qtDark, rules, seq, sent }
+  seq: 0, // registration counter: later sheets win ties in rule order
+  rules: [], // setter rules of the active toolkit, every sheet, by precedence (ascending)
+  ruleTags: new Set(), // tags named by a type selector of a setter rule
   scheme: 'light',
   overrides: {},
   tokens: null, // active token set once initialised
@@ -112,11 +126,30 @@ export const hasSheets = () => state.sheets.size > 0;
  */
 export function registerStyles(id, sheets) {
   const first = state.sheets.size === 0;
-  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', sent: undefined };
+  const prev = state.sheets.get(id);
+  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', rules: sheets.rules ?? null, seq: state.seq++, sent: undefined };
   state.sheets.set(id, entry);
   if (!ensureInit()) return;
   pushSheet(id, entry);
-  if (first) for (const el of state.elements()) markStyleDirty(el);
+  const rulesChanged = entry.rules !== null || (prev?.rules ?? null) !== null;
+  if (rulesChanged) collectRules();
+  if (first || rulesChanged) for (const el of state.elements()) markStyleDirty(el);
+}
+
+const toolkitOf = () => (state.target === 'css' ? 'gtk' : state.target === 'qss' ? 'qt' : null);
+
+/** Rebuilds the active toolkit's setter rules from every registered sheet. */
+function collectRules() {
+  const tk = toolkitOf();
+  const all = [];
+  state.ruleTags.clear();
+  for (const e of state.sheets.values()) {
+    for (const r of e.rules?.[tk] ?? []) {
+      all.push({ ...r, order: e.seq * 1e6 + r.order });
+      if (r.sel.tag) state.ruleTags.add(r.sel.tag);
+    }
+  }
+  state.rules = all.sort(byPrecedence);
 }
 
 /** Overrides tokens app-wide (`null` removes an override). Takes effect at the end of the job. */
@@ -205,10 +238,10 @@ export function applyStyle(el) {
   if (el.h == null) return;
   const a = el.attrs;
   const hasAny = a.class != null || a.style != null || a.id != null;
-  if (!hasAny && !el.sc && !(hasSheets() && KINDS[el.tag]?.ambiguous)) return;
+  if (!hasAny && !el.sc && !(hasSheets() && (KINDS[el.tag]?.ambiguous || state.ruleTags.has(el.tag)))) return;
   if (!ensureInit()) return;
   const hs = host();
-  const sc = (el.sc ??= { classes: '', name: '', inline: '', opacity: '' });
+  const sc = (el.sc ??= { classes: '', name: '', inline: '', opacity: '', setters: null });
 
   const list = classList(a.class);
   if (hasSheets() && KINDS[el.tag]?.ambiguous) list.unshift(`sv-k-${el.tag}`);
@@ -227,6 +260,7 @@ export function applyStyle(el) {
     sc.src = styleText;
     const r = styleText ? inlineOf(el, styleText) : { text: '', opacity: null };
     sc.tpl = r.text;
+    sc.inlineSetters = r.setters ?? [];
     if (state.target === 'qss' && usesTokens(r.text)) state.tokenEls.add(el);
     else state.tokenEls.delete(el);
     sc.opacity0 = r.opacity ?? '';
@@ -241,6 +275,78 @@ export function applyStyle(el) {
     sc.opacity = opacity;
     nativeOf(hs, OP.OPACITY, el.h, opacity);
   }
+  if (state.rules.length || sc.inlineSetters?.length || sc.setters) applySetters(el, sc, list, name);
+}
+
+/** The renderer's hooks into the element (index.js): explicit props and child attributes. */
+let hooks = null;
+export function bindSetterHooks(h) {
+  hooks = h;
+}
+
+/**
+ * Setter and child-attr values from the matching rules and the inline style, applied as a diff
+ * against what was applied before (`sc.setters`: key -> { entry, name, value }). An explicit
+ * attribute of the same prop (or `parent:` attribute) wins and is left alone.
+ */
+function applySetters(el, sc, classes, id) {
+  const tk = toolkitOf();
+  /** @type {Map<string, { entry: any, name: string, value: unknown }>} */
+  const want = new Map();
+  const put = (name, value) => {
+    const entry = propOf(tk, name);
+    if (!entry) return false;
+    if (entry.via === 'setter' && !appliesTo(entry, el.tag)) return false;
+    const key = entry.via === 'setter' ? `p:${entry.prop}` : `a:${entry.attr}`;
+    if (entry.via === 'setter' ? hooks.hasProp(el, entry.prop, entry.native) : hooks.hasChildAttr(el, entry.attr)) return true;
+    want.set(key, { entry, name, value });
+    return true;
+  };
+  for (const r of state.rules) if (ruleMatches(r.sel, el.tag, classes, id)) for (const [n, v] of r.decls) put(n, v);
+  for (const x of sc.inlineSetters ?? []) {
+    if (!put(x.name, x.value)) warnOnce(`'${x.name}' does not apply to <${el.tag}> on ${tk} (in style="${el.attrs.style}")`);
+  }
+  const had = sc.setters ?? new Map();
+  for (const [key, cur] of had) {
+    if (want.has(key)) continue;
+    // no rule sets it any more: back to the native value read before the first override
+    if (cur.entry.via === 'setter') {
+      if (!hooks.hasProp(el, cur.entry.prop, cur.entry.native)) hooks.writeProp(el, cur.entry.prop, cur.orig);
+    } else if (!hooks.hasChildAttr(el, cur.entry.attr)) hooks.writeChildAttr(el, cur.entry.attr, null);
+  }
+  const next = new Map();
+  for (const [key, w] of want) {
+    const cur = had.get(key);
+    const orig = cur ? cur.orig : w.entry.via === 'setter' ? hooks.readProp(el, w.entry.prop) : null;
+    next.set(key, { ...w, orig });
+    if (cur && sameValue(cur.value, w.value)) continue;
+    if (w.entry.via === 'setter') hooks.writeProp(el, w.entry.prop, w.value);
+    else hooks.writeChildAttr(el, w.entry.attr, w.value);
+  }
+  sc.setters = next.size ? next : null;
+}
+
+const sameValue = (a, b) => a === b || (typeof a === 'object' && a !== null && JSON.stringify(a) === JSON.stringify(b));
+
+/**
+ * The child attributes rules and inline style set on `el` (sent again after every insert, like
+ * the `parent:` attributes; an explicit one wins).
+ */
+export function styleChildAttrs(el) {
+  const out = [];
+  if (!el.sc?.setters) return out;
+  for (const w of el.sc.setters.values()) if (w.entry.via === 'child-attr') out.push([w.entry.attr, w.value]);
+  return out;
+}
+
+/**
+ * An explicit attribute took `prop` over: forget the rule's claim (without restoring; the explicit
+ * value stands). Removing that attribute later re-matches the rules (`markStyleDirty`).
+ */
+export function explicitPropSet(el, prop) {
+  const m = el.sc?.setters;
+  if (!m) return;
+  for (const [key, w] of m) if (w.entry.via === 'setter' && (w.entry.prop === prop || w.entry.native === prop)) m.delete(key);
 }
 
 const dirty = new Set();

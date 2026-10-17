@@ -1,0 +1,37 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Stores"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "0 x2=0 Ada!"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Inc"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Triple"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Shout"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Reset"
+ }
+]

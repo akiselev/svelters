@@ -1,0 +1,57 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Snippets"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "0: z"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "1: a"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "2: b"
+ },
+ {
+  "class": "GtkBox",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 3,
+  "text": "Card #2"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 3,
+  "text": "plain 2"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "Swap"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "More"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Add"
+ }
+]

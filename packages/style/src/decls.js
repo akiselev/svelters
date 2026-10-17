@@ -1,6 +1,10 @@
 // Declaration-level translation shared by the build-time sheet translator and the renderer's
-// inline `style` handling. No imports besides vocab.js; safe to bundle into QuickJS apps.
-import { LAYOUT_HINTS, MATRIX, QT_PLAIN_BOX, valueProblem } from './vocab.js';
+// inline `style` handling. Every property is looked up in the toolkit's style table
+// (props.generated.js): `css` declarations are translated to the dialect, `setter` and
+// `child-attr` ones are parsed into native values and returned separately. No Node imports; safe
+// to bundle into QuickJS apps.
+import { isSetter, parseSetterValue, propOf, unknownProp } from './props.js';
+import { QT_PLAIN_BOX, valueProblem } from './vocab.js';
 
 /** @typedef {{ level: 'error' | 'warning' | 'info', toolkit: string, message: string, offset?: number }} Diagnostic */
 
@@ -80,19 +84,23 @@ const BORDER_PROP = /^border(-(top|right|bottom|left))?(-(width|style|color))?$/
 /**
  * Translates declarations for one toolkit.
  *
+ * `setters: false` skips setter / child-attr declarations silently (the NC1 compiler lowers them).
  * `where`: 'rule' (stylesheet) or 'inline' (`style=`). `qtClass`: the Qt class of the rule's
  * subject when known (decides whether QSS needs `border: none` to paint a background).
  * `knownTokens`: a Set of token names; unknown `--sv-*` references get a warning.
  *
  * Returns the declaration lines (`prop: value;`, one per line, Qt tokens as `${--sv-x}`
- * placeholders), the inline opacity (applied through the widget API, not CSS), and diagnostics.
+ * placeholders), the inline opacity (applied through the widget API, not CSS), the setter and
+ * child-attr declarations (`setters`: [{ name, entry, value }], values parsed), and diagnostics.
  */
-export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null, knownTokens = null, offset } = {}) {
+export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null, knownTokens = null, offset, setters: withSetters = true } = {}) {
   /** @type {string[]} */
   const lines = [];
   /** @type {Diagnostic[]} */
   const diagnostics = [];
   let opacity = null;
+  /** @type {{ name: string, entry: any, value: unknown }[]} */
+  const setters = [];
   const warn = (m) => diagnostics.push(diag('warning', toolkit, m, offset));
   const err = (m) => diagnostics.push(diag('error', toolkit, m, offset));
   let hasBg = false;
@@ -111,15 +119,20 @@ export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null,
       else opacity = String(Math.max(0, Math.min(1, value.trim().endsWith('%') ? n / 100 : n)));
       continue;
     }
-    const row = MATRIX[prop];
-    if (!row) {
-      const hint = LAYOUT_HINTS[prop];
-      warn(`property '${prop}' is not supported${hint ? ` (${hint})` : ' by the portable vocabulary: put it in @native ' + toolkit + ' { }'}`);
+    const entry = propOf(toolkit, prop);
+    if (!entry) {
+      warn(unknownProp(toolkit, prop));
       continue;
     }
-    const level = row[toolkit];
-    if (level === 'no' || (level === 'inline' && where !== 'inline')) {
-      warn(`property '${prop}' is not supported on ${toolkit}${row.note ? `: ${row.note}` : ''}`);
+    if (isSetter(entry)) {
+      if (!withSetters) continue; // someone else's (the native compiler matches them itself)
+      const r = parseSetterValue(toolkit, prop, entry, value);
+      if (r.error) err(r.error);
+      else setters.push({ name: prop, entry, value: r.value });
+      continue;
+    }
+    if (entry.inlineOnly && where !== 'inline') {
+      warn(`property '${prop}' is not supported in stylesheet rules on ${toolkit}${entry.note ? `: ${entry.note}` : ''}`);
       continue;
     }
     // Resolve var() first so the value check sees what the toolkit will see.
@@ -157,14 +170,15 @@ export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null,
     lines.push('border: none;');
     diagnostics.push(diag('info', toolkit, `background needs a border in QSS to paint on buttons and inputs; added 'border: none'`, offset));
   }
-  return { lines, opacity, diagnostics };
+  return { lines, opacity, setters, diagnostics };
 }
 
 /**
  * The native form of an inline `style` string: `text` is the declaration text for `toolkit`
- * (newline separated, QSS token placeholders unresolved), `opacity` goes to the widget API.
+ * (newline separated, QSS token placeholders unresolved), `opacity` goes to the widget API,
+ * `setters` are the setter / child-attr declarations (applied with setProp / setChildAttr).
  */
 export function inlineToNative(styleText, toolkit, qtClass = null) {
   const r = translateDecls(parseDeclarations(styleText), toolkit, { where: 'inline', qtClass });
-  return { text: r.lines.join('\n'), opacity: r.opacity, diagnostics: r.diagnostics };
+  return { text: r.lines.join('\n'), opacity: r.opacity, setters: r.setters, diagnostics: r.diagnostics };
 }

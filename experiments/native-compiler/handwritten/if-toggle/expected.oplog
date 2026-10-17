@@ -1,0 +1,35 @@
+create window #1
+set #1 title "If toggle"
+create headerbar #2
+set #2 title "Toggle"
+insert #1 #2 before=end slot=titlebar
+create box #3
+set #3 orientation "vertical"
+set #3 spacing 8
+create button #4
+listen #4 clicked on
+set #4 label "Toggle"
+insert #3 #4 before=end slot=default
+create label #5
+set #5 label "Hidden"
+insert #3 #5 before=end slot=default
+insert #1 #3 before=end slot=default
+call #1 present []
+event #4 clicked []
+create label #6
+set #6 label "Shown"
+insert #3 #6 before=end slot=default
+remove #3 #5
+destroy #5
+event #4 clicked []
+create label #7
+set #7 label "Hidden"
+insert #3 #7 before=end slot=default
+remove #3 #6
+destroy #6
+event #4 clicked []
+create label #8
+set #8 label "Shown"
+insert #3 #8 before=end slot=default
+remove #3 #7
+destroy #7

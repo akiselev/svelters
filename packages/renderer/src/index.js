@@ -7,7 +7,7 @@ import { createRenderer } from 'svelte/renderer';
 import { BINDINGS, TOPLEVELS } from './bindings.generated.js';
 import { coerceAttribute } from './coerce.js';
 import { kindRef, methodRef, propRef } from './hostops.js';
-import { applyStyle, bindElements, forgetStyle, markStyleDirty } from './style.js';
+import { applyStyle, bindElements, bindSetterHooks, explicitPropSet, forgetStyle, markStyleDirty, styleChildAttrs } from './style.js';
 
 export { BINDINGS, TOPLEVELS };
 export { getColorScheme, getTokens, registerStyles, setColorScheme, setTokens } from './style.js';
@@ -134,6 +134,16 @@ let sweepQueued = false;
 
 export const root = new WNode('element', 'svelters-root');
 bindElements(() => byHandle.values());
+// style.js applies setter rules through these (explicit attributes win over rules)
+bindSetterHooks({
+  hasProp: (el, prop, native) => el.props.has(prop) || el.props.has(native),
+  hasChildAttr: (el, name) => el.cattrs.has(name),
+  readProp: (el, prop) => host().getProp(el.h, propRef(host(), el.tag, prop)),
+  writeProp: (el, prop, value) => host().setProp(el.h, propRef(host(), el.tag, prop), value),
+  writeChildAttr: (el, name, value) => {
+    if (el.h != null && el.np?.h != null) host().setChildAttr(el.np.h, el.h, name, value);
+  },
+});
 
 // Borrowed handles (native objects a getter or call returned, such as a parent, a root or an
 // entry's inner text) are wrapped in nodes that are never part of the tree. They are held weakly
@@ -397,15 +407,19 @@ function nativeInsert(parent, el, slot) {
 
 // Sends every `parent:` attribute of `el` to its native parent; called right after an insert.
 function applyChildAttrs(el) {
-  if (el.cattrs.size === 0 || el.h == null || el.np?.h == null) return;
+  if (el.h == null || el.np?.h == null) return;
   for (const [name, value] of el.cattrs) host().setChildAttr(el.np.h, el.h, name, value);
+  // child attributes from style rules / inline style (an explicit `parent:` one wins)
+  for (const [name, value] of styleChildAttrs(el)) if (!el.cattrs.has(name)) host().setChildAttr(el.np.h, el.h, name, value);
 }
 
 function setChildAttr(el, name, value) {
   if (value === undefined) value = null;
   if (el.cattrs.has(name) && el.cattrs.get(name) === value) return;
-  if (value === null) el.cattrs.delete(name);
-  else el.cattrs.set(name, value);
+  if (value === null) {
+    el.cattrs.delete(name);
+    if (el.sc) markStyleDirty(el); // a style rule may set it again
+  } else el.cattrs.set(name, value);
   if (el.h != null && el.np?.h != null) host().setChildAttr(el.np.h, el.h, name, value);
 }
 
@@ -464,6 +478,7 @@ function detach(n) {
 
 function setNativeProp(el, name, value) {
   if (el.props.has(name) && el.props.get(name) === value) return;
+  if (!el.props.has(name)) explicitPropSet(el, name);
   el.props.set(name, value);
   if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), value);
 }
@@ -570,6 +585,7 @@ const renderer = createRenderer({
     else if (el.props.has(name)) {
       el.props.delete(name);
       if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), null);
+      if (el.sc) markStyleDirty(el); // a style rule may set it again
     }
   },
   setText(node, text) {

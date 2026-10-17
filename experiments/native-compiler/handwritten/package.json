@@ -1,0 +1,19 @@
+{
+  "name": "@svelters-experiments/handwritten",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hand-written components in the NC1 generated-code shape, run against the fixtures' scripts",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node build.mjs && node --experimental-vm-modules --no-warnings run.mjs"
+  },
+  "dependencies": {
+    "@svelters/native-runtime": "workspace:*",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/testhost": "workspace:*",
+    "vite": "8.3.4"
+  }
+}

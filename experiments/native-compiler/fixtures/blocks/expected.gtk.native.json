@@ -1,0 +1,62 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Blocks"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkEntry",
+  "d": 2,
+  "text": "fresh 4"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "late / 4"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "x: 30"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "y: 30"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "failed 4"
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "sync 42"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Next"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Reload"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Instant"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Qty"
+ }
+]
