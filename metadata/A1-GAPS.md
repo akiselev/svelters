@@ -19,6 +19,10 @@ some blocked facts are not worth exposing anyway.
 | G6 | Model-backed views (GListModel, QAbstractItemModel) | 12 GTK kinds, 11 Qt kinds | gtk-lists-b, qt-lists-b (M5) |
 | G7 | Non-widget child objects (QAction, GMenuModel) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
 | G8 | Native-to-JS callbacks (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
+| G9 | Toplevel kinds other than `window` cannot be mounted (renderer) | every Qt dialog element's gallery presence; GTK AboutDialog, Popover-like toplevels | qt-dialogs (gallery), gtk-dialogs |
+| G10 | GTK slots whose native ops take a widget subclass (`set_popover(IsA<Popover>)`, typed getters) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
+| G11 | Enums and kinds outside the Gtk namespace (Pango, Gdk) are not in metadata/gtk | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
+| G12 | Non-widget objects reached as borrowed handles have no generated kind (GtkTextBuffer, GtkAdjustment) | TextView text editing, Range/SpinButton value and range | gtk-text, gtk-ranges |
 
 ## G1: child attributes
 
@@ -140,3 +144,40 @@ function table in the host (native code never holds a JS value) and usually a sy
 - Blocked: `gtk_drawing_area_set_draw_func` (needs a drawing API too), `gtk_list_box_set_sort_func` /
   `set_filter_func` / `set_header_func`, `gtk_flow_box_set_sort_func`, `gtk_scale_set_format_value_func`.
 - Repro: `<listbox sort={(a, b) => ...}>` must reorder rows natively by the JS comparator.
+
+## G9: toplevel kinds other than `window`
+
+`packages/renderer/src/index.js` `attachNative` throws "only <window> may be mounted at top level"
+and always calls `present`. Dialog elements (Qt `dialog`, `messagebox`, `inputdialog`, ...; GTK
+`aboutdialog`) are toplevel kinds (`gen_is_toplevel`, lifetime `toplevel`) but cannot be mounted,
+so apps cannot `open()` them through `bind:this`.
+
+- Repro: `{#if show}<messagebox bind:this={mb} text="Hi" />{/if}` at the top level of an App must
+  create the dialog hidden (or shown modelessly, per a declared policy) and let `mb.call('open')` show it.
+- Needs: the renderer to know a kind is toplevel without a native call (a `toplevel` flag in the
+  generated schema/descriptor, or `handle_info` exposed to JS) and a per-kind "show on mount"
+  method (`present` for windows, none for dialogs).
+
+## G10: typed slot ops on GTK
+
+`gen_backend.py` emits slot ops on `&gtk::Widget`; gtk4-rs `MenuButton::set_popover` takes
+`Option<&impl IsA<Popover>>` and `popover()` returns `Option<Popover>`, so the generated code does
+not compile. Fix in the generator: downcast the child to the slot's `accepts` type before the call
+and upcast the getter's result. Blocks MenuButton `popover`, Popover-accepting slots.
+
+## G11: non-Gtk enums and kinds in the GTK metadata
+
+`tools/metadata/gtk/ingest.py` writes kinds for the Gtk namespace only; properties typed with
+`Pango.EllipsizeMode`, `Pango.WrapMode` or Gdk types have `enum<...Pango...>` refs with no enum kind,
+so the generator cannot pick a test sample. Fix: ingest the enums/flags referenced by Gtk
+properties from their own namespaces (Pango, Gdk, Gsk, Graphene) into `metadata/gtk/`.
+
+## G12: borrowed objects without a generated kind
+
+X1 mints borrowed handles for any GObject a getter returns, but kinds that are not in
+`metadata/gtk` (GtkTextBuffer is a GObject in Gtk but not a widget; GtkAdjustment likewise) have
+generated kinds only for their own props, and the A1 annotation format has no way to verify facts
+on a borrowed object reached through another element. Repro: `textview.getProp('buffer').setProp('text', 'x')`
+must change the text view's content; `scale.getProp('adjustment').setProp('upper', 100)` the scale's range.
+Needs: a `verify_subject` form "borrowed from <tag>.<getter>" in the GTK override format and tests that
+reach the object through the getter.

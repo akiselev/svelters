@@ -1,0 +1,55 @@
+# Dialogs: toplevel kinds. Never exposed: exec(), QDialog::exec, the static get*/information/...
+# helpers (nested event loops). open() is the non-blocking replacement.
+inherit:
+  props:
+    - { js: modal, native: modal, provenance: "QDialog::modal Q_PROPERTY (qdoc)" }
+    - { js: sizeGripEnabled, native: sizeGripEnabled, provenance: "QDialog::sizeGripEnabled (qdoc)" }
+  signals:
+    - { js: accepted, native: accepted, connect: "accepted()", args: [], trigger: "static_cast<QDialog*>($w)->accept()", expect_args: [], provenance: "QDialog::accepted() (qdoc)" }
+    - { js: rejected, native: rejected, connect: "rejected()", args: [], trigger: "static_cast<QDialog*>($w)->reject()", expect_args: [], provenance: "QDialog::rejected() (qdoc)" }
+    - { js: finished, native: finished, connect: "finished(int)", args: [{ name: result, type: i32 }], trigger: "static_cast<QDialog*>($w)->done(7 + $i)", expect_args: ["7"], provenance: "QDialog::finished(int) (qdoc)" }
+  methods:
+    - { js: open, native: open, expect: "$w->isVisible()", provenance: "QDialog::open() slot (qdoc); non-blocking, window-modal" }
+    - { js: accept, native: accept, provenance: "QDialog::accept() slot (qdoc)" }
+    - { js: reject, native: reject, provenance: "QDialog::reject() slot (qdoc)" }
+    - { js: done, native: done, params: [i32], provenance: "QDialog::done(int) slot (qdoc)" }
+elements:
+  - tag: dialog
+    construct:
+      class: QDialog
+      composite:
+        layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
+    props:
+      - { js: title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); GTK/window vocabulary" }
+    children:
+      policy: layout_managed
+      default_slot: children
+      slots:
+        - name: children
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          host: layout
+          default: { kind: none }
+          on_remove: empty
+          requires:
+            - { check: "QWidget::layout(self) != null", otherwise: error }
+          ops:
+            insert:
+              native: "QBoxLayout::addWidget(QWidget*, int, Qt::Alignment)"
+              args: [child]
+              variants:
+                - when: "before != null"
+                  native: "QBoxLayout::insertWidget(int, QWidget*, int, Qt::Alignment)"
+                  args: [index, child]
+              effects: { child: parented }
+            remove:
+              native: "QLayout::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+            index_of: { native: "QLayout::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QLayout::count() const", item: "QLayout::itemAt(int) const" }
+          provenance: [{ origin: uic, ref: "layout/item" }, { origin: probe, ref: qt_slot_ownership_probe.py }]

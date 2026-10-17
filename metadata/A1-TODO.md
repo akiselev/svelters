@@ -370,7 +370,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - Lifetime: dialogs are toplevel (generator `gen_is_toplevel`); check close behaviour on one dialog.
 - Blocked: QColorDialog/QFontDialog values (G4).
 - Gallery: `09-dialogs.svelte` (buttons that open non-blocking dialogs; the screenshot shows the main window only).
-- Status: todo
+- Status: done (about 122 ledger facts incl. inherited QDialog facts on every dialog element; dropped: QInputDialog.doubleValue (ingest types it i32), QWizard.startId (reads -1 without pages), QWizard/QFileDialog/QFontDialog/QColorDialog/QErrorMessage accept/done methods (protected in subclass: generator gap, see docs/notes/a1-qt-dialogs.md); blocked: QWizard pages slot and gallery dialogs mounting/opening, new gap G9 (no toplevel non-window mount, no method calls from Svelte); QFileDialog fileSelected/currentChanged and QDialog.show not annotated)
 
 ### qt-display: calendar, date/time edits, misc display
 
