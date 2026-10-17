@@ -848,7 +848,14 @@ impl Inner {
         let mut deferred = false;
         if !host.is_null() {
             let mut buf = StrBuf::default();
-            let mut args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, self, &mut buf)).collect();
+            // Out-parameters (`gpointer` slots the handler result fills) are not arguments for JS.
+            let mut args: Vec<svl_value> = vals
+                .iter()
+                .enumerate()
+                .skip(1)
+                .filter(|(i, _)| !sig.outs.iter().any(|o| o.0 as usize + 1 == *i))
+                .map(|(_, v)| convert::from_value(v, self, &mut buf))
+                .collect();
             // GtkEditable::changed has no arguments; the JS contract (and the Qt backend) delivers `[text]`.
             if sig.name == "changed" && args.is_empty() {
                 if let Some(e) = vals.first().and_then(|v| v.get::<glib::Object>().ok()).and_then(|o| o.downcast::<gtk::Editable>().ok()) {
@@ -869,6 +876,9 @@ impl Inner {
         }
         if !sync {
             return None;
+        }
+        if !sig.outs.is_empty() {
+            return typed_result(sig, vals, sync_result.as_ref());
         }
         match sig.result {
             "bool" => {
@@ -1041,6 +1051,61 @@ thread_local! {
 
 /// One registered `GtkApplication` per UI thread: GTK exports it on the session bus, which
 /// allows a single instance per process.
+/// The typed handler result of a signal with out-parameters (ABI v2.4). `e.result` is `{ret?, <out>: v}`
+/// (S2's out-param object shape) or a bare number, shorthand for `{ret: 1, <first out>: n}`; `null` or
+/// anything else is no decision (the toolkit default, no out-parameter is written). `ret` is the signal's
+/// own return value (bool or int); when absent it is 1 (handled) as soon as an out-parameter was written.
+fn typed_result(sig: &SignalInfo, vals: &[glib::Value], reply: Option<&svl_value>) -> Option<glib::Value> {
+    use glib::translate::ToGlibPtr;
+    let reply = unsafe { Value::from_raw(reply?) };
+    let (ret, named): (Option<i64>, Vec<(String, Value)>) = match reply {
+        Value::Map(m) => {
+            let mut ret = None;
+            let mut rest = Vec::new();
+            for (k, v) in m {
+                match (k.as_str(), &v) {
+                    ("ret", Value::I64(i)) => ret = Some(*i),
+                    ("ret", Value::Bool(b)) => ret = Some(*b as i64),
+                    _ => rest.push((k, v)),
+                }
+            }
+            (ret, rest)
+        }
+        Value::I64(_) | Value::F64(_) => (None, vec![(sig.outs[0].1.to_string(), reply)]),
+        _ => return None,
+    };
+    let mut wrote = false;
+    for (idx, name, ty) in sig.outs {
+        let Some((_, v)) = named.iter().find(|(k, _)| k == name) else { continue };
+        let num = match v {
+            Value::I64(i) => *i as f64,
+            Value::F64(f) => *f,
+            Value::Bool(b) => *b as i64 as f64,
+            _ => continue,
+        };
+        let p = unsafe { glib::gobject_ffi::g_value_get_pointer(vals.get(*idx as usize + 1)?.to_glib_none().0) };
+        if p.is_null() {
+            continue;
+        }
+        unsafe {
+            match *ty {
+                "f64" => *(p as *mut f64) = num,
+                "i32" => *(p as *mut i32) = num as i32,
+                "u32" => *(p as *mut u32) = num as u32,
+                "i64" => *(p as *mut i64) = num as i64,
+                "bool" => *(p as *mut glib::ffi::gboolean) = (num != 0.0) as glib::ffi::gboolean,
+                _ => continue,
+            }
+        }
+        wrote = true;
+    }
+    let ret = ret.unwrap_or(wrote as i64);
+    Some(match sig.result {
+        "bool" => (ret != 0).to_value(),
+        _ => (ret as i32).to_value(),
+    })
+}
+
 fn shared_app() -> Result<gtk::Application, String> {
     APP.with(|slot| {
         if let Some(app) = slot.borrow().as_ref() {

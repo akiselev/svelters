@@ -3168,6 +3168,28 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:input",
+   "fingerprint": "76a71fc80367017a",
+   "kind": "SpinButton",
+   "name": "input",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_spinbutton_input",
+    "generated::verify::syncresult_spinbutton_input"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:output",
+   "fingerprint": "40c16a38a2dd1ac5",
+   "kind": "SpinButton",
+   "name": "output",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_spinbutton_output",
+    "generated::verify::syncresult_spinbutton_output"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:value-changed",
    "fingerprint": "12a97d8344ec58e5",
    "kind": "SpinButton",

@@ -326,6 +326,29 @@
         "sync_required": {
           "type": "boolean"
         },
+        "out_params": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["index", "name", "type"],
+            "properties": {
+              "index": {"type": "integer", "minimum": 0},
+              "name": {"type": "string"},
+              "type": {"enum": ["f64", "i32", "u32", "i64", "bool"]}
+            }
+          }
+        },
+        "sync_result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reply", "expect"],
+          "properties": {
+            "setup": {"type": "string"},
+            "reply": {"type": "string"},
+            "expect": {"type": "string"}
+          }
+        },
         "trigger": {
           "$ref": "#/$defs/trigger"
         },
