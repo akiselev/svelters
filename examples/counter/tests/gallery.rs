@@ -33,17 +33,24 @@ fn pages(tk: &str) -> Vec<String> {
 }
 
 fn run_page(tk: &str, page: &str, classes: &[&str]) {
+    run_page_clicks(tk, page, classes, &[], "");
+}
+
+/// `run_page` with extra native clicks (handles of buttons the page creates) after the sidebar click;
+/// `tag` is appended to the artifact names. Returns the dump so a test can check more.
+fn run_page_clicks(tk: &str, page: &str, classes: &[&str], clicks: &[usize], tag: &str) -> Vec<Value> {
     let idx = pages(tk).iter().position(|p| p == page).unwrap_or_else(|| panic!("no page {page} in gallery-{tk}"));
     let dir = root().join("target/gallery");
     std::fs::create_dir_all(&dir).unwrap();
-    let script = dir.join(format!("{tk}-{page}.json"));
+    let script = dir.join(format!("{tk}-{page}{tag}.json"));
+    let extra: String = clicks.iter().map(|h| format!(r#",{{"event":[{h},"clicked",[]]}},{{"checkpoint":true}}"#)).collect();
     std::fs::write(
         &script,
-        format!(r#"[{{"checkpoint":true}},{{"event":[{},"clicked",[]]}},{{"checkpoint":true}}]"#, SIDEBAR_FIRST_HANDLE + idx),
+        format!(r#"[{{"checkpoint":true}},{{"event":[{},"clicked",[]]}},{{"checkpoint":true}}{extra}]"#, SIDEBAR_FIRST_HANDLE + idx),
     )
     .unwrap();
-    let png = dir.join(format!("{tk}-{page}.png"));
-    let report = dir.join(format!("{tk}-{page}.report.json"));
+    let png = dir.join(format!("{tk}-{page}{tag}.png"));
+    let report = dir.join(format!("{tk}-{page}{tag}.report.json"));
     let _ = std::fs::remove_file(&report);
     let out = Command::new(env!("CARGO_BIN_EXE_counter"))
         .env("GSK_RENDERER", std::env::var("GSK_RENDERER").unwrap_or_else(|_| "cairo".into()))
@@ -76,6 +83,15 @@ fn run_page(tk: &str, page: &str, classes: &[&str]) {
         }
     }
     assert!(png.is_file() && std::fs::metadata(&png).unwrap().len() > 500, "screenshot {} missing or empty", png.display());
+    dump.clone()
+}
+
+/// Toplevel dump nodes of `class`: (modal, transient, visible).
+fn toplevel_flags(dump: &[Value], class: &str) -> Vec<(bool, bool, bool)> {
+    dump.iter()
+        .filter(|n| n["class"] == class)
+        .map(|n| (n["modal"].as_bool().unwrap_or(false), n["transient"].as_bool().unwrap_or(false), n["visible"].as_bool().unwrap_or(false)))
+        .collect()
 }
 
 macro_rules! gallery_page {
@@ -97,7 +113,18 @@ gallery_page!(gtk_03_text, "gtk", "03-text", ["GtkEntry", "GtkPasswordEntry", "G
 gallery_page!(gtk_09_display, "gtk", "09-display", ["GtkImage", "GtkSpinner", "GtkSeparator", "GtkPicture", "GtkDrawingArea", "GtkGraphicsOffload", "GtkCalendar"]);
 gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButton", "GtkCheckButton", "GtkSwitch", "GtkLinkButton", "GtkLockButton", "GtkMenuButton", "GtkPopover", "GtkScaleButton", "GtkVolumeButton"]);
 gallery_page!(gtk_07_bars, "gtk", "07-bars", ["GtkHeaderBar", "GtkWindowControls"]);
-gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover", "GtkEmojiChooser"]);
+gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover", "GtkEmojiChooser", "GtkAboutDialog"]);
+
+/// G9: toplevels declared in `if` blocks are real windows, transient for the main one and shown;
+/// dialogs are modal by default.
+#[test]
+fn gtk_08_dialogs_toplevels() {
+    let dump = run_page_clicks("gtk", "08-dialogs", &["GtkAboutDialog"], &[], "-toplevels");
+    assert_eq!(toplevel_flags(&dump, "GtkAboutDialog"), vec![(true, true, true)], "about dialog: modal, transient, visible");
+    let mut windows = toplevel_flags(&dump, "GtkApplicationWindow");
+    windows.sort();
+    assert_eq!(windows, vec![(false, false, true), (false, true, true)], "main window, then the tool window (modeless, transient, visible)");
+}
 
 gallery_page!(gtk_04_ranges, "gtk", "04-ranges", ["GtkProgressBar", "GtkLevelBar", "GtkScale", "GtkSpinButton", "GtkScrollbar"]);
 
@@ -111,5 +138,16 @@ gallery_page!(qt_06_layout, "qt", "06-layout", ["QMdiArea", "QDockWidget", "QWid
 gallery_page!(qt_07_selection, "qt", "07-selection", ["QComboBox", "QFontComboBox", "QListWidget"]);
 gallery_page!(qt_08_bars, "qt", "08-bars", ["QTabBar", "QDialogButtonBox", "QStatusBar", "QMenuBar", "QToolBar"]);
 gallery_page!(qt_10_display, "qt", "10-display", ["QCalendarWidget", "QDateEdit", "QTimeEdit", "QDateTimeEdit"]);
-gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);
+gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel", "QMessageBox"]);
+
+/// G9: every dialog kind opens non-blockingly from an `if` block: transient for the main window,
+/// window-modal (`open()`), visible.
+#[test]
+fn qt_09_dialogs_all_kinds() {
+    // The "open all dialogs" button is handle 24 (the overview page mounted first and took 17..=21; see the TestHost op log).
+    let dump = run_page_clicks("qt", "09-dialogs", &["QMessageBox"], &[24], "-all");
+    for c in ["QMessageBox", "QInputDialog", "QProgressDialog", "QColorDialog", "QFontDialog", "QFileDialog", "QDialog"] {
+        assert_eq!(toplevel_flags(&dump, c), vec![(true, true, true)], "{c}: modal, transient, visible");
+    }
+}
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);

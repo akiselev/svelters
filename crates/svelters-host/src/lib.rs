@@ -166,6 +166,11 @@ impl<'a> Host<'a> {
         self.core.roots()
     }
 
+    /// Live handles of the TOPLEVEL lifetime class, transient dialogs included.
+    pub fn toplevel_handles(&self) -> Vec<svl_handle> {
+        self.core.toplevel_handles()
+    }
+
     /// Runs the backend's loop. Returns when the backend quits.
     pub fn run(&self) -> Result<(), AbiError> {
         self.core.backend().run(&self.vt)

@@ -112,6 +112,9 @@ pub(crate) struct Inner {
 
 /// Slot value recorded for an event controller attached to a widget (it is not in `SLOTS`).
 const CONTROLLER_SLOT: u32 = u32::MAX;
+/// Slot value recorded for a toplevel inserted under a parent: it is transient for the parent's
+/// window (`gtk_window_set_transient_for`), see "Toplevels in the tree" in backend-abi.md.
+const TRANSIENT_SLOT: u32 = u32::MAX - 1;
 /// Frame delay used when there is no mapped toplevel to tick on.
 const FRAME_FALLBACK_MS: u64 = 16;
 /// A mapped toplevel whose clock stalls (hidden, minimised) still gets a frame after this long.
@@ -384,6 +387,14 @@ impl Inner {
             if k != h {
                 let obj = e.obj.upgrade();
                 self.release_entry(k, &mut e, obj.as_ref());
+                // GTK leaves a transient window alive when its parent goes; the tree says it belongs to the parent.
+                if e.slot.is_some_and(|(_, s)| s == TRANSIENT_SLOT) {
+                    if let Some(w) = obj.as_ref().and_then(|o| o.downcast_ref::<gtk::Window>()) {
+                        w.set_visible(false);
+                        let w = w.clone();
+                        glib::idle_add_local_once(move || w.destroy());
+                    }
+                }
             } else {
                 self.untag_object(win.upcast_ref(), k);
             }
@@ -446,6 +457,25 @@ impl Inner {
         Ok(())
     }
 
+    /// A toplevel child makes the window of `parent` its transient parent (dialogs, secondary windows).
+    fn insert_transient(&self, parent: u64, child: u64, pw: &gtk::Widget, win: &gtk::Window) -> Res<()> {
+        let owner = match pw.downcast_ref::<gtk::Window>() {
+            Some(w) => w.clone(),
+            None => pw.root().and_then(|r| r.downcast::<gtk::Window>().ok()).ok_or("insert: the parent is not inside a window")?,
+        };
+        if owner == *win {
+            return Err("insert: a window cannot be transient for itself".into());
+        }
+        if self.state.borrow().entries.get(&child).and_then(|e| e.slot).is_some() {
+            return Err("insert: the toplevel is already inserted".into());
+        }
+        win.set_transient_for(Some(&owner));
+        if let Some(e) = self.state.borrow_mut().entries.get_mut(&child) {
+            e.slot = Some((parent, TRANSIENT_SLOT));
+        }
+        Ok(())
+    }
+
     fn not_borrowed(&self, h: u64, what: &str) -> Res<()> {
         match self.state.borrow().entries.get(&h) {
             Some(e) if e.class == SVL_LIFE_BORROWED => Err(format!("handle {h} is a borrowed native object and cannot be {what} through the tree")),
@@ -463,6 +493,9 @@ impl Inner {
         let (cw, _) = self.widget_of(child)?;
         self.not_borrowed(child, "inserted")?;
         self.not_borrowed(parent, "inserted into")?;
+        if let Some(win) = cw.downcast_ref::<gtk::Window>() {
+            return self.insert_transient(parent, child, &pw, win);
+        }
         let slot = if slot == 0 { lookup::default_slot(pk) } else { slot };
         if slot == 0 {
             return Err("parent has no default slot".into());
@@ -518,6 +551,16 @@ impl Inner {
         let (cw, _) = self.widget_of(child)?;
         self.not_borrowed(child, "removed")?;
         self.not_borrowed(parent, "removed from")?;
+        if let Some(win) = cw.downcast_ref::<gtk::Window>() {
+            if self.state.borrow().entries.get(&child).and_then(|e| e.slot) != Some((parent, TRANSIENT_SLOT)) {
+                return Err(format!("handle {child} is not inserted in {parent}"));
+            }
+            win.set_transient_for(None::<&gtk::Window>);
+            if let Some(e) = self.state.borrow_mut().entries.get_mut(&child) {
+                e.slot = None;
+            }
+            return Ok(());
+        }
         let slot = {
             let st = self.state.borrow();
             match st.entries.get(&child).and_then(|e| e.slot) {
@@ -537,7 +580,7 @@ impl Inner {
         let (pw, pk) = self.widget_of(parent)?;
         let (cw, _) = self.widget_of(child)?;
         let slot = match self.state.borrow().entries.get(&child).and_then(|e| e.slot) {
-            Some((p, s)) if p == parent && s != CONTROLLER_SLOT => s,
+            Some((p, s)) if p == parent && s != CONTROLLER_SLOT && s != TRANSIENT_SLOT => s,
             _ => return Err(format!("handle {child} is not inserted in {parent}: child attributes need an inserted child")),
         };
         let a = ATTRS.get((attr as usize).wrapping_sub(1)).ok_or("unknown child attribute")?;

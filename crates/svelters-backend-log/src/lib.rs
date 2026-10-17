@@ -687,7 +687,11 @@ impl Backend for LogBackend {
 
     fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
         let kind = self.check_live(h)?;
-        let toplevel = self.shared.lock().names.name(kind) == "window";
+        let toplevel = {
+            let st = self.shared.lock();
+            let name = st.names.name(kind);
+            name == "window" || name.ends_with("dialog") || name == "messagebox" || name == "wizard"
+        };
         Ok(svl_handle_info {
             kind,
             lifetime: if toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },

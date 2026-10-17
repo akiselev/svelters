@@ -173,6 +173,58 @@ def qt_bindings() -> dict[str, dict[str, dict]]:
     return out
 
 
+def gtk_toplevels() -> dict[str, dict]:
+    """tag -> how a toplevel of this kind is shown (lifetime class `toplevel` in the merged metadata)."""
+    out: dict[str, dict] = {}
+    for path in sorted(GTK_META.glob("*.json")):
+        kind = svmeta.load_json(path)
+        tag = (kind.get("element") or {}).get("tag")
+        if not tag or (kind.get("lifetime") or {}).get("class") != "toplevel" or kind.get("abstract"):
+            continue
+        dialog = path.stem.endswith("Dialog") or path.stem == "Assistant"
+        out[tag] = {"open": ["present"], "modeless": ["present"], "modalProp": True, "dialog": dialog}
+    return out
+
+
+def qt_toplevels() -> dict[str, dict]:
+    out: dict[str, dict] = {}
+    files = {path.stem: svmeta.load_yaml(path) for path in sorted(QT_OVERRIDES.glob("*.yaml"))}
+    for data in files.values():
+        for el in data.get("elements", []):
+            cls = el["construct"]["class"]
+            meta = QT_META / f"{cls}.json"
+            if not meta.exists():
+                continue
+            m = svmeta.load_json(meta)
+            if (m.get("lifetime") or {}).get("class") != "toplevel":
+                continue
+            dialog = cls == "QDialog" or "QDialog" in m.get("bases", [])
+            has_modal = any(p["js"] == "modal" for p in qt_inherited(cls, "props", files) + el.get("props", []))
+            out[el["tag"]] = {"open": ["open", "present"] if dialog else ["present"], "modeless": ["present"],
+                              "modalProp": has_modal, "dialog": dialog}
+    return out
+
+
+def merge_toplevels(gtk: dict, qt: dict) -> dict[str, dict]:
+    """Union by tag; where both toolkits define a tag the renderer must be able to serve both:
+    candidate method lists are merged (first resolvable wins at run time)."""
+    out: dict[str, dict] = {}
+    for tk, table in (("gtk", gtk), ("qt", qt)):
+        for tag, f in table.items():
+            cur = out.get(tag)
+            if cur is None:
+                out[tag] = {**f, "toolkits": [tk]}
+                continue
+            if cur["dialog"] != f["dialog"]:
+                raise GenError(f"toplevel <{tag}>: gtk and qt disagree on dialog-ness")
+            for k in ("open", "modeless"):
+                cur[k] = cur[k] + [x for x in f[k] if x not in cur[k]]
+            cur["open"].sort(key=lambda x: x == "present")  # `open` before `present`
+            cur["modalProp"] = cur["modalProp"] and f["modalProp"]
+            cur["toolkits"].append(tk)
+    return out
+
+
 def merge(gtk: dict, qt: dict) -> dict[str, dict[str, dict]]:
     """Union by tag and name. A binding both toolkits define must agree on what the renderer sees."""
     out: dict[str, dict[str, dict]] = {}
@@ -189,6 +241,18 @@ def merge(gtk: dict, qt: dict) -> dict[str, dict[str, dict]]:
     return out
 
 
+def js_toplevels(top: dict) -> str:
+    o = ["\n// Toplevel kinds (lifetime class `toplevel`): never inserted into their JS parent; the renderer makes them\n",
+         "// transient for the enclosing toplevel and shows them. `open`/`modeless` list candidate method names, the first one\n",
+         "// the host resolves wins; `modalProp`: a `modal` property exists; `dialog`: modal by default.\n", "export const TOPLEVELS = {\n"]
+    for tag in sorted(top):
+        f = top[tag]
+        fields = ", ".join(f"{k}: {json.dumps(f[k])}" for k in ("open", "modeless", "modalProp", "dialog", "toolkits"))
+        o.append(f"  {tag}: {{ {fields} }},\n")
+    o.append("};\n")
+    return "".join(o)
+
+
 def js(table: dict) -> str:
     o = [HEADER, "// tag -> bind:<name> -> descriptor. `signal` is the JS event name of the change signal.\n"]
     o.append("export const BINDINGS = {\n")
@@ -203,7 +267,7 @@ def js(table: dict) -> str:
     return "".join(o)
 
 
-def dts(table: dict) -> str:
+def dts(table: dict, top: dict) -> str:
     ts = {v[0]: v[1] for v in TYPES.values()}
     o = [HEADER, "// `bind:<name>` targets per element tag; two-way unless marked read-only.\n", "export interface BindableProps {\n"]
     for tag in sorted(table):
@@ -214,6 +278,10 @@ def dts(table: dict) -> str:
             o.append(f"    {ro}{name}: {f['tsType']}; // {'/'.join(f['toolkits'])}\n")
         o.append("  };\n")
     o.append("}\n")
+    o.append("\n// Toplevel kinds (windows and dialogs) may be declared anywhere in a component; `show` is their JS-only policy.\n")
+    o.append("export type ToplevelShow = \"modal\" | \"modeless\" | \"none\";\n")
+    o.append("export interface ToplevelAttrs {\n  /** modal (dialogs: the default), modeless (windows: the default), or none (created hidden; open it through bind:this) */\n  show?: ToplevelShow;\n}\n")
+    o.append("export type ToplevelTag = " + " | ".join(json.dumps(t) for t in sorted(top)) + ";\n")
     return "".join(o)
 
 
@@ -223,10 +291,11 @@ def main() -> int:
     args = ap.parse_args()
     try:
         table = merge(gtk_bindings(), qt_bindings())
+        top = merge_toplevels(gtk_toplevels(), qt_toplevels())
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1
-    outs = {OUT_JS: js(table), OUT_DTS: dts(table)}
+    outs = {OUT_JS: js(table) + js_toplevels(top), OUT_DTS: dts(table, top)}
     stale = [p for p, text in outs.items() if not p.exists() or p.read_text() != text]
     if args.check:
         for p in stale:

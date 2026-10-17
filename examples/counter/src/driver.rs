@@ -201,7 +201,14 @@ impl Driver {
         match step {
             None => {
                 self.st.borrow_mut().phase = Phase::Painting;
-                let dump = self.tk.dump(ROOT);
+                let mut dump = self.tk.dump(ROOT);
+                // Other live toplevels (dialogs, secondary windows) follow the root window's tree.
+                let tops = self.host.toplevel_handles();
+                for t in tops.into_iter().filter(|t| *t != ROOT) {
+                    if let (Json::Array(all), Json::Array(more)) = (&mut dump, self.tk.dump(t)) {
+                        all.extend(more);
+                    }
+                }
                 self.st.borrow_mut().dump = Some(dump);
                 self.schedule(PAINT_MS);
             }

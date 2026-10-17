@@ -51,3 +51,7 @@ harness = false
 [[test]]
 name = "lists_e2e"
 harness = false
+
+[[test]]
+name = "toplevels"
+harness = false

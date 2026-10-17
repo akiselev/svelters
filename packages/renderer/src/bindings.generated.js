@@ -101,3 +101,20 @@ export const BINDINGS = {
     currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
 };
+
+// Toplevel kinds (lifetime class `toplevel`): never inserted into their JS parent; the renderer makes them
+// transient for the enclosing toplevel and shows them. `open`/`modeless` list candidate method names, the first one
+// the host resolves wins; `modalProp`: a `modal` property exists; `dialog`: modal by default.
+export const TOPLEVELS = {
+  aboutdialog: { open: ["present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["gtk"] },
+  colordialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  dialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  errormessage: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  filedialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  fontdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  inputdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  messagebox: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  progressdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  window: { open: ["present"], modeless: ["present"], modalProp: false, dialog: false, toolkits: ["gtk", "qt"] },
+  wizard: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+};

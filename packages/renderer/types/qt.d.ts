@@ -196,6 +196,7 @@ export interface QtElementDescriptors {
       open(options?: { signal?: AbortSignal }): Promise<number>;
       accept(): void;
       reject(): void;
+      present(): void;
       done(r: number): void;
       show(): void;
       hide(): void;
@@ -423,6 +424,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -604,6 +606,7 @@ export interface QtElementDescriptors {
     methods: {
       showMessage(message: string): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -642,6 +645,7 @@ export interface QtElementDescriptors {
     methods: {
       setDirectory(directory: string): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -704,6 +708,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -833,6 +838,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(result: number): void;
@@ -1104,6 +1110,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1237,6 +1244,7 @@ export interface QtElementDescriptors {
       reset(): void;
       cancel(): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1895,6 +1903,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;

@@ -1,19 +1,55 @@
-<!-- kinds: QLabel -->
+<!-- kinds: QLabel QDialog QMessageBox QInputDialog QProgressDialog QErrorMessage QFileDialog QColorDialog QFontDialog -->
 <script>
-  // Dialogs (dialog, messagebox, inputdialog, progressdialog, errormessage, filedialog,
-  // colordialog, fontdialog, wizard, wizardpage) are toplevel kinds. A Svelte app cannot mount
-  // a toplevel other than <window> yet (the renderer refuses any other tag at top level, gap G9),
-  // so open() cannot be called on a mounted dialog through bind:this.
-  // See docs/notes/a1-qt-dialogs.md and metadata/A1-GAPS.md G9. This page therefore
-  // documents the surface instead of mounting dialogs; the facts are verified by the generated
-  // native tests (metadata/verified/qt.json).
+  // Dialogs are toplevel kinds. They are declared in `if` blocks inside the window: the renderer
+  // makes each one transient for the enclosing window and opens it window-modal with `open()`
+  // (never `exec()`); `show="modeless"` would use `show()`, `show="none"` leaves it hidden for
+  // `bind:this` + `.call('open')`. Leaving the block destroys the dialog. `finished` reports how
+  // it ended; a dialog closed with its window button is reported natively as closed.
+  const kinds = ['messagebox', 'inputdialog', 'progressdialog', 'colordialog', 'fontdialog', 'filedialog', 'dialog'];
+  let open = $state({ messagebox: true });
+  let finished = $state(0);
+  let last = $state('none');
+
+  const done = (kind) => (code) => {
+    open[kind] = false;
+    finished++;
+    last = `${kind} ${code}`;
+  };
+  function openAll() {
+    for (const k of kinds) open[k] = true;
+  }
 </script>
 
 <box orientation="vertical" spacing="6">
-  <label label="dialog: title, modal, sizeGripEnabled; accepted, rejected, finished; open, accept, reject, done" />
-  <label label="messagebox: text, informativeText, detailedText, icon, textFormat, standardButtons" />
-  <label label="inputdialog: labelText, textValue, intValue, intMinimum, intMaximum, inputMode; textValueChanged, intValueChanged" />
-  <label label="progressdialog: value, minimum, maximum, labelText, autoClose, autoReset; canceled; reset, cancel" />
-  <label label="errormessage: showMessage(text); filedialog: fileMode, acceptMode, viewMode, defaultSuffix, setDirectory" />
-  <label label="colordialog: currentColor, options; fontdialog: currentFont, options; wizard: wizardStyle, options; wizardpage: title, subTitle" />
+  <button label="open all dialogs" onclick={openAll} />
+  <box orientation="horizontal" spacing="6">
+    {#each kinds as k}
+      <button label={k} onclick={() => (open[k] = true)} />
+    {/each}
+  </box>
+  <label label="finished: {finished}, last: {last}" />
+
+  {#if open.messagebox}
+    <messagebox text="Save changes?" informativeText="Opened with open(), not exec()" onfinished={done('messagebox')} />
+  {/if}
+  {#if open.inputdialog}
+    <inputdialog labelText="Name" textValue="svelters" onfinished={done('inputdialog')} />
+  {/if}
+  {#if open.progressdialog}
+    <progressdialog labelText="Working" minimum={0} maximum={100} value={40} onfinished={done('progressdialog')} />
+  {/if}
+  {#if open.colordialog}
+    <colordialog onfinished={done('colordialog')} />
+  {/if}
+  {#if open.fontdialog}
+    <fontdialog onfinished={done('fontdialog')} />
+  {/if}
+  {#if open.filedialog}
+    <filedialog onfinished={done('filedialog')} />
+  {/if}
+  {#if open.dialog}
+    <dialog title="A plain dialog" onfinished={done('dialog')}>
+      <label label="children of a dialog are its layout contents" />
+    </dialog>
+  {/if}
 </box>

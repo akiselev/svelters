@@ -101,3 +101,11 @@ export interface BindableProps {
     currentIndex: number; // qt
   };
 }
+
+// Toplevel kinds (windows and dialogs) may be declared anywhere in a component; `show` is their JS-only policy.
+export type ToplevelShow = "modal" | "modeless" | "none";
+export interface ToplevelAttrs {
+  /** modal (dialogs: the default), modeless (windows: the default), or none (created hidden; open it through bind:this) */
+  show?: ToplevelShow;
+}
+export type ToplevelTag = "aboutdialog" | "colordialog" | "dialog" | "errormessage" | "filedialog" | "fontdialog" | "inputdialog" | "messagebox" | "progressdialog" | "window" | "wizard";
