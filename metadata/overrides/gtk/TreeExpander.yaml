@@ -1,0 +1,2 @@
+unexposed:
+  reason: "needs a GtkTreeListRow from a GtkTreeListModel; only meaningful inside a model-backed list item, open under gap G6 (tree models)"

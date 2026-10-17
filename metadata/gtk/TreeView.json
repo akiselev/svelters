@@ -70,10 +70,6 @@
       "origin": "runtime"
     }
   ],
-  "element": {
-    "origin": "gir",
-    "tag": "treeview"
-  },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:TreeViewGridLines"
   ],
@@ -4161,11 +4157,15 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/TreeView.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "unexposed": {
+    "origin": "manual",
+    "reason": "deprecated since GTK 4.10 (GtkTreeView, GtkTreeModel, cell renderers); hierarchies are open under gap G6 (tree models), use virtuallist"
+  }
 }

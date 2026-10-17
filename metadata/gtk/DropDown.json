@@ -83,10 +83,6 @@
       "origin": "runtime"
     }
   ],
-  "element": {
-    "origin": "gir",
-    "tag": "dropdown"
-  },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode"
   ],
@@ -1123,11 +1119,15 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/DropDown.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "unexposed": {
+    "origin": "manual",
+    "reason": "GtkDropDown needs a GListModel and a list item factory; model-backed selection is open under gap G6 (DropDown/ComboBox models); until then use a button with a popover or a virtuallist"
+  }
 }

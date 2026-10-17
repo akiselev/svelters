@@ -1788,7 +1788,7 @@ fn prop_calendar_date() {
         
         let before = h.get_value(o, "date");
         h.set_value(o, "date", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "date")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "date")), crate::testing::shape(&before));
     });
 }
 
@@ -2205,6 +2205,19 @@ fn binding_checkbutton_active() {
         let ev = h.take_events_with_args();
         assert!(!ev.is_empty(), "native change is delivered");
         assert_ne!(h.get(o, "active"), V::Null, "the property reads the new value");
+    });
+}
+
+/// property ColorDialogButton.rgba (JS rgba, round trip): GtkColorDialogButton:rgba, GdkRGBA boxed round-trip (S1 value model; Gtk 4 docs)
+#[test]
+fn prop_colordialogbutton_rgba() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("colordialogbutton");
+        
+        let before = h.get_value(o, "rgba");
+        h.set_value(o, "rgba", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "rgba")), crate::testing::shape(&before));
     });
 }
 
@@ -3186,6 +3199,64 @@ fn prop_flowbox_selection_mode() {
         assert_eq!(id, h.resolve_prop("flowbox", "selection-mode"));
         h.set_str(o, "selectionMode", "none").unwrap();
         assert_eq!(h.get(o, "selectionMode"), V::Str("none".into()));
+    });
+}
+
+/// property FontDialogButton.font-desc (JS fontDesc, round trip): GtkFontDialogButton:font-desc, PangoFontDescription (Gtk 4 docs); boxed round trip (handle ids blanked)
+#[test]
+fn prop_fontdialogbutton_font_desc() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let before = h.get_value(o, "fontDesc");
+        h.set_value(o, "fontDesc", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "fontDesc")), crate::testing::shape(&before));
+    });
+}
+
+/// property FontDialogButton.level (JS level): GtkFontDialogButton:level, GtkFontLevel enum (Gtk 4 docs)
+#[test]
+fn prop_fontdialogbutton_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let id = h.resolve_prop("fontdialogbutton", "level");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("fontdialogbutton", "level"));
+        h.set_str(o, "level", "family").unwrap();
+        assert_eq!(h.get(o, "level"), V::Str("family".into()));
+    });
+}
+
+/// property FontDialogButton.use-font (JS useFont): GtkFontDialogButton:use-font (Gtk 4 docs)
+#[test]
+fn prop_fontdialogbutton_use_font() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let id = h.resolve_prop("fontdialogbutton", "useFont");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("fontdialogbutton", "use-font"));
+        h.set_bool(o, "useFont", true).unwrap();
+        assert_eq!(h.get(o, "useFont"), V::Bool(true));
+    });
+}
+
+/// property FontDialogButton.use-size (JS useSize): GtkFontDialogButton:use-size (Gtk 4 docs)
+#[test]
+fn prop_fontdialogbutton_use_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let id = h.resolve_prop("fontdialogbutton", "useSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("fontdialogbutton", "use-size"));
+        h.set_bool(o, "useSize", true).unwrap();
+        assert_eq!(h.get(o, "useSize"), V::Bool(true));
     });
 }
 
@@ -5475,7 +5546,7 @@ fn prop_scrollbar_adjustment() {
         
         let before = h.get_value(o, "adjustment");
         h.set_value(o, "adjustment", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "adjustment")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "adjustment")), crate::testing::shape(&before));
     });
 }
 
@@ -6404,7 +6475,7 @@ fn prop_stack_visible_child() {
         
         let before = h.get_value(o, "visibleChild");
         h.set_value(o, "visibleChild", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "visibleChild")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "visibleChild")), crate::testing::shape(&before));
     });
 }
 
@@ -6417,7 +6488,7 @@ fn prop_stacksidebar_stack() {
         
         let before = h.get_value(o, "stack");
         h.set_value(o, "stack", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "stack")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "stack")), crate::testing::shape(&before));
     });
 }
 
@@ -6430,7 +6501,7 @@ fn prop_stackswitcher_stack() {
         
         let before = h.get_value(o, "stack");
         h.set_value(o, "stack", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "stack")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "stack")), crate::testing::shape(&before));
     });
 }
 
@@ -7170,7 +7241,7 @@ fn prop_widget_css_classes() {
         
         let before = h.get_value(o, "cssClasses");
         h.set_value(o, "cssClasses", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "cssClasses")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "cssClasses")), crate::testing::shape(&before));
     });
 }
 

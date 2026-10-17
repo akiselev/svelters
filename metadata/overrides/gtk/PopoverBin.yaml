@@ -1,0 +1,2 @@
+unexposed:
+  reason: "new in GTK 4.22, newer than the supported GTK baseline; revisit with a child/popover slot pair when the baseline allows"

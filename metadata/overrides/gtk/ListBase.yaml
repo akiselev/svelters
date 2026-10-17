@@ -1,0 +1,2 @@
+unexposed:
+  reason: "abstract base of ListView and GridView; GListModel views are served by the portable virtuallist kind (X5, G6)"

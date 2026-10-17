@@ -1,0 +1,3 @@
+properties:
+  - name: rgba
+    provenance: "GtkColorDialogButton:rgba, GdkRGBA boxed round-trip (S1 value model; Gtk 4 docs)"

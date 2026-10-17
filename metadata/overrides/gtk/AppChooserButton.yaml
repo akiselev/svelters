@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10 (GtkAppChooser); no non-deprecated replacement widget"

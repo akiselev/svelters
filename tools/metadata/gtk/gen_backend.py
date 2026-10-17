@@ -906,7 +906,7 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
         {setup}
         let before = h.get_value(o, {js});
         h.set_value(o, {js}, &before).unwrap();
-        assert_eq!(format!("{{:?}}", h.get_value(o, {js})), format!("{{:?}}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, {js})), crate::testing::shape(&before));
 """)]
     setc, expect = smp
     extra = ""

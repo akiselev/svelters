@@ -1,0 +1,9 @@
+properties:
+  - name: font-desc
+    provenance: "GtkFontDialogButton:font-desc, PangoFontDescription (Gtk 4 docs); boxed round trip (handle ids blanked)"
+  - name: use-font
+    provenance: "GtkFontDialogButton:use-font (Gtk 4 docs)"
+  - name: use-size
+    provenance: "GtkFontDialogButton:use-size (Gtk 4 docs)"
+  - name: level
+    provenance: "GtkFontDialogButton:level, GtkFontLevel enum (Gtk 4 docs)"
