@@ -14,7 +14,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | D1 docs generator | DONE | 77addd6 | per-toolkit docs IR frontends → Starlight site (881 pages, link-checked); docs ingestion pass; GFDL-safe Qt `brief` policy; `pnpm docs:build` / `docs:test` |
 | S1 serdes main types | DONE | 8071bb2 | ABI v3 value model (tags, descriptors, records, boxed, ERROR, CALLBACK, async, variants, dates) on GTK+Qt; 114/114 nextest; remainder → S2 |
 | S2 ABI v3 remainder | DONE | e5a208d | out/in-out params (host+GTK+Qt), Qt callbacks + async (QMenu::addAction functor, QDialog::open Promise), Qt UTF-16 results (1 KiB wide getProp 32.6→1.8 µs), typed GVariant, GValue props, VALUE-class handle_info; 167/167 nextest |
-| X3 child attrs + listen phases | IN PROGRESS | | set_child_attr (G1) and listen_ex after/capture (G5), ABI additive |
+| X3 child attrs + listen phases | DONE | 7310c77 | `parent:<attr>` child attributes (GTK grid/fixed/notebook/stack/overlay; Qt grid/box/tabwidget/splitter), listen_ex after/capture, ABI v2.2 additive; 453/453 nextest; open: QMainWindow toolbar/dock areas, Qt tabIcon |
 | X5 lists (M5) | DONE | 013f593 | portable `virtuallist` (GTK GListModel+ListView/GridView, Qt QAbstractListModel+viewport-pooled rows), JS-owned ids + LIS keyed diff → minimal splices, `@svelters/lists` ListView; 10k/100k rows e2e on both; 422/422 nextest |
 | M2a ABI v2 | DONE | 417093a | schedule_wake native timers (no host thread), lifetime classes/handle_info/dead-handle ring, cascading on_destroyed reasons, onRequestClose + host-decided quit; 74/74 nextest |
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
