@@ -618,9 +618,12 @@ def qt_spec() -> dict:
         for s in el.get("signals", []):
             rec = s.get("rec") or {}
             # X3 Qt phase mapping (docs/notes/x3-childattr-listen.md): `after` on QObject signals,
-            # `capture` only on the synthetic key-press (an application event filter), neither on
-            # close-request.
-            phases = {None: ["after"], "key_press": ["capture"], "close_request": []}.get(s.get("synthetic"))
+            # neither on close-request; `capture` on the synthetic event-filter signals (X3 key-press
+            # and the X8 event families, docs/notes/x8-events-draw.md: `after` is refused there).
+            X8_FAMILIES = {"key_release", "mouse_press", "mouse_release", "mouse_move", "mouse_double_click", "wheel",
+                           "focus_in", "focus_out", "enter", "leave", "resize", "context_menu"}
+            syn = s.get("synthetic")
+            phases = ["capture"] if syn in X8_FAMILIES else {None: ["after"], "key_press": ["capture"], "close_request": []}.get(syn)
             if phases is None:
                 fail(f"{tag}: synthetic signal {s['synthetic']!r} has no phase mapping")
             sigs[s["js"]] = phases_rec({
