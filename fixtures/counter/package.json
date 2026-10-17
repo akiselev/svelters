@@ -8,7 +8,6 @@
     "test": "vite build && node --experimental-vm-modules --no-warnings ../../packages/testhost/bin/svelters-test.mjs ."
   },
   "dependencies": {
-    "@svelters/dom": "workspace:*",
     "svelte": "5.57.2"
   },
   "devDependencies": {

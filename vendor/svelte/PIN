@@ -1,0 +1,23 @@
+upstream:      https://github.com/sveltejs/svelte
+branch:        custom-condition   (top of the stack; head of PR #18511)
+commit:        f3de3f236bd586c764fd48bab04f41c54c5ff80d   "chore: force `custom-renderer` custom condition"
+stack:
+  #18042  svelte-custom-renderer        ece83ddb7b063cbdeb1925a540bca8482eabc436   custom renderer API
+  #18405  fix-interleaving              2c404177f313ce9fe2195b2b5db565013f4dfea6   interleaving renderers (`foreign`)
+  #18461  add-custom-renderer-flag      fc2d5de4dff37a22e18f503e9afe7fff012ba81b   tree-shakeable custom_renderer flag
+  #18511  custom-condition              f3de3f236bd586c764fd48bab04f41c54c5ff80d   `custom-renderer` export condition
+upstream main at pin time: 40bb08482f4857d91221638dec544a532bc35389 (not merged in; the stack was already refreshed against it)
+package:       svelte 5.57.2 (as reported by packages/svelte/package.json)
+tarball:       svelte-5.57.2-f3de3f2.tgz
+sha256:        c58ac25310cf500ea3b7e70781800e8cc671f1c8c6d7b43f560bf955e95aabed
+built:         2026-10-16, Node v22.22.2, pnpm 10.33.4, linux x86_64
+build command (from a clean checkout of the commit above):
+  git checkout f3de3f236bd586c764fd48bab04f41c54c5ff80d
+  pnpm install --frozen-lockfile --network-concurrency=4
+  cd packages/svelte
+  npx rollup -c && node scripts/process-messages && node scripts/generate-types.js
+  pnpm pack --pack-destination <dir>          # then rename to svelte-<version>-<shortsha>.tgz
+  (the full `pnpm build` also runs generate:browser-support and check-treeshakeability, which are slow and not needed for the tarball)
+consumed via:  `overrides.svelte` in pnpm-workspace.yaml (file:vendor/svelte/<tarball>)
+conditions:    bundles must resolve with export condition `custom-renderer` (or `browser`) plus `production`/`development`; any other condition gets the server build, which throws `custom_renderer_unavailable_on_server`.
+refresh:       tests/renderer-conformance/WEEKLY.md

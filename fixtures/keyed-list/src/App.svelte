@@ -21,7 +21,7 @@
 <window title="Keyed list">
   <box orientation="vertical" spacing="6">
     <box orientation="horizontal" spacing="6">
-      <entry placeholder="New item" text={draft} onchange={(e) => (draft = e.detail)} />
+      <entry placeholder="New item" text={draft} onchanged={(arg) => (draft = arg?.detail ?? arg)} />
       <button onclick={add}>Add</button>
       <button onclick={reverse}>Reverse</button>
     </box>

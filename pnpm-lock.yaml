@@ -4,18 +4,18 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  svelte: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+
 importers:
 
   .: {}
 
   fixtures/counter:
     dependencies:
-      '@svelters/dom':
-        specifier: workspace:*
-        version: link:../../packages/dom
       svelte:
-        specifier: 5.57.2
-        version: 5.57.2
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
     devDependencies:
       '@svelters/build':
         specifier: workspace:*
@@ -29,12 +29,9 @@ importers:
 
   fixtures/if-toggle:
     dependencies:
-      '@svelters/dom':
-        specifier: workspace:*
-        version: link:../../packages/dom
       svelte:
-        specifier: 5.57.2
-        version: 5.57.2
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
     devDependencies:
       '@svelters/build':
         specifier: workspace:*
@@ -48,12 +45,9 @@ importers:
 
   fixtures/keyed-list:
     dependencies:
-      '@svelters/dom':
-        specifier: workspace:*
-        version: link:../../packages/dom
       svelte:
-        specifier: 5.57.2
-        version: 5.57.2
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
     devDependencies:
       '@svelters/build':
         specifier: workspace:*
@@ -67,12 +61,9 @@ importers:
 
   fixtures/timers:
     dependencies:
-      '@svelters/dom':
-        specifier: workspace:*
-        version: link:../../packages/dom
       svelte:
-        specifier: 5.57.2
-        version: 5.57.2
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
     devDependencies:
       '@svelters/build':
         specifier: workspace:*
@@ -88,15 +79,31 @@ importers:
     dependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: 7.3.1
-        version: 7.3.1(svelte@5.57.2)(vite@8.3.4)
+        version: 7.3.1(svelte@file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz)(vite@8.3.4)
+      '@svelters/dom':
+        specifier: workspace:*
+        version: link:../dom
+      '@svelters/renderer':
+        specifier: workspace:*
+        version: link:../renderer
       svelte:
-        specifier: 5.57.2
-        version: 5.57.2
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
       vite:
         specifier: 8.3.4
         version: 8.3.4
 
   packages/dom: {}
+
+  packages/renderer:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+    devDependencies:
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../testhost
 
   packages/testhost: {}
 
@@ -227,6 +234,7 @@ packages:
 
   '@sveltejs/vite-plugin-svelte@7.3.1':
     resolution: {integrity: sha512-ZPsLN8B1e/En+Ak5s4V7srFDT532oS0qieLsQwu63NGKsS+iAjoO2Js1BochlHlglcU+Pt7WAO3C5Ee+4f6gVA==}
+    version: 7.3.1
     engines: {node: ^20.19 || ^22.12 || >=24}
     peerDependencies:
       svelte: ^5.46.4
@@ -403,8 +411,9 @@ packages:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
 
-  svelte@5.57.2:
-    resolution: {integrity: sha512-1YiPCAXT0Ct6g1vOMmSLa0Nsc3QRMvtDF32ihgglGVrugIuIK38RyDiFNXVDhtQ81TJjSO57NdMw6DyYLqSGDQ==}
+  svelte@file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz:
+    resolution: {integrity: sha512-FQBAHvTUah4BBjPwBIuIUOmDmrKxKcyjxKglNEdXuQBgQsC3vEmVK6jUsL/+2yoCt7bHiu8S7kFaiJSe2plB+Q==, tarball: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz}
+    version: 5.57.2
     engines: {node: '>=18'}
 
   tinyglobby@0.2.17:
@@ -539,12 +548,12 @@ snapshots:
     dependencies:
       acorn: 8.19.0
 
-  '@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4)':
+  '@sveltejs/vite-plugin-svelte@7.3.1(svelte@file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz)(vite@8.3.4)':
     dependencies:
       deepmerge: 4.3.1
       magic-string: 1.4.3
       obug: 2.2.1
-      svelte: 5.57.2
+      svelte: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
       vite: 8.3.4
       vitefu: 1.1.3(vite@8.3.4)
 
@@ -677,7 +686,7 @@ snapshots:
 
   source-map-js@1.2.2: {}
 
-  svelte@5.57.2:
+  svelte@file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.6.0
