@@ -13,6 +13,7 @@ fn main() {
 mod mac {
     use svelters_abi::Value as V;
     use svelters_abi::*;
+    use objc2::DefinedClass;
     use svelters_appkit::testing::Harness;
 
     /// Each case runs under `Harness::case_guard`: a case that panics has its handles destroyed,
@@ -117,7 +118,7 @@ mod mac {
     fn frame_path_probe() {
         use objc2::rc::Retained;
         use objc2::runtime::{AnyObject, Sel};
-        use objc2::{DefinedClass, MainThreadMarker, MainThreadOnly, class, msg_send, sel};
+        use objc2::{MainThreadMarker, MainThreadOnly, class, msg_send, sel};
         if std::env::var_os("SVELTERS_APPKIT_TRACE_FRAMES").is_none() {
             return;
         }

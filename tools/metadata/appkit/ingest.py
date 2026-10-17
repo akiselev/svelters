@@ -171,7 +171,9 @@ class Ingest:
 
     def type_ref(self, ty) -> dict:
         sp = ty.spelling
-        sp = re.sub(r"\b(?:API|NS|APPKIT)_[A-Z_]+\((?:[^()]|\([^()]*\))*\)", "", sp)
+        # Availability/annotation macros, with arguments (`API_AVAILABLE(macos(10.14))`) or bare:
+        # Apple's clang prints macro-qualified types by macro name (`API_AVAILABLE NSColor *`).
+        sp = re.sub(r"\b(?:API|NS|APPKIT)_[A-Z_]+\b(?:\((?:[^()]|\([^()]*\))*\))?", "", sp)
         for q in ("_Nullable", "_Nonnull", "_Null_unspecified", "__kindof", "const", "__strong", "__weak"):
             sp = sp.replace(q, "")
         sp = " ".join(sp.split())

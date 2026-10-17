@@ -43,7 +43,7 @@ jobs:
       - name: Environment
         run: sw_vers; xcode-select -p; xcrun --sdk macosx --show-sdk-path; xcrun --sdk macosx --show-sdk-version; xcrun clang --version
       - name: Python with the libclang bindings
-        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install --quiet clang==18.1.8 pyyaml jsonschema
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install --quiet clang==21.1.7 pyyaml jsonschema
       - name: Ingest from the Xcode SDK
         run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/ingest.py'
       - name: Generate tables and tests
