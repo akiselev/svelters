@@ -226,3 +226,58 @@ test('classes: clsx semantics', () => {
   assert.deepEqual([...$n.classes(['a', { b: true, c: false }, null])], ['a', 'b']);
   assert.deepEqual([...$n.classes(null)], []);
 });
+
+test('boundary: an error while rendering shows `failed`, reset() renders the children again', () => {
+  const t = harness();
+  const broken = $.state(true);
+  const seen = [];
+  let retry;
+  mountInBox((c) =>
+    $n.boundary($n.region(c), {
+      onerror: (e, reset) => {
+        seen.push(e.message);
+        retry = reset;
+      },
+      failed: (anchor, error) => label(anchor, () => `failed: ${error().message}`),
+      children: (anchor) =>
+        label(anchor, () => {
+          if ($.get(broken)) throw new Error('boom');
+          return 'ok';
+        }),
+    }),
+  );
+  $.flush(); // drains Svelte's task queue: onerror, then `failed`
+  assert.deepEqual(seen, ['boom']);
+  const failedOps = t.take();
+  assert.ok(failedOps.some((l) => /label "failed: boom"/.test(l)), failedOps.join('\n'));
+  $.set(broken, false);
+  retry();
+  $.flush();
+  const ops = t.take();
+  assert.ok(ops.some((l) => /label "ok"/.test(l)), ops.join('\n'));
+  assert.ok(ops.some((l) => /^destroy/.test(l)), 'failed content destroyed');
+});
+
+test('boundary: an error in an effect after mount reaches the boundary; one without handlers passes it on', () => {
+  const t = harness();
+  const n = $.state(0);
+  const seen = [];
+  mountInBox((c) =>
+    $n.boundary($n.region(c), {
+      onerror: (e) => seen.push(`outer ${e.message}`),
+      children: (anchor) =>
+        $n.boundary($n.region(anchor), {
+          children: (a) =>
+            label(a, () => {
+              if ($.get(n) > 0) throw new Error('later');
+              return 'fine';
+            }),
+        }),
+    }),
+  );
+  t.take();
+  $.set(n, 1);
+  $.flush();
+  assert.deepEqual(seen, ['outer later']);
+  assert.ok(t.take().some((l) => /^destroy/.test(l)), 'content removed');
+});

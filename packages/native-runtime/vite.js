@@ -1,5 +1,5 @@
 // Vite config helper for bundles built on @svelters/native-runtime: one self-contained ES module
-// (dist/app.js) like packages/build, plus the alias that exposes Svelte's internal effects module.
+// (dist/app.js) like packages/build, plus the aliases that expose Svelte's internal effects and task modules.
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -18,6 +18,13 @@ export const effectsPath = path.join(
   'reactivity/effects.js',
 );
 
+/** Svelte's microtask queue (`queue_micro_task`, drained by `flushSync`), used by `boundary`. */
+export const TASK_SPECIFIER = 'svelte/internal/client/dom/task';
+export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
+
+/** Every hidden Svelte module src/index.js imports: specifier -> absolute path. */
+export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath };
+
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
  * minified, with a source map, resolved with the same conditions as packages/build.
@@ -32,6 +39,7 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
       conditions: ['custom-renderer', 'browser'],
       alias: [
         { find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath },
+        { find: /^svelte\/internal\/client\/dom\/task(\.js)?$/, replacement: taskPath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
       ],

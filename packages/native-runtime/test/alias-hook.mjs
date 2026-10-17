@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url';
-import { EFFECTS_SPECIFIER, effectsPath } from '../vite.js';
+import { HIDDEN_MODULES } from '../vite.js';
 
 export async function resolve(specifier, context, next) {
-  if (specifier === EFFECTS_SPECIFIER) return { url: pathToFileURL(effectsPath).href, shortCircuit: true };
+  if (Object.hasOwn(HIDDEN_MODULES, specifier)) return { url: pathToFileURL(HIDDEN_MODULES[specifier]).href, shortCircuit: true };
   return next(specifier, context);
 }

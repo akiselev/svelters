@@ -139,9 +139,25 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   first), so an already-settled promise never shows `pending` in both.
 - **Snippet params, `{@const}`, `{:then}`/`{:catch}`**: plain identifiers only (Svelte supports
   destructuring and parameter defaults via `$.derived`/`$.fallback`): `unsupported_feature`.
-- **Top-level snippets** are declared in the component body after the instance script (Svelte
-  hoists them so the script can reference them during initialisation; here only lazily, e.g. in
-  functions or `$derived`).
+- **Top-level snippets** follow Svelte: before the instance script, or at module level when
+  they reference nothing of the instance (`can_hoist_snippet`).
+- **Template effect order**: Svelte creates one `$.template_effect` per fragment after its blocks
+  and components, so a parent's template expressions run after its children initialised. Here
+  each reactive prop write is its own render effect created in element order
+  (`codegen/component.rs` `DEFER_TEMPLATE_EFFECTS`, off: turning it on reorders GTK/Qt op logs).
+  Observable only through side effects in template expressions (`lifecycle-render-order-*`).
+- **Dynamic components** (`<Comp />` with `Comp` state/prop/each item/snippet param, or
+  `<obj.Comp />`) render through `$n.snippet` (Svelte's `$.component`), re-created when the
+  function changes. `<svelte:component this={expr}>` likewise (always dynamic).
+- **Legacy `on:event={handler}`** on native elements is a listener, as `onevent={handler}` (both
+  run, in attribute order). Svelte attaches it with `addEventListener` (not delegated), so its
+  order relative to delegated `onevent` handlers can differ. Modifiers, bare forwarding
+  (`on:click`) and `on:` on components are rejected (`unsupported_feature`).
+- **`<svelte:boundary>`** (`$n.boundary`, runtime-contract.md): the `pending` snippet is ignored
+  (no async mode); `failed` renders in the flush after the task that ran `onerror` (Svelte renders
+  it inside that task); no fork batches; dev-mode error adjustments (component stack in the
+  message) are Svelte's own and only apply where its `handle_error` runs.
+- **`bind:this` on a component** binds its exports (`$.bind_this(Child(...), set, get)`), as Svelte.
 - **`{@render}` dynamic test**: `$n.snippet` is used when the callee reads reactive state
   (codegen's `is_reactive`); Svelte uses `node.metadata.dynamic` (callee not a non-reassigned
   snippet declaration). Imported or plain-variable snippet functions are called directly here.

@@ -196,7 +196,29 @@ impl<'a> Lower<'a, '_, '_> {
     fn fragment(&mut self, f: &'a AstFragment, parent: &Parent, ancestors: &[StyleSubject<'a>]) -> Fragment<'a> {
         let const_ok = std::mem::take(&mut self.const_ok);
         let mut out = Fragment::default();
-        for node in &f.nodes {
+        // A backend with text nodes (spec `text_node`): text runs become text elements.
+        let text_node = self.sem.text_node();
+        let entries = match &text_node {
+            Some(_) => {
+                let parent_tag = match parent {
+                    Parent::Root | Parent::Detached => None,
+                    Parent::Element(p, _) => Some(p.tag.as_str()),
+                };
+                text_runs(&f.nodes, parent_tag)
+            }
+            None => f.nodes.iter().map(Entry::Node).collect(),
+        };
+        for entry in entries {
+            let node = match entry {
+                Entry::Node(n) => n,
+                Entry::Text(parts, span) => {
+                    let (er, prop) = text_node.clone().expect("text runs only with a text_node spec");
+                    if let Some(e) = self.text_element(&er, &prop, parts, span, parent) {
+                        out.items.push(Item::Element(e));
+                    }
+                    continue;
+                }
+            };
             match node {
                 FragmentNode::Text(t) => {
                     if !t.data.trim().is_empty() {
@@ -226,6 +248,19 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 FragmentNode::Component(el) => {
                     if let Some(c) = self.component(el, ancestors) {
+                        out.items.push(Item::Component(c));
+                    }
+                }
+                // `<svelte:boundary onerror failed>`: called like a component whose props are its
+                // attributes and snippets (`failed`, `pending`, `children`), see runtime `boundary`
+                FragmentNode::SvelteComponent(n) => {
+                    if let Some(c) = self.svelte_component(n, ancestors) {
+                        out.items.push(Item::Component(c));
+                    }
+                }
+                FragmentNode::SvelteBoundary(el) => {
+                    if let Some(mut c) = self.component(el, ancestors) {
+                        c.name = "$n.boundary".to_string();
                         out.items.push(Item::Component(c));
                     }
                 }
@@ -311,6 +346,29 @@ impl<'a> Lower<'a, '_, '_> {
             }
         }
         out
+    }
+
+    /// A text run as an element of the backend's text kind (spec `text_node`).
+    fn text_element(&mut self, er: &ElementRef, prop: &str, parts: Vec<TemplatePart<'a>>, span: Span, parent: &Parent) -> Option<Element<'a>> {
+        let slot = match parent {
+            Parent::Root | Parent::Detached => None,
+            Parent::Element(p, _) => match self.sem.place_child(p, er, None) {
+                Ok(plan) => (!plan.is_default).then_some(plan.slot),
+                Err(u) => {
+                    u.report(self.diags, sp(span));
+                    return None;
+                }
+            },
+        };
+        let id = self.next_id;
+        self.next_id += 1;
+        let op = if parts.iter().all(|p| matches!(p, TemplatePart::Text(_))) {
+            let text: String = parts.iter().map(|p| if let TemplatePart::Text(t) = p { t.as_str() } else { "" }).collect();
+            Op::Set { prop: prop.to_string(), value: Json::String(text), span }
+        } else {
+            Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), span }
+        };
+        Some(Element { id, span, kind: er.tag.clone(), present: None, slot, class_expr: None, ops: vec![op], children: Fragment::default() })
     }
 
     /// `{:then value}` / `{:catch error}`: only plain identifiers.
@@ -506,6 +564,9 @@ impl<'a> Lower<'a, '_, '_> {
         };
         let id = self.next_id;
         self.next_id += 1;
+        // A backend whose kinds have a `class` prop (the DOM conformance backend) also gets
+        // `class` / `class:` as that prop; GTK and Qt have none, so classes only drive styles.
+        let class_prop = self.sem.writable_property(&er, "class").ok().map(|p| p.js.clone());
 
         // pass 1: slot request and classes (they don't produce ops)
         let mut requested_slot: Option<String> = None;
@@ -521,6 +582,7 @@ impl<'a> Lower<'a, '_, '_> {
                 },
                 AttributeLike::Attribute(at) if at.name == "class" => match static_text(at) {
                     Some(s) => subject.static_classes.extend(s.split_ascii_whitespace().map(str::to_string)),
+                    None if class_prop.is_some() => {}
                     None => {
                         // matched at runtime against the rules' class conditions (runtime-contract.md)
                         class_expr = dynamic_of(at);
@@ -587,12 +649,20 @@ impl<'a> Lower<'a, '_, '_> {
         let mut bound_props: Vec<String> = Vec::new();
         for a in &el.attributes {
             match a {
-                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot" | "class") => {}
+                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") || (at.name == "class" && class_prop.is_none()) => {}
                 AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
                     let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
                     match self.sem.event(&er, &at.name) {
                         Ok(ev) => ops.push(Op::Listen { signal: ev.signal, handler: &t.expression, span: at.span() }),
                         Err(u) => u.report(self.diags, name_span(at)),
+                    }
+                }
+                // Legacy `on:name={handler}` (deprecated in Svelte 5, still compiled in runes mode): a
+                // listener like `onname={handler}`; modifiers and bare forwarding are rejected below
+                AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
+                    match self.sem.event(&er, &format!("on{}", d.name)) {
+                        Ok(ev) => ops.push(Op::Listen { signal: ev.signal, handler: d.expression.as_ref().unwrap(), span: d.span() }),
+                        Err(u) => u.report(self.diags, d.name_span.map_or(sp(d.span()), sp)),
                     }
                 }
                 AttributeLike::Attribute(at) => {
@@ -634,7 +704,11 @@ impl<'a> Lower<'a, '_, '_> {
                         Err(u) => u.report(self.diags, sp(d.span())),
                     }
                 }
-                AttributeLike::ClassDirective(_) => {}
+                AttributeLike::ClassDirective(d) => {
+                    if let (Some(cp), Some(e)) = (&class_prop, &d.expression) {
+                        ops.push(Op::Token { prop: cp.clone(), token: d.name.clone(), cond: vec![CondAtom::Expr(e)], span: d.span() });
+                    }
+                }
                 AttributeLike::SpreadAttribute(s) => {
                     // Decision (runtime-contract.md "Spread attributes"): rejected on native elements.
                     self.diags
@@ -652,7 +726,7 @@ impl<'a> Lower<'a, '_, '_> {
                 other => {
                     let what = match other {
                         AttributeLike::AttachTag(_) => "{@attach}",
-                        AttributeLike::OnDirective(_) => "on: directives (use on<event>={handler})",
+                        AttributeLike::OnDirective(_) => "on: directives with modifiers or without a handler (use on<event>={handler})",
                         AttributeLike::UseDirective(_) => "use: actions",
                         AttributeLike::TransitionDirective(_) => "transitions",
                         AttributeLike::AnimateDirective(_) => "animate: directives",
@@ -864,10 +938,21 @@ impl<'a> Lower<'a, '_, '_> {
     /// A component call. Children: `{#snippet}` blocks directly inside become props of the same
     /// name; everything else becomes the implicit `children` snippet (Svelte 5 semantics).
     fn component(&mut self, el: &'a AstElement, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
+        let parts = TagParts { name: &el.name, name_span: el.name_span, span: el.span(), attributes: &el.attributes, fragment: &el.fragment };
+        self.component_parts(parts, Some(el), None, ancestors)
+    }
+
+    /// `<svelte:component this={expr}>`: a dynamic component call (Svelte's `$.component`).
+    fn svelte_component(&mut self, n: &'a crate::svelte::ast::SvelteComponent, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
+        let parts = TagParts { name: &n.name, name_span: n.name_span, span: n.span(), attributes: &n.attributes, fragment: &n.fragment };
+        self.component_parts(parts, None, Some(&n.expression), ancestors)
+    }
+
+    fn component_parts(&mut self, el: TagParts<'a>, node: Option<&'a AstElement>, this: Option<&'a Expression>, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
         let mut props = Vec::new();
         let mut binds = Vec::new();
         let mut slot = None;
-        for a in &el.attributes {
+        for a in el.attributes {
             match a {
                 AttributeLike::Attribute(at) if at.name == "slot" => slot = static_text(at),
                 AttributeLike::Attribute(at) => match &at.value {
@@ -900,7 +985,7 @@ impl<'a> Lower<'a, '_, '_> {
         let forced = self.forced_slot.take();
         let outer = std::mem::replace(&mut self.in_block, true);
         self.const_ok = true;
-        let mut frag = self.fragment(&el.fragment, &Parent::Detached, ancestors);
+        let mut frag = self.fragment(el.fragment, &Parent::Detached, ancestors);
         self.in_block = outer;
         self.forced_slot = forced;
         let snippets = std::mem::take(&mut frag.snippets);
@@ -908,13 +993,22 @@ impl<'a> Lower<'a, '_, '_> {
         if snippets.iter().any(|s| s.name == "children") && !frag.items.is_empty() {
             self.diags.error(
                 "snippet_conflict",
-                (el.start, el.end),
+                (el.span.start, el.span.end),
                 "Cannot use explicit children snippet at the same time as implicit children content. Remove either the non-whitespace content or the children snippet block",
             );
         }
         let children = (!frag.items.is_empty()).then_some(frag);
-        Some(ComponentCall { span: el.span(), slot, name: el.name.clone(), props, consts, snippets, children })
+        Some(ComponentCall { span: el.span, node, this, slot, name: el.name.to_string(), props, consts, snippets, children })
     }
+}
+
+/// The parts of a component-like tag (`<Comp>`, `<svelte:component>`, `<svelte:boundary>`).
+struct TagParts<'a> {
+    name: &'a str,
+    name_span: Span,
+    span: Span,
+    attributes: &'a [AttributeLike],
+    fragment: &'a AstFragment,
 }
 
 /// Trims a branch's leading and trailing whitespace and drops empty text parts.
@@ -1050,4 +1144,87 @@ fn unsupported_node_name(n: &FragmentNode) -> &'static str {
         SvelteOptionsRaw(_) => "<svelte:options> here",
         _ => "this node",
     }
+}
+
+/// A fragment entry when the backend has text nodes: a node, or a run of text/expression tags.
+enum Entry<'a> {
+    Node(&'a FragmentNode),
+    Text(Vec<TemplatePart<'a>>, Span),
+}
+
+fn is_ws(c: char) -> bool {
+    matches!(c, ' ' | '\t' | '\r' | '\n')
+}
+
+/// Svelte's `clean_nodes` whitespace rules (phases/3-transform/utils.js, `preserveWhitespace`
+/// off), then consecutive text/expression tags grouped into runs (one text node each).
+fn text_runs<'a>(nodes: &'a [FragmentNode], parent_tag: Option<&str>) -> Vec<Entry<'a>> {
+    enum Tx<'a> {
+        Text(String, Span),
+        Expr(&'a Expression, Span),
+        Node(&'a FragmentNode),
+    }
+    let mut regular: Vec<Tx<'a>> = nodes
+        .iter()
+        .filter(|n| !matches!(n, FragmentNode::Comment(_)))
+        .map(|n| match n {
+            FragmentNode::Text(t) => Tx::Text(t.data.clone(), Span::new(t.start, t.end)),
+            FragmentNode::ExpressionTag(e) => Tx::Expr(&e.expression, Span::new(e.start, e.end)),
+            other => Tx::Node(other),
+        })
+        .collect();
+    while matches!(regular.first(), Some(Tx::Text(t, _)) if t.chars().all(is_ws)) {
+        regular.remove(0);
+    }
+    if let Some(Tx::Text(t, _)) = regular.first_mut() {
+        *t = t.trim_start_matches(is_ws).to_string();
+    }
+    while matches!(regular.last(), Some(Tx::Text(t, _)) if t.chars().all(is_ws)) {
+        regular.pop();
+    }
+    if let Some(Tx::Text(t, _)) = regular.last_mut() {
+        *t = t.trim_end_matches(is_ws).to_string();
+    }
+    let can_remove_entirely = matches!(parent_tag, Some("select" | "tr" | "table" | "tbody" | "thead" | "tfoot" | "colgroup" | "datalist"));
+    let mut cleaned: Vec<Tx<'a>> = Vec::new();
+    for i in 0..regular.len() {
+        let prev_is_expr = i > 0 && matches!(regular[i - 1], Tx::Expr(..));
+        let prev_text_ends_ws = i > 0 && matches!(&regular[i - 1], Tx::Text(t, _) if t.ends_with(is_ws));
+        let next_is_expr = matches!(regular.get(i + 1), Some(Tx::Expr(..)));
+        if let Tx::Text(t, _) = &mut regular[i] {
+            if !prev_is_expr && t.starts_with(is_ws) {
+                *t = format!("{}{}", if prev_text_ends_ws { "" } else { " " }, t.trim_start_matches(is_ws));
+            }
+            if !next_is_expr && t.ends_with(is_ws) {
+                *t = format!("{} ", t.trim_end_matches(is_ws));
+            }
+        }
+        match &regular[i] {
+            Tx::Text(t, s) => {
+                if !t.is_empty() && (t != " " || !can_remove_entirely) {
+                    cleaned.push(Tx::Text(t.clone(), *s));
+                }
+            }
+            Tx::Expr(e, s) => cleaned.push(Tx::Expr(e, *s)),
+            Tx::Node(n) => cleaned.push(Tx::Node(n)),
+        }
+    }
+    let mut out: Vec<Entry<'a>> = Vec::new();
+    for tx in cleaned {
+        let (part, s) = match tx {
+            Tx::Node(n) => {
+                out.push(Entry::Node(n));
+                continue;
+            }
+            Tx::Text(t, s) => (TemplatePart::Text(t), s),
+            Tx::Expr(e, s) => (TemplatePart::Expr(e), s),
+        };
+        if let Some(Entry::Text(parts, span)) = out.last_mut() {
+            parts.push(part);
+            span.end = s.end;
+        } else {
+            out.push(Entry::Text(vec![part], s));
+        }
+    }
+    out
 }

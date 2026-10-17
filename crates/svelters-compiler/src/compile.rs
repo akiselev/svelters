@@ -81,7 +81,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: backend.clone(), timings };
 
     let t = Instant::now();
-    let mut root = match parse(src, &ParseOptions { loose: false, native: true }) {
+    let mut root = match parse(src, &ParseOptions { loose: false, native: !opts.backend.html_syntax() }) {
         Ok(r) => r,
         Err(e) => {
             from_compile_error(&mut diags, &e);

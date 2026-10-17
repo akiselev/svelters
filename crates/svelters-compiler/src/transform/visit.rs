@@ -986,7 +986,10 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
         if t == T::None || (t == T::Each && self.mode != Mode::Read) {
             return;
         }
-        let text = read_text(&t, &id.name);
+        // a `var` may be read before its declaration ran (Svelte's add_state_transformers)
+        let is_var = matches!(t, T::Source { .. })
+            && self.cx.arena.resolve(id).is_some_and(|b| self.cx.arena.binding(b).declaration_kind == crate::svelte::scope::DeclarationKind::Var);
+        let text = if is_var { format!("$.safe_get({})", id.name) } else { read_text(&t, &id.name) };
         // `{ count }` shorthand property -> `{ count: $.get(count) }`
         if let Some(NodeRef::Property(p)) = parent
             && p.shorthand
@@ -997,6 +1000,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
         match t {
             T::PropDirect(m) => self.edits.overwrite(id.start, id.end, m),
             T::PropSource | T::Store(_) | T::Thunk => self.edits.wrap(id.start, id.end, "", "()"),
+            _ if is_var => self.edits.wrap(id.start, id.end, "$.safe_get(", ")"),
             _ => self.edits.wrap(id.start, id.end, "$.get(", ")"),
         }
     }

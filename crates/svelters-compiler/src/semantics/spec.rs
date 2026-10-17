@@ -22,6 +22,24 @@ pub struct Spec {
     pub element_hints: BTreeMap<String, String>,
     #[serde(default)]
     pub source: Value,
+    /// Optional: the backend has text nodes (the DOM conformance backend, `metadata/semantics/dom.json`).
+    /// Text and `{expression}` runs outside text-content elements then lower to elements of
+    /// `kind` (a tag) whose `prop` holds the text, with Svelte's whitespace rules. Absent on GTK/Qt:
+    /// text there is `text_not_allowed`.
+    #[serde(default)]
+    pub text_node: Option<TextNodeSpec>,
+    /// Optional: parse templates with HTML rules (void elements, implicit closing), i.e.
+    /// `ParseOptions.native == false`. Only the DOM conformance backend sets it.
+    #[serde(default)]
+    pub html_syntax: bool,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct TextNodeSpec {
+    /// Tag of the text kind (must be in `tags`).
+    pub kind: String,
+    /// The property holding the text.
+    pub prop: String,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]

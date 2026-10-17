@@ -29,6 +29,17 @@ pub trait Rewriter {
     fn assign(&self, target: &Expression, value: &str) -> String;
     /// Emits the instance script: (hoisted import text, component-body text), both mapped.
     fn script(&self, w: &mut Writer, hoist: bool);
+    /// Whether the top-level snippet starting at `start` references nothing of the component
+    /// instance, so it is hoisted to module level (Svelte's module_level_snippets).
+    fn hoist_snippet(&self, _start: u32) -> bool {
+        false
+    }
+    /// For a component tag whose name is dynamic (Svelte's `Component.metadata.dynamic`: a
+    /// non-normal binding such as `$state`/prop/each item, or a member expression), the JS that
+    /// reads the current component function; None for a static name.
+    fn dynamic_component(&self, _node: &crate::svelte::ast::Element) -> Option<String> {
+        None
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
@@ -40,19 +51,32 @@ pub struct Codegen<'a, 's> {
     pub rw: &'s dyn Rewriter,
     pub w: Writer<'s>,
     tmp: usize,
+    /// The next `fragment` is the component root, whose snippets `generate` already emitted.
+    root_fragment: bool,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str) -> (String, String) {
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, _p: std::marker::PhantomData };
     g.w.write("import * as $ from 'svelte/internal/client';\nimport * as $n from '@svelters/native-runtime';\n");
     rw.script(&mut g.w, true);
+    let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
+    for s in hoisted {
+        g.snippet(s);
+        g.w.newline();
+    }
     g.w.write(&format!("\nexport default function {name}($$anchor, $$props) {{"));
     g.w.indent();
     g.w.newline();
     g.w.write("$.push($$props, true);");
+    // Top-level snippets come before the instance script, so it can reference them (Svelte's
+    // instance_level_snippets)
+    for s in instance {
+        g.snippet(s);
+    }
     rw.script(&mut g.w, false);
+    g.root_fragment = true;
     g.fragment(&comp.root, "$$anchor");
     g.w.newline();
     rw.epilogue(&mut g.w);
@@ -107,9 +131,22 @@ impl Codegen<'_, '_> {
     }
 
     fn fragment(&mut self, f: &Fragment, container: &str) {
-        self.decls(f);
+        if std::mem::take(&mut self.root_fragment) {
+            for c in &f.consts {
+                self.line();
+                self.w.map(c.span.start);
+                self.w.write(&format!("const {} = $.derived(() => ", c.name));
+                self.paren_expr(c.init, Mode::Read);
+                self.w.write(");");
+            }
+        } else {
+            self.decls(f);
+        }
         for item in &f.items {
             self.item(item, container);
+        }
+        if DEFER_TEMPLATE_EFFECTS {
+            self.deferred_ops(f);
         }
     }
 
@@ -140,7 +177,9 @@ impl Codegen<'_, '_> {
             self.w.write("));");
         }
         for op in &e.ops {
-            self.op(&n, op);
+            if !(DEFER_TEMPLATE_EFFECTS && self.is_deferred(op)) {
+                self.op(&n, op);
+            }
         }
         // children grouped per slot container
         self.fragment_children(&e.children, &n);
@@ -149,9 +188,39 @@ impl Codegen<'_, '_> {
         self.w.write(&format!("$n.append({container}, {n});"));
     }
 
+    /// Render effects of a fragment's elements are created after its blocks and components, as
+    /// Svelte's single `$.template_effect` at the end of each fragment (so a parent's template
+    /// expressions are evaluated after its children's components initialised).
+    fn is_deferred(&self, op: &Op) -> bool {
+        match op {
+            Op::SetDynamic { value, .. } => self.dynamic_reactive(value),
+            Op::Token { cond, .. } => !cond.is_empty(),
+            Op::StyleProp { .. } => true,
+            _ => false,
+        }
+    }
+
+    /// The deferred ops of the elements of `f` (and of their children, except children in their
+    /// own JS block, which flush their own).
+    fn deferred_ops(&mut self, f: &Fragment) {
+        for item in &f.items {
+            if let Item::Element(e) = item {
+                let n = format!("$$n{}", e.id + 1);
+                for op in &e.ops {
+                    if self.is_deferred(op) {
+                        self.op(&n, op);
+                    }
+                }
+                if !scoped(&e.children) {
+                    self.deferred_ops(&e.children);
+                }
+            }
+        }
+    }
+
     fn fragment_children(&mut self, f: &Fragment, parent: &str) {
         // snippets declared among an element's children get their own JS block scope
-        let scoped = !f.snippets.is_empty() || !f.consts.is_empty();
+        let scoped = scoped(f);
         if scoped {
             self.line();
             self.w.write("{");
@@ -161,6 +230,9 @@ impl Codegen<'_, '_> {
         for item in &f.items {
             let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
             self.item(item, &c);
+        }
+        if scoped && DEFER_TEMPLATE_EFFECTS {
+            self.deferred_ops(f);
         }
         if scoped {
             self.w.dedent();
@@ -200,17 +272,34 @@ impl Codegen<'_, '_> {
             }
             Op::Bind { prop, signal, arg, target, span } => {
                 self.w.map(span.start);
-                self.w.write(&format!("$n.bind({n}, {}, {}, {arg}, () => ", js_str(prop), js_str(signal)));
-                self.expr_text(target, Mode::Read);
-                let set = self.rw.assign(target, "$$value");
-                self.w.write(&format!(", ($$value) => {{ {set}; }});"));
+                self.w.write(&format!("$n.bind({n}, {}, {}, {arg}, ", js_str(prop), js_str(signal)));
+                if let Some((get, set)) = function_binding(target) {
+                    // `bind:value={get, set}` (Svelte >= 5.9): the functions are the accessors
+                    self.paren_expr(get, Mode::Read);
+                    self.w.write(", ");
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(");");
+                } else {
+                    self.w.write("() => ");
+                    self.expr_text(target, Mode::Read);
+                    let set = self.rw.assign(target, "$$value");
+                    self.w.write(&format!(", ($$value) => {{ {set}; }});"));
+                }
             }
             Op::BindThis { target, span } => {
                 self.w.map(span.start);
-                let set = self.rw.assign(target, "$$value");
-                self.w.write(&format!("$.bind_this({n}, ($$value) => {{ {set}; }}, () => "));
-                self.expr_text(target, Mode::Read);
-                self.w.write(");");
+                if let Some((get, set)) = function_binding(target) {
+                    self.w.write(&format!("$.bind_this({n}, "));
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(", ");
+                    self.paren_expr(get, Mode::Read);
+                    self.w.write(");");
+                } else {
+                    let set = self.rw.assign(target, "$$value");
+                    self.w.write(&format!("$.bind_this({n}, ($$value) => {{ {set}; }}, () => "));
+                    self.expr_text(target, Mode::Read);
+                    self.w.write(");");
+                }
             }
             Op::Track { prop, signal, arg } => {
                 self.w.write(&format!("$n.track({n}, {}, {}, {arg});", js_str(prop), js_str(signal)));
@@ -269,6 +358,16 @@ impl Codegen<'_, '_> {
                     self.paren_expr(e, Mode::Read);
                 }
                 CondAtom::Class { element, class } => self.w.write(&format!("$.get(c{}).has({})", element + 1, js_str(class))),
+            }
+        }
+    }
+
+    fn needs_memo(&self, d: &Dynamic) -> bool {
+        let simple = |e: &Expression| matches!(e, Expression::Identifier(_) | Expression::MemberExpression(_));
+        match d {
+            Dynamic::Expr(e) => !simple(e) && self.rw.is_reactive(e),
+            Dynamic::Template(parts) => {
+                parts.iter().any(|p| matches!(p, TemplatePart::Expr(e) if !simple(e))) && self.dynamic_reactive(d)
             }
         }
     }
@@ -438,11 +537,27 @@ impl Codegen<'_, '_> {
 
     /// `const name = ($$anchor, a = $.noop) => { body };` (Svelte's snippet shape).
     fn snippet(&mut self, s: &Snippet) {
+        self.snippet_with(s, &[]);
+    }
+
+    fn consts(&mut self, consts: &[ConstDecl]) {
+        for k in consts {
+            self.line();
+            self.w.map(k.span.start);
+            self.w.write(&format!("const {} = $.derived(() => ", k.name));
+            self.paren_expr(k.init, Mode::Read);
+            self.w.write(");");
+        }
+    }
+
+    /// A snippet declaration; `consts` are declared at the start of its body.
+    fn snippet_with(&mut self, s: &Snippet, consts: &[ConstDecl]) {
         self.line();
         self.w.map(s.span.start);
         let params: String = s.params.iter().map(|p| format!(", {p} = $.noop")).collect();
         self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
         self.w.indent();
+        self.consts(consts);
         self.fragment(&s.body, "$$anchor");
         self.w.dedent();
         self.line();
@@ -475,31 +590,75 @@ impl Codegen<'_, '_> {
 
     fn component(&mut self, c: &ComponentCall, container: &str) {
         let scoped = !c.snippets.is_empty() || !c.consts.is_empty();
+        // `<svelte:boundary>`: its `{@const}`s live inside it (so their errors are caught), copied
+        // into each of its snippets (Svelte's SvelteBoundary visitor)
+        let boundary = c.name == "$n.boundary";
         if scoped {
             self.line();
             self.w.write("{");
             self.w.indent();
-            for k in &c.consts {
-                self.line();
-                self.w.map(k.span.start);
-                self.w.write(&format!("const {} = $.derived(() => ", k.name));
-                self.paren_expr(k.init, Mode::Read);
-                self.w.write(");");
+            if boundary {
+                for s in &c.snippets {
+                    self.snippet_with(s, &c.consts);
+                }
+            } else {
+                self.consts(&c.consts);
+                for s in &c.snippets {
+                    self.snippet(s);
+                }
             }
-            for s in &c.snippets {
-                self.snippet(s);
-            }
+        }
+        // Svelte's build_component memoizes non-trivial reactive prop values (anything but an
+        // identifier or member expression) in a derived, so a child reading the prop several
+        // times evaluates it once per change (`random={Math.random()}`, `active={i === index}`).
+        let mut memo: Vec<Option<String>> = Vec::new();
+        for p in &c.props {
+            let m = match p {
+                ComponentProp::Dynamic { value, .. } if self.needs_memo(value) => {
+                    self.tmp += 1;
+                    let id = format!("$$prop{}", self.tmp);
+                    self.line();
+                    self.w.write(&format!("const {id} = $.derived(() => "));
+                    self.dynamic(value);
+                    self.w.write(");");
+                    Some(id)
+                }
+                _ => None,
+            };
+            memo.push(m);
         }
         self.line();
         self.w.map(c.span.start);
-        self.w.write(&format!("{}($n.region({container}), ", c.name));
+        // `bind:this` on a component binds its exports (Svelte: `$.bind_this(Child(...), set, get)`)
+        let this_bind = c.props.iter().find_map(|p| match p {
+            ComponentProp::Bind { name, target } if name == "this" => Some(*target),
+            _ => None,
+        });
+        if this_bind.is_some() {
+            self.w.write("$.bind_this(");
+        }
+        if let Some(this) = c.this {
+            // `<svelte:component this>`: re-created when the function changes, nothing if nullish
+            self.w.write(&format!("$n.snippet({container}, () => "));
+            self.paren_expr(this, Mode::Read);
+            self.w.write(", ");
+        } else {
+            match c.node.and_then(|n| self.rw.dynamic_component(n)) {
+                // re-created when the component function changes (Svelte's `$.component`)
+                Some(get) => self.w.write(&format!("$n.snippet({container}, () => {get}, ")),
+                None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
+            }
+        }
         let spread = c.props.iter().any(|p| matches!(p, ComponentProp::Spread(_)));
         if spread {
             self.w.write("$.spread_props(");
         }
         // `$.spread_props(obj, () => spread, obj, ...)` / a single object literal
         let mut st = PropsState { open: false, first_arg: true, first_entry: true };
-        for p in &c.props {
+        for (i, p) in c.props.iter().enumerate() {
+            if matches!(p, ComponentProp::Bind { name, .. } if name == "this") {
+                continue;
+            }
             if let ComponentProp::Spread(e) = p {
                 if st.open {
                     self.w.write(" }");
@@ -525,8 +684,19 @@ impl Codegen<'_, '_> {
                 }
                 ComponentProp::Dynamic { name, value } => {
                     self.w.write(&format!("get {}() {{ return ", js_key(name)));
-                    self.dynamic(value);
+                    match &memo[i] {
+                        Some(id) => self.w.write(&format!("$.get({id})")),
+                        None => self.dynamic(value),
+                    }
                     self.w.write("; }");
+                }
+                ComponentProp::Bind { name, target } if function_binding(target).is_some() => {
+                    let (get, set) = function_binding(target).unwrap();
+                    self.w.write(&format!("get {}() {{ return (", js_key(name)));
+                    self.paren_expr(get, Mode::Read);
+                    self.w.write(&format!(")(); }}, set {}($$value) {{ (", js_key(name)));
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(")($$value); }");
                 }
                 ComponentProp::Bind { name, target } => {
                     self.w.write(&format!("get {}() {{ return ", js_key(name)));
@@ -547,6 +717,9 @@ impl Codegen<'_, '_> {
             self.prop_entry(&mut st);
             self.w.write("children: ($$anchor, $$slotProps) => {");
             self.w.indent();
+            if boundary {
+                self.consts(&c.consts);
+            }
             self.fragment(ch, "$$anchor");
             self.w.dedent();
             self.line();
@@ -566,7 +739,24 @@ impl Codegen<'_, '_> {
         if spread {
             self.w.write(")");
         }
-        self.w.write(");");
+        self.w.write(")");
+        if let Some(target) = this_bind {
+            match function_binding(target) {
+                Some((get, set)) => {
+                    self.w.write(", ");
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(", ");
+                    self.paren_expr(get, Mode::Read);
+                }
+                None => {
+                    let set = self.rw.assign(target, "$$value");
+                    self.w.write(&format!(", ($$value) => {{ {set}; }}, () => "));
+                    self.expr_text(target, Mode::Read);
+                }
+            }
+            self.w.write(")");
+        }
+        self.w.write(";");
         if scoped {
             self.w.dedent();
             self.line();
@@ -589,6 +779,28 @@ impl Codegen<'_, '_> {
         }
         self.w.write(" ");
         st.first_entry = false;
+    }
+}
+
+/// Svelte creates a fragment's render effects after its blocks and components (one
+/// `$.template_effect` at the end of the fragment), so a parent's template expressions run after
+/// its children's components initialised (Svelte's `lifecycle-render-order-for-children*`).
+/// Off: deferring moves every reactive prop write after the element's insertion, which changes
+/// the GTK/Qt op logs (`experiments/native-compiler/compiled` expected logs and hand-written
+/// references); enabling it is a decision for the op-log owners (deviations.md).
+const DEFER_TEMPLATE_EFFECTS: bool = false;
+
+/// Whether an element's children are emitted in their own JS block (they declare snippets or
+/// `{@const}`s).
+fn scoped(f: &Fragment) -> bool {
+    !f.snippets.is_empty() || !f.consts.is_empty()
+}
+
+/// `bind:x={get, set}`: the getter and setter of a function binding.
+fn function_binding<'e>(target: &'e Expression) -> Option<(&'e Expression, &'e Expression)> {
+    match target {
+        Expression::SequenceExpression(s) if s.expressions.len() == 2 => Some((&s.expressions[0], &s.expressions[1])),
+        _ => None,
     }
 }
 

@@ -215,6 +215,7 @@ pub struct ScopeRewriter<'a> {
     has_stores: bool,
     /// TypeScript to remove from the emitted text (`svelte::ts`; empty for JavaScript).
     ts_strip: crate::svelte::ts::TsStrip,
+    component_scopes: &'a HashMap<NodeKey, crate::svelte::scope::ComponentScopes>,
 }
 
 impl<'a> ScopeRewriter<'a> {
@@ -272,7 +273,7 @@ impl<'a> ScopeRewriter<'a> {
             }
         }
 
-        let mut rw = ScopeRewriter { cx, root, script: Edits::new(), module: Edits::new(), exports, has_stores: false, ts_strip: Default::default() };
+        let mut rw = ScopeRewriter { cx, root, script: Edits::new(), module: Edits::new(), exports, has_stores: false, ts_strip: Default::default(), component_scopes: &an.template.component_scopes };
         let has = rw.store_subs().next().is_some();
         rw.has_stores = has;
 
@@ -355,7 +356,66 @@ fn export_name(n: &ModuleExportName) -> String {
     }
 }
 
+impl ScopeRewriter<'_> {
+    /// Svelte's `can_hoist_snippet` (2-analyze/visitors/SnippetBlock.js): the snippet references
+    /// nothing declared inside the component function (other than hoistable snippets).
+    fn can_hoist_snippet(&self, scope: ScopeId, visited: &mut HashSet<BindingId>) -> bool {
+        let arena = self.cx.arena;
+        let depth = arena.scope(scope).function_depth;
+        for name in arena.scope(scope).references.keys() {
+            let Some(b) = arena.get(scope, name) else { continue };
+            let binding = arena.binding(b);
+            let d = arena.scope(binding.scope).function_depth;
+            if d == 0 || d >= depth {
+                continue;
+            }
+            if let Some(Initial::SnippetBlock(sb)) = binding.initial {
+                if !visited.insert(b) {
+                    continue;
+                }
+                if let Some(s) = self.snippet_scope(sb)
+                    && self.can_hoist_snippet(s, visited)
+                {
+                    continue;
+                }
+            }
+            return false;
+        }
+        true
+    }
+
+    fn snippet_scope(&self, sb: &crate::svelte::ast::SnippetBlock) -> Option<ScopeId> {
+        let key = NodeRef::SnippetBlock(sb).key();
+        self.cx.maps.iter().find_map(|m| m.get(&key).copied())
+    }
+}
+
 impl Rewriter for ScopeRewriter<'_> {
+    fn dynamic_component(&self, node: &crate::svelte::ast::Element) -> Option<String> {
+        let cs = self.component_scopes.get(&NodeRef::Component(node).key())?;
+        let scope = self.cx.arena.scope(cs.default).parent?;
+        let (first, rest) = node.name.split_once('.').map_or((node.name.as_str(), None), |(a, b)| (a, Some(b)));
+        let b = self.cx.arena.get(scope, first)?;
+        if self.cx.arena.binding(b).kind == BindingKind::Normal && rest.is_none() {
+            return None;
+        }
+        let read = read_text(&self.cx.transform_of(b), first);
+        Some(match rest {
+            Some(r) => format!("{read}.{r}"),
+            None => read,
+        })
+    }
+
+    fn hoist_snippet(&self, start: u32) -> bool {
+        let Some(sb) = self.cx.arena.bindings().find_map(|(_, b)| match b.initial {
+            Some(Initial::SnippetBlock(sb)) if sb.start == start => Some(sb),
+            _ => None,
+        }) else {
+            return false;
+        };
+        self.snippet_scope(sb).is_some_and(|s| self.can_hoist_snippet(s, &mut HashSet::new()))
+    }
+
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits) {
         self.ts_strip.apply(edits, Some(e.span()));
         let mut v = Rw::new(&self.cx, edits, mode, true);
