@@ -516,11 +516,25 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_view_get_buffer (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "matches!(r, V::Handle(_) | V::Boxed(_))",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_buffer",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_buffer",
       "name": "get_buffer",
       "native": "gtk_text_view_get_buffer",
       "origin": "gir",
@@ -1326,11 +1340,25 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_view_place_cursor_onscreen (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "matches!(r, V::Bool(_))",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:place_cursor_onscreen",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "place_cursor_onscreen",
       "name": "place_cursor_onscreen",
       "native": "gtk_text_view_place_cursor_onscreen",
       "origin": "gir",
@@ -2314,6 +2342,11 @@
         "get": "gtk_text_view_get_cursor_visible",
         "set": "gtk_text_view_set_cursor_visible"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:cursor-visible (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:cursor-visible",
       "invocation": "reflected",
@@ -2353,6 +2386,11 @@
       "accessors": {
         "get": "gtk_text_view_get_editable",
         "set": "gtk_text_view_set_editable"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:editable (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:editable",
@@ -2596,6 +2634,11 @@
         "get": "gtk_text_view_get_justification",
         "set": "gtk_text_view_set_justification"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:justification (Gtk 4 docs)"
+      },
       "default": "left",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:justification",
       "invocation": "reflected",
@@ -2635,6 +2678,11 @@
       "accessors": {
         "get": "gtk_text_view_get_left_margin",
         "set": "gtk_text_view_set_left_margin"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:left-margin (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:left-margin",
@@ -2678,6 +2726,11 @@
       "accessors": {
         "get": "gtk_text_view_get_monospace",
         "set": "gtk_text_view_set_monospace"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:monospace (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:monospace",
@@ -2970,6 +3023,11 @@
         "get": "gtk_text_view_get_top_margin",
         "set": "gtk_text_view_set_top_margin"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:top-margin (Gtk 4 docs)"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:top-margin",
       "invocation": "reflected",
@@ -3012,6 +3070,11 @@
       "accessors": {
         "get": "gtk_text_view_get_wrap_mode",
         "set": "gtk_text_view_set_wrap_mode"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkTextView:wrap-mode (Gtk 4 docs)"
       },
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:wrap-mode",
@@ -3517,7 +3580,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/TextView.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

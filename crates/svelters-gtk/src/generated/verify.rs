@@ -992,6 +992,237 @@ fn method_editable_select_region() {
     });
 }
 
+/// signal EditableLabel.notify::editing: GObject::notify for GtkEditableLabel:editing
+#[test]
+fn signal_editablelabel_notify_editing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("editablelabel");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("editing", true),
+                1 => o.set_property("editing", false),
+                2 => o.set_property("editing", true),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("editablelabel", "notify::editing"), 0);
+        assert_eq!(h.resolve_signal("editablelabel", "notify::editing"), h.resolve_signal("editablelabel", "notify::editing"));
+        h.listen(e, "notify::editing", true).unwrap();
+        fire(&h.obj(e), "True", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::editing".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::editing", false).unwrap();
+        fire(&h.obj(e), "False", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::editing", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "True", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::editing", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property EditableLabel.editing (JS editing): GtkEditableLabel:editing (Gtk 4 docs)
+#[test]
+fn prop_editablelabel_editing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("editablelabel");
+        
+        let id = h.resolve_prop("editablelabel", "editing");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("editablelabel", "editing"));
+        h.set_bool(o, "editing", true).unwrap();
+        assert_eq!(h.get(o, "editing"), V::Bool(true));
+    });
+}
+
+/// echo suppression for EditableLabel.editing: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_editablelabel_editing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("editablelabel");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("editing", true),
+                1 => o.set_property("editing", false),
+                2 => o.set_property("editing", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::editing", true).unwrap();
+        h.set_bool(o, "editing", true).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "False", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::editing"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_bool(o, "editing", true).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// method EditableLabel.start_editing (dynamic GI call): gtk_editable_label_start_editing (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_editablelabel_start_editing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("editablelabel");
+        
+        let r = h.call_args(o, "start_editing", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "editing") == V::Bool(true), "postcondition: h.get(o, 'editing') == V::Bool(true)");
+    });
+}
+
+/// bind:editing on EditableLabel: GtkEditableLabel:editing, toggled by start and stop editing (Gtk 4 docs)
+#[test]
+fn binding_editablelabel_editing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("editablelabel");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("editing", true),
+                1 => o.set_property("editing", false),
+                2 => o.set_property("editing", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::editing", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "editing"), V::Null, "the property reads the new value");
+    });
+}
+
+/// signal Entry.activate: GtkEntry::activate, action signal, void (Gtk 4 docs)
+#[test]
+fn signal_entry_activate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("entry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("entry", "activate"), 0);
+        assert_eq!(h.resolve_signal("entry", "activate"), h.resolve_signal("entry", "activate"));
+        h.listen(e, "activate", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Entry.activates-default (JS activatesDefault): GtkEntry:activates-default (Gtk 4 docs)
+#[test]
+fn prop_entry_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "activatesDefault");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "activates-default"));
+        h.set_bool(o, "activatesDefault", true).unwrap();
+        assert_eq!(h.get(o, "activatesDefault"), V::Bool(true));
+    });
+}
+
+/// property Entry.has-frame (JS hasFrame): GtkEntry:has-frame (Gtk 4 docs)
+#[test]
+fn prop_entry_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "hasFrame");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "has-frame"));
+        h.set_bool(o, "hasFrame", false).unwrap();
+        assert_eq!(h.get(o, "hasFrame"), V::Bool(false));
+    });
+}
+
+/// property Entry.input-purpose (JS inputPurpose): GtkEntry:input-purpose (Gtk 4 docs)
+#[test]
+fn prop_entry_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "inputPurpose");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "input-purpose"));
+        h.set_str(o, "inputPurpose", "alpha").unwrap();
+        assert_eq!(h.get(o, "inputPurpose"), V::Str("alpha".into()));
+    });
+}
+
+/// property Entry.max-length (JS maxLength): GtkEntry:max-length (Gtk 4 docs)
+#[test]
+fn prop_entry_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "maxLength");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "max-length"));
+        h.set_i64(o, "maxLength", 7).unwrap();
+        assert_eq!(h.get(o, "maxLength"), V::I64(7));
+    });
+}
+
+/// property Entry.overwrite-mode (JS overwriteMode): GtkEntry:overwrite-mode (Gtk 4 docs)
+#[test]
+fn prop_entry_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "overwriteMode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "overwrite-mode"));
+        h.set_bool(o, "overwriteMode", true).unwrap();
+        assert_eq!(h.get(o, "overwriteMode"), V::Bool(true));
+    });
+}
+
 /// property Entry.placeholder-text (JS placeholder): GtkEntry:placeholder-text (Gtk 4 docs); P prop, JS name 'placeholder'
 #[test]
 fn prop_entry_placeholder_text() {
@@ -1004,6 +1235,49 @@ fn prop_entry_placeholder_text() {
         assert_eq!(id, h.resolve_prop("entry", "placeholder-text"));
         h.set_str(o, "placeholder", "p3-sample").unwrap();
         assert_eq!(h.get(o, "placeholder"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property Entry.visibility (JS visibility): GtkEntry:visibility (Gtk 4 docs)
+#[test]
+fn prop_entry_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "visibility");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "visibility"));
+        h.set_bool(o, "visibility", false).unwrap();
+        assert_eq!(h.get(o, "visibility"), V::Bool(false));
+    });
+}
+
+/// method Entry.get_text_length (dynamic GI call): gtk_entry_get_text_length (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_entry_get_text_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        h.set_str(o, "text", "hello").unwrap();
+        let r = h.call_args(o, "get_text_length", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(5), "postcondition: r == V::I64(5)");
+    });
+}
+
+/// method Entry.progress_pulse (dynamic GI call): gtk_entry_progress_pulse (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_entry_progress_pulse() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "progress_pulse", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Null, "postcondition: r == V::Null");
     });
 }
 
@@ -1277,6 +1551,111 @@ fn prop_headerbar_title() {
     });
 }
 
+/// property Inscription.min-lines (JS minLines): GtkInscription:min-lines (Gtk 4 docs)
+#[test]
+fn prop_inscription_min_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "minLines");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "min-lines"));
+        h.set_i64(o, "minLines", 7).unwrap();
+        assert_eq!(h.get(o, "minLines"), V::I64(7));
+    });
+}
+
+/// property Inscription.nat-chars (JS natChars): GtkInscription:nat-chars (Gtk 4 docs)
+#[test]
+fn prop_inscription_nat_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "natChars");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "nat-chars"));
+        h.set_i64(o, "natChars", 7).unwrap();
+        assert_eq!(h.get(o, "natChars"), V::I64(7));
+    });
+}
+
+/// property Inscription.text (JS text): GtkInscription:text (Gtk 4 docs)
+#[test]
+fn prop_inscription_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "text"));
+        h.set_str(o, "text", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("p3-sample".into()));
+    });
+}
+
+/// method Inscription.get_text (dynamic GI call): gtk_inscription_get_text (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_inscription_get_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        h.set_str(o, "text", "ins").unwrap();
+        let r = h.call_args(o, "get_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Str("ins".into()), "postcondition: r == V::Str('ins'.into())");
+    });
+}
+
+/// signal Label.activate-link: GtkLabel::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler
+#[test]
+fn signal_label_activate_link() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("label");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("activate-link", &[&"https://example.org"]);
+        };
+        assert_ne!(h.resolve_signal("label", "activate-link"), 0);
+        assert_eq!(h.resolve_signal("label", "activate-link"), h.resolve_signal("label", "activate-link"));
+        h.listen(e, "activate-link", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-link".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-link", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-link", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-link", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Label.justify (JS justify): GtkLabel:justify (Gtk 4 docs)
+#[test]
+fn prop_label_justify() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "justify");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "justify"));
+        h.set_str(o, "justify", "right").unwrap();
+        assert_eq!(h.get(o, "justify"), V::Str("right".into()));
+    });
+}
+
 /// property Label.label (JS label): GtkLabel:label (Gtk 4 docs); P prop
 #[test]
 fn prop_label_label() {
@@ -1289,6 +1668,168 @@ fn prop_label_label() {
         assert_eq!(id, h.resolve_prop("label", "label"));
         h.set_str(o, "label", "p3-sample").unwrap();
         assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property Label.lines (JS lines): GtkLabel:lines (Gtk 4 docs)
+#[test]
+fn prop_label_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "lines");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "lines"));
+        h.set_i64(o, "lines", 7).unwrap();
+        assert_eq!(h.get(o, "lines"), V::I64(7));
+    });
+}
+
+/// property Label.max-width-chars (JS maxWidthChars): GtkLabel:max-width-chars (Gtk 4 docs)
+#[test]
+fn prop_label_max_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "maxWidthChars");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "max-width-chars"));
+        h.set_i64(o, "maxWidthChars", 7).unwrap();
+        assert_eq!(h.get(o, "maxWidthChars"), V::I64(7));
+    });
+}
+
+/// property Label.selectable (JS selectable): GtkLabel:selectable (Gtk 4 docs)
+#[test]
+fn prop_label_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "selectable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "selectable"));
+        h.set_bool(o, "selectable", true).unwrap();
+        assert_eq!(h.get(o, "selectable"), V::Bool(true));
+    });
+}
+
+/// property Label.use-markup (JS useMarkup): GtkLabel:use-markup (Gtk 4 docs)
+#[test]
+fn prop_label_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "useMarkup");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "use-markup"));
+        h.set_bool(o, "useMarkup", true).unwrap();
+        assert_eq!(h.get(o, "useMarkup"), V::Bool(true));
+    });
+}
+
+/// property Label.use-underline (JS useUnderline): GtkLabel:use-underline (Gtk 4 docs)
+#[test]
+fn prop_label_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "useUnderline");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "use-underline"));
+        h.set_bool(o, "useUnderline", true).unwrap();
+        assert_eq!(h.get(o, "useUnderline"), V::Bool(true));
+    });
+}
+
+/// property Label.wrap (JS wrap): GtkLabel:wrap (Gtk 4 docs)
+#[test]
+fn prop_label_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "wrap");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "wrap"));
+        h.set_bool(o, "wrap", true).unwrap();
+        assert_eq!(h.get(o, "wrap"), V::Bool(true));
+    });
+}
+
+/// property Label.xalign (JS xalign): GtkLabel:xalign (Gtk 4 docs)
+#[test]
+fn prop_label_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "xalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "xalign"));
+        h.set_f64(o, "xalign", 0.25).unwrap();
+        assert_eq!(h.get(o, "xalign"), V::F64(0.25));
+    });
+}
+
+/// property Label.yalign (JS yalign): GtkLabel:yalign (Gtk 4 docs)
+#[test]
+fn prop_label_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "yalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "yalign"));
+        h.set_f64(o, "yalign", 0.25).unwrap();
+        assert_eq!(h.get(o, "yalign"), V::F64(0.25));
+    });
+}
+
+/// method Label.get_text (dynamic GI call): gtk_label_get_text (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_label_get_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        h.set_str(o, "label", "shown").unwrap();
+        let r = h.call_args(o, "get_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Str("shown".into()), "postcondition: r == V::Str('shown'.into())");
+    });
+}
+
+/// method Label.select_region (dynamic GI call): gtk_label_select_region (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_label_select_region() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        h.set_str(o, "label", "hello").unwrap(); h.set_bool(o, "selectable", true).unwrap();
+        let r = h.call_args(o, "select_region", &[V::I64(1), V::I64(3)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Null, "postcondition: r == V::Null");
+    });
+}
+
+/// method Label.set_text (dynamic GI call): gtk_label_set_text (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_label_set_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_text", &[V::Str("plain".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "label") == V::Str("plain".into()), "postcondition: h.get(o, 'label') == V::Str('plain'.into())");
     });
 }
 
@@ -1423,6 +1964,103 @@ fn method_paned_set_position() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "position") == V::I64(40), "postcondition: h.get(o, 'position') == V::I64(40)");
+    });
+}
+
+/// signal PasswordEntry.activate: GtkPasswordEntry::activate, action signal, void (Gtk 4 docs)
+#[test]
+fn signal_passwordentry_activate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("passwordentry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("passwordentry", "activate"), 0);
+        assert_eq!(h.resolve_signal("passwordentry", "activate"), h.resolve_signal("passwordentry", "activate"));
+        h.listen(e, "activate", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property PasswordEntry.activates-default (JS activatesDefault): GtkPasswordEntry:activates-default (Gtk 4 docs)
+#[test]
+fn prop_passwordentry_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("passwordentry");
+        
+        let id = h.resolve_prop("passwordentry", "activatesDefault");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("passwordentry", "activates-default"));
+        h.set_bool(o, "activatesDefault", true).unwrap();
+        assert_eq!(h.get(o, "activatesDefault"), V::Bool(true));
+    });
+}
+
+/// property PasswordEntry.placeholder-text (JS placeholder): GtkPasswordEntry:placeholder-text (Gtk 4 docs)
+#[test]
+fn prop_passwordentry_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("passwordentry");
+        
+        let id = h.resolve_prop("passwordentry", "placeholder");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("passwordentry", "placeholder-text"));
+        h.set_str(o, "placeholder", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "placeholder"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property PasswordEntry.show-peek-icon (JS showPeekIcon): GtkPasswordEntry:show-peek-icon (Gtk 4 docs)
+#[test]
+fn prop_passwordentry_show_peek_icon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("passwordentry");
+        
+        let id = h.resolve_prop("passwordentry", "showPeekIcon");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("passwordentry", "show-peek-icon"));
+        h.set_bool(o, "showPeekIcon", true).unwrap();
+        assert_eq!(h.get(o, "showPeekIcon"), V::Bool(true));
+    });
+}
+
+/// bind:text on PasswordEntry: same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text
+#[test]
+fn binding_passwordentry_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("passwordentry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            o.dynamic_cast_ref::<gtk::Editable>().unwrap().set_text(v);
+        };
+        h.listen(o, "changed", true).unwrap();
+        fire(&h.obj(o), "hello", 0);
+        fire(&h.obj(o), "hello2", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        let arg = ev.last().unwrap().2.first().cloned().unwrap_or(V::Null);
+        assert_eq!(arg, h.get(o, "text"), "the change signal's first argument is the new value");
     });
 }
 
@@ -1694,6 +2332,440 @@ fn prop_searchbar_show_close_button() {
         assert_eq!(id, h.resolve_prop("searchbar", "show-close-button"));
         h.set_bool(o, "showCloseButton", true).unwrap();
         assert_eq!(h.get(o, "showCloseButton"), V::Bool(true));
+    });
+}
+
+/// signal SearchEntry.activate: GtkSearchEntry::activate, action signal, void (Gtk 4 docs)
+#[test]
+fn signal_searchentry_activate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("searchentry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("searchentry", "activate"), 0);
+        assert_eq!(h.resolve_signal("searchentry", "activate"), h.resolve_signal("searchentry", "activate"));
+        h.listen(e, "activate", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SearchEntry.search-changed: GtkSearchEntry::search-changed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_searchentry_search_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("searchentry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("search-changed", &[]);
+        };
+        assert_ne!(h.resolve_signal("searchentry", "search-changed"), 0);
+        assert_eq!(h.resolve_signal("searchentry", "search-changed"), h.resolve_signal("searchentry", "search-changed"));
+        h.listen(e, "search-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "search-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "search-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "search-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "search-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SearchEntry.stop-search: GtkSearchEntry::stop-search, action signal, void (Gtk 4 docs)
+#[test]
+fn signal_searchentry_stop_search() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("searchentry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("stop-search", &[]);
+        };
+        assert_ne!(h.resolve_signal("searchentry", "stop-search"), 0);
+        assert_eq!(h.resolve_signal("searchentry", "stop-search"), h.resolve_signal("searchentry", "stop-search"));
+        h.listen(e, "stop-search", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "stop-search".to_string())), "delivered: {ev:?}");
+        h.listen(e, "stop-search", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "stop-search", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "stop-search", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property SearchEntry.activates-default (JS activatesDefault): GtkSearchEntry:activates-default (Gtk 4 docs)
+#[test]
+fn prop_searchentry_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("searchentry");
+        
+        let id = h.resolve_prop("searchentry", "activatesDefault");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("searchentry", "activates-default"));
+        h.set_bool(o, "activatesDefault", true).unwrap();
+        assert_eq!(h.get(o, "activatesDefault"), V::Bool(true));
+    });
+}
+
+/// property SearchEntry.placeholder-text (JS placeholder): GtkSearchEntry:placeholder-text (Gtk 4 docs)
+#[test]
+fn prop_searchentry_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("searchentry");
+        
+        let id = h.resolve_prop("searchentry", "placeholder");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("searchentry", "placeholder-text"));
+        h.set_str(o, "placeholder", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "placeholder"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property SearchEntry.search-delay (JS searchDelay): GtkSearchEntry:search-delay (Gtk 4 docs)
+#[test]
+fn prop_searchentry_search_delay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("searchentry");
+        
+        let id = h.resolve_prop("searchentry", "searchDelay");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("searchentry", "search-delay"));
+        h.set_i64(o, "searchDelay", 7).unwrap();
+        assert_eq!(h.get(o, "searchDelay"), V::I64(7));
+    });
+}
+
+/// bind:text on SearchEntry: same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text
+#[test]
+fn binding_searchentry_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("searchentry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            o.dynamic_cast_ref::<gtk::Editable>().unwrap().set_text(v);
+        };
+        h.listen(o, "changed", true).unwrap();
+        fire(&h.obj(o), "hello", 0);
+        fire(&h.obj(o), "hello2", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        let arg = ev.last().unwrap().2.first().cloned().unwrap_or(V::Null);
+        assert_eq!(arg, h.get(o, "text"), "the change signal's first argument is the new value");
+    });
+}
+
+/// property ShortcutLabel.accelerator (JS accelerator): GtkShortcutLabel:accelerator (Gtk 4 docs)
+#[test]
+fn prop_shortcutlabel_accelerator() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("shortcutlabel");
+        
+        let id = h.resolve_prop("shortcutlabel", "accelerator");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("shortcutlabel", "accelerator"));
+        h.set_str(o, "accelerator", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "accelerator"), V::Str("p3-sample".into()));
+    });
+}
+
+/// signal Text.activate: GtkText::activate, action signal, void (Gtk 4 docs)
+#[test]
+fn signal_text_activate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("text", "activate"), 0);
+        assert_eq!(h.resolve_signal("text", "activate"), h.resolve_signal("text", "activate"));
+        h.listen(e, "activate", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Text.activates-default (JS activatesDefault): GtkText:activates-default (Gtk 4 docs)
+#[test]
+fn prop_text_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "activatesDefault");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "activates-default"));
+        h.set_bool(o, "activatesDefault", true).unwrap();
+        assert_eq!(h.get(o, "activatesDefault"), V::Bool(true));
+    });
+}
+
+/// property Text.max-length (JS maxLength): GtkText:max-length (Gtk 4 docs)
+#[test]
+fn prop_text_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "maxLength");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "max-length"));
+        h.set_i64(o, "maxLength", 7).unwrap();
+        assert_eq!(h.get(o, "maxLength"), V::I64(7));
+    });
+}
+
+/// property Text.overwrite-mode (JS overwriteMode): GtkText:overwrite-mode (Gtk 4 docs)
+#[test]
+fn prop_text_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "overwriteMode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "overwrite-mode"));
+        h.set_bool(o, "overwriteMode", true).unwrap();
+        assert_eq!(h.get(o, "overwriteMode"), V::Bool(true));
+    });
+}
+
+/// property Text.placeholder-text (JS placeholder): GtkText:placeholder-text (Gtk 4 docs)
+#[test]
+fn prop_text_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "placeholder");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "placeholder-text"));
+        h.set_str(o, "placeholder", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "placeholder"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property Text.visibility (JS visibility): GtkText:visibility (Gtk 4 docs)
+#[test]
+fn prop_text_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "visibility");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "visibility"));
+        h.set_bool(o, "visibility", false).unwrap();
+        assert_eq!(h.get(o, "visibility"), V::Bool(false));
+    });
+}
+
+/// bind:text on Text: same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text
+#[test]
+fn binding_text_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            o.dynamic_cast_ref::<gtk::Editable>().unwrap().set_text(v);
+        };
+        h.listen(o, "changed", true).unwrap();
+        fire(&h.obj(o), "hello", 0);
+        fire(&h.obj(o), "hello2", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        let arg = ev.last().unwrap().2.first().cloned().unwrap_or(V::Null);
+        assert_eq!(arg, h.get(o, "text"), "the change signal's first argument is the new value");
+    });
+}
+
+/// property TextView.cursor-visible (JS cursorVisible): GtkTextView:cursor-visible (Gtk 4 docs)
+#[test]
+fn prop_textview_cursor_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "cursorVisible");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "cursor-visible"));
+        h.set_bool(o, "cursorVisible", false).unwrap();
+        assert_eq!(h.get(o, "cursorVisible"), V::Bool(false));
+    });
+}
+
+/// property TextView.editable (JS editable): GtkTextView:editable (Gtk 4 docs)
+#[test]
+fn prop_textview_editable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "editable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "editable"));
+        h.set_bool(o, "editable", false).unwrap();
+        assert_eq!(h.get(o, "editable"), V::Bool(false));
+    });
+}
+
+/// property TextView.justification (JS justification): GtkTextView:justification (Gtk 4 docs)
+#[test]
+fn prop_textview_justification() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "justification");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "justification"));
+        h.set_str(o, "justification", "right").unwrap();
+        assert_eq!(h.get(o, "justification"), V::Str("right".into()));
+    });
+}
+
+/// property TextView.left-margin (JS leftMargin): GtkTextView:left-margin (Gtk 4 docs)
+#[test]
+fn prop_textview_left_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "leftMargin");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "left-margin"));
+        h.set_i64(o, "leftMargin", 7).unwrap();
+        assert_eq!(h.get(o, "leftMargin"), V::I64(7));
+    });
+}
+
+/// property TextView.monospace (JS monospace): GtkTextView:monospace (Gtk 4 docs)
+#[test]
+fn prop_textview_monospace() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "monospace");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "monospace"));
+        h.set_bool(o, "monospace", true).unwrap();
+        assert_eq!(h.get(o, "monospace"), V::Bool(true));
+    });
+}
+
+/// property TextView.top-margin (JS topMargin): GtkTextView:top-margin (Gtk 4 docs)
+#[test]
+fn prop_textview_top_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "topMargin");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "top-margin"));
+        h.set_i64(o, "topMargin", 7).unwrap();
+        assert_eq!(h.get(o, "topMargin"), V::I64(7));
+    });
+}
+
+/// property TextView.wrap-mode (JS wrapMode): GtkTextView:wrap-mode (Gtk 4 docs)
+#[test]
+fn prop_textview_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "wrapMode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "wrap-mode"));
+        h.set_str(o, "wrapMode", "char").unwrap();
+        assert_eq!(h.get(o, "wrapMode"), V::Str("char".into()));
+    });
+}
+
+/// method TextView.get_buffer (dynamic GI call): gtk_text_view_get_buffer (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_textview_get_buffer() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let r = h.call_args(o, "get_buffer", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(matches!(r, V::Handle(_) | V::Boxed(_)), "postcondition: matches!(r, V::Handle(_) | V::Boxed(_))");
+    });
+}
+
+/// method TextView.place_cursor_onscreen (dynamic GI call): gtk_text_view_place_cursor_onscreen (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_textview_place_cursor_onscreen() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let r = h.call_args(o, "place_cursor_onscreen", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(matches!(r, V::Bool(_)), "postcondition: matches!(r, V::Bool(_))");
     });
 }
 

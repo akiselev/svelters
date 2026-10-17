@@ -957,11 +957,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_entry_get_text_length (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(5)",
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:method:get_text_length",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_text_length",
       "name": "get_text_length",
       "native": "gtk_entry_get_text_length",
       "origin": "gir",
@@ -972,6 +987,7 @@
         "ownership": "borrowed",
         "type": "u32"
       },
+      "setup": "h.set_str(o, \"text\", \"hello\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -1011,11 +1027,25 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_entry_progress_pulse (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Null",
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:method:progress_pulse",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "progress_pulse",
       "name": "progress_pulse",
       "native": "gtk_entry_progress_pulse",
       "origin": "gir",
@@ -1831,6 +1861,11 @@
         "get": "gtk_entry_get_activates_default",
         "set": "gtk_entry_set_activates_default"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEntry:activates-default (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:activates-default",
       "invocation": "reflected",
@@ -2074,6 +2109,11 @@
         "get": "gtk_entry_get_has_frame",
         "set": "gtk_entry_set_has_frame"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEntry:has-frame (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:has-frame",
       "invocation": "reflected",
@@ -2194,6 +2234,11 @@
         "get": "gtk_entry_get_input_purpose",
         "set": "gtk_entry_set_input_purpose"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEntry:input-purpose (Gtk 4 docs)"
+      },
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-purpose",
       "invocation": "reflected",
@@ -2312,6 +2357,11 @@
       "accessors": {
         "get": "gtk_entry_get_max_length",
         "set": "gtk_entry_set_max_length"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEntry:max-length (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:max-length",
@@ -2437,6 +2487,11 @@
       "accessors": {
         "get": "gtk_entry_get_overwrite_mode",
         "set": "gtk_entry_set_overwrite_mode"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEntry:overwrite-mode (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:overwrite-mode",
@@ -3450,6 +3505,11 @@
         "get": "gtk_entry_get_visibility",
         "set": "gtk_entry_set_visibility"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEntry:visibility (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:visibility",
       "invocation": "reflected",
@@ -3483,6 +3543,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEntry::activate, action signal, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",

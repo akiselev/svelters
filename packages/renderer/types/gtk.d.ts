@@ -536,6 +536,7 @@ export interface GtkEditableProps {
 }
 export interface GtkEditableLabelProps extends GtkWidgetProps, GtkEditableProps {
   editing?: boolean;
+  "onnotify::editing"?: SvlHandler;
 }
 export interface GtkEmojiChooserProps extends GtkPopoverProps {
   "onemoji-picked"?: SvlHandler;
@@ -1206,7 +1207,7 @@ export interface GtkParamSpecExpressionProps {
 export interface GtkPasswordEntryProps extends GtkWidgetProps, GtkEditableProps {
   activatesDefault?: boolean;
   extraMenu?: number;
-  placeholderText?: string;
+  placeholder?: string;
   showPeekIcon?: boolean;
   onactivate?: SvlHandler;
 }
@@ -1395,7 +1396,7 @@ export interface GtkSearchEntryProps extends GtkWidgetProps, GtkEditableProps {
   inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   keyCaptureWidget?: number;
-  placeholderText?: string;
+  placeholder?: string;
   searchDelay?: number;
   onactivate?: SvlHandler;
   "onnext-match"?: SvlHandler;
@@ -1653,7 +1654,7 @@ export interface GtkTextProps extends GtkWidgetProps, GtkAccessibleTextProps, Gt
   invisibleCharSet?: boolean;
   maxLength?: number;
   overwriteMode?: boolean;
-  placeholderText?: string;
+  placeholder?: string;
   propagateTextWidth?: boolean;
   tabs?: Boxed<"Pango.TabArray">;
   truncateMultiline?: boolean;

@@ -2,3 +2,49 @@ properties:
   - name: label
     js_name: label
     provenance: "GtkLabel:label (Gtk 4 docs); P prop"
+  - name: use-markup
+    provenance: "GtkLabel:use-markup (Gtk 4 docs)"
+  - name: use-underline
+    provenance: "GtkLabel:use-underline (Gtk 4 docs)"
+  - name: wrap
+    provenance: "GtkLabel:wrap (Gtk 4 docs)"
+  - name: selectable
+    provenance: "GtkLabel:selectable (Gtk 4 docs)"
+  - name: justify
+    provenance: "GtkLabel:justify (Gtk 4 docs)"
+  - name: xalign
+    provenance: "GtkLabel:xalign (Gtk 4 docs)"
+  - name: yalign
+    provenance: "GtkLabel:yalign (Gtk 4 docs)"
+  - name: lines
+    provenance: "GtkLabel:lines (Gtk 4 docs)"
+  - name: max-width-chars
+    provenance: "GtkLabel:max-width-chars (Gtk 4 docs)"
+signals:
+  - name: activate-link
+    js_event: activate-link
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {rust: 'let _ = o.emit_by_name::<bool>("activate-link", &[&"https://example.org"]);', values: [a, b, c]}
+    provenance: "GtkLabel::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+methods:
+  - name: select_region
+    js_name: select_region
+    dispatch: dynamic
+    args: [1, 3]
+    setup: 'h.set_str(o, "label", "hello").unwrap(); h.set_bool(o, "selectable", true).unwrap();'
+    expect: 'r == V::Null'
+    provenance: "gtk_label_select_region (Gtk 4 docs); called through GIRepository (X1)"
+  - name: set_text
+    js_name: set_text
+    dispatch: dynamic
+    args: ["plain"]
+    expect: 'h.get(o, "label") == V::Str("plain".into())'
+    provenance: "gtk_label_set_text (Gtk 4 docs); called through GIRepository (X1)"
+  - name: get_text
+    js_name: get_text
+    dispatch: dynamic
+    args: []
+    setup: 'h.set_str(o, "label", "shown").unwrap();'
+    expect: 'r == V::Str("shown".into())'
+    provenance: "gtk_label_get_text (Gtk 4 docs); called through GIRepository (X1)"
