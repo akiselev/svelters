@@ -140,3 +140,22 @@ my-app-qt/                  (leaf crate: no project deps, nothing depends on it 
 - **Slot routing.** How does a slot get chosen: attribute, wrapper element kind, or snippet? This determines whether `insert`'s `slot` argument is enough or per-child attributes need their own op.
 - **Ownership.** What happens when the native side destroys a child the host still references? `on_destroyed` covers notification; the annotation pipeline covers which operations transfer ownership.
 - **Batching.** Should mutations be batched per checkpoint or applied one at a time? Decide by measurement after P5.
+
+## Op-log format
+
+The P1 TestHost (Node) and the P2 log backend (Rust) must produce identical logs for the same fixture and scripted interaction. They write UTF-8 text, one op per line. Handles are numbered `#1, #2, …` in creation order per run. Values are compact JSON (`JSON.stringify` / serde_json with no spaces).
+
+```text
+create <kind> #<n>
+insert #<parent> #<child> before=#<h>|end slot=<name>|default
+remove #<parent> #<child>
+destroy #<h>
+set #<h> <prop> <json>
+call #<h> <method> <json-args-array>
+listen #<h> <signal> on|off
+event #<h> <signal> <json-args-array>        # an injected native event, logged when delivered
+```
+
+Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}` and `{"checkpoint": true}` steps.
+
+Prop values never use the `SVL_LIST` tag or nested objects in P.
