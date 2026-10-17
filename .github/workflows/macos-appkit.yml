@@ -63,6 +63,8 @@ jobs:
       - name: counter-mac backend
         if: ${{ !cancelled() }}
         timeout-minutes: 10
+        env:
+          SVELTERS_APPKIT_TRACE_FRAMES: "1"
         run: cargo test -p counter-mac --test backend
       - name: counter-mac generated
         if: ${{ !cancelled() }}

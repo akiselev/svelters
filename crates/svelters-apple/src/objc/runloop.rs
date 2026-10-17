@@ -7,8 +7,8 @@
 //! - `schedule_wake`: one repeating `CFRunLoopTimer` with a huge interval whose next fire date is
 //!   re-armed (a non-repeating CF timer is invalidated after it fires). Cancel = far future.
 //!   Delays of 20 ms and more get a 10% tolerance (the `CoarseTimer` case, App Nap friendly).
-//! - `frame_fallback`: a second timer of the same kind, armed 16 ms out, for `request_frame` when
-//!   no `CADisplayLink` is available.
+//! - `frame_fallback`: a second timer of the same kind for `request_frame`: 16 ms out when no
+//!   `CADisplayLink` is available, and as a watchdog behind one that may never tick.
 
 use std::ffi::c_void;
 
@@ -206,9 +206,10 @@ impl RunLoop {
         }
     }
 
-    /// Arms the fallback frame timer 16 ms out (idempotent while armed: re-arming moves it).
-    pub fn frame_fallback(&self) {
-        unsafe { CFRunLoopTimerSetNextFireDate(self.frame_timer, CFAbsoluteTimeGetCurrent() + 0.016) };
+    /// Arms the fallback frame timer `ms` out (re-arming moves it): the frame source when there
+    /// is no `CADisplayLink`, and the watchdog behind one.
+    pub fn frame_fallback(&self, ms: u64) {
+        unsafe { CFRunLoopTimerSetNextFireDate(self.frame_timer, CFAbsoluteTimeGetCurrent() + ms as f64 / 1000.0) };
     }
 }
 

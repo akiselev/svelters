@@ -84,6 +84,14 @@ pub fn slot_info(id: u32) -> Option<&'static SlotInfo> {
     SLOTS.get((id as usize).wrapping_sub(1))
 }
 
+/// The slot along `kind`'s chain whose native child storage is the KVC key `key` (`subviews`,
+/// `arrangedSubviews`, `contentView`). Such props are owned by the handle tree: writing them would
+/// change children behind `insert`/`remove`, so they are read-only from JS whatever the header says.
+pub fn slot_owning_key(kind_id: u32, key: &str) -> Option<&'static SlotInfo> {
+    let ch = chain(kind_id);
+    SLOTS.iter().find(|s| ch.contains(&(s.kind as u32)) && (s.list == key || s.get == key) && !key.is_empty())
+}
+
 /// JS names of the readable table props of a kind (most derived declaration wins).
 pub fn readable_props(kind_id: u32) -> Vec<&'static str> {
     let mut out: Vec<&'static str> = Vec::new();
@@ -154,6 +162,10 @@ mod tests {
         let stack = kind_by_tag("stack-view");
         assert_eq!(slot_info(default_slot(stack)).unwrap().name, "arranged-subviews");
         assert!(slot(stack, "subviews") != 0, "NSView's slot is inherited");
+        assert_eq!(slot_owning_key(stack, "subviews").unwrap().name, "subviews");
+        assert_eq!(slot_owning_key(stack, "arrangedSubviews").unwrap().name, "arranged-subviews");
+        assert_eq!(slot_owning_key(kind_by_tag("window"), "contentView").unwrap().name, "content-view");
+        assert!(slot_owning_key(stack, "hidden").is_none());
         assert_eq!(slot_info(default_slot(kind_by_tag("button"))).unwrap().name, "subviews");
     }
 
