@@ -139,7 +139,7 @@ my-app-qt/                  (leaf crate: no project deps, nothing depends on it 
 - **`call_sync` re-entrancy rules.** Answered in "ABI v2.1 additive" (X2). JS may issue host ops during a sync handler and they apply at once; a nested sync signal is deferred; a returned Promise is ignored (the renderer warns); the turn budget is the timeout.
 - **Slot routing:** answered by `docs/notes/signals-and-slots-semantics.md`.
   - `insert(…, slot)` is enough for placement.
-  - Per-child attributes (grid cell, tab title, dock area) need a new `set_child_attr(parent, child, attr_id, value)` op, planned for M4.
+  - Per-child attributes (grid cell, tab title, dock area) use `set_child_attr(parent, child, attr_id, value)`, added by X3 ("ABI v2.2 additive").
   - The shim routes a child to a slot in this order: the proxy elements `sv-slot`/`sv-item`, then the `slot` attribute, then the child's kind, then the default slot.
 - **Ownership.** What happens when the native side destroys a child the host still references? `on_destroyed` covers notification; the annotation pipeline covers which operations transfer ownership.
 - **Batching.** Should mutations be batched per checkpoint or applied one at a time? Decide by measurement after P5.
@@ -292,10 +292,43 @@ void (*frame)(void *self);           /* a requested frame is due; runs requestAn
 - A throwing handler yields `0` with a `null` result and an error in the host's error list.
 - The result comes from the event object (`e.result`, `e.preventDefault()`, `e.stopPropagation()`), never from the handler's return value.
 
+### ABI v2.2 additive (X3: child attributes and listen phases)
+
+Three optional members appended after `request_frame` in `svl_backend` (nullable function pointers: a backend that does not implement one sets it to NULL), one name kind and one id convention. No existing member changes.
+
+```c
+#define SVL_ATTR 5   /* svl_name_kind: child attribute; resolve(SVL_ATTR, parent_kind, name) */
+
+/* backend, appended after request_frame */
+int (*set_child_attr)(void *self, svl_handle parent, svl_handle child, svl_id attr, const svl_value *v);
+int (*get_child_attr)(void *self, svl_handle parent, svl_handle child, svl_id attr, svl_value *out);
+int (*listen_ex)(void *self, svl_handle h, svl_id signal, bool on, uint32_t flags);
+
+enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };   /* listen_ex flags; 4 is reserved for SYNC */
+#define SVL_SIGNAL_FLAGS_SHIFT 28                         /* flags ride in bits 28..30 of the signal id of post_event/call_sync */
+```
+
+**Child attributes.**
+
+- An attribute is a per-child fact owned by the child's parent: a grid cell, a tab label, a dock area, a stretch factor. `set_child_attr` is valid only while `child` is inserted into `parent` (any slot); otherwise it fails.
+- Attribute ids are scoped by the parent's kind and named in JS camelCase (`row`, `columnSpan`, `tabLabel`). One id per (kind, name). When two slots of a kind have an attribute of the same name, the backend picks the implementation from the slot the child was inserted into, and fails if that slot has no such attribute.
+- `v` is an ordinary `svl_value`: numbers, bools, strings, enums as nick/name strings. `SVL_NULL` resets the attribute to its documented default.
+- The host calls `set_child_attr` right after `insert`, once per attribute the child already has, so a backend that fixes placement at insert time (Qt grid cells) re-places the child as the attributes arrive. Attribute changes while inserted call it again. Moving a child to another parent is `remove` + `insert` + attributes again.
+- `remove` clears all per-child attribute state the backend holds (the layout child goes away with the child on GTK; Qt resets the tab text, stretch and so on by removing the widget). `get_child_attr` reads the live native value back; it is optional and used by tests and `bind:` support.
+- A backend without the member answers every attribute op with "child attributes are not supported by this backend".
+
+**Listen phases.** `listen_ex(h, signal, on, flags)` replaces `listen` when `flags != 0`. The host calls `listen` for flags 0, so old backends keep working for ordinary listeners.
+
+- `SVL_LISTEN_AFTER`: run after the class/default handler (GTK `connect_after`).
+- `SVL_LISTEN_CAPTURE`: run in the capture phase, before the target (event controllers on GTK; an event filter on Qt).
+- Each (handle, signal, flags) is a separate native connection. The renderer turns listeners on at the first and off at the last listener of that triple.
+- The backend reports which connection fired by or-ing `flags << 28` into the signal id it passes to `post_event` and `call_sync`. The host strips the bits, resolves the name from the base id and hands the flags to JS, which runs only the listeners registered with those flags.
+- Support is per backend and per signal. A combination that has no honest native meaning fails with an error that names the reason; see "Listener phases per backend" in `docs/notes/x3-childattr-listen.md`.
+- The op log gets one more word on `listen` lines (`listen #1 key-pressed on after+capture`, only when flags are set) and one line type `attr #<parent> #<child> <name> <json>` (`null` = reset).
+
 Later ABI additions, not part of v2:
 
-- `set_child_attr` (M4);
-- `listen` flags for phase, once, after and sync (pending the feature survey);
+- `listen` flags `once` and `sync` (reserved bit 4);
 - the foreign-runtime hooks;
 - the value-model changes from the serdes research.
 

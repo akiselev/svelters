@@ -69,23 +69,26 @@ pub trait JsEngine {
     /// not leave it. Jobs may remain queued afterwards.
     fn load_module(&mut self, entry: &Path) -> Result<(), JsError>;
 
-    /// Calls `globalThis.__svelters_dispatch(handle, signal, args, deferred)`. `deferred` marks
-    /// a sync signal that could not run synchronously (its result is ignored).
+    /// Calls `globalThis.__svelters_dispatch(handle, signal, args, deferred, flags)`. `deferred`
+    /// marks a sync signal that could not run synchronously (its result is ignored); `flags` are
+    /// the `SVL_LISTEN_*` bits of the connection that fired.
     fn dispatch(
         &mut self,
         handle: u64,
         signal: &str,
         args: &[Value],
         deferred: bool,
+        flags: u32,
     ) -> Result<(), JsError>;
 
-    /// Calls `globalThis.__svelters_dispatch_sync(handle, signal, args)` and returns its result:
-    /// `Null` for no decision, a bool for a stop flag, or the handler's explicit value.
+    /// Calls `globalThis.__svelters_dispatch_sync(handle, signal, args, flags)` and returns its
+    /// result: `Null` for no decision, a bool for a stop flag, or the handler's explicit value.
     fn dispatch_sync(
         &mut self,
         handle: u64,
         signal: &str,
         args: &[Value],
+        flags: u32,
     ) -> Result<Value, JsError>;
 
     /// Runs the animation-frame callbacks (`__svelters_internal.frame`).

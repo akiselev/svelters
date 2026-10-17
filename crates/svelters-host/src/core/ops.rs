@@ -286,6 +286,67 @@ impl Core {
         })
     }
 
+    /// Sets a per-child attribute (ABI v2.2). `child` must be inserted under `parent`. `Null`
+    /// resets the attribute.
+    pub(crate) fn op_set_child_attr<R: JsReader>(
+        &self,
+        r: &R,
+        parent: svl_handle,
+        child: svl_handle,
+        attr: Name<'_>,
+        v: &R::V,
+    ) -> Result<(), OpError> {
+        self.timed(|| {
+            let (Some(pk), Some(_)) = (self.live_kind(parent)?, self.live_kind(child)?) else {
+                return Ok(());
+            };
+            if self.st.borrow().tree.get(&child) != Some(&parent) {
+                return Err(format!("handle #{child} is not a child of #{parent}: child attributes need an inserted child").into());
+            }
+            let a = self.resolve_name(NameKind::Attr, pk, attr)?;
+            let any = SlotDesc::new(SVL_NULL);
+            let mut ar = Arena::new();
+            let registry = CallbackRegistry(self);
+            let cx = Cx {
+                types: self,
+                utf16: self.utf16(),
+                callbacks: Some(&registry),
+                owner: child,
+            };
+            let raw = match convert::encode(r, v, &any, &cx, &mut ar) {
+                Ok(raw) => raw,
+                Err(e) => {
+                    self.finish_callbacks(&mut ar, false);
+                    let name = match attr {
+                        Name::Str(s) => s.to_string(),
+                        Name::Id(i) => format!("#{i}"),
+                    };
+                    return Err(self.conv_err(&format!("<{}> child attribute {name}", self.kind_name(pk)), e));
+                }
+            };
+            let res = self.backend.set_child_attr_raw(parent, child, a, &raw).map_err(|e| self.backend_err(e));
+            self.finish_callbacks(&mut ar, res.is_ok());
+            drop(ar);
+            res
+        })
+    }
+
+    pub(crate) fn op_get_child_attr<W: JsWriter>(
+        &self,
+        w: &W,
+        parent: svl_handle,
+        child: svl_handle,
+        attr: Name<'_>,
+    ) -> Result<W::V, OpError> {
+        self.timed(|| {
+            let pk = self.kind_of(parent)?;
+            self.kind_of(child)?;
+            let a = self.resolve_name(NameKind::Attr, pk, attr)?;
+            let v = self.backend.get_child_attr(parent, child, a).map_err(|e| self.backend_err(e))?;
+            self.decode_result(w, &v)
+        })
+    }
+
     pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
             self.tree_ops_allowed()?;
@@ -516,7 +577,7 @@ impl Core {
         })
     }
 
-    pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool) -> Result<(), OpError> {
+    pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
         self.timed(|| {
             let k = match self.live_kind(h)? {
                 Some(k) => k,
@@ -533,7 +594,7 @@ impl Core {
                     .ok_or_else(|| "listen by id requires the signal to have been resolved by name first".to_string())?;
                 self.st.borrow_mut().signal_names.insert((k, s), name);
             }
-            self.backend.listen(h, s, on).map_err(|e| self.backend_err(e))
+            self.backend.listen_ex(h, s, on, flags).map_err(|e| self.backend_err(e))
         })
     }
 

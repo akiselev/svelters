@@ -58,6 +58,8 @@ pub enum NameKind {
     Signal = 2,
     Method = 3,
     Slot = 4,
+    /// ABI v2.2: child attribute, scoped by the parent's kind.
+    Attr = 5,
 }
 
 impl NameKind {
@@ -68,6 +70,7 @@ impl NameKind {
             SVL_SIGNAL => NameKind::Signal,
             SVL_METHOD => NameKind::Method,
             SVL_SLOT => NameKind::Slot,
+            SVL_ATTR => NameKind::Attr,
             _ => return None,
         })
     }
@@ -978,6 +981,45 @@ impl<'a> BackendRef<'a> {
         self.check(unsafe { (b.listen)(b.self_, h, signal, on) })
     }
 
+    /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags.
+    pub fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> AbiResult<()> {
+        if flags == 0 {
+            return self.listen(h, signal, on);
+        }
+        let b = self.b();
+        match b.listen_ex {
+            Some(f) => self.check(unsafe { f(b.self_, h, signal, on, flags) }),
+            None => Err(AbiError::plain(-1, "this backend does not support listener phases (after, capture)")),
+        }
+    }
+
+    /// ABI v2.2: sets a per-child attribute (`Value::Null` resets it).
+    pub fn set_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &Value) -> AbiResult<()> {
+        v.with_raw(|raw| self.set_child_attr_raw(parent, child, attr, raw))
+    }
+
+    pub fn set_child_attr_raw(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &svl_value) -> AbiResult<()> {
+        let b = self.b();
+        match b.set_child_attr {
+            Some(f) => self.check(unsafe { f(b.self_, parent, child, attr, v) }),
+            None => Err(AbiError::plain(-1, "child attributes are not supported by this backend")),
+        }
+    }
+
+    /// ABI v2.2: reads a per-child attribute back.
+    pub fn get_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id) -> AbiResult<Value> {
+        let b = self.b();
+        let Some(f) = b.get_child_attr else {
+            return Err(AbiError::plain(-1, "child attributes are not supported by this backend"));
+        };
+        let mut out = null_value();
+        let rc = unsafe { f(b.self_, parent, child, attr, &mut out) };
+        if rc < 0 {
+            return Err(self.fail(rc, Some(&out)));
+        }
+        Ok(unsafe { Value::from_raw(&out) })
+    }
+
     /// Runs the backend's loop; returns when the app quits.
     pub fn run(&self, host: &HostVtable) -> AbiResult<()> {
         let b = self.b();
@@ -1162,6 +1204,21 @@ pub trait Backend: 'static {
     /// The default does nothing, so `requestAnimationFrame` never fires on a backend that does
     /// not implement it.
     fn request_frame(&self) {}
+
+    // ---- v2.2 ----
+
+    /// ABI v2.2: sets a per-child attribute; `Value::Null` resets it to its default.
+    fn set_child_attr(&self, _parent: svl_handle, _child: svl_handle, _attr: svl_id, _v: &Value) -> StrResult<()> {
+        Err("child attributes are not supported by this backend".into())
+    }
+    /// ABI v2.2: reads a per-child attribute back.
+    fn get_child_attr(&self, _parent: svl_handle, _child: svl_handle, _attr: svl_id) -> StrResult<Value> {
+        Err("child attributes are not supported by this backend".into())
+    }
+    /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags (never called with `flags == 0`).
+    fn listen_ex(&self, _h: svl_handle, _signal: svl_id, _on: bool, _flags: u32) -> StrResult<()> {
+        Err("this backend does not support listener phases (after, capture)".into())
+    }
 
     // ---- v3 ----
 
@@ -1350,6 +1407,37 @@ unsafe extern "C" fn t_listen(s: *mut c_void, h: svl_handle, signal: svl_id, on:
     s.rc(|b| b.listen(h, signal, on))
 }
 
+unsafe extern "C" fn t_listen_ex(s: *mut c_void, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> c_int {
+    let s = unsafe { shim(s) };
+    s.rc(|b| b.listen_ex(h, signal, on, flags))
+}
+
+unsafe extern "C" fn t_set_child_attr(
+    s: *mut c_void,
+    parent: svl_handle,
+    child: svl_handle,
+    attr: svl_id,
+    v: *const svl_value,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    if v.is_null() {
+        return s.fail("set_child_attr: null value");
+    }
+    let v = unsafe { Value::from_raw(&*v) };
+    s.rc(|b| b.set_child_attr(parent, child, attr, &v))
+}
+
+unsafe extern "C" fn t_get_child_attr(
+    s: *mut c_void,
+    parent: svl_handle,
+    child: svl_handle,
+    attr: svl_id,
+    out: *mut svl_value,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    s.rc_value(out, |b| b.get_child_attr(parent, child, attr))
+}
+
 unsafe extern "C" fn t_run(s: *mut c_void, host: *const svl_host) -> c_int {
     let s = unsafe { shim(s) };
     let host = unsafe { HostRef::from_raw(host) };
@@ -1471,6 +1559,9 @@ impl BackendVtable {
             describe_type: Some(t_describe_type),
             cancel: Some(t_cancel),
             request_frame: t_request_frame,
+            set_child_attr: Some(t_set_child_attr),
+            get_child_attr: Some(t_get_child_attr),
+            listen_ex: Some(t_listen_ex),
         });
         BackendVtable { raw, shim }
     }
