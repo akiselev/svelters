@@ -4,6 +4,9 @@ export interface BindableProps {
   calendar: {
     day: number; // gtk
   };
+  checkbutton: {
+    active: boolean; // gtk
+  };
   editablelabel: {
     editing: boolean; // gtk
   };
@@ -25,7 +28,13 @@ export interface BindableProps {
   stackedwidget: {
     currentIndex: number; // qt
   };
+  switch: {
+    active: boolean; // gtk
+  };
   text: {
     text: string; // gtk
+  };
+  togglebutton: {
+    active: boolean; // gtk
   };
 }

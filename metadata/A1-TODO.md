@@ -66,7 +66,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - M: MenuButton `popup`, `popdown` (zero-arg; expect on `active`/visibility of the popover).
 - Gallery: `02-buttons.svelte`.
 - Tests `<re>`: `_(button|togglebutton|checkbutton|switch|linkbutton|lockbutton|menubutton|scalebutton|volumebutton)_`.
-- Status: todo
+- Status: done (~45 facts verified: props, signals incl. sync state-set/activate-link, 4 bindings, popup/popdown + 8 dynamic methods; not attempted: CheckButton.group, ScaleButton.icons, LockButton.permission; blocked: MenuButton `popover` slot (new gap: typed child slots, generator casts to gtk::Widget); see docs/notes/a1-gtk-buttons.md)
 
 ### gtk-text: text entry and display text
 

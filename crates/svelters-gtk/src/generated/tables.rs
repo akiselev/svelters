@@ -570,7 +570,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 53, name: "shrink-center-last", js_name: "shrinkCenterLast", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 53, name: "start-widget", js_name: "startWidget", ty: ValueTy::Object, gtype: "GtkWidget", flags: 19, echo: &[] },
     PropInfo { kind: 54, name: "shrink-center-last", js_name: "shrinkCenterLast", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
-    PropInfo { kind: 55, name: "active", js_name: "active", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
+    PropInfo { kind: 55, name: "active", js_name: "active", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &["toggled", "notify::active"] },
     PropInfo { kind: 55, name: "child", js_name: "child", ty: ValueTy::Object, gtype: "GtkWidget", flags: 19, echo: &[] },
     PropInfo { kind: 55, name: "group", js_name: "group", ty: ValueTy::Object, gtype: "GtkCheckButton", flags: 2, echo: &[] },
     PropInfo { kind: 55, name: "inconsistent", js_name: "inconsistent", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
@@ -1386,7 +1386,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 262, name: "resource", js_name: "resource", ty: ValueTy::Str, gtype: "gchararray", flags: 19, echo: &[] },
     PropInfo { kind: 262, name: "state", js_name: "state", ty: ValueTy::U32, gtype: "guint", flags: 19, echo: &[] },
     PropInfo { kind: 262, name: "weight", js_name: "weight", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &[] },
-    PropInfo { kind: 263, name: "active", js_name: "active", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
+    PropInfo { kind: 263, name: "active", js_name: "active", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &["notify::active"] },
     PropInfo { kind: 263, name: "state", js_name: "state", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 265, name: "activates-default", js_name: "activatesDefault", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 265, name: "attributes", js_name: "attributes", ty: ValueTy::Boxed, gtype: "PangoAttrList", flags: 19, echo: &[] },
@@ -1525,7 +1525,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 271, name: "tabs", js_name: "tabs", ty: ValueTy::Boxed, gtype: "PangoTabArray", flags: 3, echo: &[] },
     PropInfo { kind: 271, name: "top-margin", js_name: "topMargin", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &[] },
     PropInfo { kind: 271, name: "wrap-mode", js_name: "wrapMode", ty: ValueTy::Enum, gtype: "GtkWrapMode", flags: 19, echo: &[] },
-    PropInfo { kind: 272, name: "active", js_name: "active", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
+    PropInfo { kind: 272, name: "active", js_name: "active", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &["toggled", "notify::active"] },
     PropInfo { kind: 272, name: "group", js_name: "group", ty: ValueTy::Object, gtype: "GtkToggleButton", flags: 2, echo: &[] },
     PropInfo { kind: 276, name: "child", js_name: "child", ty: ValueTy::Object, gtype: "GtkWidget", flags: 19, echo: &[] },
     PropInfo { kind: 276, name: "hide-expander", js_name: "hideExpander", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
@@ -1662,7 +1662,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 298, name: "child", js_name: "child", ty: ValueTy::Object, gtype: "GtkWidget", flags: 19, echo: &[] },
 ];
 
-pub static SIGNALS: [SignalInfo; 353] = [
+pub static SIGNALS: [SignalInfo; 356] = [
     SignalInfo { kind: 1, name: "state-change", js_event: "state-change", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 2, name: "activate-link", js_event: "activate-link", params: &["string"], result: "bool", handler_result: 1, sync_required: false },
     SignalInfo { kind: 11, name: "changed", js_event: "changed", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -1702,6 +1702,7 @@ pub static SIGNALS: [SignalInfo; 353] = [
     SignalInfo { kind: 50, name: "edited", js_event: "edited", params: &["string", "string"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 51, name: "toggled", js_event: "toggled", params: &["string"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 55, name: "activate", js_event: "activate", params: &[], result: "void", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 55, name: "notify::active", js_event: "notify::active", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 55, name: "toggled", js_event: "toggled", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 57, name: "activate", js_event: "activate", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 57, name: "color-set", js_event: "color-set", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -1841,7 +1842,7 @@ pub static SIGNALS: [SignalInfo; 353] = [
     SignalInfo { kind: 153, name: "copy-clipboard", js_event: "copy-clipboard", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 153, name: "move-cursor", js_event: "move-cursor", params: &["enum<svelters-api:v1:type:gtk:Gtk:MovementStep>", "i32", "bool"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 156, name: "offset-changed", js_event: "offset-changed", params: &["string"], result: "void", handler_result: 0, sync_required: false },
-    SignalInfo { kind: 157, name: "activate-link", js_event: "activate-link", params: &[], result: "bool", handler_result: 1, sync_required: false },
+    SignalInfo { kind: 157, name: "activate-link", js_event: "activate-link", params: &[], result: "bool", handler_result: 1, sync_required: true },
     SignalInfo { kind: 159, name: "activate-cursor-row", js_event: "activate-cursor-row", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 159, name: "move-cursor", js_event: "move-cursor", params: &["enum<svelters-api:v1:type:gtk:Gtk:MovementStep>", "i32", "bool", "bool"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 159, name: "row-activated", js_event: "row-activated", params: &["object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"], result: "void", handler_result: 0, sync_required: false },
@@ -1929,7 +1930,8 @@ pub static SIGNALS: [SignalInfo; 353] = [
     SignalInfo { kind: 261, name: "gtk-private-changed", js_event: "gtk-private-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 262, name: "error", js_event: "error", params: &["boxed<svelters-api:v1:type:gtk:GLib:Error>"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 263, name: "activate", js_event: "activate", params: &[], result: "void", handler_result: 0, sync_required: false },
-    SignalInfo { kind: 263, name: "state-set", js_event: "state-set", params: &["bool"], result: "bool", handler_result: 1, sync_required: false },
+    SignalInfo { kind: 263, name: "notify::active", js_event: "notify::active", params: &[], result: "void", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 263, name: "state-set", js_event: "state-set", params: &["bool"], result: "bool", handler_result: 1, sync_required: true },
     SignalInfo { kind: 265, name: "activate", js_event: "activate", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 265, name: "backspace", js_event: "backspace", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 265, name: "copy-clipboard", js_event: "copy-clipboard", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -1974,6 +1976,7 @@ pub static SIGNALS: [SignalInfo; 353] = [
     SignalInfo { kind: 271, name: "set-anchor", js_event: "set-anchor", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 271, name: "toggle-cursor-visible", js_event: "toggle-cursor-visible", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 271, name: "toggle-overwrite", js_event: "toggle-overwrite", params: &[], result: "void", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 272, name: "notify::active", js_event: "notify::active", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 272, name: "toggled", js_event: "toggled", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 280, name: "row-changed", js_event: "row-changed", params: &["boxed<svelters-api:v1:type:gtk:Gtk:TreePath>", "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 280, name: "row-deleted", js_event: "row-deleted", params: &["boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"], result: "void", handler_result: 0, sync_required: false },
@@ -2018,7 +2021,9 @@ pub static SIGNALS: [SignalInfo; 353] = [
     SignalInfo { kind: 295, name: "keys-changed", js_event: "keys-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
 ];
 
-pub static METHODS: [MethodInfo; 5] = [
+pub static METHODS: [MethodInfo; 7] = [
+    MethodInfo { kind: 171, name: "popdown" },
+    MethodInfo { kind: 171, name: "popup" },
     MethodInfo { kind: 250, name: "start" },
     MethodInfo { kind: 250, name: "stop" },
     MethodInfo { kind: 293, name: "queueDraw" },

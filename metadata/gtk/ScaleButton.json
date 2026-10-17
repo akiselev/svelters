@@ -579,6 +579,11 @@
         "get": "gtk_scale_button_get_has_frame",
         "set": "gtk_scale_button_set_has_frame"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScaleButton:has-frame (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:has-frame",
       "invocation": "reflected",
@@ -659,6 +664,14 @@
         "get": "gtk_scale_button_get_value",
         "set": "gtk_scale_button_set_value"
       },
+      "annotated": {
+        "fields": [
+          "sample",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkScaleButton:value (Gtk 4 docs); needs a non-empty adjustment range"
+      },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:value",
       "invocation": "reflected",
@@ -684,6 +697,8 @@
         "origin": "runtime",
         "owner": "GtkScaleButton"
       },
+      "sample": 42.5,
+      "setup": "h.widget(o).downcast_ref::<gtk::ScaleButton>().unwrap().set_adjustment(&gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0));",
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -747,6 +762,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkScaleButton::value-changed, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -774,7 +799,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let sb = o.downcast_ref::<gtk::ScaleButton>().unwrap(); sb.set_adjustment(&gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)); sb.set_value(10.0 + i as f64);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -783,7 +817,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/ScaleButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

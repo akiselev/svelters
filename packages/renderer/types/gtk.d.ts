@@ -343,6 +343,7 @@ export interface GtkCheckButtonProps extends GtkWidgetProps, GtkActionableProps 
   label?: string;
   useUnderline?: boolean;
   onactivate?: SvlHandler;
+  "onnotify::active"?: SvlHandler;
   ontoggled?: SvlHandler;
 }
 export interface GtkClosureExpressionProps extends GtkExpressionProps {
@@ -1639,6 +1640,7 @@ export interface GtkSwitchProps extends GtkWidgetProps, GtkActionableProps {
   active?: boolean;
   state?: boolean;
   onactivate?: SvlHandler;
+  "onnotify::active"?: SvlHandler;
   "onstate-set"?: SvlHandler;
 }
 export interface GtkSymbolicPaintableProps {
@@ -1832,6 +1834,7 @@ export interface GtkTextViewProps extends GtkWidgetProps, GtkAccessibleTextProps
 export interface GtkToggleButtonProps extends GtkButtonProps {
   active?: boolean;
   group?: number;
+  "onnotify::active"?: SvlHandler;
   ontoggled?: SvlHandler;
 }
 export interface GtkTooltipProps {

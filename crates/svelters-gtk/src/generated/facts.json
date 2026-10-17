@@ -301,6 +301,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:activate",
+   "fingerprint": "91ce4f1ff0776869",
+   "kind": "Button",
+   "name": "activate",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_button_activate"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked",
    "fingerprint": "69ecf22f7506854f",
    "kind": "Button",
@@ -311,6 +321,36 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:can-shrink",
+   "fingerprint": "3ecb3cac1c3da9a9",
+   "kind": "Button",
+   "name": "can-shrink",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_button_can_shrink"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:has-frame",
+   "fingerprint": "2b6af12a535ca5e6",
+   "kind": "Button",
+   "name": "has-frame",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_button_has_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:icon-name",
+   "fingerprint": "62fb639f9115b73f",
+   "kind": "Button",
+   "name": "icon-name",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_button_icon_name"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:label",
    "fingerprint": "773013b38c87f8f4",
    "kind": "Button",
@@ -318,6 +358,26 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_button_label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:use-underline",
+   "fingerprint": "1e264a4e72a5869d",
+   "kind": "Button",
+   "name": "use-underline",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_button_use_underline"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:method:set_label",
+   "fingerprint": "983d5636028ce23d",
+   "kind": "Button",
+   "name": "set_label",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_button_set_label"
    ]
   },
   {
@@ -439,6 +499,97 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_centerbox_shrink_center_last"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:signal:toggled",
+   "fingerprint": "d0fbf074c0471b75",
+   "kind": "CheckButton",
+   "name": "toggled",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_checkbutton_toggled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:signal:notify::active",
+   "fingerprint": "c6708e77a826cc9d",
+   "kind": "CheckButton",
+   "name": "notify::active",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_checkbutton_notify_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:active",
+   "fingerprint": "79eebf4883fad821",
+   "kind": "CheckButton",
+   "name": "active",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_checkbutton_active",
+    "generated::verify::echo_checkbutton_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:inconsistent",
+   "fingerprint": "e68bfb51d42a0ef0",
+   "kind": "CheckButton",
+   "name": "inconsistent",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_checkbutton_inconsistent"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:label",
+   "fingerprint": "b11eda5046cc85a1",
+   "kind": "CheckButton",
+   "name": "label",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_checkbutton_label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:use-underline",
+   "fingerprint": "c60eb5f82c5b60df",
+   "kind": "CheckButton",
+   "name": "use-underline",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_checkbutton_use_underline"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:method:get_label",
+   "fingerprint": "e9cd2facf310b754",
+   "kind": "CheckButton",
+   "name": "get_label",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_checkbutton_get_label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:method:set_inconsistent",
+   "fingerprint": "f0f6d8841b137843",
+   "kind": "CheckButton",
+   "name": "set_inconsistent",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_checkbutton_set_inconsistent"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:binding:active",
+   "fingerprint": "aac3582455e2f5b3",
+   "kind": "CheckButton",
+   "name": "active",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_checkbutton_active"
    ]
   },
   {
@@ -1095,6 +1246,216 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LinkButton:signal:activate-link",
+   "fingerprint": "a7c595cca71eb69d",
+   "kind": "LinkButton",
+   "name": "activate-link",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_linkbutton_activate_link"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LinkButton:prop:uri",
+   "fingerprint": "c5d575708f6bc9f9",
+   "kind": "LinkButton",
+   "name": "uri",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_linkbutton_uri"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LinkButton:prop:visited",
+   "fingerprint": "ef1b69777b75b249",
+   "kind": "LinkButton",
+   "name": "visited",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_linkbutton_visited"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LinkButton:method:set_visited",
+   "fingerprint": "b289513bd773baca",
+   "kind": "LinkButton",
+   "name": "set_visited",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_linkbutton_set_visited"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock",
+   "fingerprint": "a204a609db80f9d2",
+   "kind": "LockButton",
+   "name": "text-lock",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_lockbutton_text_lock"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-unlock",
+   "fingerprint": "c30beb37c9d66ff6",
+   "kind": "LockButton",
+   "name": "text-unlock",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_lockbutton_text_unlock"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-lock",
+   "fingerprint": "2ebc20d36f15ba86",
+   "kind": "LockButton",
+   "name": "tooltip-lock",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_lockbutton_tooltip_lock"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-not-authorized",
+   "fingerprint": "8e61ef96897bb4af",
+   "kind": "LockButton",
+   "name": "tooltip-not-authorized",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_lockbutton_tooltip_not_authorized"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-unlock",
+   "fingerprint": "6b76652444612c05",
+   "kind": "LockButton",
+   "name": "tooltip-unlock",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_lockbutton_tooltip_unlock"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:signal:activate",
+   "fingerprint": "8318c1dffe61656e",
+   "kind": "MenuButton",
+   "name": "activate",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_menubutton_activate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:always-show-arrow",
+   "fingerprint": "888cd3aeb1200985",
+   "kind": "MenuButton",
+   "name": "always-show-arrow",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_always_show_arrow"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:can-shrink",
+   "fingerprint": "53b4ba464cc78781",
+   "kind": "MenuButton",
+   "name": "can-shrink",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_can_shrink"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:direction",
+   "fingerprint": "8a5804989252e388",
+   "kind": "MenuButton",
+   "name": "direction",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:has-frame",
+   "fingerprint": "0e64c1aa8cee6b72",
+   "kind": "MenuButton",
+   "name": "has-frame",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_has_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:icon-name",
+   "fingerprint": "c539e4c995a13c60",
+   "kind": "MenuButton",
+   "name": "icon-name",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_icon_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:label",
+   "fingerprint": "784a19bb3c89a3cb",
+   "kind": "MenuButton",
+   "name": "label",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:primary",
+   "fingerprint": "42b6aa8fcbbc1653",
+   "kind": "MenuButton",
+   "name": "primary",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_primary"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:use-underline",
+   "fingerprint": "24707882bf39cfe4",
+   "kind": "MenuButton",
+   "name": "use-underline",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_menubutton_use_underline"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:popdown",
+   "fingerprint": "7de2f70a8ddcc5db",
+   "kind": "MenuButton",
+   "name": "popdown",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_menubutton_popdown"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:popup",
+   "fingerprint": "045d327bb950b5d4",
+   "kind": "MenuButton",
+   "name": "popup",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_menubutton_popup"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_direction",
+   "fingerprint": "645bfa485e6ef561",
+   "kind": "MenuButton",
+   "name": "set_direction",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_menubutton_set_direction"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
    "fingerprint": "63d313dbd2010718",
    "kind": "Orientable",
@@ -1302,6 +1663,36 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_revealer_transition_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:signal:value-changed",
+   "fingerprint": "27bcfd13d172ae67",
+   "kind": "ScaleButton",
+   "name": "value-changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_scalebutton_value_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:has-frame",
+   "fingerprint": "eccb78c328e5c6c5",
+   "kind": "ScaleButton",
+   "name": "has-frame",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_scalebutton_has_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:value",
+   "fingerprint": "7758737d3f6af96c",
+   "kind": "ScaleButton",
+   "name": "value",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_scalebutton_value"
    ]
   },
   {
@@ -1576,6 +1967,77 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:signal:state-set",
+   "fingerprint": "c011b2efa616ced9",
+   "kind": "Switch",
+   "name": "state-set",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_switch_state_set"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:signal:notify::active",
+   "fingerprint": "16d3c6531525ec6f",
+   "kind": "Switch",
+   "name": "notify::active",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_switch_notify_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:prop:active",
+   "fingerprint": "0cc52f1c63314f60",
+   "kind": "Switch",
+   "name": "active",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_switch_active",
+    "generated::verify::echo_switch_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:prop:state",
+   "fingerprint": "70af19bb74274cbe",
+   "kind": "Switch",
+   "name": "state",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_switch_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:method:get_active",
+   "fingerprint": "729d0a1652d7f7c3",
+   "kind": "Switch",
+   "name": "get_active",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_switch_get_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:method:set_state",
+   "fingerprint": "c3b4ddf3b1c2e5f9",
+   "kind": "Switch",
+   "name": "set_state",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_switch_set_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Switch:binding:active",
+   "fingerprint": "a5f5f6d3bece92ed",
+   "kind": "Switch",
+   "name": "active",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_switch_active"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:signal:activate",
    "fingerprint": "f92563280d66f9a1",
    "kind": "Text",
@@ -1736,6 +2198,57 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ToggleButton:signal:toggled",
+   "fingerprint": "d4b328aeb5de37d5",
+   "kind": "ToggleButton",
+   "name": "toggled",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_togglebutton_toggled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ToggleButton:signal:notify::active",
+   "fingerprint": "258aa2fef7287aa0",
+   "kind": "ToggleButton",
+   "name": "notify::active",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_togglebutton_notify_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ToggleButton:prop:active",
+   "fingerprint": "4a47dcd7b67dec15",
+   "kind": "ToggleButton",
+   "name": "active",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_togglebutton_active",
+    "generated::verify::echo_togglebutton_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ToggleButton:method:set_active",
+   "fingerprint": "1989f42a5a94be57",
+   "kind": "ToggleButton",
+   "name": "set_active",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_togglebutton_set_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ToggleButton:binding:active",
+   "fingerprint": "4db124579312085d",
+   "kind": "ToggleButton",
+   "name": "active",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_togglebutton_active"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Viewport:prop:scroll-to-focus",
    "fingerprint": "ab987e72c1c74ea6",
    "kind": "Viewport",
@@ -1743,6 +2256,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_viewport_scroll_to_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:VolumeButton:prop:use-symbolic",
+   "fingerprint": "ab55bd3a24ab4019",
+   "kind": "VolumeButton",
+   "name": "use-symbolic",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_volumebutton_use_symbolic"
    ]
   },
   {

@@ -448,22 +448,30 @@ pub fn virtual_get(prop: u32, obj: &glib::Object) -> Result<Option<String>, Stri
 pub fn call_method(method: u32, obj: &glib::Object) -> Result<(), String> {
     match method {
         1 => {
-            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.start();
+            obj.downcast_ref::<gtk::MenuButton>().ok_or("receiver is not a gtk::MenuButton")?.popdown();
             Ok(())
         }
         2 => {
-            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.stop();
+            obj.downcast_ref::<gtk::MenuButton>().ok_or("receiver is not a gtk::MenuButton")?.popup();
             Ok(())
         }
         3 => {
-            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_draw();
+            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.start();
             Ok(())
         }
         4 => {
-            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_resize();
+            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.stop();
             Ok(())
         }
         5 => {
+            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_draw();
+            Ok(())
+        }
+        6 => {
+            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_resize();
+            Ok(())
+        }
+        7 => {
             obj.downcast_ref::<gtk::Window>().ok_or("receiver is not a gtk::Window")?.present();
             Ok(())
         }

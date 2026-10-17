@@ -360,7 +360,7 @@
   "kind": "Button",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    12
   ],
   "native": "GtkButton",
@@ -369,8 +369,8 @@
    6,
    6
   ],
-  "props_annotated": 1,
-  "signal_results": 1,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
    2,
    2
@@ -379,8 +379,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   8,
+   8
   ]
  },
  {
@@ -513,14 +513,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "checkbutton",
-  "gallery": null,
+  "gallery": "02-buttons",
   "inherited": 25,
   "kind": "CheckButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    11
   ],
   "native": "GtkCheckButton",
@@ -529,18 +529,18 @@
    6,
    6
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 4,
+  "signal_results": 2,
   "signals": [
-   2,
-   2
+   3,
+   3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -1827,12 +1827,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "linkbutton",
-  "gallery": null,
-  "inherited": 27,
+  "gallery": "02-buttons",
+  "inherited": 33,
   "kind": "LinkButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    4
   ],
   "native": "GtkLinkButton",
@@ -1841,8 +1841,8 @@
    2,
    2
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 2,
+  "signal_results": 1,
   "signals": [
    1,
    1
@@ -1851,8 +1851,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1987,8 +1987,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "lockbutton",
-  "gallery": null,
-  "inherited": 27,
+  "gallery": "02-buttons",
+  "inherited": 33,
   "kind": "LockButton",
   "lifetime": "owned",
   "methods": [
@@ -2001,7 +2001,7 @@
    0,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
@@ -2011,8 +2011,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2051,12 +2051,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "menubutton",
-  "gallery": null,
+  "gallery": "02-buttons",
   "inherited": 23,
   "kind": "MenuButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    27
   ],
   "native": "GtkMenuButton",
@@ -2065,8 +2065,8 @@
    12,
    12
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 8,
+  "signal_results": 1,
   "signals": [
    1,
    1
@@ -2075,8 +2075,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   12,
+   12
   ]
  },
  {
@@ -2627,7 +2627,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "scalebutton",
-  "gallery": null,
+  "gallery": "02-buttons",
   "inherited": 24,
   "kind": "ScaleButton",
   "lifetime": "owned",
@@ -2641,8 +2641,8 @@
    4,
    5
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 2,
+  "signal_results": 1,
   "signals": [
    3,
    3
@@ -2651,8 +2651,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -3201,14 +3201,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "switch",
-  "gallery": null,
+  "gallery": "02-buttons",
   "inherited": 25,
   "kind": "Switch",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    4
   ],
   "native": "GtkSwitch",
@@ -3217,18 +3217,18 @@
    2,
    2
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 2,
+  "signal_results": 2,
   "signals": [
-   2,
-   2
+   3,
+   3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -3297,14 +3297,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "togglebutton",
-  "gallery": null,
-  "inherited": 27,
+  "gallery": "02-buttons",
+  "inherited": 33,
   "kind": "ToggleButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    4
   ],
   "native": "GtkToggleButton",
@@ -3313,18 +3313,18 @@
    2,
    2
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 1,
+  "signal_results": 2,
   "signals": [
-   1,
-   1
+   2,
+   2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -3459,8 +3459,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "volumebutton",
-  "gallery": null,
-  "inherited": 24,
+  "gallery": "02-buttons",
+  "inherited": 27,
   "kind": "VolumeButton",
   "lifetime": "owned",
   "methods": [
@@ -3473,7 +3473,7 @@
    0,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -3483,8 +3483,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {

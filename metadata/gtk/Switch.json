@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::active",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::active"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Switch:binding:active",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "active",
+      "origin": "manual",
+      "property": "active",
+      "provenance": "gtk_switch_set_active notifies only on change (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -227,11 +267,26 @@
   },
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_switch_get_active (Gtk 4 docs); bool return through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Switch:method:get_active",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_active",
       "name": "get_active",
       "native": "gtk_switch_get_active",
       "origin": "gir",
@@ -242,6 +297,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "setup": "h.set_bool(o, \"active\", true).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -289,11 +345,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_switch_set_state (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"state\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Switch:method:set_state",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_state",
       "name": "set_state",
       "native": "gtk_switch_set_state",
       "origin": "gir",
@@ -334,7 +406,18 @@
         "get": "gtk_switch_get_active",
         "set": "gtk_switch_set_active"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSwitch:active (Gtk 4 docs)"
+      },
       "default": false,
+      "echo_suppress": [
+        "notify::active"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:Switch:prop:active",
       "invocation": "reflected",
       "js_name": "active",
@@ -373,6 +456,11 @@
       "accessors": {
         "get": "gtk_switch_get_state",
         "set": "gtk_switch_set_state"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSwitch:state (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Switch:prop:state",
@@ -433,6 +521,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSwitch::state-set, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -460,7 +558,68 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "property": "active",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkSwitch:active"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "active"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::active",
+      "name": "notify::active",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "active",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
     }
   ],
   "source": {
@@ -469,7 +628,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Switch.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

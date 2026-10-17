@@ -515,11 +515,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_button_set_label (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        "via method"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"label\") == V::Str(\"via method\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_label",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_label",
       "name": "set_label",
       "native": "gtk_button_set_label",
       "origin": "gir",
@@ -585,6 +601,11 @@
       "accessors": {
         "get": "gtk_button_get_can_shrink",
         "set": "gtk_button_set_can_shrink"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkButton:can-shrink (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Button:prop:can-shrink",
@@ -667,6 +688,11 @@
         "get": "gtk_button_get_has_frame",
         "set": "gtk_button_set_has_frame"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkButton:has-frame (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Button:prop:has-frame",
       "invocation": "reflected",
@@ -706,6 +732,11 @@
       "accessors": {
         "get": "gtk_button_get_icon_name",
         "set": "gtk_button_set_icon_name"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkButton:icon-name (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Button:prop:icon-name",
@@ -794,6 +825,11 @@
         "get": "gtk_button_get_use_underline",
         "set": "gtk_button_set_use_underline"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkButton:use-underline (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Button:prop:use-underline",
       "invocation": "reflected",
@@ -827,6 +863,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkButton::activate is an action signal with void return (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",

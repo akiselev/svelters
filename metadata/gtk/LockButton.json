@@ -85,6 +85,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Actionable",
         "name": "set_detailed_action_name",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:method:set_label",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "set_label",
+        "origin": "manual"
       }
     ],
     "properties": [
@@ -101,6 +107,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:can-shrink",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "can-shrink",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -113,6 +125,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:has-frame",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "has-frame",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "height-request",
@@ -122,6 +140,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:icon-name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "icon-name",
         "origin": "manual"
       },
       {
@@ -185,6 +209,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:use-underline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "use-underline",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "valign",
@@ -210,6 +240,12 @@
       }
     ],
     "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:activate",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "activate",
+        "origin": "manual"
+      },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked",
         "from": "svelters-api:v1:type:gtk:Gtk:Button",
@@ -354,6 +390,11 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLockButton:text-lock (Gtk 4 docs)"
+      },
       "default": "Lock",
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock",
@@ -394,6 +435,11 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLockButton:text-unlock (Gtk 4 docs)"
       },
       "default": "Unlock",
       "deprecated": true,
@@ -436,6 +482,11 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLockButton:tooltip-lock (Gtk 4 docs)"
+      },
       "default": "Dialog is unlocked.\nClick to prevent further changes",
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-lock",
@@ -476,6 +527,11 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLockButton:tooltip-not-authorized (Gtk 4 docs)"
       },
       "default": "System policy prevents changes.\nContact your system administrator",
       "deprecated": true,
@@ -518,6 +574,11 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLockButton:tooltip-unlock (Gtk 4 docs)"
+      },
       "default": "Dialog is locked.\nClick to make changes",
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-unlock",
@@ -557,7 +618,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/LockButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

@@ -115,6 +115,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Actionable",
         "name": "set_detailed_action_name",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:method:set_label",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "set_label",
+        "origin": "manual"
       }
     ],
     "properties": [
@@ -131,6 +137,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:can-shrink",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "can-shrink",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -143,6 +155,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:has-frame",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "has-frame",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "height-request",
@@ -152,6 +170,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:icon-name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "icon-name",
         "origin": "manual"
       },
       {
@@ -215,6 +239,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:use-underline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "use-underline",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "valign",
@@ -240,6 +270,12 @@
       }
     ],
     "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:activate",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "activate",
+        "origin": "manual"
+      },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked",
         "from": "svelters-api:v1:type:gtk:Gtk:Button",
@@ -341,11 +377,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_link_button_set_visited (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"visited\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:LinkButton:method:set_visited",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_visited",
       "name": "set_visited",
       "native": "gtk_link_button_set_visited",
       "origin": "gir",
@@ -386,6 +438,11 @@
         "get": "gtk_link_button_get_uri",
         "set": "gtk_link_button_set_uri"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLinkButton:uri (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:LinkButton:prop:uri",
       "invocation": "reflected",
@@ -425,6 +482,11 @@
         "get": "gtk_link_button_get_visited",
         "set": "gtk_link_button_set_visited"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLinkButton:visited (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:LinkButton:prop:visited",
       "invocation": "reflected",
@@ -458,6 +520,16 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkLinkButton::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -479,7 +551,16 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::Button>().unwrap().emit_clicked();",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -488,7 +569,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/LinkButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
