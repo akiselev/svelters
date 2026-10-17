@@ -8,6 +8,7 @@ members = [
     "crates/svelters-qt-build",
     "crates/svelters-apple",
     "crates/svelters-appkit",
+    "crates/svelters-compiler",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",

@@ -1,0 +1,2 @@
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/slots-qt/App.svelte:13:3
+unknown_element (gtk): <statusbar> is not an element of the gtk backend (help: did you mean one of `searchbar`, `headerbar`, `scrollbar`?)

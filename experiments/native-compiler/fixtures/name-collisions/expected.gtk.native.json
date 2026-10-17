@@ -1,0 +1,12 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Names x"
+ },
+ {
+  "class": "GtkButton",
+  "d": 1,
+  "text": "n1 = 2"
+ }
+]

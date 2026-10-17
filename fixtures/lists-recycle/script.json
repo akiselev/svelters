@@ -1,0 +1,13 @@
+[{"checkpoint": true},
+ {"sync": [10, "setup", [1]]}, {"sync": [10, "setup", [2]]},
+ {"sync": [10, "bind", [1, 0, 1, 1]]}, {"sync": [10, "bind", [2, 1, 2, 1]]},
+ {"event": [15, "clicked", []]}, {"checkpoint": true},
+ {"sync": [10, "unbind", [1, 1]]}, {"sync": [10, "bind", [1, 5, 6, 2]]}, {"checkpoint": true},
+ {"event": [10, "activate", [5]]}, {"event": [10, "select", [5]]}, {"checkpoint": true},
+ {"event": [6, "clicked", []]}, {"checkpoint": true},
+ {"event": [4, "clicked", []]}, {"checkpoint": true},
+ {"event": [5, "clicked", []]}, {"checkpoint": true},
+ {"event": [7, "clicked", []]}, {"checkpoint": true},
+ {"sync": [10, "unbind", [2, 1]]}, {"sync": [10, "teardown", [2]]}, {"checkpoint": true},
+ {"event": [8, "clicked", []]}, {"checkpoint": true},
+ {"event": [8, "clicked", []]}, {"checkpoint": true}]

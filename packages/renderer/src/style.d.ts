@@ -3,6 +3,17 @@ export interface SheetSet {
   gtk?: string;
   qt?: string;
   qtDark?: string;
+  /** Setter rules per toolkit (setter and child-attr properties, applied with setProp / setChildAttr). */
+  rules?: Partial<Record<'gtk' | 'qt', SetterRule[]>>;
+}
+/** One compound selector (type, classes, id) and the native values of its setter declarations. */
+export interface SetterRule {
+  sel: { tag: string | null; classes: string[]; id: string | null };
+  /** (ids, classes, types) */
+  spec: [number, number, number];
+  order: number;
+  /** [style property, native value], in source order */
+  decls: [string, unknown][];
 }
 /** Registers a component's translated stylesheets under `id`; registering again replaces them. */
 export function registerStyles(id: string, sheets: SheetSet): void;

@@ -1,0 +1,98 @@
+create window #1
+set #1 title "Keyed stress"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 2
+create label #3
+set #3 label ""
+insert #2 #3 before=end slot=default
+create box #4
+set #4 orientation "vertical"
+set #4 spacing 2
+create label #5
+set #5 label "1"
+insert #4 #5 before=end slot=default
+create label #6
+set #6 label "2"
+insert #4 #6 before=end slot=default
+create label #7
+set #7 label "3"
+insert #4 #7 before=end slot=default
+create label #8
+set #8 label "4"
+insert #4 #8 before=end slot=default
+create label #9
+set #9 label "5"
+insert #4 #9 before=end slot=default
+create label #10
+set #10 label "6"
+insert #4 #10 before=end slot=default
+insert #2 #4 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+remove #4 #6
+insert #4 #6 before=#5 slot=default
+remove #4 #7
+insert #4 #7 before=#6 slot=default
+remove #4 #8
+insert #4 #8 before=#7 slot=default
+remove #4 #9
+insert #4 #9 before=#8 slot=default
+remove #4 #10
+insert #4 #10 before=#9 slot=default
+create label #11
+set #11 label "7"
+insert #4 #11 before=#8 slot=default
+create label #12
+set #12 label "8"
+insert #4 #12 before=#10 slot=default
+create label #13
+set #13 label "9"
+insert #4 #13 before=end slot=default
+remove #4 #12
+destroy #12
+remove #4 #8
+destroy #8
+remove #4 #7
+insert #4 #7 before=end slot=default
+remove #4 #10
+insert #4 #10 before=#7 slot=default
+remove #4 #6
+insert #4 #6 before=#11 slot=default
+remove #4 #6
+insert #4 #6 before=#9 slot=default
+remove #4 #11
+insert #4 #11 before=#6 slot=default
+remove #4 #5
+insert #4 #5 before=#11 slot=default
+remove #4 #13
+insert #4 #13 before=#5 slot=default
+remove #4 #10
+insert #4 #10 before=#13 slot=default
+remove #4 #7
+insert #4 #7 before=#10 slot=default
+remove #4 #13
+insert #4 #13 before=end slot=default
+remove #4 #10
+insert #4 #10 before=#13 slot=default
+remove #4 #7
+insert #4 #7 before=#10 slot=default
+remove #4 #5
+destroy #5
+remove #4 #11
+destroy #11
+remove #4 #9
+destroy #9
+remove #4 #7
+destroy #7
+remove #4 #13
+destroy #13
+remove #4 #10
+insert #4 #10 before=#6 slot=default
+create label #14
+set #14 label "101"
+insert #4 #14 before=#10 slot=default
+create label #15
+set #15 label "100"
+insert #4 #15 before=#10 slot=default
+set #3 label "101,100,6,2"

@@ -1,0 +1,19 @@
+# Style properties of the AppKit backend (MAC1). Format: metadata/style/gtk.yaml.
+# AppKit has no stylesheet language: every property is a setter (a KVC property of the element,
+# `prop` is its kebab-case JS name) or a child attribute. Not yet consumed by
+# tools/metadata/style/gen_props.py (TOOLKITS = gtk, qt); the kinds are AppKit classes from
+# metadata/appkit and resolve along the superclass chain.
+toolkit: appkit
+dialect: none
+setter_selectors: [type, class, id]
+units:
+  px: { scale: 1, provenance: "AppKit view geometry is in points (1 CSS px = 1 pt)" }
+
+properties:
+  opacity: { via: setter, prop: alpha-value, type: number, kinds: [NSView] }
+  visibility-hidden: { via: setter, prop: hidden, type: bool, kinds: [NSView] }
+  enabled: { via: setter, prop: enabled, type: bool, kinds: [NSControl] }
+  gap: { via: setter, prop: spacing, type: length, kinds: [NSStackView] }
+  flex-direction: { via: setter, prop: orientation, type: enum, kinds: [NSStackView], note: "row -> horizontal, column -> vertical (value map not yet written)" }
+  padding: { via: setter, prop: edge-insets, type: insets, kinds: [NSStackView] }
+  text-align: { via: setter, prop: alignment, type: enum, kinds: [NSTextField] }

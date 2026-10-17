@@ -2,7 +2,10 @@
 // Checks a widget gallery fixture (fixtures/gallery-<toolkit>):
 //  1. every page in src/pages/ starts with a `<!-- kinds: A B -->` header (read by tools/metadata/coverage.py);
 //  2. every page has a screenshot test line in examples/counter/tests/gallery.rs;
-//  3. the bundle opens every page in the TestHost without a JS error (clicking each sidebar button).
+//  3. the bundle opens every page in the TestHost without a JS error (clicking each sidebar button);
+//  4. the op log holds every line of `style-setters.expected` (the setter section of the styling
+//     page: rules and inline setter properties written with setProp / setChildAttr), with the
+//     TestHost answering the toolkit's style dialect.
 // Usage: node fixtures/gallery-common/check-pages.mjs <fixtureDir>
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,9 +28,18 @@ for (const p of list) {
 }
 const script = [{ checkpoint: true }];
 list.forEach((_, i) => script.push({ event: [SIDEBAR_FIRST_HANDLE + i, 'clicked', []] }, { checkpoint: true }));
+let log;
 try {
-  await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script });
+  log = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, styleDialect: tk === 'qt' ? 'qss' : 'css' });
 } catch (e) {
   fail(`opening the pages in the TestHost threw: ${e?.stack ?? e}`);
+}
+const expected = path.join(dir, 'style-setters.expected');
+if (fs.existsSync(expected)) {
+  const lines = log.split('\n');
+  for (const want of fs.readFileSync(expected, 'utf8').split('\n').filter((l) => l.trim() && !l.startsWith('#'))) {
+    const re = new RegExp(`^${want.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/#N/g, '#\\d+')}$`);
+    if (!lines.some((l) => re.test(l))) fail(`style-setters.expected: no op matching "${want}"`);
+  }
 }
 console.log(`PASS gallery-${tk} (${list.length} pages)`);

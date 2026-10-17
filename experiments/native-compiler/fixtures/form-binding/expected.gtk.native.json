@@ -1,0 +1,32 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Binding"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkEntry",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "Nobody (11 edits)"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Clear"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Shout"
+ }
+]

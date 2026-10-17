@@ -6,9 +6,16 @@
 // everything that was dropped. For Qt this matters twice: QSS stops parsing at the first
 // construct it does not understand, so the translator only ever emits constructs from a closed
 // set (docs/notes/styling-gtk-css-qss.md section 2.2).
+//
+// Declarations of setter and child-attr properties (the style table, props.generated.js) are not
+// CSS: they become setter rules `{ sel: { tag, classes, id }, spec, order, decls }` that the
+// renderer matches against elements and applies with setProp / setChildAttr. Their selector must
+// be one compound of the toolkit's `setterSelectors` (type, .class, #id); anything else is an
+// error naming the property.
 import { parseCss } from 'svelte/compiler';
 import { diag, parseDeclarations, translateDecls } from './decls.js';
 import { KINDS } from './kinds.generated.js';
+import { STYLE_TABLES, appliesTo } from './props.js';
 import { DEFAULT_TOKEN_NAMES, PSEUDO } from './vocab.js';
 
 export { KINDS };
@@ -77,8 +84,9 @@ export function extractNative(source) {
  * Translates one stylesheet for one toolkit.
  * @param {string} cssText
  * @param {'gtk' | 'qt'} toolkit
- * @param {{ native?: string[], knownTokens?: Iterable<string>, kinds?: typeof KINDS }} [opts]
- * @returns {{ css: string, dark: string, diagnostics: import('./decls.js').Diagnostic[] }}
+ * @param {{ native?: string[], knownTokens?: Iterable<string>, kinds?: typeof KINDS, setters?: boolean }} [opts]
+ *   setters: false leaves setter / child-attr declarations out, silently (the NC1 compiler's).
+ * @returns {{ css: string, dark: string, rules: SetterRule[], diagnostics: import('./decls.js').Diagnostic[] }}
  */
 export function translateSheet(cssText, toolkit, opts = {}) {
   const kinds = opts.kinds ?? KINDS;
@@ -88,6 +96,66 @@ export function translateSheet(cssText, toolkit, opts = {}) {
   const ast = parseCss(cssText);
   const base = [];
   const dark = [];
+  /** @type {SetterRule[]} */
+  const rules = [];
+  let order = 0;
+  const allowed = new Set(STYLE_TABLES[toolkit]?.setterSelectors ?? []);
+
+  /**
+   * The `{ tag, classes, id }` of a selector a setter rule accepts (one compound of type, class
+   * and id selectors; Svelte's `:where(.svelte-h)` is flattened), or the reason it is not one.
+   */
+  function setterSelector(cx) {
+    if (cx.children.length !== 1) return { why: 'combinators are not supported' };
+    const sel = { tag: null, classes: [], id: null };
+    const walk = (list) => {
+      for (const x of list) {
+        if (x.type === 'TypeSelector' && x.name !== '*' && allowed.has('type')) sel.tag = x.name;
+        else if (x.type === 'ClassSelector' && allowed.has('class')) sel.classes.push(x.name);
+        else if (x.type === 'IdSelector' && allowed.has('id')) sel.id = x.name;
+        else if (x.type === 'PseudoClassSelector' && (x.name === 'where' || x.name === 'is') && x.args && flatSelector(x.args.children)) {
+          const why = walk(flatSelector(x.args.children).selectors);
+          if (why) return why;
+        } else {
+          const what = x.type === 'PseudoClassSelector' ? `:${x.name}` : x.type === 'PseudoElementSelector' ? `::${x.name}` : x.type === 'TypeSelector' ? x.name : x.type;
+          return `${what} is not supported`;
+        }
+      }
+      return null;
+    };
+    const why = walk(cx.children[0].selectors);
+    if (why) return { why };
+    if (!sel.tag && !sel.id && !sel.classes.length) return { why: 'the selector selects nothing specific' };
+    return { sel };
+  }
+
+  /** Records the setter declarations of a rule, one setter rule per selector. */
+  function setterRules(node, setters, ctx) {
+    const kinds = [...allowed].join(', ');
+    const names = setters.map((x) => `'${x.name}'`).join(', ');
+    if (ctx.parent !== undefined || ctx.media) {
+      dg('error', `${names}: setter properties cannot be inside ${ctx.media ? '@media' : 'a nested rule'} (they are written with setProp, not CSS); rule dropped`, node);
+      return;
+    }
+    for (const cx of node.prelude.children) {
+      const r = setterSelector(cx);
+      if (r.why) {
+        dg('error', `${names}: setter properties only take ${kinds} selectors (${r.why}); dropped for this selector`, cx);
+        continue;
+      }
+      const decls = [];
+      for (const x of setters) {
+        if (r.sel.tag && x.entry.via === 'setter' && !appliesTo(x.entry, r.sel.tag)) {
+          dg('error', `'${x.name}' does not apply to <${r.sel.tag}> on ${toolkit}; declaration dropped`, cx);
+          continue;
+        }
+        decls.push([x.name, x.value]);
+      }
+      if (!decls.length) continue;
+      const spec = [r.sel.id ? 1 : 0, r.sel.classes.length, r.sel.tag ? 1 : 0];
+      rules.push({ sel: r.sel, spec, order: order++, decls });
+    }
+  }
 
   /** @returns {{ text: string, qtClass: string | null } | null} */
   function compound(rel, ctx) {
@@ -214,8 +282,9 @@ export function translateSheet(cssText, toolkit, opts = {}) {
       // Qt: one subject class for the border rule, only when all selectors agree.
       const classes = new Set(sels.map((s) => s.qtClass));
       const qtClass = classes.size === 1 ? [...classes][0] : null;
-      const r = translateDecls(decls, toolkit, { where: 'rule', qtClass, knownTokens, offset: node.start });
+      const r = translateDecls(decls, toolkit, { where: 'rule', qtClass, knownTokens, offset: node.start, setters: opts.setters ?? true });
       diagnostics.push(...r.diagnostics);
+      if (r.setters.length) setterRules(node, r.setters, ctx);
       if (r.lines.length) {
         out.push(`${sels.map((s) => s.text).join(',\n')} {\n${r.lines.map((l) => `  ${l}`).join('\n')}\n}`);
       }
@@ -231,10 +300,11 @@ export function translateSheet(cssText, toolkit, opts = {}) {
       const q = node.prelude.replace(/\s+/g, ' ').trim();
       const inner = [];
       const dest = toolkit === 'qt' && /^\(prefers-color-scheme:\s*dark\)$/.test(q) ? dark : inner;
-      for (const c of node.block.children) (c.type === 'Rule' ? rule(c, {}, dest) : atrule(c, dest));
+      for (const c of node.block.children) (c.type === 'Rule' ? rule(c, { media: true }, dest) : atrule(c, dest));
       if (toolkit === 'gtk') {
-        if (/^\(prefers-(color-scheme|contrast|reduced-motion):\s*[\w-]+\)$/.test(q)) out.push(`@media ${q} {\n${inner.join('\n')}\n}`);
-        else dg('error', `@media ${q} is not supported on gtk (only prefers-color-scheme, prefers-contrast, prefers-reduced-motion)`, node);
+        if (/^\(prefers-(color-scheme|contrast|reduced-motion):\s*[\w-]+\)$/.test(q)) {
+          if (inner.length) out.push(`@media ${q} {\n${inner.join('\n')}\n}`);
+        } else dg('error', `@media ${q} is not supported on gtk (only prefers-color-scheme, prefers-contrast, prefers-reduced-motion)`, node);
       } else if (dest !== dark) {
         dg('error', `@media ${q} is not supported on qt (only prefers-color-scheme: dark)`, node);
       }
@@ -255,17 +325,25 @@ export function translateSheet(cssText, toolkit, opts = {}) {
   for (const n of ast.children) (n.type === 'Rule' ? rule(n, {}, base) : atrule(n, base));
   for (const text of opts.native ?? []) base.push(text);
   const join = (a) => (a.length ? `${a.join('\n')}\n` : '');
-  return { css: join(base), dark: join(dark), diagnostics };
+  return { css: join(base), dark: join(dark), rules, diagnostics };
 }
 
-/** Translates for every toolkit; the result is what `registerStyles` carries. */
+/**
+ * @typedef {{ sel: { tag: string | null, classes: string[], id: string | null }, spec: [number, number, number],
+ *   order: number, decls: [string, unknown][] }} SetterRule
+ * `spec`: (ids, classes, types); `decls`: [style property, native value] in source order.
+ */
+
+/**
+ * Translates for every toolkit; the result is what `registerStyles` carries: the sheets, plus
+ * `rules` (setter rules per toolkit) when the stylesheet has any.
+ */
 export function translateAll(cssText, { native = { gtk: [], qt: [] }, knownTokens } = {}) {
   const gtk = translateSheet(cssText, 'gtk', { native: native.gtk, knownTokens });
   const qt = translateSheet(cssText, 'qt', { native: native.qt, knownTokens });
-  return {
-    sheets: { gtk: gtk.css, qt: qt.css, qtDark: qt.dark },
-    diagnostics: [...gtk.diagnostics, ...qt.diagnostics],
-  };
+  const sheets = { gtk: gtk.css, qt: qt.css, qtDark: qt.dark };
+  if (gtk.rules.length || qt.rules.length) sheets.rules = { gtk: gtk.rules, qt: qt.rules };
+  return { sheets, diagnostics: [...gtk.diagnostics, ...qt.diagnostics] };
 }
 
 export { parseDeclarations };

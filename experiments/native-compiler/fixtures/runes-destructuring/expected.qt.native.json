@@ -1,0 +1,27 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Destructuring"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "LR size=2 area=4 perimeter=8 tags=none"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Swap"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Grow"
+ }
+]
