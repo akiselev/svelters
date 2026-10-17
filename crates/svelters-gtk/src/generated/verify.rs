@@ -4,6 +4,30 @@
 use crate::testing::{on_gtk, Harness, V};
 use gtk::prelude::*;
 
+/// slot AspectFrame.child: gir: gtk_aspect_frame_set_child
+#[test]
+fn slot_aspectframe_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("aspectframe");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
 /// slot Box.children: gir: gtk_box_insert_child_after; gir: gtk_box_remove
 #[test]
 fn slot_box_children() {
@@ -28,6 +52,174 @@ fn slot_box_children() {
         for x in [a, b, c] { h.remove(parent, x).unwrap(); }
         assert!(!(h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in children");
         assert!(!(h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in children");
+    });
+}
+
+/// slot CenterBox.center: gir: gtk_center_box_set_center_widget
+#[test]
+fn slot_centerbox_center() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("centerbox");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("center")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        h.insert(parent, b, None, Some("center")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(b))), "b in center");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(b))), "b in center");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("center")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+    });
+}
+
+/// slot CenterBox.end: gir: gtk_center_box_set_end_widget
+#[test]
+fn slot_centerbox_end() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("centerbox");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("end")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        h.insert(parent, b, None, Some("end")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(b))), "b in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(b))), "b in end");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("end")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+    });
+}
+
+/// slot CenterBox.start: gir: gtk_center_box_set_start_widget
+#[test]
+fn slot_centerbox_start() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("centerbox");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("start")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        h.insert(parent, b, None, Some("start")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(b))), "b in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(b))), "b in start");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("start")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+    });
+}
+
+/// slot Expander.child: gir: gtk_expander_set_child
+#[test]
+fn slot_expander_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("expander");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// slot Expander.label: gir: gtk_expander_set_label_widget
+#[test]
+fn slot_expander_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("expander");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("label")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        h.insert(parent, b, None, Some("label")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("label")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+    });
+}
+
+/// slot Frame.child: gir: gtk_frame_set_child
+#[test]
+fn slot_frame_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("frame");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// slot Frame.label: gir: gtk_frame_set_label_widget
+#[test]
+fn slot_frame_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("frame");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("label")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        h.insert(parent, b, None, Some("label")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("label")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
     });
 }
 
@@ -101,6 +293,125 @@ fn slot_headerbar_title() {
     });
 }
 
+/// slot Overlay.child: gir: gtk_overlay_set_child
+#[test]
+fn slot_overlay_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("overlay");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// slot Overlay.overlays: gir: gtk_overlay_add_overlay; gir: gtk_overlay_remove_overlay
+#[test]
+fn slot_overlay_overlays() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("overlay");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("overlays")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in overlays");
+        h.insert(parent, b, None, Some("overlays")).unwrap();
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in overlays");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in overlays");
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in overlays");
+        h.insert(parent, a, None, Some("overlays")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in overlays");
+        h.remove(parent, a).unwrap();
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in overlays");
+    });
+}
+
+/// slot Paned.end: gir: gtk_paned_set_end_child
+#[test]
+fn slot_paned_end() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("paned");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("end")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        h.insert(parent, b, None, Some("end")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(b))), "b in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(b))), "b in end");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("end")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+    });
+}
+
+/// slot Paned.start: gir: gtk_paned_set_start_child
+#[test]
+fn slot_paned_start() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("paned");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("start")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        h.insert(parent, b, None, Some("start")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(b))), "b in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(b))), "b in start");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("start")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+    });
+}
+
+/// slot Revealer.child: gir: gtk_revealer_set_child
+#[test]
+fn slot_revealer_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("revealer");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
 /// slot ScrolledWindow.child: gir: gtk_scrolled_window_set_child; manual: docs: a non-scrollable child is wrapped in a GtkViewport automatically
 #[test]
 fn slot_scrolledwindow_child() {
@@ -122,6 +433,54 @@ fn slot_scrolledwindow_child() {
         assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "a in child");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "a in child");
+    });
+}
+
+/// slot SearchBar.child: gir: gtk_search_bar_set_child
+#[test]
+fn slot_searchbar_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("searchbar");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// slot Viewport.child: gir: gtk_viewport_set_child
+#[test]
+fn slot_viewport_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("viewport");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -170,6 +529,90 @@ fn slot_window_titlebar() {
         assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(a))), "a in titlebar");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(a))), "a in titlebar");
+    });
+}
+
+/// slot WindowHandle.child: gir: gtk_window_handle_set_child
+#[test]
+fn slot_windowhandle_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("windowhandle");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// property AspectFrame.obey-child (JS obeyChild): GtkAspectFrame:obey-child (Gtk 4 docs); P prop
+#[test]
+fn prop_aspectframe_obey_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspectframe");
+        
+        let id = h.resolve_prop("aspectframe", "obeyChild");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aspectframe", "obey-child"));
+        h.set_bool(o, "obeyChild", false).unwrap();
+        assert_eq!(h.get(o, "obeyChild"), V::Bool(false));
+    });
+}
+
+/// property AspectFrame.ratio (JS ratio): GtkAspectFrame:ratio (Gtk 4 docs); P prop
+#[test]
+fn prop_aspectframe_ratio() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspectframe");
+        
+        let id = h.resolve_prop("aspectframe", "ratio");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aspectframe", "ratio"));
+        h.set_f64(o, "ratio", 0.5).unwrap();
+        assert_eq!(h.get(o, "ratio"), V::F64(0.5));
+    });
+}
+
+/// property AspectFrame.xalign (JS xalign): GtkAspectFrame:xalign (Gtk 4 docs); P prop
+#[test]
+fn prop_aspectframe_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspectframe");
+        
+        let id = h.resolve_prop("aspectframe", "xalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aspectframe", "xalign"));
+        h.set_f64(o, "xalign", 0.25).unwrap();
+        assert_eq!(h.get(o, "xalign"), V::F64(0.25));
+    });
+}
+
+/// property AspectFrame.yalign (JS yalign): GtkAspectFrame:yalign (Gtk 4 docs); P prop
+#[test]
+fn prop_aspectframe_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspectframe");
+        
+        let id = h.resolve_prop("aspectframe", "yalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aspectframe", "yalign"));
+        h.set_f64(o, "yalign", 0.25).unwrap();
+        assert_eq!(h.get(o, "yalign"), V::F64(0.25));
     });
 }
 
@@ -231,6 +674,36 @@ fn prop_button_label() {
         assert_eq!(id, h.resolve_prop("button", "label"));
         h.set_str(o, "label", "p3-sample").unwrap();
         assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property CenterBox.baseline-position (JS baselinePosition): GtkCenterBox:baseline-position (Gtk 4 docs); P prop
+#[test]
+fn prop_centerbox_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("centerbox");
+        
+        let id = h.resolve_prop("centerbox", "baselinePosition");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("centerbox", "baseline-position"));
+        h.set_str(o, "baselinePosition", "top").unwrap();
+        assert_eq!(h.get(o, "baselinePosition"), V::Str("top".into()));
+    });
+}
+
+/// property CenterBox.shrink-center-last (JS shrinkCenterLast): GtkCenterBox:shrink-center-last (Gtk 4 docs); P prop
+#[test]
+fn prop_centerbox_shrink_center_last() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("centerbox");
+        
+        let id = h.resolve_prop("centerbox", "shrinkCenterLast");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("centerbox", "shrink-center-last"));
+        h.set_bool(o, "shrinkCenterLast", false).unwrap();
+        assert_eq!(h.get(o, "shrinkCenterLast"), V::Bool(false));
     });
 }
 
@@ -375,6 +848,238 @@ fn binding_entry_text() {
     });
 }
 
+/// signal Expander.activate: GtkExpander::activate is an action signal with void return (Gtk 4 docs)
+#[test]
+fn signal_expander_activate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("expander");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("expander", "activate"), 0);
+        assert_eq!(h.resolve_signal("expander", "activate"), h.resolve_signal("expander", "activate"));
+        h.listen(e, "activate", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Expander.notify::expanded: GObject::notify for GtkExpander:expanded
+#[test]
+fn signal_expander_notify_expanded() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("expander");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("expanded", true),
+                1 => o.set_property("expanded", false),
+                2 => o.set_property("expanded", true),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("expander", "notify::expanded"), 0);
+        assert_eq!(h.resolve_signal("expander", "notify::expanded"), h.resolve_signal("expander", "notify::expanded"));
+        h.listen(e, "notify::expanded", true).unwrap();
+        fire(&h.obj(e), "True", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::expanded".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::expanded", false).unwrap();
+        fire(&h.obj(e), "False", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::expanded", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "True", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::expanded", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Expander.expanded (JS expanded): GtkExpander:expanded (Gtk 4 docs); P prop
+#[test]
+fn prop_expander_expanded() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let id = h.resolve_prop("expander", "expanded");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("expander", "expanded"));
+        h.set_bool(o, "expanded", true).unwrap();
+        assert_eq!(h.get(o, "expanded"), V::Bool(true));
+    });
+}
+
+/// echo suppression for Expander.expanded: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_expander_expanded() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("expanded", true),
+                1 => o.set_property("expanded", false),
+                2 => o.set_property("expanded", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::expanded", true).unwrap();
+        h.set_bool(o, "expanded", true).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "False", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::expanded"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_bool(o, "expanded", true).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// property Expander.label (JS label): GtkExpander:label (Gtk 4 docs); P prop
+#[test]
+fn prop_expander_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let id = h.resolve_prop("expander", "label");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("expander", "label"));
+        h.set_str(o, "label", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property Expander.resize-toplevel (JS resizeToplevel): GtkExpander:resize-toplevel (Gtk 4 docs); P prop
+#[test]
+fn prop_expander_resize_toplevel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let id = h.resolve_prop("expander", "resizeToplevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("expander", "resize-toplevel"));
+        h.set_bool(o, "resizeToplevel", true).unwrap();
+        assert_eq!(h.get(o, "resizeToplevel"), V::Bool(true));
+    });
+}
+
+/// property Expander.use-markup (JS useMarkup): GtkExpander:use-markup (Gtk 4 docs); P prop
+#[test]
+fn prop_expander_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let id = h.resolve_prop("expander", "useMarkup");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("expander", "use-markup"));
+        h.set_bool(o, "useMarkup", true).unwrap();
+        assert_eq!(h.get(o, "useMarkup"), V::Bool(true));
+    });
+}
+
+/// property Expander.use-underline (JS useUnderline): GtkExpander:use-underline (Gtk 4 docs); P prop
+#[test]
+fn prop_expander_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let id = h.resolve_prop("expander", "useUnderline");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("expander", "use-underline"));
+        h.set_bool(o, "useUnderline", true).unwrap();
+        assert_eq!(h.get(o, "useUnderline"), V::Bool(true));
+    });
+}
+
+/// bind:expanded on Expander: set_expanded notifies expanded only on change (Gtk 4 docs)
+#[test]
+fn binding_expander_expanded() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("expanded", true),
+                1 => o.set_property("expanded", false),
+                2 => o.set_property("expanded", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::expanded", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "expanded"), V::Null, "the property reads the new value");
+    });
+}
+
+/// property Frame.label (JS label): GtkFrame:label (Gtk 4 docs); P prop
+#[test]
+fn prop_frame_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("frame");
+        
+        let id = h.resolve_prop("frame", "label");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("frame", "label"));
+        h.set_str(o, "label", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property Frame.label-xalign (JS labelXalign): GtkFrame:label-xalign (Gtk 4 docs); P prop
+#[test]
+fn prop_frame_label_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("frame");
+        
+        let id = h.resolve_prop("frame", "labelXalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("frame", "label-xalign"));
+        h.set_f64(o, "labelXalign", 0.5).unwrap();
+        assert_eq!(h.get(o, "labelXalign"), V::F64(0.5));
+    });
+}
+
 /// property HeaderBar.title (JS title): GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'
 #[test]
 fn prop_headerbar_title() {
@@ -419,6 +1124,397 @@ fn prop_orientable_orientation() {
         assert_eq!(id, h.resolve_prop("box", "orientation"));
         h.set_str(o, "orientation", "vertical").unwrap();
         assert_eq!(h.get(o, "orientation"), V::Str("vertical".into()));
+    });
+}
+
+/// property Paned.position (JS position): GtkPaned:position (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "position");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "position"));
+        h.set_i64(o, "position", 7).unwrap();
+        assert_eq!(h.get(o, "position"), V::I64(7));
+    });
+}
+
+/// property Paned.position-set (JS positionSet): GtkPaned:position-set (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_position_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "positionSet");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "position-set"));
+        h.set_bool(o, "positionSet", true).unwrap();
+        assert_eq!(h.get(o, "positionSet"), V::Bool(true));
+    });
+}
+
+/// property Paned.resize-end-child (JS resizeEndChild): GtkPaned:resize-end-child (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_resize_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "resizeEndChild");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "resize-end-child"));
+        h.set_bool(o, "resizeEndChild", false).unwrap();
+        assert_eq!(h.get(o, "resizeEndChild"), V::Bool(false));
+    });
+}
+
+/// property Paned.resize-start-child (JS resizeStartChild): GtkPaned:resize-start-child (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_resize_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "resizeStartChild");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "resize-start-child"));
+        h.set_bool(o, "resizeStartChild", false).unwrap();
+        assert_eq!(h.get(o, "resizeStartChild"), V::Bool(false));
+    });
+}
+
+/// property Paned.shrink-end-child (JS shrinkEndChild): GtkPaned:shrink-end-child (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_shrink_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "shrinkEndChild");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "shrink-end-child"));
+        h.set_bool(o, "shrinkEndChild", false).unwrap();
+        assert_eq!(h.get(o, "shrinkEndChild"), V::Bool(false));
+    });
+}
+
+/// property Paned.shrink-start-child (JS shrinkStartChild): GtkPaned:shrink-start-child (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_shrink_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "shrinkStartChild");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "shrink-start-child"));
+        h.set_bool(o, "shrinkStartChild", false).unwrap();
+        assert_eq!(h.get(o, "shrinkStartChild"), V::Bool(false));
+    });
+}
+
+/// property Paned.wide-handle (JS wideHandle): GtkPaned:wide-handle (Gtk 4 docs); P prop
+#[test]
+fn prop_paned_wide_handle() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let id = h.resolve_prop("paned", "wideHandle");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("paned", "wide-handle"));
+        h.set_bool(o, "wideHandle", true).unwrap();
+        assert_eq!(h.get(o, "wideHandle"), V::Bool(true));
+    });
+}
+
+/// property Revealer.reveal-child (JS revealChild): GtkRevealer:reveal-child (Gtk 4 docs); P prop
+#[test]
+fn prop_revealer_reveal_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let id = h.resolve_prop("revealer", "revealChild");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("revealer", "reveal-child"));
+        h.set_bool(o, "revealChild", true).unwrap();
+        assert_eq!(h.get(o, "revealChild"), V::Bool(true));
+    });
+}
+
+/// property Revealer.transition-duration (JS transitionDuration): GtkRevealer:transition-duration (Gtk 4 docs); P prop
+#[test]
+fn prop_revealer_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let id = h.resolve_prop("revealer", "transitionDuration");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("revealer", "transition-duration"));
+        h.set_i64(o, "transitionDuration", 7).unwrap();
+        assert_eq!(h.get(o, "transitionDuration"), V::I64(7));
+    });
+}
+
+/// property Revealer.transition-type (JS transitionType): GtkRevealer:transition-type (Gtk 4 docs); P prop
+#[test]
+fn prop_revealer_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let id = h.resolve_prop("revealer", "transitionType");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("revealer", "transition-type"));
+        h.set_str(o, "transitionType", "none").unwrap();
+        assert_eq!(h.get(o, "transitionType"), V::Str("none".into()));
+    });
+}
+
+/// signal ScrolledWindow.edge-reached: GtkScrolledWindow::edge-reached, run-last, void; delivery only, emitted by name (real emission needs scrolling with an allocation) (Gtk 4 docs)
+#[test]
+fn signal_scrolledwindow_edge_reached() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("scrolledwindow");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("edge-reached", &[&gtk::PositionType::Bottom]);
+        };
+        assert_ne!(h.resolve_signal("scrolledwindow", "edge-reached"), 0);
+        assert_eq!(h.resolve_signal("scrolledwindow", "edge-reached"), h.resolve_signal("scrolledwindow", "edge-reached"));
+        h.listen(e, "edge-reached", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "edge-reached".to_string())), "delivered: {ev:?}");
+        h.listen(e, "edge-reached", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "edge-reached", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "edge-reached", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property ScrolledWindow.has-frame (JS hasFrame): GtkScrolledWindow:has-frame (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "hasFrame");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "has-frame"));
+        h.set_bool(o, "hasFrame", true).unwrap();
+        assert_eq!(h.get(o, "hasFrame"), V::Bool(true));
+    });
+}
+
+/// property ScrolledWindow.hscrollbar-policy (JS hscrollbarPolicy): GtkScrolledWindow:hscrollbar-policy (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_hscrollbar_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "hscrollbarPolicy");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "hscrollbar-policy"));
+        h.set_str(o, "hscrollbarPolicy", "always").unwrap();
+        assert_eq!(h.get(o, "hscrollbarPolicy"), V::Str("always".into()));
+    });
+}
+
+/// property ScrolledWindow.kinetic-scrolling (JS kineticScrolling): GtkScrolledWindow:kinetic-scrolling (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_kinetic_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "kineticScrolling");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "kinetic-scrolling"));
+        h.set_bool(o, "kineticScrolling", false).unwrap();
+        assert_eq!(h.get(o, "kineticScrolling"), V::Bool(false));
+    });
+}
+
+/// property ScrolledWindow.max-content-height (JS maxContentHeight): GtkScrolledWindow:max-content-height (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_max_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "maxContentHeight");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "max-content-height"));
+        h.set_i64(o, "maxContentHeight", 7).unwrap();
+        assert_eq!(h.get(o, "maxContentHeight"), V::I64(7));
+    });
+}
+
+/// property ScrolledWindow.max-content-width (JS maxContentWidth): GtkScrolledWindow:max-content-width (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_max_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "maxContentWidth");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "max-content-width"));
+        h.set_i64(o, "maxContentWidth", 7).unwrap();
+        assert_eq!(h.get(o, "maxContentWidth"), V::I64(7));
+    });
+}
+
+/// property ScrolledWindow.min-content-height (JS minContentHeight): GtkScrolledWindow:min-content-height (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_min_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "minContentHeight");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "min-content-height"));
+        h.set_i64(o, "minContentHeight", 7).unwrap();
+        assert_eq!(h.get(o, "minContentHeight"), V::I64(7));
+    });
+}
+
+/// property ScrolledWindow.min-content-width (JS minContentWidth): GtkScrolledWindow:min-content-width (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_min_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "minContentWidth");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "min-content-width"));
+        h.set_i64(o, "minContentWidth", 7).unwrap();
+        assert_eq!(h.get(o, "minContentWidth"), V::I64(7));
+    });
+}
+
+/// property ScrolledWindow.overlay-scrolling (JS overlayScrolling): GtkScrolledWindow:overlay-scrolling (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_overlay_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "overlayScrolling");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "overlay-scrolling"));
+        h.set_bool(o, "overlayScrolling", false).unwrap();
+        assert_eq!(h.get(o, "overlayScrolling"), V::Bool(false));
+    });
+}
+
+/// property ScrolledWindow.propagate-natural-height (JS propagateNaturalHeight): GtkScrolledWindow:propagate-natural-height (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_propagate_natural_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "propagateNaturalHeight");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "propagate-natural-height"));
+        h.set_bool(o, "propagateNaturalHeight", true).unwrap();
+        assert_eq!(h.get(o, "propagateNaturalHeight"), V::Bool(true));
+    });
+}
+
+/// property ScrolledWindow.propagate-natural-width (JS propagateNaturalWidth): GtkScrolledWindow:propagate-natural-width (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_propagate_natural_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "propagateNaturalWidth");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "propagate-natural-width"));
+        h.set_bool(o, "propagateNaturalWidth", true).unwrap();
+        assert_eq!(h.get(o, "propagateNaturalWidth"), V::Bool(true));
+    });
+}
+
+/// property ScrolledWindow.vscrollbar-policy (JS vscrollbarPolicy): GtkScrolledWindow:vscrollbar-policy (Gtk 4 docs); P prop
+#[test]
+fn prop_scrolledwindow_vscrollbar_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolledwindow");
+        
+        let id = h.resolve_prop("scrolledwindow", "vscrollbarPolicy");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolledwindow", "vscrollbar-policy"));
+        h.set_str(o, "vscrollbarPolicy", "always").unwrap();
+        assert_eq!(h.get(o, "vscrollbarPolicy"), V::Str("always".into()));
+    });
+}
+
+/// property SearchBar.search-mode-enabled (JS searchModeEnabled): GtkSearchBar:search-mode-enabled (Gtk 4 docs); P prop
+#[test]
+fn prop_searchbar_search_mode_enabled() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("searchbar");
+        
+        let id = h.resolve_prop("searchbar", "searchModeEnabled");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("searchbar", "search-mode-enabled"));
+        h.set_bool(o, "searchModeEnabled", true).unwrap();
+        assert_eq!(h.get(o, "searchModeEnabled"), V::Bool(true));
+    });
+}
+
+/// property SearchBar.show-close-button (JS showCloseButton): GtkSearchBar:show-close-button (Gtk 4 docs); P prop
+#[test]
+fn prop_searchbar_show_close_button() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("searchbar");
+        
+        let id = h.resolve_prop("searchbar", "showCloseButton");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("searchbar", "show-close-button"));
+        h.set_bool(o, "showCloseButton", true).unwrap();
+        assert_eq!(h.get(o, "showCloseButton"), V::Bool(true));
+    });
+}
+
+/// property Viewport.scroll-to-focus (JS scrollToFocus): GtkViewport:scroll-to-focus (Gtk 4 docs); P prop
+#[test]
+fn prop_viewport_scroll_to_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("viewport");
+        
+        let id = h.resolve_prop("viewport", "scrollToFocus");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("viewport", "scroll-to-focus"));
+        h.set_bool(o, "scrollToFocus", false).unwrap();
+        assert_eq!(h.get(o, "scrollToFocus"), V::Bool(false));
     });
 }
 

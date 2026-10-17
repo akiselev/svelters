@@ -18,9 +18,84 @@
         "child"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "child",
+    "policy": "single_child",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_viewport_set_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Viewport:slot:child",
+        "name": "child",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkViewport::get_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkViewport::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkViewport::set_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -268,6 +343,11 @@
         "get": "gtk_viewport_get_scroll_to_focus",
         "set": "gtk_viewport_set_scroll_to_focus"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkViewport:scroll-to-focus (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Viewport:prop:scroll-to-focus",
       "invocation": "reflected",
@@ -306,7 +386,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Viewport.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

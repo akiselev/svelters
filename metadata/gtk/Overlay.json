@@ -19,9 +19,161 @@
         "child"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "child",
+    "policy": "named_slots",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_overlay_set_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:child",
+        "name": "child",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkOverlay::get_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkOverlay::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkOverlay::set_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_overlay_add_overlay"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_overlay_remove_overlay"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays",
+        "name": "overlays",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "contains": "parent",
+            "origin": "manual"
+          },
+          "insert": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "origin": "manual"
+            },
+            "native": "GtkOverlay::add_overlay(GtkWidget*)",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkOverlay::remove_overlay(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "append_only",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -380,7 +532,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Overlay.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

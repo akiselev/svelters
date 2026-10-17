@@ -20,9 +20,84 @@
         "key-capture-widget"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "child",
+    "policy": "single_child",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_search_bar_set_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:SearchBar:slot:child",
+        "name": "child",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkSearchBar::get_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkSearchBar::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkSearchBar::set_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -377,6 +452,11 @@
         "get": "gtk_search_bar_get_search_mode",
         "set": "gtk_search_bar_set_search_mode"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSearchBar:search-mode-enabled (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:search-mode-enabled",
       "invocation": "reflected",
@@ -417,6 +497,11 @@
         "get": "gtk_search_bar_get_show_close_button",
         "set": "gtk_search_bar_set_show_close_button"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSearchBar:show-close-button (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:show-close-button",
       "invocation": "reflected",
@@ -456,7 +541,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/SearchBar.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::expanded",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::expanded"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Expander:binding:expanded",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "expanded",
+      "origin": "manual",
+      "property": "expanded",
+      "provenance": "set_expanded notifies expanded only on change (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -20,9 +60,162 @@
         "label-widget"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "child",
+    "policy": "named_slots",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_expander_set_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Expander:slot:child",
+        "name": "child",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkExpander::get_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkExpander::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkExpander::set_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_expander_set_label_widget"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "conflicts_with_props": [
+            "label"
+          ],
+          "kind": "builtin",
+          "origin": "manual",
+          "restore": null
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Expander:slot:label",
+        "name": "label",
+        "on_remove": "restore_default",
+        "ops": {
+          "get": {
+            "native": "GtkExpander::get_label_widget() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkExpander::set_label_widget(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkExpander::set_label_widget(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -473,7 +666,17 @@
         "get": "gtk_expander_get_expanded",
         "set": "gtk_expander_set_expanded"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress"
+        ],
+        "origin": "manual",
+        "provenance": "GtkExpander:expanded (Gtk 4 docs); P prop"
+      },
       "default": false,
+      "echo_suppress": [
+        "notify::expanded"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:expanded",
       "invocation": "reflected",
       "js_name": "expanded",
@@ -513,6 +716,11 @@
       "accessors": {
         "get": "gtk_expander_get_label",
         "set": "gtk_expander_set_label"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkExpander:label (Gtk 4 docs); P prop"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:label",
@@ -594,6 +802,11 @@
         "get": "gtk_expander_get_resize_toplevel",
         "set": "gtk_expander_set_resize_toplevel"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkExpander:resize-toplevel (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:resize-toplevel",
       "invocation": "reflected",
@@ -633,6 +846,11 @@
       "accessors": {
         "get": "gtk_expander_get_use_markup",
         "set": "gtk_expander_set_use_markup"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkExpander:use-markup (Gtk 4 docs); P prop"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:use-markup",
@@ -675,6 +893,11 @@
         "get": "gtk_expander_get_use_underline",
         "set": "gtk_expander_set_use_underline"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkExpander:use-underline (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:use-underline",
       "invocation": "reflected",
@@ -709,6 +932,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkExpander::activate is an action signal with void return (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -733,6 +965,58 @@
         "return_gtype": "void"
       },
       "sync_required": false
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkExpander:expanded"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "expanded"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::expanded",
+      "name": "notify::expanded",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "expanded",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
     }
   ],
   "source": {
@@ -741,7 +1025,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Expander.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

@@ -18,9 +18,84 @@
         "child"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "child",
+    "policy": "single_child",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_aspect_frame_set_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame:slot:child",
+        "name": "child",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkAspectFrame::get_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkAspectFrame::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkAspectFrame::set_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -380,6 +455,11 @@
         "get": "gtk_aspect_frame_get_obey_child",
         "set": "gtk_aspect_frame_set_obey_child"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkAspectFrame:obey-child (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:obey-child",
       "invocation": "reflected",
@@ -419,6 +499,11 @@
       "accessors": {
         "get": "gtk_aspect_frame_get_ratio",
         "set": "gtk_aspect_frame_set_ratio"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkAspectFrame:ratio (Gtk 4 docs); P prop"
       },
       "default": 1.0,
       "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:ratio",
@@ -463,6 +548,11 @@
         "get": "gtk_aspect_frame_get_xalign",
         "set": "gtk_aspect_frame_set_xalign"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkAspectFrame:xalign (Gtk 4 docs); P prop"
+      },
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:xalign",
       "invocation": "reflected",
@@ -506,6 +596,11 @@
         "get": "gtk_aspect_frame_get_yalign",
         "set": "gtk_aspect_frame_set_yalign"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkAspectFrame:yalign (Gtk 4 docs); P prop"
+      },
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:yalign",
       "invocation": "reflected",
@@ -547,7 +642,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/AspectFrame.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

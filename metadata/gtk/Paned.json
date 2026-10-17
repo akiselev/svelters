@@ -17,9 +17,158 @@
         "start-child"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "start",
+    "policy": "named_slots",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_paned_set_start_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Paned:slot:start",
+        "name": "start",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkPaned::get_start_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkPaned::set_start_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkPaned::set_start_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_paned_set_end_child"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Paned:slot:end",
+        "name": "end",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkPaned::get_end_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkPaned::set_end_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkPaned::set_end_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -586,6 +735,11 @@
         "get": "gtk_paned_get_position",
         "set": "gtk_paned_set_position"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:position (Gtk 4 docs); P prop"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:position",
       "invocation": "reflected",
@@ -629,6 +783,11 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:position-set (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:position-set",
       "invocation": "reflected",
@@ -668,6 +827,11 @@
       "accessors": {
         "get": "gtk_paned_get_resize_end_child",
         "set": "gtk_paned_set_resize_end_child"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:resize-end-child (Gtk 4 docs); P prop"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:resize-end-child",
@@ -709,6 +873,11 @@
         "get": "gtk_paned_get_resize_start_child",
         "set": "gtk_paned_set_resize_start_child"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:resize-start-child (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:resize-start-child",
       "invocation": "reflected",
@@ -749,6 +918,11 @@
         "get": "gtk_paned_get_shrink_end_child",
         "set": "gtk_paned_set_shrink_end_child"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:shrink-end-child (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:shrink-end-child",
       "invocation": "reflected",
@@ -788,6 +962,11 @@
       "accessors": {
         "get": "gtk_paned_get_shrink_start_child",
         "set": "gtk_paned_set_shrink_start_child"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:shrink-start-child (Gtk 4 docs); P prop"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:shrink-start-child",
@@ -868,6 +1047,11 @@
       "accessors": {
         "get": "gtk_paned_get_wide_handle",
         "set": "gtk_paned_set_wide_handle"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkPaned:wide-handle (Gtk 4 docs); P prop"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:wide-handle",
@@ -1082,7 +1266,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Paned.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

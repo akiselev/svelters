@@ -1,0 +1,51 @@
+children:
+  policy: named_slots
+  default_slot: start
+  slots:
+    - name: start
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkPaned::get_start_child() const"}
+        set:    {native: "GtkPaned::set_start_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkPaned::set_start_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_paned_set_start_child"}]
+    - name: end
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkPaned::get_end_child() const"}
+        set:    {native: "GtkPaned::set_end_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkPaned::set_end_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_paned_set_end_child"}]
+properties:
+  - name: position
+    provenance: "GtkPaned:position (Gtk 4 docs); P prop"
+  - name: position-set
+    provenance: "GtkPaned:position-set (Gtk 4 docs); P prop"
+  - name: wide-handle
+    provenance: "GtkPaned:wide-handle (Gtk 4 docs); P prop"
+  - name: resize-start-child
+    provenance: "GtkPaned:resize-start-child (Gtk 4 docs); P prop"
+  - name: resize-end-child
+    provenance: "GtkPaned:resize-end-child (Gtk 4 docs); P prop"
+  - name: shrink-start-child
+    provenance: "GtkPaned:shrink-start-child (Gtk 4 docs); P prop"
+  - name: shrink-end-child
+    provenance: "GtkPaned:shrink-end-child (Gtk 4 docs); P prop"
