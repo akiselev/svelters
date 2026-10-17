@@ -244,9 +244,11 @@ fn run(setup: Setup) -> Result<Json, String> {
     if let Err(e) = &run_result {
         failures.push(format!("run() failed: {e}"));
     }
+    let mut dump_all = Json::Null;
     let (mut dump, steps) = match driver.as_ref().map(|d| d.report()) {
         Some(r) => {
             failures.extend(r.failures);
+            dump_all = r.dump_all.unwrap_or(Json::Null);
             (r.dump.unwrap_or(Json::Null), r.steps)
         }
         None => (Json::Null, Vec::new()),
@@ -265,6 +267,7 @@ fn run(setup: Setup) -> Result<Json, String> {
         "errors": errors,
         "console": console,
         "dump": dump,
+        "dump_all": dump_all,
         "reloads": reloads.borrow().clone(),
         "native_toplevels": native_toplevels.get(),
         "threads": thread_names(),

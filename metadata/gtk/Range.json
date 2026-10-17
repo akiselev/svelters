@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "value-changed",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "value-changed"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:binding:value",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "value",
+      "origin": "manual",
+      "property": "value",
+      "provenance": "GtkAdjustment:value through GtkRange:adjustment; value-changed fires only on change and the adjustment clamps (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "write": {
+        "natively_normalizes": true,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -1079,6 +1119,380 @@
         "native": "gboolean",
         "nullable": false,
         "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "echo_suppress",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "setup",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:value through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "echo_suppress": [
+        "value-changed"
+      ],
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:value",
+      "invocation": "virtual",
+      "js_name": "value",
+      "name": "value",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 42.0,
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap();",
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "value",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:lower through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:lower",
+      "invocation": "virtual",
+      "js_name": "lower",
+      "name": "lower",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 5.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "lower",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:upper through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:upper",
+      "invocation": "virtual",
+      "js_name": "upper",
+      "name": "upper",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 80.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "upper",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:step-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:stepIncrement",
+      "invocation": "virtual",
+      "js_name": "stepIncrement",
+      "name": "stepIncrement",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 3.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "step-increment",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:page-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageIncrement",
+      "invocation": "virtual",
+      "js_name": "pageIncrement",
+      "name": "pageIncrement",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 25.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "page-increment",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "setup",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:page-size through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageSize",
+      "invocation": "virtual",
+      "js_name": "pageSize",
+      "name": "pageSize",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 10.0,
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap();",
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "page-size",
+        "via": "adjustment"
       }
     }
   ],

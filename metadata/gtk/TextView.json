@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "changed",
+        "value": "arg0"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "changed"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:text",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "text",
+      "origin": "manual",
+      "property": "text",
+      "provenance": "GtkTextBuffer:text set through the buffer emits changed only for real edits (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -3110,6 +3150,71 @@
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Gtk:WrapMode>"
       }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "echo_suppress",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer:text through GtkTextView:buffer (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": "",
+      "echo_suppress": [
+        "changed"
+      ],
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:text",
+      "invocation": "virtual",
+      "js_name": "text",
+      "name": "text",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": "p3 text",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "text",
+        "via": "buffer"
+      }
     }
   ],
   "schema": "svelters-element-kind/v0",
@@ -3578,6 +3683,55 @@
         "return_gtype": "void"
       },
       "sync_required": false
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "flags",
+          "handler_result",
+          "js_event",
+          "new",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger",
+          "via"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer::changed through GtkTextView:buffer (Gtk 4 docs); the text view has no such signal, the backend connects it on the buffer (X7, G12)"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "flags": [],
+      "handler_result": "none",
+      "js_event": "changed",
+      "name": "changed",
+      "new": true,
+      "origin": "manual",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::TextView>().unwrap().buffer().set_text(&format!(\"text {i}\"));",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "via": "buffer"
     }
   ],
   "source": {

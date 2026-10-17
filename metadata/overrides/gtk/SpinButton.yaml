@@ -16,6 +16,66 @@ properties:
     provenance: "GtkSpinButton:climb-rate (Gtk 4 docs)"
   - name: update-policy
     provenance: "GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)"
+  - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:lower"
+    name: lower
+    js_name: lower
+    new: true
+    type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: 0
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    virtual: {op: via_object, via: adjustment, property: lower}
+    sample: 5.0
+    provenance: "GtkAdjustment:lower through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+  - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:upper"
+    name: upper
+    js_name: upper
+    new: true
+    type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: 0
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    virtual: {op: via_object, via: adjustment, property: upper}
+    sample: 80.0
+    provenance: "GtkAdjustment:upper through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+  - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:stepIncrement"
+    name: stepIncrement
+    js_name: stepIncrement
+    new: true
+    type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: 0
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    virtual: {op: via_object, via: adjustment, property: step-increment}
+    sample: 3.0
+    provenance: "GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+  - id: "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:pageIncrement"
+    name: pageIncrement
+    js_name: pageIncrement
+    new: true
+    type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: 0
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    virtual: {op: via_object, via: adjustment, property: page-increment}
+    sample: 25.0
+    provenance: "GtkAdjustment:page-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
 signals:
   - name: value-changed
     js_event: value-changed

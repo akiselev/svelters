@@ -10,6 +10,7 @@ inherit:
     - { js: finished, native: finished, connect: "finished(int)", args: [{ name: result, type: i32 }], trigger: "static_cast<QDialog*>($w)->done(7 + $i)", expect_args: ["7"], provenance: "QDialog::finished(int) (qdoc)" }
   methods:
     - { js: open, native: open, expect: "$w->isVisible()", provenance: "QDialog::open() slot (qdoc); non-blocking, window-modal" }
+    - { js: present, native: show, expect: "$w->isVisible()", provenance: "QWidget::show() slot (qdoc); modeless show under the GTK name, as QMainWindow present" }
     - { js: accept, native: accept, provenance: "QDialog::accept() slot (qdoc)" }
     - { js: reject, native: reject, provenance: "QDialog::reject() slot (qdoc)" }
     - { js: done, native: done, params: [i32], provenance: "QDialog::done(int) slot (qdoc)" }

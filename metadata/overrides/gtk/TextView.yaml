@@ -13,6 +13,22 @@ properties:
     provenance: "GtkTextView:top-margin (Gtk 4 docs)"
   - name: justification
     provenance: "GtkTextView:justification (Gtk 4 docs)"
+  - id: "svelters-api:v1:type:gtk:Gtk:TextView:prop:text"
+    name: text
+    js_name: text
+    new: true
+    type: {ref: string, nullable: false, native: "gchar*", gtype: gchararray}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: ""
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    virtual: {op: via_object, via: buffer, property: text}
+    echo_suppress: [changed]
+    sample: "p3 text"
+    provenance: "GtkTextBuffer:text through GtkTextView:buffer (Gtk 4 docs); forwarded by the backend (X7, G12)"
 methods:
   - name: place_cursor_onscreen
     js_name: place_cursor_onscreen
@@ -26,3 +42,27 @@ methods:
     args: []
     expect: 'matches!(r, V::Handle(_) | V::Boxed(_))'
     provenance: "gtk_text_view_get_buffer (Gtk 4 docs); called through GIRepository (X1)"
+signals:
+  - name: changed
+    new: true
+    via: buffer
+    js_event: changed
+    trigger: {rust: 'o.downcast_ref::<gtk::TextView>().unwrap().buffer().set_text(&format!("text {i}"));', values: [a, b, c]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: last
+    flags: []
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GtkTextBuffer::changed through GtkTextView:buffer (Gtk 4 docs); the text view has no such signal, the backend connects it on the buffer (X7, G12)"
+bindings:
+  - name: text
+    direction: two_way
+    property: text
+    type: {ref: string, nullable: false}
+    change: {signal: changed, role: any_change, value: arg0}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: [changed]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "GtkTextBuffer:text set through the buffer emits changed only for real edits (Gtk 4 docs)"

@@ -622,12 +622,132 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_detailed_action_name",
-   "fingerprint": "d5a1f56411c9577b",
+   "fingerprint": "13a7e10917e8a1bf",
    "kind": "Actionable",
    "name": "set_detailed_action_name",
    "section": "methods",
    "tests": [
     "generated::verify::method_actionable_set_detailed_action_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:signal:changed",
+   "fingerprint": "0f92cf703231f73b",
+   "kind": "Adjustment",
+   "name": "changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_adjustment_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:signal:value-changed",
+   "fingerprint": "658c0e0f58e4ad86",
+   "kind": "Adjustment",
+   "name": "value-changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_adjustment_value_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:lower",
+   "fingerprint": "f4ded37384754dad",
+   "kind": "Adjustment",
+   "name": "lower",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_adjustment_lower"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:page-increment",
+   "fingerprint": "a1a9eadacc1e600f",
+   "kind": "Adjustment",
+   "name": "page-increment",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_adjustment_page_increment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:page-size",
+   "fingerprint": "75218b19552a0fa8",
+   "kind": "Adjustment",
+   "name": "page-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_adjustment_page_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:step-increment",
+   "fingerprint": "f8c1d0af9acc7396",
+   "kind": "Adjustment",
+   "name": "step-increment",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_adjustment_step_increment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:upper",
+   "fingerprint": "0b6054b633abe266",
+   "kind": "Adjustment",
+   "name": "upper",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_adjustment_upper"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:value",
+   "fingerprint": "8d93d4ca0b1aa653",
+   "kind": "Adjustment",
+   "name": "value",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_adjustment_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:clamp_page",
+   "fingerprint": "137b181babf9cb5d",
+   "kind": "Adjustment",
+   "name": "clamp_page",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_adjustment_clamp_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:configure",
+   "fingerprint": "4861efac4acb7b7e",
+   "kind": "Adjustment",
+   "name": "configure",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_adjustment_configure"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:get_minimum_increment",
+   "fingerprint": "90fc718dfd88d2fc",
+   "kind": "Adjustment",
+   "name": "get_minimum_increment",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_adjustment_get_minimum_increment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:get_value",
+   "fingerprint": "faef1b636dd1ef6c",
+   "kind": "Adjustment",
+   "name": "get_value",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_adjustment_get_value"
    ]
   },
   {
@@ -1175,7 +1295,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:method:select_region",
-   "fingerprint": "37d4a92fcd53c2b3",
+   "fingerprint": "08fcaa2beccff2c8",
    "kind": "Editable",
    "name": "select_region",
    "section": "methods",
@@ -2768,6 +2888,36 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:lower",
+   "fingerprint": "ed6783eeec39ec55",
+   "kind": "Range",
+   "name": "lower",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_range_lower"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageIncrement",
+   "fingerprint": "5ad5cd4cd4c7bcdd",
+   "kind": "Range",
+   "name": "pageIncrement",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_range_pageincrement"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageSize",
+   "fingerprint": "862a139f00d1eaeb",
+   "kind": "Range",
+   "name": "pageSize",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_range_pagesize"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:restrict-to-fill-level",
    "fingerprint": "9fc2bb65f82f7226",
    "kind": "Range",
@@ -2785,6 +2935,37 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_range_show_fill_level"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:stepIncrement",
+   "fingerprint": "cb53e48ef3dca7ea",
+   "kind": "Range",
+   "name": "stepIncrement",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_range_stepincrement"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:upper",
+   "fingerprint": "a5057e0923ef3a2d",
+   "kind": "Range",
+   "name": "upper",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_range_upper"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:value",
+   "fingerprint": "d368705bcbdeb9d7",
+   "kind": "Range",
+   "name": "value",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_range_value",
+    "generated::verify::echo_range_value"
    ]
   },
   {
@@ -2825,6 +3006,16 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_range_set_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:value",
+   "fingerprint": "8b575d65f48db5fd",
+   "kind": "Range",
+   "name": "value",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_range_value"
    ]
   },
   {
@@ -3240,6 +3431,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:lower",
+   "fingerprint": "026849e4e5114c26",
+   "kind": "SpinButton",
+   "name": "lower",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_spinbutton_lower"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:numeric",
    "fingerprint": "674051b389b2db99",
    "kind": "SpinButton",
@@ -3247,6 +3448,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_spinbutton_numeric"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:pageIncrement",
+   "fingerprint": "b11be1d4c985a27f",
+   "kind": "SpinButton",
+   "name": "pageIncrement",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_spinbutton_pageincrement"
    ]
   },
   {
@@ -3260,6 +3471,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:stepIncrement",
+   "fingerprint": "bcf7552a9cfed38c",
+   "kind": "SpinButton",
+   "name": "stepIncrement",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_spinbutton_stepincrement"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:update-policy",
    "fingerprint": "ac76756f92accc0b",
    "kind": "SpinButton",
@@ -3267,6 +3488,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_spinbutton_update_policy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:upper",
+   "fingerprint": "d0bc957442b9d829",
+   "kind": "SpinButton",
+   "name": "upper",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_spinbutton_upper"
    ]
   },
   {
@@ -3613,6 +3844,126 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:begin-user-action",
+   "fingerprint": "83f35497465717d2",
+   "kind": "TextBuffer",
+   "name": "begin-user-action",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_textbuffer_begin_user_action"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:changed",
+   "fingerprint": "ec9eb6f8f9c7069b",
+   "kind": "TextBuffer",
+   "name": "changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_textbuffer_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:end-user-action",
+   "fingerprint": "9d7eb84921104f8f",
+   "kind": "TextBuffer",
+   "name": "end-user-action",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_textbuffer_end_user_action"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:modified-changed",
+   "fingerprint": "600db2a364b4e1ed",
+   "kind": "TextBuffer",
+   "name": "modified-changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_textbuffer_modified_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:enable-undo",
+   "fingerprint": "2c59783f7bb268c5",
+   "kind": "TextBuffer",
+   "name": "enable-undo",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textbuffer_enable_undo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:text",
+   "fingerprint": "e508a634120f0318",
+   "kind": "TextBuffer",
+   "name": "text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textbuffer_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_char_count",
+   "fingerprint": "71a44078b442928b",
+   "kind": "TextBuffer",
+   "name": "get_char_count",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textbuffer_get_char_count"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_line_count",
+   "fingerprint": "cedc2912c2440886",
+   "kind": "TextBuffer",
+   "name": "get_line_count",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textbuffer_get_line_count"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_at_cursor",
+   "fingerprint": "4aac880338bbdb39",
+   "kind": "TextBuffer",
+   "name": "insert_at_cursor",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textbuffer_insert_at_cursor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:set_text",
+   "fingerprint": "89defba8739e29b2",
+   "kind": "TextBuffer",
+   "name": "set_text",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textbuffer_set_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:undo",
+   "fingerprint": "d65b5ad11ac96d1e",
+   "kind": "TextBuffer",
+   "name": "undo",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textbuffer_undo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:signal:changed",
+   "fingerprint": "8fe1c34707aab44d",
+   "kind": "TextView",
+   "name": "changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_textview_changed"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:cursor-visible",
    "fingerprint": "2230419add55c025",
    "kind": "TextView",
@@ -3663,6 +4014,17 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:text",
+   "fingerprint": "b76546a919f83a94",
+   "kind": "TextView",
+   "name": "text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_text",
+    "generated::verify::echo_textview_text"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:top-margin",
    "fingerprint": "2c62a1548f3bce75",
    "kind": "TextView",
@@ -3700,6 +4062,16 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_textview_place_cursor_onscreen"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:binding:text",
+   "fingerprint": "3743ec871dd41e03",
+   "kind": "TextView",
+   "name": "text",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_textview_text"
    ]
   },
   {

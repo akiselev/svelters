@@ -398,6 +398,14 @@ Ordering: the first styling use of an app sends `SHEET` with `NULL` (so a hot-re
 
 Op log lines: `style #h classes|name|inline|opacity <json|null>`, `style sheet "<id>" <json text|null>` (id `*` = clear), `style scheme "<scheme>" <number of palette pairs>`.
 
+### Toplevels in the tree (X7)
+
+No new vtable member and no new name kind. Convention for `insert`/`remove` when the **child** is of the TOPLEVEL lifetime class (a window or dialog):
+
+- `insert(parent, child, before=0, slot=0)` makes `child` transient for the window that contains `parent` (`parent` itself when it is a window). GTK: `gtk_window_set_transient_for`. Qt: `QWidget::setParent(parent->window(), windowFlags())`, which keeps the window type. `before` and `slot` are ignored. The child is not shown by the insert; `present` (windows), `open` (Qt dialogs, window-modal, non-blocking) or `modal` + `present` (GTK) show it. Blocking calls (`exec`, run loops) are never exposed.
+- `remove(parent, child)` undoes it (`set_transient_for(NULL)`, `setParent(nullptr, flags)`). Inserting an already inserted toplevel, a window into itself, or into a parent that is not in a window fails.
+- The tree edge is real for lifetime purposes: when the parent window dies, its transient toplevels die with it and are reported `SVL_GONE_PARENT` (Qt through the QObject parent; GTK destroys them from an idle). A transient toplevel that is closed on its own reports `SVL_GONE_CLOSED` as any toplevel.
+- Renderer side: a toplevel kind (`TOPLEVELS` in `bindings.generated.js`) may appear anywhere in a component; it is realized, inserted under the nearest enclosing toplevel element (none at the root), and shown by its `show` policy (`modal`, `modeless`, `none`) after that window was shown.
 
 Later ABI additions, not part of v2:
 

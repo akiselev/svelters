@@ -30,13 +30,22 @@ TYPE_PREFIX = "svelters-api:v1:type:gtk:"
 
 VALUE_TY = {"bool": "Bool", "i32": "I32", "u32": "U32", "i64": "I64", "u64": "U64", "f32": "F32", "f64": "F64",
             "string": "Str", "variant": "Variant"}
-F_READ, F_WRITE, F_CONSTRUCT, F_CONSTRUCT_ONLY, F_EXPLICIT_NOTIFY, F_VIRTUAL = 1, 2, 4, 8, 16, 32
+F_READ, F_WRITE, F_CONSTRUCT, F_CONSTRUCT_ONLY, F_EXPLICIT_NOTIFY, F_VIRTUAL, F_VIA = 1, 2, 4, 8, 16, 32, 64
 HANDLER_RESULT = {"none": 0, "bool_stop": 1, "value": 2}
 DOM_EVENT = {"clicked": "click", "changed": "change"}
 
 
 def rs(s: str) -> str:
     return json.dumps(s, ensure_ascii=True)
+
+
+def is_via(p: dict) -> bool:
+    """A property forwarded to the object another property returns (`virtual: {op: via_object, via, property}`)."""
+    return (p.get("virtual") or {}).get("op") == "via_object"
+
+
+def is_label_virtual(p: dict) -> bool:
+    return bool(p.get("virtual")) and not is_via(p)
 
 
 def value_ty(ref: str) -> str:
@@ -82,6 +91,18 @@ class Model:
                 self.attrs.append((k, i + 1, s, d, a))
         self.tags = {d["element"]["tag"]: d for d in self.kinds if "element" in d}
 
+    def is_widget(self, d: dict) -> bool:
+        return d["id"].endswith(":Gtk:Widget") or "Gtk.Widget" in d.get("bases", [])
+
+    def make(self, d: dict) -> str:
+        """Rust expression yielding the handle of the object facts annotated on kind `d` are tested on.
+        `verify_subject: {borrowed: {tag, getter}}`: an object reached through a getter of another
+        element (a GtkTextBuffer through GtkTextView.get_buffer), a BORROWED handle (X7, G12)."""
+        b = (d.get("verify_subject") or {}).get("borrowed")
+        if b:
+            return f"h.borrow_from({rs(b['tag'])}, {rs(b['getter'])})"
+        return f"h.create({rs(self.subject(d))})"
+
     def kind_ref(self, gir: str) -> int:
         ns, _, n = gir.rpartition(".")
         return self.kind_id.get(f"{TYPE_PREFIX}{ns}:{n}", 0)
@@ -90,7 +111,7 @@ class Model:
         """Name the harness uses to create an instance exercising facts annotated on kind d."""
         if "element" in d:
             return d["element"]["tag"]
-        if d["kind"] == "object" and not d["abstract"]:
+        if d["kind"] == "object" and (not d["abstract"] or (d.get("verify_subject") or {}).get("borrowed")):
             return d["native"]["gtype"]
         return d["verify_subject"]["tag"]
 
@@ -109,6 +130,8 @@ pub const F_CONSTRUCT: u8 = 4;
 pub const F_CONSTRUCT_ONLY: u8 = 8;
 pub const F_EXPLICIT_NOTIFY: u8 = 16;
 pub const F_VIRTUAL: u8 = 32;
+/// The property lives on the object another property returns (`via`), under another name (`target`).
+pub const F_VIA: u8 = 64;
 
 pub struct KindInfo {
     pub name: &'static str,
@@ -129,6 +152,8 @@ pub struct PropInfo {
     pub gtype: &'static str,
     pub flags: u8,
     pub echo: &'static [&'static str],
+    pub via: &'static str,
+    pub target: &'static str,
 }
 
 pub struct SignalInfo {
@@ -141,6 +166,8 @@ pub struct SignalInfo {
     pub sync_required: bool,
     /// Out-parameters the handler result fills (the `gpointer` params of the signal): (param index, JS name, type).
     pub outs: &'static [(u8, &'static str, &'static str)],
+    /// The signal is emitted by the object this property returns (GtkTextView `changed` comes from its buffer).
+    pub via: &'static str,
 }
 
 pub struct MethodInfo {
@@ -189,10 +216,12 @@ pub struct AttrInfo {
         a = p["access"]
         fl = ((F_READ if a["read"] else 0) | (F_WRITE if a["write"] else 0) | (F_CONSTRUCT if a["construct"] else 0)
               | (F_CONSTRUCT_ONLY if a["construct_only"] else 0)
-              | (F_EXPLICIT_NOTIFY if p["notify"]["explicit"] else 0) | (F_VIRTUAL if p.get("virtual") else 0))
+              | (F_EXPLICIT_NOTIFY if p["notify"]["explicit"] else 0)
+              | (F_VIRTUAL if is_label_virtual(p) else 0) | (F_VIA if is_via(p) else 0))
         echo = ", ".join(rs(e) for e in p.get("echo_suppress", []))
+        via, target = ((p["virtual"]["via"], p["virtual"]["property"]) if is_via(p) else ("", ""))
         o.append(f"    PropInfo {{ kind: {k}, name: {rs(p['name'])}, js_name: {rs(p['js_name'])}, ty: ValueTy::{value_ty(p['type']['ref'])}, "
-                 f"gtype: {rs(p['type'].get('gtype', ''))}, flags: {fl}, echo: &[{echo}] }},\n")
+                 f"gtype: {rs(p['type'].get('gtype', ''))}, flags: {fl}, echo: &[{echo}], via: {rs(via)}, target: {rs(target)} }},\n")
     o.append("];\n")
 
     o.append(f"\npub static SIGNALS: [SignalInfo; {len(m.signals)}] = [\n")
@@ -201,7 +230,7 @@ pub struct AttrInfo {
         outs = ", ".join(f"({q['index']}, {rs(q['name'])}, {rs(q['type'])})" for q in s.get("out_params", []))
         o.append(f"    SignalInfo {{ kind: {k}, name: {rs(s['name'])}, js_event: {rs(s['js_event'])}, params: &[{params}], "
                  f"result: {rs(s['returns']['type'])}, handler_result: {HANDLER_RESULT[s['handler_result']]}, "
-                 f"sync_required: {str(bool(s['sync_required'])).lower()}, outs: &[{outs}] }},\n")
+                 f"sync_required: {str(bool(s['sync_required'])).lower()}, outs: &[{outs}], via: {rs(s.get('via', ''))} }},\n")
     o.append("];\n")
 
     o.append(f"\npub static METHODS: [MethodInfo; {len(m.methods)}] = [\n")
@@ -373,7 +402,7 @@ def gen_slots(m: Model) -> str:
     vset, vget = [], []
     for i, (k, p) in enumerate(m.props):
         v = p.get("virtual")
-        if not v:
+        if not v or is_via(p):
             continue
         assert v["op"] == "managed_title_label", v
         prop = v["property"]
@@ -866,7 +895,7 @@ def signal_test(m: Model, d: dict, s: dict) -> tuple[str, str]:
     setup = (s.get("trigger") or {}).get("setup", "")
     name = fn_ident("signal", gir_name(d), s["name"])
     sig = rs(s["name"])
-    body = f"""        let e = h.create({rs(subj)});
+    body = f"""        let e = {m.make(d)};
         let o = e;
         {setup}
         let fire = |o: &gtk::glib::Object, v: &str, i: usize| {{
@@ -934,7 +963,7 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
             raise Untestable(f"property {p['name']}: echo_suppress needs a scalar sample (set `sample:`)")
         # Records, flags, boxed values, string lists, object references: the value read from the
         # widget must be accepted back unchanged (value converters round trip both ways).
-        return [wrap(fn_ident('prop', gir_name(d), p['name']), f"property {gir_name(d)}.{p['name']} (JS {p['js_name']}, round trip): {ann_prov(p)}", f"""        let o = h.create({rs(subj)});
+        return [wrap(fn_ident('prop', gir_name(d), p['name']), f"property {gir_name(d)}.{p['name']} (JS {p['js_name']}, round trip): {ann_prov(p)}", f"""        let o = {m.make(d)};
         {setup}
         let before = h.get_value(o, {js});
         h.set_value(o, {js}, &before).unwrap();
@@ -942,10 +971,16 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
 """)]
     setc, expect = smp
     extra = ""
-    if p.get("virtual"):
+    if is_via(p):
+        v = p["virtual"]
+        wrap_v = {"f64": "V::F64", "string": "V::Str", "bool": "V::Bool"}.get(p["type"]["ref"])
+        if wrap_v:
+            extra = (f"        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>({rs(v['via'])}).unwrap();\n"
+                     f"        assert_eq!({wrap_v}(tgt.property({rs(v['property'])})), {expect}, \"the object behind `{v['via']}` holds the value\");\n")
+    elif p.get("virtual"):
         extra = (f"        let w = h.obj(o).property::<Option<gtk::Widget>>({rs(p['virtual']['property'])}).unwrap();\n"
                  f"        assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), \"p3-sample\");\n")
-    out = [wrap(fn_ident('prop', gir_name(d), p['name']), f"property {gir_name(d)}.{p['name']} (JS {p['js_name']}): {ann_prov(p)}", f"""        let o = h.create({rs(subj)});
+    out = [wrap(fn_ident('prop', gir_name(d), p['name']), f"property {gir_name(d)}.{p['name']} (JS {p['js_name']}): {ann_prov(p)}", f"""        let o = {m.make(d)};
         {setup}
         let id = h.resolve_prop({rs(subj)}, {js});
         assert_ne!(id, 0);
@@ -962,7 +997,7 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
         listens = "".join(f"        h.listen(o, {rs(x)}, true).unwrap();\n" for x in sigs)
         names = ", ".join(rs(x) for x in sigs)
         out.append(wrap(fn_ident('echo', gir_name(d), p['name']),
-                        f"echo suppression for {gir_name(d)}.{p['name']}: programmatic sets do not reach listeners, native edits do.", f"""        let o = h.create({rs(subj)});
+                        f"echo suppression for {gir_name(d)}.{p['name']}: programmatic sets do not reach listeners, native edits do.", f"""        let o = {m.make(d)};
         {setup}
         let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {{
             let o = ob;
@@ -1007,7 +1042,7 @@ def binding_test(m: Model, d: dict, b: dict) -> tuple[str, str]:
              f"        assert_eq!(arg, h.get(o, {rs(p['js_name'])}), \"the change signal's first argument is the new value\");\n"
              if value_from == "arg0" else
              f"        assert_ne!(h.get(o, {rs(p['js_name'])}), V::Null, \"the property reads the new value\");\n")
-    return wrap(fn_ident("binding", gir_name(d), b["name"]), f"bind:{b['name']} on {gir_name(d)}: {prov_str(b['provenance'])}", f"""        let o = h.create({rs(subj)});
+    return wrap(fn_ident("binding", gir_name(d), b["name"]), f"bind:{b['name']} on {gir_name(d)}: {prov_str(b['provenance'])}", f"""        let o = {m.make(d)};
         let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {{
             let o = ob;
             let _ = (v, i);
@@ -1053,23 +1088,24 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
             if "annotated" not in me:
                 continue
             jn = me.get("js_name", me["name"])
+            W = "h.widget(o)" if m.is_widget(d) else "h.obj(o)"
 
             def mk(me=me, d=d, jn=jn):
                 if not me.get("expect"):
                     raise Untestable("method annotation needs `expect`")
                 if me.get("dispatch") == "dynamic":
                     args = ", ".join(v_lit(a) for a in me.get("args", []))
-                    return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']} (dynamic GI call): {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
+                    return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']} (dynamic GI call): {ann_prov(me)}", f"""        let o = {m.make(d)};
         {me.get('setup', '')}
         let r = h.call_args(o, {rs(jn)}, &[{args}]).unwrap();
-        let w = h.widget(o);
+        let w = {W};
         let _ = (&w, &r);
         assert!({me['expect']}, "postcondition: {me['expect'].replace('"', "'")}");
 """)]
-                return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']}: {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
+                return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']}: {ann_prov(me)}", f"""        let o = {m.make(d)};
         {me.get('setup', '')}
         h.call(o, {rs(jn)}).unwrap();
-        let w = h.widget(o);
+        let w = {W};
         let _ = &w;
         assert!({me['expect']}, "postcondition: {me['expect'].replace('"', "'")}");
 """)]
@@ -1081,7 +1117,7 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
             def mkl(d=d, life=life):
                 if life["class"] not in LIFE:
                     raise Untestable(f"lifetime class {life['class']} is not minted by the backend yet")
-                return [wrap(fn_ident("lifetime", gir_name(d)), f"lifetime {gir_name(d)}: {prov_str(life['provenance'])}", f"""        let o = h.create({rs(m.subject(d))});
+                return [wrap(fn_ident("lifetime", gir_name(d)), f"lifetime {gir_name(d)}: {prov_str(life['provenance'])}", f"""        let o = {m.make(d)};
         assert_eq!(h.handle_info(o).unwrap().lifetime, svelters_abi::{LIFE[life['class']]});
 """)]
             attempt(life["id"], "lifetime", d, "lifetime", life, mkl)

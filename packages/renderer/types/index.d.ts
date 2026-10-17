@@ -6,7 +6,7 @@
 // or add `/// <reference types="@svelters/renderer/types" />` to an ambient .d.ts file.
 import type { GtkElements } from './gtk';
 import type { QtElementDescriptors } from './qt';
-import type { BindableProps } from './bindings';
+import type { BindableProps, ToplevelAttrs, ToplevelTag } from './bindings';
 import type { MenuElements } from './menus';
 
 export type { GtkElements, QtElementDescriptors };
@@ -31,7 +31,8 @@ type WithBindings<E> = {
   [K in keyof E]: StyleAttrs &
     (K extends keyof BindableProps
       ? E[K] & { [N in keyof BindableProps[K] as `bind:${N & string}`]?: BindableProps[K][N] }
-      : E[K]);
+      : E[K]) &
+    (K extends ToplevelTag ? ToplevelAttrs : unknown);
 };
 
 declare global {

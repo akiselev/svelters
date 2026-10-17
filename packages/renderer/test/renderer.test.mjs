@@ -606,3 +606,62 @@ test('listen phases: separate native listens per flags, dispatch by flags, captu
   assert.equal(take(), `listen #${h} key-pressed off after`);
   r.remove(win);
 });
+
+test('toplevel kinds: a dialog inside a window is transient, shown after the window, removed with its block', async () => {
+  const win = el('window', { title: 'Main' });
+  const box = el('box');
+  const dlg = el('messagebox', { text: 'Hi' });
+  const lbl = el('label');
+  r.insert(box, lbl, null);
+  r.insert(box, dlg, null);
+  r.insert(win, box, null);
+  take();
+  r.insert(root, win, null);
+  const out = take().split('\n');
+  const id = (tag) => Number(out.find((l) => l.startsWith(`create ${tag} `)).split('#')[1]);
+  const [w, b, d] = [id('window'), id('box'), id('messagebox')];
+  assert.ok(out.includes(`insert #${w} #${d} before=end slot=default`), out.join('\n'));
+  assert.ok(out.indexOf(`call #${w} present []`) < out.indexOf(`call #${d} open []`), out.join('\n'));
+  assert.ok(!out.some((l) => l.startsWith(`insert #${b} #${d}`)), 'the dialog is not a layout child');
+  const late = el('label');
+  r.insert(box, late, null);
+  assert.match(take(), new RegExp(`^create label #\\d+\\ninsert #${b} #\\d+ before=end slot=default$`));
+  r.remove(dlg);
+  assert.equal(take(), `remove #${w} #${d}`);
+  await tick();
+  assert.equal(take(), `destroy #${d}`);
+  r.remove(win);
+  await tick();
+  take();
+});
+
+test('toplevel kinds: show policy and a dialog mounted at the root', async () => {
+  const hidden = el('messagebox', { show: 'none' });
+  const modeless = el('messagebox', { show: 'modeless' });
+  r.insert(root, hidden, null);
+  r.insert(root, modeless, null);
+  const out = take();
+  assert.ok(!out.includes('call #') || out.split('\n').filter((l) => l.startsWith('call')).length === 1, out);
+  assert.match(out, /call #\d+ present \[\]/);
+  assert.throws(() => r.insert(root, el('label'), null), /only toplevel kinds/);
+  assert.throws(() => r.insert(root, el('messagebox', { show: 'sometimes' }), null), /expected modal, modeless or none/);
+  r.remove(hidden);
+  r.remove(modeless);
+  await tick();
+  take();
+});
+
+test('toplevel kinds: a dialog nested in a subtree that is not yet realized waits for the window', () => {
+  const win = el('window');
+  const dlg = el('aboutdialog');
+  const inner = el('box');
+  r.insert(inner, dlg, null);
+  r.insert(win, inner, null);
+  take();
+  r.insert(root, win, null);
+  const lines = take().split('\n');
+  const w = lines.find((l) => l.startsWith('create window')).split('#')[1];
+  const d = lines.find((l) => l.startsWith('create aboutdialog')).split('#')[1];
+  assert.ok(lines.indexOf(`call #${w} present []`) >= 0 && lines.indexOf(`call #${w} present []`) < lines.indexOf(`call #${d} present []`), lines.join('\n'));
+  assert.ok(lines.includes(`insert #${w} #${d} before=end slot=default`), lines.join('\n'));
+});

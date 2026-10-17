@@ -266,6 +266,16 @@ impl Harness {
         self.try_create(kind).unwrap_or_else(|e| panic!("create {kind}: {e}"))
     }
 
+    /// A BORROWED handle: the object `getter` (a no-argument method of element `tag`, e.g.
+    /// `get_buffer`) returns. The element stays alive in the harness.
+    pub fn borrow_from(&self, tag: &str, getter: &str) -> u64 {
+        let owner = self.create(tag);
+        match self.call_args(owner, getter, &[]) {
+            Ok(V::Handle(b)) => b,
+            other => panic!("{tag}.{getter} did not return a handle: {other:?}"),
+        }
+    }
+
     fn kind_of(&self, h: u64) -> u32 {
         match self.kinds.borrow().get(&h) {
             Some(k) => *k,

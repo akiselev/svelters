@@ -47,7 +47,7 @@ DATES = {"QDate": "date", "QTime": "time", "QDateTime": "datetime"}
 
 
 # QtGui classes the menu model needs (X4): actions are non-widget children of menus, menu bars and tool bars.
-QTGUI_CLASSES = {"QAction", "QActionGroup"}
+QTGUI_CLASSES = {"QAction", "QActionGroup", "QTextDocument"}
 _MODULES: dict = {}
 
 

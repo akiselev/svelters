@@ -246,6 +246,42 @@ fn close_window() {
     assert!(info(t.vp).is_err() && info(t.win).is_err());
 }
 
+fn str_value(v: &str) -> svl_value {
+    svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: v.as_ptr().cast(), len: v.len() } })
+}
+
+fn bool_value(v: bool) -> svl_value {
+    svl_value::new(SVL_BOOL, svl_value_u { b: v })
+}
+
+/// X7 (G12): a QTextEdit's document is a borrowed handle with its own generated kind, so its
+/// properties, methods and signals work on it.
+fn document_kind() {
+    let edit = create("textedit");
+    let doc = getter(edit, "document").unwrap().expect("a text edit has a document");
+    assert_eq!(info(doc).unwrap().lifetime, SVL_LIFE_BORROWED);
+    assert_eq!(info(doc).unwrap().kind, kind("textdocument"), "borrowed objects get the kind of their class");
+    assert_eq!(getter(edit, "document").unwrap(), Some(doc), "same object, same handle");
+
+    let k = kind("textdocument");
+    let a = str_value("one\ntwo");
+    let mut out = svl_value::null();
+    assert_eq!(unsafe { (be().call)(be().self_, doc, id(SVL_METHOD, k, "setPlainText"), &a, 1, &mut out) }, 0, "{}", err());
+    assert_eq!(unsafe { (be().get_prop)(be().self_, doc, id(SVL_PROP, k, "blockCount"), &mut out) }, 0, "{}", err());
+    assert_eq!((out.tag, unsafe { out.u.i }), (SVL_I64, 2));
+    // the editor shows what the document holds
+    let mut text = svl_value::null();
+    let ek = kind("textedit");
+    assert_eq!(unsafe { (be().get_prop)(be().self_, edit, id(SVL_PROP, ek, "plainText"), &mut text) }, 0);
+    // Qt returns UTF-16 (SVL_CAP_UTF16_OUT); len counts code units
+    let units = unsafe { std::slice::from_raw_parts(text.u.s.ptr.cast::<u16>(), text.u.s.len) };
+    assert_eq!(String::from_utf16(units).unwrap(), "one\ntwo");
+    let v = bool_value(false);
+    assert_eq!(unsafe { (be().set_prop)(be().self_, doc, id(SVL_PROP, k, "undoRedoEnabled"), &v) }, 0, "{}", err());
+    destroy(doc);
+    destroy(edit);
+}
+
 fn scenario(steps: Vec<fn()>) {
     let mut all: Vec<Step> = vec![Box::new(build)];
     all.extend(steps.into_iter().map(|f| Box::new(f) as Step));
@@ -257,5 +293,6 @@ fn main() {
     counter_qt::run_as_test("guards", || scenario(vec![guards]));
     counter_qt::run_as_test("destroy_forgets", || scenario(vec![destroy_forgets]));
     counter_qt::run_as_test("owner_death", || scenario(vec![destroy_owner, owner_died, at_most_once]));
+    counter_qt::run_as_test("document_kind", || scenario(vec![document_kind]));
     counter_qt::run_as_test("window_close_cascade", || scenario(vec![close_window, at_most_once]));
 }

@@ -1,0 +1,43 @@
+create window #1
+set #1 title "Main"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 8
+create label #3
+set #3 label "settings open"
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+set #4 label "Toggle"
+insert #2 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "About"
+insert #2 #5 before=end slot=default
+create window #6
+set #6 title "Settings"
+create label #7
+set #7 label "Settings body"
+insert #6 #7 before=end slot=default
+insert #1 #6 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+call #6 present []
+create aboutdialog #8
+set #8 programName "Dialogs"
+event #4 clicked []
+remove #1 #6
+set #3 label "settings closed"
+destroy #7
+destroy #6
+event #4 clicked []
+create window #9
+set #9 title "Settings"
+create label #10
+set #10 label "Settings body"
+insert #9 #10 before=end slot=default
+insert #1 #9 before=end slot=default
+call #9 present []
+set #3 label "settings open"
+event #5 clicked []
+call #8 present []
