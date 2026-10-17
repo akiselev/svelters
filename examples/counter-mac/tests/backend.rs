@@ -93,64 +93,110 @@ mod mac {
         }
     }
 
-    /// Diagnostics for CI (only with SVELTERS_APPKIT_TRACE_FRAMES): does the display tick at all,
-    /// and how late are run-loop timers, before and after `finishLaunching` / an activity token.
+    pub struct TickIvars {
+        pub n: std::cell::Cell<u32>,
+    }
+
+    objc2::define_class!(
+        #[unsafe(super(objc2::runtime::NSObject))]
+        #[thread_kind = objc2::MainThreadOnly]
+        #[name = "FA1TickCounter"]
+        #[ivars = TickIvars]
+        pub struct TickCounter;
+
+        impl TickCounter {
+            #[unsafe(method(tick:))]
+            fn tick(&self, _l: Option<&objc2::runtime::AnyObject>) {
+                self.ivars().n.set(self.ivars().n.get() + 1);
+            }
+        }
+    );
+
+    /// Diagnostics for CI (only with SVELTERS_APPKIT_TRACE_FRAMES): which display-link setups tick
+    /// on this machine, and how late run-loop timers are.
     fn frame_path_probe() {
-        use objc2::runtime::AnyObject;
-        use objc2::{class, msg_send, rc::Retained};
+        use objc2::rc::Retained;
+        use objc2::runtime::{AnyObject, Sel};
+        use objc2::{DefinedClass, MainThreadMarker, MainThreadOnly, class, msg_send, sel};
         if std::env::var_os("SVELTERS_APPKIT_TRACE_FRAMES").is_none() {
             return;
         }
         let h = Harness::shared();
-        eprintln!("[probe] CoreGraphics/CVDisplayLink (display, width, Hz, rc, ticks/300ms): {:?}", probe::cv(300));
-        unsafe {
-            let scr: Option<Retained<AnyObject>> = msg_send![class!(NSScreen), mainScreen];
-            if let Some(s) = scr {
-                let fps: isize = msg_send![&*s, maximumFramesPerSecond];
-                eprintln!("[probe] NSScreen.mainScreen maximumFramesPerSecond={fps}");
-            } else {
-                eprintln!("[probe] no NSScreen.mainScreen");
-            }
-        }
-        let w = h.create("window");
-        h.call(w, "make-key-and-order-front", vec![]).unwrap();
-        let measure = |label: &str| {
-            for _ in 0..3 {
-                let before = h.frames();
-                let t = std::time::Instant::now();
-                h.backend_trait().request_frame();
-                while h.frames() == before && t.elapsed().as_millis() < 1000 {
-                    h.pump(2);
-                }
-                eprintln!("[probe] {label}: frame after {:?}", t.elapsed());
-            }
+        let mtm = MainThreadMarker::new().unwrap();
+        eprintln!("[probe] CVDisplayLink (display, width, Hz, rc, ticks/300ms): {:?}", probe::cv(300));
+        // Timers before any window exists: request_frame takes the 16 ms timer path.
+        for _ in 0..3 {
+            let before = h.frames();
             let t = std::time::Instant::now();
+            h.backend_trait().request_frame();
+            while h.frames() == before && t.elapsed().as_millis() < 1000 {
+                h.pump(2);
+            }
+            eprintln!("[probe] no window: 16 ms frame timer fired after {:?}", t.elapsed());
             let c = h.checkpoints();
-            h.backend_trait().schedule_wake(10);
+            let t = std::time::Instant::now();
+            h.backend_trait().schedule_wake(16);
             while h.checkpoints() == c && t.elapsed().as_millis() < 1000 {
                 h.pump(2);
             }
-            eprintln!("[probe] {label}: 10 ms schedule_wake fired after {:?}", t.elapsed());
+            eprintln!("[probe] no window: 16 ms schedule_wake fired after {:?}", t.elapsed());
+        }
+        let w = h.create("window");
+        h.call(w, "make-key-and-order-front", vec![]).unwrap();
+        h.pump(100);
+        let win = h.backend.object(w).unwrap();
+        let view: Retained<AnyObject> = unsafe { msg_send![&*win, contentView] };
+        let screen: Option<Retained<AnyObject>> = unsafe { msg_send![&*win, screen] };
+        let counter = || {
+            let c = TickCounter::alloc(mtm).set_ivars(TickIvars { n: std::cell::Cell::new(0) });
+            let c: Retained<TickCounter> = unsafe { msg_send![super(c), init] };
+            c
         };
-        measure("fresh");
+        let add = |link: &AnyObject, mode: &str| unsafe {
+            let rl: Retained<AnyObject> = msg_send![class!(NSRunLoop), mainRunLoop];
+            let m = objc2_foundation::NSString::from_str(mode);
+            let _: () = msg_send![link, addToRunLoop: &*rl, forMode: &*m];
+        };
+        let run = |label: &str, src: &AnyObject, mode: &str, pump: &dyn Fn()| {
+            let c = counter();
+            let tick: Sel = sel!(tick:);
+            let link: Option<Retained<AnyObject>> = unsafe { msg_send![src, displayLinkWithTarget: &*c, selector: tick] };
+            let Some(link) = link else {
+                eprintln!("[probe] {label}: no link");
+                return;
+            };
+            add(&link, mode);
+            let paused: bool = unsafe { msg_send![&*link, isPaused] };
+            pump();
+            let _: () = unsafe { msg_send![&*link, invalidate] };
+            eprintln!("[probe] {label} ({mode}, paused at start={paused}): {} ticks", c.ivars().n.get());
+        };
+        let next_event = || h.pump(300);
+        let cf_run = || {
+            unsafe extern "C" {
+                fn CFRunLoopRunInMode(mode: *const std::ffi::c_void, secs: f64, ret: u8) -> i32;
+                static kCFRunLoopDefaultMode: *const std::ffi::c_void;
+            }
+            unsafe { CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.3, 0) };
+        };
+        run("view link, nextEvent", &view, "kCFRunLoopCommonModes", &next_event);
+        run("view link, nextEvent", &view, "kCFRunLoopDefaultMode", &next_event);
+        run("view link, CFRunLoopRunInMode", &view, "kCFRunLoopDefaultMode", &cf_run);
+        run("window link", &win, "kCFRunLoopDefaultMode", &next_event);
+        if let Some(s) = &screen {
+            run("screen link", s, "kCFRunLoopDefaultMode", &next_event);
+        }
+        let _: () = unsafe { msg_send![&*view, setWantsLayer: true] };
+        h.pump(50);
+        run("layer-backed view link", &view, "kCFRunLoopDefaultMode", &next_event);
         unsafe {
             let app: Retained<AnyObject> = msg_send![class!(NSApplication), sharedApplication];
             let _: () = msg_send![&*app, finishLaunching];
             let _: () = msg_send![&*app, activateIgnoringOtherApps: true];
-            let active: bool = msg_send![&*app, isActive];
-            eprintln!("[probe] after finishLaunching+activate: isActive={active}");
         }
         h.pump(100);
-        measure("launched");
-        unsafe {
-            let pi: Retained<AnyObject> = msg_send![class!(NSProcessInfo), processInfo];
-            let reason = objc2_foundation::NSString::from_str("svelters tests");
-            // NSActivityUserInitiated | NSActivityLatencyCritical
-            let opts: u64 = 0x00FFFFFF | 0xFF00000000;
-            let tok: Option<Retained<AnyObject>> = msg_send![&*pi, beginActivityWithOptions: opts, reason: &*reason];
-            std::mem::forget(tok);
-        }
-        measure("activity");
+        run("after finishLaunching, view link", &view, "kCFRunLoopDefaultMode", &next_event);
+        run("after finishLaunching, window link", &win, "kCFRunLoopDefaultMode", &next_event);
         h.destroy(w);
     }
 

@@ -56,6 +56,18 @@ STRUCTS = {"NSRect": "rect", "CGRect": "rect", "NSSize": "size", "CGSize": "size
 
 
 def setup_lib(ci):
+    # Apple's libclang can be newer than the bindings and report cursor kinds they do not know
+    # (new attributes, e.g. kind 431 from Xcode 26's clang). None of those matter here: map them
+    # to UNEXPOSED_ATTR instead of raising.
+    known = ci.CursorKind.from_id.__func__
+
+    def from_id(cls, kind_id):
+        try:
+            return known(cls, kind_id)
+        except ValueError:
+            return ci.CursorKind.UNEXPOSED_ATTR
+
+    ci.CursorKind.from_id = classmethod(from_id)
     lib = ci.conf.lib
     lib.clang_Cursor_getObjCPropertyAttributes.argtypes = [ci.Cursor, ctypes.c_uint]
     lib.clang_Cursor_getObjCPropertyAttributes.restype = ctypes.c_uint
