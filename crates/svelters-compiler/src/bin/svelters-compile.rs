@@ -1,4 +1,4 @@
-//! `svelters-compile --backend gtk|qt [--spec path.json] [--filename name] [--dev] [--module] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt [--spec path.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! Prints the generated JS (or, with `--json`, `{js, map, diagnostics, backend, timings}`).
@@ -8,7 +8,7 @@ use std::io::Read;
 use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile_module};
 use svelters_compiler::semantics::SpecBackend;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt [--spec spec.json] [--filename name] [--dev] [--module] [--json] <file.svelte | file.svelte.js | ->";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt [--spec spec.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
 
 fn main() {
     let mut backend = "gtk".to_string();
@@ -17,6 +17,7 @@ fn main() {
     let mut json = false;
     let mut dev = false;
     let mut module = false;
+    let mut css_scope: Option<String> = None;
     let mut input: Option<String> = None;
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
@@ -27,6 +28,7 @@ fn main() {
             "--json" => json = true,
             "--dev" => dev = true,
             "--module" => module = true,
+            "--css-scope" => css_scope = args.next(),
             "-h" | "--help" => {
                 eprintln!("{USAGE}");
                 return;
@@ -55,7 +57,7 @@ fn main() {
             eprintln!("svelters-compile: {e}");
             std::process::exit(2)
         });
-        compile(&src, &CompileOptions { filename: filename.clone(), backend: &sem, dev })
+        compile(&src, &CompileOptions { filename: filename.clone(), backend: &sem, dev, css_scope })
     };
     for d in &res.diagnostics {
         eprintln!("{}", d.render(&filename));

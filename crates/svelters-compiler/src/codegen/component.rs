@@ -197,6 +197,10 @@ impl Codegen<'_, '_> {
             Op::ChildAttr { value: AttrValue::Dynamic(value), .. } => self.dynamic_reactive(value),
             Op::Token { cond, .. } => !cond.is_empty(),
             Op::StyleProp { .. } => true,
+            Op::Classes { dynamic, toggles, .. } => dynamic.is_some() || !toggles.is_empty(),
+            Op::WidgetName { value: AttrValue::Dynamic(value), .. } => self.dynamic_reactive(value),
+            Op::InlineStyle { dynamic, directives, .. } => dynamic.is_some() || !directives.is_empty(),
+            Op::StyleSetter { .. } => true,
             _ => false,
         }
     }
@@ -294,6 +298,83 @@ impl Codegen<'_, '_> {
                 self.paren_expr(expr, Mode::Read);
                 self.w.write(");");
             }
+            Op::Classes { base, dynamic, toggles, span } => {
+                self.w.map(span.start);
+                if dynamic.is_none() && toggles.is_empty() {
+                    self.w.write(&format!("$n.attr({n}, \"class\", {});", js_str(base)));
+                    return;
+                }
+                self.w.write(&format!("$.template_effect(() => $n.attr({n}, \"class\", $n.class_name({}, ", js_str(base)));
+                match dynamic {
+                    Some(id) => self.w.write(&format!("$.get(c{})", id + 1)),
+                    None => self.w.write("null"),
+                }
+                self.w.write(", [");
+                for (i, (name, e)) in toggles.iter().enumerate() {
+                    if i > 0 {
+                        self.w.write(", ");
+                    }
+                    self.w.write(&format!("[{}, !!", js_str(name)));
+                    self.paren_expr(e, Mode::Read);
+                    self.w.write("]");
+                }
+                self.w.write("])));");
+            }
+            Op::WidgetName { value, span } => {
+                self.w.map(span.start);
+                match value {
+                    AttrValue::Static(v) => {
+                        self.w.write(&format!("$n.attr({n}, \"id\", "));
+                        self.json(v);
+                        self.w.write(");");
+                    }
+                    AttrValue::Dynamic(d) => {
+                        let reactive = self.dynamic_reactive(d);
+                        if reactive {
+                            self.w.write("$.template_effect(() => ");
+                        }
+                        self.w.write(&format!("$n.attr({n}, \"id\", "));
+                        self.dynamic(d);
+                        self.w.write(")");
+                        if reactive {
+                            self.w.write(")");
+                        }
+                        self.w.write(";");
+                    }
+                }
+            }
+            Op::InlineStyle { base, dynamic, directives, span } => {
+                self.w.map(span.start);
+                if dynamic.is_none() && directives.is_empty() {
+                    self.w.write(&format!("$n.attr({n}, \"style\", {});", js_str(base)));
+                    return;
+                }
+                self.w.write(&format!("$.template_effect(() => $n.attr({n}, \"style\", $n.style_text("));
+                match dynamic {
+                    Some(d) => self.dynamic(d),
+                    None => self.w.write(&js_str(base)),
+                }
+                self.w.write(", [");
+                for (i, (name, v)) in directives.iter().enumerate() {
+                    if i > 0 {
+                        self.w.write(", ");
+                    }
+                    self.w.write(&format!("[{}, ", js_str(name)));
+                    match v {
+                        AttrValue::Static(j) => self.json(j),
+                        AttrValue::Dynamic(d) => self.dynamic(d),
+                    }
+                    self.w.write("]");
+                }
+                self.w.write("])));");
+            }
+            Op::StyleSetter { name, target, child_attr, backend, value, span } => {
+                self.w.map(span.start);
+                let f = if *child_attr { "child_attr" } else { "set" };
+                self.w.write(&format!("$.template_effect(() => $n.{f}({n}, {}, $n.setter_value({}, {}, ", js_str(target), js_str(backend), js_str(name)));
+                self.dynamic(value);
+                self.w.write(")));");
+            }
             Op::ChildAttr { name, value, span } => {
                 self.w.map(span.start);
                 match value {
@@ -361,8 +442,9 @@ impl Codegen<'_, '_> {
                     self.w.write("));");
                 }
             }
-            Op::StyleProp { prop, candidates, fallback, span } => {
+            Op::StyleProp { prop, child_attr, candidates, fallback, span } => {
                 self.w.map(span.start);
+                let f = if *child_attr { "child_attr" } else { "set" };
                 match fallback {
                     Fallback::Restore => self.w.write(&format!("$n.capture({n}, {});", js_str(prop))),
                     // the widget starts at the spec's native default: don't write it redundantly
@@ -372,7 +454,7 @@ impl Codegen<'_, '_> {
                 if !matches!(fallback, Fallback::Default(d) if d.is_null()) {
                     self.line();
                 }
-                self.w.write(&format!("$.template_effect(() => $n.set({n}, {}, ", js_str(prop)));
+                self.w.write(&format!("$.template_effect(() => $n.{f}({n}, {}, ", js_str(prop)));
                 for (c, v) in candidates {
                     if c.is_empty() {
                         self.json(v);

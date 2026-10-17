@@ -16,6 +16,7 @@
 
 <style>
   .x { color: red; }
-  box { spacing: 4px; }
-  button:hover { min-height: 10dp; }
+  box { spacing: 4dp; }
+  button:hover { height-request: 10px; minimum-height: 10px; }
+  .x .y { spacing: 2px; }
 </style>

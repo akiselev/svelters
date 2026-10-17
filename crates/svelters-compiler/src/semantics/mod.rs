@@ -11,8 +11,8 @@ pub mod spec;
 
 pub use backend::SpecBackend;
 pub use spec::{
-    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Contract, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
-    ValueKind,
+    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
+    StylePropSpec, ValueKind, Via,
 };
 
 use crate::diag::Diagnostics;
@@ -32,7 +32,6 @@ pub mod codes {
     pub const STYLE_UNKNOWN_DECLARATION: &str = "style_unknown_declaration";
     pub const STYLE_NOT_APPLICABLE: &str = "style_not_applicable";
     pub const STYLE_BAD_VALUE: &str = "style_bad_value";
-    pub const STYLE_INTENT_UNSUPPORTED: &str = "style_intent_unsupported";
     pub const UNKNOWN_CHILD_ATTR: &str = "unknown_child_attr";
     pub const CHILD_ATTR_BAD_VALUE: &str = "child_attr_bad_value";
     pub const LISTEN_PHASE_UNSUPPORTED: &str = "listen_phase_unsupported";
@@ -208,6 +207,8 @@ pub enum StaticValue {
     Flags { nicks: Vec<String>, bits: Option<u64> },
     /// A list of strings (GTK `css-classes`; ABI v3 passes it as an array).
     StrList(Vec<String>),
+    /// A record value (`{ top, right, bottom, left }` insets).
+    Record(serde_json::Value),
 }
 
 impl StaticValue {
@@ -222,20 +223,18 @@ impl StaticValue {
             StaticValue::Str(s) | StaticValue::Enum(s) => J::String(s.clone()),
             StaticValue::Flags { nicks, .. } => J::Array(nicks.iter().cloned().map(J::String).collect()),
             StaticValue::StrList(l) => J::Array(l.iter().cloned().map(J::String).collect()),
+            StaticValue::Record(v) => v.clone(),
         }
     }
 }
 
-/// What a style declaration lowers to.
+/// What a setter or child-attr style declaration lowers to.
 #[derive(Debug, Clone, PartialEq)]
 pub enum StyleLowering {
     /// `$n.set(node, prop, value)`.
     SetProp { prop: String, value: StaticValue },
-    /// `$n.token(node, prop, token, true)` on a token list prop (`list<string>`, e.g. GTK `cssClasses`).
-    AddToken { prop: String, token: String },
-    /// A `native_intent` declaration: the backend's convention for `intent`; `actions` are
-    /// `SetProp`/`AddToken` (empty: leave the native default).
-    Intent { declaration: String, intent: String, actions: Vec<StyleLowering> },
+    /// `$n.child_attr(node, attr, value)`: a child attribute owned by the native parent.
+    ChildAttr { attr: String, value: StaticValue },
 }
 
 /// Native semantics of one backend, as the compiler needs them.
@@ -270,7 +269,16 @@ pub trait BackendSemantics {
     fn place_child(&self, parent: &ElementRef, child: &ElementRef, requested_slot: Option<&str>) -> Result<SlotPlan, Unresolved>;
     /// The property that text children fold into (`<label>Count: {n}</label>`).
     fn text_content(&self, el: &ElementRef) -> Option<&PropertySpec>;
-    fn style_declaration(&self, el: &ElementRef, name: &str, value: &[ValueToken]) -> Result<StyleLowering, Unresolved>;
+    /// The style table entry of `name` (None: not a style property of this backend).
+    fn style_property(&self, name: &str) -> Option<&StylePropSpec>;
+    /// Whether `name` is a setter or child-attr property here (the compiler's part of a sheet;
+    /// `css` declarations go to the X6 translator).
+    fn is_setter_property(&self, name: &str) -> bool {
+        self.style_property(name).is_some_and(|p| p.via != Via::Css)
+    }
+    /// A setter or child-attr declaration on `el` (whose native parent is `parent`, for a child
+    /// attribute). `Ok(None)`: not the compiler's (a `css` property, or unknown here).
+    fn style_declaration(&self, el: &ElementRef, parent: Option<&ElementRef>, name: &str, value: &[ValueToken]) -> Result<Option<StyleLowering>, Unresolved>;
     /// A static attribute value (`None` = bare attribute) as a typed constant.
     fn coerce_static(&self, prop: &PropertySpec, value: Option<&str>) -> Result<StaticValue, String>;
     /// Text nodes, when the backend has them (spec `text_node`): the text kind and its text

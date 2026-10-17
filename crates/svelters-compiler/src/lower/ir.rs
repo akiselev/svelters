@@ -99,9 +99,22 @@ pub enum Op<'a> {
     Track { prop: String, signal: String, arg: i64 },
     /// `$n.token(node, prop, token, cond)`; static when `cond` is empty.
     Token { prop: String, token: String, cond: Cond<'a>, span: Span },
-    /// Style-driven prop with conditional candidates, highest precedence first; the first whose
-    /// condition holds wins, else `fallback`.
-    StyleProp { prop: String, candidates: Vec<(Cond<'a>, Json)>, fallback: Fallback, span: Span },
+    /// Style-driven prop (or child attribute, `child_attr`) with conditional candidates, highest
+    /// precedence first; the first whose condition holds wins, else `fallback`.
+    StyleProp { prop: String, child_attr: bool, candidates: Vec<(Cond<'a>, Json)>, fallback: Fallback, span: Span },
+    /// The classes the X6 styling sees (`$n.attr(node, "class", ...)` -> `host.style(CLASSES)`):
+    /// `base` (static classes and the component's CSS scope class), then the dynamic class set of
+    /// element `dynamic` (`c<id>`), then the `class:` toggles.
+    Classes { base: String, dynamic: Option<usize>, toggles: Vec<(String, &'a Expression)>, span: Span },
+    /// `id`: the widget name (`$n.attr(node, "id", value)` -> `host.style(NAME)`).
+    WidgetName { value: AttrValue<'a>, span: Span },
+    /// The inline style the X6 styling sees (`$n.attr(node, "style", ...)`): the static CSS
+    /// declarations of `style=`, or its dynamic value, then the `style:` directives of CSS
+    /// properties (a nullish value drops the declaration).
+    InlineStyle { base: String, dynamic: Option<Dynamic<'a>>, directives: Vec<(String, AttrValue<'a>)>, span: Span },
+    /// `style:<setter>={value}`: `$n.set(node, target, $n.setter_value(backend, name, value))`
+    /// (`$n.child_attr` for a child attribute); the value is parsed at runtime like `style=`.
+    StyleSetter { name: String, target: String, child_attr: bool, backend: String, value: Dynamic<'a>, span: Span },
 }
 
 /// An event handler: an expression, or a property of a spread object (`{...events}`), read when

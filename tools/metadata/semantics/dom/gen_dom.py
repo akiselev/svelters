@@ -152,7 +152,7 @@ def build() -> dict:
     return {
         "schema": SCHEMA, "backend": "dom", "framework": "HTML DOM (jsdom), conformance testing only",
         "source": {"generator": "tools/metadata/semantics/dom/gen_dom.py", "provenance": PROVENANCE},
-        "event_aliases": {}, "tags": tags, "kinds": kinds, "style": {"units": {}, "declarations": {}},
+        "event_aliases": {}, "tags": tags, "kinds": kinds, "style": {"dialect": "none", "setter_selectors": ["type", "class", "id"], "units": {}, "properties": {}},
         "element_hints": {}, "text_node": {"kind": "#text", "prop": "data"}, "html_syntax": True,
     }
 

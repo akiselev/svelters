@@ -19,7 +19,7 @@ fn run_case(dir: &Path) -> Result<(), String> {
     } else {
         let src = fs::read_to_string(dir.join("input.svelte")).unwrap();
         let backend = SpecBackend::builtin("gtk").unwrap();
-        let res = compile(&src, &CompileOptions { filename: "input.svelte".into(), backend: &backend, dev });
+        let res = compile(&src, &CompileOptions { filename: "input.svelte".into(), backend: &backend, dev, css_scope: None });
         (src, res)
     };
     let _ = src;

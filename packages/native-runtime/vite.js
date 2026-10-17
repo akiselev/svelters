@@ -5,6 +5,10 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
+import { compile as svelteCompile } from 'svelte/compiler';
+import { extractNative, translateSheet } from '@svelters/style/build';
+import { formatDiagnostic } from '@svelters/style/runtime';
 
 /** The specifier src/index.js imports for block/branch/destroy_effect/component_root. */
 export const EFFECTS_SPECIFIER = 'svelte/internal/client/reactivity/effects';
@@ -85,6 +89,36 @@ export function compilerPath() {
   return found[0];
 }
 
+const registerPath = createRequire(import.meta.url).resolve('@svelters/renderer/style');
+const STYLE_TAG = /<style(\s[^>]*)?>([\s\S]*?)<\/style>/;
+
+/**
+ * The X6 half of a component's `<style>` (ST1): `@native` blocks lifted out, Svelte scopes the
+ * rest with `scope` (its own CSS compile, as the stock pipeline), and @svelters/style translates
+ * it for `toolkit` without the setter declarations (the Rust compiler matches those itself).
+ * Returns null when nothing remains for the toolkit's dialect.
+ */
+export function nativeSheets(code, file, toolkit, warn = () => {}) {
+  const m = STYLE_TAG.exec(code);
+  if (!m || /\blang\s*=/.test(m[1] ?? '')) return null;
+  const { css, native, errors } = extractNative(m[2]);
+  if (errors.length) throw new Error(`${file}: ${errors.join('; ')}`);
+  const src = code.slice(0, m.index) + `<style${m[1] ?? ''}>${css}</style>` + code.slice(m.index + m[0].length);
+  const scope = `svelte-${createHash('sha256').update(path.relative(repoRoot, file)).digest('hex').slice(0, 10)}`;
+  let r;
+  try {
+    r = svelteCompile(src, { filename: file, css: 'external', cssHash: () => scope, experimental: { customRenderer: 'svelters-native' } });
+  } catch (e) {
+    // the native compiler reports the component's own problems; only the CSS half is skipped
+    warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
+    return null;
+  }
+  const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false });
+  for (const d of t.diagnostics) if (d.level !== 'info') warn(formatDiagnostic(d));
+  if (!t.css.trim() && !t.dark.trim()) return null;
+  return { scope, sheets: toolkit === 'qt' ? { qt: t.css, qtDark: t.dark } : { [toolkit]: t.css } };
+}
+
 /**
  * Vite plugin: compiles `.svelte` modules with the experimental Rust compiler (NC1) for one
  * backend, and `.svelte.js` modules (runes outside components: Svelte's `compileModule`).
@@ -103,6 +137,9 @@ export function svelteNative({ backend = 'gtk', spec, dev = false } = {}) {
       if (!isModule && !file.endsWith('.svelte')) return null;
       const args = isModule ? ['--module', '--json', '--filename', file] : ['--backend', backend, '--json', '--filename', file];
       if (spec && !isModule) args.push('--spec', spec);
+      // CSS declarations of <style> go to the X6 translator (GTK CSS / QSS), scoped like Svelte's
+      const css = isModule ? null : nativeSheets(code, file, backend, (message) => this.warn({ message }));
+      if (css) args.push('--css-scope', css.scope);
       if (dev) args.push('--dev');
       args.push('-');
       let out;
@@ -122,7 +159,12 @@ export function svelteNative({ backend = 'gtk', spec, dev = false } = {}) {
         const more = errors.length > 1 ? `\n${errors.slice(1).map((x) => `  ${path.basename(file)}:${x.line}:${x.column}: ${x.code}: ${x.message}`).join('\n')}` : '';
         this.error({ message: `${d.code}${d.backend ? ` (${d.backend})` : ''}: ${d.message}${d.help ? ` (help: ${d.help})` : ''}${more}`, id, loc: { line: d.line, column: d.column - 1 } });
       }
-      return { code: res.js, map: res.map };
+      let js = res.js;
+      if (css) {
+        // imports are hoisted: the sheet is registered before the component module body runs
+        js += `\nimport { registerStyles as $$registerStyles } from ${JSON.stringify(registerPath)};\n$$registerStyles(${JSON.stringify(path.relative(repoRoot, file))}, ${JSON.stringify(css.sheets)});\n`;
+      }
+      return { code: js, map: res.map };
     },
   };
 }

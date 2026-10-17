@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@svelters/lists": "workspace:*",
+    "@svelters/renderer": "workspace:*",
+    "@svelters/style": "workspace:*",
     "svelte": "5.57.2"
   },
   "devDependencies": {

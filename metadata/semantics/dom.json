@@ -87,7 +87,7 @@
 },
 "schema":"svelters-semantics/v0",
 "source":{"generator":"tools/metadata/semantics/dom/gen_dom.py","provenance":"HTML Living Standard (elements, global attributes, events); conformance backend, tools/metadata/semantics/dom/gen_dom.py"},
-"style":{"declarations":{},"units":{}},
+"style":{"dialect":"none","properties":{},"setter_selectors":["type","class","id"],"units":{}},
 "tags":{
   "#text":"#text",
   "a":"a",

@@ -248,6 +248,38 @@ test('component: bind:this follows the instance of a dynamic component (Codex P2
   assert.equal(ref, null, 'cleared when the component goes');
 });
 
+test('styling helpers: class_name, style_text, setter_value (ST1)', () => {
+  assert.equal($n.class_name('a svelte-x', new Set(['b', 'a']), [['c', true], ['a', false], ['d', false]]), 'svelte-x b c');
+  assert.equal($n.class_name('', null, []), '');
+  assert.equal($n.style_text('color: red', [['font-weight', 'bold'], ['opacity', null]]), 'color: red; font-weight: bold');
+  assert.equal($n.style_text(null, [['color', 'blue']]), 'color: blue');
+  assert.equal($n.setter_value('gtk', 'spacing', 8), 8);
+  assert.equal($n.setter_value('gtk', 'spacing', '12px'), 12);
+  assert.equal($n.setter_value('gtk', 'halign', 'center'), 'center');
+  assert.deepEqual($n.setter_value('qt', 'contents-margins', '1 2'), { top: 1, right: 2, bottom: 1, left: 2 });
+});
+
+test('attr: classes, widget name and inline style reach host.style once per job (ST1)', async () => {
+  const t = harness();
+  let b;
+  mountInBox((c) => {
+    b = $n.element('button');
+    $n.attr(b, 'class', 'primary svelte-x');
+    $n.attr(b, 'id', 'ok');
+    $n.attr(b, 'style', 'color: red; hexpand: true');
+    $n.append(c, b);
+  });
+  await new Promise((r) => setImmediate(r));
+  const ops = t.take();
+  assert.ok(ops.includes(`style #${b.h} classes "primary svelte-x"`), ops.join('\n'));
+  assert.ok(ops.includes(`style #${b.h} name "ok"`), ops.join('\n'));
+  assert.ok(ops.includes(`style #${b.h} inline "color: red;"`), ops.join('\n'));
+  assert.ok(ops.includes(`set #${b.h} hexpand true`), 'inline setter written with set');
+  $n.attr(b, 'class', null);
+  await new Promise((r) => setImmediate(r));
+  assert.deepEqual(t.take(), [`style #${b.h} classes null`]);
+});
+
 test('classes: clsx semantics', () => {
   assert.deepEqual([...$n.classes('a  b')], ['a', 'b']);
   assert.deepEqual([...$n.classes(['a', { b: true, c: false }, null])], ['a', 'b']);

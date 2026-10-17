@@ -77,35 +77,63 @@ impl SpecBackend {
         }
     }
 
-    fn json_to_static(&self, prop: &PropertySpec, v: &serde_json::Value) -> Result<StaticValue, String> {
-        use serde_json::Value as J;
-        match v {
-            J::Bool(b) => self.coerce_static(prop, Some(if *b { "true" } else { "false" })),
-            J::Number(n) => self.coerce_static(prop, Some(&n.to_string())),
-            J::String(s) => self.coerce_static(prop, Some(s)),
-            J::Null if prop.nullable => Ok(StaticValue::Null),
-            other => Err(format!("cannot use {other} for {}", prop.js)),
-        }
+    fn length(&self, decl: &str, value: f64, unit: Option<&str>) -> Result<f64, Unresolved> {
+        let scale = match unit {
+            None => 1.0,
+            Some(u) => match self.spec.style.units.get(u) {
+                Some(us) => us.scale,
+                None => {
+                    let known: Vec<String> = self.spec.style.units.keys().cloned().collect();
+                    return Err(Unresolved::new(
+                        codes::STYLE_BAD_VALUE,
+                        format!("`{decl}`: unit `{u}` is not supported on {} (lengths are unitless or in {})", self.spec.backend, known.join(", ")),
+                    )
+                    .suggest(known.iter().map(|k| format!("{value}{k}")).collect()));
+                }
+            },
+        };
+        Ok(value * scale)
     }
 
-    fn style_value(&self, el: &ElementRef, decl: &str, d: &DeclarationSpec, value: &[ValueToken]) -> Result<StyleLowering, Unresolved> {
+    /// The native value of a setter / child-attr declaration (`prop`: the target property, whose
+    /// range is checked; None for a child attribute).
+    fn style_value(&self, decl: &str, p: &StylePropSpec, prop: Option<&PropertySpec>, value: &[ValueToken]) -> Result<StaticValue, Unresolved> {
         let bad = |msg: String| Unresolved::new(codes::STYLE_BAD_VALUE, format!("`{decl}`: {msg}"));
-        let prop_name = d.prop.as_deref().unwrap_or_default();
-        let prop = self.find_prop(el, prop_name).ok_or_else(|| {
-            Unresolved::new(
-                codes::STYLE_NOT_APPLICABLE,
-                format!("`{decl}` lowers to property `{prop_name}`, which <{}> does not have on {}{}", el.tag, self.spec.backend, self.only_annotated()),
-            )
-        })?;
+        let kind = p.value.ok_or_else(|| bad("the style table gives no value type".into()))?;
+        let whole = |x: f64| -> Result<StaticValue, Unresolved> {
+            if let Some(r) = prop.and_then(|pr| pr.range)
+                && (x < r.min || x > r.max)
+            {
+                return Err(bad(format!("{x} is outside {}..{}", r.min, r.max)));
+            }
+            if x.fract() != 0.0 {
+                return Err(bad(format!("takes whole pixels, {x} is not")));
+            }
+            Ok(StaticValue::Int(x as i64))
+        };
+        if kind == ValueKind::Insets {
+            let mut n = Vec::new();
+            for t in value {
+                match t {
+                    ValueToken::Number { value, unit } => n.push(self.length(decl, *value, unit.as_deref())?),
+                    t => return Err(bad(format!("expected 1 to 4 lengths, got {}", token_text(t)))),
+                }
+            }
+            if n.is_empty() || n.len() > 4 || n.iter().any(|x| x.fract() != 0.0) {
+                return Err(bad("expected 1 to 4 whole lengths (top right bottom left, as CSS)".into()));
+            }
+            let (t, r) = (n[0], *n.get(1).unwrap_or(&n[0]));
+            let (b, l) = (*n.get(2).unwrap_or(&t), *n.get(3).unwrap_or(&r));
+            return Ok(StaticValue::Record(serde_json::json!({ "top": t as i64, "right": r as i64, "bottom": b as i64, "left": l as i64 })));
+        }
         let one = match value {
             [t] => t,
             [] => return Err(bad("missing value".into())),
             _ => return Err(bad("expected a single value".into())),
         };
-        let kind = d.value.ok_or_else(|| bad("declaration has no value kind in the spec".into()))?;
-        let value = match (kind, one) {
+        Ok(match (kind, one) {
             (ValueKind::Enum, ValueToken::Ident(id)) => {
-                let values = prop.values.clone().unwrap_or_default();
+                let values = p.values.clone().unwrap_or_default();
                 if !values.iter().any(|v| v == id) {
                     return Err(bad(format!("`{id}` is not one of {}", values.join(", "))).suggest(closest(id, values.iter().map(|s| s.as_str()))));
                 }
@@ -117,90 +145,26 @@ impl SpecBackend {
                 _ => return Err(bad(format!("`{id}` is not true or false")).suggest(closest(id, ["true", "false"]))),
             },
             (ValueKind::Length, ValueToken::Number { value, unit }) => {
-                let scale = match unit.as_deref() {
-                    None if *value == 0.0 => 1.0,
-                    None => {
-                        return Err(bad(format!("length {value} needs a unit")).suggest(self.spec.style.units.keys().map(|u| format!("{value}{u}")).collect()))
-                    }
-                    Some(u) => match self.spec.style.units.get(u) {
-                        Some(us) => us.scale,
-                        None => {
-                            return Err(bad(format!("unit `{u}` is not supported on {}", self.spec.backend))
-                                .suggest(self.spec.style.units.keys().cloned().collect()))
-                        }
-                    },
-                };
-                let x = value * scale;
-                if let Some(r) = prop.range
-                    && (x < r.min || x > r.max)
-                {
-                    return Err(bad(format!("{x} is outside {}..{} for `{}`", r.min, r.max, prop.js)));
-                }
-                if prop.ty.is_integer() {
-                    if x.fract() != 0.0 {
-                        return Err(bad(format!("`{}` takes whole pixels, {x} is not", prop.js)));
-                    }
-                    self.coerce_static(prop, Some(&format!("{}", x as i64))).map_err(bad)?
-                } else {
-                    StaticValue::Float(x)
-                }
+                let x = self.length(decl, *value, unit.as_deref())?;
+                if prop.is_some_and(|pr| !pr.ty.is_integer()) { StaticValue::Float(x) } else { whole(x)? }
             }
+            (ValueKind::Int, ValueToken::Number { value, unit: None }) => whole(*value)?,
+            (ValueKind::Number, ValueToken::Number { value, unit: None }) => StaticValue::Float(*value),
+            (ValueKind::String, ValueToken::String(t) | ValueToken::Ident(t)) => StaticValue::Str(t.clone()),
             (k, t) => return Err(bad(format!("expected {}, got {}", value_kind_name(k), token_text(t)))),
-        };
-        Ok(StyleLowering::SetProp { prop: prop.js.clone(), value })
-    }
-
-    fn style_intent(&self, el: &ElementRef, decl: &str, d: &DeclarationSpec, value: &[ValueToken]) -> Result<StyleLowering, Unresolved> {
-        let names: Vec<&str> = d.intents.keys().map(|s| s.as_str()).collect();
-        let intent = match value {
-            [ValueToken::Ident(i)] => i,
-            _ => {
-                return Err(Unresolved::new(codes::STYLE_BAD_VALUE, format!("`{decl}` takes one of {}", names.join(", ")))
-                    .suggest(names.iter().map(|s| s.to_string()).collect()))
-            }
-        };
-        if let Some(why) = d.unsupported.get(intent) {
-            return Err(Unresolved::new(
-                codes::STYLE_INTENT_UNSUPPORTED,
-                format!("`{decl}: {intent}` has no native equivalent on {}: {why}", self.spec.backend),
-            )
-            .suggest(names.iter().map(|s| s.to_string()).collect()));
-        }
-        let Some(actions) = d.intents.get(intent) else {
-            return Err(Unresolved::new(
-                codes::STYLE_BAD_VALUE,
-                format!("`{intent}` is not a `{decl}` intent on {} (known: {})", self.spec.backend, names.join(", ")),
-            )
-            .suggest(closest(intent, names.iter().copied())));
-        };
-        let mut out = Vec::new();
-        for a in actions {
-            let prop_name = match a {
-                IntentAction::Set { prop, .. } | IntentAction::AddToken { prop, .. } => prop,
-            };
-            let prop = self.find_prop(el, prop_name).ok_or_else(|| {
-                Unresolved::new(
-                    codes::STYLE_NOT_APPLICABLE,
-                    format!("`{decl}: {intent}` needs property `{prop_name}`, which <{}> does not have{}", el.tag, self.only_annotated()),
-                )
-            })?;
-            out.push(match a {
-                IntentAction::Set { value, .. } => StyleLowering::SetProp {
-                    prop: prop.js.clone(),
-                    value: self.json_to_static(prop, value).map_err(|e| Unresolved::new(codes::STYLE_BAD_VALUE, e))?,
-                },
-                IntentAction::AddToken { token, .. } => StyleLowering::AddToken { prop: prop.js.clone(), token: token.clone() },
-            });
-        }
-        Ok(StyleLowering::Intent { declaration: decl.to_string(), intent: intent.clone(), actions: out })
+        })
     }
 }
 
 fn value_kind_name(k: ValueKind) -> &'static str {
     match k {
         ValueKind::Enum => "a keyword",
-        ValueKind::Length => "a length (e.g. 8dp)",
+        ValueKind::Length => "a length (e.g. 8px)",
+        ValueKind::Int => "an integer",
+        ValueKind::Number => "a number",
         ValueKind::Bool => "true or false",
+        ValueKind::Insets => "1 to 4 lengths",
+        ValueKind::String => "a string",
     }
 }
 
@@ -418,24 +382,49 @@ impl BackendSemantics for SpecBackend {
         self.find_prop(el, name)
     }
 
-    fn style_declaration(&self, el: &ElementRef, name: &str, value: &[ValueToken]) -> Result<StyleLowering, Unresolved> {
-        let decls = &self.spec.style.declarations;
-        let Some(d) = decls.get(name) else {
-            return Err(Unresolved::new(
-                codes::STYLE_UNKNOWN_DECLARATION,
-                format!("`{name}` is not a native style declaration on {}", self.spec.backend),
-            )
-            .suggest(closest(name, decls.keys().map(|s| s.as_str()))));
-        };
-        if !self.is_a(el, &d.applies_to) {
-            return Err(Unresolved::new(
-                codes::STYLE_NOT_APPLICABLE,
-                format!("`{name}` applies to {} on {}; <{}> is a {}", d.applies_to, self.spec.backend, el.tag, self.kind(el).native),
-            ));
-        }
-        match d.contract {
-            Contract::Common => self.style_value(el, name, d, value),
-            Contract::NativeIntent => self.style_intent(el, name, d, value),
+    fn style_property(&self, name: &str) -> Option<&StylePropSpec> {
+        self.spec.style.properties.get(name)
+    }
+
+    fn style_declaration(&self, el: &ElementRef, parent: Option<&ElementRef>, name: &str, value: &[ValueToken]) -> Result<Option<StyleLowering>, Unresolved> {
+        let Some(p) = self.spec.style.properties.get(name) else { return Ok(None) };
+        let list = |tags: &[String]| tags.iter().map(|t| format!("<{t}>")).collect::<Vec<_>>().join(", ");
+        match p.via {
+            Via::Css => Ok(None),
+            Via::Setter => {
+                if !p.tags.contains(&el.tag) {
+                    return Err(Unresolved::new(
+                        codes::STYLE_NOT_APPLICABLE,
+                        format!("`{name}` applies to {} on {}, not <{}>", list(&p.tags), self.spec.backend, el.tag),
+                    ));
+                }
+                let target = p.prop.as_deref().unwrap_or_default();
+                let prop = self.find_prop(el, target).ok_or_else(|| {
+                    Unresolved::new(codes::STYLE_NOT_APPLICABLE, format!("`{name}` lowers to `{target}`, which <{}> does not have on {}{}", el.tag, self.spec.backend, self.only_annotated()))
+                })?;
+                let value = self.style_value(name, p, Some(prop), value)?;
+                Ok(Some(StyleLowering::SetProp { prop: prop.js.clone(), value }))
+            }
+            Via::ChildAttr => {
+                let attr = p.attr.clone().unwrap_or_default();
+                match parent {
+                    Some(par) if p.tags.contains(&par.tag) => {}
+                    Some(par) => {
+                        return Err(Unresolved::new(
+                            codes::STYLE_NOT_APPLICABLE,
+                            format!("`{name}` is a child attribute of {} on {}; <{}> is in a <{}>", list(&p.tags), self.spec.backend, el.tag, par.tag),
+                        ))
+                    }
+                    None => {
+                        return Err(Unresolved::new(
+                            codes::STYLE_NOT_APPLICABLE,
+                            format!("`{name}` is a child attribute of {} on {}; <{}> has no native parent here", list(&p.tags), self.spec.backend, el.tag),
+                        ))
+                    }
+                }
+                let value = self.style_value(name, p, None, value)?;
+                Ok(Some(StyleLowering::ChildAttr { attr, value }))
+            }
         }
     }
 

@@ -1,5 +1,7 @@
-<!-- Native styling: declarations lower to native props / native appearance per backend.
-     Precedence: explicit attribute > rules by (specificity, order) > native default. -->
+<!-- Native styling (ST1): setter properties (native names per toolkit) are matched at compile
+     time and lowered to setProp; CSS properties go to the X6 translator (GTK CSS / QSS) with the
+     classes sent through host.style. Precedence: explicit attribute > style= / style: > rules by
+     (specificity, order) > native default. -->
 <script>
   let active = $state(false);
 </script>
@@ -8,22 +10,24 @@
   <box class="toolbar">
     <button class="primary">Save</button>
     <button class:primary={active} onclick={() => (active = !active)}>Toggle</button>
-    <button>Plain</button>
+    <button style="height-request: 30px; minimum-height: 30px; font-weight: bold">Plain</button>
   </box>
 </window>
 
 <style>
   .toolbar {
     orientation: horizontal;
-    spacing: 8dp;
+    spacing: 8px;
   }
 
   button {
-    min-height: 24dp;
+    height-request: 24px;
+    minimum-height: 24px;
   }
 
   .primary {
-    min-height: 36dp;
-    emphasis: accent;
+    height-request: 36px;
+    minimum-height: 36px;
+    color: #1c71d8;
   }
 </style>

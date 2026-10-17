@@ -1,9 +1,11 @@
 //! Native style subset parser (svelters extension, not Svelte's CSS parser). Owner: agent C.
 //!
-//! A component's `<style>` is not browser CSS: the compiler lowers its declarations to native
-//! widget properties per backend. This module only parses the small subset we can implement
-//! natively and reports everything else as an error with a precise span. Accepted grammar and
-//! diagnostic codes: `docs/notes/native-compiler/styling-syntax.md`.
+//! A component's `<style>` holds two kinds of declarations (the backend's style table, ST1):
+//! `css` ones are the X6 translator's (GTK CSS / QSS, run by the Vite plugin on Svelte's scoped
+//! CSS), setter and child-attr ones are the compiler's: it matches their rules at compile time and
+//! lowers them to `$n.set` / `$n.child_attr`. This parser reads the whole sheet but only reports
+//! problems that touch setter declarations (`is_setter`): a CSS construct it does not model is
+//! not its business. Grammar and diagnostic codes: `docs/notes/native-compiler/styling-syntax.md`.
 //!
 //! All spans are absolute byte offsets into the component source (`content_start` + local offset).
 
@@ -50,6 +52,7 @@ pub struct ComplexSelector {
 pub struct Compound {
     pub span: Span,
     pub element: Option<String>,
+    pub id: Option<String>,
     pub classes: Vec<String>,
     pub states: Vec<String>,
 }
@@ -81,18 +84,18 @@ pub enum ValueToken {
 }
 
 impl Compound {
-    /// `(classes + states, element types)`; compare lexicographically.
-    pub fn specificity(&self) -> (u32, u32) {
-        ((self.classes.len() + self.states.len()) as u32, self.element.is_some() as u32)
+    /// `(ids, classes + states, element types)`; compare lexicographically.
+    pub fn specificity(&self) -> (u32, u32, u32) {
+        (self.id.is_some() as u32, (self.classes.len() + self.states.len()) as u32, self.element.is_some() as u32)
     }
 }
 
 impl ComplexSelector {
-    /// CSS specificity without ids: `(class/pseudo-class count, type count)`.
-    pub fn specificity(&self) -> (u32, u32) {
-        self.parts.iter().fold((0, 0), |(a, b), (_, c)| {
-            let (ca, cb) = c.specificity();
-            (a + ca, b + cb)
+    /// CSS specificity: `(id count, class/pseudo-class count, type count)`.
+    pub fn specificity(&self) -> (u32, u32, u32) {
+        self.parts.iter().fold((0, 0, 0), |(a, b, c), (_, x)| {
+            let (xa, xb, xc) = x.specificity();
+            (a + xa, b + xb, c + xc)
         })
     }
 
@@ -111,8 +114,10 @@ pub const UNSUPPORTED_IMPORTANT: &str = "style_unsupported_important";
 pub const UNSUPPORTED_VALUE: &str = "style_unsupported_value";
 
 /// Parses the text of a `<style>` element; `content_start` is its absolute byte offset.
-pub fn parse_style(source: &str, content_start: u32, diags: &mut Diagnostics) -> StyleSheet {
-    let mut p = Parser { src: source, b: source.as_bytes(), base: content_start, diags };
+/// `is_setter(name)`: whether a declaration is the compiler's (a setter or child-attr property);
+/// only problems touching those are reported.
+pub fn parse_style(source: &str, content_start: u32, diags: &mut Diagnostics, is_setter: &dyn Fn(&str) -> bool) -> StyleSheet {
+    let mut p = Parser { src: source, b: source.as_bytes(), base: content_start, diags, is_setter };
     let len = source.len();
     let mut rules = Vec::new();
     let mut i = 0;
@@ -137,11 +142,68 @@ pub fn parse_style(source: &str, content_start: u32, diags: &mut Diagnostics) ->
     StyleSheet { rules }
 }
 
+/// Splits inline declarations (`a: b; c: d(e;f)`) into `(name, value)`, honouring parentheses
+/// and quotes (as @svelters/style's `parseDeclarations`). Names are lower-cased.
+pub fn split_declarations(text: &str) -> Vec<(String, String)> {
+    let mut out = Vec::new();
+    let (mut depth, mut quote, mut cur) = (0u32, None::<char>, String::new());
+    let mut flush = |cur: &mut String| {
+        if let Some(i) = cur.find(':') {
+            let (name, value) = (cur[..i].trim(), cur[i + 1..].trim());
+            if !name.is_empty() && !value.is_empty() {
+                out.push((if name.starts_with("--") { name.to_string() } else { name.to_ascii_lowercase() }, value.to_string()));
+            }
+        }
+        cur.clear();
+    };
+    for ch in text.chars() {
+        match (quote, ch) {
+            (Some(q), c) => {
+                if c == q {
+                    quote = None;
+                }
+                cur.push(c);
+            }
+            (None, '"' | '\'') => {
+                quote = Some(ch);
+                cur.push(ch);
+            }
+            (None, '(') => {
+                depth += 1;
+                cur.push(ch);
+            }
+            (None, ')') => {
+                depth = depth.saturating_sub(1);
+                cur.push(ch);
+            }
+            (None, ';') if depth == 0 => flush(&mut cur),
+            (None, c) => cur.push(c),
+        }
+    }
+    flush(&mut cur);
+    out
+}
+
+/// The value tokens of one declaration value (a `style=` / `style:` setter value), or the first
+/// problem.
+pub fn parse_value(text: &str) -> Result<Vec<ValueToken>, String> {
+    let mut diags = Diagnostics::default();
+    let all = |_: &str| true;
+    let mut p = Parser { src: text, b: text.as_bytes(), base: 0, diags: &mut diags, is_setter: &all };
+    let tokens = p.value(0, text.len());
+    match (tokens, diags.list.first()) {
+        (Some(t), None) if !t.is_empty() => Ok(t.into_iter().map(|x| x.0).collect()),
+        (_, Some(d)) => Err(d.message.clone()),
+        _ => Err("missing value".into()),
+    }
+}
+
 struct Parser<'a> {
     src: &'a str,
     b: &'a [u8],
     base: u32,
     diags: &'a mut Diagnostics,
+    is_setter: &'a dyn Fn(&str) -> bool,
 }
 
 fn is_name_start(c: u8) -> bool {
@@ -279,23 +341,44 @@ impl Parser<'_> {
         self.b.len()
     }
 
-    /// `@name ...;` or `@name ... { ... }`: reported and skipped.
+    /// `@name ...;` or `@name ... { ... }`: skipped (the X6 translator's), reported only when its
+    /// block holds setter declarations.
     fn at_rule(&mut self, i: usize) -> usize {
         let name_end = self.ident_end(i + 1, self.b.len());
-        if name_end == i + 1 {
-            self.diags.error(SYNTAX, self.sp(i, i + 1), "expected an at-rule name after `@`");
-        } else {
-            let name = &self.src[i..name_end];
-            self.diags
-                .error(UNSUPPORTED_AT_RULE, self.sp(i, name_end), format!("`{name}` rules are not supported by native styling yet"))
-                .help("native styles are static: write plain rules, and use classes or states for conditional styling");
-        }
         let (stop_pos, stop) = self.scan(name_end, self.b.len(), b"{;}");
-        match stop {
+        let end = match stop {
             Some(b'{') => self.skip_block(stop_pos),
             Some(b';') => stop_pos + 1,
             _ => stop_pos,
+        };
+        if stop == Some(b'{')
+            && let Some(prop) = self.setter_inside(stop_pos, end)
+        {
+            if name_end == i + 1 {
+                self.diags.error(SYNTAX, self.sp(i, i + 1), "expected an at-rule name after `@`");
+            } else {
+                let name = &self.src[i..name_end];
+                self.diags
+                    .error(UNSUPPORTED_AT_RULE, self.sp(i, name_end), format!("setter property `{prop}` cannot be inside `{name}`: setter properties are written with setProp, not CSS"))
+                    .help("put setter properties in a plain top-level rule; @media and @native are CSS-only");
+            }
         }
+        end
+    }
+
+    /// The first setter property declared anywhere in `[open, end)` (a block), if any.
+    fn setter_inside(&self, open: usize, end: usize) -> Option<String> {
+        let text = &self.src[open..end];
+        for seg in text.split(['{', '}', ';']) {
+            let t = seg.trim_start();
+            if let Some(c) = t.find(':') {
+                let name = t[..c].trim();
+                if !name.is_empty() && name.bytes().all(|b| is_name(b)) && (self.is_setter)(name) {
+                    return Some(name.to_string());
+                }
+            }
+        }
+        None
     }
 
     /// `selector-list { declarations }` starting at `i`.
@@ -306,8 +389,13 @@ impl Parser<'_> {
             self.diags.error(SYNTAX, self.sp(i, e), "expected `{` after the selector");
             return (stop_pos + stop.is_some() as usize, None);
         }
+        let mark = self.diags.list.len();
         let selectors = self.selector_list(i, stop_pos);
-        let (end, declarations) = self.block(stop_pos);
+        let (end, declarations, setters) = self.block(stop_pos);
+        if !setters {
+            // a CSS-only rule: the X6 translator's to judge
+            self.diags.list.truncate(mark);
+        }
         let rule = (!selectors.is_empty()).then(|| Rule { span: self.sp(i, end), selectors, declarations });
         (end, rule)
     }
@@ -386,14 +474,14 @@ impl Parser<'_> {
     /// `element? (.class | :state)*`
     fn compound(&mut self, s: usize, e: usize) -> Option<(usize, Compound)> {
         let mut i = s;
-        let mut c = Compound { span: (0, 0), element: None, classes: Vec::new(), states: Vec::new() };
+        let mut c = Compound { span: (0, 0), element: None, id: None, classes: Vec::new(), states: Vec::new() };
         if i < e && self.b[i].is_ascii_alphabetic() {
             while i < e && (self.b[i].is_ascii_alphanumeric() || self.b[i] == b'-') {
                 i += 1;
             }
             c.element = Some(self.src[s..i].to_string());
         }
-        const USE_CLASS: &str = "native styles match element names, `.class` and `:state` only";
+        const USE_CLASS: &str = "setter rules match element names, `.class` and `#id` only";
         while i < e {
             match self.b[i] {
                 b'.' => {
@@ -434,9 +522,13 @@ impl Parser<'_> {
                     i = j;
                 }
                 b'#' => {
-                    let j = self.ident_end(i + 1, e).max(i + 1);
-                    let msg = format!("id selectors (`{}`) are not supported", &self.src[i..j]);
-                    return self.unsupported_selector(i, j, msg, "use a class instead");
+                    let j = self.ident_end(i + 1, e);
+                    if j == i + 1 {
+                        self.diags.error(SYNTAX, self.sp(i, i + 1), "expected an id after `#`");
+                        return None;
+                    }
+                    c.id = Some(self.src[i + 1..j].to_string());
+                    i = j;
                 }
                 b'*' => return self.unsupported_selector(i, i + 1, "the universal selector `*` is not supported".into(), USE_CLASS),
                 b'[' => {
@@ -462,19 +554,21 @@ impl Parser<'_> {
         Some((i, c))
     }
 
-    /// `open` is at `{`.
-    fn block(&mut self, open: usize) -> (usize, Vec<Declaration>) {
+    /// `open` is at `{`. Also returns whether the block declares a setter property (parsed or
+    /// not): only then do the rule's selector problems matter.
+    fn block(&mut self, open: usize) -> (usize, Vec<Declaration>, bool) {
         let len = self.b.len();
         let mut decls = Vec::new();
+        let mut setters = false;
         let mut i = open + 1;
         loop {
             i = self.skip_trivia(i, len);
             if i >= len {
                 self.diags.error(SYNTAX, self.sp(open, open + 1), "unclosed block: expected `}`");
-                return (len, decls);
+                return (len, decls, true);
             }
             match self.b[i] {
-                b'}' => return (i + 1, decls),
+                b'}' => return (i + 1, decls, setters),
                 b';' => {
                     i += 1;
                     continue;
@@ -483,17 +577,29 @@ impl Parser<'_> {
             }
             let (stop_pos, stop) = self.scan(i, len, b"{;}");
             if stop == Some(b'{') {
+                let before = self.diags.list.len();
                 if self.b[i] == b'@' {
                     self.at_rule(i);
-                } else {
+                    // a reported at-rule keeps the rule's diagnostics
+                    setters |= self.diags.list.len() > before;
+                } else if let Some(prop) = self.setter_inside(stop_pos, self.skip_block(stop_pos)) {
+                    setters = true;
                     let e = self.trim_end(i, stop_pos);
                     self.diags
-                        .error(UNSUPPORTED_NESTING, self.sp(i, e), "nested rules are not supported")
+                        .error(UNSUPPORTED_NESTING, self.sp(i, e), format!("setter property `{prop}` cannot be in a nested rule"))
                         .help("write the full selector as a separate top-level rule");
                 }
                 i = self.skip_block(stop_pos);
             } else {
+                // problems of a CSS declaration are the X6 translator's
+                let name_end = self.ident_end(i, stop_pos);
+                let setter = (self.is_setter)(&self.src[i..name_end]);
+                setters |= setter;
+                let mark = self.diags.list.len();
                 decls.extend(self.declaration(i, stop_pos));
+                if !setter {
+                    self.diags.list.truncate(mark);
+                }
                 i = stop_pos + (stop == Some(b';')) as usize;
             }
         }
@@ -657,9 +763,17 @@ mod tests {
     use super::*;
     use crate::diag::Diagnostic;
 
+    /// Every declaration counts as a setter one, so every problem is reported.
     fn parse_at(src: &str, base: u32) -> (StyleSheet, Vec<Diagnostic>) {
         let mut d = Diagnostics::default();
-        let sheet = parse_style(src, base, &mut d);
+        let sheet = parse_style(src, base, &mut d, &|_| true);
+        (sheet, d.list)
+    }
+
+    /// Only `spacing` is a setter property: CSS-only rules are not reported.
+    fn parse_mixed(src: &str) -> (StyleSheet, Vec<Diagnostic>) {
+        let mut d = Diagnostics::default();
+        let sheet = parse_style(src, 0, &mut d, &|n| n == "spacing");
         (sheet, d.list)
     }
 
@@ -804,7 +918,7 @@ mod tests {
 
     #[test]
     fn absolute_offsets() {
-        let src = "\n  .a { spacing: 4dp; }\n  #id {}";
+        let src = "\n  .a { spacing: 4dp; }\n  * { x: 1 }";
         let base = 100;
         let (sheet, diags) = parse_at(src, base);
         let shift = |(s, e): Span| (s + base, e + base);
@@ -816,44 +930,66 @@ mod tests {
         assert_eq!(d.name_span, shift(at(src, "spacing")));
         assert_eq!(d.value_span, shift(at(src, "4dp")));
         assert_eq!(d.span, shift(at(src, "spacing: 4dp")));
-        assert_eq!((diags[0].start, diags[0].end), shift(at(src, "#id")));
+        assert_eq!((diags[0].start, diags[0].end), shift(at(src, "*")));
     }
 
     #[test]
     fn unsupported_selectors() {
         let cases = [
-            ("#main {}", UNSUPPORTED_SELECTOR, "#main"),
-            ("a#main {}", UNSUPPORTED_SELECTOR, "#main"),
-            ("* {}", UNSUPPORTED_SELECTOR, "*"),
-            ("a [type=\"x]\"] {}", UNSUPPORTED_SELECTOR, "[type=\"x]\"]"),
-            ("a::before {}", UNSUPPORTED_SELECTOR, "::before"),
-            ("a:not(.b, .c) {}", UNSUPPORTED_SELECTOR, ":not(.b, .c)"),
-            (":global(.x) {}", UNSUPPORTED_SELECTOR, ":global(.x)"),
-            ("& .x {}", UNSUPPORTED_SELECTOR, "&"),
-            ("a + b {}", UNSUPPORTED_COMBINATOR, "+"),
-            ("a~b {}", UNSUPPORTED_COMBINATOR, "~"),
-            ("a > {}", SYNTAX, ">"),
-            ("> a {}", SYNTAX, ">"),
-            ("a. {}", SYNTAX, "."),
-            ("a: {}", SYNTAX, ":"),
-            ("a\"s\" {}", SYNTAX, "\""),
+            ("* { x: 1 }", UNSUPPORTED_SELECTOR, "*"),
+            ("a [type=\"x]\"] { x: 1 }", UNSUPPORTED_SELECTOR, "[type=\"x]\"]"),
+            ("a::before { x: 1 }", UNSUPPORTED_SELECTOR, "::before"),
+            ("a:not(.b, .c) { x: 1 }", UNSUPPORTED_SELECTOR, ":not(.b, .c)"),
+            (":global(.x) { x: 1 }", UNSUPPORTED_SELECTOR, ":global(.x)"),
+            ("& .x { x: 1 }", UNSUPPORTED_SELECTOR, "&"),
+            ("a + b { x: 1 }", UNSUPPORTED_COMBINATOR, "+"),
+            ("a~b { x: 1 }", UNSUPPORTED_COMBINATOR, "~"),
+            ("a > { x: 1 }", SYNTAX, ">"),
+            ("> a { x: 1 }", SYNTAX, ">"),
+            ("a. { x: 1 }", SYNTAX, "."),
+            ("a# { x: 1 }", SYNTAX, "#"),
+            ("a: { x: 1 }", SYNTAX, ":"),
+            ("a\"s\" { x: 1 }", SYNTAX, "\""),
         ];
         for (src, code, needle) in cases {
             let sheet = one_error(src, code, needle);
             assert!(sheet.rules.is_empty(), "{src:?}");
         }
-        let sheet = one_error(", a {}", SYNTAX, ",");
+        let sheet = one_error(", a { x: 1 }", SYNTAX, ",");
         assert_eq!(sheet.rules[0].selectors.len(), 1);
-        let sheet = one_error("a, {}", SYNTAX, ",");
+        let sheet = one_error("a, { x: 1 }", SYNTAX, ",");
         assert_eq!(sheet.rules[0].selectors.len(), 1);
-        let (_, d) = parse(":global(.x) {}");
+        let (_, d) = parse(":global(.x) { x: 1 }");
         assert!(d[0].message.contains(":global"));
     }
 
     #[test]
+    fn id_selectors() {
+        let s = sel("box#main.a");
+        assert_eq!(s.subject().id.as_deref(), Some("main"));
+        assert_eq!(s.subject().element.as_deref(), Some("box"));
+        assert_eq!(s.specificity(), (1, 1, 1));
+    }
+
+    #[test]
+    fn css_only_rules_are_not_reported() {
+        // selectors, values and at-rules the subset does not model are the X6 translator's
+        let src = "a + b { color: red } .x::before { color: #ggg } @media (prefers-color-scheme: dark) { .y { color: red } } @keyframes k { from { opacity: 0 } } .ok { spacing: 4px; color: 1 / 2 }";
+        let (sheet, diags) = parse_mixed(src);
+        assert!(diags.is_empty(), "{diags:#?}");
+        let ok = sheet.rules.iter().find(|r| r.selectors[0].subject().classes == ["ok"]).unwrap();
+        assert_eq!(ok.declarations.iter().map(|d| d.name.as_str()).collect::<Vec<_>>(), ["spacing"]);
+        // setter declarations in a rule make its selector problems count, and @media / nesting
+        // holding one is an error
+        let (_, diags) = parse_mixed("a + b { spacing: 4px; color: red } @media (x) { .y { spacing: 1 } } .z { .w { spacing: 2 } } .v { spacing: !important }");
+        let codes: Vec<_> = diags.iter().map(|d| d.code).collect();
+        assert_eq!(codes, [UNSUPPORTED_COMBINATOR, UNSUPPORTED_AT_RULE, UNSUPPORTED_NESTING, UNSUPPORTED_IMPORTANT], "{diags:#?}");
+    }
+
+    #[test]
     fn bad_selector_in_list_keeps_the_rest() {
-        let src = "#id, .ok { x: 1 }";
-        let sheet = one_error(src, UNSUPPORTED_SELECTOR, "#id");
+        let src = "*, .ok { x: 1 }";
+        let sheet = one_error(src, UNSUPPORTED_SELECTOR, "*");
         assert_eq!(sheet.rules.len(), 1);
         assert_eq!(sheet.rules[0].selectors.len(), 1);
         assert_eq!(sheet.rules[0].selectors[0].subject().classes, vec!["ok"]);
@@ -862,7 +998,7 @@ mod tests {
 
     #[test]
     fn recovery_continues_with_next_rule() {
-        let src = "#a { x: 1 } * { y: 2 } .ok { z: 3 }";
+        let src = "a::b { x: 1 } * { y: 2 } .ok { z: 3 }";
         let (sheet, diags) = parse(src);
         assert_eq!(diags.iter().map(|d| d.code).collect::<Vec<_>>(), [UNSUPPORTED_SELECTOR, UNSUPPORTED_SELECTOR]);
         assert_eq!(sheet.rules.len(), 1);
@@ -873,20 +1009,18 @@ mod tests {
     fn at_rules() {
         let src = "@media (min-width: 10px) { a { b: 1 } } @import 'x.css'; .ok { c: 2 }";
         let (sheet, diags) = parse(src);
-        assert_eq!(diags.len(), 2, "{diags:#?}");
+        assert_eq!(diags.len(), 1, "{diags:#?}");
         assert_eq!(diags[0].code, UNSUPPORTED_AT_RULE);
         assert_eq!((diags[0].start, diags[0].end), at(src, "@media"));
-        assert!(diags[0].message.contains("not supported by native styling yet"));
-        assert_eq!((diags[1].start, diags[1].end), at(src, "@import"));
+        assert!(diags[0].message.contains("cannot be inside `@media`"));
         assert_eq!(sheet.rules.len(), 1);
         assert_eq!(sheet.rules[0].declarations[0].name, "c");
         // Inside a block, with or without a block of its own.
         let src = "a { @apply foo; @media x { b: 1 } c: 2 }";
         let (sheet, diags) = parse(src);
-        assert_eq!(diags.iter().map(|d| d.code).collect::<Vec<_>>(), [UNSUPPORTED_AT_RULE, UNSUPPORTED_AT_RULE]);
-        assert_eq!((diags[1].start, diags[1].end), at(src, "@media"));
+        assert_eq!(diags.iter().map(|d| d.code).collect::<Vec<_>>(), [UNSUPPORTED_AT_RULE]);
+        assert_eq!((diags[0].start, diags[0].end), at(src, "@media"));
         assert_eq!(sheet.rules[0].declarations.len(), 1);
-        one_error("@ {}", SYNTAX, "@");
     }
 
     #[test]
@@ -949,18 +1083,18 @@ mod tests {
 
     #[test]
     fn specificity_and_subject() {
-        assert_eq!(sel("button").specificity(), (0, 1));
-        assert_eq!(sel(".a").specificity(), (1, 0));
-        assert_eq!(sel("button:hover").specificity(), (1, 1));
-        assert_eq!(sel("box > button.primary:hover").specificity(), (2, 2));
-        let mut ordered = [sel(".a .b"), sel("a"), sel("a b"), sel(".a"), sel("a.b")];
+        assert_eq!(sel("button").specificity(), (0, 0, 1));
+        assert_eq!(sel(".a").specificity(), (0, 1, 0));
+        assert_eq!(sel("button:hover").specificity(), (0, 1, 1));
+        assert_eq!(sel("box > button.primary:hover").specificity(), (0, 2, 2));
+        let mut ordered = [sel(".a .b"), sel("a"), sel("a b"), sel(".a"), sel("a.b"), sel("#x")];
         ordered.sort_by_key(|s| s.specificity());
         let spans: Vec<_> = ordered.iter().map(|s| s.specificity()).collect();
-        assert_eq!(spans, [(0, 1), (0, 2), (1, 0), (1, 1), (2, 0)]);
+        assert_eq!(spans, [(0, 0, 1), (0, 0, 2), (0, 1, 0), (0, 1, 1), (0, 2, 0), (1, 0, 0)]);
         let s = sel("window .bar > label.big");
         assert_eq!(s.subject().element.as_deref(), Some("label"));
         assert_eq!(s.subject().classes, vec!["big"]);
-        assert_eq!(s.parts[0].1.specificity(), (0, 1));
+        assert_eq!(s.parts[0].1.specificity(), (0, 0, 1));
     }
 
     #[test]

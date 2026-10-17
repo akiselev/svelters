@@ -250,74 +250,78 @@ fn qt_slots_and_kind_routing() {
 }
 
 #[test]
-fn style_common_declarations() {
+fn style_setter_declarations() {
     for b in both() {
         let bx = el(&b, "box");
-        let set = |prop: &str, value: StaticValue| StyleLowering::SetProp { prop: prop.into(), value };
-        assert_eq!(b.style_declaration(&bx, "orientation", &ident("vertical")).unwrap(), set("orientation", StaticValue::Enum("vertical".into())));
-        assert_eq!(b.style_declaration(&bx, "spacing", &len(8.0, Some("dp"))).unwrap(), set("spacing", StaticValue::Int(8)), "{}", b.backend());
-        assert_eq!(b.style_declaration(&bx, "spacing", &len(0.0, None)).unwrap(), set("spacing", StaticValue::Int(0)));
-        let e = b.style_declaration(&bx, "spacing", &len(8.0, Some("px"))).unwrap_err();
-        assert_eq!(e.code, codes::STYLE_BAD_VALUE);
-        assert_eq!(e.suggestions, vec!["dp"]);
-        let e = b.style_declaration(&bx, "spacing", &len(8.0, None)).unwrap_err();
-        assert_eq!((e.code, e.suggestions.as_slice()), (codes::STYLE_BAD_VALUE, ["8dp".to_string()].as_slice()));
-        let e = b.style_declaration(&bx, "spacing", &len(1.5, Some("dp"))).unwrap_err();
+        let set = |prop: &str, value: StaticValue| Some(StyleLowering::SetProp { prop: prop.into(), value });
+        assert_eq!(b.style_declaration(&bx, None, "orientation", &ident("vertical")).unwrap(), set("orientation", StaticValue::Enum("vertical".into())));
+        assert_eq!(b.style_declaration(&bx, None, "spacing", &len(8.0, Some("px"))).unwrap(), set("spacing", StaticValue::Int(8)), "{}", b.backend());
+        assert_eq!(b.style_declaration(&bx, None, "spacing", &len(8.0, None)).unwrap(), set("spacing", StaticValue::Int(8)), "unitless lengths are pixels");
+        let e = b.style_declaration(&bx, None, "spacing", &len(8.0, Some("dp"))).unwrap_err();
+        assert_eq!((e.code, e.suggestions.as_slice()), (codes::STYLE_BAD_VALUE, ["8px".to_string()].as_slice()));
+        let e = b.style_declaration(&bx, None, "spacing", &len(1.5, Some("px"))).unwrap_err();
         assert!(e.message.contains("whole pixels"), "{}", e.message);
-        let e = b.style_declaration(&bx, "orientation", &ident("vertcal")).unwrap_err();
+        let e = b.style_declaration(&bx, None, "orientation", &ident("vertcal")).unwrap_err();
         assert_eq!((e.code, e.suggestions.as_slice()), (codes::STYLE_BAD_VALUE, ["vertical".to_string()].as_slice()));
-        let e = b.style_declaration(&bx, "orientation", &len(1.0, None)).unwrap_err();
+        let e = b.style_declaration(&bx, None, "orientation", &len(1.0, None)).unwrap_err();
         assert_eq!(e.code, codes::STYLE_BAD_VALUE);
-        let e = b.style_declaration(&bx, "spacng", &len(1.0, Some("dp"))).unwrap_err();
-        assert_eq!((e.code, e.suggestions.as_slice()), (codes::STYLE_UNKNOWN_DECLARATION, ["spacing".to_string()].as_slice()));
-        let e = b.style_declaration(&el(&b, "label"), "spacing", &len(1.0, Some("dp"))).unwrap_err();
+        // CSS properties and unknown names are not the compiler's
+        assert_eq!(b.style_declaration(&bx, None, "color", &ident("red")).unwrap(), None);
+        assert_eq!(b.style_declaration(&bx, None, "spacng", &len(1.0, None)).unwrap(), None);
+        assert!(!b.is_setter_property("color") && b.is_setter_property("spacing"));
+        let e = b.style_declaration(&el(&b, "label"), None, "spacing", &len(1.0, None)).unwrap_err();
         assert_eq!(e.code, codes::STYLE_NOT_APPLICABLE);
-        let mh = b.style_declaration(&el(&b, "button"), "min-height", &len(32.0, Some("dp"))).unwrap();
-        let prop = if b.backend() == "gtk" { "heightRequest" } else { "minimumHeight" };
-        assert_eq!(mh, set(prop, StaticValue::Int(32)));
+        assert!(e.message.contains("not <label>"), "{}", e.message);
     }
-    // Qt: min-height applies to every QWidget; A1 wave 2 annotated minimumHeight on all of them.
-    let qt = load("qt");
-    assert_eq!(qt.style_declaration(&el(&qt, "label"), "min-height", &len(4.0, Some("dp"))).unwrap(), StyleLowering::SetProp { prop: "minimumHeight".into(), value: StaticValue::Int(4) });
-    // GTK-only common declarations.
+    // names are native: GTK's size request, Qt's minimum size
     let gtk = load("gtk");
+    let qt = load("qt");
     assert_eq!(
-        gtk.style_declaration(&el(&gtk, "entry"), "enabled", &ident("false")).unwrap(),
-        StyleLowering::SetProp { prop: "sensitive".into(), value: StaticValue::Bool(false) }
+        gtk.style_declaration(&el(&gtk, "button"), None, "height-request", &len(32.0, None)).unwrap(),
+        Some(StyleLowering::SetProp { prop: "heightRequest".into(), value: StaticValue::Int(32) })
     );
-    assert_eq!(gtk.style_declaration(&el(&gtk, "entry"), "enabled", &ident("no")).unwrap_err().code, codes::STYLE_BAD_VALUE);
-    assert_eq!(qt.style_declaration(&el(&qt, "entry"), "enabled", &ident("false")).unwrap_err().code, codes::STYLE_UNKNOWN_DECLARATION);
+    assert_eq!(
+        qt.style_declaration(&el(&qt, "label"), None, "minimum-height", &len(4.0, Some("px"))).unwrap(),
+        Some(StyleLowering::SetProp { prop: "minimumHeight".into(), value: StaticValue::Int(4) })
+    );
+    assert_eq!(gtk.style_declaration(&el(&gtk, "button"), None, "minimum-height", &len(4.0, None)).unwrap(), None);
+    assert_eq!(
+        gtk.style_declaration(&el(&gtk, "entry"), None, "sensitive", &ident("false")).unwrap(),
+        Some(StyleLowering::SetProp { prop: "sensitive".into(), value: StaticValue::Bool(false) })
+    );
+    assert_eq!(gtk.style_declaration(&el(&gtk, "entry"), None, "sensitive", &ident("no")).unwrap_err().code, codes::STYLE_BAD_VALUE);
     // Range: width-request >= -1.
-    assert_eq!(gtk.style_declaration(&el(&gtk, "box"), "min-width", &len(-5.0, Some("dp"))).unwrap_err().code, codes::STYLE_BAD_VALUE);
+    assert_eq!(gtk.style_declaration(&el(&gtk, "box"), None, "width-request", &len(-5.0, None)).unwrap_err().code, codes::STYLE_BAD_VALUE);
+    // min-width is GTK CSS, not a setter
+    assert_eq!(gtk.style_declaration(&el(&gtk, "box"), None, "min-width", &len(5.0, Some("px"))).unwrap(), None);
+    // insets, number
+    assert_eq!(
+        qt.style_declaration(&el(&qt, "box"), None, "contents-margins", &[len(4.0, None), len(8.0, Some("px"))].concat()).unwrap(),
+        Some(StyleLowering::SetProp { prop: "contentsMargins".into(), value: StaticValue::Record(serde_json::json!({"top": 4, "right": 8, "bottom": 4, "left": 8})) })
+    );
+    assert_eq!(
+        gtk.style_declaration(&el(&gtk, "label"), None, "xalign", &len(0.5, None)).unwrap(),
+        Some(StyleLowering::SetProp { prop: "xalign".into(), value: StaticValue::Float(0.5) })
+    );
 }
 
 #[test]
-fn style_emphasis_intents() {
-    let gtk = load("gtk");
+fn style_child_attributes() {
     let qt = load("qt");
-    let intent = |intent: &str, actions| StyleLowering::Intent { declaration: "emphasis".into(), intent: intent.into(), actions };
+    let bx = el(&qt, "box");
+    let button = el(&qt, "button");
     assert_eq!(
-        gtk.style_declaration(&el(&gtk, "button"), "emphasis", &ident("accent")).unwrap(),
-        intent("accent", vec![StyleLowering::AddToken { prop: "cssClasses".into(), token: "suggested-action".into() }])
+        qt.style_declaration(&button, Some(&bx), "stretch", &len(2.0, None)).unwrap(),
+        Some(StyleLowering::ChildAttr { attr: "stretch".into(), value: StaticValue::Int(2) })
     );
     assert_eq!(
-        gtk.style_declaration(&el(&gtk, "button"), "emphasis", &ident("destructive")).unwrap(),
-        intent("destructive", vec![StyleLowering::AddToken { prop: "cssClasses".into(), token: "destructive-action".into() }])
+        qt.style_declaration(&button, Some(&bx), "align", &ident("left")).unwrap(),
+        Some(StyleLowering::ChildAttr { attr: "align".into(), value: StaticValue::Enum("left".into()) })
     );
-    assert_eq!(gtk.style_declaration(&el(&gtk, "button"), "emphasis", &ident("normal")).unwrap(), intent("normal", vec![]));
-    assert_eq!(
-        qt.style_declaration(&el(&qt, "button"), "emphasis", &ident("accent")).unwrap(),
-        intent("accent", vec![StyleLowering::SetProp { prop: "default".into(), value: StaticValue::Bool(true) }])
-    );
-    let e = qt.style_declaration(&el(&qt, "button"), "emphasis", &ident("destructive")).unwrap_err();
-    assert_eq!(e.code, codes::STYLE_INTENT_UNSUPPORTED);
-    assert!(e.message.contains("no native equivalent on qt"), "{}", e.message);
-    assert_eq!(e.suggestions, vec!["accent", "normal"]);
-    let e = gtk.style_declaration(&el(&gtk, "button"), "emphasis", &ident("acent")).unwrap_err();
-    assert_eq!((e.code, e.suggestions.as_slice()), (codes::STYLE_BAD_VALUE, ["accent".to_string()].as_slice()));
-    for b in [&gtk, &qt] {
-        assert_eq!(b.style_declaration(&el(b, "label"), "emphasis", &ident("accent")).unwrap_err().code, codes::STYLE_NOT_APPLICABLE);
-    }
+    let e = qt.style_declaration(&button, None, "stretch", &len(2.0, None)).unwrap_err();
+    assert_eq!(e.code, codes::STYLE_NOT_APPLICABLE);
+    let e = qt.style_declaration(&bx, Some(&el(&qt, "window")), "stretch", &len(2.0, None)).unwrap_err();
+    assert!(e.message.contains("is in a <window>"), "{}", e.message);
 }
 
 #[test]
@@ -370,13 +374,6 @@ fn abi_v3_value_types() {
     let v = gtk.coerce_static(css, Some("pill  flat")).unwrap();
     assert_eq!(v, StaticValue::StrList(vec!["pill".into(), "flat".into()]));
     assert_eq!(v.to_json(), serde_json::json!(["pill", "flat"]));
-    // AddToken still targets the list prop.
-    match gtk.style_declaration(&button, "emphasis", &ident("accent")).unwrap() {
-        StyleLowering::Intent { actions, .. } => {
-            assert_eq!(actions, vec![StyleLowering::AddToken { prop: "cssClasses".into(), token: "suggested-action".into() }])
-        }
-        other => panic!("{other:?}"),
-    }
 
     let qt = load("qt");
     let geo = qt.property(&el(&qt, "box"), "geometry").unwrap();

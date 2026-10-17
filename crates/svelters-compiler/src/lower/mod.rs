@@ -19,7 +19,7 @@ mod lists;
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
 use crate::semantics::{BackendSemantics, ElementRef, Lifetime, StyleLowering, Unresolved};
-use crate::style::{Combinator, ComplexSelector, Compound, StyleSheet};
+use crate::style::{Combinator, ComplexSelector, Compound, StyleSheet, parse_value, split_declarations};
 use crate::svelte::ast::{
     Attribute, AttributeLike, AttributeValue, Element as AstElement, ExpressionTagNode, Fragment as AstFragment, FragmentNode, RenderTag,
     Root, SnippetBlock, TextOrExpressionTag,
@@ -32,7 +32,9 @@ use std::collections::{HashMap, HashSet};
 /// The slot proxy: `<sv-slot name="x">` puts its content into the parent element's slot `x`.
 pub const SLOT_PROXY: &str = "sv-slot";
 
-pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a StyleSheet>, diags: &mut Diagnostics) -> Component<'a> {
+/// `css_scope`: the class the X6 sheets of this component are scoped with (the Vite plugin's
+/// Svelte-compiled CSS); every native element of the component carries it.
+pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a StyleSheet>, css_scope: Option<&str>, diags: &mut Diagnostics) -> Component<'a> {
     let mut snippet_roots = HashMap::new();
     collect_snippets(&root.fragment, &mut snippet_roots);
     let mut l = Lower {
@@ -40,6 +42,8 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a 
         diags,
         next_id: 0,
         styles,
+        css_scope: css_scope.map(str::to_string),
+        bad_selectors: HashSet::new(),
         reported: HashSet::new(),
         single_slots: Default::default(),
         in_block: false,
@@ -53,9 +57,9 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a 
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
     if let Some(sheet) = styles {
-        for rule in &sheet.rules {
+        for rule in sheet.rules.iter().filter(|r| r.declarations.iter().any(|d| sem.is_setter_property(&d.name))) {
             for sel in &rule.selectors {
-                if !l.matched.contains(&sel.span) && sel.parts.iter().all(|(_, c)| c.states.is_empty()) {
+                if !l.matched.contains(&sel.span) && !l.bad_selectors.contains(&sel.span) {
                     l.diags.warning("style_unused_selector", sel.span, "this selector matches no element of the component (its declarations are not checked)");
                 }
             }
@@ -77,6 +81,8 @@ enum Parent {
 #[derive(Clone)]
 struct StyleSubject<'a> {
     tag: String,
+    /// A static `id` (a dynamic one matches no `#id` setter rule).
+    id: Option<String>,
     static_classes: Vec<String>,
     cond_classes: Vec<(String, &'a Expression)>,
     /// The element id when it has a dynamic `class` (its class set is matched at runtime).
@@ -88,6 +94,10 @@ struct Lower<'a, 's, 'd> {
     diags: &'d mut Diagnostics,
     next_id: usize,
     styles: Option<&'a StyleSheet>,
+    /// The CSS scope class of the component's X6 sheets (added to every native element).
+    css_scope: Option<String>,
+    /// Selectors of setter rules that setter rules cannot use (reported once).
+    bad_selectors: HashSet<(u32, u32)>,
     /// (span, code) pairs already reported, so a declaration matching many elements reports once.
     reported: HashSet<(u32, u32, &'static str)>,
     /// Single-child slots already filled by a static element: (parent id, slot) -> its tag.
@@ -177,18 +187,29 @@ fn dynamic_of(at: &Attribute) -> Option<Dynamic<'_>> {
 }
 
 impl<'a> Lower<'a, '_, '_> {
+    /// Setter rules take one compound of type, `.class` and `#id` (as on the stock path): rules
+    /// with setter declarations and a combinator or a `:state` are reported, those selectors unused.
     fn check_style_sheet(&mut self) {
         let Some(sheet) = self.styles else { return };
         for rule in &sheet.rules {
+            let names: Vec<&str> = rule.declarations.iter().filter(|d| self.sem.is_setter_property(&d.name)).map(|d| d.name.as_str()).collect();
+            if names.is_empty() {
+                continue;
+            }
+            let props = names.iter().map(|n| format!("`{n}`")).collect::<Vec<_>>().join(", ");
             for sel in &rule.selectors {
-                for (_, c) in &sel.parts {
-                    if !c.states.is_empty() {
-                        self.diags.error(
-                            "style_state_unsupported",
-                            c.span,
-                            format!("state selectors (:{}) need native state tracking, which this compiler does not implement yet", c.states.join(", :")),
-                        );
-                    }
+                let why = if sel.parts.len() > 1 {
+                    Some(("style_unsupported_combinator", "combinators are not supported"))
+                } else if sel.parts.iter().any(|(_, c)| !c.states.is_empty()) {
+                    Some(("style_state_unsupported", "states are CSS-only"))
+                } else {
+                    None
+                };
+                if let Some((code, why)) = why {
+                    self.bad_selectors.insert(sel.span);
+                    self.diags
+                        .error(code, sel.span, format!("setter properties ({props}) only take type, class and id selectors: {why}"))
+                        .help("move the setter properties to a rule with a single compound selector (`box.toolbar`, `#main`); keep CSS properties where they are");
                 }
             }
         }
@@ -580,11 +601,18 @@ impl<'a> Lower<'a, '_, '_> {
         // A backend whose kinds have a `class` prop (the DOM conformance backend) also gets
         // `class` / `class:` as that prop; GTK and Qt have none, so classes only drive styles.
         let class_prop = self.sem.writable_property(&er, "class").ok().map(|p| p.js.clone());
+        // GTK / Qt: `class`, `id`, `style` and `style:` drive the X6 styling and setter rules
+        let native_style = class_prop.is_none();
+        let parent_er = match parent {
+            Parent::Element(p, _) => Some(p.clone()),
+            _ => None,
+        };
 
         // pass 1: slot request and classes (they don't produce ops)
         let mut requested_slot: Option<String> = None;
         let mut class_expr = None;
-        let mut subject = StyleSubject { tag: el.name.clone(), static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
+        let mut subject = StyleSubject { tag: el.name.clone(), id: None, static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
+        let mut has_class = false;
         for a in &el.attributes {
             match a {
                 AttributeLike::Attribute(at) if at.name == "slot" || at.name == "data-slot" => match static_text(at) {
@@ -593,17 +621,25 @@ impl<'a> Lower<'a, '_, '_> {
                         self.diags.error("slot_not_static", sp(at.span()), "`slot` must be a static name");
                     }
                 },
+                AttributeLike::Attribute(at) if native_style && at.name == "id" => subject.id = static_text(at),
                 AttributeLike::Attribute(at) if at.name == "class" => match static_text(at) {
-                    Some(s) => subject.static_classes.extend(s.split_ascii_whitespace().map(str::to_string)),
+                    Some(s) => {
+                        has_class = true;
+                        subject.static_classes.extend(s.split_ascii_whitespace().map(str::to_string))
+                    }
                     None if class_prop.is_some() => {}
                     None => {
                         // matched at runtime against the rules' class conditions (runtime-contract.md)
+                        has_class = true;
                         class_expr = dynamic_of(at);
                         subject.dynamic = class_expr.is_some().then_some(id);
                     }
                 },
                 AttributeLike::ClassDirective(d) => match &d.expression {
-                    Some(e) => subject.cond_classes.push((d.name.clone(), e)),
+                    Some(e) => {
+                        has_class = true;
+                        subject.cond_classes.push((d.name.clone(), e))
+                    }
                     None => unreachable!("the parser synthesises class:x shorthands"),
                 },
                 _ => {}
@@ -664,9 +700,34 @@ impl<'a> Lower<'a, '_, '_> {
         let mut ops: Vec<Op<'a>> = Vec::new();
         let mut explicit_props: Vec<String> = Vec::new();
         let mut bound_props: Vec<String> = Vec::new();
+        // inline style: static CSS text, a dynamic `style=`, CSS `style:` directives, setters
+        let mut inline_css = String::new();
+        let mut inline_dynamic: Option<Dynamic<'a>> = None;
+        let mut inline_dirs: Vec<(String, AttrValue<'a>)> = Vec::new();
+        let mut inline_setters: Vec<(StyleLowering, Span)> = Vec::new();
+        let mut style_span: Option<Span> = None;
         for a in &el.attributes {
             match a {
                 AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") || (at.name == "class" && class_prop.is_none()) => {}
+                AttributeLike::Attribute(at) if native_style && at.name == "id" => {
+                    let value = match (static_text(at), dynamic_of(at)) {
+                        (Some(t), _) => AttrValue::Static(Json::String(t)),
+                        (None, Some(d)) => AttrValue::Dynamic(d),
+                        (None, None) => AttrValue::Static(Json::String(String::new())),
+                    };
+                    ops.push(Op::WidgetName { value, span: at.span() });
+                }
+                AttributeLike::Attribute(at) if native_style && at.name == "style" => {
+                    style_span.get_or_insert(at.span());
+                    match static_text(at) {
+                        Some(text) => inline_css = self.inline_style(&er, parent_er.as_ref(), &text, sp(at.span()), &mut inline_setters),
+                        None => inline_dynamic = dynamic_of(at),
+                    }
+                }
+                AttributeLike::StyleDirective(d) if native_style => {
+                    style_span.get_or_insert(d.span());
+                    self.style_directive(&er, parent_er.as_ref(), d, &mut ops, &mut inline_dirs, &mut inline_setters);
+                }
                 AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
                     let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
                     ops.extend(self.listen_op(&er, &at.name, Handler::Expr(&t.expression), at.span(), name_span(at)));
@@ -749,7 +810,7 @@ impl<'a> Lower<'a, '_, '_> {
                         AttributeLike::UseDirective(_) => "use: actions",
                         AttributeLike::TransitionDirective(_) => "transitions",
                         AttributeLike::AnimateDirective(_) => "animate: directives",
-                        AttributeLike::StyleDirective(_) => "style: directives (use <style> rules)",
+                        AttributeLike::StyleDirective(_) => "style: directives on this backend",
                         AttributeLike::LetDirective(_) => "let: directives",
                         _ => "this attribute",
                     };
@@ -761,10 +822,30 @@ impl<'a> Lower<'a, '_, '_> {
             self.diags.error("bind_and_prop", span, format!("`{p}` is both bound and set explicitly"));
         }
 
+        // the X6 styling: classes (with the CSS scope), inline style
+        if native_style {
+            if has_class || self.css_scope.is_some() {
+                let mut base = subject.static_classes.clone();
+                if let Some(sc) = &self.css_scope {
+                    base.push(sc.clone());
+                }
+                let toggles = subject.cond_classes.clone();
+                ops.push(Op::Classes { base: base.join(" "), dynamic: subject.dynamic, toggles, span: el.span() });
+            }
+            if !inline_css.is_empty() || inline_dynamic.is_some() || !inline_dirs.is_empty() {
+                let span = style_span.unwrap_or(el.span());
+                ops.push(Op::InlineStyle { base: inline_css, dynamic: inline_dynamic, directives: inline_dirs, span });
+            }
+        }
+
         // style-derived ops
+        let explicit_attrs: Vec<String> = ops.iter().filter_map(|o| if let Op::ChildAttr { name, .. } = o { Some(name.clone()) } else { None }).collect();
+        let dynamic_keys: Vec<String> =
+            ops.iter().filter_map(|o| if let Op::StyleSetter { target, child_attr, .. } = o { Some(key(*child_attr, target)) } else { None }).collect();
         let mut chain = ancestors.to_vec();
         chain.push(subject);
-        self.style_ops(&er, &chain, &explicit_props, &bound_props, &mut ops, tag_span);
+        let explicit = Explicit { props: &explicit_props, attrs: &explicit_attrs, bound: &bound_props };
+        self.style_ops(&er, parent_er.as_ref(), &chain, &explicit, inline_setters, &dynamic_keys, &mut ops);
 
         // children: text content or native children (an element's children are not in its
         // parent's <sv-slot>)
@@ -824,12 +905,164 @@ impl<'a> Lower<'a, '_, '_> {
         parts
     }
 
-    /// Resolves the component's style rules for one element (see docs/notes/native-compiler/styling.md):
-    /// explicit attributes > rules by (specificity, source order) > native default.
-    fn style_ops(&mut self, er: &ElementRef, chain: &[StyleSubject<'a>], explicit: &[String], bound: &[String], ops: &mut Vec<Op<'a>>, _tag_span: (u32, u32)) {
+    /// `style="..."` (static) on a native element: CSS declarations are returned as the inline CSS
+    /// text (the X6 translator's at runtime), setter ones are lowered into `setters`.
+    fn inline_style(&mut self, er: &ElementRef, parent: Option<&ElementRef>, text: &str, span: (u32, u32), setters: &mut Vec<(StyleLowering, Span)>) -> String {
+        let mut css = Vec::new();
+        for (name, value) in split_declarations(text) {
+            if !self.sem.is_setter_property(&name) {
+                css.push(format!("{name}: {value}"));
+                continue;
+            }
+            match parse_value(&value) {
+                Ok(tokens) => match self.sem.style_declaration(er, parent, &name, &tokens) {
+                    Ok(Some(l)) => setters.push((l, Span::new(span.0, span.1))),
+                    Ok(None) => {}
+                    Err(u) => u.report(self.diags, span),
+                },
+                Err(msg) => {
+                    self.diags.native_error(crate::semantics::codes::STYLE_BAD_VALUE, span, format!("`{name}`: {msg}"));
+                }
+            }
+        }
+        css.join("; ")
+    }
+
+    /// `style:name=...` on a native element: a setter property becomes a setter op (static values
+    /// are checked now, dynamic ones parsed at runtime), a CSS one joins the inline style.
+    fn style_directive(
+        &mut self,
+        er: &ElementRef,
+        parent: Option<&ElementRef>,
+        d: &'a crate::svelte::ast::StyleDirective,
+        ops: &mut Vec<Op<'a>>,
+        dirs: &mut Vec<(String, AttrValue<'a>)>,
+        setters: &mut Vec<(StyleLowering, Span)>,
+    ) {
+        let span = sp(d.span());
+        if !d.modifiers.is_empty() {
+            self.diags.error("unsupported_feature", span, format!("`style:{}|{}`: style directive modifiers are not supported natively", d.name, d.modifiers.join("|")));
+            return;
+        }
+        let value: Option<AttrValue<'a>> = match &d.value {
+            AttributeValue::True(_) => None,
+            AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) => Some(AttrValue::Dynamic(Dynamic::Expr(&t.expression))),
+            AttributeValue::Sequence(parts) if parts.iter().all(|p| matches!(p, TextOrExpressionTag::Text(_))) => {
+                Some(AttrValue::Static(Json::String(parts.iter().map(|p| if let TextOrExpressionTag::Text(t) = p { t.data.as_str() } else { "" }).collect())))
+            }
+            AttributeValue::Sequence(parts) => Some(AttrValue::Dynamic(Dynamic::Template(
+                parts
+                    .iter()
+                    .map(|p| match p {
+                        TextOrExpressionTag::Text(t) => TemplatePart::Text(t.data.clone()),
+                        TextOrExpressionTag::ExpressionTag(e) => TemplatePart::Expr(&e.expression),
+                    })
+                    .collect(),
+            ))),
+        };
+        let Some(value) = value else {
+            self.diags.error("unsupported_feature", span, format!("the `style:{0}` shorthand is not supported natively; write `style:{0}={{{0}}}`", d.name));
+            return;
+        };
+        let Some(p) = self.sem.style_property(&d.name).filter(|p| p.via != crate::semantics::Via::Css) else {
+            dirs.push((d.name.clone(), value));
+            return;
+        };
+        match value {
+            AttrValue::Static(Json::String(text)) => match parse_value(&text) {
+                Ok(tokens) => match self.sem.style_declaration(er, parent, &d.name, &tokens) {
+                    Ok(Some(l)) => setters.push((l, Span::new(span.0, span.1))),
+                    Ok(None) => {}
+                    Err(u) => u.report(self.diags, span),
+                },
+                Err(msg) => {
+                    self.diags.native_error(crate::semantics::codes::STYLE_BAD_VALUE, span, format!("`{}`: {msg}", d.name));
+                }
+            },
+            AttrValue::Static(_) => unreachable!("static style directive values are text"),
+            AttrValue::Dynamic(dv) => {
+                let child_attr = p.via == crate::semantics::Via::ChildAttr;
+                let (ok, owner) = if child_attr { (parent.is_some_and(|x| p.tags.contains(&x.tag)), parent.map_or("no native parent".to_string(), |x| format!("<{}>", x.tag))) } else { (p.tags.contains(&er.tag), format!("<{}>", er.tag)) };
+                if !ok {
+                    let tags = p.tags.iter().map(|t| format!("<{t}>")).collect::<Vec<_>>().join(", ");
+                    self.diags.native_error(
+                        crate::semantics::codes::STYLE_NOT_APPLICABLE,
+                        span,
+                        format!("`{}` applies to {} on {}, not {}", d.name, if child_attr { format!("the children of {tags}") } else { tags }, self.sem.backend(), owner),
+                    );
+                    return;
+                }
+                let target = if child_attr {
+                    p.attr.clone().unwrap_or_default()
+                } else {
+                    match self.sem.writable_property(er, p.prop.as_deref().unwrap_or_default()) {
+                        Ok(pr) => pr.js.clone(),
+                        Err(u) => {
+                            u.report(self.diags, span);
+                            return;
+                        }
+                    }
+                };
+                ops.push(Op::StyleSetter { name: d.name.clone(), target, child_attr, backend: self.sem.backend().to_string(), value: dv, span: Span::new(span.0, span.1) });
+            }
+        }
+    }
+
+    /// Resolves the setter properties for one element (docs/notes/native-compiler/styling.md):
+    /// explicit attributes > `style:` / `style=` > rules by (specificity, source order) > native default.
+    fn style_ops(
+        &mut self,
+        er: &ElementRef,
+        parent: Option<&ElementRef>,
+        chain: &[StyleSubject<'a>],
+        explicit: &Explicit,
+        inline: Vec<(StyleLowering, Span)>,
+        dynamic_keys: &[String],
+        ops: &mut Vec<Op<'a>>,
+    ) {
+        // `style:` with a dynamic value and static `style=` setters: above every rule
+        let mut taken: Vec<String> = Vec::new();
+        for k in dynamic_keys {
+            let (attr, name) = (k.starts_with("a:"), &k[2..]);
+            if (!attr && explicit.props.iter().any(|p| p == name)) || (attr && explicit.attrs.iter().any(|p| p == name)) {
+                let span = ops
+                    .iter()
+                    .find_map(|o| match o {
+                        Op::StyleSetter { target, child_attr, span, .. } if *child_attr == attr && target == name => Some(sp(*span)),
+                        _ => None,
+                    })
+                    .unwrap_or_default();
+                self.diags.native_warning("style_overridden", span, format!("`{name}` is set explicitly on <{}>, which takes precedence over its style: directive", er.tag));
+                ops.retain(|o| !matches!(o, Op::StyleSetter { target, child_attr, .. } if *child_attr == attr && target == name));
+            }
+            taken.push(k.clone());
+        }
+        for (l, span) in inline.into_iter().rev() {
+            let (is_attr, name) = match &l {
+                StyleLowering::SetProp { prop, .. } => (false, prop.clone()),
+                StyleLowering::ChildAttr { attr, .. } => (true, attr.clone()),
+            };
+            let k = key(is_attr, &name);
+            if taken.contains(&k) {
+                continue;
+            }
+            taken.push(k);
+            if (!is_attr && explicit.props.contains(&name)) || (is_attr && explicit.attrs.contains(&name)) {
+                self.diags.native_warning("style_overridden", sp(span), format!("`{name}` is set explicitly on <{}>, which takes precedence over its inline style", er.tag));
+                continue;
+            }
+            if !is_attr && explicit.bound.contains(&name) {
+                self.diags.native_error("style_conflicts_binding", sp(span), format!("style sets `{name}`, which is bound with bind: on this element"));
+                continue;
+            }
+            match l {
+                StyleLowering::SetProp { prop, value } => ops.push(Op::Set { prop, value: value.to_json(), span }),
+                StyleLowering::ChildAttr { attr, value } => ops.push(Op::ChildAttr { name: attr, value: AttrValue::Static(value.to_json()), span }),
+            }
+        }
         let Some(sheet) = self.styles else { return };
         struct Cand<'a> {
-            spec: (u32, u32),
+            spec: (u32, u32, u32),
             order: usize,
             cond: Cond<'a>,
             lowering: StyleLowering,
@@ -840,18 +1073,17 @@ impl<'a> Lower<'a, '_, '_> {
         for rule in &sheet.rules {
             for sel in &rule.selectors {
                 order += 1;
+                if self.bad_selectors.contains(&sel.span) {
+                    continue;
+                }
                 let Some(cond) = match_selector(sel, chain) else { continue };
-                self.matched.insert(sel.span);
-                for d in &rule.declarations {
+                let mut any = false;
+                for d in rule.declarations.iter().filter(|d| self.sem.is_setter_property(&d.name)) {
+                    any = true;
                     let dspan = (d.span.0, d.span.1);
-                    match self.sem.style_declaration(er, &d.name, &d.value) {
-                        Ok(lowering) => cands.push(Cand {
-                            spec: sel.specificity(),
-                            order: order * 1000 + cands.len(),
-                            cond: cond.clone(),
-                            lowering,
-                            span: Span::new(d.span.0, d.span.1),
-                        }),
+                    match self.sem.style_declaration(er, parent, &d.name, &d.value) {
+                        Ok(Some(lowering)) => cands.push(Cand { spec: sel.specificity(), order: order * 1000 + cands.len(), cond: cond.clone(), lowering, span: Span::new(d.span.0, d.span.1) }),
+                        Ok(None) => {}
                         // A rule that reaches this element only through its own dynamic class set
                         // may never apply to it: a kind mismatch is not an error then.
                         Err(u)
@@ -871,88 +1103,74 @@ impl<'a> Lower<'a, '_, '_> {
                         }
                     }
                 }
+                if any {
+                    self.matched.insert(sel.span);
+                }
             }
         }
         if cands.is_empty() {
             return;
         }
-        // flatten intents into their actions
-        let mut flat: Vec<(Cand<'a>, StyleLowering)> = Vec::new();
-        for c in cands {
-            match &c.lowering {
-                StyleLowering::Intent { actions, .. } => {
-                    for a in actions.clone() {
-                        flat.push((Cand { spec: c.spec, order: c.order, cond: c.cond.clone(), lowering: a.clone(), span: c.span }, a));
-                    }
-                }
-                l => {
-                    let l = l.clone();
-                    flat.push((c, l));
-                }
-            }
-        }
         // highest precedence first
-        flat.sort_by(|a, b| (b.0.spec, b.0.order).cmp(&(a.0.spec, a.0.order)));
-
-        let mut props: Vec<String> = Vec::new();
-        let mut tokens: Vec<(String, String)> = Vec::new();
-        for (_, l) in &flat {
-            match l {
-                StyleLowering::SetProp { prop, .. } if !props.contains(prop) => props.push(prop.clone()),
-                StyleLowering::AddToken { prop, token } if !tokens.contains(&(prop.clone(), token.clone())) => tokens.push((prop.clone(), token.clone())),
-                _ => {}
+        cands.sort_by(|a, b| (b.spec, b.order).cmp(&(a.spec, a.order)));
+        let key_of = |l: &StyleLowering| match l {
+            StyleLowering::SetProp { prop, .. } => key(false, prop),
+            StyleLowering::ChildAttr { attr, .. } => key(true, attr),
+        };
+        let mut keys: Vec<String> = Vec::new();
+        for c in &cands {
+            let k = key_of(&c.lowering);
+            if !keys.contains(&k) {
+                keys.push(k);
             }
         }
-        for prop in props {
-            let mine: Vec<&(Cand<'a>, StyleLowering)> = flat.iter().filter(|(_, l)| matches!(l, StyleLowering::SetProp { prop: p, .. } if *p == prop)).collect();
-            let span = mine[0].0.span;
-            if bound.contains(&prop) {
-                self.diags.native_error("style_conflicts_binding", sp(span), format!("style sets `{prop}`, which is bound with bind: on this element"));
+        for k in keys {
+            let mine: Vec<&Cand<'a>> = cands.iter().filter(|c| key_of(&c.lowering) == k).collect();
+            let span = mine[0].span;
+            let (is_attr, name) = (k.starts_with("a:"), k[2..].to_string());
+            if taken.contains(&k) {
                 continue;
             }
-            if explicit.contains(&prop) {
-                self.diags.native_warning("style_overridden", sp(span), format!("`{prop}` is set explicitly on <{}>, which takes precedence over this style declaration", er.tag));
+            if !is_attr && explicit.bound.contains(&name) {
+                self.diags.native_error("style_conflicts_binding", sp(span), format!("style sets `{name}`, which is bound with bind: on this element"));
+                continue;
+            }
+            if (!is_attr && explicit.props.contains(&name)) || (is_attr && explicit.attrs.contains(&name)) {
+                self.diags.native_warning("style_overridden", sp(span), format!("`{name}` is set explicitly on <{}>, which takes precedence over this style declaration", er.tag));
                 continue;
             }
             let mut candidates: Vec<(Cond<'a>, Json)> = Vec::new();
-            for (c, l) in mine {
-                let StyleLowering::SetProp { value, .. } = l else { unreachable!() };
-                candidates.push((c.cond.clone(), value.to_json()));
+            for c in &mine {
+                let v = match &c.lowering {
+                    StyleLowering::SetProp { value, .. } | StyleLowering::ChildAttr { value, .. } => value.to_json(),
+                };
+                candidates.push((c.cond.clone(), v));
                 if c.cond.is_empty() {
                     break;
                 }
             }
             if candidates.len() == 1 && candidates[0].0.is_empty() {
                 let (_, v) = candidates.pop().unwrap();
-                ops.push(Op::Set { prop, value: v, span });
+                if is_attr {
+                    ops.push(Op::ChildAttr { name, value: AttrValue::Static(v), span });
+                } else {
+                    ops.push(Op::Set { prop: name, value: v, span });
+                }
                 continue;
             }
-            let fallback = if candidates.last().is_some_and(|c| c.0.is_empty()) {
-                Fallback::Default(Json::Null) // unreachable at runtime: the last candidate always holds
+            let fallback = if candidates.last().is_some_and(|c| c.0.is_empty()) || is_attr {
+                // unreachable at runtime when the last candidate always holds; a child attribute
+                // falls back to null (the parent's default)
+                Fallback::Default(Json::Null)
             } else {
-                match self.sem.property(er, &prop).ok().and_then(|p| p.default.clone()) {
+                match self.sem.property(er, &name).ok().and_then(|p| p.default.clone()) {
                     Some(d) => Fallback::Default(d),
                     None => Fallback::Restore,
                 }
             };
-            ops.push(Op::StyleProp { prop, candidates, fallback, span });
-        }
-        for (prop, token) in tokens {
-            let mine: Vec<&(Cand<'a>, StyleLowering)> =
-                flat.iter().filter(|(_, l)| matches!(l, StyleLowering::AddToken { prop: p, token: t } if *p == prop && *t == token)).collect();
-            let span = mine[0].0.span;
-            let cond = if mine.iter().any(|(c, _)| c.cond.is_empty()) {
-                Vec::new()
-            } else {
-                if mine.len() > 1 {
-                    self.diags.native_warning("style_token_conditions", sp(span), "several conditional rules add the same native token; only the highest-precedence condition is used");
-                }
-                mine[0].0.cond.clone()
-            };
-            ops.push(Op::Token { prop, token, cond, span });
+            ops.push(Op::StyleProp { prop: name, child_attr: is_attr, candidates, fallback, span });
         }
     }
-
 
     /// A component call. Children: `{#snippet}` blocks directly inside become props of the same
     /// name; everything else becomes the implicit `children` snippet (Svelte 5 semantics).
@@ -1093,6 +1311,11 @@ fn match_compound<'a>(c: &Compound, s: &StyleSubject<'a>, cond: &mut Cond<'a>) -
     if !c.states.is_empty() {
         return None;
     }
+    if let Some(id) = &c.id
+        && s.id.as_ref() != Some(id)
+    {
+        return None;
+    }
     if let Some(t) = &c.element
         && *t != s.tag
     {
@@ -1109,6 +1332,18 @@ fn match_compound<'a>(c: &Compound, s: &StyleSubject<'a>, cond: &mut Cond<'a>) -
         }
     }
     Some(())
+}
+
+/// What explicit attributes an element has (they win over style).
+struct Explicit<'x> {
+    props: &'x [String],
+    attrs: &'x [String],
+    bound: &'x [String],
+}
+
+/// Key of a style target: `p:<prop>` or `a:<child attribute>`.
+fn key(child_attr: bool, name: &str) -> String {
+    format!("{}:{name}", if child_attr { "a" } else { "p" })
 }
 
 fn static_text(at: &Attribute) -> Option<String> {

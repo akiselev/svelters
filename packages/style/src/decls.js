@@ -84,6 +84,7 @@ const BORDER_PROP = /^border(-(top|right|bottom|left))?(-(width|style|color))?$/
 /**
  * Translates declarations for one toolkit.
  *
+ * `setters: false` skips setter / child-attr declarations silently (the NC1 compiler lowers them).
  * `where`: 'rule' (stylesheet) or 'inline' (`style=`). `qtClass`: the Qt class of the rule's
  * subject when known (decides whether QSS needs `border: none` to paint a background).
  * `knownTokens`: a Set of token names; unknown `--sv-*` references get a warning.
@@ -92,7 +93,7 @@ const BORDER_PROP = /^border(-(top|right|bottom|left))?(-(width|style|color))?$/
  * placeholders), the inline opacity (applied through the widget API, not CSS), the setter and
  * child-attr declarations (`setters`: [{ name, entry, value }], values parsed), and diagnostics.
  */
-export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null, knownTokens = null, offset } = {}) {
+export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null, knownTokens = null, offset, setters: withSetters = true } = {}) {
   /** @type {string[]} */
   const lines = [];
   /** @type {Diagnostic[]} */
@@ -124,6 +125,7 @@ export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null,
       continue;
     }
     if (isSetter(entry)) {
+      if (!withSetters) continue; // someone else's (the native compiler matches them itself)
       const r = parseSetterValue(toolkit, prop, entry, value);
       if (r.error) err(r.error);
       else setters.push({ name: prop, entry, value: r.value });

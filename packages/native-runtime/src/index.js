@@ -9,6 +9,10 @@ import * as $ from 'svelte/internal/client';
 // Hidden by svelte's exports map; resolved by the alias in ../vite.js (and test/register.mjs).
 import { block, branch, component_root, destroy_effect } from 'svelte/internal/client/reactivity/effects';
 import { queue_micro_task } from 'svelte/internal/client/dom/task';
+// The X6 styling of @svelters/renderer (classes, widget name, inline style, sheets, tokens) works
+// on any node with `h`, `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
+import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from '@svelters/renderer/style';
+import { parseSetterValue, propOf } from '@svelters/style/runtime';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');
@@ -56,6 +60,13 @@ class Native {
     this.cattrs = new Map(); // `parent:` child attributes, by name (sent after every insert)
     this.passive = new Map(); // signal -> [fn]: `track` mirrors, run before the handlers, never listened
     this.slots = new Map(); // slot name (null = default) -> Slot
+    this.attrs = {}; // class / id / style for the X6 styling (`attr`)
+    this.sc = null; // what styling has been sent (@svelters/renderer/style)
+  }
+
+  /** The element tag (the X6 styling's kind table is keyed by tag). */
+  get tag() {
+    return this.kind;
   }
 
   // Native access for `bind:this`, the same surface as @svelters/renderer's nodes.
@@ -239,6 +250,73 @@ export function set(node, prop, value) {
  */
 export function assume(node, prop, value) {
   if (!node.last.has(prop)) node.last.set(prop, value);
+}
+
+// ---------------------------------------------------------------------------------------------
+// Styling (X6 sheets and the inline style; setter rules are matched at compile time)
+
+bindElements(() => table().values());
+// inline setter properties of a dynamic `style={...}` (static ones are compiled): written with
+// `set`, child attributes straight to the parent
+bindSetterHooks({
+  hasProp: () => false,
+  hasChildAttr: (n, name) => n.cattrs.has(name),
+  readProp: (n, prop) => n.host.getProp(n.h, prop),
+  writeProp: (n, prop, value) => set(n, prop, value),
+  writeChildAttr: (n, name, value) => {
+    if (n.np && alive(n) && alive(n.np)) n.host.setChildAttr(n.np.h, n.h, name, value);
+  },
+});
+
+/**
+ * `class`, `id` or `style` of a native element for the X6 styling (as @svelters/renderer's
+ * attributes): sent with `host.style` at the end of the job, diffed.
+ */
+export function attr(node, name, value) {
+  if (value === undefined || value === null || value === false) {
+    if (!(name in node.attrs)) return;
+    delete node.attrs[name];
+  } else {
+    if (node.attrs[name] === value) return;
+    node.attrs[name] = value;
+  }
+  if (alive(node)) markStyleDirty(node);
+}
+
+/** The class string: `base`, the dynamic class set `dyn` (or null), then `[name, on]` toggles. */
+export function class_name(base, dyn, toggles) {
+  const out = base ? base.split(' ') : [];
+  if (dyn) for (const c of dyn) if (!out.includes(c)) out.push(c);
+  for (const [c, on] of toggles) {
+    const i = out.indexOf(c);
+    if (on && i < 0) out.push(c);
+    else if (!on && i >= 0) out.splice(i, 1);
+  }
+  return out.join(' ');
+}
+
+/** The inline style text: `base` plus `[property, value]` pairs (nullish values dropped), as Svelte's `style:`. */
+export function style_text(base, directives) {
+  let out = base == null ? '' : String(base).trim();
+  for (const [k, v] of directives) {
+    if (v == null || v === '') continue;
+    out += `${out && !out.endsWith(';') ? '; ' : ''}${k}: ${v}`;
+  }
+  return out;
+}
+
+/**
+ * The native value of a `style:<setter>={value}`: numbers, booleans and objects pass through,
+ * strings are parsed like `style=` (`'8px'`, `'center'`). A bad value warns and writes null.
+ */
+export function setter_value(toolkit, name, value) {
+  if (typeof value !== 'string') return value ?? null;
+  const r = parseSetterValue(toolkit, name, propOf(toolkit, name), value);
+  if (r.error) {
+    console.warn(`[svelters/style] ${r.error}`);
+    return null;
+  }
+  return r.value;
 }
 
 export function capture(node, prop) {
@@ -550,6 +628,7 @@ function dispose(s, region) {
     for (const sl of n.slots.values()) for (const c of allNatives(sl)) if (c.scope === s && !c.destroyed) walk(c);
     n.destroyed = true;
     n.np = null;
+    if (n.sc) forgetStyle(n);
     if (!n.dead) {
       table(n.host).delete(n.h);
       n.host.destroy(n.h);

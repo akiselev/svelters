@@ -21,11 +21,14 @@ pub struct CompileOptions<'b> {
     /// Svelte's `dev` option: `$inspect` / `$inspect.trace` are kept and sources are labelled
     /// (`$.tag`); otherwise they are stripped.
     pub dev: bool,
+    /// The scope class of the component's X6 sheets (the Vite plugin compiles the `<style>` with
+    /// Svelte and this `cssHash`): every native element gets it, so the scoped selectors match.
+    pub css_scope: Option<String>,
 }
 
 impl<'b> CompileOptions<'b> {
     pub fn new(filename: impl Into<String>, backend: &'b dyn BackendSemantics) -> Self {
-        CompileOptions { filename: filename.into(), backend, dev: false }
+        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None }
     }
 }
 
@@ -109,8 +112,9 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     timings.analyze_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
-    let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags));
-    let ir = lower(&root, opts.backend, sheet.as_ref(), &mut diags);
+    let is_setter = |name: &str| opts.backend.is_setter_property(name);
+    let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
+    let ir = lower(&root, opts.backend, sheet.as_ref(), opts.css_scope.as_deref(), &mut diags);
     timings.lower_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();

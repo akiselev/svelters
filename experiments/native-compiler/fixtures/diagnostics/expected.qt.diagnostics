@@ -5,5 +5,6 @@ bad_attribute_value (qt): `orientation`: "diagonal" is not one of horizontal, ve
   App.svelte:11:13: unknown_event: <button> has no event `klick` on qt
   App.svelte:12:12: unknown_property: <entry> has no property `colour` on qt (only annotated properties exist on qt: metadata/overrides/qt)
   App.svelte:13:6: unknown_element: <frobnicator> is not an element of the qt backend
-  App.svelte:19:9: style_bad_value: `spacing`: unit `px` is not supported on qt (did you mean dp?) (in a rule matching <box>)
-  App.svelte:20:3: style_state_unsupported: state selectors (:hover) need native state tracking, which this compiler does not implement yet
+  App.svelte:19:9: style_bad_value: `spacing`: unit `dp` is not supported on qt (lengths are unitless or in px) (did you mean 4px?) (in a rule matching <box>)
+  App.svelte:20:3: style_state_unsupported: setter properties (`minimum-height`) only take type, class and id selectors: states are CSS-only
+  App.svelte:21:3: style_unsupported_combinator: setter properties (`spacing`) only take type, class and id selectors: combinators are not supported

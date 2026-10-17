@@ -84,7 +84,8 @@ export function extractNative(source) {
  * Translates one stylesheet for one toolkit.
  * @param {string} cssText
  * @param {'gtk' | 'qt'} toolkit
- * @param {{ native?: string[], knownTokens?: Iterable<string>, kinds?: typeof KINDS }} [opts]
+ * @param {{ native?: string[], knownTokens?: Iterable<string>, kinds?: typeof KINDS, setters?: boolean }} [opts]
+ *   setters: false leaves setter / child-attr declarations out, silently (the NC1 compiler's).
  * @returns {{ css: string, dark: string, rules: SetterRule[], diagnostics: import('./decls.js').Diagnostic[] }}
  */
 export function translateSheet(cssText, toolkit, opts = {}) {
@@ -281,7 +282,7 @@ export function translateSheet(cssText, toolkit, opts = {}) {
       // Qt: one subject class for the border rule, only when all selectors agree.
       const classes = new Set(sels.map((s) => s.qtClass));
       const qtClass = classes.size === 1 ? [...classes][0] : null;
-      const r = translateDecls(decls, toolkit, { where: 'rule', qtClass, knownTokens, offset: node.start });
+      const r = translateDecls(decls, toolkit, { where: 'rule', qtClass, knownTokens, offset: node.start, setters: opts.setters ?? true });
       diagnostics.push(...r.diagnostics);
       if (r.setters.length) setterRules(node, r.setters, ctx);
       if (r.lines.length) {

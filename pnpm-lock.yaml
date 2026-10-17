@@ -497,6 +497,12 @@ importers:
       '@svelters/lists':
         specifier: workspace:*
         version: link:../lists
+      '@svelters/renderer':
+        specifier: workspace:*
+        version: link:../renderer
+      '@svelters/style':
+        specifier: workspace:*
+        version: link:../style
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz

@@ -373,10 +373,20 @@ pub struct ChildrenSpec {
     pub slots: BTreeMap<String, SlotSpec>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+/// The style property table (metadata/style/<backend>.yaml through gen_semantics.py): how each
+/// style property is applied. `css` ones are not the compiler's (they go to the X6 translator).
+#[derive(Debug, Clone, Default, Deserialize)]
 pub struct StyleSpec {
+    /// `css`, `qss` or `none` (a setter-only toolkit).
+    #[serde(default)]
+    pub dialect: String,
+    /// What a setter rule's compound selector may hold: `type`, `class`, `id`.
+    #[serde(default)]
+    pub setter_selectors: Vec<String>,
+    #[serde(default)]
     pub units: BTreeMap<String, UnitSpec>,
-    pub declarations: BTreeMap<String, DeclarationSpec>,
+    #[serde(default)]
+    pub properties: BTreeMap<String, StylePropSpec>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -387,47 +397,50 @@ pub struct UnitSpec {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Contract {
-    /// Same meaning on every backend; lowers to one property.
-    Common,
-    /// A design intent each backend maps to its own convention (or rejects).
-    NativeIntent,
+#[serde(rename_all = "kebab-case")]
+pub enum Via {
+    /// The toolkit's own styling dialect (GTK CSS, QSS).
+    Css,
+    /// A widget property (`setProp`).
+    Setter,
+    /// A child attribute on the parent (`setChildAttr`).
+    ChildAttr,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ValueKind {
-    Enum,
+    /// Pixels: unitless or in one of `units`.
     Length,
+    Int,
+    Number,
     Bool,
+    Enum,
+    /// 1 to 4 lengths in CSS order, as `{ top, right, bottom, left }`.
+    Insets,
+    String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-#[serde(tag = "op", rename_all = "snake_case")]
-pub enum IntentAction {
-    Set { prop: String, value: Value },
-    AddToken { prop: String, token: String },
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct DeclarationSpec {
-    /// Kind id or class the element must be (`is_a`).
-    pub applies_to: String,
-    pub contract: Contract,
-    #[serde(default)]
-    pub provenance: String,
-    /// Common: target property (JS name).
+pub struct StylePropSpec {
+    pub via: Via,
+    /// Setter: the target property (JS name).
     #[serde(default)]
     pub prop: Option<String>,
+    /// Child attribute: its name.
     #[serde(default)]
+    pub attr: Option<String>,
+    #[serde(default, rename = "type")]
     pub value: Option<ValueKind>,
-    /// Native intent: intent name -> actions (empty = leave the native default).
+    /// Setter: the tags it applies to; child attribute: the parents' tags.
     #[serde(default)]
-    pub intents: BTreeMap<String, Vec<IntentAction>>,
-    /// Native intent names this backend knowingly cannot express, with the reason.
+    pub tags: Vec<String>,
     #[serde(default)]
-    pub unsupported: BTreeMap<String, String>,
+    pub values: Option<Vec<String>>,
+    #[serde(default)]
+    pub inline_only: bool,
+    #[serde(default)]
+    pub note: Option<String>,
 }
 
 impl Spec {
