@@ -1,0 +1,2 @@
+unexposed:
+  reason: "GPU rendering surface driven by QRhi commands; no declarative surface."

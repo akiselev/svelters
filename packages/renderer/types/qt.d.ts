@@ -79,6 +79,50 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  calendar: {
+    props: {
+      gridVisible?: boolean;
+      navigationBarVisible?: boolean;
+      firstDayOfWeek?: "friday" | "monday" | "saturday" | "sunday" | "thursday" | "tuesday" | "wednesday";
+      horizontalHeaderFormat?: "long-day-names" | "no-horizontal-header" | "short-day-names" | "single-letter-day-names";
+      verticalHeaderFormat?: "iso-week-numbers" | "no-vertical-header";
+      dateEditEnabled?: boolean;
+      dateEditAcceptDelay?: number;
+      selectionMode?: "no-selection" | "single-selection";
+      selectedDate?: DateParts;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "selection-changed": () => void;
+      "page-changed": (year: number, month: number) => void;
+      clicked: (date: DateParts) => void;
+      activated: (date: DateParts) => void;
+    };
+    methods: {
+      showToday(): void;
+      showNextMonth(): void;
+      showPreviousMonth(): void;
+      showNextYear(): void;
+      showPreviousYear(): void;
+      monthShown(): number;
+      yearShown(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   colordialog: {
     props: {
       currentColor?: Color | string;
@@ -159,6 +203,8 @@ export interface QtElementDescriptors {
   dateedit: {
     props: {
       date?: DateParts;
+      displayFormat?: string;
+      calendarPopup?: boolean;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -177,6 +223,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "date-changed": (date: DateParts) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -192,6 +239,7 @@ export interface QtElementDescriptors {
     props: {
       dateTime?: Date;
       displayFormat?: string;
+      calendarPopup?: boolean;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -210,6 +258,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "date-time-changed": (datetime: Date) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -952,6 +1001,7 @@ export interface QtElementDescriptors {
   timeedit: {
     props: {
       time?: TimeParts;
+      displayFormat?: string;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -970,6 +1020,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "time-changed": (time: TimeParts) => void;
       editingFinished: () => void;
     };
     methods: {

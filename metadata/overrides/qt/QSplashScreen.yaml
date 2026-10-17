@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Startup-only top-level window shown before the main window exists; not part of an app page."

@@ -383,4 +383,4 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   work; expose if worthwhile), QGraphicsView (G7: scene), QSplashScreen (startup only), QRhiWidget (GPU API),
   QRubberBand/QFocusFrame/QSizeGrip/QSplitterHandle (internal), item views (G6).
 - Gallery: `10-display.svelte`.
-- Status: todo
+- Status: done (calendar 7 P + 5 M + 4 S; dateedit/timeedit/datetimeedit 4+4+4 P, 1 S each, verified by generated tests; 13 classes unexposed with reasons; dropped: min/max Date/Time/DateTime props (ingest resolves getter to clearMinimumX(), generated C++ does not compile; new gap), date/time bindings and calendar selectedDate binding (suppress_signals test is scalar-only; selectionChanged has no arg; new gap))
