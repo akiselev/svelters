@@ -209,6 +209,8 @@ const MAX_TIMER_FIRINGS = 10_000;
  * Step semantics (the contract P2 must reproduce):
  *   { event: [h, signal, args] }  append `event #h signal args` to the log, then call
  *                                 globalThis.__svelters_dispatch(h, signal, args) synchronously.
+ *   { sync: [h, signal, args] }  append `sync #h signal args`, call globalThis.__svelters_dispatch_sync(h, signal, args)
+ *                                 synchronously (no checkpoint), append `result #h <json of the result>`.
  *   { gone: [h, reason] }         the native object behind h died: log `gone #h reason` for h and each
  *                                 descendant (pre-order, reason `parent`), then call
  *                                 globalThis.__svelters_gone(handle, reason) for each, synchronously.
@@ -250,6 +252,11 @@ export async function runBundle({ bundlePath, script }) {
         const [h, signal, args] = step.event;
         th.lines.push(`event #${h} ${signal} ${JSON.stringify(args)}`);
         ctx.__svelters_dispatch(h, signal, args);
+      } else if (step.sync) {
+        const [h, signal, args] = step.sync;
+        th.lines.push(`sync #${h} ${signal} ${JSON.stringify(args)}`);
+        const r = ctx.__svelters_dispatch_sync(h, signal, args);
+        th.lines.push(`result #${h} ${JSON.stringify(r ?? null)}`);
       } else if (step.gone) {
         const [h, reason] = step.gone;
         for (const [x, why] of th.killNative(h, reason)) ctx.__svelters_gone?.(x, why);

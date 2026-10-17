@@ -33,11 +33,19 @@ pub enum Step {
         handle: svl_handle,
         reason: u32,
     },
+    /// A native signal whose handler result matters: logs `sync #h <signal> <args>`, calls
+    /// `host.call_sync`, then logs `result #h <json>` (`busy`/`error` when the host refused).
+    /// Unlike `Event` it does not checkpoint; the script's `checkpoint` steps do.
+    Sync {
+        handle: svl_handle,
+        signal: String,
+        args: Vec<Value>,
+    },
     Checkpoint,
 }
 
 /// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args]}`,
-/// `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
+/// `{"sync": [h, signal, args]}`, `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
@@ -50,7 +58,8 @@ pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
 
 fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
     let obj = s.as_object().ok_or("expected an object")?;
-    if let Some(ev) = obj.get("event") {
+    if let Some(ev) = obj.get("event").or_else(|| obj.get("sync")) {
+        let is_sync = obj.contains_key("sync");
         let ev = ev
             .as_array()
             .ok_or("event: expected [handle, signal, args]")?;
@@ -72,6 +81,13 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
                 .map(json_to_value)
                 .collect::<Result<_, _>>()?,
         };
+        if is_sync {
+            return Ok(Step::Sync {
+                handle,
+                signal,
+                args,
+            });
+        }
         Ok(Step::Event {
             handle,
             signal,
@@ -86,7 +102,7 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
-        Err("unknown step (expected `event`, `gone` or `checkpoint`)".into())
+        Err("unknown step (expected `event`, `sync`, `gone` or `checkpoint`)".into())
     }
 }
 
@@ -264,6 +280,10 @@ struct State {
     wake_deadline: Option<Instant>,
     timer_fires: u64,
     schedule_calls: u64,
+    /// `request_frame` was called and the virtual frame has not been delivered yet.
+    frame_pending: bool,
+    frames_requested: u64,
+    frames_delivered: u64,
 }
 
 struct Shared {
@@ -309,6 +329,9 @@ impl LogBackend {
                     wake_deadline: None,
                     timer_fires: 0,
                     schedule_calls: 0,
+                    frame_pending: false,
+                    frames_requested: 0,
+                    frames_delivered: 0,
                 }),
                 cv: Condvar::new(),
                 wakes: AtomicU64::new(0),
@@ -340,6 +363,16 @@ impl LogBackend {
     /// Number of `schedule_wake` calls received.
     pub fn schedule_call_count(&self) -> u64 {
         self.shared.lock().schedule_calls
+    }
+
+    /// Number of `request_frame` calls received.
+    pub fn frames_requested(&self) -> u64 {
+        self.shared.lock().frames_requested
+    }
+
+    /// Number of virtual frames delivered to the host.
+    pub fn frames_delivered(&self) -> u64 {
+        self.shared.lock().frames_delivered
     }
 
     /// Number of checkpoints the fake loop has requested.
@@ -394,6 +427,20 @@ impl LogBackend {
             st.props.retain(|(ph, _), _| ph != x);
         }
         dying
+    }
+
+    /// Delivers the pending virtual frame, if any. The frame clock of this backend ticks on the
+    /// next loop turn: no wall-clock wait, so runs stay deterministic and fast.
+    fn deliver_frame(&self, host: &HostRef<'_>) -> bool {
+        {
+            let mut st = self.shared.lock();
+            if !std::mem::take(&mut st.frame_pending) {
+                return false;
+            }
+            st.frames_delivered += 1;
+        }
+        host.frame();
+        true
     }
 
     fn take_wake(&self) -> bool {
@@ -574,6 +621,14 @@ impl Backend for LogBackend {
         self.shared.cv.notify_all();
     }
 
+    fn request_frame(&self) {
+        let mut st = self.shared.lock();
+        st.frames_requested += 1;
+        st.frame_pending = true;
+        drop(st);
+        self.shared.cv.notify_all();
+    }
+
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         let steps = std::mem::take(&mut self.shared.lock().script);
         for step in steps {
@@ -583,8 +638,30 @@ impl Backend for LogBackend {
             if self.take_wake() {
                 self.checkpoint(host);
             }
+            self.deliver_frame(host);
             match step {
                 Step::Checkpoint => self.checkpoint(host),
+                Step::Sync {
+                    handle,
+                    signal,
+                    args,
+                } => {
+                    let kind = self.check_live(handle)?;
+                    let sig =
+                        self.shared
+                            .lock()
+                            .names
+                            .intern(NameKind::Signal as u32, kind, &signal);
+                    let list = Value::List(args.clone());
+                    self.append(format_args!("sync #{handle} {signal} {}", json_string(&list)));
+                    match host.call_sync(handle, sig, &args) {
+                        Ok(v) => self.append(format_args!("result #{handle} {}", json_string(&v))),
+                        Err(e) if e.code == svelters_abi::SVL_SYNC_BUSY => {
+                            self.append(format_args!("result #{handle} busy"))
+                        }
+                        Err(_) => self.append(format_args!("result #{handle} error")),
+                    }
+                }
                 Step::Gone { handle, reason } => {
                     self.check_live(handle)?;
                     for (h, why) in self.kill(handle, reason) {
@@ -615,7 +692,7 @@ impl Backend for LogBackend {
         loop {
             let mut st = self.shared.lock();
             let mut timer_fired = false;
-            while !st.wake_pending && !st.quit && !timer_fired {
+            while !st.wake_pending && !st.quit && !timer_fired && !st.frame_pending {
                 // A pending `schedule_wake` keeps the loop alive until its deadline; otherwise
                 // the loop returns once nothing has woken it for `settle`.
                 let wait = match st.wake_deadline {
@@ -644,8 +721,11 @@ impl Backend for LogBackend {
             if st.quit {
                 return Ok(());
             }
-            st.wake_pending = false;
+            let wake = std::mem::take(&mut st.wake_pending);
             drop(st);
+            if self.deliver_frame(host) && !wake && !timer_fired {
+                continue;
+            }
             self.checkpoint(host);
         }
     }

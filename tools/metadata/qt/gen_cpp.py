@@ -396,8 +396,9 @@ class Model:
     def _resolve_signal(self, el: dict, s: dict) -> None:
         tag, cls = el["tag"], el["cls"]
         if s.get("synthetic"):
-            # Raised by the backend itself, not by a QObject signal. Only `close_request` exists.
-            if s["synthetic"] != "close_request":
+            # Raised by the backend itself (an event filter), not by a QObject signal. Both are
+            # sync signals: the JS handler's result decides (close_request: veto, key_press: consume).
+            if s["synthetic"] not in ("close_request", "key_press"):
                 raise GenError(f"{tag}: unknown synthetic signal {s['synthetic']}")
             s.setdefault("args", [])
             s["decl_cls"], s["rec"], s["qparams"] = None, None, []
@@ -857,8 +858,11 @@ def emit_listen(m: Model) -> str:
         for s in e["signals"]:
             sid = f"G_{t}_{cident(s['js'])}"
             if s.get("synthetic"):
-                # onRequestClose: while listened, the backend vetoes the native close and posts it.
-                out.append(f"        case {sid}: {{ e.close_listen = on; e.close_sig = sig; return 0; }}")
+                if s["synthetic"] == "key_press":
+                    out.append(f"        case {sid}: return listen_key(e, sig, on);")
+                else:
+                    # onRequestClose: while listened, the JS handler decides each native close.
+                    out.append(f"        case {sid}: {{ e.close_listen = on; e.close_sig = sig; return 0; }}")
                 continue
             ptypes = ", ".join(tn for _, tn in s["qparams"])
             lam_params = ", ".join(f"{tn} a{i}" for i, (_, tn) in enumerate(s["qparams"]))

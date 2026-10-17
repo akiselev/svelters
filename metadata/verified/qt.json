@@ -25,6 +25,7 @@
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QLineEdit:element:entry:prop:text", "fingerprint": "ac8e292f321e8c15", "result": "pass", "test": "prop/entry.text", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QLineEdit:element:entry:prop:text", "fingerprint": "ac8e292f321e8c15", "result": "pass", "test": "signal/entry.text/no_echo_on_set_prop", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QLineEdit:element:entry:signal:changed", "fingerprint": "5a59ad0b2afff087", "result": "pass", "test": "signal/entry.changed/delivered_once", "version": "6.11.0"},
+{"fact": "svelters-api:v1:type:qt:QtWidgets:QLineEdit:element:entry:signal:key-press", "fingerprint": "1b801d40fcd7af0a", "result": "pass", "test": "signal/entry.key-press/synthetic_listen", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:element:window:method:close", "fingerprint": "1cfa840da7c33e8c", "result": "pass", "test": "method/window.close", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:element:window:method:present", "fingerprint": "90b68bad7f0dd569", "result": "pass", "test": "method/window.present", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:element:window:method:resize", "fingerprint": "955e26442296ceee", "result": "pass", "test": "method/window.resize", "version": "6.11.0"},

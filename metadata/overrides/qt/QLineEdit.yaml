@@ -23,6 +23,9 @@ elements:
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "docs/notes/signals-and-slots-semantics.md 1.6 (qt_sync_probe.py: textEdited never fires for setText, textChanged does)"
     signals:
+      # Synthetic (an event filter, not a Qt signal): a sync signal. The handler's result decides
+      # whether the key press is consumed (`e.preventDefault()`), before the line edit sees it.
+      - { js: key-press, synthetic: key_press, provenance: "X2 sync key-press (docs/notes/x2-sync-frame.md); QKeyEvent via event filter" }
       - js: changed
         native: textChanged
         connect: "textChanged(QString)"

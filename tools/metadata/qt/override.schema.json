@@ -98,7 +98,7 @@
                                              "properties": {"name": {"type": "string"}, "type": {"type": "string"}}}},
         "trigger": {"type": "string", "description": "C++ statement that makes Qt emit the signal; `$w` is the widget, `$i` the iteration (0, 1, 2)."},
         "expect_args": {"type": "array", "items": {"type": "string"}},
-        "synthetic": {"enum": ["close_request"]},
+        "synthetic": {"enum": ["close_request", "key_press"]},
         "provenance": {"$ref": "#/$defs/provenance"}
       }
     },

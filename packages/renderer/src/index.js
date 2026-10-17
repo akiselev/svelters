@@ -441,7 +441,72 @@ export function gone(h, reason) {
 }
 
 /**
- * Deliver a native signal to JS. Handlers registered for the signal (`onclicked`) and for its
+ * The event object handed to listeners of a signal whose handler result matters (sync signals,
+ * and their deferred async delivery). Svelte ignores handler return values, so the result of the
+ * native signal comes from flags on this object:
+ *   e.preventDefault() / e.stopPropagation()   result `true` (stop: veto the close, key handled)
+ *   e.result = v                               explicit result; wins over the flags
+ * `args` are the native signal arguments; listeners receive them after the event, `(e, ...args)`.
+ * When `deferred` is true the toolkit did not wait for JS (JS was already running), so the flags
+ * are ignored; they stay settable so the same handler code runs unchanged.
+ */
+export class NativeEvent {
+  constructor(type, signal, target, args, deferred) {
+    this.type = type;
+    this.signal = signal;
+    this.target = target;
+    this.args = args;
+    this.deferred = deferred;
+    this.cancelable = !deferred;
+    this.defaultPrevented = false;
+    this.cancelBubble = false;
+    this.result = undefined;
+    this.immediateStopped = false;
+  }
+
+  preventDefault() {
+    if (this.cancelable) this.defaultPrevented = true;
+  }
+
+  stopPropagation() {
+    if (this.cancelable) this.cancelBubble = true;
+  }
+
+  stopImmediatePropagation() {
+    this.stopPropagation();
+    this.immediateStopped = true;
+  }
+}
+
+/** The host value for a finished sync event: `null` means "no decision, use the default". */
+function syncResult(ev) {
+  if (ev.result !== undefined) return ev.result;
+  return ev.defaultPrevented || ev.cancelBubble ? true : null;
+}
+
+/**
+ * Deliver a sync native signal (`call_sync`): run the listeners now, in registration order, with
+ * a NativeEvent, and return the result for the toolkit (see NativeEvent). An exception from a
+ * listener propagates; the host reports it and the toolkit gets the default.
+ */
+export function dispatchSync(h, signal, args = []) {
+  const el = byHandle.get(h);
+  if (!el) throw new Error(`dispatchSync: unknown handle ${h}`);
+  const ev = new NativeEvent(eventFor(signal), signal, el, args, false);
+  run: for (const type of new Set([eventFor(signal), signal])) {
+    for (const f of [...(el.listeners[type] ?? [])]) {
+      const r = f.call(el, ev, ...args);
+      if (r !== null && typeof r === 'object' && typeof r.then === 'function') {
+        console.warn(`sync handler for '${signal}' returned a Promise: flags set after its first await come too late and are ignored`);
+      }
+      if (ev.immediateStopped) break run;
+    }
+  }
+  return syncResult(ev);
+}
+
+/**
+ * Deliver a native signal to JS (asynchronously, from the event queue). Handlers registered for the signal (`onclicked`) and for its
  * DOM-style alias (`onclick`) run with the raw args, in registration order, `this` = the node.
  *
  * Returns `{ results, event }`:
@@ -450,9 +515,18 @@ export function gone(h, reason) {
  *            such as defaultPrevented/cancelBubble/returnValue the handlers set on it), else null
  * Exceptions from handlers propagate to the caller.
  */
-export function dispatch(h, signal, args = []) {
+export function dispatch(h, signal, args = [], deferred = false) {
   const el = byHandle.get(h);
   if (!el) throw new Error(`dispatch: unknown handle ${h}`);
+  if (deferred) {
+    // A sync signal that was delivered late: same listener signature as dispatchSync, result ignored.
+    const ev = new NativeEvent(eventFor(signal), signal, el, args, true);
+    const results = [];
+    for (const type of new Set([eventFor(signal), signal])) {
+      for (const f of [...(el.listeners[type] ?? [])]) results.push(f.call(el, ev, ...args));
+    }
+    return { results, event: ev };
+  }
   // Mirror host-owned state so Svelte writing the same value back is a no-op.
   if (signal === 'changed' && el.tag === 'entry' && typeof args[0] === 'string') el.props.set('text', args[0]);
   const results = [];

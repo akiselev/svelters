@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPixmap>
+#include <QtGui/QWindow>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
@@ -81,9 +82,11 @@ struct Entry {
   svl_id kind = 0;
   QMetaObject::Connection destroyed;
   bool toplevel = false;      // a parentless widget: lifetime class TOPLEVEL
-  bool close_listen = false;  // JS listens for close-request: veto the close and post it
+  bool close_listen = false;  // JS listens for close-request: the handler decides (call_sync)
   svl_id close_sig = 0;
   int suppress = 0;           // > 0 while JS writes an echo-suppressed property: posts are dropped
+  bool key_listen = false;    // JS listens for key-press: the handler may consume the key
+  svl_id key_sig = 0;
 };
 
 // Echo suppression for programmatic sets: our own connections drop their posts for this handle
@@ -107,6 +110,12 @@ struct Core {
   QTimer *wake_timer = nullptr;  // schedule_wake's single-shot timer; main thread only
   std::atomic<bool> wake_pending{false};
   std::atomic<bool> queued{false};  // a checkpoint is already queued on the loop
+  // Frame clock (request_frame). Main thread only.
+  bool frame_pending = false;
+  QTimer *frame_timer = nullptr;      // fallback / watchdog for a frame the window does not deliver
+  QPointer<QWindow> frame_win;        // the window whose UpdateRequest events we watch
+  QObject *frame_filter = nullptr;
+  unsigned frames_by_update = 0;      // frames delivered by an UpdateRequest (the rest: the timer)
 };
 
 Core g;
@@ -220,24 +229,111 @@ svl_handle handle_of(QObject *o) {
   return 0;
 }
 
-// onRequestClose for toplevels (see backend-abi.md, ABI v2): while JS listens for close-request the
-// close is vetoed and posted as an event; otherwise the window is closed for good.
+// Sync handler result: a bool (or non-zero integer) `true` means stop/handled.
+bool sync_stop(int rc, const svl_value &out) {
+  if (rc != 0) return false;
+  if (out.tag == SVL_BOOL) return out.u.b;
+  if (out.tag == SVL_I64) return out.u.i != 0;
+  return false;
+}
+
+// onRequestClose for toplevels (see backend-abi.md, ABI v2 and v2.1): while JS listens for
+// close-request its handler decides each close through call_sync (`true` vetoes). A busy host
+// (JS is running) queued the event itself: the close is vetoed so the late handler can decide.
+// Without a listener, or when the handler does not veto, the window is closed for good.
 struct CloseFilter : QObject {
   bool eventFilter(QObject *o, QEvent *ev) override {
     if (ev->type() != QEvent::Close) return false;
     svl_handle h = handle_of(o);
     if (!h) return false;
-    Entry &e = g.table[h];
-    if (e.close_listen) {
-      ev->ignore();
-      if (g.host && g.host->post_event) g.host->post_event(g.host->self, h, e.close_sig, nullptr, 0);
-      return true;
+    const Entry &e = g.table[h];
+    if (e.close_listen && g.host && g.host->call_sync) {
+      svl_value out{};
+      int rc = g.host->call_sync(g.host->self, h, e.close_sig, nullptr, 0, &out);
+      if (rc == SVL_SYNC_BUSY || sync_stop(rc, out) || g.table.find(h) == g.table.end()) {
+        ev->ignore();
+        return true;
+      }
     }
     ev->accept();
     native_closed(h, o);
     return true;
   }
 };
+
+// key-press (synthetic): while JS listens, every key press on the object goes through call_sync
+// with [key, text, modifiers]; a handler result of `true` consumes the key, so the widget never
+// sees it (a QLineEdit does not insert the text).
+struct KeyFilter : QObject {
+  bool eventFilter(QObject *o, QEvent *ev) override {
+    if (ev->type() != QEvent::KeyPress || !g.host || !g.host->call_sync) return false;
+    svl_handle h = handle_of(o);
+    if (!h) return false;
+    auto it = g.table.find(h);
+    if (it == g.table.end() || !it->second.key_listen) return false;
+    const svl_id sig = it->second.key_sig;
+    auto *k = static_cast<QKeyEvent *>(ev);
+    const QByteArray text = k->text().toUtf8();
+    svl_value args[3] = {};
+    args[0].tag = SVL_I64;
+    args[0].u.i = k->key();
+    args[1].tag = SVL_STR;
+    args[1].u.s.ptr = text.constData();
+    args[1].u.s.len = static_cast<size_t>(text.size());
+    args[2].tag = SVL_I64;
+    args[2].u.i = static_cast<qint64>(k->modifiers().toInt());
+    svl_value out{};
+    int rc = g.host->call_sync(g.host->self, h, sig, args, 3, &out);
+    return sync_stop(rc, out);
+  }
+};
+
+int listen_key(Entry &e, svl_id sig, bool on) {
+  static KeyFilter *filter = new KeyFilter;
+  e.key_listen = on;
+  e.key_sig = sig;
+  if (e.obj.isNull()) return 0;
+  if (on) e.obj->installEventFilter(filter);
+  else e.obj->removeEventFilter(filter);
+  return 0;
+}
+
+// ---- frame clock (ABI v2.1 request_frame) ------------------------------------------------------
+
+void deliver_frame(bool from_update) {
+  if (!g.frame_pending) return;
+  g.frame_pending = false;
+  if (g.frame_timer) g.frame_timer->stop();
+  if (from_update) g.frames_by_update++;
+  if (g.host && g.host->frame) g.host->frame(g.host->self);
+}
+
+// Watches the chosen window for the update requests that QWindow::requestUpdate() delivers on the
+// toolkit's frame cadence. It never consumes them: the window repaints as usual.
+struct FrameFilter : QObject {
+  bool eventFilter(QObject *, QEvent *ev) override {
+    if (ev->type() == QEvent::UpdateRequest) deliver_frame(true);
+    return false;
+  }
+};
+
+// The platform-backed window of the lowest-handle visible toplevel, if any.
+QWindow *frame_window() {
+  svl_handle best = 0;
+  QWindow *win = nullptr;
+  for (auto &kv : g.table) {
+    if (!kv.second.toplevel || kv.second.obj.isNull()) continue;
+    auto *w = qobject_cast<QWidget *>(kv.second.obj.data());
+    if (!w || !w->isVisible()) continue;
+    QWindow *wh = w->windowHandle();
+    if (!wh || !wh->handle()) continue;
+    if (!best || kv.first < best) {
+      best = kv.first;
+      win = wh;
+    }
+  }
+  return win;
+}
 
 void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
   if (auto it = g.table.find(h); it != g.table.end() && it->second.suppress > 0) return;
@@ -454,7 +550,10 @@ int b_run(void *, const svl_host *host) {
     g.queued.store(true);
     QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
   }
-  return QCoreApplication::exec();
+  const int rc = QCoreApplication::exec();
+  // The host vtable is only guaranteed while `run` is on the stack; late timers must not use it.
+  g.host = nullptr;
+  return rc;
 }
 
 void b_wake(void *) {
@@ -477,10 +576,37 @@ void b_quit(void *) {
 
 const char *b_last_error(void *) { return g.err.c_str(); }
 
+// One host->frame on the next frame: QWindow::requestUpdate() on a platform-backed toplevel, whose
+// UpdateRequest event the frame filter turns into the callback. Without such a window a 16 ms
+// timer stands in; with one, a 250 ms watchdog covers a window that stops updating (hidden).
+void b_request_frame(void *) {
+  ensure_app();
+  if (g.frame_pending) return;
+  g.frame_pending = true;
+  if (!g.frame_timer) {
+    g.frame_timer = new QTimer(g.waker.load());
+    g.frame_timer->setSingleShot(true);
+    QObject::connect(g.frame_timer, &QTimer::timeout, g.frame_timer, [] { deliver_frame(false); });
+  }
+  int delay = 16;
+  if (QWindow *win = frame_window()) {
+    if (g.frame_win.data() != win) {
+      if (!g.frame_filter) g.frame_filter = new FrameFilter;
+      if (!g.frame_win.isNull()) g.frame_win->removeEventFilter(g.frame_filter);
+      win->installEventFilter(g.frame_filter);
+      g.frame_win = win;
+    }
+    win->requestUpdate();
+    delay = 250;
+  }
+  g.frame_timer->setTimerType(delay < 20 ? Qt::PreciseTimer : Qt::CoarseTimer);
+  g.frame_timer->start(delay);
+}
+
 // v3 members (caps, describe, describe_type, cancel) follow `last_error`.
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
-                              b_last_error, SVL_CAP_UTF16_IN, b_describe, b_describe_type, nullptr};
+                              b_last_error, SVL_CAP_UTF16_IN, b_describe, b_describe_type, nullptr, b_request_frame};
 
 }  // namespace
 
@@ -628,6 +754,9 @@ extern "C" void svl_qt_run_later(void (*cb)(void *), void *ud, int ms) {
   ensure_app();
   QTimer::singleShot(ms, g.waker.load(), [cb, ud] { cb(ud); });
 }
+
+// Frames delivered by a window's UpdateRequest so far (the others came from the fallback timer).
+extern "C" unsigned svl_qt_frames_by_update() { return g.frames_by_update; }
 
 extern "C" void svl_qt_set_timing(int on) { g_timing.on = on != 0; }
 

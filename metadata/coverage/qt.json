@@ -1207,7 +1207,7 @@
    19
   ],
   "props_annotated": 5,
-  "signal_results": 0,
+  "signal_results": 1,
   "signals": [
    1,
    7
@@ -1216,8 +1216,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   8,
+   8
   ]
  },
  {

@@ -352,6 +352,9 @@ impl Backend for Nesting {
     fn schedule_wake(&self, ms: i64) {
         self.inner.schedule_wake(ms)
     }
+    fn request_frame(&self) {
+        self.inner.request_frame()
+    }
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         // SAFETY: the host outlives this call; the stashed copy is cleared before returning.
         self.host.set(Some(unsafe {

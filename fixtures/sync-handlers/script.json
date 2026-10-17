@@ -1,0 +1,11 @@
+[{"checkpoint":true},
+ {"sync":[1,"close-request",[]]},
+ {"checkpoint":true},
+ {"sync":[4,"key-pressed",[97,38,0]]},
+ {"sync":[4,"key-pressed",[98,56,0]]},
+ {"sync":[4,"key-pressed",[99,54,0]]},
+ {"checkpoint":true},
+ {"event":[5,"clicked",[]]},
+ {"checkpoint":true},
+ {"sync":[1,"close-request",[]]},
+ {"checkpoint":true}]
