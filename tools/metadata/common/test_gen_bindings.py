@@ -90,3 +90,11 @@ def test_binding_validation_against_facts():
 def test_kebab_matches_the_winui_generator():
     assert g.kebab("IsChecked") == "is-checked"
     assert g.kebab("StackPanel") == "stack-panel"
+
+
+def test_text_props_union_in_toolkit_order():
+    tp = g.text_props()
+    assert tp["button"][0] == "label"
+    assert tp["togglebutton"] == ["label"]
+    assert list(tp) == sorted(tp)
+    assert "export const TEXT_PROPS = {" in g.js_text_props(tp)

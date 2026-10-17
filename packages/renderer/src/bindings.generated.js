@@ -131,6 +131,18 @@ export const BINDINGS = {
   },
 };
 
+// Tags whose Text children are folded into a prop, with candidate prop names (union over the toolkits, in order);
+// the first one the host resolves wins. From `kinds.<id>.text_content` of metadata/semantics/<toolkit>.json.
+export const TEXT_PROPS = {
+  button: ["label", "title", "content"],
+  "check-box": ["content"],
+  label: ["label"],
+  linkbutton: ["label"],
+  lockbutton: ["label"],
+  "text-block": ["text"],
+  togglebutton: ["label"],
+};
+
 // Toplevel kinds (lifetime class `toplevel`): never inserted into their JS parent; the renderer makes them
 // transient for the enclosing toplevel and shows them. `open`/`modeless` list candidate method names, the first one
 // the host resolves wins; `modalProp`: a `modal` property exists; `dialog`: modal by default.

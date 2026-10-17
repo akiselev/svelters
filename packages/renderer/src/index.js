@@ -4,7 +4,7 @@
 // only elements become native widgets, created lazily when first inserted under a native parent.
 // Mapping rules and the dispatch return shape: docs/notes/p1-js-lane.md. Plain ES2022, no globals.
 import { createRenderer } from 'svelte/renderer';
-import { BINDINGS, TOPLEVELS } from './bindings.generated.js';
+import { BINDINGS, TEXT_PROPS, TOPLEVELS } from './bindings.generated.js';
 import { coerceAttribute } from './coerce.js';
 import { kindRef, methodRef, propRef } from './hostops.js';
 import { applyStyle, bindElements, bindSetterHooks, explicitPropSet, forgetStyle, markStyleDirty, styleChildAttrs } from './style.js';
@@ -12,17 +12,9 @@ import { applyStyle, bindElements, bindSetterHooks, explicitPropSet, forgetStyle
 export { BINDINGS, TOPLEVELS };
 export { getColorScheme, getTokens, registerStyles, setColorScheme, setTokens } from './style.js';
 
-/**
- * Tags whose Text children are folded into a prop, with candidate prop names: the first one the
- * host resolves wins (`button` is GTK/Qt `label` and WinUI `content`; names stay native per toolkit).
- */
-export const TEXT_PROPS = {
-  label: ['label'],
-  button: ['label', 'content'],
-  'text-block': ['text'],
-  'check-box': ['content'],
-  'toggle-button': ['content'],
-};
+// TEXT_PROPS (generated): tags whose Text children are folded into a prop, with candidate prop names; the
+// first one the host resolves wins (`button` is GTK/Qt `label` and WinUI `content`; names stay native per toolkit).
+export { TEXT_PROPS };
 /** Kinds whose Text children are folded into a prop (see TEXT_PROPS). */
 export const LABEL_KINDS = new Set(Object.keys(TEXT_PROPS));
 

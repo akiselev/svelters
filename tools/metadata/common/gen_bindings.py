@@ -365,6 +365,35 @@ def merge_toplevels(gtk: dict, qt: dict, appkit: dict | None = None, winui: dict
     return out
 
 
+SEMANTICS = ROOT / "metadata/semantics"
+
+
+def text_props() -> dict[str, list[str]]:
+    """tag -> candidate JS prop names Text children are folded into (`kinds.<id>.text_content` of each toolkit's
+    semantics file that exists), in toolkit order gtk, qt, appkit, winui."""
+    out: dict[str, list[str]] = {}
+    for tk in ("gtk", "qt", "appkit", "winui"):
+        path = SEMANTICS / f"{tk}.json"
+        if not path.exists():
+            continue
+        spec = svmeta.load_json(path)
+        for tag, kid in spec["tags"].items():
+            name = (spec["kinds"].get(kid) or {}).get("text_content")
+            if name and name not in out.setdefault(tag, []):
+                out[tag].append(name)
+    return {t: out[t] for t in sorted(out)}
+
+
+def js_text_props(tp: dict[str, list[str]]) -> str:
+    o = ["\n// Tags whose Text children are folded into a prop, with candidate prop names (union over the toolkits, in order);\n",
+         "// the first one the host resolves wins. From `kinds.<id>.text_content` of metadata/semantics/<toolkit>.json.\n",
+         "export const TEXT_PROPS = {\n"]
+    for tag, names in tp.items():
+        o.append(f"  {key(tag)}: {json.dumps(names)},\n")
+    o.append("};\n")
+    return "".join(o)
+
+
 GTK_EXTRAS = ROOT / "metadata/extras"
 
 
@@ -476,7 +505,7 @@ def main() -> int:
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1
-    outs = {OUT_JS: js(table) + js_toplevels(top), OUT_DTS: dts(table, top)}
+    outs = {OUT_JS: js(table) + js_text_props(text_props()) + js_toplevels(top), OUT_DTS: dts(table, top)}
     stale = [p for p, text in outs.items() if not p.exists() or p.read_text() != text]
     if args.check:
         for p in stale:
