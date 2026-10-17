@@ -512,7 +512,7 @@
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMdiArea:element:mdiarea:slot:subwindows", "fingerprint": "6a624adabf255741", "result": "pass", "test": "ownership/mdiarea.subwindows/parent_destroy_deletes_children", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMdiArea:element:mdiarea:slot:subwindows", "fingerprint": "6a624adabf255741", "result": "pass", "test": "ownership/mdiarea.subwindows/remove_released", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMdiArea:element:mdiarea:slot:subwindows", "fingerprint": "6a624adabf255741", "result": "pass", "test": "slot/mdiarea.subwindows/append", "version": "6.11.0"},
-{"fact": "svelters-api:v1:type:qt:QtWidgets:QMenu:element:contextmenu:construct:context_menu", "fingerprint": "0770fb00e5f86340", "result": "fail", "test": "construct/contextmenu.context_menu", "version": "6.11.0"},
+{"fact": "svelters-api:v1:type:qt:QtWidgets:QMenu:element:contextmenu:construct:context_menu", "fingerprint": "6d955fd1cb50a8cf", "result": "pass", "test": "construct/contextmenu.context_menu", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMenu:element:contextmenu:method:popdown", "fingerprint": "48a0bcfdcb713723", "result": "pass", "test": "method/contextmenu.popdown", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMenu:element:contextmenu:method:popup", "fingerprint": "60d6810e707b9ec1", "result": "pass", "test": "method/contextmenu.popup", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QMenu:element:contextmenu:prop:label", "fingerprint": "5b02821715d32e5d", "result": "pass", "test": "prop/contextmenu.label", "version": "6.11.0"},
