@@ -264,12 +264,13 @@ fn if_toggle_gtk() {
 }
 
 #[test]
-fn if_toggle_qt_reports_missing_headerbar() {
-    // The GTK fixture on Qt on purpose (no Qt twin): the run must fail cleanly.
+fn gtk_fixture_on_qt_reports_the_unknown_kind() {
+    // The GTK-vocabulary fixture on Qt on purpose: Qt has no `window` (it is `main-window`) nor
+    // `header-bar`, and the run must fail cleanly, naming the first unknown kind.
     let r = run_dir("qt", "if-toggle", &root().join("fixtures/if-toggle/script.json"), &[]);
-    assert!(!r.out.status.success(), "Qt has no header-bar kind and must not pretend to run");
+    assert!(!r.out.status.success(), "a GTK-vocabulary app must not pretend to run on Qt");
     let err = r.stderr();
-    assert!(err.contains("header-bar"), "error should name the missing kind:\n{err}");
+    assert!(err.contains("unknown kind 'window'"), "error should name the missing kind:\n{err}");
     assert!(!err.contains("SIGSEGV") && !err.contains("panicked"), "must be a clean error:\n{err}");
 }
 

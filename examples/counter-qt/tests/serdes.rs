@@ -188,7 +188,7 @@ fn enums() {
     assert!(en.native("echoMode").contains("PasswordEchoOnEdit"));
     assert_eq!(names_of(&en.get("echo-mode")), vec!["password-echo-on-edit".to_string()]);
     let bx = mk("box-layout");
-    assert_eq!(bx.tdesc("direction").members.iter().map(|m| m.name.clone()).collect::<Vec<_>>(), vec!["left-to-right", "right-to-left", "top-to-bottom", "bottom-to-top"]);
+    assert_eq!(bx.tdesc("direction").members.iter().map(|m| m.name.clone()).collect::<Vec<_>>(), vec!["bottom-to-top", "left-to-right", "right-to-left", "top-to-bottom"]);
     bx.set("direction", &bx.named("direction", &["top-to-bottom"])).unwrap();
     assert_eq!(names_of(&bx.get("direction")), vec!["top-to-bottom".to_string()]);
     // Names are also accepted by the backend (the host normally resolves them).

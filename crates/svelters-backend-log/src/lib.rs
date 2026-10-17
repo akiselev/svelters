@@ -514,6 +514,19 @@ impl LogBackend {
 
 impl Backend for LogBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
+        // With an explicit per-backend schema (a toolkit-specific fixture, `with_schema`), a kind the
+        // schema lists has exactly its props, like the Node TestHost's `toolkit` mode: the renderer
+        // then picks the toolkit's own candidate (Qt `text`, not GTK `label`).
+        if what == NameKind::Prop && kind > 0 {
+            if let Some(schema) = self.shared.schema.lock().unwrap().clone() {
+                let st = self.shared.lock();
+                if let Some(props) = schema.get(st.names.name(kind)) {
+                    if !props.contains_key(name) {
+                        return 0;
+                    }
+                }
+            }
+        }
         self.shared.lock().names.intern(what as u32, kind, name)
     }
 
