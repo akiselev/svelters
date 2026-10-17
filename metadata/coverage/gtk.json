@@ -259,7 +259,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "aspectframe",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "AspectFrame",
   "lifetime": "owned",
@@ -268,23 +268,23 @@
    10
   ],
   "native": "GtkAspectFrame",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -483,7 +483,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "centerbox",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 1,
   "kind": "CenterBox",
   "lifetime": "owned",
@@ -492,23 +492,23 @@
    10
   ],
   "native": "GtkCenterBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 3,
+  "slots_own": 3,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -1057,9 +1057,9 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "expander",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "Expander",
   "lifetime": "owned",
@@ -1068,23 +1068,23 @@
    14
   ],
   "native": "GtkExpander",
-  "ownership": false,
+  "ownership": true,
   "props": [
    7,
    7
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
-   1,
-   1
+   2,
+   2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -1443,7 +1443,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "frame",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "Frame",
   "lifetime": "owned",
@@ -1452,23 +1452,23 @@
    8
   ],
   "native": "GtkFrame",
-  "ownership": false,
+  "ownership": true,
   "props": [
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2179,7 +2179,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "overlay",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "Overlay",
   "lifetime": "owned",
@@ -2188,7 +2188,7 @@
    8
   ],
   "native": "GtkOverlay",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
@@ -2199,12 +2199,12 @@
    1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -2243,32 +2243,32 @@
   "abstract": false,
   "bindings": 0,
   "element": "paned",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 1,
   "kind": "Paned",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    16
   ],
   "native": "GtkPaned",
-  "ownership": false,
+  "ownership": true,
   "props": [
    11,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    6,
    6
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -2563,7 +2563,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "revealer",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "Revealer",
   "lifetime": "owned",
@@ -2572,23 +2572,23 @@
    9
   ],
   "native": "GtkRevealer",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2737,8 +2737,8 @@
    15,
    15
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 11,
+  "signal_results": 1,
   "signals": [
    4,
    4
@@ -2747,15 +2747,15 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   13,
+   13
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "searchbar",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "SearchBar",
   "lifetime": "owned",
@@ -2764,23 +2764,23 @@
    9
   ],
   "native": "GtkSearchBar",
-  "ownership": false,
+  "ownership": true,
   "props": [
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -3427,7 +3427,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "viewport",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "Viewport",
   "lifetime": "owned",
@@ -3436,23 +3436,23 @@
    5
   ],
   "native": "GtkViewport",
-  "ownership": false,
+  "ownership": true,
   "props": [
    2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -3587,7 +3587,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "windowhandle",
-  "gallery": null,
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "WindowHandle",
   "lifetime": "owned",
@@ -3596,7 +3596,7 @@
    2
   ],
   "native": "GtkWindowHandle",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
@@ -3607,12 +3607,12 @@
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  }
 ]

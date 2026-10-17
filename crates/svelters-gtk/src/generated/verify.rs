@@ -1232,6 +1232,20 @@ fn prop_paned_wide_handle() {
     });
 }
 
+/// method Paned.set_position (dynamic GI call): gtk_paned_set_position (Gtk 4 docs)
+#[test]
+fn method_paned_set_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "set_position", &[V::I64(40)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "position") == V::I64(40), "postcondition: h.get(o, 'position') == V::I64(40)");
+    });
+}
+
 /// property Revealer.reveal-child (JS revealChild): GtkRevealer:reveal-child (Gtk 4 docs); P prop
 #[test]
 fn prop_revealer_reveal_child() {

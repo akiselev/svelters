@@ -573,6 +573,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_position",
+   "fingerprint": "6f565bcbf81c1f1b",
+   "kind": "Paned",
+   "name": "set_position",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_paned_set_position"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:reveal-child",
    "fingerprint": "8a9d64ed8f59a867",
    "kind": "Revealer",

@@ -410,6 +410,20 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_paned_set_position (Gtk 4 docs)"
+      },
+      "args": [
+        40
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"position\") == V::I64(40)",
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_position",
       "invocation": {
         "dev": "introspected",
