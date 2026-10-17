@@ -17,27 +17,28 @@ env:
   NO_AT_BRIDGE: "1"
 
 jobs:
+  # The test suite, on a current GTK (Arch, like local development: 4.22 at the time of writing).
   gtk:
-    # Ubuntu 24.04 ships GTK 4.14 (local development uses 4.22).
     runs-on: ubuntu-24.04
+    container: archlinux:latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-
-      - name: System packages (GTK4, Xvfb, fonts)
+      - name: System packages (GTK4, Xvfb, fonts, toolchain)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            libgtk-4-dev libgirepository-2.0-dev gir1.2-gtk-4.0 xvfb xauth dbus-x11 at-spi2-core \
-            fonts-dejavu-core fonts-noto-core fonts-noto-color-emoji \
-            imagemagick python3-yaml python3-jsonschema
+          pacman -Syu --noconfirm --needed \
+            base-devel git gtk4 gobject-introspection-runtime xorg-server-xvfb xorg-xauth dbus \
+            ttf-dejavu noto-fonts imagemagick python python-yaml python-jsonschema python-pytest \
+            rustup nodejs
           pkg-config --modversion gtk4
+          git config --global --add safe.directory '*'
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - uses: actions/checkout@v4
 
       - name: Rust toolchain (rust-toolchain.toml)
         run: rustup toolchain install --profile minimal && rustc --version
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: linux-gtk
+          shared-key: linux-gtk-arch
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-nextest
@@ -81,3 +82,26 @@ jobs:
             target/p5/
             target/m2b/
             target/*.png
+
+  # Ubuntu 24.04 ships GTK 4.14. svelters-gtk does not link against it yet: the generated type
+  # table (crates/svelters-gtk/src/generated/types.rs) calls *_get_type of kinds added after 4.14
+  # (GtkSvg, GtkPopoverBin, GtkTryExpression, GtkAccessibleHyperlink). Informational until the
+  # backend resolves those at run time; see docs/notes/ci1.md.
+  gtk-4-14:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: System packages (GTK 4.14)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev libgirepository-2.0-dev gir1.2-gtk-4.0
+          pkg-config --modversion gtk4
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: linux-gtk-4-14
+      - name: Build svelters-gtk tests against GTK 4.14
+        run: cargo test --no-run -p svelters-gtk -p counter --no-default-features --features counter/gtk
