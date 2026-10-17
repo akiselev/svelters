@@ -1,0 +1,52 @@
+properties:
+  - name: selection-mode
+    provenance: "GtkFlowBox:selection-mode (Gtk 4 docs); P prop"
+  - name: min-children-per-line
+    provenance: "GtkFlowBox:min-children-per-line (Gtk 4 docs); P prop"
+  - name: max-children-per-line
+    provenance: "GtkFlowBox:max-children-per-line (Gtk 4 docs); P prop"
+  - name: homogeneous
+    provenance: "GtkFlowBox:homogeneous (Gtk 4 docs); P prop"
+  - name: column-spacing
+    provenance: "GtkFlowBox:column-spacing (Gtk 4 docs); P prop"
+  - name: row-spacing
+    provenance: "GtkFlowBox:row-spacing (Gtk 4 docs); P prop"
+signals:
+  - name: child-activated
+    js_event: child-activated
+    handler_result: none
+    sync_required: false
+    trigger:
+      setup: 'let fb = h.obj(o).downcast::<gtk::FlowBox>().unwrap(); fb.insert(&gtk::Label::new(None), -1);'
+      rust: 'o.downcast_ref::<gtk::FlowBox>().unwrap().child_at_index(0).unwrap().emit_by_name::<()>("activate", &[]);'
+      values: [a, b, c]
+    provenance: "GtkFlowBox::child-activated, run-last, void; emitted by activating the FlowBoxChild (Gtk 4 docs)"
+  - name: selected-children-changed
+    js_event: selected-children-changed
+    handler_result: none
+    sync_required: false
+    trigger:
+      setup: 'let fb = h.obj(o).downcast::<gtk::FlowBox>().unwrap(); fb.insert(&gtk::Label::new(None), -1); fb.insert(&gtk::Label::new(None), -1);'
+      rust: 'let fb = o.downcast_ref::<gtk::FlowBox>().unwrap(); fb.select_child(&fb.child_at_index((i % 2) as i32).unwrap());'
+      values: [a, b, c]
+    provenance: "GtkFlowBox::selected-children-changed, run-first, void (Gtk 4 docs)"
+children:
+  policy: ordered
+  default_slot: children
+  slots:
+    - name: children
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: native_index
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {contains: ancestor}
+        insert: {native: "GtkFlowBox::insert(GtkWidget*, int)", args: [child, index], effects: {child: "wrapped:FlowBoxChild"}}
+        remove: {native: "GtkFlowBox::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_flow_box_insert"}, {origin: gir, ref: "gtk_flow_box_remove"}, {origin: manual, ref: "docs: the child is wrapped in a GtkFlowBoxChild"}]

@@ -1,0 +1,9 @@
+properties:
+  - name: row-spacing
+    provenance: "GtkGrid:row-spacing (Gtk 4 docs); P prop"
+  - name: column-spacing
+    provenance: "GtkGrid:column-spacing (Gtk 4 docs); P prop"
+  - name: row-homogeneous
+    provenance: "GtkGrid:row-homogeneous (Gtk 4 docs); P prop"
+  - name: column-homogeneous
+    provenance: "GtkGrid:column-homogeneous (Gtk 4 docs); P prop"

@@ -1,0 +1,33 @@
+properties:
+  - name: visible-child
+    provenance: "GtkStack:visible-child (Gtk 4 docs); object reference, round trip"
+  - name: transition-type
+    provenance: "GtkStack:transition-type (Gtk 4 docs); P prop"
+  - name: hhomogeneous
+    provenance: "GtkStack:hhomogeneous (Gtk 4 docs); P prop"
+  - name: vhomogeneous
+    provenance: "GtkStack:vhomogeneous (Gtk 4 docs); P prop"
+  - name: transition-duration
+    provenance: "GtkStack:transition-duration (Gtk 4 docs); P prop"
+  - name: interpolate-size
+    provenance: "GtkStack:interpolate-size (Gtk 4 docs); P prop"
+children:
+  policy: ordered
+  default_slot: children
+  slots:
+    - name: children
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {contains: parent}
+        insert: {native: "GtkStack::add_child(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkStack::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_stack_add_child"}, {origin: gir, ref: "gtk_stack_remove"}]

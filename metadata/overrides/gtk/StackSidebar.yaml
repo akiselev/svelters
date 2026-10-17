@@ -1,0 +1,3 @@
+properties:
+  - name: stack
+    provenance: "GtkStackSidebar:stack (Gtk 4 docs); object reference, round trip"

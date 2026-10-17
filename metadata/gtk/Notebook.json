@@ -9,6 +9,47 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::page",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::page",
+          "switch-page"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Notebook:binding:page",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "page",
+      "origin": "manual",
+      "property": "page",
+      "provenance": "set_current_page emits switch-page and notify::page only on change (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -19,9 +60,97 @@
       ],
       "widget_props": []
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "pages",
+    "policy": "ordered",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_notebook_insert_page"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_notebook_remove_page"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_notebook_page_num"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages",
+        "name": "pages",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "contains": "ancestor",
+            "origin": "manual"
+          },
+          "index_of": {
+            "native": "GtkNotebook::page_num(GtkWidget*) const",
+            "origin": "manual"
+          },
+          "insert": {
+            "args": [
+              "child",
+              null,
+              "index_opt"
+            ],
+            "effects": {
+              "child": "parented",
+              "origin": "manual"
+            },
+            "native": "GtkNotebook::insert_page(GtkWidget*, GtkWidget*, int)",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child_index_opt"
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkNotebook::remove_page(int)",
+            "origin": "manual"
+          }
+        },
+        "order": "native_index",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -1507,7 +1636,21 @@
         "get": "gtk_notebook_get_current_page",
         "set": "gtk_notebook_set_current_page"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress",
+          "js_name",
+          "sample",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkNotebook:page (Gtk 4 docs); needs pages, set up in the test"
+      },
       "default": -1,
+      "echo_suppress": [
+        "notify::page",
+        "switch-page"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:page",
       "invocation": "reflected",
       "js_name": "page",
@@ -1532,6 +1675,8 @@
         "origin": "runtime",
         "owner": "GtkNotebook"
       },
+      "sample": 7,
+      "setup": "let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..8 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); }",
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -1588,6 +1733,11 @@
         "get": "gtk_notebook_get_scrollable",
         "set": "gtk_notebook_set_scrollable"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkNotebook:scrollable (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:scrollable",
       "invocation": "reflected",
@@ -1627,6 +1777,11 @@
       "accessors": {
         "get": "gtk_notebook_get_show_border",
         "set": "gtk_notebook_set_show_border"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkNotebook:show-border (Gtk 4 docs); P prop"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-border",
@@ -1668,6 +1823,11 @@
         "get": "gtk_notebook_get_show_tabs",
         "set": "gtk_notebook_set_show_tabs"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkNotebook:show-tabs (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-tabs",
       "invocation": "reflected",
@@ -1707,6 +1867,11 @@
       "accessors": {
         "get": "gtk_notebook_get_tab_pos",
         "set": "gtk_notebook_set_tab_pos"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkNotebook:tab-pos (Gtk 4 docs); P prop"
       },
       "default": "top",
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:tab-pos",
@@ -2041,6 +2206,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkNotebook::switch-page, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2073,7 +2248,70 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));",
+        "setup": "let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkNotebook:page"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "page"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::page",
+      "name": "notify::page",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));",
+        "setup": "let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -2082,7 +2320,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Notebook.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

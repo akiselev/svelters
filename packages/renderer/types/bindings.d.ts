@@ -34,6 +34,9 @@ export interface BindableProps {
   listwidget: {
     currentRow: number; // qt
   };
+  notebook: {
+    page: number; // gtk
+  };
   passwordentry: {
     text: string; // gtk
   };

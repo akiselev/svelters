@@ -1,0 +1,3 @@
+properties:
+  - name: stack
+    provenance: "GtkStackSwitcher:stack (Gtk 4 docs); object reference, round trip"

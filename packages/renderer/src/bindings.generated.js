@@ -34,6 +34,9 @@ export const BINDINGS = {
   listwidget: {
     currentRow: { prop: "currentRow", signal: "row-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  notebook: {
+    page: { prop: "page", signal: "notify::page", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
   passwordentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
