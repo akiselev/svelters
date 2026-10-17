@@ -22,6 +22,17 @@ unsafe extern "C" {
     fn svl_qt_on_first_paint(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void);
     fn svl_qt_set_timing(on: i32);
     fn svl_qt_take_timing(ns: *mut u64, calls: *mut u64);
+    fn svl_qt_click_button(label: *const std::ffi::c_char) -> i32;
+    fn svl_qt_label_starting(prefix: *const std::ffi::c_char) -> *const std::ffi::c_char;
+    fn svl_qt_vlist_rows() -> *const std::ffi::c_char;
+    fn svl_qt_vlist_count() -> i64;
+    fn svl_qt_vlist_pool() -> i32;
+    fn svl_qt_vlist_present() -> i32;
+    fn svl_qt_vlist_watch();
+    fn svl_qt_vlist_changes(clear: i32) -> *const std::ffi::c_char;
+    fn svl_qt_vlist_select(pos: i32) -> i32;
+    fn svl_qt_vlist_activate(pos: i32) -> i32;
+    fn svl_qt_live_handles() -> usize;
 }
 
 /// The Qt backend vtable. `run` creates the `QApplication` (if none exists) and owns the loop.
@@ -126,6 +137,65 @@ pub mod hooks {
         }
         let ud = Box::into_raw(Box::new(f)) as *mut c_void;
         unsafe { svl_qt_on_first_paint(tramp, ud) };
+    }
+
+    fn text(p: *const std::ffi::c_char) -> String {
+        // SAFETY: the hooks return NUL-terminated buffers valid until the next call; copied here.
+        unsafe { std::ffi::CStr::from_ptr(p) }.to_string_lossy().into_owned()
+    }
+
+    /// Clicks the push button with this text. False when there is none.
+    pub fn click_button(label: &str) -> bool {
+        let l = CString::new(label).expect("label");
+        unsafe { svl_qt_click_button(l.as_ptr()) == 0 }
+    }
+
+    /// Text of the first label that starts with `prefix`, or "".
+    pub fn label_starting(prefix: &str) -> String {
+        let p = CString::new(prefix).expect("prefix");
+        text(unsafe { svl_qt_label_starting(p.as_ptr()) })
+    }
+
+    /// The `virtuallist` (M5): texts of the visible row widgets, one entry per row slot.
+    pub fn vlist_rows() -> Vec<String> {
+        text(unsafe { svl_qt_vlist_rows() }).lines().map(|s| s.to_string()).collect()
+    }
+
+    /// Items in the `virtuallist` model, -1 without a list.
+    pub fn vlist_count() -> i64 {
+        unsafe { svl_qt_vlist_count() }
+    }
+
+    /// Row slots in the pool, -1 without a list.
+    pub fn vlist_pool() -> i32 {
+        unsafe { svl_qt_vlist_pool() }
+    }
+
+    pub fn vlist_present() -> bool {
+        unsafe { svl_qt_vlist_present() != 0 }
+    }
+
+    /// Starts recording model notifications; read them with [`vlist_changes`].
+    pub fn vlist_watch() {
+        unsafe { svl_qt_vlist_watch() }
+    }
+
+    /// Recorded notifications as text: `I first count;` insert, `R ...;` remove, `C ...;` replace.
+    pub fn vlist_changes(clear: bool) -> String {
+        text(unsafe { svl_qt_vlist_changes(clear as i32) })
+    }
+
+    pub fn vlist_select(pos: i32) -> bool {
+        unsafe { svl_qt_vlist_select(pos) == 0 }
+    }
+
+    pub fn vlist_activate(pos: i32) -> bool {
+        unsafe { svl_qt_vlist_activate(pos) == 0 }
+    }
+
+    /// Handles in the backend's table: the leak check of the list tests.
+    pub fn live_handles() -> usize {
+        unsafe { svl_qt_live_handles() }
     }
 
     pub fn set_timing(on: bool) {
