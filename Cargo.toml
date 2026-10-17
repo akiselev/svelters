@@ -1,73 +1,24 @@
-cargo-features = ["strip"]
-
-[package]
-authors = ["Alexander Kiselev <svelters@akiselev.com>"]
-edition = "2018"
-name = "svelters"
-version = "0.1.0"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[[bin]]
-path = "src/gtk_main.rs"
-name = "svgtk"
-
-# [[bin]]
-# path = "src/qt_main.rs"
-# name = "svqt"
-
-[lib]
-path = "src/lib.rs"
-name = "svelters"
-
-[dependencies]
-gio = "0.14.8"
-tracing = "0.1.26"
-tracing-bunyan-formatter = "0.2.4"
-tracing-log = "0.1.2"
-tracing-subscriber = "0.2.18"
-gobject-sys = "0.14.0"
-lazy_static = "1.4.0"
-rquickjs = { version = "0.1.2", path = "./lib/rquickjs", features = [
-    "full",
-    "backtrace",
-    "tokio",
-    "rust-alloc",
-    # "dump-gc",
-    # "dump-gc-free",
-    # "dump-free",
-    "dump-leaks",
-    # "dump-mem",
-] }
-svelters-gtk = { version = "0.1.0", path = "./gtk" }
-# svelters-qt = { version = "0.1.0", path = "./qt" }
-node-resolve = "2.2.0"
-anyhow = "1.0.40"
-notify = "4.0.17"
-tokio = { version = "1", features = ["full"] }
-clap = "3.0.0-beta.5"
-flume = "0.10.9"
-hotwatch = "0.4.6"
-glib = "0.14.8"
-
-[dependencies.gtk4]
-version = "0.3.1"
-features = ["v4_2"]
-
-[profile.release]
-lto = true
-strip = true
-# opt-level = 'z'
-# codegen-units = 32
-# panic = 'abort'
-
 [workspace]
+resolver = "3"
 members = [
-    # "qt",
-    "gtk",
-    # "lib/compiler",
-    "lib/rquickjs",
-    "lib/rquickjs/core",
-    "lib/rquickjs/macro",
+    "crates/svelters-abi",
+    "crates/svelters-host",
+    "crates/svelters-backend-log",
+    "crates/svelters-gtk",
+    "crates/svelters-qt-build",
+    "examples/counter",
+    "examples/counter-qt",
 ]
-exclude = ["lib/compiler", "lib/rquickjs", "qt"]
+
+[workspace.package]
+edition = "2024"
+version = "0.0.0"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[workspace.dependencies]
+svelters-abi = { path = "crates/svelters-abi" }
+svelters-host = { path = "crates/svelters-host" }
+svelters-backend-log = { path = "crates/svelters-backend-log" }
+svelters-gtk = { path = "crates/svelters-gtk" }
+svelters-qt-build = { path = "crates/svelters-qt-build" }

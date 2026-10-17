@@ -1,0 +1,1278 @@
+[
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "AboutDialog",
+  "signal": "activate-link",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "ComboBox",
+  "signal": "format-entry-text",
+  "returns": "utf8",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_after_first result='h1'"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "ComboBox",
+  "signal": "popdown",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DragSource",
+  "signal": "drag-cancel",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Drag",
+   "Gdk.DragCancelReason"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DragSource",
+  "signal": "prepare",
+  "returns": "Gdk.ContentProvider",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_after_first result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTarget",
+  "signal": "accept",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Drop"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTarget",
+  "signal": "drop",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "GObject.Value",
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTarget",
+  "signal": "enter",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTarget",
+  "signal": "motion",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTargetAsync",
+  "signal": "accept",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Drop"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTargetAsync",
+  "signal": "drag-enter",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Drop",
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTargetAsync",
+  "signal": "drag-motion",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Drop",
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "DropTargetAsync",
+  "signal": "drop",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Drop",
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EntryCompletion",
+  "signal": "cursor-on-match",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TreeModel",
+   "TreeIter"
+  ],
+  "probe": "skipped:arg:GtkTreeModel"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EntryCompletion",
+  "signal": "insert-prefix",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EntryCompletion",
+  "signal": "match-selected",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TreeModel",
+   "TreeIter"
+  ],
+  "probe": "skipped:arg:GtkTreeModel"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EventControllerKey",
+  "signal": "key-pressed",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "guint",
+   "guint",
+   "Gdk.ModifierType"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EventControllerKey",
+  "signal": "modifiers",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.ModifierType"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EventControllerLegacy",
+  "signal": "event",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.Event"
+  ],
+  "probe": "skipped:arg:GdkEvent"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "EventControllerScroll",
+  "signal": "scroll",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gdouble",
+   "gdouble"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "FlowBox",
+  "signal": "move-cursor",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "MovementStep",
+   "gint",
+   "gboolean",
+   "gboolean"
+  ],
+  "probe": "skipped:crash rc=-6"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "GLArea",
+  "signal": "create-context",
+  "returns": "Gdk.GLContext",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "GLArea",
+  "signal": "render",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Gdk.GLContext"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "IMContext",
+  "signal": "delete-surrounding",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gint",
+   "gint"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "IMContext",
+  "signal": "invalid-composition",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "IMContext",
+  "signal": "retrieve-surrounding",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "IconView",
+  "signal": "activate-cursor-item",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "IconView",
+  "signal": "move-cursor",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "MovementStep",
+   "gint",
+   "gboolean",
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Label",
+  "signal": "activate-link",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "LinkButton",
+  "signal": "activate-link",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Notebook",
+  "signal": "change-current-page",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gint"
+  ],
+  "probe": "last_wins result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Notebook",
+  "signal": "create-window",
+  "returns": "Notebook",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Widget"
+  ],
+  "probe": "last_wins result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Notebook",
+  "signal": "focus-tab",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "NotebookTab"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Notebook",
+  "signal": "reorder-tab",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "DirectionType",
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Notebook",
+  "signal": "select-page",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [
+   "allocation"
+  ],
+  "ns": "Gtk-4.0",
+  "owner": "Overlay",
+  "signal": "get-child-position",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Widget",
+   "Gdk.Rectangle"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Paned",
+  "signal": "accept-position",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Paned",
+  "signal": "cancel-position",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Paned",
+  "signal": "cycle-child-focus",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "last_wins result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Paned",
+  "signal": "cycle-handle-focus",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "skipped:crash rc=-6"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Paned",
+  "signal": "move-handle",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "ScrollType"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Paned",
+  "signal": "toggle-handle-focus",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "PrintOperation",
+  "signal": "create-custom-widget",
+  "returns": "GObject.Object",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "PrintOperation",
+  "signal": "paginate",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "PrintContext"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "PrintOperation",
+  "signal": "preview",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "PrintOperationPreview",
+   "PrintContext",
+   "Window"
+  ],
+  "probe": "skipped:arg:GtkPrintOperationPreview"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Range",
+  "signal": "change-value",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "ScrollType",
+   "gdouble"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "ScrolledWindow",
+  "signal": "scroll-child",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "ScrollType",
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "ShortcutsSection",
+  "signal": "change-current-page",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gint"
+  ],
+  "probe": "skipped:crash rc=-6"
+ },
+ {
+  "deprecated": false,
+  "out_params": [
+   "new_value"
+  ],
+  "ns": "Gtk-4.0",
+  "owner": "SpinButton",
+  "signal": "input",
+  "returns": "gint",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gdouble"
+  ],
+  "probe": "last_wins result=0"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "SpinButton",
+  "signal": "output",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Switch",
+  "signal": "state-set",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TextView",
+  "signal": "extend-selection",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TextExtendSelection",
+   "TextIter",
+   "TextIter",
+   "TextIter"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "expand-collapse-cursor-row",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gboolean",
+   "gboolean",
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "move-cursor",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "MovementStep",
+   "gint",
+   "gboolean",
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "select-all",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "select-cursor-parent",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "select-cursor-row",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "start-interactive-search",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "test-collapse-row",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TreeIter",
+   "TreePath"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "test-expand-row",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TreeIter",
+   "TreePath"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "toggle-cursor-row",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "TreeView",
+  "signal": "unselect-all",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=False"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Widget",
+  "signal": "keynav-failed",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "DirectionType"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Widget",
+  "signal": "mnemonic-activate",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Widget",
+  "signal": "query-tooltip",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gint",
+   "gint",
+   "gboolean",
+   "Tooltip"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Window",
+  "signal": "close-request",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gtk-4.0",
+  "owner": "Window",
+  "signal": "enable-debugging",
+  "returns": "gboolean",
+  "when": "last",
+  "action": true,
+  "detailed": false,
+  "params": [
+   "gboolean"
+  ],
+  "probe": "last_wins result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "AboutDialog",
+  "signal": "activate-link",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": true,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "AboutWindow",
+  "signal": "activate-link",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "utf8"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "NavigationView",
+  "signal": "get-next-page",
+  "returns": "NavigationPage",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "Sidebar",
+  "signal": "drop",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "guint",
+   "GObject.Value",
+   "Gdk.DragAction"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "Sidebar",
+  "signal": "drop-enter",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "guint"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "Sidebar",
+  "signal": "drop-value-loaded",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "guint",
+   "GObject.Value"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [
+   "new_value"
+  ],
+  "ns": "Adw-1",
+  "owner": "SpinRow",
+  "signal": "input",
+  "returns": "gint",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "gdouble"
+  ],
+  "probe": "last_wins result=0"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "SpinRow",
+  "signal": "output",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabBar",
+  "signal": "extra-drag-drop",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TabPage",
+   "GObject.Value"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabBar",
+  "signal": "extra-drag-value",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TabPage",
+   "GObject.Value"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabOverview",
+  "signal": "create-tab",
+  "returns": "TabPage",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabOverview",
+  "signal": "extra-drag-drop",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TabPage",
+   "GObject.Value"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabOverview",
+  "signal": "extra-drag-value",
+  "returns": "Gdk.DragAction",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TabPage",
+   "GObject.Value"
+  ],
+  "probe": "stop_after_first result=<DragAction.COPY: 1>"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabView",
+  "signal": "close-page",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "TabPage"
+  ],
+  "probe": "stop_on_true result=True"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Adw-1",
+  "owner": "TabView",
+  "signal": "create-window",
+  "returns": "TabView",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [],
+  "probe": "last_wins result=None"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gdk-4.0",
+  "owner": "Surface",
+  "signal": "event",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "Event"
+  ],
+  "probe": "skipped:abstract"
+ },
+ {
+  "deprecated": false,
+  "out_params": [],
+  "ns": "Gdk-4.0",
+  "owner": "Surface",
+  "signal": "render",
+  "returns": "gboolean",
+  "when": "last",
+  "action": false,
+  "detailed": false,
+  "params": [
+   "cairo.Region"
+  ],
+  "probe": "skipped:abstract"
+ }
+]

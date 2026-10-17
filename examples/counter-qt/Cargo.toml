@@ -1,0 +1,13 @@
+[package]
+name = "counter-qt"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+# Leaf crate: nothing in the project depends on it except the final binary.
+[dependencies]
+svelters-abi.workspace = true
+
+[build-dependencies]
+svelters-qt-build.workspace = true

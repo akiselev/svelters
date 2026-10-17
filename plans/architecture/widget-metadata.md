@@ -44,7 +44,94 @@ Layout: `tools/metadata/{common,gtk,qt}/` holds the scripts, `metadata/{gtk,qt}/
 
 ## Schema
 
-`svelters-element-kind/v0`. The P0 step promotes the sketch in `docs/notes/widget-metadata-ingestion.md` §4 to this section.
+`svelters-element-kind/v0`, frozen for the prototype. It is promoted from `docs/notes/widget-metadata-ingestion.md` §4.
+
+Change rules during P:
+
+- Lanes may add optional fields.
+- Renaming or removing a field, or changing a field's meaning, goes through the coordinator and updates this section.
+- `children.slots[].ops` is provisional. Its final shape will be the agent-fillable op-descriptor format from `docs/notes/signals-and-slots-semantics.md`.
+
+Shared helpers are in `tools/metadata/common/svmeta.py`: load, override merge, validation and a deterministic writer.
+
+```yaml
+schema: svelters-element-kind/v0
+toolkit: gtk                     # gtk | qt
+id: "svelters-api:v1:type:gtk:Gtk:Button"
+native: { name: GtkButton, gtype: GtkButton, c_type: GtkButton }   # qt: { name: QPushButton, header: qpushbutton.h, module: QtWidgets }
+kind: object                     # object | interface | enum | flags | boxed | value
+abstract: false
+bases: [Gtk.Widget, GObject.InitiallyUnowned, GObject.Object]     # full chain, nearest first
+interfaces: [Gtk.Accessible, Gtk.Actionable, Gtk.Buildable, Gtk.ConstraintTarget]
+availability: { since: "4.0", deprecated: null }
+constructors:
+  - id: ...ctor:new_with_label(utf8)
+    native: gtk_button_new_with_label
+    params: [{ name: label, type: string, nullable: false, ownership: borrowed }]
+    returns: { type: self, ownership: floating_sink }   # qt: parent_owned via parent arg
+    invocation: { dev: introspected, release: generated_thunk }
+  - id: ...ctor:generic             # g_object_new_with_properties / qt: none
+    invocation: { dev: reflected }
+properties:
+  - name: label
+    js_name: label
+    type: { ref: string, nullable: true }
+    access: { read: true, write: true, construct: false, construct_only: false }
+    default: null                # typed value (from GParamSpec / Q_PROPERTY reset) not C literal
+    range: null                  # {min, max} for numeric
+    notify: { signal: "notify::label", explicit: true }    # qt: labelChanged()
+    accessors: { get: gtk_button_get_label, set: gtk_button_set_label }
+    invocation: reflected
+    role: value                  # value | child_slot | reference (widget refs like default-widget)
+signals:
+  - name: clicked
+    js_event: click
+    params: []
+    returns: { type: void }
+    handler_result: none         # none | bool_stop | value
+    sync_required: false
+    phase: first                 # gtk when; qt: n/a
+    flags: [action]              # action, detailed, no_recurse, cleanup
+    connection: { disconnect_on: [handle_drop, native_destroy] }
+methods:
+  - name: set_child               # usually hidden in favour of slots
+    params: [...]
+    invocation: { dev: introspected, release: generated_thunk }
+    unsupported_reason: null      # varargs | non_introspectable | callback_scope | ...
+enums: []                         # ids of enum/flags kinds referenced; enum kinds list members {name, nick, value}
+children:
+  policy: single_child            # none | single_child | ordered | named_slots | layout_managed | pages | model_driven | custom
+  default_slot: child
+  slots:
+    - name: child
+      cardinality: one            # one | many
+      accepts: [Gtk.Widget]
+      ops: { set: {property: child}, clear: {property: child, value: null} }
+      ownership: parent_owned
+      attached_props: []
+  # e.g. HeaderBar:
+  #   - {name: start, cardinality: many, ops: {insert: pack_start, remove: remove}, order: append_only}
+  #   - {name: end,   cardinality: many, ops: {insert: pack_end,   remove: remove}}
+  #   - {name: title, cardinality: one,  ops: {set: {property: title-widget}}}
+  # QMainWindow:
+  #   - {name: central, cardinality: one, ops: {set: setCentralWidget, take: takeCentralWidget}, replace: releases_old}
+  #   - {name: menubar, cardinality: one, accepts: [QMenuBar], ops: {set: setMenuBar}}
+  #   - {name: toolbars, cardinality: many, accepts: [QToolBar], ops: {insert: "addToolBar(area,w)", remove: removeToolBar},
+  #      attached_props: [{name: area, type: Qt.ToolBarArea, default: TopToolBarArea}, {name: break_before, type: bool}]}
+  #   - {name: docks, cardinality: many, accepts: [QDockWidget], ops: {insert: "addDockWidget(area,w)", remove: removeDockWidget},
+  #      attached_props: [{name: area, type: Qt.DockWidgetArea}]}
+  #   - {name: statusbar, cardinality: one, accepts: [QStatusBar], ops: {set: setStatusBar}}
+semantics: { role: button, actions: [activate] }   # link to semantic-graph defaults
+source:                                            # provenance per fact
+  gir: { file: Gtk-4.0.gir, sha256: ..., version: "4.22.4" }
+  runtime: { pygobject: "3.56.2" }
+  overrides: overrides/gtk/Button.yaml             # hand-annotated facts are marked origin: manual
+```
+
+Type references use a small neutral vocabulary (`bool, i32, u32, i64, u64, f32, f64,
+string, enum<Id>, flags<Id>, object<Id>, boxed<Id>, value<Id>, list<T>, variant, callback<Id>`)
+plus `native` (raw GIR/C++ spelling) for diagnostics. Every fact carries `origin:
+gir | runtime | qdoc | metaobject | typesystem | apiextractor | manual`.
 
 ## Outputs
 

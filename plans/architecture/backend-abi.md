@@ -1,6 +1,6 @@
 # Backend ABI (L2 ↔ L3)
 
-Status: draft for the P lanes. Changes go here first, then into `crates/svelters-abi/include/svelters_backend.h`.
+Status: draft for the P lanes. Changes go here first, then into `crates/svelters-abi/include/svelters_backend.h`. The header and its Rust mirror `crates/svelters-abi/src/lib.rs` are authoritative for exact spelling: the value union is named `u`, and `svl_str`/`svl_list` are named structs.
 
 ## Goals
 

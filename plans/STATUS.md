@@ -4,7 +4,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 
 | Milestone | State | Commit | Notes |
 | --- | --- | --- | --- |
-| P0 setup | QUEUED | | tag `v1-legacy`, move 2021 tree to `legacy/`, new workspace skeleton |
+| P0 setup | DONE | (this commit) | tag `v1-legacy`, move 2021 tree to `legacy/`, new workspace skeleton |
 | P1 JS lane | QUEUED | | |
 | P2 host lane | QUEUED | | |
 | P3 GTK lane | QUEUED | | |
