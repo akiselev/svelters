@@ -14,8 +14,8 @@ some blocked facts are not worth exposing anyway.
 | G1 | Child attributes (`set_child_attr`) | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow |
 | G2 | GTK method calls with arguments or return values | GTK: 669 methods with args, 396 zero-arg getters | every GTK batch (methods column) |
 | G3 | Object-returning getters (borrowed handles) | GTK: 154 methods; Qt: ~60 | gtk-text-b, qt-text-b, qt-selection |
-| G4 | Boxed/value types (colours, fonts, dates, icons, paintables, string lists) | GTK: 21 props + 11 signals; Qt: ~90 props | gtk-display, gtk-pickers, qt-pickers, qt-display |
-| G5 | Sync signal handlers with return values decided by JS | GTK: 40 signals; Qt: virtual-based events | gtk-buttons (Switch::state-set), gtk-ranges (SpinButton input/output, Scale format-value) |
+| G4 | Boxed/value types: **mostly closed by S1 (ABI v3, master 8071bb2)**; open: out params, GTK time-only/date-only records, model data | re-check per kind | gtk-display, qt-display |
+| G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; open: typed `value` results, listen phases, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
 | G6 | Model-backed views (GListModel, QAbstractItemModel) | 12 GTK kinds, 11 Qt kinds | gtk-lists-b, qt-lists-b (M5) |
 | G7 | Non-widget child objects (QAction, GMenuModel) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
 | G8 | Native-to-JS callbacks (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
@@ -63,6 +63,13 @@ ABI v2 defines the BORROWED lifetime class but no `get_prop`/`call` mints a borr
 
 ## G4: boxed/value types
 
+**Status 2026-10-17: mostly closed by lane S1** (ABI v3 value model, `docs/notes/s1-handoff.md`):
+typed values, enums as names, flags, records (Rect/Size/Point/Insets/Color), boxed with dispose,
+BYTES, dates (`QDate/QTime/QDateTime`, `GDateTime`) and string forms (QKeySequence, QUrl, QIcon,
+QFont, QColor, GIcon, PangoFontDescription, GdkRGBA, GFile). Batches annotate these facts now.
+Still open (lane S2): out/in-out parameters, GTK time-only/date-only records, list models.
+The original text follows for reference.
+
 The value model (`plans/architecture/backend-abi.md#planned-abi-v3-value-model-m3`) is not
 implemented: props and signal args of boxed/value types are not converted.
 
@@ -76,6 +83,14 @@ implemented: props and signal args of boxed/value types are not converted.
   `QDate` <-> ISO string both ways.
 
 ## G5: sync signal handlers with return values
+
+**Status 2026-10-17: bool results closed by lane X2** (`docs/notes/x2-sync-frame.md`, "What A1
+should annotate"): GTK signals with `handler_result: bool_stop` (and `sync_required: true` for
+`close-request`, `key-pressed`, `drop`, `accept`, `change-value`, `activate-link`, `state-set`) go
+through `call_sync`; Qt has synthetic `close_request` and `key_press`. X2 recorded its closures as
+X2-G1..G5 (sync results, per-event close veto, key handled, event controllers, rAF).
+Still open: typed `value` results (`SpinButton::input/output`, drag actions), listen phases
+(after/capture), Qt `key_release`/generic event families. The original text follows.
 
 The backends return a fixed default to the toolkit (`false` for `bool_stop`, nothing for `value`)
 and post the event asynchronously; only `close-request` is special-cased. `listen` flags for sync

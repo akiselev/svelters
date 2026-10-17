@@ -8,6 +8,16 @@ a batch whose remaining facts all need a gap is marked `blocked: gap:<id>`.
 Status values: `todo | in-progress (<worker>) | done | blocked: <why>`. The status line of a done
 batch also lists facts that were tried and dropped because their generated test failed.
 
+Changes since the inventory was written (2026-10-17):
+- S1 (ABI v3 value model) is merged: enums travel as names, and flags, records, dates and
+  string-form boxed types (colours, fonts, icons, key sequences, URLs, GFile) convert on both
+  toolkits. Facts marked G4 below are now worth trying; Qt enum props need no `values` map unless
+  the JS vocabulary differs from the Qt names. Re-check G4 items before marking them blocked.
+- X2 (sync handlers) is merged: GTK signals with `handler_result: bool_stop` and Qt synthetic
+  `close_request`/`key_press` let JS decide (`e.preventDefault()`). Annotate `handler_result` and
+  `sync_required` (see `docs/notes/x2-sync-frame.md`, "What A1 should annotate"); items marked G5
+  with bool results are now doable. Qt input widgets in your batch can get `synthetic: key_press`.
+
 Common to every batch:
 - **Facts to annotate**, by column: P = properties (JS name, sample, echo suppression), S =
   signals (trigger, handler result), M = methods, C = child slots (ops + effects = ownership),
