@@ -196,8 +196,11 @@ fn handles_nullable_and_boxed() {
         let img2 = h.create("Image");
         h.set_value(img2, "gicon", &Value::Boxed { ty, handle }).unwrap();
         assert!(h.obj(img2).property::<Option<gtk::gio::Icon>>("gicon").is_some());
+        // A boxed value is a VALUE-class handle; releasing it makes the handle stale.
+        assert_eq!(h.handle_info(handle).unwrap().lifetime, SVL_LIFE_VALUE);
         // Release: explicit, idempotent, stale afterwards.
         h.destroy(handle);
+        assert!(h.handle_info(handle).is_err());
         h.destroy(handle);
         assert!(h.set_value(img2, "gicon", &Value::Boxed { ty, handle }).unwrap_err().contains("stale boxed handle"));
         // A boxed value of the wrong type is refused.

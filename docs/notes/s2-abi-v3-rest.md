@@ -39,3 +39,9 @@
 ## 5. packages/dom INT_PROPS (done)
 
 `packages/dom` no longer has `INT_PROPS`; `setAttribute` calls the renderer's `coerceAttribute(host, tag, name, value)` (descriptor-driven via `host.propType`), exported as `@svelters/renderer/coerce`. Behaviour change: a host that publishes no descriptors gets the attribute text unchanged (before: `spacing` was always coerced to an integer). The native host and the Node TestHost both publish descriptors. `packages/dom` now has a test (`test/coerce.test.mjs`, fake host). Note: the shim still targets the older host API (`host.create`), which the Node TestHost no longer provides, so it only runs on the native host.
+
+## 6. Handoff leftovers
+
+- `backend-abi.md`: the v3 section is marked implemented; "As implemented" now covers out/in-out params, Qt callbacks/async, UTF-16 results, typed variants and GValue props, VALUE-class handles. `serdes-impl.md` "Open" updated.
+- VALUE-class handles: BOXED + dispose already was the VALUE class; `handle_info` now says so (`SVL_LIFE_VALUE`) on both backends.
+- A1 gaps touched: G4 (value types: out/in-out, exact variants, GValue closed here; GTK time-only records and list models remain), G8 on Qt (callbacks via `callbacks:` YAML; GTK callbacks belong to the GI invoker). A1 should extend `metadata/overrides/qt/QMenu.yaml` (tag `menu`, created here as the callback proof) when it takes G7.

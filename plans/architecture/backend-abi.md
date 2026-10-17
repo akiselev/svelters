@@ -258,7 +258,9 @@ Later ABI additions, not part of v2:
 - the foreign-runtime hooks;
 - the value-model changes from the serdes research.
 
-## Planned ABI v3: value model (M3)
+## ABI v3: value model (M3)
+
+**Status: implemented (S1, S2).** The text below is the original plan; "As implemented" at the end of this section records what was built and the additions made later.
 
 From `docs/notes/js-native-serdes.md` §5.1, which has the exact C proposal.
 
@@ -309,3 +311,7 @@ A backend that advertises `SVL_CAP_UTF16_OUT` may return `STR` values flagged `S
   - Qt has no signatures: a basic one fixes the `QMetaType` and the range (`y n q i u x t d b s o g`); a container signature passes the value as it is.
   - Reading a variant still yields the inferred JS shape; the signature does not come back.
 - **GValue props.** A property of boxed type `G_TYPE_VALUE` (e.g. `GtkDropTarget:value`) has a variant-like dynamic slot: the JS value is converted to a GValue by inference (bool, int64, double, string, bytes -> `GBytes`, boxed or object handles as themselves, typed variants as `GVariant`) and read back by unwrapping the contained GValue.
+
+#### VALUE-class handles (S2)
+
+A `BOXED` value is the v2 VALUE lifetime class: a refcounted, immutable native value behind a handle in the same never-reused handle space. `destroy(h)` (the wrapper's `dispose()`, or the finalizer at the next checkpoint) is the unref and is idempotent. `handle_info(h)` answers `lifetime = SVL_LIFE_VALUE` with `kind = 0` (the value's type is the `BOXED` type descriptor it travelled with) until it is released; afterwards the handle is stale. No tree operation accepts a VALUE handle. Both backends implement it.

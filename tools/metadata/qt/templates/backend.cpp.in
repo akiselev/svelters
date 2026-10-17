@@ -422,6 +422,12 @@ int b_listen(void *, svl_handle h, svl_id sig, bool on) {
 }
 
 int b_handle_info(void *, svl_handle h, svl_handle_info *out) {
+  if (g.boxed.count(h)) {  // a boxed value is a VALUE handle: refcounted and immutable, released by `destroy`
+    out->kind = 0;
+    out->lifetime = SVL_LIFE_VALUE;
+    out->flags = 0;
+    return 0;
+  }
   Entry *e = find(h);
   if (!e) return fail("handle_info: stale or unknown handle");
   out->kind = e->kind;

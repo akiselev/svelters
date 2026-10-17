@@ -308,8 +308,11 @@ fn boxed_values() {
     assert!(b1.desc("icon").params[0].has(SVL_D_STRING_FORM));
     // Passing the handle to another widget copies the (implicitly shared) value.
     b2.set("icon", &Value::Boxed { ty, handle }).unwrap();
+    // A boxed value is a VALUE-class handle.
+    assert_eq!(be().handle_info(handle).unwrap().lifetime, SVL_LIFE_VALUE);
     // Release is explicit and idempotent; the handle is stale afterwards.
     be().destroy(handle);
+    assert!(be().handle_info(handle).is_err());
     be().destroy(handle);
     let e = b2.set("icon", &Value::Boxed { ty, handle }).unwrap_err();
     assert!(e.contains("stale boxed handle"), "{e}");
