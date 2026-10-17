@@ -8,34 +8,6 @@
 // The primary template is undefined: using an unmapped type is a compile error, and C++ only
 // instantiates the converters the generated dispatch code uses.
 
-#include <cmath>
-#include <deque>
-#include <functional>
-#include <limits>
-#include <memory>
-#include <set>
-#include <type_traits>
-#include <vector>
-
-#include <QtCore/QDate>
-#include <QtCore/QDateTime>
-#include <QtCore/QFlags>
-#include <QtCore/QList>
-#include <QtCore/QMargins>
-#include <QtCore/QPoint>
-#include <QtCore/QPointF>
-#include <QtCore/QRect>
-#include <QtCore/QRectF>
-#include <QtCore/QSize>
-#include <QtCore/QSizeF>
-#include <QtCore/QStringList>
-#include <QtCore/QTime>
-#include <QtCore/QUrl>
-#include <QtGui/QColor>
-#include <QtGui/QFont>
-#include <QtGui/QIcon>
-#include <QtGui/QKeySequence>
-
 // Storage for everything a returned svl_value points at; valid until the next ABI call that
 // produces output (get_prop, call), as the ABI promises.
 struct OutArena {
@@ -528,9 +500,9 @@ struct Conv<QColor> {
     return true;
   }
   static void out(const QColor &c, svl_value *o) {
-    qreal r, g, b, a;
-    c.getRgbF(&r, &g, &b, &a);
-    rec_out(tid(), {r, g, b, a}, false, o);
+    float r, gr, b, a;
+    c.getRgbF(&r, &gr, &b, &a);
+    rec_out(tid(), {double(r), double(gr), double(b), double(a)}, false, o);
   }
   static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_RECORD, SVL_D_STRING_FORM, tid()); }
 };
@@ -672,7 +644,7 @@ struct Conv<QDate> {
   static bool in(const svl_value *v, QDate &o, std::string &e) {
     double f[3];
     if (!rec_fields(v, 3, "DateParts", f, e)) return false;
-    QDate d(int(f[0]), int(f[1]), int(f[2]));
+    QDate d = QDate(static_cast<int>(f[0]), static_cast<int>(f[1]), static_cast<int>(f[2]));
     if (!d.isValid()) { e = "invalid date"; return false; }
     o = d;
     return true;
@@ -692,7 +664,7 @@ struct Conv<QTime> {
   static bool in(const svl_value *v, QTime &o, std::string &e) {
     double f[4];
     if (!rec_fields(v, 4, "TimeParts", f, e)) return false;
-    QTime t(int(f[0]), int(f[1]), int(f[2]), int(f[3]));
+    QTime t = QTime(static_cast<int>(f[0]), static_cast<int>(f[1]), static_cast<int>(f[2]), static_cast<int>(f[3]));
     if (!t.isValid()) { e = "invalid time"; return false; }
     o = t;
     return true;

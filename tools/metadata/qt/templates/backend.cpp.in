@@ -29,6 +29,36 @@
 #include <QtWidgets/QWidget>
 //@@INCLUDES@@
 
+// Headers of the value-model converters (serdes.hpp.in is included inside the anonymous namespace).
+#include <cmath>
+#include <deque>
+#include <functional>
+#include <limits>
+#include <memory>
+#include <set>
+#include <type_traits>
+#include <vector>
+
+#include <QtCore/QDate>
+#include <QtCore/QDateTime>
+#include <QtCore/QFlags>
+#include <QtCore/QList>
+#include <QtCore/QMargins>
+#include <QtCore/QPoint>
+#include <QtCore/QPointF>
+#include <QtCore/QRect>
+#include <QtCore/QRectF>
+#include <QtCore/QSize>
+#include <QtCore/QSizeF>
+#include <QtCore/QStringList>
+#include <QtCore/QTime>
+#include <QtCore/QUrl>
+#include <QtGui/QColor>
+#include <QtGui/QFont>
+#include <QtGui/QIcon>
+#include <QtGui/QKeySequence>
+
+
 #include <atomic>
 #include <chrono>
 #include <cstdio>
@@ -336,7 +366,6 @@ void b_quit(void *) {
 const char *b_last_error(void *) { return g.err.c_str(); }
 
 // v3 members (caps, describe, describe_type, cancel) follow `last_error`.
-const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
                               b_last_error, SVL_CAP_UTF16_IN, b_describe, b_describe_type, nullptr};

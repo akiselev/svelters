@@ -231,12 +231,7 @@ typedef struct svl_backend {
 
   const char *(*last_error)(void *self); /* NUL-terminated, valid until the next call */
 
-  /* Reserved for ABI v2 (approved): `void (*schedule_wake)(void *self, int64_t ms)` and
-   * `int (*handle_info)(void *self, svl_handle h, svl_handle_info *out)`. Must be NULL until v2 lands. */
-  void *reserved_v2_schedule_wake;
-  void *reserved_v2_handle_info;
-
-  /* v3 */
+  /* v3: appended after the v2 members. */
   uint32_t caps; /* SVL_CAP_* */
   /* Descriptors may be NULL (no type information: the host converts dynamically). The returned
    * pointers stay valid for the backend's lifetime. NULL return = unknown member / type. */
