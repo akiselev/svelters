@@ -1059,33 +1059,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "keysequenceedit",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QKeySequenceEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    14
   ],
   "native": "QKeySequenceEdit",
   "ownership": false,
   "props": [
-   0,
+   2,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1137,21 +1137,21 @@
   "native": "QLabel",
   "ownership": false,
   "props": [
-   5,
+   10,
    12
   ],
-  "props_annotated": 5,
+  "props_annotated": 10,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   14,
+   14
   ]
  },
  {
@@ -1197,27 +1197,27 @@
   "kind": "QLineEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   6,
    85
   ],
   "native": "QLineEdit",
   "ownership": false,
   "props": [
-   5,
+   11,
    19
   ],
-  "props_annotated": 5,
+  "props_annotated": 11,
   "signal_results": 1,
   "signals": [
-   1,
+   5,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   8,
-   8
+   24,
+   24
   ]
  },
  {
@@ -1486,35 +1486,35 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 15,
-  "element": null,
-  "gallery": null,
+  "element": "plaintextedit",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QPlainTextEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   11,
    93
   ],
   "native": "QPlainTextEdit",
   "ownership": false,
   "props": [
-   0,
+   13,
    16
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 13,
+  "signal_results": 1,
   "signals": [
-   0,
+   4,
    9
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   30,
+   30
   ]
  },
  {
@@ -2214,66 +2214,66 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "textbrowser",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QTextBrowser",
   "lifetime": "owned",
   "methods": [
-   0,
+   5,
    30
   ],
   "native": "QTextBrowser",
   "ownership": false,
   "props": [
-   0,
+   4,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    6
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 16,
-  "element": null,
-  "gallery": null,
+  "element": "textedit",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QTextEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   11,
    110
   ],
   "native": "QTextEdit",
   "ownership": false,
   "props": [
-   0,
+   16,
    18
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 16,
+  "signal_results": 1,
   "signals": [
-   0,
+   3,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   32,
+   32
   ]
  },
  {

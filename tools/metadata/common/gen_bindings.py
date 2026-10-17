@@ -126,15 +126,33 @@ def gtk_bindings() -> dict[str, dict[str, dict]]:
     return out
 
 
+QT_META = ROOT / "metadata/qt"
+
+
+def qt_inherited(cls: str, key: str, files: dict[str, dict]) -> list[dict]:
+    """`inherit:` records of `cls` and its bases (nearest first), as gen_cpp.py applies them."""
+    meta = QT_META / f"{cls}.json"
+    chain = [cls] + (svmeta.load_json(meta).get("bases", []) if meta.exists() else [])
+    out = []
+    for c in chain:
+        out += ((files.get(c) or {}).get("inherit") or {}).get(key, [])
+    return out
+
+
 def qt_bindings() -> dict[str, dict[str, dict]]:
     out: dict[str, dict[str, dict]] = {}
-    for path in sorted(QT_OVERRIDES.glob("*.yaml")):
-        for el in svmeta.load_yaml(path).get("elements", []):
+    files = {path.stem: svmeta.load_yaml(path) for path in sorted(QT_OVERRIDES.glob("*.yaml"))}
+    for stem, data in files.items():
+        for el in data.get("elements", []):
             if not el.get("bindings"):
                 continue
             tag = el["tag"]
-            props = {p["js"]: p for p in el.get("props", [])}
-            signals = {s["js"]: s for s in el.get("signals", [])}
+            excl = set(el.get("exclude", []))
+            cls = el["construct"]["class"]
+            props = {p["js"]: p for p in qt_inherited(cls, "props", files)[::-1] if p["js"] not in excl}
+            props.update({p["js"]: p for p in el.get("props", [])})
+            signals = {s["js"]: s for s in qt_inherited(cls, "signals", files)[::-1] if s["js"] not in excl}
+            signals.update({s["js"]: s for s in el.get("signals", [])})
             for b in el["bindings"]:
                 where = f"qt <{tag}>"
                 fields = common_fields(where, b)

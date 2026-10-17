@@ -13,6 +13,12 @@ export const BINDINGS = {
   combobox: {
     currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  dial: {
+    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
+  doublespinbox: {
+    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   editablelabel: {
     editing: { prop: "editing", signal: "notify::editing", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
@@ -22,17 +28,35 @@ export const BINDINGS = {
   expander: {
     expanded: { prop: "expanded", signal: "notify::expanded", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
+  levelbar: {
+    value: { prop: "value", signal: "notify::value", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
   listwidget: {
     currentRow: { prop: "currentRow", signal: "row-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   passwordentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
+  plaintextedit: {
+    plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  },
   radiobutton: {
     checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  scrollbar: {
+    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   searchentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
+  },
+  slider: {
+    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
+  spinbox: {
+    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
+  spinbutton: {
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
   spinner: {
     spinning: { prop: "spinning", signal: "notify::spinning", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
@@ -48,6 +72,9 @@ export const BINDINGS = {
   },
   text: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
+  },
+  textedit: {
+    plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
   },
   togglebutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },

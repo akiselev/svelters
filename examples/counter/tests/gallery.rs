@@ -109,3 +109,4 @@ gallery_page!(qt_05_containers, "qt", "05-containers", ["QFrame", "QGroupBox", "
 gallery_page!(qt_07_selection, "qt", "07-selection", ["QComboBox", "QFontComboBox", "QListWidget"]);
 gallery_page!(qt_08_bars, "qt", "08-bars", ["QTabBar", "QDialogButtonBox", "QStatusBar", "QMenuBar", "QToolBar"]);
 gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);
+gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);

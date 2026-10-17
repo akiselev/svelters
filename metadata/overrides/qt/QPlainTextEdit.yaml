@@ -1,0 +1,70 @@
+elements:
+  - tag: plaintextedit
+    construct: { class: QPlainTextEdit }
+    props:
+      - { js: plainText, native: plainText, suppress_signals: true, provenance: "QPlainTextEdit::plainText (qdoc)" }
+      - { js: readOnly, native: readOnly, provenance: "QPlainTextEdit::readOnly (qdoc)" }
+      - { js: placeholderText, native: placeholderText, provenance: "QPlainTextEdit::placeholderText (qdoc)" }
+      - { js: lineWrapMode, native: lineWrapMode, provenance: "QPlainTextEdit::lineWrapMode (qdoc)" }
+      - { js: tabChangesFocus, native: tabChangesFocus, provenance: "QPlainTextEdit::tabChangesFocus (qdoc)" }
+      - { js: overwriteMode, native: overwriteMode, provenance: "QPlainTextEdit::overwriteMode (qdoc)" }
+      - { js: wordWrapMode, native: wordWrapMode, provenance: "QPlainTextEdit::wordWrapMode (qdoc)" }
+      - { js: undoRedoEnabled, native: undoRedoEnabled, provenance: "QPlainTextEdit::undoRedoEnabled (qdoc)" }
+      - { js: maximumBlockCount, native: maximumBlockCount, provenance: "QPlainTextEdit::maximumBlockCount (qdoc)" }
+      - { js: cursorWidth, native: cursorWidth, provenance: "QPlainTextEdit::cursorWidth (qdoc)" }
+      - { js: tabStopDistance, native: tabStopDistance, provenance: "QPlainTextEdit::tabStopDistance (qdoc)" }
+      - { js: textInteractionFlags, native: textInteractionFlags, provenance: "QPlainTextEdit::textInteractionFlags (qdoc)" }
+      - { js: documentTitle, native: documentTitle, provenance: "QPlainTextEdit::documentTitle (qdoc)" }
+    methods:
+      - { js: appendPlainText, native: appendPlainText, params: [string], args: ["x"], provenance: "QPlainTextEdit::appendPlainText (qdoc)" }
+      - { js: insertPlainText, native: insertPlainText, params: [string], args: ["x"], provenance: "QPlainTextEdit::insertPlainText (qdoc)" }
+      - { js: appendHtml, native: appendHtml, params: [string], args: ["x"], provenance: "QPlainTextEdit::appendHtml (qdoc)" }
+      - { js: clear, native: clear, expect: "$w->toPlainText().isEmpty()", provenance: "QPlainTextEdit::clear (qdoc)" }
+      - { js: selectAll, native: selectAll, provenance: "QPlainTextEdit::selectAll (qdoc)" }
+      - { js: undo, native: undo, provenance: "QPlainTextEdit::undo (qdoc)" }
+      - { js: redo, native: redo, provenance: "QPlainTextEdit::redo (qdoc)" }
+      - { js: copy, native: copy, provenance: "QPlainTextEdit::copy (qdoc)" }
+      - { js: cut, native: cut, provenance: "QPlainTextEdit::cut (qdoc)" }
+      - { js: centerCursor, native: centerCursor, provenance: "QPlainTextEdit::centerCursor (qdoc)" }
+      - { js: ensureCursorVisible, native: ensureCursorVisible, provenance: "QPlainTextEdit::ensureCursorVisible (qdoc)" }
+    bindings:
+      - name: plainText
+        direction: two_way
+        property: plainText
+        type: { ref: string, nullable: false }
+        change: { signal: changed, role: any_change, value: prop }
+        write: { natively_normalizes: false }
+        echo:
+          strategy: host_suppressed
+          compare_before_set: true
+          read_back: false
+          sync_signals_on_set: ["textChanged()"]
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QPlainTextEdit::textChanged() has no args, so the value is read from the property (docs/notes/fork-bindings.md 6)"
+    signals:
+      - { js: key-press, synthetic: key_press, provenance: "X2 sync key-press (docs/notes/x2-sync-frame.md)" }
+      - js: changed
+        native: textChanged
+        connect: "textChanged()"
+        args: []
+        trigger: '$w->setPlainText(QStringLiteral("v") + QString::number($i))'
+        provenance: "QPlainTextEdit::textChanged() (qdoc)"
+      - js: selectionChanged
+        native: selectionChanged
+        connect: "selectionChanged()"
+        args: []
+        trigger: 'Q_EMIT $w->selectionChanged()'
+        provenance: "QPlainTextEdit::selectionChanged() (qdoc)"
+      - js: cursorPositionChanged
+        native: cursorPositionChanged
+        connect: "cursorPositionChanged()"
+        args: []
+        trigger: 'Q_EMIT $w->cursorPositionChanged()'
+        provenance: "QPlainTextEdit::cursorPositionChanged() (qdoc)"
+      - js: blockCountChanged
+        native: blockCountChanged
+        connect: "blockCountChanged(int)"
+        args: [{ name: newBlockCount, type: i32 }]
+        trigger: '$w->setPlainText(QStringLiteral("a\n").repeated($i + 1))'
+        expect_args: ["2"]
+        provenance: "QPlainTextEdit::blockCountChanged(int) (qdoc)"

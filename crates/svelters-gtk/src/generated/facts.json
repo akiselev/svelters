@@ -171,6 +171,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:slot:child",
+   "fingerprint": "a0f5066e80edeab4",
+   "kind": "Popover",
+   "name": "child",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_popover_child"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Revealer:slot:child",
    "fingerprint": "90f95478876c6e73",
    "kind": "Revealer",
@@ -238,6 +248,76 @@
    "section": "slots",
    "tests": [
     "generated::verify::slot_windowhandle_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:comments",
+   "fingerprint": "c757f0e44e73268e",
+   "kind": "AboutDialog",
+   "name": "comments",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_comments"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:copyright",
+   "fingerprint": "9809b65a2911dfe5",
+   "kind": "AboutDialog",
+   "name": "copyright",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_copyright"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license-type",
+   "fingerprint": "ac9ab8e66299050b",
+   "kind": "AboutDialog",
+   "name": "license-type",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_license_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:program-name",
+   "fingerprint": "9522cb9ed190d6c1",
+   "kind": "AboutDialog",
+   "name": "program-name",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_program_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:version",
+   "fingerprint": "a628a84f11f504b1",
+   "kind": "AboutDialog",
+   "name": "version",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_version"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:website",
+   "fingerprint": "7a3d656d929ed813",
+   "kind": "AboutDialog",
+   "name": "website",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_website"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:wrap-license",
+   "fingerprint": "d2838fa478d67c79",
+   "kind": "AboutDialog",
+   "name": "wrap-license",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_wrap_license"
    ]
   },
   {
@@ -785,6 +865,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EmojiChooser:signal:emoji-picked",
+   "fingerprint": "c64751fa366c6cd1",
+   "kind": "EmojiChooser",
+   "name": "emoji-picked",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_emojichooser_emoji_picked"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:signal:activate",
    "fingerprint": "c3a1182385f5ab00",
    "kind": "Entry",
@@ -1016,6 +1106,26 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:decoration-layout",
+   "fingerprint": "11d3787f4005012c",
+   "kind": "HeaderBar",
+   "name": "decoration-layout",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_headerbar_decoration_layout"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:show-title-buttons",
+   "fingerprint": "86f15e6313dc138d",
+   "kind": "HeaderBar",
+   "name": "show-title-buttons",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_headerbar_show_title_buttons"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title",
    "fingerprint": "1d52bf0b599f7886",
    "kind": "HeaderBar",
@@ -1023,6 +1133,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_headerbar_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:use-native-controls",
+   "fingerprint": "dd8dbf408d321c1b",
+   "kind": "HeaderBar",
+   "name": "use-native-controls",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_headerbar_use_native_controls"
    ]
   },
   {
@@ -1754,6 +1874,86 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_picture_keep_aspect_ratio"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:signal:activate-default",
+   "fingerprint": "5999397780559dd5",
+   "kind": "Popover",
+   "name": "activate-default",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_popover_activate_default"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:signal:closed",
+   "fingerprint": "04b933f3eb14f32b",
+   "kind": "Popover",
+   "name": "closed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_popover_closed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:autohide",
+   "fingerprint": "a7bc5d5cce076151",
+   "kind": "Popover",
+   "name": "autohide",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_popover_autohide"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:cascade-popdown",
+   "fingerprint": "b67abcaa7372dc8e",
+   "kind": "Popover",
+   "name": "cascade-popdown",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_popover_cascade_popdown"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:has-arrow",
+   "fingerprint": "5538e36d44566262",
+   "kind": "Popover",
+   "name": "has-arrow",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_popover_has_arrow"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:position",
+   "fingerprint": "de2f2324767dfc3d",
+   "kind": "Popover",
+   "name": "position",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_popover_position"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:popdown",
+   "fingerprint": "360dbe38d0be47d5",
+   "kind": "Popover",
+   "name": "popdown",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_popover_popdown"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:popup",
+   "fingerprint": "b4eb1bdd7db152bc",
+   "kind": "Popover",
+   "name": "popup",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_popover_popup"
    ]
   },
   {
@@ -2991,6 +3191,96 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:decorated",
+   "fingerprint": "6f5a6e2761d31d08",
+   "kind": "Window",
+   "name": "decorated",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_decorated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-height",
+   "fingerprint": "411ef8c7b0a8d193",
+   "kind": "Window",
+   "name": "default-height",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_default_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-width",
+   "fingerprint": "0139ac994a56c6b1",
+   "kind": "Window",
+   "name": "default-width",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_default_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:deletable",
+   "fingerprint": "3f274af3b84fa2da",
+   "kind": "Window",
+   "name": "deletable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_deletable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:fullscreened",
+   "fingerprint": "dc7cb603432a4874",
+   "kind": "Window",
+   "name": "fullscreened",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_fullscreened"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:hide-on-close",
+   "fingerprint": "540701784b9746a8",
+   "kind": "Window",
+   "name": "hide-on-close",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_hide_on_close"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:maximized",
+   "fingerprint": "8fe891ec98d559b1",
+   "kind": "Window",
+   "name": "maximized",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_maximized"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:modal",
+   "fingerprint": "eb09c7e35e421b25",
+   "kind": "Window",
+   "name": "modal",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_modal"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:resizable",
+   "fingerprint": "1e3597548ccd8b0d",
+   "kind": "Window",
+   "name": "resizable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_resizable"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:title",
    "fingerprint": "69ad40a290a938fe",
    "kind": "Window",
@@ -2998,6 +3288,46 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_window_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:close",
+   "fingerprint": "9e42263985669826",
+   "kind": "Window",
+   "name": "close",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_close"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:fullscreen",
+   "fingerprint": "0c909cc5236bf7af",
+   "kind": "Window",
+   "name": "fullscreen",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_fullscreen"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:maximize",
+   "fingerprint": "803af9406409fc55",
+   "kind": "Window",
+   "name": "maximize",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_maximize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:minimize",
+   "fingerprint": "6d5fb7853019c329",
+   "kind": "Window",
+   "name": "minimize",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_minimize"
    ]
   },
   {
@@ -3018,6 +3348,66 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_window_set_default_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unfullscreen",
+   "fingerprint": "8dfa88f69493eab5",
+   "kind": "Window",
+   "name": "unfullscreen",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_unfullscreen"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unmaximize",
+   "fingerprint": "f223253ff80984ac",
+   "kind": "Window",
+   "name": "unmaximize",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_unmaximize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unminimize",
+   "fingerprint": "42ad68d0dca2a5e7",
+   "kind": "Window",
+   "name": "unminimize",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_unminimize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:decoration-layout",
+   "fingerprint": "a9989fcd39916d85",
+   "kind": "WindowControls",
+   "name": "decoration-layout",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_windowcontrols_decoration_layout"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:side",
+   "fingerprint": "dfa7cc176e09756b",
+   "kind": "WindowControls",
+   "name": "side",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_windowcontrols_side"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:use-native-controls",
+   "fingerprint": "6b0cdf5597f8d47d",
+   "kind": "WindowControls",
+   "name": "use-native-controls",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_windowcontrols_use_native_controls"
    ]
   }
  ],

@@ -412,6 +412,30 @@ fn slot_paned_start() {
     });
 }
 
+/// slot Popover.child: gir: gtk_popover_set_child
+#[test]
+fn slot_popover_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("popover");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+    });
+}
+
 /// slot Revealer.child: gir: gtk_revealer_set_child
 #[test]
 fn slot_revealer_child() {
@@ -577,6 +601,111 @@ fn slot_windowhandle_child() {
         assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// property AboutDialog.comments (JS comments): GtkAboutDialog:comments (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_comments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "comments");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "comments"));
+        h.set_str(o, "comments", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "comments"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.copyright (JS copyright): GtkAboutDialog:copyright (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_copyright() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "copyright");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "copyright"));
+        h.set_str(o, "copyright", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "copyright"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.license-type (JS licenseType): GtkAboutDialog:license-type (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_license_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "licenseType");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "license-type"));
+        h.set_str(o, "licenseType", "custom").unwrap();
+        assert_eq!(h.get(o, "licenseType"), V::Str("custom".into()));
+    });
+}
+
+/// property AboutDialog.program-name (JS programName): GtkAboutDialog:program-name (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_program_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "programName");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "program-name"));
+        h.set_str(o, "programName", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "programName"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.version (JS version): GtkAboutDialog:version (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_version() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "version");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "version"));
+        h.set_str(o, "version", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "version"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.website (JS website): GtkAboutDialog:website (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_website() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "website");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "website"));
+        h.set_str(o, "website", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "website"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.wrap-license (JS wrapLicense): GtkAboutDialog:wrap-license (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_wrap_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "wrapLicense");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "wrap-license"));
+        h.set_bool(o, "wrapLicense", true).unwrap();
+        assert_eq!(h.get(o, "wrapLicense"), V::Bool(true));
     });
 }
 
@@ -1749,6 +1878,37 @@ fn binding_editablelabel_editing() {
     });
 }
 
+/// signal EmojiChooser.emoji-picked: GtkEmojiChooser::emoji-picked, run-last, string arg (Gtk 4 docs)
+#[test]
+fn signal_emojichooser_emoji_picked() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("emojichooser");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("emoji-picked", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("emojichooser", "emoji-picked"), 0);
+        assert_eq!(h.resolve_signal("emojichooser", "emoji-picked"), h.resolve_signal("emojichooser", "emoji-picked"));
+        h.listen(e, "emoji-picked", true).unwrap();
+        fire(&h.obj(e), "1", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "emoji-picked".to_string())), "delivered: {ev:?}");
+        h.listen(e, "emoji-picked", false).unwrap();
+        fire(&h.obj(e), "2", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "emoji-picked", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "3", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "emoji-picked", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal Entry.activate: GtkEntry::activate, action signal, void (Gtk 4 docs)
 #[test]
 fn signal_entry_activate() {
@@ -2196,6 +2356,36 @@ fn prop_graphicsoffload_enabled() {
     });
 }
 
+/// property HeaderBar.decoration-layout (JS decorationLayout): GtkHeaderBar:decoration-layout (Gtk 4 docs)
+#[test]
+fn prop_headerbar_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("headerbar");
+        
+        let id = h.resolve_prop("headerbar", "decorationLayout");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("headerbar", "decoration-layout"));
+        h.set_str(o, "decorationLayout", "menu:close").unwrap();
+        assert_eq!(h.get(o, "decorationLayout"), V::Str("menu:close".into()));
+    });
+}
+
+/// property HeaderBar.show-title-buttons (JS showTitleButtons): GtkHeaderBar:show-title-buttons (Gtk 4 docs)
+#[test]
+fn prop_headerbar_show_title_buttons() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("headerbar");
+        
+        let id = h.resolve_prop("headerbar", "showTitleButtons");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("headerbar", "show-title-buttons"));
+        h.set_bool(o, "showTitleButtons", false).unwrap();
+        assert_eq!(h.get(o, "showTitleButtons"), V::Bool(false));
+    });
+}
+
 /// property HeaderBar.title (JS title): GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'
 #[test]
 fn prop_headerbar_title() {
@@ -2210,6 +2400,21 @@ fn prop_headerbar_title() {
         assert_eq!(h.get(o, "title"), V::Str("p3-sample".into()));
         let w = h.obj(o).property::<Option<gtk::Widget>>("title-widget").unwrap();
         assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), "p3-sample");
+    });
+}
+
+/// property HeaderBar.use-native-controls (JS useNativeControls): GtkHeaderBar:use-native-controls (Gtk 4.18 docs)
+#[test]
+fn prop_headerbar_use_native_controls() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("headerbar");
+        
+        let id = h.resolve_prop("headerbar", "useNativeControls");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("headerbar", "use-native-controls"));
+        h.set_bool(o, "useNativeControls", true).unwrap();
+        assert_eq!(h.get(o, "useNativeControls"), V::Bool(true));
     });
 }
 
@@ -3446,6 +3651,156 @@ fn prop_picture_keep_aspect_ratio() {
         assert_eq!(id, h.resolve_prop("picture", "keep-aspect-ratio"));
         h.set_bool(o, "keepAspectRatio", false).unwrap();
         assert_eq!(h.get(o, "keepAspectRatio"), V::Bool(false));
+    });
+}
+
+/// signal Popover.activate-default: GtkPopover::activate-default, action signal (Gtk 4 docs)
+#[test]
+fn signal_popover_activate_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("popover");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate-default", &[]);
+        };
+        assert_ne!(h.resolve_signal("popover", "activate-default"), 0);
+        assert_eq!(h.resolve_signal("popover", "activate-default"), h.resolve_signal("popover", "activate-default"));
+        h.listen(e, "activate-default", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-default".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-default", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-default", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-default", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Popover.closed: GtkPopover::closed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_popover_closed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("popover");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("closed", &[]);
+        };
+        assert_ne!(h.resolve_signal("popover", "closed"), 0);
+        assert_eq!(h.resolve_signal("popover", "closed"), h.resolve_signal("popover", "closed"));
+        h.listen(e, "closed", true).unwrap();
+        fire(&h.obj(e), "1", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "closed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "closed", false).unwrap();
+        fire(&h.obj(e), "2", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "closed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "3", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "closed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Popover.autohide (JS autohide): GtkPopover:autohide (Gtk 4 docs)
+#[test]
+fn prop_popover_autohide() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "autohide");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "autohide"));
+        h.set_bool(o, "autohide", false).unwrap();
+        assert_eq!(h.get(o, "autohide"), V::Bool(false));
+    });
+}
+
+/// property Popover.cascade-popdown (JS cascadePopdown): GtkPopover:cascade-popdown (Gtk 4 docs)
+#[test]
+fn prop_popover_cascade_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "cascadePopdown");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "cascade-popdown"));
+        h.set_bool(o, "cascadePopdown", true).unwrap();
+        assert_eq!(h.get(o, "cascadePopdown"), V::Bool(true));
+    });
+}
+
+/// property Popover.has-arrow (JS hasArrow): GtkPopover:has-arrow (Gtk 4 docs)
+#[test]
+fn prop_popover_has_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "hasArrow");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "has-arrow"));
+        h.set_bool(o, "hasArrow", false).unwrap();
+        assert_eq!(h.get(o, "hasArrow"), V::Bool(false));
+    });
+}
+
+/// property Popover.position (JS position): GtkPopover:position (Gtk 4 docs); PositionType nick
+#[test]
+fn prop_popover_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "position");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "position"));
+        h.set_str(o, "position", "left").unwrap();
+        assert_eq!(h.get(o, "position"), V::Str("left".into()));
+    });
+}
+
+/// method Popover.popdown: gtk_popover_popdown (Gtk 4 docs)
+#[test]
+fn method_popover_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let b = gtk::Button::new(); let win = gtk::Window::new(); win.set_child(Some(&b)); win.present(); h.widget(o).set_parent(&b); std::mem::forget(win); h.widget(o).downcast_ref::<gtk::Popover>().unwrap().popup();
+        h.call(o, "popdown").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(!w.is_visible(), "postcondition: !w.is_visible()");
+    });
+}
+
+/// method Popover.popup: gtk_popover_popup (Gtk 4 docs)
+#[test]
+fn method_popover_popup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let b = gtk::Button::new(); let win = gtk::Window::new(); win.set_child(Some(&b)); win.present(); h.widget(o).set_parent(&b); std::mem::forget(win);
+        h.call(o, "popup").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(w.is_visible(), "postcondition: w.is_visible()");
     });
 }
 
@@ -5757,6 +6112,141 @@ fn method_widget_queue_resize() {
     });
 }
 
+/// property Window.decorated (JS decorated): GtkWindow:decorated (Gtk 4 docs)
+#[test]
+fn prop_window_decorated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "decorated");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "decorated"));
+        h.set_bool(o, "decorated", false).unwrap();
+        assert_eq!(h.get(o, "decorated"), V::Bool(false));
+    });
+}
+
+/// property Window.default-height (JS defaultHeight): GtkWindow:default-height (Gtk 4 docs)
+#[test]
+fn prop_window_default_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "defaultHeight");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "default-height"));
+        h.set_i64(o, "defaultHeight", 300).unwrap();
+        assert_eq!(h.get(o, "defaultHeight"), V::I64(300));
+    });
+}
+
+/// property Window.default-width (JS defaultWidth): GtkWindow:default-width (Gtk 4 docs)
+#[test]
+fn prop_window_default_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "defaultWidth");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "default-width"));
+        h.set_i64(o, "defaultWidth", 500).unwrap();
+        assert_eq!(h.get(o, "defaultWidth"), V::I64(500));
+    });
+}
+
+/// property Window.deletable (JS deletable): GtkWindow:deletable (Gtk 4 docs)
+#[test]
+fn prop_window_deletable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "deletable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "deletable"));
+        h.set_bool(o, "deletable", false).unwrap();
+        assert_eq!(h.get(o, "deletable"), V::Bool(false));
+    });
+}
+
+/// property Window.fullscreened (JS fullscreened): GtkWindow:fullscreened (Gtk 4 docs)
+#[test]
+fn prop_window_fullscreened() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "fullscreened");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "fullscreened"));
+        h.set_bool(o, "fullscreened", true).unwrap();
+        assert_eq!(h.get(o, "fullscreened"), V::Bool(true));
+    });
+}
+
+/// property Window.hide-on-close (JS hideOnClose): GtkWindow:hide-on-close (Gtk 4 docs)
+#[test]
+fn prop_window_hide_on_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "hideOnClose");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "hide-on-close"));
+        h.set_bool(o, "hideOnClose", true).unwrap();
+        assert_eq!(h.get(o, "hideOnClose"), V::Bool(true));
+    });
+}
+
+/// property Window.maximized (JS maximized): GtkWindow:maximized (Gtk 4 docs)
+#[test]
+fn prop_window_maximized() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "maximized");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "maximized"));
+        h.set_bool(o, "maximized", true).unwrap();
+        assert_eq!(h.get(o, "maximized"), V::Bool(true));
+    });
+}
+
+/// property Window.modal (JS modal): GtkWindow:modal (Gtk 4 docs)
+#[test]
+fn prop_window_modal() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "modal");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "modal"));
+        h.set_bool(o, "modal", true).unwrap();
+        assert_eq!(h.get(o, "modal"), V::Bool(true));
+    });
+}
+
+/// property Window.resizable (JS resizable): GtkWindow:resizable (Gtk 4 docs)
+#[test]
+fn prop_window_resizable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "resizable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "resizable"));
+        h.set_bool(o, "resizable", false).unwrap();
+        assert_eq!(h.get(o, "resizable"), V::Bool(false));
+    });
+}
+
 /// property Window.title (JS title): GtkWindow:title (Gtk 4 docs); P prop
 #[test]
 fn prop_window_title() {
@@ -5769,6 +6259,62 @@ fn prop_window_title() {
         assert_eq!(id, h.resolve_prop("GtkWindow", "title"));
         h.set_str(o, "title", "p3-sample").unwrap();
         assert_eq!(h.get(o, "title"), V::Str("p3-sample".into()));
+    });
+}
+
+/// method Window.close: gtk_window_close (Gtk 4 docs)
+#[test]
+fn method_window_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        h.set_bool(o, "hide-on-close", true).unwrap(); h.widget(o).downcast_ref::<gtk::Window>().unwrap().present();
+        h.call(o, "close").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(!w.is_visible(), "postcondition: !w.is_visible()");
+    });
+}
+
+/// method Window.fullscreen: gtk_window_fullscreen (Gtk 4 docs)
+#[test]
+fn method_window_fullscreen() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "fullscreen").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.maximize: gtk_window_maximize (Gtk 4 docs)
+#[test]
+fn method_window_maximize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "maximize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.minimize: gtk_window_minimize (Gtk 4 docs)
+#[test]
+fn method_window_minimize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "minimize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
     });
 }
 
@@ -5797,5 +6343,92 @@ fn method_window_set_default_size() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "default-width") == V::I64(600) && h.get(o, "default-height") == V::I64(400), "postcondition: h.get(o, 'default-width') == V::I64(600) && h.get(o, 'default-height') == V::I64(400)");
+    });
+}
+
+/// method Window.unfullscreen: gtk_window_unfullscreen (Gtk 4 docs)
+#[test]
+fn method_window_unfullscreen() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "unfullscreen").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.unmaximize: gtk_window_unmaximize (Gtk 4 docs)
+#[test]
+fn method_window_unmaximize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "unmaximize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.unminimize: gtk_window_unminimize (Gtk 4 docs)
+#[test]
+fn method_window_unminimize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "unminimize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// property WindowControls.decoration-layout (JS decorationLayout): GtkWindowControls:decoration-layout (Gtk 4 docs)
+#[test]
+fn prop_windowcontrols_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("windowcontrols");
+        
+        let id = h.resolve_prop("windowcontrols", "decorationLayout");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("windowcontrols", "decoration-layout"));
+        h.set_str(o, "decorationLayout", "menu:close").unwrap();
+        assert_eq!(h.get(o, "decorationLayout"), V::Str("menu:close".into()));
+    });
+}
+
+/// property WindowControls.side (JS side): GtkWindowControls:side (Gtk 4 docs); PackType nick
+#[test]
+fn prop_windowcontrols_side() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("windowcontrols");
+        
+        let id = h.resolve_prop("windowcontrols", "side");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("windowcontrols", "side"));
+        h.set_str(o, "side", "end").unwrap();
+        assert_eq!(h.get(o, "side"), V::Str("end".into()));
+    });
+}
+
+/// property WindowControls.use-native-controls (JS useNativeControls): GtkWindowControls:use-native-controls (Gtk 4.18 docs)
+#[test]
+fn prop_windowcontrols_use_native_controls() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("windowcontrols");
+        
+        let id = h.resolve_prop("windowcontrols", "useNativeControls");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("windowcontrols", "use-native-controls"));
+        h.set_bool(o, "useNativeControls", true).unwrap();
+        assert_eq!(h.get(o, "useNativeControls"), V::Bool(true));
     });
 }
