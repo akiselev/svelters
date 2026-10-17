@@ -86,8 +86,8 @@ create virtuallist #23
 set #23 layout "list"
 set #23 selection "single"
 set #23 rowHeight 32
-set #23 vexpand "true"
-set #23 minHeight "300"
+set #23 vexpand true
+set #23 minHeight 300
 listen #23 setup on
 listen #23 bind on
 listen #23 unbind on

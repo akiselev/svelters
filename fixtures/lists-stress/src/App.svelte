@@ -58,8 +58,8 @@
       {items}
       key={(it) => it.id}
       bind:selected
-      vexpand="true"
-      minHeight="300"
+      vexpand={true}
+      minHeight={300}
       onactivate={(item, pos) => (activated = `${pos}:${item.id}`)}
     >
       {#snippet row(item, index)}

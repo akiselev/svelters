@@ -192,6 +192,8 @@ fn i64_arg(args: &[svl_value], i: usize, what: &str) -> Result<i64, String> {
     match v.tag {
         SVL_I64 => Ok(unsafe { v.u.i }),
         SVL_F64 => Ok(unsafe { v.u.f } as i64),
+        // A static attribute (`minHeight="300"`) arrives as text: the kind has no descriptors to coerce it.
+        SVL_STR => unsafe { convert::as_str(v) }.and_then(|s| s.trim().parse().ok()).ok_or_else(|| format!("`{what}` must be a number")),
         _ => Err(format!("`{what}` must be a number")),
     }
 }
