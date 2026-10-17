@@ -1,0 +1,25 @@
+children:
+  policy: single_child
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkSearchBar::get_child() const"}
+        set:    {native: "GtkSearchBar::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkSearchBar::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_search_bar_set_child"}]
+properties:
+  - name: search-mode-enabled
+    provenance: "GtkSearchBar:search-mode-enabled (Gtk 4 docs); P prop"
+  - name: show-close-button
+    provenance: "GtkSearchBar:show-close-button (Gtk 4 docs); P prop"

@@ -1,0 +1,6 @@
+elements:
+  - tag: errormessage
+    construct: { class: QErrorMessage }
+    exclude: [done]   # protected in QErrorMessage; generated thunks call it on the subclass
+    methods:
+      - { js: showMessage, native: showMessage, params: [string], provenance: "QErrorMessage::showMessage(const QString &) slot (qdoc); non-blocking" }

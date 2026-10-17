@@ -1,0 +1,41 @@
+properties:
+  - name: active
+    js_name: active
+    echo_suppress: [toggled, "notify::active"]
+    provenance: "GtkToggleButton:active (Gtk 4 docs)"
+signals:
+  - name: toggled
+    js_event: toggled
+    handler_result: none
+    sync_required: false
+    trigger: {property: active, values: [true, false, true]}
+    provenance: "GtkToggleButton::toggled, run-first, void (Gtk 4 docs)"
+  - name: "notify::active"
+    derived_from: {property: active}
+    js_event: "notify::active"
+    trigger: {property: active, values: [true, false, true]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkToggleButton:active"
+bindings:
+  - name: active
+    direction: two_way
+    property: active
+    type: {ref: bool, nullable: false}
+    change: {signal: toggled, role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: [toggled, "notify::active"]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "GtkToggleButton set_active emits toggled and notify::active only on change (Gtk 4 docs)"
+methods:
+  - name: set_active
+    js_name: set_active
+    dispatch: dynamic
+    args: [true]
+    expect: 'h.get(o, "active") == V::Bool(true)'
+    provenance: "gtk_toggle_button_set_active (Gtk 4 docs); called through GIRepository (X1)"

@@ -56,6 +56,7 @@ fn gio_file_callbacks_async_and_gerror() {
                 "path true true",
                 "exists true",
                 "loadContents true \"alpha\"",
+                "loadContentsEtag ret,contents,etag true true \"alpha\" true",
                 "exists missing false",
                 "sync error NativeError g-io-error-quark not-found true true",
                 "async returns a promise true",

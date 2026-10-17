@@ -1,0 +1,27 @@
+elements:
+  - tag: inputdialog
+    construct: { class: QInputDialog }
+    props:
+      - { js: labelText, native: labelText, provenance: "QInputDialog::labelText (qdoc)" }
+      - { js: textValue, native: textValue, provenance: "QInputDialog::textValue (qdoc)" }
+      - { js: intValue, native: intValue, provenance: "QInputDialog::intValue (qdoc)" }
+      - { js: intMinimum, native: intMinimum, provenance: "QInputDialog::intMinimum (qdoc)" }
+      - { js: intMaximum, native: intMaximum, provenance: "QInputDialog::intMaximum (qdoc)" }
+      - { js: inputMode, native: inputMode, provenance: "QInputDialog::inputMode (qdoc); enum by name (ABI v3)" }
+      - { js: okButtonText, native: okButtonText, provenance: "QInputDialog::okButtonText (qdoc)" }
+      - { js: cancelButtonText, native: cancelButtonText, provenance: "QInputDialog::cancelButtonText (qdoc)" }
+    signals:
+      - js: textValueChanged
+        native: textValueChanged
+        connect: "textValueChanged(QString)"
+        args: [{ name: text, type: string }]
+        trigger: '$w->setTextValue(QStringLiteral("v") + QString::number($i))'
+        expect_args: ["v0"]
+        provenance: "QInputDialog::textValueChanged(const QString &) (qdoc)"
+      - js: intValueChanged
+        native: intValueChanged
+        connect: "intValueChanged(int)"
+        args: [{ name: value, type: i32 }]
+        trigger: '$w->setIntValue(5 + $i)'
+        expect_args: ["5"]
+        provenance: "QInputDialog::intValueChanged(int) (qdoc)"

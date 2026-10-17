@@ -12,10 +12,12 @@
 // produces output (get_prop, call), as the ABI promises.
 struct OutArena {
   std::deque<std::string> strs;
+  std::deque<QString> wides;  // UTF-16 results: the QString shares its buffer, nothing is copied
   std::deque<QByteArray> bytes;
   std::deque<std::vector<svl_value>> lists;
   void clear() {
     strs.clear();
+    wides.clear();
     bytes.clear();
     lists.clear();
   }
@@ -45,6 +47,11 @@ inline svl_slot_desc slot_desc(const char *name, uint16_t tag, uint16_t flags = 
   d.type = type;
   d.min = mn;
   d.max = mx;
+  return d;
+}
+
+inline svl_slot_desc with_flags(svl_slot_desc d, uint16_t f) {
+  d.flags = static_cast<uint16_t>(d.flags | f);
   return d;
 }
 
@@ -179,12 +186,15 @@ struct Conv<QString> {
       o = QString::fromUtf8(static_cast<const char *>(v->u.s.ptr), static_cast<qsizetype>(v->u.s.len));
     return true;
   }
+  // UTF-16 with SVL_F_UTF16, as QString stores it: the host turns it into a JS string without
+  // transcoding through UTF-8 (SVL_CAP_UTF16_OUT).
   static void out(const QString &s, svl_value *o) {
-    QByteArray u = s.toUtf8();
-    g_out.strs.emplace_back(u.constData(), static_cast<size_t>(u.size()));
+    g_out.wides.push_back(s);
+    const QString &kept = g_out.wides.back();
     *o = mkv(SVL_STR);
-    o->u.s.ptr = g_out.strs.back().data();
-    o->u.s.len = g_out.strs.back().size();
+    o->flags = SVL_F_UTF16;
+    o->u.s.ptr = kept.constData();
+    o->u.s.len = static_cast<size_t>(kept.size());
   }
   static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_STR, SVL_D_NULLABLE); }
 };
@@ -755,8 +765,47 @@ struct Conv<QVariant> {
         o = QVariant(m);
         return true;
       }
-      default: e = "this value cannot be held in a variant"; return false;
+      case SVL_RECORD: {
+        // variant(signature, value): a QVariant has no GVariant signature, but a basic one fixes the
+        // QMetaType (and range) of the value; a container signature just takes the value as it is.
+        if (v->type != SVL_T_TYPED_VARIANT || v->u.l.len != 2) break;
+        QString sig;
+        if (!Conv<QString>::in(&v->u.l.ptr[0], sig, e)) return false;
+        QVariant inner;
+        if (!in(&v->u.l.ptr[1], inner, e)) return false;
+        int meta = -1;
+        qlonglong lo = 0, hi = 0;
+        bool ranged = true;
+        if (sig == QLatin1String("y")) { meta = QMetaType::UChar; lo = 0; hi = 255; }
+        else if (sig == QLatin1String("n")) { meta = QMetaType::Short; lo = -32768; hi = 32767; }
+        else if (sig == QLatin1String("q")) { meta = QMetaType::UShort; lo = 0; hi = 65535; }
+        else if (sig == QLatin1String("i")) { meta = QMetaType::Int; lo = INT32_MIN; hi = INT32_MAX; }
+        else if (sig == QLatin1String("u")) { meta = QMetaType::UInt; lo = 0; hi = UINT32_MAX; }
+        else if (sig == QLatin1String("x")) { meta = QMetaType::LongLong; ranged = false; }
+        else if (sig == QLatin1String("t")) { meta = QMetaType::ULongLong; ranged = false; }
+        else if (sig == QLatin1String("d")) { meta = QMetaType::Double; ranged = false; }
+        else if (sig == QLatin1String("b")) { meta = QMetaType::Bool; ranged = false; }
+        else if (sig == QLatin1String("s") || sig == QLatin1String("o") || sig == QLatin1String("g")) { meta = QMetaType::QString; ranged = false; }
+        if (meta >= 0) {
+          const bool numeric = sig != QLatin1String("s") && sig != QLatin1String("o") && sig != QLatin1String("g") && sig != QLatin1String("b");
+          if (numeric ? !(inner.typeId() == QMetaType::LongLong || inner.typeId() == QMetaType::ULongLong || inner.typeId() == QMetaType::Double)
+                      : (sig == QLatin1String("b") ? inner.typeId() != QMetaType::Bool : inner.typeId() != QMetaType::QString)) {
+            e = "variant(\"" + sig.toStdString() + "\"): the value does not match the signature";
+            return false;
+          }
+          if (ranged) {
+            const qlonglong n = inner.toLongLong();
+            if (n < lo || n > hi) { e = "variant(\"" + sig.toStdString() + "\"): " + std::to_string(n) + " does not fit the type"; return false; }
+          }
+          inner.convert(QMetaType(meta));
+        }
+        o = inner;
+        return true;
+      }
+      default: break;
     }
+    e = "this value cannot be held in a variant";
+    return false;
   }
   static void out(const QVariant &v, svl_value *o) {
     switch (v.typeId()) {
@@ -880,4 +929,46 @@ inline void out_null(svl_value *out) {
 }
 inline int bad_type(const char *what, const char *want) {
   return fail(std::string(what) + ": expected " + want);
+}
+
+// ---- callbacks (JS functions called by Qt) and async completion ----
+
+// Registers the descriptor of a callback type: its parameters (`fields`), result and scope.
+inline svl_id new_callback_type(const std::string &name, uint16_t scope,
+                                const std::vector<std::pair<std::string, svl_slot_desc>> &fields, svl_slot_desc ret) {
+  svl_id id = new_type(0, name, SVL_CALLBACK, {}, fields);
+  g_types[id]->desc.scope = scope;
+  g_types[id]->desc.ret = ret;
+  return id;
+}
+
+// Runs the JS function behind a CALLBACK id. A failure (the function threw, was released, or its owner
+// died) is reported by the host; the native caller sees a default-constructed result.
+template <class R, class... A>
+R js_invoke(uint64_t id, const A &...a) {
+  constexpr size_t N = sizeof...(A);
+  g_out.clear();
+  svl_value vals[N ? N : 1];
+  size_t i = 0;
+  ((Conv<A>::out(a, &vals[i++])), ...);
+  svl_value res = mkv(SVL_NULL);
+  const bool ok = g.host && g.host->invoke_callback && g.host->invoke_callback(g.host->self, id, N ? vals : nullptr, N, &res) == 0;
+  if constexpr (std::is_void_v<R>) {
+    (void)ok;
+  } else {
+    R r{};
+    std::string er;
+    if (ok && Conv<R>::in(&res, r, er)) return r;
+    return R{};
+  }
+}
+
+// An async operation ended: hands `v[0..n)` to the host's one-shot completion callback.
+inline void async_complete(uint64_t id, const svl_value *v, size_t n) {
+  auto it = g.asyncs.find(id);
+  if (it == g.asyncs.end()) return;
+  QObject::disconnect(it->second.conn);
+  g.asyncs.erase(it);
+  svl_value res = mkv(SVL_NULL);
+  if (g.host && g.host->invoke_callback) g.host->invoke_callback(g.host->self, id, v, n, &res);
 }

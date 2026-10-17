@@ -1,6 +1,23 @@
 elements:
   - tag: colordialog
     construct: { class: QColorDialog }
+    exclude: [done]   # protected in QColorDialog; generated thunks call it on the subclass
     props:
       - { js: currentColor, native: currentColor, provenance: "QColorDialog::currentColor (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: options, native: options, provenance: "QColorDialog::options (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      - js: currentColorChanged
+        native: currentColorChanged
+        connect: "currentColorChanged(QColor)"
+        args: [{ name: color, type: "record<Color>" }]
+        trigger: '$w->setCurrentColor(($i % 2) == 0 ? QColor(255, 0, 0) : QColor(0, 255, 0))'
+        provenance: "QColorDialog::currentColorChanged(const QColor &) (qdoc)"
+    methods:
+      # Async: a Promise that settles with the dialog result (1 accepted, 0 rejected) when `finished` fires.
+      # An abort signal rejects it with a NativeError after `reject()` closes the dialog.
+      - js: open
+        native: open
+        async: { signal: finished, connect: "finished(int)", result: result, cancel: reject }
+        provenance: "QDialog::open() + QDialog::finished(int) (qdoc); async methods, S2 ABI v3"
+      - { js: accept, native: accept, provenance: "QDialog::accept (qdoc)" }
+      - { js: reject, native: reject, provenance: "QDialog::reject (qdoc)" }

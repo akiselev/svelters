@@ -168,6 +168,12 @@ fn replay_all_fixtures() {
             eprintln!("{}: skipped (sync handlers)", e.file_name().to_string_lossy());
             continue;
         }
+        if log.lines().any(|l| l.starts_with("create virtuallist ")) {
+            // Model-view fixtures splice list arguments and bind rows from toolkit callbacks; the
+            // flat replay has neither. `tests/vlist.rs` and `tests/lists_e2e.rs` run them natively.
+            eprintln!("{}: skipped (virtuallist)", e.file_name().to_string_lossy());
+            continue;
+        }
         replay(&e.file_name().to_string_lossy(), log);
     }
 }

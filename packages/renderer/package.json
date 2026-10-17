@@ -9,7 +9,8 @@
     "./install": "./src/install.js",
     "./types": {
       "types": "./types/index.d.ts"
-    }
+    },
+    "./coerce": "./src/coerce.js"
   },
   "dependencies": {
     "svelte": "5.57.2"

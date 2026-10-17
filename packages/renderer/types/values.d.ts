@@ -14,7 +14,11 @@ export interface DateParts { year: number; month: number; day: number }
 export interface TimeParts { hour: number; minute: number; second: number; ms: number }
 
 /** A JSON-like tree plus `Date`, bytes and boxed values: what `QVariant` / `GVariant` slots take and give. */
-export type Variant = null | boolean | number | string | Date | Uint8Array | Variant[] | { [key: string]: Variant };
+export type Variant = null | boolean | number | string | Date | Uint8Array | NativeVariant | Variant[] | { [key: string]: Variant };
+
+/** A `GVariant` with an exact type signature (`variant('(ii)', [1, 2])`); Qt ignores everything but a basic signature. */
+export interface NativeVariant { readonly signature: string; readonly value: Variant }
+export declare function variant(signature: string, value: Variant): NativeVariant;
 
 /**
  * An opaque native value (QIcon, QFont, GIcon, PangoFontDescription, ...). `dispose()` releases

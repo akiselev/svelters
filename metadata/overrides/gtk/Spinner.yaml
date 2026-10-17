@@ -1,0 +1,40 @@
+properties:
+  - name: spinning
+    js_name: spinning
+    echo_suppress: ["notify::spinning"]
+    provenance: "GtkSpinner:spinning (Gtk 4 docs)"
+signals:
+  - name: "notify::spinning"
+    derived_from: {property: spinning}
+    js_event: "notify::spinning"
+    trigger: {property: spinning, values: [true, false, true]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkSpinner:spinning"
+bindings:
+  - name: spinning
+    direction: two_way
+    property: spinning
+    type: {ref: bool, nullable: false}
+    change: {signal: "notify::spinning", role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["notify::spinning"]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "g_object_set emits notify::spinning only on change (GObject docs)"
+methods:
+  - name: start
+    js_name: start
+    dispatch: zero_arg
+    expect: 'h.get(o, "spinning") == V::Bool(true)'
+    provenance: "gtk_spinner_start (Gtk 4 docs)"
+  - name: stop
+    js_name: stop
+    dispatch: zero_arg
+    setup: 'h.set_bool(o, "spinning", true).unwrap();'
+    expect: 'h.get(o, "spinning") == V::Bool(false)'
+    provenance: "gtk_spinner_stop (Gtk 4 docs)"

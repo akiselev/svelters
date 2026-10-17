@@ -16,8 +16,9 @@ and therefore the fingerprint of every fact built on it).
   python3 tools/metadata/ledger.py refresh [--toolkit gtk|qt|all]   # needs a display or xvfb-run
   python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|all]
 
-Build limits come from the environment (CARGO_BUILD_JOBS, CARGO_BUILD_BUILD_DIR); `refresh`
-defaults them to 4 jobs and target/build when unset.
+Cargo runs go through the machine-wide build queue `tools/dev/cargo-slot` (it sets
+CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR); without it, the environment's
+settings apply.
 """
 from __future__ import annotations
 
@@ -65,31 +66,34 @@ def save(tk: str, version: str, entries: list[dict]) -> None:
     (LEDGER_DIR / f"{tk}.json").write_text(text)
 
 
+SLOT = Path("/projects/svelters/tools/dev/cargo-slot")
+
+
 def env() -> dict:
     e = dict(os.environ)
-    e.setdefault("CARGO_BUILD_JOBS", "4")
     e.setdefault("CARGO_BUILD_BUILD_DIR", "target/build")
     e.setdefault("GSK_RENDERER", "cairo")
     return e
 
 
 def display_prefix() -> list[str]:
-    if os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"):
-        return []
-    if shutil.which("xvfb-run"):
-        return ["xvfb-run", "-a"]
-    return []
+    """The build queue (when present) and a virtual display (when there is none)."""
+    out = [str(SLOT)] if SLOT.exists() else ([str(ROOT / "tools/dev/cargo-slot")] if (ROOT / "tools/dev/cargo-slot").exists() else [])
+    if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")) and shutil.which("xvfb-run"):
+        out += ["xvfb-run", "-a"]
+    return out
 
 
 def run_gtk() -> dict[str, str]:
-    threads = os.environ.get("SVELTERS_TEST_THREADS", "4")
-    cmd = display_prefix() + ["cargo", "test", "-p", "svelters-gtk", "--lib", "generated::verify", "--", "--test-threads", threads]
+    cmd = display_prefix() + ["cargo", "nextest", "run", "-p", "svelters-gtk", "--lib", "--no-fail-fast",
+                              "-E", "test(/^generated::verify::/)"]
     p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
     res = {}
-    for m in re.finditer(r"^test (generated::verify::\S+) \.\.\. (ok|FAILED|ignored)", p.stdout, re.M):
-        res[m.group(1)] = {"ok": "pass", "FAILED": "fail", "ignored": "skip"}[m.group(2)]
+    text = p.stdout + p.stderr
+    for m in re.finditer(r"^\s*(PASS|FLAKY|FAIL|TIMEOUT|SIG\w+)\b.*?\]\s+(?:\(\s*\d+/\d+\)\s+)?svelters-gtk\s+(generated::verify::\S+)", text, re.M):
+        res[m.group(2)] = "pass" if m.group(1) in ("PASS", "FLAKY") else "fail"
     if not res:
-        sys.stderr.write(p.stdout[-4000:] + p.stderr[-4000:])
+        sys.stderr.write(text[-6000:])
         raise SystemExit("ledger: no GTK test results (build failure?)")
     return res
 

@@ -7,9 +7,16 @@ fact you cannot verify is left out and listed in your batch's status line.
 
 ## 0. Rules
 
-- Builds: always `export CARGO_BUILD_JOBS=2 CARGO_BUILD_BUILD_DIR=target/build`, nextest
-  `--test-threads 2`. Never omit `CARGO_BUILD_BUILD_DIR` (the global cargo config shares a build
-  dir across worktrees and corrupts artifacts). Run only your batch's tests until the final gate run.
+- Builds (user rules, 2026-10-17):
+  1. Finish the code for a step first. No compile-and-check loop after each small edit: while
+     editing use the Python/JS checks (the generators, `ledger.py check`, `pnpm` unit tests).
+  2. Run every cargo/nextest command through the machine-wide queue
+     `/projects/svelters/tools/dev/cargo-slot <cmd>` (e.g.
+     `/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run -p svelters-gtk -E '...'`).
+     It sets CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR: do not pass
+     `--test-threads` or `CARGO_BUILD_JOBS` yourself. `ledger.py refresh` uses the queue itself.
+  3. Batch runs: one targeted test run per finished step, one full-gate run before you report.
+     Don't hold a slot while you think.
 - Edit only: `metadata/overrides/qt/<Class>.yaml` for your batch's classes, your gallery page
   `fixtures/gallery-qt/src/pages/NN-<family>.svelte`, your `gallery_page!` line(s) in
   `examples/counter/tests/gallery.rs`, your batch's `Status:` line in `metadata/A1-TODO.md`, and the
@@ -134,7 +141,7 @@ The loop:
 
 ```sh
 python3 tools/metadata/qt/gen_cpp.py --config tools/metadata/qt/gen.dev.toml --out /tmp/$USER-qtgen   # fast check: schema, resolution, testability
-xvfb-run -a cargo nextest run -p counter-qt --test-threads 2 --no-capture 2>&1 | grep -E "FAIL|tests,"  # builds and runs all generated Qt tests
+/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run -p counter-qt --no-capture 2>&1 | grep -E "FAIL|tests,"  # builds and runs all generated Qt tests
 python3 tools/metadata/common/gen_bindings.py            # after adding bindings
 ```
 
@@ -155,16 +162,16 @@ and record it in your status line. Never weaken a generated test.
 - Add `gallery_page!(qt_NN_family, "qt", "NN-family", ["QFoo", "QBar"]);` to
   `examples/counter/tests/gallery.rs`.
 - Check: `pnpm --filter @svelters-fixtures/gallery-qt test` and
-  `xvfb-run -a cargo nextest run -p counter --test gallery --test-threads 2 -E 'test(/qt_NN/)'`;
+  `/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run -p counter --test gallery -E 'test(/qt_NN/)'`;
   look at `target/gallery/qt-NN-family.png` (Read tool) and fix layout problems.
 
 ## 5. Finish
 
 ```sh
-SVELTERS_TEST_THREADS=2 python3 tools/metadata/ledger.py refresh --toolkit qt
+python3 tools/metadata/ledger.py refresh --toolkit qt
 python3 tools/metadata/coverage.py
 pnpm test && pnpm docs:test
-xvfb-run -a cargo nextest run --workspace --test-threads 2        # full gate, once at the end
+/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run --workspace        # full gate, once at the end
 ```
 
 Update your batch's `Status:` line in `metadata/A1-TODO.md` to `done (<n> facts verified;

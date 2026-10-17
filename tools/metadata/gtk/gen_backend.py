@@ -68,7 +68,10 @@ class Model:
             k = self.kind_id[d["id"]]
             self.props += [(k, p) for p in sorted(d["properties"], key=lambda p: p["name"])]
             self.signals += [(k, s) for s in sorted(d["signals"], key=lambda s: s["name"])]
-            self.methods += [(k, m) for m in sorted(d["methods"], key=lambda m: m["name"]) if "annotated" in m]
+            # Only zero-arg generated calls go into METHODS; `dispatch: dynamic` methods are called
+            # through GIRepository (X1) and only get verification tests.
+            self.methods += [(k, m) for m in sorted(d["methods"], key=lambda m: m["name"])
+                             if "annotated" in m and m.get("dispatch", "zero_arg") == "zero_arg"]
             for s in d.get("children", {}).get("slots", []):
                 self.slots.append((k, s, d))
         self.slots.sort(key=lambda t: (t[0], t[1]["name"]))
@@ -256,7 +259,28 @@ ARG_EXPR = {"child": "child", "prev_sibling": "prev.as_ref()", "before": "before
             "child_index": "crate::util::idx_i32(cidx)", "child_index_opt": "cidx"}
 
 
-def native_call(m: Model, op: dict) -> tuple[str, str]:
+def child_tag(m: "Model", slot: dict) -> str:
+    """Element tag the generated slot test inserts: a label, or the slot's accepted class."""
+    acc = slot.get("accepts") or ["Gtk.Widget"]
+    if acc[0] == "Gtk.Widget":
+        return "label"
+    d = m.by_id.get(TYPE_PREFIX + acc[0].replace(".", ":"))
+    if not d or "element" not in d:
+        raise ValueError(f"slot {slot['name']}: accepted class {acc[0]} has no element tag to test with")
+    return d["element"]["tag"]
+
+
+def child_expr(slot: dict | None) -> str:
+    """The child argument, downcast to the slot's accepted class when it is narrower than
+    GtkWidget (gtk4-rs takes `&impl IsA<Popover>` for `set_popover`; A1-GAPS G10)."""
+    acc = (slot or {}).get("accepts") or ["Gtk.Widget"]
+    if acc[0] in ("Gtk.Widget",):
+        return "child"
+    cls = acc[0].split(".")[1]
+    return f'child.downcast_ref::<gtk::{cls}>().ok_or("child is not a gtk::{cls}")?'
+
+
+def native_call(m: Model, op: dict, slot: dict | None = None) -> tuple[str, str]:
     """Return (class, "method(args)") as a gtk4-rs call; argument exprs follow signals-and-slots-semantics 2.5.2.
 
     A1 additions: `index`/`index_opt` (position of `before`, -1/None = append) and
@@ -272,7 +296,9 @@ def native_call(m: Model, op: dict) -> tuple[str, str]:
             continue
         e = ARG_EXPR[a]
         if a == "child":
-            e = "Some(child)" if p["nullable"] else "child"
+            e = f"Some({child_expr(slot)})" if p["nullable"] else child_expr(slot)
+        elif a == "null" and slot and (slot.get("accepts") or ["Gtk.Widget"])[0] != "Gtk.Widget":
+            e = f"None::<&gtk::{slot['accepts'][0].split('.')[1]}>"
         elif not p["nullable"] and a in ("null", "prev_sibling", "before"):
             raise ValueError(f"{op['native']}: {a} for non-nullable {p['name']}")
         out.append(e)
@@ -307,7 +333,7 @@ def gen_slots(m: Model) -> str:
         ops = s["ops"]
         one = s["cardinality"] == "one"
         call = ops["set"] if one else ops["insert"]
-        cls, expr = native_call(m, call)
+        cls, expr = native_call(m, call, s)
         ty = f"gtk::{cls}"
         prev = "            let prev = crate::util::prev_sibling(parent, before);\n" if "prev_sibling" in call["args"] else ""
         if uses(call, "index", "index_opt"):
@@ -318,16 +344,16 @@ def gen_slots(m: Model) -> str:
             Ok(())
         }}
 """)
-        rcls, rexpr = native_call(m, ops["remove"])
+        rcls, rexpr = native_call(m, ops["remove"], s)
         guard = ""
         if one:
             gcls, gmeth, _ = native_parse(m, ops["get"]["native"])
-            guard = (f"            let cur = p.{gmeth}();\n"
+            guard = (f"            let cur = p.{gmeth}().map(|x| x.upcast::<gtk::Widget>());\n"
                      f"            if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {{\n"
                      f"                return Err(\"child is not in slot {s['name']}\".into());\n            }}\n")
             get.append(f"""        {sid} => {{
             let p = parent.downcast_ref::<{ty}>().ok_or("parent is not a {ty}")?;
-            Ok(p.{gmeth}())
+            Ok(p.{gmeth}().map(|x| x.upcast::<gtk::Widget>()))
         }}
 """)
         if uses(ops["remove"], "child_index", "child_index_opt"):
@@ -588,7 +614,7 @@ def contained(m: Model, s: dict, d: dict, parent: str, child: str) -> str:
     ops = s["ops"]
     if s["cardinality"] == "one":
         cls, meth, _ = native_parse(m, ops["get"]["native"])
-        get = f"h.widget({parent}).downcast_ref::<gtk::{cls}>().unwrap().{meth}()"
+        get = f"h.widget({parent}).downcast_ref::<gtk::{cls}>().unwrap().{meth}().map(|x| x.upcast::<gtk::Widget>())"
         wrapped = ops["set"]["effects"]["child"]
         if wrapped.startswith("wrapped:"):
             return (f"{get}.is_some() && h.widget({child}).ancestor(gtk::{wrapped[8:]}::static_type()) == {get}")
@@ -694,11 +720,29 @@ def prop_sample(m: Model, d: dict, p: dict) -> tuple[str, str]:
         return f"h.set_f64(o, {js}, {float(v)!r}).unwrap();", f"V::F64({float(v)!r})"
     if head == "enum":
         en = m.by_id.get(ref[ref.index("<") + 1:-1])
-        if en is None:
+        nicks = [x["nick"] for x in en["members"]] if en else p["type"].get("nicks")
+        if not nicks:
             raise Untestable(f"enum {ref} not in metadata")
-        nick = str(sample) if sample is not None else next(x["nick"] for x in en["members"] if x["nick"] != p["default"])
+        nick = str(sample) if sample is not None else next(n for n in nicks if n != p["default"])
         return f'h.set_str(o, {js}, {rs(nick)}).unwrap();', f'V::Str({rs(nick)}.into())'
-    raise Untestable(f"property {p['name']}: type {ref} has no generated test (supported: string, bool, integers, floats, enums)")
+    return None  # no scalar sample: prop_tests writes back the value it reads (round trip)
+
+
+def v_lit(a) -> str:
+    """A testing::V literal for a dynamic-call argument."""
+    if a is None:
+        return "V::Null"
+    if isinstance(a, bool):
+        return f"V::Bool({str(a).lower()})"
+    if isinstance(a, int):
+        return f"V::I64({a})"
+    if isinstance(a, float):
+        return f"V::F64({a!r})"
+    if isinstance(a, str):
+        return f"V::Str({rs(a)}.into())"
+    if isinstance(a, list):
+        return "V::List(vec![" + ", ".join(v_lit(x) for x in a) + "])"
+    raise Untestable(f"no V literal for {a!r}")
 
 
 def ann_prov(r: dict) -> str:
@@ -730,7 +774,7 @@ def slot_test(m: Model, k: int, s: dict, d: dict) -> tuple[str, str]:
     body = [f"        let parent = h.create({rs(subj)});\n"]
     ordered = s.get("order") in ("before_sibling", "native_index")
     for c in ("abc" if ordered else "ab"):
-        body.append(f"        let {c} = h.create(\"label\");\n")
+        body.append(f"        let {c} = h.create({rs(child_tag(m, s))});\n")
     ins = lambda c, before="None", slot=None: (
         f"        h.insert(parent, {c}, {before}, {('Some(' + rs(slot) + ')') if slot else 'None'}).unwrap();\n")
     A = lambda c, neg=False: f"        assert!({'!' if neg else ''}({contained(m, s, d, 'parent', c)}), \"{c} in {s['name']}\");\n"
@@ -760,7 +804,7 @@ def slot_test(m: Model, k: int, s: dict, d: dict) -> tuple[str, str]:
     return wrap(name, f"slot {gir_name(d)}.{s['name']}: {ann_prov(s)}", "".join(body))
 
 
-def v_lit(ty: str, v) -> str:
+def attr_v_lit(ty: str, v) -> str:
     if v is None:
         return "V::Null"
     if ty == "bool":
@@ -778,8 +822,8 @@ def attr_test(m: Model, k: int, sid: int, s: dict, d: dict, a: dict) -> tuple[st
     if "samples" not in a or len(a["samples"]) != 2 or "default" not in a:
         raise Untestable(f"attribute {a['name']} needs `default` and two `samples` (non-default, different)")
     ty = a["type"]
-    v1, v2 = (v_lit(ty, x) for x in a["samples"])
-    dv = v_lit(ty, a["default"])
+    v1, v2 = (attr_v_lit(ty, x) for x in a["samples"])
+    dv = attr_v_lit(ty, a["default"])
     n = rs(a["name"])
     slot = rs(s["name"])
     name = fn_ident("attr", gir_name(d), s["name"], a["name"])
@@ -846,9 +890,23 @@ def signal_test(m: Model, d: dict, s: dict) -> tuple[str, str]:
 
 def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
     subj = m.subject(d)
-    setc, expect = prop_sample(m, d, p)
     js = rs(p["js_name"])
     setup = p.get("setup", "")
+    smp = prop_sample(m, d, p)
+    if smp is None:
+        if not p["access"]["write"] or not p["access"]["read"] or p["access"].get("construct_only"):
+            raise Untestable(f"property {p['name']}: {p['type']['ref']} is not read/write; nothing to test")
+        if p.get("echo_suppress"):
+            raise Untestable(f"property {p['name']}: echo_suppress needs a scalar sample (set `sample:`)")
+        # Records, flags, boxed values, string lists, object references: the value read from the
+        # widget must be accepted back unchanged (value converters round trip both ways).
+        return [wrap(fn_ident('prop', gir_name(d), p['name']), f"property {gir_name(d)}.{p['name']} (JS {p['js_name']}, round trip): {ann_prov(p)}", f"""        let o = h.create({rs(subj)});
+        {setup}
+        let before = h.get_value(o, {js});
+        h.set_value(o, {js}, &before).unwrap();
+        assert_eq!(format!("{{:?}}", h.get_value(o, {js})), format!("{{:?}}", before));
+""")]
+    setc, expect = smp
     extra = ""
     if p.get("virtual"):
         extra = (f"        let w = h.obj(o).property::<Option<gtk::Widget>>({rs(p['virtual']['property'])}).unwrap();\n"
@@ -965,6 +1023,15 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
             def mk(me=me, d=d, jn=jn):
                 if not me.get("expect"):
                     raise Untestable("method annotation needs `expect`")
+                if me.get("dispatch") == "dynamic":
+                    args = ", ".join(v_lit(a) for a in me.get("args", []))
+                    return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']} (dynamic GI call): {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
+        {me.get('setup', '')}
+        let r = h.call_args(o, {rs(jn)}, &[{args}]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!({me['expect']}, "postcondition: {me['expect'].replace('"', "'")}");
+""")]
                 return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']}: {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
         {me.get('setup', '')}
         h.call(o, {rs(jn)}).unwrap();

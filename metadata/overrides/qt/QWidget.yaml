@@ -1,3 +1,21 @@
+inherit:
+  props:
+    - { js: enabled, native: enabled, provenance: "QWidget::enabled (qdoc)" }
+    - { js: toolTip, native: toolTip, provenance: "QWidget::toolTip (qdoc)" }
+    - { js: statusTip, native: statusTip, provenance: "QWidget::statusTip (qdoc)" }
+    - { js: whatsThis, native: whatsThis, provenance: "QWidget::whatsThis (qdoc)" }
+    - { js: minimumWidth, native: minimumWidth, provenance: "QWidget::minimumWidth (qdoc)" }
+    - { js: minimumHeight, native: minimumHeight, provenance: "QWidget::minimumHeight (qdoc)" }
+    - { js: maximumWidth, native: maximumWidth, provenance: "QWidget::maximumWidth (qdoc)" }
+    - { js: maximumHeight, native: maximumHeight, provenance: "QWidget::maximumHeight (qdoc)" }
+    - { js: styleSheet, native: styleSheet, provenance: "QWidget::styleSheet (qdoc)" }
+    - { js: accessibleName, native: accessibleName, provenance: "QWidget::accessibleName (qdoc)" }
+  methods:
+    - { js: show, native: show, provenance: "QWidget::show() slot (qdoc)" }
+    - { js: hide, native: hide, provenance: "QWidget::hide() slot (qdoc)" }
+    - { js: setFocus, native: setFocus, provenance: "QWidget::setFocus() slot (qdoc)" }
+    - { js: update, native: update, provenance: "QWidget::update() slot (qdoc)" }
+    - { js: adjustSize, native: adjustSize, provenance: "QWidget::adjustSize() slot (qdoc)" }
 # Element `box`: a plain QWidget carrying a QBoxLayout. Children are layout-managed and ordered.
 # Slot annotations follow docs/notes/signals-and-slots-semantics.md section 2.5. Extensions used here:
 # `then` (extra steps after an op), `receiver: child` (receiver), `index_of`, and `list.item`.
@@ -33,6 +51,8 @@ elements:
       - { js: saveGeometry, native: saveGeometry, provenance: "QWidget::saveGeometry (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: restoreGeometry, native: restoreGeometry, params: [bytes], provenance: "QWidget::restoreGeometry (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: resizeTo, native: resize, params: ["record<Size>"], provenance: "QWidget::resize (qdoc); typed by the S1 value model (ABI v3)" }
+      # Out parameters: JS passes nothing and gets {left, top, right, bottom}.
+      - { js: getContentsMargins, target: layout, native: getContentsMargins, out: [left, top, right, bottom], provenance: "QLayout::getContentsMargins(int *, int *, int *, int *) (qdoc); out parameters, S2 ABI v3" }
     signals:
       # Synthetic (an event filter): the key presses this widget itself receives. Its main use is the capture
       # phase (X3): `onkey-presscapture` sees the keys of descendants (an entry inside the box) before they do.

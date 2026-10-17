@@ -1,0 +1,28 @@
+properties:
+  - name: editable
+    provenance: "GtkTextView:editable (Gtk 4 docs)"
+  - name: wrap-mode
+    provenance: "GtkTextView:wrap-mode (Gtk 4 docs)"
+  - name: monospace
+    provenance: "GtkTextView:monospace (Gtk 4 docs)"
+  - name: cursor-visible
+    provenance: "GtkTextView:cursor-visible (Gtk 4 docs)"
+  - name: left-margin
+    provenance: "GtkTextView:left-margin (Gtk 4 docs)"
+  - name: top-margin
+    provenance: "GtkTextView:top-margin (Gtk 4 docs)"
+  - name: justification
+    provenance: "GtkTextView:justification (Gtk 4 docs)"
+methods:
+  - name: place_cursor_onscreen
+    js_name: place_cursor_onscreen
+    dispatch: dynamic
+    args: []
+    expect: 'matches!(r, V::Bool(_))'
+    provenance: "gtk_text_view_place_cursor_onscreen (Gtk 4 docs); called through GIRepository (X1)"
+  - name: get_buffer
+    js_name: get_buffer
+    dispatch: dynamic
+    args: []
+    expect: 'matches!(r, V::Handle(_) | V::Boxed(_))'
+    provenance: "gtk_text_view_get_buffer (Gtk 4 docs); called through GIRepository (X1)"

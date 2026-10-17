@@ -29,6 +29,7 @@ use std::sync::Arc;
 use svelters_abi::*;
 
 mod extras;
+mod vlist;
 use extras::CallErr;
 
 struct Entry {
@@ -105,6 +106,8 @@ pub(crate) struct Inner {
     frames_by_clock: Cell<u32>,
     /// State of the `gio-file` services (see `extras.rs`).
     files: RefCell<HashMap<u64, extras::FileState>>,
+    /// `virtuallist` widgets (see `vlist.rs`).
+    vlists: RefCell<HashMap<u64, Rc<vlist::VList>>>,
 }
 
 /// Slot value recorded for an event controller attached to a widget (it is not in `SLOTS`).
@@ -164,7 +167,12 @@ impl Inner {
     fn obj_of(&self, h: u64) -> Res<(glib::Object, u32)> {
         let st = self.state.borrow();
         let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        Ok((e.obj.upgrade().ok_or_else(|| format!("handle {h} was destroyed"))?, e.kind))
+        Ok((e.obj.upgrade().ok_or_else(|| format!("handle {h} was destroyed"))?, self.table_kind(e.kind)))
+    }
+
+    /// The kind the generated tables use for `kind`: a `virtuallist` is a `ScrolledWindow` there.
+    fn table_kind(&self, kind: u32) -> u32 {
+        if kind == vlist::KIND_VLIST { lookup::kind_by_name("ScrolledWindow") } else { kind }
     }
 
     fn widget_of(&self, h: u64) -> Res<(gtk::Widget, u32)> {
@@ -289,6 +297,9 @@ impl Inner {
     }
 
     fn create(self: &Rc<Self>, kind: u32) -> Res<u64> {
+        if kind == vlist::KIND_VLIST {
+            return self.create_vlist();
+        }
         if extras::is_extra(kind) {
             return self.create_extra(kind);
         }
@@ -393,7 +404,9 @@ impl Inner {
         if self.state.borrow_mut().boxed.remove(&h).is_some() {
             return Ok(());
         }
-        if self.extra_kind(h).is_some() {
+        if self.extra_kind(h) == Some(vlist::KIND_VLIST) {
+            self.destroy_vlist(h);
+        } else if self.extra_kind(h).is_some() {
             self.destroy_extra(h);
         }
         let mut entry = {
@@ -584,9 +597,11 @@ impl Inner {
         Ok(())
     }
 
-    fn set_prop(&self, h: u64, prop: u32, v: &svl_value) -> Res<()> {
-        if self.extra_kind(h).is_some() {
-            return self.extra_set_prop(h, prop, v);
+    fn set_prop(self: &Rc<Self>, h: u64, prop: u32, v: &svl_value) -> Res<()> {
+        match self.extra_kind(h) {
+            Some(vlist::KIND_VLIST) if vlist::is_own_member(prop) => return self.vlist_set_prop(h, prop, v),
+            Some(vlist::KIND_VLIST) | None => {}
+            Some(_) => return self.extra_set_prop(h, prop, v),
         }
         let (obj, kind) = self.obj_of(h)?;
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
@@ -604,7 +619,7 @@ impl Inner {
             return slots::virtual_set(prop, &obj, text.as_deref());
         }
         let pspec = obj.find_property(p.name).ok_or_else(|| format!("{} has no property {}", obj.type_().name(), p.name))?;
-        let value = unsafe { convert::to_value(pspec.value_type(), v, self) }.map_err(|e| format!("{}: {e}", p.name))?;
+        let value = unsafe { convert::to_value(pspec.value_type(), v, &**self) }.map_err(|e| format!("{}: {e}", p.name))?;
         // Echo suppression: handlers for the signals this property would raise are blocked while JS writes it.
         let st = self.state.borrow();
         let blocked: Vec<&glib::SignalHandlerId> = st
@@ -629,8 +644,10 @@ impl Inner {
     }
 
     fn get_prop(&self, h: u64, prop: u32, out: &mut svl_value) -> Res<()> {
-        if self.extra_kind(h).is_some() {
-            return self.extra_get_prop(h, prop, out);
+        match self.extra_kind(h) {
+            Some(vlist::KIND_VLIST) if vlist::is_own_member(prop) => return self.vlist_get_prop(h, prop, out),
+            Some(vlist::KIND_VLIST) | None => {}
+            Some(_) => return self.extra_get_prop(h, prop, out),
         }
         let (obj, kind) = self.obj_of(h)?;
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
@@ -720,6 +737,10 @@ impl Inner {
     ///   phase puts the controller itself into `PropagationPhase::Capture` for as long as any capture
     ///   listener exists (the previous phase is restored after the last). Any other object is refused.
     fn listen_ex(self: &Rc<Self>, h: u64, signal: u32, on: bool, flags: u32) -> Res<()> {
+        if vlist::is_own_member(signal) && self.extra_kind(h) == Some(vlist::KIND_VLIST) {
+            self.vlist_listen(h, signal, on)?;
+            return Ok(());
+        }
         let (obj, kind) = self.obj_of(h)?;
         let sig = SIGNALS.get((signal as usize).wrapping_sub(1)).ok_or("unknown signal")?;
         if !lookup::in_chain(kind, sig.kind) {
@@ -891,6 +912,7 @@ impl Inner {
     /// The descriptor of a property of the handle kind `kind` (`SVL_PROP` only; other member
     /// kinds have no value descriptors yet).
     fn describe_member(&self, what: u32, kind: u32, member: u32) -> Option<MemberDesc> {
+        let kind = if kind == vlist::KIND_VLIST && !vlist::is_own_member(member) { self.table_kind(kind) } else { kind };
         if extras::is_extra(kind) {
             return extras::describe_member(what, member);
         }
@@ -1003,6 +1025,7 @@ impl GtkBackend {
             frame_timer: RefCell::new(None),
             frames_by_clock: Cell::new(0),
             files: RefCell::new(HashMap::new()),
+            vlists: RefCell::new(HashMap::new()),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -1053,6 +1076,11 @@ impl GtkBackend {
         self.ctl.local.frames_by_clock.get()
     }
 
+    /// Handles currently in the table (owned, toplevel and borrowed): the leak check of the tests.
+    pub fn live_handles(&self) -> usize {
+        self.ctl.local.state.borrow().entries.len()
+    }
+
     /// Diagnostic access to the object behind a handle.
     pub fn object(&self, h: u64) -> Option<glib::Object> {
         self.ctl.local.obj_of(h).ok().map(|x| x.0)
@@ -1078,13 +1106,31 @@ fn run_int(c: &Ctl, f: impl FnOnce(&Rc<Inner>) -> Res<()>) -> c_int {
     }
 }
 
+fn resolve_generic(p: *mut c_void, what: u32, kind: svl_id, name: &str) -> svl_id {
+    match what {
+        SVL_PROP => lookup::find_prop(kind, name),
+        SVL_SIGNAL => lookup::find_signal(kind, name),
+        SVL_METHOD => match lookup::find_method(kind, name) {
+            0 => unsafe { ctl(p) }.local.resolve_dynamic(kind, name),
+            id => id,
+        },
+        SVL_SLOT => lookup::find_slot(kind, name),
+        _ => 0,
+    }
+}
+
 unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *const c_char, len: usize) -> svl_id {
     let bytes = unsafe { std::slice::from_raw_parts(name as *const u8, len) };
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     match what {
+        SVL_KIND if name == "virtuallist" => vlist::KIND_VLIST,
         SVL_KIND => match extras::kind_by_name(name) {
             0 => lookup::kind_by_name(name),
             k => k,
+        },
+        _ if kind == vlist::KIND_VLIST => match vlist::find_member(what, name) {
+            0 => resolve_generic(p, what, unsafe { ctl(p) }.local.table_kind(kind), name),
+            id => id,
         },
         _ if extras::is_extra(kind) => extras::find_member(what, kind, name),
         SVL_PROP => lookup::find_prop(kind, name),
@@ -1134,7 +1180,9 @@ unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args:
     let _t = crate::timing::scope();
     let out = unsafe { &mut *out };
     let r = catch_unwind(AssertUnwindSafe(|| {
-        if c.local.extra_kind(h).is_some() {
+        if c.local.extra_kind(h) == Some(vlist::KIND_VLIST) && vlist::is_own_member(method) {
+            c.local.vlist_call(h, method, extras::args_of(args, n), out)
+        } else if c.local.extra_kind(h).is_some_and(|k| k != vlist::KIND_VLIST) {
             c.local.extra_call(h, method, args, n, out)
         } else {
             c.local.call(h, method, extras::args_of(args, n), out)
@@ -1185,6 +1233,11 @@ unsafe extern "C" fn b_get_child_attr(p: *mut c_void, parent: svl_handle, child:
 unsafe extern "C" fn b_handle_info(p: *mut c_void, h: svl_handle, out: *mut svl_handle_info) -> c_int {
     run_int(unsafe { ctl(p) }, |i| {
         let st = i.state.borrow();
+        // A boxed value is a VALUE handle: refcounted and immutable, released by `destroy`.
+        if st.boxed.contains_key(&h) {
+            unsafe { *out = svl_handle_info { kind: 0, lifetime: SVL_LIFE_VALUE, flags: 0 } };
+            return Ok(());
+        }
         let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
         unsafe { *out = svl_handle_info { kind: e.kind, lifetime: e.class, flags: 0 } };
         Ok(())

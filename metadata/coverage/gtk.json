@@ -4,7 +4,7 @@
   "bindings": 0,
   "element": "aboutdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "AboutDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -36,7 +36,7 @@
   "bindings": 0,
   "element": "actionbar",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ActionBar",
   "lifetime": "owned",
   "methods": [
@@ -67,12 +67,12 @@
   "abstract": true,
   "bindings": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "01-widget",
   "inherited": 0,
   "kind": "Actionable",
   "lifetime": null,
   "methods": [
-   0,
+   1,
    6
   ],
   "native": "GtkActionable",
@@ -81,7 +81,7 @@
    1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -91,8 +91,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -132,7 +132,7 @@
   "bindings": 0,
   "element": "appchooserbutton",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "AppChooserButton",
   "lifetime": "owned",
   "methods": [
@@ -164,7 +164,7 @@
   "bindings": 0,
   "element": "appchooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "AppChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -196,7 +196,7 @@
   "bindings": 0,
   "element": "appchooserwidget",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "AppChooserWidget",
   "lifetime": "owned",
   "methods": [
@@ -228,7 +228,7 @@
   "bindings": 0,
   "element": "window",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "ApplicationWindow",
   "lifetime": "toplevel",
   "methods": [
@@ -259,8 +259,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "aspectframe",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "AspectFrame",
   "lifetime": "owned",
   "methods": [
@@ -268,23 +268,23 @@
    10
   ],
   "native": "GtkAspectFrame",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -292,7 +292,7 @@
   "bindings": 0,
   "element": "assistant",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "Assistant",
   "lifetime": "toplevel",
   "methods": [
@@ -324,7 +324,7 @@
   "bindings": 0,
   "element": "box",
   "gallery": "00-overview",
-  "inherited": 1,
+  "inherited": 25,
   "kind": "Box",
   "lifetime": "owned",
   "methods": [
@@ -356,11 +356,11 @@
   "bindings": 0,
   "element": "button",
   "gallery": "00-overview",
-  "inherited": 0,
+  "inherited": 26,
   "kind": "Button",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    12
   ],
   "native": "GtkButton",
@@ -369,8 +369,8 @@
    6,
    6
   ],
-  "props_annotated": 1,
-  "signal_results": 1,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
    2,
    2
@@ -379,20 +379,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   8,
+   8
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "calendar",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "09-display",
+  "inherited": 24,
   "kind": "Calendar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    19
   ],
   "native": "GtkCalendar",
@@ -401,18 +401,18 @@
    3,
    7
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 7,
+  "signal_results": 2,
   "signals": [
-   5,
-   5
+   6,
+   6
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
@@ -452,7 +452,7 @@
   "bindings": 0,
   "element": "cellview",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "CellView",
   "lifetime": "owned",
   "methods": [
@@ -483,8 +483,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "centerbox",
-  "gallery": null,
-  "inherited": 1,
+  "gallery": "05-containers",
+  "inherited": 25,
   "kind": "CenterBox",
   "lifetime": "owned",
   "methods": [
@@ -492,35 +492,35 @@
    10
   ],
   "native": "GtkCenterBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 3,
+  "slots_own": 3,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "checkbutton",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "02-buttons",
+  "inherited": 26,
   "kind": "CheckButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    11
   ],
   "native": "GtkCheckButton",
@@ -529,18 +529,18 @@
    6,
    6
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 4,
+  "signal_results": 2,
   "signals": [
-   2,
-   2
+   3,
+   3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -548,7 +548,7 @@
   "bindings": 0,
   "element": "colorbutton",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ColorButton",
   "lifetime": "owned",
   "methods": [
@@ -612,7 +612,7 @@
   "bindings": 0,
   "element": "colorchooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "ColorChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -644,7 +644,7 @@
   "bindings": 0,
   "element": "colorchooserwidget",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ColorChooserWidget",
   "lifetime": "owned",
   "methods": [
@@ -676,7 +676,7 @@
   "bindings": 0,
   "element": "colordialogbutton",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ColorDialogButton",
   "lifetime": "owned",
   "methods": [
@@ -708,7 +708,7 @@
   "bindings": 0,
   "element": "columnview",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ColumnView",
   "lifetime": "owned",
   "methods": [
@@ -740,7 +740,7 @@
   "bindings": 0,
   "element": "combobox",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ComboBox",
   "lifetime": "owned",
   "methods": [
@@ -772,7 +772,7 @@
   "bindings": 0,
   "element": "comboboxtext",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ComboBoxText",
   "lifetime": "owned",
   "methods": [
@@ -804,7 +804,7 @@
   "bindings": 0,
   "element": "dialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "Dialog",
   "lifetime": "toplevel",
   "methods": [
@@ -836,7 +836,7 @@
   "bindings": 0,
   "element": "dragicon",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "DragIcon",
   "lifetime": "owned",
   "methods": [
@@ -867,8 +867,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "drawingarea",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "09-display",
+  "inherited": 24,
   "kind": "DrawingArea",
   "lifetime": "owned",
   "methods": [
@@ -881,7 +881,7 @@
    2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    1,
@@ -891,8 +891,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -900,7 +900,7 @@
   "bindings": 0,
   "element": "dropdown",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "DropDown",
   "lifetime": "owned",
   "methods": [
@@ -931,12 +931,12 @@
   "abstract": true,
   "bindings": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "01-widget",
   "inherited": 0,
   "kind": "Editable",
   "lifetime": null,
   "methods": [
-   0,
+   1,
    24
   ],
   "native": "GtkEditable",
@@ -945,8 +945,8 @@
    8,
    8
   ],
-  "props_annotated": 1,
-  "signal_results": 2,
+  "props_annotated": 6,
+  "signal_results": 4,
   "signals": [
    4,
    4
@@ -955,20 +955,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   11,
+   11
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "editablelabel",
-  "gallery": null,
-  "inherited": 3,
+  "gallery": "03-text",
+  "inherited": 35,
   "kind": "EditableLabel",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    3
   ],
   "native": "GtkEditableLabel",
@@ -977,18 +977,18 @@
    1,
    1
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 1,
+  "signal_results": 1,
   "signals": [
-   0,
-   0
+   1,
+   1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -996,7 +996,7 @@
   "bindings": 0,
   "element": "emojichooser",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "EmojiChooser",
   "lifetime": "owned",
   "methods": [
@@ -1028,11 +1028,11 @@
   "bindings": 1,
   "element": "entry",
   "gallery": "00-overview",
-  "inherited": 3,
+  "inherited": 35,
   "kind": "Entry",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    60
   ],
   "native": "GtkEntry",
@@ -1041,8 +1041,8 @@
    38,
    41
   ],
-  "props_annotated": 1,
-  "signal_results": 0,
+  "props_annotated": 7,
+  "signal_results": 1,
   "signals": [
    3,
    3
@@ -1051,16 +1051,16 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   11,
+   11
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "expander",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "Expander",
   "lifetime": "owned",
   "methods": [
@@ -1068,23 +1068,23 @@
    14
   ],
   "native": "GtkExpander",
-  "ownership": false,
+  "ownership": true,
   "props": [
    7,
    7
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
-   1,
-   1
+   2,
+   2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -1124,7 +1124,7 @@
   "bindings": 0,
   "element": "filechooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "FileChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -1156,7 +1156,7 @@
   "bindings": 0,
   "element": "filechooserwidget",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "FileChooserWidget",
   "lifetime": "owned",
   "methods": [
@@ -1188,7 +1188,7 @@
   "bindings": 0,
   "element": "fixed",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Fixed",
   "lifetime": "owned",
   "methods": [
@@ -1220,7 +1220,7 @@
   "bindings": 0,
   "element": "flowbox",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "FlowBox",
   "lifetime": "owned",
   "methods": [
@@ -1252,7 +1252,7 @@
   "bindings": 0,
   "element": "flowboxchild",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "FlowBoxChild",
   "lifetime": "owned",
   "methods": [
@@ -1284,7 +1284,7 @@
   "bindings": 0,
   "element": "fontbutton",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "FontButton",
   "lifetime": "owned",
   "methods": [
@@ -1348,7 +1348,7 @@
   "bindings": 0,
   "element": "fontchooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "FontChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -1380,7 +1380,7 @@
   "bindings": 0,
   "element": "fontchooserwidget",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "FontChooserWidget",
   "lifetime": "owned",
   "methods": [
@@ -1412,7 +1412,7 @@
   "bindings": 0,
   "element": "fontdialogbutton",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "FontDialogButton",
   "lifetime": "owned",
   "methods": [
@@ -1443,8 +1443,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "frame",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "Frame",
   "lifetime": "owned",
   "methods": [
@@ -1452,23 +1452,23 @@
    8
   ],
   "native": "GtkFrame",
-  "ownership": false,
+  "ownership": true,
   "props": [
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1476,7 +1476,7 @@
   "bindings": 0,
   "element": "glarea",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "GLArea",
   "lifetime": "owned",
   "methods": [
@@ -1507,8 +1507,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "graphicsoffload",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "09-display",
+  "inherited": 24,
   "kind": "GraphicsOffload",
   "lifetime": "owned",
   "methods": [
@@ -1521,7 +1521,7 @@
    3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -1531,8 +1531,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -1540,7 +1540,7 @@
   "bindings": 0,
   "element": "grid",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "Grid",
   "lifetime": "owned",
   "methods": [
@@ -1572,7 +1572,7 @@
   "bindings": 0,
   "element": "gridview",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "GridView",
   "lifetime": "owned",
   "methods": [
@@ -1604,7 +1604,7 @@
   "bindings": 0,
   "element": "headerbar",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "HeaderBar",
   "lifetime": "owned",
   "methods": [
@@ -1636,7 +1636,7 @@
   "bindings": 0,
   "element": "iconview",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "IconView",
   "lifetime": "owned",
   "methods": [
@@ -1667,12 +1667,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "image",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "09-display",
+  "inherited": 24,
   "kind": "Image",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    15
   ],
   "native": "GtkImage",
@@ -1681,7 +1681,7 @@
    9,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -1691,8 +1691,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -1700,7 +1700,7 @@
   "bindings": 0,
   "element": "infobar",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "InfoBar",
   "lifetime": "owned",
   "methods": [
@@ -1731,12 +1731,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "inscription",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "03-text",
+  "inherited": 24,
   "kind": "Inscription",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    21
   ],
   "native": "GtkInscription",
@@ -1745,7 +1745,7 @@
    10,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -1755,8 +1755,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1764,11 +1764,11 @@
   "bindings": 0,
   "element": "label",
   "gallery": "00-overview",
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Label",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    49
   ],
   "native": "GtkLabel",
@@ -1777,8 +1777,8 @@
    18,
    20
   ],
-  "props_annotated": 1,
-  "signal_results": 0,
+  "props_annotated": 12,
+  "signal_results": 1,
   "signals": [
    4,
    4
@@ -1787,8 +1787,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   16,
+   16
   ]
  },
  {
@@ -1796,7 +1796,7 @@
   "bindings": 0,
   "element": "levelbar",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "LevelBar",
   "lifetime": "owned",
   "methods": [
@@ -1827,12 +1827,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "linkbutton",
-  "gallery": null,
-  "inherited": 2,
+  "gallery": "02-buttons",
+  "inherited": 34,
   "kind": "LinkButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    4
   ],
   "native": "GtkLinkButton",
@@ -1841,8 +1841,8 @@
    2,
    2
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 2,
+  "signal_results": 1,
   "signals": [
    1,
    1
@@ -1851,8 +1851,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1860,7 +1860,7 @@
   "bindings": 0,
   "element": null,
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "ListBase",
   "lifetime": "borrowed_only",
   "methods": [
@@ -1892,7 +1892,7 @@
   "bindings": 0,
   "element": "listbox",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ListBox",
   "lifetime": "owned",
   "methods": [
@@ -1924,7 +1924,7 @@
   "bindings": 0,
   "element": "listboxrow",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 26,
   "kind": "ListBoxRow",
   "lifetime": "owned",
   "methods": [
@@ -1956,7 +1956,7 @@
   "bindings": 0,
   "element": "listview",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "ListView",
   "lifetime": "owned",
   "methods": [
@@ -1987,8 +1987,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "lockbutton",
-  "gallery": null,
-  "inherited": 2,
+  "gallery": "02-buttons",
+  "inherited": 34,
   "kind": "LockButton",
   "lifetime": "owned",
   "methods": [
@@ -2001,7 +2001,7 @@
    0,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
@@ -2011,8 +2011,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2020,7 +2020,7 @@
   "bindings": 0,
   "element": "mediacontrols",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "MediaControls",
   "lifetime": "owned",
   "methods": [
@@ -2051,32 +2051,32 @@
   "abstract": false,
   "bindings": 0,
   "element": "menubutton",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "02-buttons",
+  "inherited": 24,
   "kind": "MenuButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    27
   ],
   "native": "GtkMenuButton",
-  "ownership": false,
+  "ownership": true,
   "props": [
    12,
    12
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 8,
+  "signal_results": 1,
   "signals": [
    1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   13,
+   13
   ]
  },
  {
@@ -2084,7 +2084,7 @@
   "bindings": 0,
   "element": "messagedialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "MessageDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2116,7 +2116,7 @@
   "bindings": 0,
   "element": "notebook",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Notebook",
   "lifetime": "owned",
   "methods": [
@@ -2147,7 +2147,7 @@
   "abstract": true,
   "bindings": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "01-widget",
   "inherited": 0,
   "kind": "Orientable",
   "lifetime": null,
@@ -2179,8 +2179,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "overlay",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "Overlay",
   "lifetime": "owned",
   "methods": [
@@ -2199,12 +2199,12 @@
    1,
    1
   ],
-  "slots": 1,
-  "slots_own": 1,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   4,
+   4
   ]
  },
  {
@@ -2212,7 +2212,7 @@
   "bindings": 0,
   "element": "pagesetupunixdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "PageSetupUnixDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2243,40 +2243,40 @@
   "abstract": false,
   "bindings": 0,
   "element": "paned",
-  "gallery": null,
-  "inherited": 1,
+  "gallery": "05-containers",
+  "inherited": 25,
   "kind": "Paned",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    16
   ],
   "native": "GtkPaned",
-  "ownership": false,
+  "ownership": true,
   "props": [
    11,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    6,
    6
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "passwordentry",
-  "gallery": null,
-  "inherited": 3,
+  "gallery": "03-text",
+  "inherited": 35,
   "kind": "PasswordEntry",
   "lifetime": "owned",
   "methods": [
@@ -2289,8 +2289,8 @@
    4,
    4
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 3,
+  "signal_results": 1,
   "signals": [
    1,
    1
@@ -2299,16 +2299,16 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "picture",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "09-display",
+  "inherited": 24,
   "kind": "Picture",
   "lifetime": "owned",
   "methods": [
@@ -2321,7 +2321,7 @@
    6,
    7
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -2331,8 +2331,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2340,7 +2340,7 @@
   "bindings": 0,
   "element": "popover",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Popover",
   "lifetime": "owned",
   "methods": [
@@ -2372,7 +2372,7 @@
   "bindings": 0,
   "element": "popoverbin",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "PopoverBin",
   "lifetime": "owned",
   "methods": [
@@ -2404,7 +2404,7 @@
   "bindings": 0,
   "element": "popovermenu",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "PopoverMenu",
   "lifetime": "owned",
   "methods": [
@@ -2436,7 +2436,7 @@
   "bindings": 0,
   "element": "popovermenubar",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "PopoverMenuBar",
   "lifetime": "owned",
   "methods": [
@@ -2468,7 +2468,7 @@
   "bindings": 0,
   "element": "printunixdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "PrintUnixDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2500,7 +2500,7 @@
   "bindings": 0,
   "element": "progressbar",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "ProgressBar",
   "lifetime": "owned",
   "methods": [
@@ -2532,7 +2532,7 @@
   "bindings": 0,
   "element": "range",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "Range",
   "lifetime": "owned",
   "methods": [
@@ -2563,8 +2563,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "revealer",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "Revealer",
   "lifetime": "owned",
   "methods": [
@@ -2572,23 +2572,23 @@
    9
   ],
   "native": "GtkRevealer",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2596,7 +2596,7 @@
   "bindings": 0,
   "element": "scale",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "Scale",
   "lifetime": "owned",
   "methods": [
@@ -2627,8 +2627,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "scalebutton",
-  "gallery": null,
-  "inherited": 1,
+  "gallery": "02-buttons",
+  "inherited": 25,
   "kind": "ScaleButton",
   "lifetime": "owned",
   "methods": [
@@ -2641,8 +2641,8 @@
    4,
    5
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 2,
+  "signal_results": 1,
   "signals": [
    3,
    3
@@ -2651,8 +2651,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -2692,7 +2692,7 @@
   "bindings": 0,
   "element": "scrollbar",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "Scrollbar",
   "lifetime": "owned",
   "methods": [
@@ -2724,7 +2724,7 @@
   "bindings": 0,
   "element": "scrolledwindow",
   "gallery": "00-overview",
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ScrolledWindow",
   "lifetime": "owned",
   "methods": [
@@ -2737,8 +2737,8 @@
    15,
    15
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 11,
+  "signal_results": 1,
   "signals": [
    4,
    4
@@ -2747,16 +2747,16 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   13,
+   13
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "searchbar",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "SearchBar",
   "lifetime": "owned",
   "methods": [
@@ -2764,31 +2764,31 @@
    9
   ],
   "native": "GtkSearchBar",
-  "ownership": false,
+  "ownership": true,
   "props": [
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "searchentry",
-  "gallery": null,
-  "inherited": 3,
+  "gallery": "03-text",
+  "inherited": 35,
   "kind": "SearchEntry",
   "lifetime": "owned",
   "methods": [
@@ -2801,8 +2801,8 @@
    6,
    6
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 3,
+  "signal_results": 3,
   "signals": [
    6,
    6
@@ -2811,16 +2811,16 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "separator",
-  "gallery": null,
-  "inherited": 1,
+  "gallery": "09-display",
+  "inherited": 25,
   "kind": "Separator",
   "lifetime": "owned",
   "methods": [
@@ -2851,8 +2851,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "shortcutlabel",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "03-text",
+  "inherited": 24,
   "kind": "ShortcutLabel",
   "lifetime": "owned",
   "methods": [
@@ -2865,7 +2865,7 @@
    0,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -2875,8 +2875,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -2884,7 +2884,7 @@
   "bindings": 0,
   "element": "shortcutsgroup",
   "gallery": null,
-  "inherited": 3,
+  "inherited": 27,
   "kind": "ShortcutsGroup",
   "lifetime": "owned",
   "methods": [
@@ -2916,7 +2916,7 @@
   "bindings": 0,
   "element": "shortcutssection",
   "gallery": null,
-  "inherited": 3,
+  "inherited": 27,
   "kind": "ShortcutsSection",
   "lifetime": "owned",
   "methods": [
@@ -2948,7 +2948,7 @@
   "bindings": 0,
   "element": "shortcutsshortcut",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "ShortcutsShortcut",
   "lifetime": "owned",
   "methods": [
@@ -2980,7 +2980,7 @@
   "bindings": 0,
   "element": "shortcutswindow",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 29,
   "kind": "ShortcutsWindow",
   "lifetime": "toplevel",
   "methods": [
@@ -3012,7 +3012,7 @@
   "bindings": 0,
   "element": "spinbutton",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 36,
   "kind": "SpinButton",
   "lifetime": "owned",
   "methods": [
@@ -3041,14 +3041,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "spinner",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "09-display",
+  "inherited": 24,
   "kind": "Spinner",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    4
   ],
   "native": "GtkSpinner",
@@ -3057,18 +3057,18 @@
    1,
    1
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 1,
+  "signal_results": 1,
   "signals": [
-   0,
-   0
+   1,
+   1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -3076,7 +3076,7 @@
   "bindings": 0,
   "element": "stack",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Stack",
   "lifetime": "owned",
   "methods": [
@@ -3108,7 +3108,7 @@
   "bindings": 0,
   "element": "stacksidebar",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "StackSidebar",
   "lifetime": "owned",
   "methods": [
@@ -3140,7 +3140,7 @@
   "bindings": 0,
   "element": "stackswitcher",
   "gallery": null,
-  "inherited": 1,
+  "inherited": 25,
   "kind": "StackSwitcher",
   "lifetime": "owned",
   "methods": [
@@ -3172,7 +3172,7 @@
   "bindings": 0,
   "element": "statusbar",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Statusbar",
   "lifetime": "owned",
   "methods": [
@@ -3201,14 +3201,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "switch",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "02-buttons",
+  "inherited": 26,
   "kind": "Switch",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    4
   ],
   "native": "GtkSwitch",
@@ -3217,26 +3217,26 @@
    2,
    2
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 2,
+  "signal_results": 2,
   "signals": [
-   2,
-   2
+   3,
+   3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "text",
-  "gallery": null,
-  "inherited": 3,
+  "gallery": "03-text",
+  "inherited": 35,
   "kind": "Text",
   "lifetime": "owned",
   "methods": [
@@ -3249,8 +3249,8 @@
    16,
    18
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 1,
   "signals": [
    11,
    11
@@ -3259,20 +3259,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "textview",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "03-text",
+  "inherited": 24,
   "kind": "TextView",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    72
   ],
   "native": "GtkTextView",
@@ -3281,7 +3281,7 @@
    20,
    21
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    15,
@@ -3291,20 +3291,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "togglebutton",
-  "gallery": null,
-  "inherited": 2,
+  "gallery": "02-buttons",
+  "inherited": 34,
   "kind": "ToggleButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    4
   ],
   "native": "GtkToggleButton",
@@ -3313,18 +3313,18 @@
    2,
    2
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 1,
+  "signal_results": 2,
   "signals": [
-   1,
-   1
+   2,
+   2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -3332,7 +3332,7 @@
   "bindings": 0,
   "element": "treeexpander",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "TreeExpander",
   "lifetime": "owned",
   "methods": [
@@ -3364,7 +3364,7 @@
   "bindings": 0,
   "element": "treeview",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "TreeView",
   "lifetime": "owned",
   "methods": [
@@ -3396,7 +3396,7 @@
   "bindings": 0,
   "element": "video",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Video",
   "lifetime": "owned",
   "methods": [
@@ -3427,8 +3427,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "viewport",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "Viewport",
   "lifetime": "owned",
   "methods": [
@@ -3436,31 +3436,31 @@
    5
   ],
   "native": "GtkViewport",
-  "ownership": false,
+  "ownership": true,
   "props": [
    2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "volumebutton",
-  "gallery": null,
-  "inherited": 1,
+  "gallery": "02-buttons",
+  "inherited": 28,
   "kind": "VolumeButton",
   "lifetime": "owned",
   "methods": [
@@ -3473,7 +3473,7 @@
    0,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -3483,20 +3483,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": true,
   "bindings": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "01-widget",
   "inherited": 0,
   "kind": "Widget",
   "lifetime": "borrowed_only",
   "methods": [
-   0,
+   3,
    164
   ],
   "native": "GtkWidget",
@@ -3505,8 +3505,8 @@
    34,
    35
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 19,
+  "signal_results": 2,
   "signals": [
    13,
    13
@@ -3515,8 +3515,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   24,
+   24
   ]
  },
  {
@@ -3524,11 +3524,11 @@
   "bindings": 0,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "Window",
   "lifetime": "toplevel",
   "methods": [
-   1,
+   2,
    57
   ],
   "native": "GtkWindow",
@@ -3547,8 +3547,8 @@
   "slots_own": 2,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   5,
+   5
   ]
  },
  {
@@ -3556,7 +3556,7 @@
   "bindings": 0,
   "element": "windowcontrols",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 24,
   "kind": "WindowControls",
   "lifetime": "owned",
   "methods": [
@@ -3587,8 +3587,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "windowhandle",
-  "gallery": null,
-  "inherited": 0,
+  "gallery": "05-containers",
+  "inherited": 24,
   "kind": "WindowHandle",
   "lifetime": "owned",
   "methods": [
@@ -3596,7 +3596,7 @@
    2
   ],
   "native": "GtkWindowHandle",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
@@ -3607,12 +3607,12 @@
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  }
 ]

@@ -1,0 +1,14 @@
+elements:
+  - tag: filedialog
+    construct: { class: QFileDialog }
+    exclude: [accept, done]   # protected in QFileDialog; generated thunks call them on the subclass
+    props:
+      - { js: fileMode, native: fileMode, provenance: "QFileDialog::fileMode (qdoc); enum by name (ABI v3)" }
+      - { js: acceptMode, native: acceptMode, provenance: "QFileDialog::acceptMode (qdoc); enum by name (ABI v3)" }
+      - { js: viewMode, native: viewMode, provenance: "QFileDialog::viewMode (qdoc); enum by name (ABI v3)" }
+      - { js: defaultSuffix, native: defaultSuffix, provenance: "QFileDialog::defaultSuffix (qdoc)" }
+    signals:
+      # QFileDialog::accept() only accepts with a usable selection: AnyFile mode and a new file name.
+      - { js: accepted, native: accepted, connect: "accepted()", args: [], trigger: '$w->setFileMode(QFileDialog::AnyFile); $w->selectFile(QStringLiteral("/tmp/svl-dialog-new-file")); static_cast<QDialog*>($w)->accept()', expect_args: [], provenance: "QDialog::accepted() (qdoc); QFileDialog::accept needs a selection" }
+    methods:
+      - { js: setDirectory, native: setDirectory, params: [string], provenance: "QFileDialog::setDirectory(const QString &) (qdoc)" }

@@ -11,16 +11,32 @@ some blocked facts are not worth exposing anyway.
 
 | Id | Gap | Blocked facts (approx.) | Batches |
 | --- | --- | --- | --- |
-| G1 | Child attributes (`set_child_attr`) | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow |
-| G2 | GTK method calls with arguments or return values | GTK: 669 methods with args, 396 zero-arg getters | every GTK batch (methods column) |
-| G3 | Object-returning getters (borrowed handles) | GTK: 154 methods; Qt: ~60 | gtk-text-b, qt-text-b, qt-selection |
-| G4 | Boxed/value types: **mostly closed by S1 (ABI v3, master 8071bb2)**; open: out params, GTK time-only/date-only records, model data | re-check per kind | gtk-display, qt-display |
-| G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; open: typed `value` results, listen phases, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
-| G6 | Model-backed views (GListModel, QAbstractItemModel) | 12 GTK kinds, 11 Qt kinds | gtk-lists-b, qt-lists-b (M5) |
-| G7 | Non-widget child objects (QAction, GMenuModel) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
-| G8 | Native-to-JS callbacks (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
+| G1 | Child attributes (`set_child_attr`): **closed by lane X3 (branch worktree-agent-a16928a5b92b85e0a; commits d0aeb4c, 1604f6d, 4d16716, ab8bba5)**; open: QMainWindow toolbar/dock areas, `tabIcon` | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow (areas only) |
+| G2 | GTK method calls with arguments or return values: **closed by X1 (master 865482d)** except out/in-out params, arrays and callbacks (S2) | out params, arrays | - |
+| G3 | Object-returning getters (borrowed handles): **closed by X1** (GTK: any GI getter; Qt: ~110 generated getters) | Qt methods with required args on unannotated classes, list returns | - |
+| G4 | Boxed/value types: **closed by S1 + S2** (typed values, out/in-out params, exact GVariant, GValue props, VALUE handles); open: GTK time-only/date-only records, model data | few | - |
+| G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; **listen phases (after, capture) closed by X3**; open: typed `value` results, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
+| G6 | Model-backed views (GListModel, QAbstractItemModel): **closed by X5 (branch worktree-agent-a8dce564007788244, 28a8e17 GTK, abd7024 Qt)** through the portable `virtuallist` kind (`packages/lists`, `plans/milestones/M5-lists.md`). Open: ColumnView/TableView/TreeView columns, `GtkDropDown`/`GtkComboBox`/`QComboBox` models, `GtkTreeView`/`QTreeView` hierarchies | the 12 GTK / 11 Qt view kinds map to `virtuallist` (list, grid); the rest stay as listed | gtk-lists-b, qt-lists-b (re-run) |
+| G7 | Non-widget child objects (QAction, GMenuModel); S2 added `QMenu.yaml` (tag `menu`) with callbacks as a proof: extend it | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
+| G8 | Native-to-JS callbacks: **closed on Qt by S2** (`callbacks:`, async methods); **sort/filter for model-backed views closed by X5 by design** (JS sorts and filters, keyed diff pushes minimal splices; see M5-lists.md). Open on GTK: DrawingArea draw func, `GtkListBox`/`GtkFlowBox` sort/filter/header funcs, `scale_format_value_func` | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
+| G9 | Toplevel kinds other than `window` cannot be mounted (renderer) | every Qt dialog element's gallery presence; GTK AboutDialog, Popover-like toplevels | qt-dialogs (gallery), gtk-dialogs |
+| G10 | GTK slots whose native ops take a widget subclass: **closed by the A1 lead** (generator downcasts to `accepts`, upcasts getters; MenuButton `popover` verified) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
+| G11 | Enums outside the Gtk namespace: **enums closed by the A1 lead** (Pango/Gdk nicks kept on the property; Label `ellipsize`/`wrap-mode` verified); non-Gtk object kinds still open | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
+| G12 | Non-widget objects reached as borrowed handles have no generated kind (GtkTextBuffer, GtkAdjustment) | TextView text editing, Range/SpinButton value and range | gtk-text, gtk-ranges |
 
 ## G1: child attributes
+
+**Status 2026-10-17: closed by lane X3** (ABI v2.2 `set_child_attr`/`get_child_attr`, `docs/notes/x3-childattr-listen.md`,
+commits d0aeb4c, 1604f6d, 4d16716, ab8bba5). JS: `<label parent:column={1} parent:row={2}>`; metadata: slot `attrs[]`
+(typed in both override schemas; see the notes for the format). Verified facts: GTK `grid` (column, row, columnSpan,
+rowSpan), `fixed` (x, y), `notebook` (tabLabel, menuLabel, reorderable, detachable, tabExpand, tabFill), `stack` (name,
+title, iconName, needsAttention, useUnderline), `overlay` (measure, clip); Qt `grid`, `box` (stretch, align), `tabwidget`
+(tabLabel, tabToolTip, tabEnabled), `splitter` (stretch). X3 created `Grid/Fixed/Notebook/Stack.yaml` (GTK) and the
+attr-bearing slots of `Overlay.yaml` (`overlays`), `QTabWidget.yaml` (`pages`), `QSplitter.yaml`, and the `grid`/`box` elements
+in `QWidget.yaml`: A1 batches extend those files with props/signals. Slot order `unordered` (positional containers ignore
+`before`) and `nested: true` for QTabWidget are used. Still open: QMainWindow toolbar/dock areas (`QMainWindow` has no
+indexOf/count for them, needs `toolbar`/`dockwidget` elements), Qt `tabIcon`, GTK `Paned` resize/shrink and `Box`
+(no attrs exist). The original text follows.
 
 Per-child facts that are neither a property of the child nor of the parent: grid cell and span,
 notebook/tab label text, stack page name and title, paned resize/shrink, form-layout label,
@@ -39,6 +55,11 @@ QMainWindow toolbar and dock areas, splitter stretch factors. ABI v2 has no `set
 
 ## G2: GTK method calls with arguments or return values
 
+**Status 2026-10-17: closed by lane X1** (`docs/notes/x1-borrowed-gi.md`): dynamic GIRepository
+calls with scalars, strings, enums/flags, objects, GStrv and boxed values. A1 annotates useful
+methods with `dispatch: dynamic` (generated test through `Harness::call_args`). Still open (S2):
+out/in-out parameters, arrays other than GStrv, callbacks, static functions. The original text follows.
+
 The GTK backend dispatches only `dispatch: zero_arg` methods returning void, through generated
 gtk4-rs calls (`crates/svelters-gtk/src/generated/slots.rs::call_method`). PLAN M3 lists "GTK
 dynamic GI method invocation"; it is not implemented.
@@ -52,6 +73,10 @@ dynamic GI method invocation"; it is not implemented.
 
 ## G3: object-returning getters (borrowed handles)
 
+**Status 2026-10-17: closed by lane X1**: GTK getters mint borrowed handles (weak-ref tracked,
+`owner`/`parent` death reasons); Qt has about 110 generated getters (`gen_getter`). Still open: Qt
+methods with required arguments on classes without an override, list returns. The original text follows.
+
 ABI v2 defines the BORROWED lifetime class but no `get_prop`/`call` mints a borrowed handle yet
 (backend-abi.md "As implemented": "Only owned and toplevel are minted today").
 
@@ -62,6 +87,10 @@ ABI v2 defines the BORROWED lifetime class but no `get_prop`/`call` mints a borr
   `buf.setProp('text', 'x')` works, and which goes stale (`owner`) when the text view dies.
 
 ## G4: boxed/value types
+
+**Update (S2, master e5a208d):** out and in-out parameters (`out:`/`inout:` on Qt methods, GTK
+through GI), exact GVariant typing, GValue-typed GTK properties and VALUE-class handles for boxed
+values are done. Remaining: GTK time-only/date-only records and model data (G6).
 
 **Status 2026-10-17: mostly closed by lane S1** (ABI v3 value model, `docs/notes/s1-handoff.md`):
 typed values, enums as names, flags, records (Rect/Size/Point/Insets/Color), boxed with dispose,
@@ -83,6 +112,12 @@ implemented: props and signal args of boxed/value types are not converted.
   `QDate` <-> ISO string both ways.
 
 ## G5: sync signal handlers with return values
+
+**Status 2026-10-17 (X3): listen phases closed.** `listen_ex` flags `after` and `capture` (JS: `on<event>capture`,
+`{@attach listen(name, fn, {after: true})}`). GTK: `connect_after` on any signal; `capture` on event controllers (the
+controller goes into the capture phase). Qt: `after` on QObject signals (kept behind plain listeners); `capture` for the
+synthetic `key-press` (application event filter over descendants). Everything else is refused with a reason, see the
+notes ("Listener phases per backend").
 
 **Status 2026-10-17: bool results closed by lane X2** (`docs/notes/x2-sync-frame.md`, "What A1
 should annotate"): GTK signals with `handler_result: bool_stop` (and `sync_required: true` for
@@ -125,9 +160,50 @@ Menus and toolbars hold actions (`QAction`, `GMenuItem`), which are not widgets 
 
 ## G8: native-to-JS callbacks
 
+**Update (S2):** closed on Qt: `callbacks:` (functor/std::function params become JS functions) and
+`async:` (Promise-returning methods settled by a signal, e.g. `QDialog::open` + `finished`). GTK
+callback parameters (`gtk_drawing_area_set_draw_func`, list sort/filter funcs) remain open.
+
 Callback-typed parameters (`unsupported_reason: callback_scope` in the GTK metadata) need a JS
 function table in the host (native code never holds a JS value) and usually a sync call.
 
 - Blocked: `gtk_drawing_area_set_draw_func` (needs a drawing API too), `gtk_list_box_set_sort_func` /
   `set_filter_func` / `set_header_func`, `gtk_flow_box_set_sort_func`, `gtk_scale_set_format_value_func`.
 - Repro: `<listbox sort={(a, b) => ...}>` must reorder rows natively by the JS comparator.
+
+## G9: toplevel kinds other than `window`
+
+`packages/renderer/src/index.js` `attachNative` throws "only <window> may be mounted at top level"
+and always calls `present`. Dialog elements (Qt `dialog`, `messagebox`, `inputdialog`, ...; GTK
+`aboutdialog`) are toplevel kinds (`gen_is_toplevel`, lifetime `toplevel`) but cannot be mounted,
+so apps cannot `open()` them through `bind:this`.
+
+- Repro: `{#if show}<messagebox bind:this={mb} text="Hi" />{/if}` at the top level of an App must
+  create the dialog hidden (or shown modelessly, per a declared policy) and let `mb.call('open')` show it.
+- Needs: the renderer to know a kind is toplevel without a native call (a `toplevel` flag in the
+  generated schema/descriptor, or `handle_info` exposed to JS) and a per-kind "show on mount"
+  method (`present` for windows, none for dialogs).
+
+## G10: typed slot ops on GTK
+
+`gen_backend.py` emits slot ops on `&gtk::Widget`; gtk4-rs `MenuButton::set_popover` takes
+`Option<&impl IsA<Popover>>` and `popover()` returns `Option<Popover>`, so the generated code does
+not compile. Fix in the generator: downcast the child to the slot's `accepts` type before the call
+and upcast the getter's result. Blocks MenuButton `popover`, Popover-accepting slots.
+
+## G11: non-Gtk enums and kinds in the GTK metadata
+
+`tools/metadata/gtk/ingest.py` writes kinds for the Gtk namespace only; properties typed with
+`Pango.EllipsizeMode`, `Pango.WrapMode` or Gdk types have `enum<...Pango...>` refs with no enum kind,
+so the generator cannot pick a test sample. Fix: ingest the enums/flags referenced by Gtk
+properties from their own namespaces (Pango, Gdk, Gsk, Graphene) into `metadata/gtk/`.
+
+## G12: borrowed objects without a generated kind
+
+X1 mints borrowed handles for any GObject a getter returns, but kinds that are not in
+`metadata/gtk` (GtkTextBuffer is a GObject in Gtk but not a widget; GtkAdjustment likewise) have
+generated kinds only for their own props, and the A1 annotation format has no way to verify facts
+on a borrowed object reached through another element. Repro: `textview.getProp('buffer').setProp('text', 'x')`
+must change the text view's content; `scale.getProp('adjustment').setProp('upper', 100)` the scale's range.
+Needs: a `verify_subject` form "borrowed from <tag>.<getter>" in the GTK override format and tests that
+reach the object through the getter.

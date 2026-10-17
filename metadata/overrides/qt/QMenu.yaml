@@ -1,0 +1,13 @@
+elements:
+  - tag: menu
+    construct: { class: QMenu }
+    methods:
+      # Callback: `fn(checked)` runs whenever the new action is triggered. It lives as long as the menu
+      # (notified scope: the host drops it when the menu's handle dies).
+      - js: addItem
+        native: addAction
+        discard_return: true
+        params: [string, callback, "boxed<QKeySequence>"]
+        callbacks:
+          - { param: functor, scope: notified, args: [{ name: checked, cpp: bool, ref: bool }] }
+        provenance: "QMenu::addAction(const QString &, Functor, const QKeySequence &) (qdoc); callbacks, S2 ABI v3"

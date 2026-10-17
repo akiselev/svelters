@@ -7,9 +7,16 @@ fact you cannot verify is left out and listed in your batch's status line.
 
 ## 0. Rules
 
-- Builds: always `export CARGO_BUILD_JOBS=2 CARGO_BUILD_BUILD_DIR=target/build`, nextest
-  `--test-threads 2`. Never omit `CARGO_BUILD_BUILD_DIR` (the global cargo config shares a build
-  dir across worktrees and corrupts artifacts). Run only your batch's tests until the final gate run.
+- Builds (user rules, 2026-10-17):
+  1. Finish the code for a step first. No compile-and-check loop after each small edit: while
+     editing use the Python/JS checks (the generators, `ledger.py check`, `pnpm` unit tests).
+  2. Run every cargo/nextest command through the machine-wide queue
+     `/projects/svelters/tools/dev/cargo-slot <cmd>` (e.g.
+     `/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run -p svelters-gtk -E '...'`).
+     It sets CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR: do not pass
+     `--test-threads` or `CARGO_BUILD_JOBS` yourself. `ledger.py refresh` uses the queue itself.
+  3. Batch runs: one targeted test run per finished step, one full-gate run before you report.
+     Don't hold a slot while you think.
 - Edit only: `metadata/overrides/gtk/<Kind>.yaml` for your batch's kinds, your gallery page
   `fixtures/gallery-gtk/src/pages/NN-<family>.svelte`, your `gallery_page!` line(s) in
   `examples/counter/tests/gallery.rs`, your batch's `Status:` line in `metadata/A1-TODO.md`, and the
@@ -53,11 +60,16 @@ in generated files take either side and rerun the generator commands of section 
 
 How GTK exposure works: every property and signal of every widget is already reachable by
 reflection (dynamic GObject). Annotations add (a) JS names, (b) child slots, (c) signal semantics
-(results, sync), (d) two-way bindings, (e) methods (zero-arg only, see G2), and (f) a generated test
+(results, sync), (d) two-way bindings, (e) methods, and (f) a generated test
 per fact. Annotations on a base class or interface apply to subclasses (`inherited` in the merged
 JSON); test them once on the base through `verify_subject`.
 
 ## 3. Annotation format and the loop
+
+Methods: every GTK method is already callable from JS through GIRepository (X1,
+`docs/notes/x1-borrowed-gi.md`: scalars, strings, enums/flags, objects, GStrv, boxed; no out
+params, callbacks or arrays). Annotate the useful ones with `dispatch: dynamic` so they get a
+verified test; object-returning getters mint borrowed handles.
 
 Every record needs `provenance` (a string, or a list of `{origin, ref}` with origin
 `gir|runtime|manual|probe|docs|source`). Records under `properties`, `signals`, `methods` must
@@ -102,11 +114,16 @@ bindings:
     lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
     provenance: "set_active emits toggled and notify::active only on change (Gtk 4 docs)"
 methods:
-  - name: popup                      # zero-arg, void only (G2 blocks the rest)
+  - name: popup                      # zero_arg: generated gtk4-rs call, void, no args
     js_name: popup
     dispatch: zero_arg
     expect: 'h.get(o, "active") == V::Bool(true)'   # Rust bool expression checked after the call (h, o, w: gtk::Widget)
     provenance: "gtk_menu_button_popup (Gtk 4 docs)"
+  - name: set_default_size           # dynamic: GIRepository call (X1); any args/returns the GI layer supports
+    dispatch: dynamic
+    args: [600, 400]                 # JSON scalars/strings/lists passed by the test
+    expect: 'h.get(o, "default-width") == V::I64(600)'   # `r` (the returned testing::V) is also in scope
+    provenance: "gtk_window_set_default_size (Gtk 4 docs)"
 ```
 
 Signal triggers: `{property: <name>, values: [...]}` (sets the GObject property natively, typed
@@ -126,6 +143,11 @@ direct child that contains the widget is used. `effects` record ownership (`chil
 unparented | wrapped:<Kind>`, `old: unparented`); the generated test checks insert, order,
 replacement release and removal. `order: before_sibling|native_index` enables insert-before.
 
+Slots may accept a narrower class (`accepts: [Gtk.Popover]`): the generator downcasts the
+child and the test inserts that kind (MenuButton `popover` is the example). Properties whose type
+has no scalar sample (records, boxed values, dates, string lists, flags) get a round-trip test
+(read, write back, read again); enums from Pango/Gdk work like Gtk enums.
+
 Other keys: `element: {tag: x}` renames the element tag (default: lower-case GTK name);
 `unexposed: {reason: "..."}` marks a kind deliberately not exposed (shown in coverage);
 `verify_subject: {tag: x}` for abstract kinds/interfaces; `lifetime: {class, provenance}` only when
@@ -137,7 +159,7 @@ The loop:
 python3 tools/metadata/gtk/ingest.py            # ~60 s: merges overrides, strict-merge errors appear here
 python3 tools/metadata/gtk/gen_backend.py       # lists facts without a working test: fix or drop them
 python3 tools/metadata/common/gen_bindings.py   # binding table; checks bindings against the facts
-xvfb-run -a cargo nextest run -p svelters-gtk --test-threads 2 -E 'test(/<re>/)'   # <re> from your batch
+/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run -p svelters-gtk -E 'test(/<re>/)'   # <re> from your batch
 ```
 
 A failing test means the annotation is wrong (or GTK behaves differently than documented): read the
@@ -160,16 +182,16 @@ failure, fix the fact, or drop it and record it in your status line (`dropped: P
 - Add `gallery_page!(gtk_NN_family, "gtk", "NN-family", ["GtkFoo", "GtkBar"]);` to
   `examples/counter/tests/gallery.rs` (native classes that must appear in the widget tree).
 - Check: `pnpm --filter @svelters-fixtures/gallery-gtk test` (builds and opens every page in the
-  TestHost) and `xvfb-run -a cargo nextest run -p counter --test gallery --test-threads 2 -E 'test(/gtk_NN/)'`.
+  TestHost) and `/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run -p counter --test gallery -E 'test(/gtk_NN/)'`.
   Look at the screenshot `target/gallery/gtk-NN-family.png` (Read tool) and fix layout problems.
 
 ## 5. Finish
 
 ```sh
-SVELTERS_TEST_THREADS=2 python3 tools/metadata/ledger.py refresh --toolkit gtk   # runs the generated tests, writes the ledger
+python3 tools/metadata/ledger.py refresh --toolkit gtk   # runs the generated tests, writes the ledger
 python3 tools/metadata/coverage.py
 pnpm test && pnpm docs:test
-xvfb-run -a cargo nextest run --workspace --test-threads 2                       # full gate, once at the end
+/projects/svelters/tools/dev/cargo-slot xvfb-run -a cargo nextest run --workspace                       # full gate, once at the end
 ```
 
 Update your batch's `Status:` line in `metadata/A1-TODO.md` to `done (<n> facts verified;

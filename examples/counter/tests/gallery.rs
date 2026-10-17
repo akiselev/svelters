@@ -89,6 +89,15 @@ macro_rules! gallery_page {
 
 // ---- GTK pages (fixtures/gallery-gtk/src/pages) ----
 gallery_page!(gtk_00_overview, "gtk", "00-overview", ["GtkEntry", "GtkButton", "GtkLabel"]);
+gallery_page!(gtk_01_widget, "gtk", "01-widget", ["GtkLabel", "GtkButton", "GtkEntry", "GtkBox"]);
+
+gallery_page!(gtk_05_containers, "gtk", "05-containers", ["GtkCenterBox", "GtkPaned", "GtkFrame", "GtkExpander", "GtkRevealer", "GtkAspectFrame", "GtkOverlay", "GtkWindowHandle", "GtkViewport", "GtkScrolledWindow", "GtkSearchBar"]);
+gallery_page!(gtk_03_text, "gtk", "03-text", ["GtkEntry", "GtkPasswordEntry", "GtkSearchEntry", "GtkText", "GtkEditableLabel", "GtkLabel", "GtkInscription", "GtkTextView", "GtkShortcutLabel"]);
+gallery_page!(gtk_09_display, "gtk", "09-display", ["GtkImage", "GtkSpinner", "GtkSeparator", "GtkPicture", "GtkDrawingArea", "GtkGraphicsOffload", "GtkCalendar"]);
+gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButton", "GtkCheckButton", "GtkSwitch", "GtkLinkButton", "GtkLockButton", "GtkMenuButton", "GtkScaleButton", "GtkVolumeButton"]);
 
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
 gallery_page!(qt_00_overview, "qt", "00-overview", ["QLineEdit", "QPushButton", "QLabel"]);
+gallery_page!(qt_01_widget, "qt", "01-widget", ["QWidget", "QPushButton", "QLineEdit", "QLabel"]);
+gallery_page!(qt_05_containers, "qt", "05-containers", ["QFrame", "QGroupBox", "QScrollArea", "QSplitter", "QStackedWidget", "QTabWidget", "QToolBox"]);
+gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);

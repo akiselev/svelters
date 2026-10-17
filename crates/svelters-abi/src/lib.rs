@@ -43,6 +43,7 @@ pub const SVL_T_DATE: u32 = 6;
 pub const SVL_T_TIME: u32 = 7;
 pub const SVL_T_DATETIME: u32 = 8;
 pub const SVL_T_VARIANT: u32 = 9;
+pub const SVL_T_TYPED_VARIANT: u32 = 10;
 pub const SVL_T_FIRST_BACKEND: u32 = 0x10000;
 
 // ---- descriptor flags ----

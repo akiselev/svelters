@@ -1,0 +1,23 @@
+children:
+  policy: single_child
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkViewport::get_child() const"}
+        set:    {native: "GtkViewport::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkViewport::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_viewport_set_child"}]
+properties:
+  - name: scroll-to-focus
+    provenance: "GtkViewport:scroll-to-focus (Gtk 4 docs); P prop"

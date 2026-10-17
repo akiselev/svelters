@@ -1,10 +1,23 @@
-# GtkOverlay overlays (X3 child attributes only; the `child` slot belongs to gtk-containers-a).
-# `measure` and `clip` are per-overlay flags set through methods of the overlay.
-# Svelte: <overlay><label parent:measure={true}>over</label></overlay> (overlays slot)
 children:
   policy: named_slots
-  default_slot: overlays
+  default_slot: child
   slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkOverlay::get_child() const"}
+        set:    {native: "GtkOverlay::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkOverlay::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_overlay_set_child"}]
     - name: overlays
       content: widget
       accepts: [Gtk.Widget]

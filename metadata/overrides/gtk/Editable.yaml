@@ -5,6 +5,16 @@ properties:
     # Programmatic sets from JS block these handlers so the app does not see its own write.
     echo_suppress: [changed, "notify::text"]
     provenance: "GtkEditable:text (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+  - name: editable
+    provenance: "GtkEditable:editable (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+  - name: width-chars
+    provenance: "GtkEditable:width-chars (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+  - name: max-width-chars
+    provenance: "GtkEditable:max-width-chars (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+  - name: xalign
+    provenance: "GtkEditable:xalign (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+  - name: enable-undo
+    provenance: "GtkEditable:enable-undo (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
 signals:
   - name: changed
     js_event: changed
@@ -24,3 +34,23 @@ signals:
     flags: [detailed]
     connection: {disconnect_on: [handle_drop, native_destroy]}
     provenance: "GObject::notify detail for GtkEditable:text; P entry event"
+  - name: insert-text
+    js_event: insert-text
+    handler_result: none
+    sync_required: false
+    trigger: {native: set_text, values: [hello, hello2]}
+    provenance: "GtkEditable::insert-text, run-last (Gtk 4 docs); delivery only, position is an in/out pointer"
+  - name: delete-text
+    js_event: delete-text
+    handler_result: none
+    sync_required: false
+    trigger: {native: set_text, values: [hello, hello2]}
+    provenance: "GtkEditable::delete-text, run-last (Gtk 4 docs); delivery only"
+methods:
+  - name: select_region
+    js_name: selectRegion
+    dispatch: dynamic
+    args: [1, 3]
+    setup: 'h.set_str(o, "text", "hello").unwrap();'
+    expect: 'h.get(o, "cursor-position") == V::I64(1) && h.get(o, "selection-bound") == V::I64(3)'
+    provenance: "gtk_editable_select_region (Gtk 4 docs); called through GIRepository (X1)"

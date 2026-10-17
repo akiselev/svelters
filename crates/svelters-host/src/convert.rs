@@ -72,6 +72,10 @@ pub(crate) trait JsReader {
     fn bytes(&self, v: &Self::V, guards: &mut Vec<Guard>) -> Result<(*const u8, usize), String>;
     /// `(handle, type id)` when `v` is a boxed-value wrapper that has not been disposed.
     fn boxed(&self, v: &Self::V) -> Result<Option<(svl_handle, svl_id)>, String>;
+    /// `(signature, value)` when `v` was made by `variant(signature, value)`.
+    fn typed_variant(&self, _v: &Self::V) -> Result<Option<(String, Self::V)>, String> {
+        Ok(None)
+    }
     /// A renderer node standing for a native handle: `None` when `v` is not a node, `Some(None)`
     /// for a node that has no live native object.
     fn node_handle(&self, v: &Self::V) -> Result<Option<Option<f64>>, String>;
@@ -93,6 +97,8 @@ pub(crate) trait JsWriter {
     fn boolean(&self, b: bool) -> Result<Self::V, String>;
     fn number(&self, n: f64) -> Result<Self::V, String>;
     fn string(&self, s: &str) -> Result<Self::V, String>;
+    /// UTF-16 text from a backend with `SVL_CAP_UTF16_OUT`, without transcoding through UTF-8.
+    fn string16(&self, s: &[u16]) -> Result<Self::V, String>;
     fn array(&self, items: Vec<Self::V>) -> Result<Self::V, String>;
     fn object(&self, entries: Vec<(String, Self::V)>) -> Result<Self::V, String>;
     fn bytes(&self, b: &[u8]) -> Result<Self::V, String>;
@@ -806,6 +812,15 @@ fn dynamic<R: JsReader>(
             let l = ar.list(items);
             Ok(svl_value::new(SVL_LIST, svl_value_u { l }))
         }
+        JsKind::Object if r.typed_variant(v)?.is_some() => {
+            let (sig, inner) = r.typed_variant(v)?.expect("checked above");
+            let sb: Box<str> = sig.into_boxed_str();
+            let sv = svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: sb.as_ptr().cast(), len: sb.len() } });
+            ar.guards.push(Box::new(sb));
+            let val = encode_at(r, &inner, &variant_slot(), cx, ar, depth + 1).map_err(|e| e.at("value".to_string()))?;
+            let l = ar.list(vec![sv, val]);
+            Ok(svl_value::typed(SVL_RECORD, SVL_T_TYPED_VARIANT, svl_value_u { l }))
+        }
         JsKind::Object if r.date_ms(v).is_some() => Ok(svl_value::typed(
             SVL_F64,
             SVL_T_DATETIME,
@@ -870,6 +885,7 @@ fn decode_at<W: JsWriter>(w: &W, v: &Value, types: &dyn TypeSource, depth: u32) 
         Value::F64(f) => w.number(*f),
         Value::DateTime(ms) => w.date(*ms),
         Value::Str(s) => w.string(s),
+        Value::Str16(u) => w.string16(u),
         Value::Handle(h) => w.handle(*h),
         Value::List(items) => {
             let vs = items

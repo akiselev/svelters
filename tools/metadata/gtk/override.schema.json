@@ -370,8 +370,10 @@
         },
         "dispatch": {
           "enum": [
-            "zero_arg"
-          ]
+            "zero_arg",
+            "dynamic"
+          ],
+          "description": "zero_arg: generated gtk4-rs call (void, no args). dynamic: GIRepository call (X1; scalars, strings, enums, flags, objects, GStrv, boxed; no out params or callbacks)."
         },
         "setup": {
           "type": "string",
@@ -379,10 +381,14 @@
         },
         "expect": {
           "type": "string",
-          "description": "Rust bool expression checked after the call; `h` (Harness), `o` (handle), `w` (gtk::Widget) available."
+          "description": "Rust bool expression checked after the call; `h` (Harness), `o` (handle), `w` (gtk::Widget) and, for dynamic calls, `r` (the returned testing::V) are in scope."
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "args": {
+          "type": "array",
+          "description": "dynamic: arguments the generated test passes (JSON scalars, strings, lists)."
         }
       }
     },

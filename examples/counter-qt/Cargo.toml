@@ -43,3 +43,11 @@ harness = false
 [[test]]
 name = "host_childattr"
 harness = false
+
+[[test]]
+name = "host"
+harness = false
+
+[[test]]
+name = "lists_e2e"
+harness = false

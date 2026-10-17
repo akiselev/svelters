@@ -1,0 +1,57 @@
+children:
+  policy: named_slots
+  default_slot: center
+  slots:
+    - name: start
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkCenterBox::get_start_widget() const"}
+        set:    {native: "GtkCenterBox::set_start_widget(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkCenterBox::set_start_widget(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_center_box_set_start_widget"}]
+    - name: center
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkCenterBox::get_center_widget() const"}
+        set:    {native: "GtkCenterBox::set_center_widget(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkCenterBox::set_center_widget(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_center_box_set_center_widget"}]
+    - name: end
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkCenterBox::get_end_widget() const"}
+        set:    {native: "GtkCenterBox::set_end_widget(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkCenterBox::set_end_widget(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_center_box_set_end_widget"}]
+properties:
+  - name: shrink-center-last
+    provenance: "GtkCenterBox:shrink-center-last (Gtk 4 docs); P prop"
+  - name: baseline-position
+    provenance: "GtkCenterBox:baseline-position (Gtk 4 docs); P prop"

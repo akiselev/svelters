@@ -1,12 +1,35 @@
-# Element `tabwidget` (X3): only the `pages` slot and its per-page attributes. Properties and signals of QTabWidget
-# belong to A1's qt-containers-a batch.
-# A page's label, tooltip and enabled state are facts of the tab, not of the page widget, so they are child
-# attributes: <tabwidget><label parent:tabLabel="One">...</label></tabwidget>. QTabWidget keeps them per tab, and
-# removing a tab drops them, so remove + insert returns a page to the defaults.
-# Not exposed: the tab icon (setTabIcon takes a QIcon; there is no attribute value form for it yet).
 elements:
   - tag: tabwidget
     construct: { class: QTabWidget }
+    props:
+      - { js: tabPosition, native: tabPosition, provenance: "QTabWidget::tabPosition (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tabShape, native: tabShape, provenance: "QTabWidget::tabShape (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tabsClosable, native: tabsClosable, provenance: "QTabWidget::tabsClosable (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: movable, native: movable, provenance: "QTabWidget::movable (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: documentMode, native: documentMode, provenance: "QTabWidget::documentMode (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: usesScrollButtons, native: usesScrollButtons, provenance: "QTabWidget::usesScrollButtons (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      - js: changed
+        native: currentChanged
+        connect: "currentChanged(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: 'if ($i == 2) $w->setCurrentIndex(1); else $w->addTab(new QWidget(), QString())'
+        expect_args: ["0"]
+        provenance: "QTabWidget::currentChanged(int) (qdoc)"
+      - js: tab-close-requested
+        native: tabCloseRequested
+        connect: "tabCloseRequested(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->tabCloseRequested(2 + $i)'
+        expect_args: ["2"]
+        provenance: "QTabWidget::tabCloseRequested(int) (qdoc); emitted directly (a close click needs a shown widget)"
+      - js: tab-bar-clicked
+        native: tabBarClicked
+        connect: "tabBarClicked(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->tabBarClicked(1 + $i)'
+        expect_args: ["1"]
+        provenance: "QTabWidget::tabBarClicked(int) (qdoc); emitted directly (a click needs a shown widget)"
     children:
       policy: named_slots
       default_slot: pages
@@ -16,6 +39,7 @@ elements:
           accepts: [QWidget]
           cardinality: many
           order: native_index
+          nested: true
           host: self
           default: { kind: none }
           on_remove: empty

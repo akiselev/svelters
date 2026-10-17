@@ -271,6 +271,13 @@
       "type": {
         "gtype": "GdkDragAction",
         "native": null,
+        "nicks": [
+          "none",
+          "copy",
+          "move",
+          "link",
+          "ask"
+        ],
         "nullable": false,
         "ref": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
       }
