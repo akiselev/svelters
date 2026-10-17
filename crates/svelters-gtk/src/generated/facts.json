@@ -1867,7 +1867,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload:prop:black-background",
-   "fingerprint": "d1dcc94ff644c996",
+   "fingerprint": "fcd2a4d7c0ad67fe",
    "kind": "GraphicsOffload",
    "name": "black-background",
    "section": "properties",
@@ -1957,7 +1957,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:use-native-controls",
-   "fingerprint": "0ce26bacf31240e8",
+   "fingerprint": "9350fba966991607",
    "kind": "HeaderBar",
    "name": "use-native-controls",
    "section": "properties",
@@ -4787,7 +4787,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:use-native-controls",
-   "fingerprint": "485ad9a5ac019109",
+   "fingerprint": "89c0490d1d1cec82",
    "kind": "WindowControls",
    "name": "use-native-controls",
    "section": "properties",

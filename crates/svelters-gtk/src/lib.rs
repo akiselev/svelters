@@ -4,6 +4,7 @@
 //! `generated/` is produced by `tools/metadata/gtk/gen_backend.py`; everything else is hand-written.
 
 mod backend;
+pub mod compat;
 mod convert;
 mod gi;
 pub mod generated;

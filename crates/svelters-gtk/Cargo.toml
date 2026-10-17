@@ -9,6 +9,7 @@ publish.workspace = true
 svelters-abi.workspace = true
 gtk = { workspace = true, features = ["v4_6"] }
 serde_json.workspace = true
+libc = "0.2"
 
 [dev-dependencies]
 svelters-host.workspace = true

@@ -4176,6 +4176,9 @@ fn signal_gestureclick_stopped() {
 /// property GraphicsOffload.black-background (JS black-background): GtkGraphicsOffload:black-background (Gtk 4 docs)
 #[test]
 fn prop_graphicsoffload_black_background() {
+    if crate::testing::skip_below_gtk(4, 16) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("graphics-offload");
@@ -4313,6 +4316,9 @@ fn prop_headerbar_title() {
 /// property HeaderBar.use-native-controls (JS use-native-controls): GtkHeaderBar:use-native-controls (Gtk 4.18 docs)
 #[test]
 fn prop_headerbar_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("header-bar");
@@ -9487,6 +9493,9 @@ fn prop_windowcontrols_side() {
 /// property WindowControls.use-native-controls (JS use-native-controls): GtkWindowControls:use-native-controls (Gtk 4.18 docs)
 #[test]
 fn prop_windowcontrols_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("window-controls");

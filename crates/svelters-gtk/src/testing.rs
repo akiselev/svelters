@@ -55,6 +55,17 @@ fn gtk_thread() -> &'static Mutex<Sender<Job>> {
     })
 }
 
+/// True (after printing why) when the running GTK predates `major.minor`: the caller returns early,
+/// so tests of kinds and members newer than the build minimum skip on older GTK.
+pub fn skip_below_gtk(major: u16, minor: u16) -> bool {
+    if crate::compat::has((major, minor)) {
+        return false;
+    }
+    let (a, b, c) = crate::compat::runtime();
+    eprintln!("SKIP: needs GTK {major}.{minor} (running {a}.{b}.{c})");
+    true
+}
+
 /// Run `f` on the GTK thread and propagate its panic, if any.
 pub fn on_gtk<F: FnOnce() + Send + 'static>(f: F) {
     let (done_tx, done_rx) = channel();
