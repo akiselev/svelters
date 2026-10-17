@@ -18,9 +18,88 @@
         "child"
       ]
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "popover",
+    "policy": "named_slots",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Popover"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_menu_button_set_popover"
+            },
+            {
+              "origin": "manual",
+              "ref": "the popover is parented to the button (Gtk 4 docs)"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:slot:popover",
+        "name": "popover",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkMenuButton::get_popover() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkMenuButton::set_popover(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkMenuButton::set_popover(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": true,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -82,6 +161,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
         "origin": "manual"
       },
       {

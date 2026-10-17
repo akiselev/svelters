@@ -4028,6 +4028,11 @@
         "get": "gtk_widget_get_css_classes",
         "set": "gtk_widget_set_css_classes"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:css-classes, GStrv (Gtk 4 docs); ABI v3 string list, round-trip test"
+      },
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
       "invocation": "reflected",

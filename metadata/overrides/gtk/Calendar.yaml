@@ -1,4 +1,6 @@
 properties:
+  - name: date
+    provenance: "GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test"
   - name: day
     js_name: day
     sample: 15

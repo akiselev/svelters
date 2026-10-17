@@ -120,6 +120,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -720,6 +726,11 @@
       "accessors": {
         "get": "gtk_calendar_get_date",
         "set": "gtk_calendar_set_date"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",

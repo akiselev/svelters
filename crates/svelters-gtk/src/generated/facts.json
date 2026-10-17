@@ -2,7 +2,7 @@
  "facts": [
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:slot:child",
-   "fingerprint": "ac0a66a89cb654c9",
+   "fingerprint": "446c2652b188b5bd",
    "kind": "AspectFrame",
    "name": "child",
    "section": "slots",
@@ -22,7 +22,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:center",
-   "fingerprint": "8df749436f3c86c8",
+   "fingerprint": "cf97e579582d5b7b",
    "kind": "CenterBox",
    "name": "center",
    "section": "slots",
@@ -32,7 +32,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:end",
-   "fingerprint": "735a4a9a5e145358",
+   "fingerprint": "266e9c376713aac8",
    "kind": "CenterBox",
    "name": "end",
    "section": "slots",
@@ -42,7 +42,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:start",
-   "fingerprint": "5754125b302006cf",
+   "fingerprint": "e6c21dcb22714a6d",
    "kind": "CenterBox",
    "name": "start",
    "section": "slots",
@@ -52,7 +52,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:slot:child",
-   "fingerprint": "cbccc38c0e66e61e",
+   "fingerprint": "aab7794d81f6ec11",
    "kind": "Expander",
    "name": "child",
    "section": "slots",
@@ -62,7 +62,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:slot:label",
-   "fingerprint": "25e1309fb8fda1a7",
+   "fingerprint": "d6e46285dec0e328",
    "kind": "Expander",
    "name": "label",
    "section": "slots",
@@ -72,7 +72,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:slot:child",
-   "fingerprint": "318cc870cafa27d4",
+   "fingerprint": "9f7203337a1d5c0a",
    "kind": "Frame",
    "name": "child",
    "section": "slots",
@@ -82,7 +82,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:slot:label",
-   "fingerprint": "c6836b2ab4cc696c",
+   "fingerprint": "58b6be84b023c36b",
    "kind": "Frame",
    "name": "label",
    "section": "slots",
@@ -112,7 +112,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:title",
-   "fingerprint": "143b234460110fb2",
+   "fingerprint": "2013f0c14893cc73",
    "kind": "HeaderBar",
    "name": "title",
    "section": "slots",
@@ -121,8 +121,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:slot:popover",
+   "fingerprint": "7a7a59180603db81",
+   "kind": "MenuButton",
+   "name": "popover",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_menubutton_popover"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:child",
-   "fingerprint": "fad999714acc75d4",
+   "fingerprint": "53514ef48aa3c7a6",
    "kind": "Overlay",
    "name": "child",
    "section": "slots",
@@ -142,7 +152,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Paned:slot:end",
-   "fingerprint": "478ce530ab35c09f",
+   "fingerprint": "c6338d2a86d451ce",
    "kind": "Paned",
    "name": "end",
    "section": "slots",
@@ -152,7 +162,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Paned:slot:start",
-   "fingerprint": "f86702f4d5cdfe0a",
+   "fingerprint": "41a75d8a81c3263a",
    "kind": "Paned",
    "name": "start",
    "section": "slots",
@@ -162,7 +172,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Revealer:slot:child",
-   "fingerprint": "a2995c0bffa1e9c0",
+   "fingerprint": "90f95478876c6e73",
    "kind": "Revealer",
    "name": "child",
    "section": "slots",
@@ -172,7 +182,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:slot:child",
-   "fingerprint": "b9d6357bfda0e1a9",
+   "fingerprint": "91b083ff7d4d4650",
    "kind": "ScrolledWindow",
    "name": "child",
    "section": "slots",
@@ -182,7 +192,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchBar:slot:child",
-   "fingerprint": "40ba81928b36f15d",
+   "fingerprint": "f1e598e614c998c1",
    "kind": "SearchBar",
    "name": "child",
    "section": "slots",
@@ -192,7 +202,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Viewport:slot:child",
-   "fingerprint": "f7ba78c43c516806",
+   "fingerprint": "f93ca3b440d5468a",
    "kind": "Viewport",
    "name": "child",
    "section": "slots",
@@ -202,7 +212,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child",
-   "fingerprint": "7d9b09269591c309",
+   "fingerprint": "6e63505943ca5cb1",
    "kind": "Window",
    "name": "child",
    "section": "slots",
@@ -212,7 +222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar",
-   "fingerprint": "b07557021d29c57c",
+   "fingerprint": "71f29029b6117503",
    "kind": "Window",
    "name": "titlebar",
    "section": "slots",
@@ -222,7 +232,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:WindowHandle:slot:child",
-   "fingerprint": "a9fe9be3997df98b",
+   "fingerprint": "19d956d937694a21",
    "kind": "WindowHandle",
    "name": "child",
    "section": "slots",
@@ -398,6 +408,16 @@
    "section": "signals",
    "tests": [
     "generated::verify::signal_calendar_notify_day"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",
+   "fingerprint": "20bfe5e4a5ea57ef",
+   "kind": "Calendar",
+   "name": "date",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_date"
    ]
   },
   {
@@ -1116,6 +1136,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:ellipsize",
+   "fingerprint": "376e22bfcd8cfed6",
+   "kind": "Label",
+   "name": "ellipsize",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_ellipsize"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:justify",
    "fingerprint": "e1c66fce482f8375",
    "kind": "Label",
@@ -1193,6 +1223,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_label_wrap"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap-mode",
+   "fingerprint": "a3390ce43bc9e957",
+   "kind": "Label",
+   "name": "wrap-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_wrap_mode"
    ]
   },
   {
@@ -2296,6 +2336,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_widget_can_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+   "fingerprint": "bcf9b68342f629d6",
+   "kind": "Widget",
+   "name": "css-classes",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_css_classes"
    ]
   },
   {

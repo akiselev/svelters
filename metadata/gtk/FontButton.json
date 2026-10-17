@@ -105,6 +105,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",

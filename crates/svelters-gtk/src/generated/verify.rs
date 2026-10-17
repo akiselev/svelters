@@ -13,18 +13,18 @@ fn slot_aspectframe_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::AspectFrame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -64,18 +64,18 @@ fn slot_centerbox_center() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("center")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
         h.insert(parent, b, None, Some("center")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(b))), "b in center");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in center");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(b))), "b in center");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in center");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("center")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget() == Some(h.widget(a))), "a in center");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
     });
 }
 
@@ -88,18 +88,18 @@ fn slot_centerbox_end() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("end")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
         h.insert(parent, b, None, Some("end")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(b))), "b in end");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(b))), "b in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in end");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("end")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget() == Some(h.widget(a))), "a in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().end_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
     });
 }
 
@@ -112,18 +112,18 @@ fn slot_centerbox_start() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("start")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         h.insert(parent, b, None, Some("start")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(b))), "b in start");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(b))), "b in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in start");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("start")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        assert!((h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget() == Some(h.widget(a))), "a in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::CenterBox>().unwrap().start_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
     });
 }
 
@@ -136,18 +136,18 @@ fn slot_expander_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -160,18 +160,18 @@ fn slot_expander_label() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("label")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         h.insert(parent, b, None, Some("label")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in label");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("label")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!((h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Expander>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
     });
 }
 
@@ -184,18 +184,18 @@ fn slot_frame_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -208,18 +208,18 @@ fn slot_frame_label() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("label")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         h.insert(parent, b, None, Some("label")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(b))), "b in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in label");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("label")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget() == Some(h.widget(a))), "a in label");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
     });
 }
 
@@ -278,18 +278,42 @@ fn slot_headerbar_title() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("title")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget() == Some(h.widget(a))), "a in title");
+        assert!((h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in title");
         h.insert(parent, b, None, Some("title")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget() == Some(h.widget(b))), "b in title");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget() == Some(h.widget(a))), "a in title");
+        assert!((h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in title");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in title");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget() == Some(h.widget(b))), "b in title");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in title");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("title")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget() == Some(h.widget(a))), "a in title");
+        assert!((h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in title");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget() == Some(h.widget(a))), "a in title");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::HeaderBar>().unwrap().title_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in title");
+    });
+}
+
+/// slot MenuButton.popover: gir: gtk_menu_button_set_popover; manual: the popover is parented to the button (Gtk 4 docs)
+#[test]
+fn slot_menubutton_popover() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("menubutton");
+        let a = h.create("popover");
+        let b = h.create("popover");
+        h.insert(parent, a, None, Some("popover")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in popover");
+        h.insert(parent, b, None, Some("popover")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in popover");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in popover");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in popover");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("popover")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in popover");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in popover");
     });
 }
 
@@ -302,18 +326,18 @@ fn slot_overlay_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Overlay>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -349,18 +373,18 @@ fn slot_paned_end() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("end")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
         h.insert(parent, b, None, Some("end")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(b))), "b in end");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(b))), "b in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in end");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("end")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child() == Some(h.widget(a))), "a in end");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().end_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in end");
     });
 }
 
@@ -373,18 +397,18 @@ fn slot_paned_start() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("start")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         h.insert(parent, b, None, Some("start")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(b))), "b in start");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(b))), "b in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in start");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("start")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child() == Some(h.widget(a))), "a in start");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
     });
 }
 
@@ -397,18 +421,18 @@ fn slot_revealer_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Revealer>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -421,18 +445,18 @@ fn slot_scrolledwindow_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()).is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>())), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(b).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()).is_some() && h.widget(b).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>())), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()).is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>())), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(b).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()).is_some() && h.widget(b).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>())), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()).is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>())), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child()), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()).is_some() && h.widget(a).ancestor(gtk::Viewport::static_type()) == h.widget(parent).downcast_ref::<gtk::ScrolledWindow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>())), "a in child");
     });
 }
 
@@ -445,18 +469,18 @@ fn slot_searchbar_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::SearchBar>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -469,18 +493,18 @@ fn slot_viewport_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Viewport>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -493,18 +517,18 @@ fn slot_window_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -517,18 +541,18 @@ fn slot_window_titlebar() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("titlebar")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(a))), "a in titlebar");
+        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in titlebar");
         h.insert(parent, b, None, Some("titlebar")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(b))), "b in titlebar");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(a))), "a in titlebar");
+        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in titlebar");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in titlebar");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(b))), "b in titlebar");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in titlebar");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("titlebar")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(a))), "a in titlebar");
+        assert!((h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in titlebar");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar() == Some(h.widget(a))), "a in titlebar");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Window>().unwrap().titlebar().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in titlebar");
     });
 }
 
@@ -541,18 +565,18 @@ fn slot_windowhandle_child() {
         let a = h.create("label");
         let b = h.create("label");
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.insert(parent, b, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(b))), "b in child");
-        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         assert!(h.widget(a).parent().is_none(), "replaced child is released");
         h.remove(parent, b).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
         h.remove(parent, a).unwrap_err();
         h.insert(parent, a, None, Some("child")).unwrap();
-        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
-        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child() == Some(h.widget(a))), "a in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -882,6 +906,19 @@ fn signal_calendar_notify_day() {
         fire(&obj, "12", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "notify::day", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Calendar.date (JS date, round trip): GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test
+#[test]
+fn prop_calendar_date() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let before = h.get_value(o, "date");
+        h.set_value(o, "date", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "date")), format!("{:?}", before));
     });
 }
 
@@ -2354,6 +2391,21 @@ fn signal_label_activate_link() {
     });
 }
 
+/// property Label.ellipsize (JS ellipsize): GtkLabel:ellipsize, PangoEllipsizeMode (Gtk 4 docs); Pango nicks kept on the property (A1-GAPS G11)
+#[test]
+fn prop_label_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "ellipsize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "ellipsize"));
+        h.set_str(o, "ellipsize", "start").unwrap();
+        assert_eq!(h.get(o, "ellipsize"), V::Str("start".into()));
+    });
+}
+
 /// property Label.justify (JS justify): GtkLabel:justify (Gtk 4 docs)
 #[test]
 fn prop_label_justify() {
@@ -2471,6 +2523,21 @@ fn prop_label_wrap() {
         assert_eq!(id, h.resolve_prop("label", "wrap"));
         h.set_bool(o, "wrap", true).unwrap();
         assert_eq!(h.get(o, "wrap"), V::Bool(true));
+    });
+}
+
+/// property Label.wrap-mode (JS wrapMode): GtkLabel:wrap-mode, PangoWrapMode (Gtk 4 docs)
+#[test]
+fn prop_label_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "wrapMode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "wrap-mode"));
+        h.set_str(o, "wrapMode", "char").unwrap();
+        assert_eq!(h.get(o, "wrapMode"), V::Str("char".into()));
     });
 }
 
@@ -4549,6 +4616,19 @@ fn prop_widget_can_focus() {
         assert_eq!(id, h.resolve_prop("label", "can-focus"));
         h.set_bool(o, "canFocus", false).unwrap();
         assert_eq!(h.get(o, "canFocus"), V::Bool(false));
+    });
+}
+
+/// property Widget.css-classes (JS cssClasses, round trip): GtkWidget:css-classes, GStrv (Gtk 4 docs); ABI v3 string list, round-trip test
+#[test]
+fn prop_widget_css_classes() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let before = h.get_value(o, "cssClasses");
+        h.set_value(o, "cssClasses", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "cssClasses")), format!("{:?}", before));
     });
 }
 

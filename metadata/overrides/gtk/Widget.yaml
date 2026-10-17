@@ -1,5 +1,7 @@
 verify_subject: {tag: label}
 properties:
+  - name: css-classes
+    provenance: "GtkWidget:css-classes, GStrv (Gtk 4 docs); ABI v3 string list, round-trip test"
   - name: visible
     provenance: "GtkWidget:visible (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
   - name: sensitive

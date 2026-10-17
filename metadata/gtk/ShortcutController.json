@@ -312,6 +312,21 @@
       "type": {
         "gtype": "GdkModifierType",
         "native": null,
+        "nicks": [
+          "no-modifier-mask",
+          "shift-mask",
+          "lock-mask",
+          "control-mask",
+          "alt-mask",
+          "button1-mask",
+          "button2-mask",
+          "button3-mask",
+          "button4-mask",
+          "button5-mask",
+          "super-mask",
+          "hyper-mask",
+          "meta-mask"
+        ],
         "nullable": false,
         "ref": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
       }

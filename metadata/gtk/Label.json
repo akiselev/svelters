@@ -120,6 +120,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -1477,6 +1483,11 @@
         "get": "gtk_label_get_ellipsize",
         "set": "gtk_label_set_ellipsize"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:ellipsize, PangoEllipsizeMode (Gtk 4 docs); Pango nicks kept on the property (A1-GAPS G11)"
+      },
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:ellipsize",
       "invocation": "reflected",
@@ -1502,6 +1513,12 @@
       "type": {
         "gtype": "PangoEllipsizeMode",
         "native": null,
+        "nicks": [
+          "none",
+          "start",
+          "middle",
+          "end"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>"
       }
@@ -2170,6 +2187,11 @@
         "get": "gtk_label_get_wrap_mode",
         "set": "gtk_label_set_wrap_mode"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:wrap-mode, PangoWrapMode (Gtk 4 docs)"
+      },
       "default": "word",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap-mode",
       "invocation": "reflected",
@@ -2195,6 +2217,12 @@
       "type": {
         "gtype": "PangoWrapMode",
         "native": null,
+        "nicks": [
+          "word",
+          "char",
+          "word-char",
+          "none"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
       }

@@ -225,7 +225,7 @@ pub static KINDS: [KindInfo; 298] = [
     KindInfo { name: "MediaControls", tag: "mediacontrols", gtype: "GtkMediaControls", parent: 293, ifaces: &[3, 29, 75], is_abstract: false, is_interface: false, default_slot: "" },
     KindInfo { name: "MediaFile", tag: "", gtype: "GtkMediaFile", parent: 170, ifaces: &[], is_abstract: true, is_interface: false, default_slot: "" },
     KindInfo { name: "MediaStream", tag: "", gtype: "GtkMediaStream", parent: 0, ifaces: &[], is_abstract: true, is_interface: false, default_slot: "" },
-    KindInfo { name: "MenuButton", tag: "menubutton", gtype: "GtkMenuButton", parent: 293, ifaces: &[3, 29, 75], is_abstract: false, is_interface: false, default_slot: "" },
+    KindInfo { name: "MenuButton", tag: "menubutton", gtype: "GtkMenuButton", parent: 293, ifaces: &[3, 29, 75], is_abstract: false, is_interface: false, default_slot: "popover" },
     KindInfo { name: "MessageDialog", tag: "messagedialog", gtype: "GtkMessageDialog", parent: 80, ifaces: &[3, 29, 75, 180, 218, 235], is_abstract: false, is_interface: false, default_slot: "" },
     KindInfo { name: "MnemonicAction", tag: "", gtype: "GtkMnemonicAction", parent: 232, ifaces: &[], is_abstract: false, is_interface: false, default_slot: "" },
     KindInfo { name: "MnemonicTrigger", tag: "", gtype: "GtkMnemonicTrigger", parent: 236, ifaces: &[], is_abstract: false, is_interface: false, default_slot: "" },
@@ -2031,7 +2031,7 @@ pub static METHODS: [MethodInfo; 7] = [
     MethodInfo { kind: 295, name: "present" },
 ];
 
-pub static SLOTS: [SlotInfo; 23] = [
+pub static SLOTS: [SlotInfo; 24] = [
     SlotInfo { kind: 21, name: "child", many: false, ordered: false },
     SlotInfo { kind: 27, name: "children", many: true, ordered: true },
     SlotInfo { kind: 53, name: "center", many: false, ordered: false },
@@ -2044,6 +2044,7 @@ pub static SLOTS: [SlotInfo; 23] = [
     SlotInfo { kind: 142, name: "end", many: true, ordered: false },
     SlotInfo { kind: 142, name: "start", many: true, ordered: false },
     SlotInfo { kind: 142, name: "title", many: false, ordered: false },
+    SlotInfo { kind: 171, name: "popover", many: false, ordered: false },
     SlotInfo { kind: 190, name: "child", many: false, ordered: false },
     SlotInfo { kind: 190, name: "overlays", many: true, ordered: false },
     SlotInfo { kind: 196, name: "end", many: false, ordered: false },

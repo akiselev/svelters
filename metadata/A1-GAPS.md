@@ -20,8 +20,8 @@ some blocked facts are not worth exposing anyway.
 | G7 | Non-widget child objects (QAction, GMenuModel) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
 | G8 | Native-to-JS callbacks (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
 | G9 | Toplevel kinds other than `window` cannot be mounted (renderer) | every Qt dialog element's gallery presence; GTK AboutDialog, Popover-like toplevels | qt-dialogs (gallery), gtk-dialogs |
-| G10 | GTK slots whose native ops take a widget subclass (`set_popover(IsA<Popover>)`, typed getters) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
-| G11 | Enums and kinds outside the Gtk namespace (Pango, Gdk) are not in metadata/gtk | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
+| G10 | GTK slots whose native ops take a widget subclass: **closed by the A1 lead** (generator downcasts to `accepts`, upcasts getters; MenuButton `popover` verified) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
+| G11 | Enums outside the Gtk namespace: **enums closed by the A1 lead** (Pango/Gdk nicks kept on the property; Label `ellipsize`/`wrap-mode` verified); non-Gtk object kinds still open | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
 | G12 | Non-widget objects reached as borrowed handles have no generated kind (GtkTextBuffer, GtkAdjustment) | TextView text editing, Range/SpinButton value and range | gtk-text, gtk-ranges |
 
 ## G1: child attributes
