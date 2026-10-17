@@ -4,5 +4,19 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish.workspace = true
+description = "Runs a fixture bundle (fixtures/<name>/dist/app.js) in the host on the GTK4 or Qt backend"
+
+[features]
+default = ["gtk", "qt"]
+gtk = ["dep:svelters-gtk", "dep:gtk"]
+qt = ["dep:counter-qt"]
 
 [dependencies]
+svelters-abi.workspace = true
+svelters-host.workspace = true
+svelters-backend-log.workspace = true
+serde_json.workspace = true
+svelters-gtk = { workspace = true, optional = true }
+gtk = { workspace = true, optional = true }
+# The leaf crate: only this binary depends on it, so editing src/ here never reruns its build script.
+counter-qt = { path = "../counter-qt", optional = true }
