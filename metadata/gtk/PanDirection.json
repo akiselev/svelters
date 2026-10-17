@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PanDirection",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "left",
+      "native": "GTK_PAN_DIRECTION_LEFT",
+      "nick": "left",
+      "value": 0
+    },
+    {
+      "name": "right",
+      "native": "GTK_PAN_DIRECTION_RIGHT",
+      "nick": "right",
+      "value": 1
+    },
+    {
+      "name": "up",
+      "native": "GTK_PAN_DIRECTION_UP",
+      "nick": "up",
+      "value": 2
+    },
+    {
+      "name": "down",
+      "native": "GTK_PAN_DIRECTION_DOWN",
+      "nick": "down",
+      "value": 3
+    }
+  ],
+  "native": {
+    "c_type": "GtkPanDirection",
+    "gtype": "GtkPanDirection",
+    "name": "GtkPanDirection"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

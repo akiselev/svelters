@@ -1,0 +1,145 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:License",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "unknown",
+      "native": "GTK_LICENSE_UNKNOWN",
+      "nick": "unknown",
+      "value": 0
+    },
+    {
+      "name": "custom",
+      "native": "GTK_LICENSE_CUSTOM",
+      "nick": "custom",
+      "value": 1
+    },
+    {
+      "name": "gpl_2_0",
+      "native": "GTK_LICENSE_GPL_2_0",
+      "nick": "gpl-2-0",
+      "value": 2
+    },
+    {
+      "name": "gpl_3_0",
+      "native": "GTK_LICENSE_GPL_3_0",
+      "nick": "gpl-3-0",
+      "value": 3
+    },
+    {
+      "name": "lgpl_2_1",
+      "native": "GTK_LICENSE_LGPL_2_1",
+      "nick": "lgpl-2-1",
+      "value": 4
+    },
+    {
+      "name": "lgpl_3_0",
+      "native": "GTK_LICENSE_LGPL_3_0",
+      "nick": "lgpl-3-0",
+      "value": 5
+    },
+    {
+      "name": "bsd",
+      "native": "GTK_LICENSE_BSD",
+      "nick": "bsd",
+      "value": 6
+    },
+    {
+      "name": "mit_x11",
+      "native": "GTK_LICENSE_MIT_X11",
+      "nick": "mit-x11",
+      "value": 7
+    },
+    {
+      "name": "artistic",
+      "native": "GTK_LICENSE_ARTISTIC",
+      "nick": "artistic",
+      "value": 8
+    },
+    {
+      "name": "gpl_2_0_only",
+      "native": "GTK_LICENSE_GPL_2_0_ONLY",
+      "nick": "gpl-2-0-only",
+      "value": 9
+    },
+    {
+      "name": "gpl_3_0_only",
+      "native": "GTK_LICENSE_GPL_3_0_ONLY",
+      "nick": "gpl-3-0-only",
+      "value": 10
+    },
+    {
+      "name": "lgpl_2_1_only",
+      "native": "GTK_LICENSE_LGPL_2_1_ONLY",
+      "nick": "lgpl-2-1-only",
+      "value": 11
+    },
+    {
+      "name": "lgpl_3_0_only",
+      "native": "GTK_LICENSE_LGPL_3_0_ONLY",
+      "nick": "lgpl-3-0-only",
+      "value": 12
+    },
+    {
+      "name": "agpl_3_0",
+      "native": "GTK_LICENSE_AGPL_3_0",
+      "nick": "agpl-3-0",
+      "value": 13
+    },
+    {
+      "name": "agpl_3_0_only",
+      "native": "GTK_LICENSE_AGPL_3_0_ONLY",
+      "nick": "agpl-3-0-only",
+      "value": 14
+    },
+    {
+      "name": "bsd_3",
+      "native": "GTK_LICENSE_BSD_3",
+      "nick": "bsd-3",
+      "value": 15
+    },
+    {
+      "name": "apache_2_0",
+      "native": "GTK_LICENSE_APACHE_2_0",
+      "nick": "apache-2-0",
+      "value": 16
+    },
+    {
+      "name": "mpl_2_0",
+      "native": "GTK_LICENSE_MPL_2_0",
+      "nick": "mpl-2-0",
+      "value": 17
+    },
+    {
+      "name": "0bsd",
+      "native": "GTK_LICENSE_0BSD",
+      "nick": "0bsd",
+      "value": 18
+    }
+  ],
+  "native": {
+    "c_type": "GtkLicense",
+    "gtype": "GtkLicense",
+    "name": "GtkLicense"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

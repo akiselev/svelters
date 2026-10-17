@@ -1,0 +1,22 @@
+verify_subject: {tag: entry}
+properties:
+  - name: text
+    js_name: text
+    provenance: "GtkEditable:text (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+signals:
+  - name: changed
+    js_event: changed
+    handler_result: none
+    sync_required: false
+    provenance: "GtkEditable::changed, void return, run-last (Gtk 4 docs)"
+  - name: "notify::text"
+    js_event: "notify::text"
+    derived_from: {property: text}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify detail for GtkEditable:text; P entry event"

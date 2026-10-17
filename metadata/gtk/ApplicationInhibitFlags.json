@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ApplicationInhibitFlags",
+  "kind": "flags",
+  "members": [
+    {
+      "name": "logout",
+      "native": "GTK_APPLICATION_INHIBIT_LOGOUT",
+      "nick": "logout",
+      "value": 1
+    },
+    {
+      "name": "switch",
+      "native": "GTK_APPLICATION_INHIBIT_SWITCH",
+      "nick": "switch",
+      "value": 2
+    },
+    {
+      "name": "suspend",
+      "native": "GTK_APPLICATION_INHIBIT_SUSPEND",
+      "nick": "suspend",
+      "value": 4
+    },
+    {
+      "name": "idle",
+      "native": "GTK_APPLICATION_INHIBIT_IDLE",
+      "nick": "idle",
+      "value": 8
+    }
+  ],
+  "native": {
+    "c_type": "GtkApplicationInhibitFlags",
+    "gtype": "GtkApplicationInhibitFlags",
+    "name": "GtkApplicationInhibitFlags"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

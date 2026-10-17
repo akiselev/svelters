@@ -1,0 +1,305 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "set_child"
+      ],
+      "widget_props": [
+        "child"
+      ]
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_viewport_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "hadjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        },
+        {
+          "name": "vadjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "viewport"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Viewport",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Scrollable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:method:get_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child",
+      "native": "gtk_viewport_get_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:method:get_scroll_to_focus",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_scroll_to_focus",
+      "native": "gtk_viewport_get_scroll_to_focus",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:method:scroll_to",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "scroll_to",
+      "native": "gtk_viewport_scroll_to",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "descendant",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "scroll",
+          "native": "GtkScrollInfo*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:ScrollInfo>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:method:set_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_child",
+      "native": "gtk_viewport_set_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:method:set_scroll_to_focus",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_scroll_to_focus",
+      "native": "gtk_viewport_set_scroll_to_focus",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "scroll_to_focus",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkViewport",
+    "gtype": "GtkViewport",
+    "name": "GtkViewport"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_viewport_get_child",
+        "set": "gtk_viewport_set_child"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:prop:child",
+      "invocation": "reflected",
+      "js_name": "child",
+      "name": "child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkViewport"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_viewport_get_scroll_to_focus",
+        "set": "gtk_viewport_set_scroll_to_focus"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Viewport:prop:scroll-to-focus",
+      "invocation": "reflected",
+      "js_name": "scrollToFocus",
+      "name": "scroll-to-focus",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::scroll-to-focus"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkViewport"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

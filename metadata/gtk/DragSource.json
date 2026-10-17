@@ -1,0 +1,459 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.GestureSingle",
+    "Gtk.Gesture",
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_drag_source_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gdk:DragAction"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:DragSource",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:drag_cancel",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "drag_cancel",
+      "native": "gtk_drag_source_drag_cancel",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:get_actions",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_actions",
+      "native": "gtk_drag_source_get_actions",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkDragAction",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:get_content",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_content",
+      "native": "gtk_drag_source_get_content",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkContentProvider*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:ContentProvider>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:get_drag",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_drag",
+      "native": "gtk_drag_source_get_drag",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkDrag*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Drag>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:set_actions",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_actions",
+      "native": "gtk_drag_source_set_actions",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "actions",
+          "native": "GdkDragAction",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:set_content",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_content",
+      "native": "gtk_drag_source_set_content",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "content",
+          "native": "GdkContentProvider*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:ContentProvider>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:set_icon",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_icon",
+      "native": "gtk_drag_source_set_icon",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "paintable",
+          "native": "GdkPaintable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+        },
+        {
+          "name": "hot_x",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "hot_y",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkDragSource",
+    "gtype": "GtkDragSource",
+    "name": "GtkDragSource"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drag_source_get_actions",
+        "set": "gtk_drag_source_set_actions"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:prop:actions",
+      "invocation": "reflected",
+      "js_name": "actions",
+      "name": "actions",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::actions"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkDragAction",
+        "origin": "runtime",
+        "owner": "GtkDragSource"
+      },
+      "type": {
+        "gtype": "GdkDragAction",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drag_source_get_content",
+        "set": "gtk_drag_source_set_content"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:prop:content",
+      "invocation": "reflected",
+      "js_name": "content",
+      "name": "content",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::content"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkContentProvider",
+        "origin": "runtime",
+        "owner": "GtkDragSource"
+      },
+      "type": {
+        "gtype": "GdkContentProvider",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gdk:ContentProvider>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:signal:drag-begin",
+      "js_event": "drag-begin",
+      "name": "drag-begin",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrag",
+          "name": "drag",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drag>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:signal:drag-cancel",
+      "js_event": "drag-cancel",
+      "name": "drag-cancel",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrag",
+          "name": "drag",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drag>"
+        },
+        {
+          "gtype": "GdkDragCancelReason",
+          "name": "reason",
+          "type": "enum<svelters-api:v1:type:gtk:Gdk:DragCancelReason>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:signal:drag-end",
+      "js_event": "drag-end",
+      "name": "drag-end",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrag",
+          "name": "drag",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drag>"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "delete_data",
+          "type": "bool"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DragSource:signal:prepare",
+      "js_event": "prepare",
+      "name": "prepare",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "object<svelters-api:v1:type:gtk:Gdk:ContentProvider>"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "GdkContentProvider"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,1941 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_print_settings_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:ctor:new_from_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_file",
+      "native": "gtk_print_settings_new_from_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:ctor:new_from_gvariant",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_gvariant",
+      "native": "gtk_print_settings_new_from_gvariant",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "variant",
+          "native": "GVariant*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "variant"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:ctor:new_from_key_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_key_file",
+      "native": "gtk_print_settings_new_from_key_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key_file",
+          "native": "GKeyFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:KeyFile>"
+        },
+        {
+          "name": "group_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:copy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "copy",
+      "native": "gtk_print_settings_copy",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintSettings*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:PrintSettings>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:foreach",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "foreach",
+      "native": "gtk_print_settings_foreach",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkPrintSettingsFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:PrintSettingsFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get",
+      "native": "gtk_print_settings_get",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_bool",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_bool",
+      "native": "gtk_print_settings_get_bool",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_collate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_collate",
+      "native": "gtk_print_settings_get_collate",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_default_source",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_default_source",
+      "native": "gtk_print_settings_get_default_source",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_dither",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_dither",
+      "native": "gtk_print_settings_get_dither",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_double",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_double",
+      "native": "gtk_print_settings_get_double",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_double_with_default",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_double_with_default",
+      "native": "gtk_print_settings_get_double_with_default",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "def",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_duplex",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_duplex",
+      "native": "gtk_print_settings_get_duplex",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintDuplex",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PrintDuplex>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_finishings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_finishings",
+      "native": "gtk_print_settings_get_finishings",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_int",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_int",
+      "native": "gtk_print_settings_get_int",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_int_with_default",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_int_with_default",
+      "native": "gtk_print_settings_get_int_with_default",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "def",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_length",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_length",
+      "native": "gtk_print_settings_get_length",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "unit",
+          "native": "GtkUnit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Unit>"
+        }
+      ],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_media_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_media_type",
+      "native": "gtk_print_settings_get_media_type",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_n_copies",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_n_copies",
+      "native": "gtk_print_settings_get_n_copies",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_number_up",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_number_up",
+      "native": "gtk_print_settings_get_number_up",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_number_up_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_number_up_layout",
+      "native": "gtk_print_settings_get_number_up_layout",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkNumberUpLayout",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:NumberUpLayout>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_orientation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_orientation",
+      "native": "gtk_print_settings_get_orientation",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPageOrientation",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PageOrientation>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_output_bin",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_output_bin",
+      "native": "gtk_print_settings_get_output_bin",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_page_ranges",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_page_ranges",
+      "native": "gtk_print_settings_get_page_ranges",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "num_ranges",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "GtkPageRange*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "list<value<svelters-api:v1:type:gtk:Gtk:PageRange>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_page_set",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_page_set",
+      "native": "gtk_print_settings_get_page_set",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPageSet",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PageSet>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_paper_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_paper_height",
+      "native": "gtk_print_settings_get_paper_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "unit",
+          "native": "GtkUnit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Unit>"
+        }
+      ],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_paper_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_paper_size",
+      "native": "gtk_print_settings_get_paper_size",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPaperSize*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:PaperSize>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_paper_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_paper_width",
+      "native": "gtk_print_settings_get_paper_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "unit",
+          "native": "GtkUnit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Unit>"
+        }
+      ],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_print_pages",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_print_pages",
+      "native": "gtk_print_settings_get_print_pages",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintPages",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PrintPages>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_printer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_printer",
+      "native": "gtk_print_settings_get_printer",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_printer_lpi",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_printer_lpi",
+      "native": "gtk_print_settings_get_printer_lpi",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_quality",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_quality",
+      "native": "gtk_print_settings_get_quality",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintQuality",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PrintQuality>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_resolution",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resolution",
+      "native": "gtk_print_settings_get_resolution",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_resolution_x",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resolution_x",
+      "native": "gtk_print_settings_get_resolution_x",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_resolution_y",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resolution_y",
+      "native": "gtk_print_settings_get_resolution_y",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_reverse",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_reverse",
+      "native": "gtk_print_settings_get_reverse",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_scale",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_scale",
+      "native": "gtk_print_settings_get_scale",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:get_use_color",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_color",
+      "native": "gtk_print_settings_get_use_color",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:has_key",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "has_key",
+      "native": "gtk_print_settings_has_key",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:load_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_file",
+      "native": "gtk_print_settings_load_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:load_key_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_key_file",
+      "native": "gtk_print_settings_load_key_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key_file",
+          "native": "GKeyFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:KeyFile>"
+        },
+        {
+          "name": "group_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set",
+      "native": "gtk_print_settings_set",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_bool",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_bool",
+      "native": "gtk_print_settings_set_bool",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_collate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_collate",
+      "native": "gtk_print_settings_set_collate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "collate",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_default_source",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_default_source",
+      "native": "gtk_print_settings_set_default_source",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "default_source",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_dither",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_dither",
+      "native": "gtk_print_settings_set_dither",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "dither",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_double",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_double",
+      "native": "gtk_print_settings_set_double",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_duplex",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_duplex",
+      "native": "gtk_print_settings_set_duplex",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "duplex",
+          "native": "GtkPrintDuplex",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PrintDuplex>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_finishings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_finishings",
+      "native": "gtk_print_settings_set_finishings",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "finishings",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_int",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_int",
+      "native": "gtk_print_settings_set_int",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_length",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_length",
+      "native": "gtk_print_settings_set_length",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "unit",
+          "native": "GtkUnit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Unit>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_media_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_media_type",
+      "native": "gtk_print_settings_set_media_type",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "media_type",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_n_copies",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_n_copies",
+      "native": "gtk_print_settings_set_n_copies",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "num_copies",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_number_up",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_number_up",
+      "native": "gtk_print_settings_set_number_up",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "number_up",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_number_up_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_number_up_layout",
+      "native": "gtk_print_settings_set_number_up_layout",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "number_up_layout",
+          "native": "GtkNumberUpLayout",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:NumberUpLayout>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_orientation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_orientation",
+      "native": "gtk_print_settings_set_orientation",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "orientation",
+          "native": "GtkPageOrientation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PageOrientation>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_output_bin",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_output_bin",
+      "native": "gtk_print_settings_set_output_bin",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "output_bin",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_page_ranges",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_page_ranges",
+      "native": "gtk_print_settings_set_page_ranges",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "page_ranges",
+          "native": "GtkPageRange*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gtk:PageRange>>"
+        },
+        {
+          "name": "num_ranges",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_page_set",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_page_set",
+      "native": "gtk_print_settings_set_page_set",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "page_set",
+          "native": "GtkPageSet",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PageSet>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_paper_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_paper_height",
+      "native": "gtk_print_settings_set_paper_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "height",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "unit",
+          "native": "GtkUnit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Unit>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_paper_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_paper_size",
+      "native": "gtk_print_settings_set_paper_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "paper_size",
+          "native": "GtkPaperSize*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:PaperSize>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_paper_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_paper_width",
+      "native": "gtk_print_settings_set_paper_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "width",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "unit",
+          "native": "GtkUnit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Unit>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_print_pages",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_print_pages",
+      "native": "gtk_print_settings_set_print_pages",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "pages",
+          "native": "GtkPrintPages",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PrintPages>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_printer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_printer",
+      "native": "gtk_print_settings_set_printer",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "printer",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_printer_lpi",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_printer_lpi",
+      "native": "gtk_print_settings_set_printer_lpi",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "lpi",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_quality",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_quality",
+      "native": "gtk_print_settings_set_quality",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "quality",
+          "native": "GtkPrintQuality",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PrintQuality>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_resolution",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_resolution",
+      "native": "gtk_print_settings_set_resolution",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resolution",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_resolution_xy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_resolution_xy",
+      "native": "gtk_print_settings_set_resolution_xy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resolution_x",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "resolution_y",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_reverse",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_reverse",
+      "native": "gtk_print_settings_set_reverse",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "reverse",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_scale",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_scale",
+      "native": "gtk_print_settings_set_scale",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "scale",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:set_use_color",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_color",
+      "native": "gtk_print_settings_set_use_color",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "use_color",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:to_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "to_file",
+      "native": "gtk_print_settings_to_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:to_gvariant",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "to_gvariant",
+      "native": "gtk_print_settings_to_gvariant",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GVariant*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "variant"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:to_key_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "to_key_file",
+      "native": "gtk_print_settings_to_key_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key_file",
+          "native": "GKeyFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:KeyFile>"
+        },
+        {
+          "name": "group_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings:method:unset",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unset",
+      "native": "gtk_print_settings_unset",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintSettings",
+    "gtype": "GtkPrintSettings",
+    "name": "GtkPrintSettings"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,169 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_stack_switcher_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "stackswitcher"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:method:get_stack",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_stack",
+      "native": "gtk_stack_switcher_get_stack",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkStack*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Stack>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:method:set_stack",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_stack",
+      "native": "gtk_stack_switcher_set_stack",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "stack",
+          "native": "GtkStack*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Stack>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkStackSwitcher",
+    "gtype": "GtkStackSwitcher",
+    "name": "GtkStackSwitcher"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_switcher_get_stack",
+        "set": "gtk_stack_switcher_set_stack"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:prop:stack",
+      "invocation": "reflected",
+      "js_name": "stack",
+      "name": "stack",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::stack"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "GtkStack",
+        "origin": "runtime",
+        "owner": "GtkStackSwitcher"
+      },
+      "type": {
+        "gtype": "GtkStack",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Stack>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

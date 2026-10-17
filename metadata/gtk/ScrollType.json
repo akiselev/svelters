@@ -1,0 +1,127 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrollType",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "none",
+      "native": "GTK_SCROLL_NONE",
+      "nick": "none",
+      "value": 0
+    },
+    {
+      "name": "jump",
+      "native": "GTK_SCROLL_JUMP",
+      "nick": "jump",
+      "value": 1
+    },
+    {
+      "name": "step_backward",
+      "native": "GTK_SCROLL_STEP_BACKWARD",
+      "nick": "step-backward",
+      "value": 2
+    },
+    {
+      "name": "step_forward",
+      "native": "GTK_SCROLL_STEP_FORWARD",
+      "nick": "step-forward",
+      "value": 3
+    },
+    {
+      "name": "page_backward",
+      "native": "GTK_SCROLL_PAGE_BACKWARD",
+      "nick": "page-backward",
+      "value": 4
+    },
+    {
+      "name": "page_forward",
+      "native": "GTK_SCROLL_PAGE_FORWARD",
+      "nick": "page-forward",
+      "value": 5
+    },
+    {
+      "name": "step_up",
+      "native": "GTK_SCROLL_STEP_UP",
+      "nick": "step-up",
+      "value": 6
+    },
+    {
+      "name": "step_down",
+      "native": "GTK_SCROLL_STEP_DOWN",
+      "nick": "step-down",
+      "value": 7
+    },
+    {
+      "name": "page_up",
+      "native": "GTK_SCROLL_PAGE_UP",
+      "nick": "page-up",
+      "value": 8
+    },
+    {
+      "name": "page_down",
+      "native": "GTK_SCROLL_PAGE_DOWN",
+      "nick": "page-down",
+      "value": 9
+    },
+    {
+      "name": "step_left",
+      "native": "GTK_SCROLL_STEP_LEFT",
+      "nick": "step-left",
+      "value": 10
+    },
+    {
+      "name": "step_right",
+      "native": "GTK_SCROLL_STEP_RIGHT",
+      "nick": "step-right",
+      "value": 11
+    },
+    {
+      "name": "page_left",
+      "native": "GTK_SCROLL_PAGE_LEFT",
+      "nick": "page-left",
+      "value": 12
+    },
+    {
+      "name": "page_right",
+      "native": "GTK_SCROLL_PAGE_RIGHT",
+      "nick": "page-right",
+      "value": 13
+    },
+    {
+      "name": "start",
+      "native": "GTK_SCROLL_START",
+      "nick": "start",
+      "value": 14
+    },
+    {
+      "name": "end",
+      "native": "GTK_SCROLL_END",
+      "nick": "end",
+      "value": 15
+    }
+  ],
+  "native": {
+    "c_type": "GtkScrollType",
+    "gtype": "GtkScrollType",
+    "name": "GtkScrollType"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

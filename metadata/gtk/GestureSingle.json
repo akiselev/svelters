@@ -1,0 +1,351 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Gesture",
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:get_button",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_button",
+      "native": "gtk_gesture_single_get_button",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:get_current_button",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_button",
+      "native": "gtk_gesture_single_get_current_button",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:get_current_sequence",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_sequence",
+      "native": "gtk_gesture_single_get_current_sequence",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkEventSequence*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:get_exclusive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_exclusive",
+      "native": "gtk_gesture_single_get_exclusive",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:get_touch_only",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_touch_only",
+      "native": "gtk_gesture_single_get_touch_only",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:set_button",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_button",
+      "native": "gtk_gesture_single_set_button",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "button",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:set_exclusive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_exclusive",
+      "native": "gtk_gesture_single_set_exclusive",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "exclusive",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:method:set_touch_only",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_touch_only",
+      "native": "gtk_gesture_single_set_touch_only",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "touch_only",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGestureSingle",
+    "gtype": "GtkGestureSingle",
+    "name": "GtkGestureSingle"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gesture_single_get_button",
+        "set": "gtk_gesture_single_set_button"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:prop:button",
+      "invocation": "reflected",
+      "js_name": "button",
+      "name": "button",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::button"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkGestureSingle"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gesture_single_get_exclusive",
+        "set": "gtk_gesture_single_set_exclusive"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:prop:exclusive",
+      "invocation": "reflected",
+      "js_name": "exclusive",
+      "name": "exclusive",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::exclusive"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGestureSingle"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gesture_single_get_touch_only",
+        "set": "gtk_gesture_single_set_touch_only"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:prop:touch-only",
+      "invocation": "reflected",
+      "js_name": "touchOnly",
+      "name": "touch-only",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::touch-only"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGestureSingle"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

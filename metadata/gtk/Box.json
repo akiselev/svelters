@@ -1,0 +1,649 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "append",
+        "insert_child_after",
+        "prepend",
+        "remove",
+        "reorder_child_after"
+      ],
+      "widget_props": []
+    },
+    "default_slot": "children",
+    "policy": "ordered",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attached_props",
+            "cardinality",
+            "ops",
+            "order",
+            "ownership",
+            "readback"
+          ],
+          "origin": "manual",
+          "provenance": "gtk_box_insert_child_after / gtk_box_remove docs; insert-before is expressed as insert-after the anchor's previous sibling"
+        },
+        "attached_props": [],
+        "cardinality": "many",
+        "name": "children",
+        "ops": {
+          "insert": {
+            "args": [
+              "child",
+              "prev_sibling"
+            ],
+            "method": "insert_child_after",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child"
+            ],
+            "method": "remove",
+            "origin": "manual"
+          }
+        },
+        "order": "ordered",
+        "origin": "manual",
+        "ownership": "parent_owned",
+        "readback": {
+          "mode": "parent",
+          "origin": "manual"
+        }
+      }
+    ]
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_box_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "orientation",
+          "native": "GtkOrientation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Orientation>"
+        },
+        {
+          "name": "spacing",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "box"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:BaselinePosition"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Box",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:append",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append",
+      "native": "gtk_box_append",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:get_baseline_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_baseline_child",
+      "native": "gtk_box_get_baseline_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:get_baseline_position",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_baseline_position",
+      "native": "gtk_box_get_baseline_position",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkBaselinePosition",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:BaselinePosition>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:get_homogeneous",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_homogeneous",
+      "native": "gtk_box_get_homogeneous",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:get_spacing",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_spacing",
+      "native": "gtk_box_get_spacing",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:insert_child_after",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_child_after",
+      "native": "gtk_box_insert_child_after",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "sibling",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:prepend",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "prepend",
+      "native": "gtk_box_prepend",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:remove",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove",
+      "native": "gtk_box_remove",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:reorder_child_after",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reorder_child_after",
+      "native": "gtk_box_reorder_child_after",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "sibling",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:set_baseline_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_baseline_child",
+      "native": "gtk_box_set_baseline_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:set_baseline_position",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_baseline_position",
+      "native": "gtk_box_set_baseline_position",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "GtkBaselinePosition",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:BaselinePosition>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:set_homogeneous",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_homogeneous",
+      "native": "gtk_box_set_homogeneous",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "homogeneous",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:method:set_spacing",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_spacing",
+      "native": "gtk_box_set_spacing",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "spacing",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkBox",
+    "gtype": "GtkBox",
+    "name": "GtkBox"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_box_get_baseline_child",
+        "set": "gtk_box_set_baseline_child"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:prop:baseline-child",
+      "invocation": "reflected",
+      "js_name": "baselineChild",
+      "name": "baseline-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::baseline-child"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkBox"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_box_get_baseline_position",
+        "set": "gtk_box_set_baseline_position"
+      },
+      "default": "center",
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:prop:baseline-position",
+      "invocation": "reflected",
+      "js_name": "baselinePosition",
+      "name": "baseline-position",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::baseline-position"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkBaselinePosition",
+        "origin": "runtime",
+        "owner": "GtkBox"
+      },
+      "type": {
+        "gtype": "GtkBaselinePosition",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:BaselinePosition>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_box_get_homogeneous",
+        "set": "gtk_box_set_homogeneous"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:prop:homogeneous",
+      "invocation": "reflected",
+      "js_name": "homogeneous",
+      "name": "homogeneous",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::homogeneous"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkBox"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_box_get_spacing",
+        "set": "gtk_box_set_spacing"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkBox:spacing (Gtk 4 docs); P prop"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Box:prop:spacing",
+      "invocation": "reflected",
+      "js_name": "spacing",
+      "name": "spacing",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::spacing"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkBox"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": "overrides/gtk/Box.yaml",
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

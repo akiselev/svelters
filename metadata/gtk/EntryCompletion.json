@@ -1,0 +1,1104 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_entry_completion_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:ctor:new_with_area",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_with_area",
+      "native": "gtk_entry_completion_new_with_area",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "area",
+          "native": "GtkCellArea*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellArea>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion",
+  "interfaces": [
+    "Gtk.Buildable",
+    "Gtk.CellLayout"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:complete",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "complete",
+      "native": "gtk_entry_completion_complete",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:compute_prefix",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "compute_prefix",
+      "native": "gtk_entry_completion_compute_prefix",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "key",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "char*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_completion_prefix",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_completion_prefix",
+      "native": "gtk_entry_completion_get_completion_prefix",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_entry",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_entry",
+      "native": "gtk_entry_completion_get_entry",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_inline_completion",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_inline_completion",
+      "native": "gtk_entry_completion_get_inline_completion",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_inline_selection",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_inline_selection",
+      "native": "gtk_entry_completion_get_inline_selection",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_minimum_key_length",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_minimum_key_length",
+      "native": "gtk_entry_completion_get_minimum_key_length",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_entry_completion_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreeModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_popup_completion",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_popup_completion",
+      "native": "gtk_entry_completion_get_popup_completion",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_popup_set_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_popup_set_width",
+      "native": "gtk_entry_completion_get_popup_set_width",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_popup_single_match",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_popup_single_match",
+      "native": "gtk_entry_completion_get_popup_single_match",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:get_text_column",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_text_column",
+      "native": "gtk_entry_completion_get_text_column",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:insert_prefix",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_prefix",
+      "native": "gtk_entry_completion_insert_prefix",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_inline_completion",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_inline_completion",
+      "native": "gtk_entry_completion_set_inline_completion",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "inline_completion",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_inline_selection",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_inline_selection",
+      "native": "gtk_entry_completion_set_inline_selection",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "inline_selection",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_match_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_match_func",
+      "native": "gtk_entry_completion_set_match_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkEntryCompletionMatchFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:EntryCompletionMatchFunc>"
+        },
+        {
+          "name": "func_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "func_notify",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_minimum_key_length",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_minimum_key_length",
+      "native": "gtk_entry_completion_set_minimum_key_length",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "length",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_model",
+      "native": "gtk_entry_completion_set_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GtkTreeModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_popup_completion",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_popup_completion",
+      "native": "gtk_entry_completion_set_popup_completion",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "popup_completion",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_popup_set_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_popup_set_width",
+      "native": "gtk_entry_completion_set_popup_set_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "popup_set_width",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_popup_single_match",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_popup_single_match",
+      "native": "gtk_entry_completion_set_popup_single_match",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "popup_single_match",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:method:set_text_column",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_text_column",
+      "native": "gtk_entry_completion_set_text_column",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "column",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkEntryCompletion",
+    "gtype": "GtkEntryCompletion",
+    "name": "GtkEntryCompletion"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:cell-area",
+      "invocation": "reflected",
+      "js_name": "cellArea",
+      "name": "cell-area",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::cell-area"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkCellArea",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "GtkCellArea",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:CellArea>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_inline_completion",
+        "set": "gtk_entry_completion_set_inline_completion"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:inline-completion",
+      "invocation": "reflected",
+      "js_name": "inlineCompletion",
+      "name": "inline-completion",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::inline-completion"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_inline_selection",
+        "set": "gtk_entry_completion_set_inline_selection"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:inline-selection",
+      "invocation": "reflected",
+      "js_name": "inlineSelection",
+      "name": "inline-selection",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::inline-selection"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_minimum_key_length",
+        "set": "gtk_entry_completion_set_minimum_key_length"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:minimum-key-length",
+      "invocation": "reflected",
+      "js_name": "minimumKeyLength",
+      "name": "minimum-key-length",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::minimum-key-length"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_model",
+        "set": "gtk_entry_completion_set_model"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:model",
+      "invocation": "reflected",
+      "js_name": "model",
+      "name": "model",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkTreeModel",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "GtkTreeModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_popup_completion",
+        "set": "gtk_entry_completion_set_popup_completion"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:popup-completion",
+      "invocation": "reflected",
+      "js_name": "popupCompletion",
+      "name": "popup-completion",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::popup-completion"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_popup_set_width",
+        "set": "gtk_entry_completion_set_popup_set_width"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:popup-set-width",
+      "invocation": "reflected",
+      "js_name": "popupSetWidth",
+      "name": "popup-set-width",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::popup-set-width"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_popup_single_match",
+        "set": "gtk_entry_completion_set_popup_single_match"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:popup-single-match",
+      "invocation": "reflected",
+      "js_name": "popupSingleMatch",
+      "name": "popup-single-match",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::popup-single-match"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_entry_completion_get_text_column",
+        "set": "gtk_entry_completion_set_text_column"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:text-column",
+      "invocation": "reflected",
+      "js_name": "textColumn",
+      "name": "text-column",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::text-column"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkEntryCompletion"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:signal:cursor-on-match",
+      "js_event": "cursor-on-match",
+      "name": "cursor-on-match",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTreeModel",
+          "name": "model",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "gtype": "GtkTreeIter",
+          "name": "iter",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:signal:insert-prefix",
+      "js_event": "insert-prefix",
+      "name": "insert-prefix",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "prefix",
+          "type": "string"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:signal:match-selected",
+      "js_event": "match-selected",
+      "name": "match-selected",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTreeModel",
+          "name": "model",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "gtype": "GtkTreeIter",
+          "name": "iter",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:signal:no-matches",
+      "js_event": "no-matches",
+      "name": "no-matches",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

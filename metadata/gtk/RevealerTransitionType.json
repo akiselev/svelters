@@ -1,0 +1,115 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:RevealerTransitionType",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "none",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_NONE",
+      "nick": "none",
+      "value": 0
+    },
+    {
+      "name": "crossfade",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_CROSSFADE",
+      "nick": "crossfade",
+      "value": 1
+    },
+    {
+      "name": "slide_right",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT",
+      "nick": "slide-right",
+      "value": 2
+    },
+    {
+      "name": "slide_left",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT",
+      "nick": "slide-left",
+      "value": 3
+    },
+    {
+      "name": "slide_up",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SLIDE_UP",
+      "nick": "slide-up",
+      "value": 4
+    },
+    {
+      "name": "slide_down",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN",
+      "nick": "slide-down",
+      "value": 5
+    },
+    {
+      "name": "swing_right",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SWING_RIGHT",
+      "nick": "swing-right",
+      "value": 6
+    },
+    {
+      "name": "swing_left",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SWING_LEFT",
+      "nick": "swing-left",
+      "value": 7
+    },
+    {
+      "name": "swing_up",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SWING_UP",
+      "nick": "swing-up",
+      "value": 8
+    },
+    {
+      "name": "swing_down",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_SWING_DOWN",
+      "nick": "swing-down",
+      "value": 9
+    },
+    {
+      "name": "fade_slide_right",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_RIGHT",
+      "nick": "fade-slide-right",
+      "value": 10
+    },
+    {
+      "name": "fade_slide_left",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_LEFT",
+      "nick": "fade-slide-left",
+      "value": 11
+    },
+    {
+      "name": "fade_slide_up",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_UP",
+      "nick": "fade-slide-up",
+      "value": 12
+    },
+    {
+      "name": "fade_slide_down",
+      "native": "GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_DOWN",
+      "nick": "fade-slide-down",
+      "value": 13
+    }
+  ],
+  "native": {
+    "c_type": "GtkRevealerTransitionType",
+    "gtype": "GtkRevealerTransitionType",
+    "name": "GtkRevealerTransitionType"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

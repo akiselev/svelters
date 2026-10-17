@@ -1,0 +1,960 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "range"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Range",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.AccessibleRange",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_adjustment",
+      "native": "gtk_range_get_adjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_fill_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_fill_level",
+      "native": "gtk_range_get_fill_level",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_flippable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_flippable",
+      "native": "gtk_range_get_flippable",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_inverted",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_inverted",
+      "native": "gtk_range_get_inverted",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_range_rect",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_range_rect",
+      "native": "gtk_range_get_range_rect",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "range_rect",
+          "native": "GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_restrict_to_fill_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_restrict_to_fill_level",
+      "native": "gtk_range_get_restrict_to_fill_level",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_round_digits",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_round_digits",
+      "native": "gtk_range_get_round_digits",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_show_fill_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_fill_level",
+      "native": "gtk_range_get_show_fill_level",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_slider_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_slider_range",
+      "native": "gtk_range_get_slider_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "slider_start",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "slider_end",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_slider_size_fixed",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_slider_size_fixed",
+      "native": "gtk_range_get_slider_size_fixed",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_value",
+      "native": "gtk_range_get_value",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_adjustment",
+      "native": "gtk_range_set_adjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_fill_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_fill_level",
+      "native": "gtk_range_set_fill_level",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "fill_level",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_flippable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_flippable",
+      "native": "gtk_range_set_flippable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "flippable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_increments",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_increments",
+      "native": "gtk_range_set_increments",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "step",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "page",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_inverted",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_inverted",
+      "native": "gtk_range_set_inverted",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_range",
+      "native": "gtk_range_set_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "max",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_restrict_to_fill_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_restrict_to_fill_level",
+      "native": "gtk_range_set_restrict_to_fill_level",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "restrict_to_fill_level",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_round_digits",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_round_digits",
+      "native": "gtk_range_set_round_digits",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "round_digits",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_show_fill_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_fill_level",
+      "native": "gtk_range_set_show_fill_level",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "show_fill_level",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_slider_size_fixed",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_slider_size_fixed",
+      "native": "gtk_range_set_slider_size_fixed",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "size_fixed",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_value",
+      "native": "gtk_range_set_value",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "value",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkRange",
+    "gtype": "GtkRange",
+    "name": "GtkRange"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_range_get_adjustment",
+        "set": "gtk_range_set_adjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:adjustment",
+      "invocation": "reflected",
+      "js_name": "adjustment",
+      "name": "adjustment",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::adjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkRange"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_range_get_fill_level",
+        "set": "gtk_range_set_fill_level"
+      },
+      "default": 1.7976931348623157e+308,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:fill-level",
+      "invocation": "reflected",
+      "js_name": "fillLevel",
+      "name": "fill-level",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::fill-level"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": -1.7976931348623157e+308
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkRange"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_range_get_inverted",
+        "set": "gtk_range_set_inverted"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:inverted",
+      "invocation": "reflected",
+      "js_name": "inverted",
+      "name": "inverted",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::inverted"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkRange"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_range_get_restrict_to_fill_level",
+        "set": "gtk_range_set_restrict_to_fill_level"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:restrict-to-fill-level",
+      "invocation": "reflected",
+      "js_name": "restrictToFillLevel",
+      "name": "restrict-to-fill-level",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::restrict-to-fill-level"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkRange"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_range_get_round_digits",
+        "set": "gtk_range_set_round_digits"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:round-digits",
+      "invocation": "reflected",
+      "js_name": "roundDigits",
+      "name": "round-digits",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::round-digits"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkRange"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_range_get_show_fill_level",
+        "set": "gtk_range_set_show_fill_level"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:show-fill-level",
+      "invocation": "reflected",
+      "js_name": "showFillLevel",
+      "name": "show-fill-level",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-fill-level"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkRange"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:signal:adjust-bounds",
+      "js_event": "adjust-bounds",
+      "name": "adjust-bounds",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "value",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:signal:change-value",
+      "js_event": "change-value",
+      "name": "change-value",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkScrollType",
+          "name": "scroll",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollType>"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "value",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:signal:move-slider",
+      "js_event": "move-slider",
+      "name": "move-slider",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkScrollType",
+          "name": "step",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollType>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Range:signal:value-changed",
+      "js_event": "value-changed",
+      "name": "value-changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

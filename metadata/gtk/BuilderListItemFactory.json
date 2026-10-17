@@ -1,0 +1,295 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.ListItemFactory",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:ctor:new_from_bytes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_bytes",
+      "native": "gtk_builder_list_item_factory_new_from_bytes",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "scope",
+          "native": "GtkBuilderScope*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:BuilderScope>"
+        },
+        {
+          "name": "bytes",
+          "native": "GBytes*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:Bytes>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:ctor:new_from_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_resource",
+      "native": "gtk_builder_list_item_factory_new_from_resource",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "scope",
+          "native": "GtkBuilderScope*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:BuilderScope>"
+        },
+        {
+          "name": "resource_path",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:method:get_bytes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_bytes",
+      "native": "gtk_builder_list_item_factory_get_bytes",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GBytes*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:GLib:Bytes>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:method:get_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resource",
+      "native": "gtk_builder_list_item_factory_get_resource",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:method:get_scope",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_scope",
+      "native": "gtk_builder_list_item_factory_get_scope",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkBuilderScope*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:BuilderScope>"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkBuilderListItemFactory",
+    "gtype": "GtkBuilderListItemFactory",
+    "name": "GtkBuilderListItemFactory"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_builder_list_item_factory_get_bytes",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:prop:bytes",
+      "invocation": "reflected",
+      "js_name": "bytes",
+      "name": "bytes",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::bytes"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GBytes",
+        "origin": "runtime",
+        "owner": "GtkBuilderListItemFactory"
+      },
+      "type": {
+        "gtype": "GBytes",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:GLib:Bytes>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_builder_list_item_factory_get_resource",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:prop:resource",
+      "invocation": "reflected",
+      "js_name": "resource",
+      "name": "resource",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::resource"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkBuilderListItemFactory"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_builder_list_item_factory_get_scope",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory:prop:scope",
+      "invocation": "reflected",
+      "js_name": "scope",
+      "name": "scope",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::scope"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkBuilderScope",
+        "origin": "runtime",
+        "owner": "GtkBuilderListItemFactory"
+      },
+      "type": {
+        "gtype": "GtkBuilderScope",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:BuilderScope>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

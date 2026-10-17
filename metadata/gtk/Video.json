@@ -1,0 +1,655 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_video_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:ctor:new_for_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_for_file",
+      "native": "gtk_video_new_for_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file",
+          "native": "GFile*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:ctor:new_for_filename",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_for_filename",
+      "native": "gtk_video_new_for_filename",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filename",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:ctor:new_for_media_stream",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_for_media_stream",
+      "native": "gtk_video_new_for_media_stream",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "stream",
+          "native": "GtkMediaStream*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:MediaStream>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:ctor:new_for_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_for_resource",
+      "native": "gtk_video_new_for_resource",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resource_path",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "video"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Video",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_autoplay",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_autoplay",
+      "native": "gtk_video_get_autoplay",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_file",
+      "native": "gtk_video_get_file",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GFile*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_graphics_offload",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_graphics_offload",
+      "native": "gtk_video_get_graphics_offload",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkGraphicsOffloadEnabled",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_loop",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_loop",
+      "native": "gtk_video_get_loop",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_media_stream",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_media_stream",
+      "native": "gtk_video_get_media_stream",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkMediaStream*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:MediaStream>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_autoplay",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_autoplay",
+      "native": "gtk_video_set_autoplay",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "autoplay",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_file",
+      "native": "gtk_video_set_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file",
+          "native": "GFile*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_filename",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_filename",
+      "native": "gtk_video_set_filename",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filename",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_graphics_offload",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_graphics_offload",
+      "native": "gtk_video_set_graphics_offload",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "enabled",
+          "native": "GtkGraphicsOffloadEnabled",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_loop",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_loop",
+      "native": "gtk_video_set_loop",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "loop",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_media_stream",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_media_stream",
+      "native": "gtk_video_set_media_stream",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "stream",
+          "native": "GtkMediaStream*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:MediaStream>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_resource",
+      "native": "gtk_video_set_resource",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resource_path",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkVideo",
+    "gtype": "GtkVideo",
+    "name": "GtkVideo"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_video_get_autoplay",
+        "set": "gtk_video_set_autoplay"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:autoplay",
+      "invocation": "reflected",
+      "js_name": "autoplay",
+      "name": "autoplay",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::autoplay"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkVideo"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_video_get_file",
+        "set": "gtk_video_set_file"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:file",
+      "invocation": "reflected",
+      "js_name": "file",
+      "name": "file",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::file"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GFile",
+        "origin": "runtime",
+        "owner": "GtkVideo"
+      },
+      "type": {
+        "gtype": "GFile",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:File>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_video_get_graphics_offload",
+        "set": "gtk_video_set_graphics_offload"
+      },
+      "default": "disabled",
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:graphics-offload",
+      "invocation": "reflected",
+      "js_name": "graphicsOffload",
+      "name": "graphics-offload",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::graphics-offload"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkGraphicsOffloadEnabled",
+        "origin": "runtime",
+        "owner": "GtkVideo"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "GtkGraphicsOffloadEnabled",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_video_get_loop",
+        "set": "gtk_video_set_loop"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:loop",
+      "invocation": "reflected",
+      "js_name": "loop",
+      "name": "loop",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::loop"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkVideo"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_video_get_media_stream",
+        "set": "gtk_video_set_media_stream"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:media-stream",
+      "invocation": "reflected",
+      "js_name": "mediaStream",
+      "name": "media-stream",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::media-stream"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkMediaStream",
+        "origin": "runtime",
+        "owner": "GtkVideo"
+      },
+      "type": {
+        "gtype": "GtkMediaStream",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:MediaStream>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,272 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Actionable",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:get_action_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_action_name",
+      "native": "gtk_actionable_get_action_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:get_action_target_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_action_target_value",
+      "native": "gtk_actionable_get_action_target_value",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GVariant*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "variant"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_action_name",
+      "native": "gtk_actionable_set_action_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "action_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_target",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_action_target",
+      "native": "gtk_actionable_set_action_target",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "format_string",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_target_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_action_target_value",
+      "native": "gtk_actionable_set_action_target_value",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "target_value",
+          "native": "GVariant*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "variant"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_detailed_action_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_detailed_action_name",
+      "native": "gtk_actionable_set_detailed_action_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "detailed_action_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkActionable",
+    "gtype": "GtkActionable",
+    "name": "GtkActionable"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_actionable_get_action_name",
+        "set": "gtk_actionable_set_action_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-name",
+      "invocation": "reflected",
+      "js_name": "actionName",
+      "name": "action-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::action-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkActionable"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": "gtk_actionable_set_action_target"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-target",
+      "invocation": "reflected",
+      "js_name": "actionTarget",
+      "name": "action-target",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::action-target"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GVariant",
+        "origin": "runtime",
+        "owner": "GtkActionable"
+      },
+      "type": {
+        "gtype": "GVariant",
+        "native": null,
+        "nullable": true,
+        "ref": "variant"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

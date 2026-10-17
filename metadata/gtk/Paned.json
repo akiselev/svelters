@@ -1,0 +1,1071 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": [
+        "end-child",
+        "start-child"
+      ]
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_paned_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "orientation",
+          "native": "GtkOrientation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Orientation>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "paned"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Paned",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.AccessibleRange",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_end_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_end_child",
+      "native": "gtk_paned_get_end_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_position",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_position",
+      "native": "gtk_paned_get_position",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_resize_end_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resize_end_child",
+      "native": "gtk_paned_get_resize_end_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_resize_start_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resize_start_child",
+      "native": "gtk_paned_get_resize_start_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_shrink_end_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_shrink_end_child",
+      "native": "gtk_paned_get_shrink_end_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_shrink_start_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_shrink_start_child",
+      "native": "gtk_paned_get_shrink_start_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_start_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_start_child",
+      "native": "gtk_paned_get_start_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:get_wide_handle",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_wide_handle",
+      "native": "gtk_paned_get_wide_handle",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_end_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_end_child",
+      "native": "gtk_paned_set_end_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_position",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_position",
+      "native": "gtk_paned_set_position",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_resize_end_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_resize_end_child",
+      "native": "gtk_paned_set_resize_end_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resize",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_resize_start_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_resize_start_child",
+      "native": "gtk_paned_set_resize_start_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resize",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_shrink_end_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_shrink_end_child",
+      "native": "gtk_paned_set_shrink_end_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resize",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_shrink_start_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_shrink_start_child",
+      "native": "gtk_paned_set_shrink_start_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resize",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_start_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_start_child",
+      "native": "gtk_paned_set_start_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:method:set_wide_handle",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_wide_handle",
+      "native": "gtk_paned_set_wide_handle",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wide",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkPaned",
+    "gtype": "GtkPaned",
+    "name": "GtkPaned"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_end_child",
+        "set": "gtk_paned_set_end_child"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:end-child",
+      "invocation": "reflected",
+      "js_name": "endChild",
+      "name": "end-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::end-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 2147483647,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:max-position",
+      "invocation": "reflected",
+      "js_name": "maxPosition",
+      "name": "max-position",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::max-position"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:min-position",
+      "invocation": "reflected",
+      "js_name": "minPosition",
+      "name": "min-position",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::min-position"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_position",
+        "set": "gtk_paned_set_position"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:position",
+      "invocation": "reflected",
+      "js_name": "position",
+      "name": "position",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::position"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:position-set",
+      "invocation": "reflected",
+      "js_name": "positionSet",
+      "name": "position-set",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::position-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_resize_end_child",
+        "set": "gtk_paned_set_resize_end_child"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:resize-end-child",
+      "invocation": "reflected",
+      "js_name": "resizeEndChild",
+      "name": "resize-end-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::resize-end-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_resize_start_child",
+        "set": "gtk_paned_set_resize_start_child"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:resize-start-child",
+      "invocation": "reflected",
+      "js_name": "resizeStartChild",
+      "name": "resize-start-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::resize-start-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_shrink_end_child",
+        "set": "gtk_paned_set_shrink_end_child"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:shrink-end-child",
+      "invocation": "reflected",
+      "js_name": "shrinkEndChild",
+      "name": "shrink-end-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::shrink-end-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_shrink_start_child",
+        "set": "gtk_paned_set_shrink_start_child"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:shrink-start-child",
+      "invocation": "reflected",
+      "js_name": "shrinkStartChild",
+      "name": "shrink-start-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::shrink-start-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_start_child",
+        "set": "gtk_paned_set_start_child"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:start-child",
+      "invocation": "reflected",
+      "js_name": "startChild",
+      "name": "start-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::start-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_paned_get_wide_handle",
+        "set": "gtk_paned_set_wide_handle"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:wide-handle",
+      "invocation": "reflected",
+      "js_name": "wideHandle",
+      "name": "wide-handle",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::wide-handle"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPaned"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:signal:accept-position",
+      "js_event": "accept-position",
+      "name": "accept-position",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:signal:cancel-position",
+      "js_event": "cancel-position",
+      "name": "cancel-position",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:signal:cycle-child-focus",
+      "js_event": "cycle-child-focus",
+      "name": "cycle-child-focus",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gboolean",
+          "name": "reversed",
+          "type": "bool"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:signal:cycle-handle-focus",
+      "js_event": "cycle-handle-focus",
+      "name": "cycle-handle-focus",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gboolean",
+          "name": "reversed",
+          "type": "bool"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:signal:move-handle",
+      "js_event": "move-handle",
+      "name": "move-handle",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkScrollType",
+          "name": "scroll_type",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollType>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Paned:signal:toggle-handle-focus",
+      "js_event": "toggle-handle-focus",
+      "name": "toggle-handle-focus",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

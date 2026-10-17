@@ -1,0 +1,928 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_calendar_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "calendar"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Calendar",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:clear_marks",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "clear_marks",
+      "native": "gtk_calendar_clear_marks",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_date",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_date",
+      "native": "gtk_calendar_get_date",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GDateTime*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:GLib:DateTime>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_day",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_day",
+      "native": "gtk_calendar_get_day",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_day_is_marked",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_day_is_marked",
+      "native": "gtk_calendar_get_day_is_marked",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "day",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_month",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_month",
+      "native": "gtk_calendar_get_month",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_show_day_names",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_day_names",
+      "native": "gtk_calendar_get_show_day_names",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_show_heading",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_heading",
+      "native": "gtk_calendar_get_show_heading",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_show_week_numbers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_week_numbers",
+      "native": "gtk_calendar_get_show_week_numbers",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:get_year",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_year",
+      "native": "gtk_calendar_get_year",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:mark_day",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "mark_day",
+      "native": "gtk_calendar_mark_day",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "day",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:select_day",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_day",
+      "native": "gtk_calendar_select_day",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "date",
+          "native": "GDateTime*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:DateTime>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_date",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_date",
+      "native": "gtk_calendar_set_date",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "date",
+          "native": "GDateTime*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:DateTime>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_day",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_day",
+      "native": "gtk_calendar_set_day",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "day",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_month",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_month",
+      "native": "gtk_calendar_set_month",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "month",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_show_day_names",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_day_names",
+      "native": "gtk_calendar_set_show_day_names",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "value",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_show_heading",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_heading",
+      "native": "gtk_calendar_set_show_heading",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "value",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_show_week_numbers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_week_numbers",
+      "native": "gtk_calendar_set_show_week_numbers",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "value",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:set_year",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_year",
+      "native": "gtk_calendar_set_year",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "year",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:unmark_day",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unmark_day",
+      "native": "gtk_calendar_unmark_day",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "day",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkCalendar",
+    "gtype": "GtkCalendar",
+    "name": "GtkCalendar"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_date",
+        "set": "gtk_calendar_set_date"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",
+      "invocation": "reflected",
+      "js_name": "date",
+      "name": "date",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::date"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GDateTime",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "GDateTime",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:GLib:DateTime>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_day",
+        "set": "gtk_calendar_set_day"
+      },
+      "default": 1,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:day",
+      "invocation": "reflected",
+      "js_name": "day",
+      "name": "day",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::day"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 31,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_month",
+        "set": "gtk_calendar_set_month"
+      },
+      "default": 0,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:month",
+      "invocation": "reflected",
+      "js_name": "month",
+      "name": "month",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::month"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 11,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_show_day_names",
+        "set": "gtk_calendar_set_show_day_names"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-day-names",
+      "invocation": "reflected",
+      "js_name": "showDayNames",
+      "name": "show-day-names",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-day-names"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_show_heading",
+        "set": "gtk_calendar_set_show_heading"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-heading",
+      "invocation": "reflected",
+      "js_name": "showHeading",
+      "name": "show-heading",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-heading"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_show_week_numbers",
+        "set": "gtk_calendar_set_show_week_numbers"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-week-numbers",
+      "invocation": "reflected",
+      "js_name": "showWeekNumbers",
+      "name": "show-week-numbers",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-week-numbers"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_calendar_get_year",
+        "set": "gtk_calendar_set_year"
+      },
+      "default": 1,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:year",
+      "invocation": "reflected",
+      "js_name": "year",
+      "name": "year",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::year"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 9999,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkCalendar"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:day-selected",
+      "js_event": "day-selected",
+      "name": "day-selected",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:next-month",
+      "js_event": "next-month",
+      "name": "next-month",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:next-year",
+      "js_event": "next-year",
+      "name": "next-year",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:prev-month",
+      "js_event": "prev-month",
+      "name": "prev-month",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:prev-year",
+      "js_event": "prev-year",
+      "name": "prev-year",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

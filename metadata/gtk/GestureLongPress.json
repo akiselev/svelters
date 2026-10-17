@@ -1,0 +1,224 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.GestureSingle",
+    "Gtk.Gesture",
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_gesture_long_press_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:method:get_delay_factor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_delay_factor",
+      "native": "gtk_gesture_long_press_get_delay_factor",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:method:set_delay_factor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_delay_factor",
+      "native": "gtk_gesture_long_press_set_delay_factor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "delay_factor",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGestureLongPress",
+    "gtype": "GtkGestureLongPress",
+    "name": "GtkGestureLongPress"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gesture_long_press_get_delay_factor",
+        "set": "gtk_gesture_long_press_set_delay_factor"
+      },
+      "default": 1.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:prop:delay-factor",
+      "invocation": "reflected",
+      "js_name": "delayFactor",
+      "name": "delay-factor",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::delay-factor"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2.0,
+        "min": 0.5
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkGestureLongPress"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:signal:cancelled",
+      "js_event": "cancelled",
+      "name": "cancelled",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:signal:pressed",
+      "js_event": "pressed",
+      "name": "pressed",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

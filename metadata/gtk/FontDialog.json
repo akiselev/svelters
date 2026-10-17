@@ -1,0 +1,844 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.10"
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_font_dialog_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:FontDialog",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_face",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_face",
+      "native": "gtk_font_dialog_choose_face",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "initial_value",
+          "native": "PangoFontFace*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:FontFace>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_face_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_face_finish",
+      "native": "gtk_font_dialog_choose_face_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        }
+      ],
+      "returns": {
+        "native": "PangoFontFace*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontFace>"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_family",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_family",
+      "native": "gtk_font_dialog_choose_family",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "initial_value",
+          "native": "PangoFontFamily*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:FontFamily>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_family_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_family_finish",
+      "native": "gtk_font_dialog_choose_family_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        }
+      ],
+      "returns": {
+        "native": "PangoFontFamily*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontFamily>"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_font",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_font",
+      "native": "gtk_font_dialog_choose_font",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "initial_value",
+          "native": "PangoFontDescription*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_font_and_features",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_font_and_features",
+      "native": "gtk_font_dialog_choose_font_and_features",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "initial_value",
+          "native": "PangoFontDescription*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_font_and_features_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_font_and_features_finish",
+      "native": "gtk_font_dialog_choose_font_and_features_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        },
+        {
+          "name": "font_desc",
+          "native": "PangoFontDescription**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+        },
+        {
+          "name": "font_features",
+          "native": "char**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "string"
+        },
+        {
+          "name": "language",
+          "native": "PangoLanguage**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:choose_font_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "choose_font_finish",
+      "native": "gtk_font_dialog_choose_font_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        }
+      ],
+      "returns": {
+        "native": "PangoFontDescription*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:get_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_filter",
+      "native": "gtk_font_dialog_get_filter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkFilter*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Filter>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:get_font_map",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_map",
+      "native": "gtk_font_dialog_get_font_map",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontMap*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontMap>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:get_language",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_language",
+      "native": "gtk_font_dialog_get_language",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoLanguage*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:get_modal",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_modal",
+      "native": "gtk_font_dialog_get_modal",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:get_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_title",
+      "native": "gtk_font_dialog_get_title",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:set_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_filter",
+      "native": "gtk_font_dialog_set_filter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter",
+          "native": "GtkFilter*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Filter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:set_font_map",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_font_map",
+      "native": "gtk_font_dialog_set_font_map",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "fontmap",
+          "native": "PangoFontMap*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:FontMap>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:set_language",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_language",
+      "native": "gtk_font_dialog_set_language",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "language",
+          "native": "PangoLanguage*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:set_modal",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_modal",
+      "native": "gtk_font_dialog_set_modal",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "modal",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:method:set_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_title",
+      "native": "gtk_font_dialog_set_title",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "title",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkFontDialog",
+    "gtype": "GtkFontDialog",
+    "name": "GtkFontDialog"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_get_filter",
+        "set": "gtk_font_dialog_set_filter"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:filter",
+      "invocation": "reflected",
+      "js_name": "filter",
+      "name": "filter",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::filter"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkFilter",
+        "origin": "runtime",
+        "owner": "GtkFontDialog"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "GtkFilter",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Filter>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_get_font_map",
+        "set": "gtk_font_dialog_set_font_map"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:font-map",
+      "invocation": "reflected",
+      "js_name": "fontMap",
+      "name": "font-map",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::font-map"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoFontMap",
+        "origin": "runtime",
+        "owner": "GtkFontDialog"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "PangoFontMap",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Pango:FontMap>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_get_language",
+        "set": "gtk_font_dialog_set_language"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:language",
+      "invocation": "reflected",
+      "js_name": "language",
+      "name": "language",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::language"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoLanguage",
+        "origin": "runtime",
+        "owner": "GtkFontDialog"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "PangoLanguage",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_get_modal",
+        "set": "gtk_font_dialog_set_modal"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:modal",
+      "invocation": "reflected",
+      "js_name": "modal",
+      "name": "modal",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::modal"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkFontDialog"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_get_title",
+        "set": "gtk_font_dialog_set_title"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:title",
+      "invocation": "reflected",
+      "js_name": "title",
+      "name": "title",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::title"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkFontDialog"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

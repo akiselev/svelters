@@ -1,0 +1,619 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:StackPage",
+  "interfaces": [
+    "Gtk.Accessible"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child",
+      "native": "gtk_stack_page_get_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_icon_name",
+      "native": "gtk_stack_page_get_icon_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_name",
+      "native": "gtk_stack_page_get_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_needs_attention",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_needs_attention",
+      "native": "gtk_stack_page_get_needs_attention",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_title",
+      "native": "gtk_stack_page_get_title",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_use_underline",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_underline",
+      "native": "gtk_stack_page_get_use_underline",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:get_visible",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_visible",
+      "native": "gtk_stack_page_get_visible",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:set_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_icon_name",
+      "native": "gtk_stack_page_set_icon_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:set_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_name",
+      "native": "gtk_stack_page_set_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:set_needs_attention",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_needs_attention",
+      "native": "gtk_stack_page_set_needs_attention",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:set_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_title",
+      "native": "gtk_stack_page_set_title",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:set_use_underline",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_underline",
+      "native": "gtk_stack_page_set_use_underline",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:method:set_visible",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_visible",
+      "native": "gtk_stack_page_set_visible",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "visible",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkStackPage",
+    "gtype": "GtkStackPage",
+    "name": "GtkStackPage"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_child",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:child",
+      "invocation": "reflected",
+      "js_name": "child",
+      "name": "child",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_icon_name",
+        "set": "gtk_stack_page_set_icon_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:icon-name",
+      "invocation": "reflected",
+      "js_name": "iconName",
+      "name": "icon-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::icon-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_name",
+        "set": "gtk_stack_page_set_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:name",
+      "invocation": "reflected",
+      "js_name": "name",
+      "name": "name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_needs_attention",
+        "set": "gtk_stack_page_set_needs_attention"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:needs-attention",
+      "invocation": "reflected",
+      "js_name": "needsAttention",
+      "name": "needs-attention",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::needs-attention"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_title",
+        "set": "gtk_stack_page_set_title"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:title",
+      "invocation": "reflected",
+      "js_name": "title",
+      "name": "title",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::title"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_use_underline",
+        "set": "gtk_stack_page_set_use_underline"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:use-underline",
+      "invocation": "reflected",
+      "js_name": "useUnderline",
+      "name": "use-underline",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-underline"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_stack_page_get_visible",
+        "set": "gtk_stack_page_set_visible"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:visible",
+      "invocation": "reflected",
+      "js_name": "visible",
+      "name": "visible",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::visible"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkStackPage"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

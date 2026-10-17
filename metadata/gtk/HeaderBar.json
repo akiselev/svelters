@@ -1,0 +1,635 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "pack_end",
+        "pack_start",
+        "remove",
+        "set_title_widget"
+      ],
+      "widget_props": [
+        "title-widget"
+      ]
+    },
+    "default_slot": "start",
+    "policy": "named_slots",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attached_props",
+            "cardinality",
+            "ops",
+            "order",
+            "ownership",
+            "readback"
+          ],
+          "origin": "manual",
+          "provenance": "gtk_header_bar_pack_start / gtk_header_bar_remove docs; children live in an internal box"
+        },
+        "attached_props": [],
+        "cardinality": "many",
+        "name": "start",
+        "ops": {
+          "insert": {
+            "args": [
+              "child"
+            ],
+            "method": "pack_start",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child"
+            ],
+            "method": "remove",
+            "origin": "manual"
+          }
+        },
+        "order": "append_only",
+        "origin": "manual",
+        "ownership": "parent_owned",
+        "readback": {
+          "mode": "ancestor",
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attached_props",
+            "cardinality",
+            "ops",
+            "order",
+            "ownership",
+            "readback"
+          ],
+          "origin": "manual",
+          "provenance": "gtk_header_bar_pack_end / gtk_header_bar_remove docs"
+        },
+        "attached_props": [],
+        "cardinality": "many",
+        "name": "end",
+        "ops": {
+          "insert": {
+            "args": [
+              "child"
+            ],
+            "method": "pack_end",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child"
+            ],
+            "method": "remove",
+            "origin": "manual"
+          }
+        },
+        "order": "append_only",
+        "origin": "manual",
+        "ownership": "parent_owned",
+        "readback": {
+          "mode": "ancestor",
+          "origin": "manual"
+        }
+      },
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attached_props",
+            "cardinality",
+            "ops",
+            "ownership",
+            "readback"
+          ],
+          "origin": "manual",
+          "provenance": "GtkHeaderBar:title-widget property (Gtk 4 docs)"
+        },
+        "attached_props": [],
+        "cardinality": "one",
+        "name": "title",
+        "ops": {
+          "clear": {
+            "origin": "manual",
+            "property": "title-widget",
+            "value": null
+          },
+          "origin": "manual",
+          "set": {
+            "origin": "manual",
+            "property": "title-widget"
+          }
+        },
+        "origin": "manual",
+        "ownership": "parent_owned",
+        "readback": {
+          "mode": "property",
+          "origin": "manual",
+          "property": "title-widget"
+        }
+      }
+    ]
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_header_bar_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "headerbar"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:get_decoration_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_decoration_layout",
+      "native": "gtk_header_bar_get_decoration_layout",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:get_show_title_buttons",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_title_buttons",
+      "native": "gtk_header_bar_get_show_title_buttons",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:get_title_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_title_widget",
+      "native": "gtk_header_bar_get_title_widget",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:get_use_native_controls",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_native_controls",
+      "native": "gtk_header_bar_get_use_native_controls",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:pack_end",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "pack_end",
+      "native": "gtk_header_bar_pack_end",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:pack_start",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "pack_start",
+      "native": "gtk_header_bar_pack_start",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:remove",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove",
+      "native": "gtk_header_bar_remove",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:set_decoration_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_decoration_layout",
+      "native": "gtk_header_bar_set_decoration_layout",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "layout",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:set_show_title_buttons",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_title_buttons",
+      "native": "gtk_header_bar_set_show_title_buttons",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:set_title_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_title_widget",
+      "native": "gtk_header_bar_set_title_widget",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "title_widget",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:set_use_native_controls",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_native_controls",
+      "native": "gtk_header_bar_set_use_native_controls",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkHeaderBar",
+    "gtype": "GtkHeaderBar",
+    "name": "GtkHeaderBar"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_header_bar_get_decoration_layout",
+        "set": "gtk_header_bar_set_decoration_layout"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:decoration-layout",
+      "invocation": "reflected",
+      "js_name": "decorationLayout",
+      "name": "decoration-layout",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::decoration-layout"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkHeaderBar"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_header_bar_get_show_title_buttons",
+        "set": "gtk_header_bar_set_show_title_buttons"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:show-title-buttons",
+      "invocation": "reflected",
+      "js_name": "showTitleButtons",
+      "name": "show-title-buttons",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-title-buttons"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkHeaderBar"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_header_bar_get_title_widget",
+        "set": "gtk_header_bar_set_title_widget"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title-widget",
+      "invocation": "reflected",
+      "js_name": "titleWidget",
+      "name": "title-widget",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::title-widget"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkHeaderBar"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_header_bar_get_use_native_controls",
+        "set": "gtk_header_bar_set_use_native_controls"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:use-native-controls",
+      "invocation": "reflected",
+      "js_name": "useNativeControls",
+      "name": "use-native-controls",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-native-controls"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkHeaderBar"
+      },
+      "since": "4.18",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": "overrides/gtk/HeaderBar.yaml",
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

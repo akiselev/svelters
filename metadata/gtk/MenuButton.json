@@ -1,0 +1,1204 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "set_child"
+      ],
+      "widget_props": [
+        "child"
+      ]
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_menu_button_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "menubutton"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ArrowType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:MenuButton",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_active",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_active",
+      "native": "gtk_menu_button_get_active",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_always_show_arrow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_always_show_arrow",
+      "native": "gtk_menu_button_get_always_show_arrow",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_can_shrink",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_can_shrink",
+      "native": "gtk_menu_button_get_can_shrink",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child",
+      "native": "gtk_menu_button_get_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_direction",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_direction",
+      "native": "gtk_menu_button_get_direction",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkArrowType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ArrowType>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_has_frame",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_has_frame",
+      "native": "gtk_menu_button_get_has_frame",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_icon_name",
+      "native": "gtk_menu_button_get_icon_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_label",
+      "native": "gtk_menu_button_get_label",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_menu_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_menu_model",
+      "native": "gtk_menu_button_get_menu_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GMenuModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_popover",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_popover",
+      "native": "gtk_menu_button_get_popover",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPopover*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Popover>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_primary",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_primary",
+      "native": "gtk_menu_button_get_primary",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:get_use_underline",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_underline",
+      "native": "gtk_menu_button_get_use_underline",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:popdown",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "popdown",
+      "native": "gtk_menu_button_popdown",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:popup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "popup",
+      "native": "gtk_menu_button_popup",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_active",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_active",
+      "native": "gtk_menu_button_set_active",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "active",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_always_show_arrow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_always_show_arrow",
+      "native": "gtk_menu_button_set_always_show_arrow",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "always_show_arrow",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_can_shrink",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_can_shrink",
+      "native": "gtk_menu_button_set_can_shrink",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "can_shrink",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_child",
+      "native": "gtk_menu_button_set_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_create_popup_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_create_popup_func",
+      "native": "gtk_menu_button_set_create_popup_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkMenuButtonCreatePopupFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:MenuButtonCreatePopupFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy_notify",
+          "native": "GDestroyNotify",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_direction",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_direction",
+      "native": "gtk_menu_button_set_direction",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "direction",
+          "native": "GtkArrowType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ArrowType>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_has_frame",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_has_frame",
+      "native": "gtk_menu_button_set_has_frame",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "has_frame",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_icon_name",
+      "native": "gtk_menu_button_set_icon_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_label",
+      "native": "gtk_menu_button_set_label",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "label",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_menu_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_menu_model",
+      "native": "gtk_menu_button_set_menu_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "menu_model",
+          "native": "GMenuModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_popover",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_popover",
+      "native": "gtk_menu_button_set_popover",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "popover",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Popover>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_primary",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_primary",
+      "native": "gtk_menu_button_set_primary",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "primary",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:method:set_use_underline",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_underline",
+      "native": "gtk_menu_button_set_use_underline",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "use_underline",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkMenuButton",
+    "gtype": "GtkMenuButton",
+    "name": "GtkMenuButton"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_active",
+        "set": "gtk_menu_button_set_active"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:active",
+      "invocation": "reflected",
+      "js_name": "active",
+      "name": "active",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::active"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_always_show_arrow",
+        "set": "gtk_menu_button_set_always_show_arrow"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:always-show-arrow",
+      "invocation": "reflected",
+      "js_name": "alwaysShowArrow",
+      "name": "always-show-arrow",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::always-show-arrow"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "since": "4.4",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_can_shrink",
+        "set": "gtk_menu_button_set_can_shrink"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:can-shrink",
+      "invocation": "reflected",
+      "js_name": "canShrink",
+      "name": "can-shrink",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::can-shrink"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_child",
+        "set": "gtk_menu_button_set_child"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:child",
+      "invocation": "reflected",
+      "js_name": "child",
+      "name": "child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_direction",
+        "set": "gtk_menu_button_set_direction"
+      },
+      "default": "down",
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:direction",
+      "invocation": "reflected",
+      "js_name": "direction",
+      "name": "direction",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::direction"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkArrowType",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "GtkArrowType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ArrowType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_has_frame",
+        "set": "gtk_menu_button_set_has_frame"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:has-frame",
+      "invocation": "reflected",
+      "js_name": "hasFrame",
+      "name": "has-frame",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::has-frame"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_icon_name",
+        "set": "gtk_menu_button_set_icon_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:icon-name",
+      "invocation": "reflected",
+      "js_name": "iconName",
+      "name": "icon-name",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::icon-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_label",
+        "set": "gtk_menu_button_set_label"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:label",
+      "invocation": "reflected",
+      "js_name": "label",
+      "name": "label",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::label"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_menu_model",
+        "set": "gtk_menu_button_set_menu_model"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:menu-model",
+      "invocation": "reflected",
+      "js_name": "menuModel",
+      "name": "menu-model",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::menu-model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GMenuModel",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "GMenuModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_popover",
+        "set": "gtk_menu_button_set_popover"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:popover",
+      "invocation": "reflected",
+      "js_name": "popover",
+      "name": "popover",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::popover"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkPopover",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "GtkPopover",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Popover>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_primary",
+        "set": "gtk_menu_button_set_primary"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:primary",
+      "invocation": "reflected",
+      "js_name": "primary",
+      "name": "primary",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::primary"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "since": "4.4",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_menu_button_get_use_underline",
+        "set": "gtk_menu_button_set_use_underline"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:use-underline",
+      "invocation": "reflected",
+      "js_name": "useUnderline",
+      "name": "use-underline",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-underline"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkMenuButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:signal:activate",
+      "js_event": "activate",
+      "name": "activate",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

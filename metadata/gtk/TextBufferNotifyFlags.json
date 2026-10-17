@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.16"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:TextBufferNotifyFlags",
+  "kind": "flags",
+  "members": [
+    {
+      "name": "before_insert",
+      "native": "GTK_TEXT_BUFFER_NOTIFY_BEFORE_INSERT",
+      "nick": "before-insert",
+      "value": 1
+    },
+    {
+      "name": "after_insert",
+      "native": "GTK_TEXT_BUFFER_NOTIFY_AFTER_INSERT",
+      "nick": "after-insert",
+      "value": 2
+    },
+    {
+      "name": "before_delete",
+      "native": "GTK_TEXT_BUFFER_NOTIFY_BEFORE_DELETE",
+      "nick": "before-delete",
+      "value": 4
+    },
+    {
+      "name": "after_delete",
+      "native": "GTK_TEXT_BUFFER_NOTIFY_AFTER_DELETE",
+      "nick": "after-delete",
+      "value": 8
+    }
+  ],
+  "native": {
+    "c_type": "GtkTextBufferNotifyFlags",
+    "gtype": "GtkTextBufferNotifyFlags",
+    "name": "GtkTextBufferNotifyFlags"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

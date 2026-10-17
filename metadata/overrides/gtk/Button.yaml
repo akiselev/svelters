@@ -1,0 +1,10 @@
+properties:
+  - name: label
+    js_name: label
+    provenance: "GtkButton:label (Gtk 4 docs); P prop"
+signals:
+  - name: clicked
+    js_event: clicked
+    handler_result: none
+    sync_required: false
+    provenance: "GtkButton::clicked is an action signal with void return (Gtk 4 docs)"

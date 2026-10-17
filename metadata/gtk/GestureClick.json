@@ -1,0 +1,225 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.GestureSingle",
+    "Gtk.Gesture",
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureClick:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_gesture_click_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureClick:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureClick",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "c_type": "GtkGestureClick",
+    "gtype": "GtkGestureClick",
+    "name": "GtkGestureClick"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:pressed",
+      "js_event": "pressed",
+      "name": "pressed",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gint",
+          "name": "n_press",
+          "type": "i32"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:released",
+      "js_event": "released",
+      "name": "released",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gint",
+          "name": "n_press",
+          "type": "i32"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:stopped",
+      "js_event": "stopped",
+      "name": "stopped",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:unpaired-release",
+      "js_event": "unpaired-release",
+      "name": "unpaired-release",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        },
+        {
+          "gtype": "guint",
+          "name": "button",
+          "type": "u32"
+        },
+        {
+          "gtype": "GdkEventSequence",
+          "name": "sequence",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

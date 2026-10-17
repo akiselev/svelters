@@ -1,0 +1,421 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Filter",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_string_filter_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "expression",
+          "native": "GtkExpression*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:StringFilter",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:get_expression",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_expression",
+      "native": "gtk_string_filter_get_expression",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkExpression*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:get_ignore_case",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_ignore_case",
+      "native": "gtk_string_filter_get_ignore_case",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:get_match_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_match_mode",
+      "native": "gtk_string_filter_get_match_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkStringFilterMatchMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:get_search",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_search",
+      "native": "gtk_string_filter_get_search",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:set_expression",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_expression",
+      "native": "gtk_string_filter_set_expression",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "expression",
+          "native": "GtkExpression*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:set_ignore_case",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_ignore_case",
+      "native": "gtk_string_filter_set_ignore_case",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "ignore_case",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:set_match_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_match_mode",
+      "native": "gtk_string_filter_set_match_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mode",
+          "native": "GtkStringFilterMatchMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:method:set_search",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_search",
+      "native": "gtk_string_filter_set_search",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "search",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkStringFilter",
+    "gtype": "GtkStringFilter",
+    "name": "GtkStringFilter"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_string_filter_get_expression",
+        "set": "gtk_string_filter_set_expression"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:expression",
+      "invocation": "reflected",
+      "js_name": "expression",
+      "name": "expression",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::expression"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkExpression",
+        "origin": "runtime",
+        "owner": "GtkStringFilter"
+      },
+      "type": {
+        "gtype": "GtkExpression",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_string_filter_get_ignore_case",
+        "set": "gtk_string_filter_set_ignore_case"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:ignore-case",
+      "invocation": "reflected",
+      "js_name": "ignoreCase",
+      "name": "ignore-case",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::ignore-case"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkStringFilter"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_string_filter_get_match_mode",
+        "set": "gtk_string_filter_set_match_mode"
+      },
+      "default": "substring",
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:match-mode",
+      "invocation": "reflected",
+      "js_name": "matchMode",
+      "name": "match-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::match-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkStringFilterMatchMode",
+        "origin": "runtime",
+        "owner": "GtkStringFilter"
+      },
+      "type": {
+        "gtype": "GtkStringFilterMatchMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_string_filter_get_search",
+        "set": "gtk_string_filter_set_search"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:search",
+      "invocation": "reflected",
+      "js_name": "search",
+      "name": "search",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::search"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkStringFilter"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

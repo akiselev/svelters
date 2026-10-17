@@ -1,0 +1,446 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_shortcut_controller_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:ctor:new_for_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_for_model",
+      "native": "gtk_shortcut_controller_new_for_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GListModel*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ShortcutScope",
+    "svelters-api:v1:type:gtk:Gdk:ModifierType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController",
+  "interfaces": [
+    "Gio.ListModel",
+    "Gtk.Buildable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:method:add_shortcut",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_shortcut",
+      "native": "gtk_shortcut_controller_add_shortcut",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "shortcut",
+          "native": "GtkShortcut*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Shortcut>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:method:get_mnemonics_modifiers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_mnemonics_modifiers",
+      "native": "gtk_shortcut_controller_get_mnemonics_modifiers",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkModifierType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:method:get_scope",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_scope",
+      "native": "gtk_shortcut_controller_get_scope",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkShortcutScope",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ShortcutScope>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:method:remove_shortcut",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_shortcut",
+      "native": "gtk_shortcut_controller_remove_shortcut",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "shortcut",
+          "native": "GtkShortcut*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Shortcut>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:method:set_mnemonics_modifiers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_mnemonics_modifiers",
+      "native": "gtk_shortcut_controller_set_mnemonics_modifiers",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "modifiers",
+          "native": "GdkModifierType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:method:set_scope",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_scope",
+      "native": "gtk_shortcut_controller_set_scope",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "scope",
+          "native": "GtkShortcutScope",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ShortcutScope>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkShortcutController",
+    "gtype": "GtkShortcutController",
+    "name": "GtkShortcutController"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:item-type",
+      "invocation": "reflected",
+      "js_name": "itemType",
+      "name": "item-type",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::item-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GType",
+        "origin": "runtime",
+        "owner": "GtkShortcutController"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "GType",
+        "native": "GType",
+        "nullable": false,
+        "ref": "u64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_shortcut_controller_get_mnemonics_modifiers",
+        "set": "gtk_shortcut_controller_set_mnemonics_modifiers"
+      },
+      "default": 8,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:mnemonic-modifiers",
+      "invocation": "reflected",
+      "js_name": "mnemonicModifiers",
+      "name": "mnemonic-modifiers",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::mnemonic-modifiers"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkModifierType",
+        "origin": "runtime",
+        "owner": "GtkShortcutController"
+      },
+      "type": {
+        "gtype": "GdkModifierType",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:model",
+      "invocation": "reflected",
+      "js_name": "model",
+      "name": "model",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE",
+          "CONSTRUCT_ONLY",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GListModel",
+        "origin": "runtime",
+        "owner": "GtkShortcutController"
+      },
+      "type": {
+        "gtype": "GListModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:n-items",
+      "invocation": "reflected",
+      "js_name": "nItems",
+      "name": "n-items",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::n-items"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkShortcutController"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_shortcut_controller_get_scope",
+        "set": "gtk_shortcut_controller_set_scope"
+      },
+      "default": "local",
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:scope",
+      "invocation": "reflected",
+      "js_name": "scope",
+      "name": "scope",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::scope"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkShortcutScope",
+        "origin": "runtime",
+        "owner": "GtkShortcutController"
+      },
+      "type": {
+        "gtype": "GtkShortcutScope",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ShortcutScope>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

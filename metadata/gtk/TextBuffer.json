@@ -1,0 +1,3032 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_text_buffer_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "table",
+          "native": "GtkTextTagTable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextTagTable>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:add_commit_notify",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_commit_notify",
+      "native": "gtk_text_buffer_add_commit_notify",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "flags",
+          "native": "GtkTextBufferNotifyFlags",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:TextBufferNotifyFlags>"
+        },
+        {
+          "name": "commit_notify",
+          "native": "GtkTextBufferCommitNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:TextBufferCommitNotify>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:add_mark",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_mark",
+      "native": "gtk_text_buffer_add_mark",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mark",
+          "native": "GtkTextMark*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+        },
+        {
+          "name": "where",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:add_selection_clipboard",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_selection_clipboard",
+      "native": "gtk_text_buffer_add_selection_clipboard",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "clipboard",
+          "native": "GdkClipboard*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Clipboard>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:apply_tag",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "apply_tag",
+      "native": "gtk_text_buffer_apply_tag",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "tag",
+          "native": "GtkTextTag*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextTag>"
+        },
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:apply_tag_by_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "apply_tag_by_name",
+      "native": "gtk_text_buffer_apply_tag_by_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:backspace",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "backspace",
+      "native": "gtk_text_buffer_backspace",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "interactive",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:begin_irreversible_action",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "begin_irreversible_action",
+      "native": "gtk_text_buffer_begin_irreversible_action",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:begin_user_action",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "begin_user_action",
+      "native": "gtk_text_buffer_begin_user_action",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:copy_clipboard",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "copy_clipboard",
+      "native": "gtk_text_buffer_copy_clipboard",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "clipboard",
+          "native": "GdkClipboard*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Clipboard>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:create_child_anchor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "create_child_anchor",
+      "native": "gtk_text_buffer_create_child_anchor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "GtkTextChildAnchor*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextChildAnchor>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:create_mark",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "create_mark",
+      "native": "gtk_text_buffer_create_mark",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mark_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "where",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "left_gravity",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "GtkTextMark*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:create_tag",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "create_tag",
+      "native": "gtk_text_buffer_create_tag",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "tag_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "first_property_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "GtkTextTag*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextTag>"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:cut_clipboard",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cut_clipboard",
+      "native": "gtk_text_buffer_cut_clipboard",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "clipboard",
+          "native": "GdkClipboard*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Clipboard>"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:delete",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "delete",
+      "native": "gtk_text_buffer_delete",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:delete_interactive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "delete_interactive",
+      "native": "gtk_text_buffer_delete_interactive",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start_iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end_iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:delete_mark",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "delete_mark",
+      "native": "gtk_text_buffer_delete_mark",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mark",
+          "native": "GtkTextMark*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:delete_mark_by_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "delete_mark_by_name",
+      "native": "gtk_text_buffer_delete_mark_by_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:delete_selection",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "delete_selection",
+      "native": "gtk_text_buffer_delete_selection",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "interactive",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:end_irreversible_action",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "end_irreversible_action",
+      "native": "gtk_text_buffer_end_irreversible_action",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:end_user_action",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "end_user_action",
+      "native": "gtk_text_buffer_end_user_action",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_bounds",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_bounds",
+      "native": "gtk_text_buffer_get_bounds",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_can_redo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_can_redo",
+      "native": "gtk_text_buffer_get_can_redo",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_can_undo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_can_undo",
+      "native": "gtk_text_buffer_get_can_undo",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_char_count",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_char_count",
+      "native": "gtk_text_buffer_get_char_count",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_enable_undo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_enable_undo",
+      "native": "gtk_text_buffer_get_enable_undo",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_end_iter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_end_iter",
+      "native": "gtk_text_buffer_get_end_iter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_has_selection",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_has_selection",
+      "native": "gtk_text_buffer_get_has_selection",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_insert",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_insert",
+      "native": "gtk_text_buffer_get_insert",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTextMark*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_iter_at_child_anchor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_iter_at_child_anchor",
+      "native": "gtk_text_buffer_get_iter_at_child_anchor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "anchor",
+          "native": "GtkTextChildAnchor*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextChildAnchor>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_iter_at_line",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_iter_at_line",
+      "native": "gtk_text_buffer_get_iter_at_line",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "line_number",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_iter_at_line_index",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_iter_at_line_index",
+      "native": "gtk_text_buffer_get_iter_at_line_index",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "line_number",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "byte_index",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_iter_at_line_offset",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_iter_at_line_offset",
+      "native": "gtk_text_buffer_get_iter_at_line_offset",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "line_number",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "char_offset",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_iter_at_mark",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_iter_at_mark",
+      "native": "gtk_text_buffer_get_iter_at_mark",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "mark",
+          "native": "GtkTextMark*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_iter_at_offset",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_iter_at_offset",
+      "native": "gtk_text_buffer_get_iter_at_offset",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "char_offset",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_line_count",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_line_count",
+      "native": "gtk_text_buffer_get_line_count",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_mark",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_mark",
+      "native": "gtk_text_buffer_get_mark",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "GtkTextMark*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_max_undo_levels",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_max_undo_levels",
+      "native": "gtk_text_buffer_get_max_undo_levels",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_modified",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_modified",
+      "native": "gtk_text_buffer_get_modified",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_selection_bound",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selection_bound",
+      "native": "gtk_text_buffer_get_selection_bound",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTextMark*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_selection_bounds",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selection_bounds",
+      "native": "gtk_text_buffer_get_selection_bounds",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_selection_content",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selection_content",
+      "native": "gtk_text_buffer_get_selection_content",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkContentProvider*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:ContentProvider>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_slice",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_slice",
+      "native": "gtk_text_buffer_get_slice",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "include_hidden_chars",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_start_iter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_start_iter",
+      "native": "gtk_text_buffer_get_start_iter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_tag_table",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_tag_table",
+      "native": "gtk_text_buffer_get_tag_table",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTextTagTable*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TextTagTable>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_text",
+      "native": "gtk_text_buffer_get_text",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "include_hidden_chars",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert",
+      "native": "gtk_text_buffer_insert",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_at_cursor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_at_cursor",
+      "native": "gtk_text_buffer_insert_at_cursor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_child_anchor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_child_anchor",
+      "native": "gtk_text_buffer_insert_child_anchor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "anchor",
+          "native": "GtkTextChildAnchor*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextChildAnchor>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_interactive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_interactive",
+      "native": "gtk_text_buffer_insert_interactive",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_interactive_at_cursor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_interactive_at_cursor",
+      "native": "gtk_text_buffer_insert_interactive_at_cursor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_markup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_markup",
+      "native": "gtk_text_buffer_insert_markup",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "markup",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_paintable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_paintable",
+      "native": "gtk_text_buffer_insert_paintable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "paintable",
+          "native": "GdkPaintable*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_range",
+      "native": "gtk_text_buffer_insert_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_range_interactive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_range_interactive",
+      "native": "gtk_text_buffer_insert_range_interactive",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_with_tags",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_with_tags",
+      "native": "gtk_text_buffer_insert_with_tags",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "first_tag",
+          "native": "GtkTextTag*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextTag>"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_with_tags_by_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert_with_tags_by_name",
+      "native": "gtk_text_buffer_insert_with_tags_by_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "first_tag_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:move_mark",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "move_mark",
+      "native": "gtk_text_buffer_move_mark",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mark",
+          "native": "GtkTextMark*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+        },
+        {
+          "name": "where",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:move_mark_by_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "move_mark_by_name",
+      "native": "gtk_text_buffer_move_mark_by_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "where",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:paste_clipboard",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "paste_clipboard",
+      "native": "gtk_text_buffer_paste_clipboard",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "clipboard",
+          "native": "GdkClipboard*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Clipboard>"
+        },
+        {
+          "name": "override_location",
+          "native": "GtkTextIter*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "default_editable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:place_cursor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "place_cursor",
+      "native": "gtk_text_buffer_place_cursor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "where",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:redo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "redo",
+      "native": "gtk_text_buffer_redo",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:remove_all_tags",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_all_tags",
+      "native": "gtk_text_buffer_remove_all_tags",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:remove_commit_notify",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_commit_notify",
+      "native": "gtk_text_buffer_remove_commit_notify",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "commit_notify_handler",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:remove_selection_clipboard",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_selection_clipboard",
+      "native": "gtk_text_buffer_remove_selection_clipboard",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "clipboard",
+          "native": "GdkClipboard*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Clipboard>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:remove_tag",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_tag",
+      "native": "gtk_text_buffer_remove_tag",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "tag",
+          "native": "GtkTextTag*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextTag>"
+        },
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:remove_tag_by_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_tag_by_name",
+      "native": "gtk_text_buffer_remove_tag_by_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "start",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "end",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:select_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_range",
+      "native": "gtk_text_buffer_select_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "ins",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "name": "bound",
+          "native": "const GtkTextIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:set_enable_undo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_enable_undo",
+      "native": "gtk_text_buffer_set_enable_undo",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "enable_undo",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:set_max_undo_levels",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_max_undo_levels",
+      "native": "gtk_text_buffer_set_max_undo_levels",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "max_undo_levels",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:set_modified",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_modified",
+      "native": "gtk_text_buffer_set_modified",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:set_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_text",
+      "native": "gtk_text_buffer_set_text",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:undo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "undo",
+      "native": "gtk_text_buffer_undo",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkTextBuffer",
+    "gtype": "GtkTextBuffer",
+    "name": "GtkTextBuffer"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_text_buffer_get_can_redo",
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:can-redo",
+      "invocation": "reflected",
+      "js_name": "canRedo",
+      "name": "can-redo",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::can-redo"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_text_buffer_get_can_undo",
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:can-undo",
+      "invocation": "reflected",
+      "js_name": "canUndo",
+      "name": "can-undo",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::can-undo"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:cursor-position",
+      "invocation": "reflected",
+      "js_name": "cursorPosition",
+      "name": "cursor-position",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::cursor-position"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_text_buffer_get_enable_undo",
+        "set": "gtk_text_buffer_set_enable_undo"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:enable-undo",
+      "invocation": "reflected",
+      "js_name": "enableUndo",
+      "name": "enable-undo",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::enable-undo"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_text_buffer_get_has_selection",
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:has-selection",
+      "invocation": "reflected",
+      "js_name": "hasSelection",
+      "name": "has-selection",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::has-selection"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_text_buffer_get_tag_table",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:tag-table",
+      "invocation": "reflected",
+      "js_name": "tagTable",
+      "name": "tag-table",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::tag-table"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkTextTagTable",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "GtkTextTagTable",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:TextTagTable>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_text_buffer_get_text",
+        "set": "gtk_text_buffer_set_text"
+      },
+      "default": "",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:text",
+      "invocation": "reflected",
+      "js_name": "text",
+      "name": "text",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::text"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextBuffer"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:apply-tag",
+      "js_event": "apply-tag",
+      "name": "apply-tag",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextTag",
+          "name": "tag",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextTag>"
+        },
+        {
+          "gtype": "GtkTextIter",
+          "name": "start",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "GtkTextIter",
+          "name": "end",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:begin-user-action",
+      "js_event": "begin-user-action",
+      "name": "begin-user-action",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:changed",
+      "js_event": "changed",
+      "name": "changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:delete-range",
+      "js_event": "delete-range",
+      "name": "delete-range",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextIter",
+          "name": "start",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "GtkTextIter",
+          "name": "end",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:end-user-action",
+      "js_event": "end-user-action",
+      "name": "end-user-action",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:insert-child-anchor",
+      "js_event": "insert-child-anchor",
+      "name": "insert-child-anchor",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextIter",
+          "name": "location",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "GtkTextChildAnchor",
+          "name": "anchor",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextChildAnchor>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:insert-paintable",
+      "js_event": "insert-paintable",
+      "name": "insert-paintable",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextIter",
+          "name": "location",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "GdkPaintable",
+          "name": "paintable",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:insert-text",
+      "js_event": "insert-text",
+      "name": "insert-text",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextIter",
+          "name": "location",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "gchararray",
+          "name": "text",
+          "type": "string"
+        },
+        {
+          "gtype": "gint",
+          "name": "len",
+          "type": "i32"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:mark-deleted",
+      "js_event": "mark-deleted",
+      "name": "mark-deleted",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextMark",
+          "name": "mark",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:mark-set",
+      "js_event": "mark-set",
+      "name": "mark-set",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextIter",
+          "name": "location",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "GtkTextMark",
+          "name": "mark",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextMark>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:modified-changed",
+      "js_event": "modified-changed",
+      "name": "modified-changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:paste-done",
+      "js_event": "paste-done",
+      "name": "paste-done",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkClipboard",
+          "name": "clipboard",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Clipboard>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:redo",
+      "js_event": "redo",
+      "name": "redo",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:remove-tag",
+      "js_event": "remove-tag",
+      "name": "remove-tag",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTextTag",
+          "name": "tag",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TextTag>"
+        },
+        {
+          "gtype": "GtkTextIter",
+          "name": "start",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        },
+        {
+          "gtype": "GtkTextIter",
+          "name": "end",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TextIter>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signal:undo",
+      "js_event": "undo",
+      "name": "undo",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

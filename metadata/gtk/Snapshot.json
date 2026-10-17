@@ -1,0 +1,2088 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gdk.Snapshot",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_snapshot_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Snapshot",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_border",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_border",
+      "native": "gtk_snapshot_append_border",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "outline",
+          "native": "const GskRoundedRect*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "value<svelters-api:v1:type:gtk:Gsk:RoundedRect>"
+        },
+        {
+          "name": "border_width",
+          "native": "const float*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<f32>"
+        },
+        {
+          "name": "border_color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<boxed<svelters-api:v1:type:gtk:Gdk:RGBA>>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_cairo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_cairo",
+      "native": "gtk_snapshot_append_cairo",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        }
+      ],
+      "returns": {
+        "native": "cairo_t*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:cairo:Context>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_color",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_color",
+      "native": "gtk_snapshot_append_color",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        },
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_conic_gradient",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_conic_gradient",
+      "native": "gtk_snapshot_append_conic_gradient",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "center",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "rotation",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "stops",
+          "native": "const GskColorStop*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gsk:ColorStop>>"
+        },
+        {
+          "name": "n_stops",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_fill",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_fill",
+      "native": "gtk_snapshot_append_fill",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GskPath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Path>"
+        },
+        {
+          "name": "fill_rule",
+          "native": "GskFillRule",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gsk:FillRule>"
+        },
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_inset_shadow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_inset_shadow",
+      "native": "gtk_snapshot_append_inset_shadow",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "outline",
+          "native": "const GskRoundedRect*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "value<svelters-api:v1:type:gtk:Gsk:RoundedRect>"
+        },
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        },
+        {
+          "name": "dx",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "dy",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "spread",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "blur_radius",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_layout",
+      "native": "gtk_snapshot_append_layout",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "layout",
+          "native": "PangoLayout*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:Layout>"
+        },
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_linear_gradient",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_linear_gradient",
+      "native": "gtk_snapshot_append_linear_gradient",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "start_point",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "end_point",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "stops",
+          "native": "const GskColorStop*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gsk:ColorStop>>"
+        },
+        {
+          "name": "n_stops",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_node",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_node",
+      "native": "gtk_snapshot_append_node",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "node",
+          "native": "GskRenderNode*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gsk:RenderNode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_outset_shadow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_outset_shadow",
+      "native": "gtk_snapshot_append_outset_shadow",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "outline",
+          "native": "const GskRoundedRect*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "value<svelters-api:v1:type:gtk:Gsk:RoundedRect>"
+        },
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        },
+        {
+          "name": "dx",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "dy",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "spread",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "blur_radius",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_paste",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_paste",
+      "native": "gtk_snapshot_append_paste",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "nth",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_radial_gradient",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_radial_gradient",
+      "native": "gtk_snapshot_append_radial_gradient",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "center",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "hradius",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "vradius",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "start",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "end",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "stops",
+          "native": "const GskColorStop*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gsk:ColorStop>>"
+        },
+        {
+          "name": "n_stops",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_repeating_linear_gradient",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_repeating_linear_gradient",
+      "native": "gtk_snapshot_append_repeating_linear_gradient",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "start_point",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "end_point",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "stops",
+          "native": "const GskColorStop*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gsk:ColorStop>>"
+        },
+        {
+          "name": "n_stops",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_repeating_radial_gradient",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_repeating_radial_gradient",
+      "native": "gtk_snapshot_append_repeating_radial_gradient",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "center",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        },
+        {
+          "name": "hradius",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "vradius",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "start",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "end",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "stops",
+          "native": "const GskColorStop*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gsk:ColorStop>>"
+        },
+        {
+          "name": "n_stops",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_scaled_texture",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_scaled_texture",
+      "native": "gtk_snapshot_append_scaled_texture",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "texture",
+          "native": "GdkTexture*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Texture>"
+        },
+        {
+          "name": "filter",
+          "native": "GskScalingFilter",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gsk:ScalingFilter>"
+        },
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_stroke",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_stroke",
+      "native": "gtk_snapshot_append_stroke",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GskPath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Path>"
+        },
+        {
+          "name": "stroke",
+          "native": "const GskStroke*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Stroke>"
+        },
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:append_texture",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append_texture",
+      "native": "gtk_snapshot_append_texture",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "texture",
+          "native": "GdkTexture*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Texture>"
+        },
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:free_to_node",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "free_to_node",
+      "native": "gtk_snapshot_free_to_node",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GskRenderNode*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gsk:RenderNode>"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:free_to_paintable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "free_to_paintable",
+      "native": "gtk_snapshot_free_to_paintable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "size",
+          "native": "const graphene_size_t*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Size>"
+        }
+      ],
+      "returns": {
+        "native": "GdkPaintable*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:gl_shader_pop_texture",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "gl_shader_pop_texture",
+      "native": "gtk_snapshot_gl_shader_pop_texture",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:perspective",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "perspective",
+      "native": "gtk_snapshot_perspective",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "depth",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:pop",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "pop",
+      "native": "gtk_snapshot_pop",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_blend",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_blend",
+      "native": "gtk_snapshot_push_blend",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "blend_mode",
+          "native": "GskBlendMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gsk:BlendMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_blur",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_blur",
+      "native": "gtk_snapshot_push_blur",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "radius",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_clip",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_clip",
+      "native": "gtk_snapshot_push_clip",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_color_matrix",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_color_matrix",
+      "native": "gtk_snapshot_push_color_matrix",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "color_matrix",
+          "native": "const graphene_matrix_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Matrix>"
+        },
+        {
+          "name": "color_offset",
+          "native": "const graphene_vec4_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Vec4>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_component_transfer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_component_transfer",
+      "native": "gtk_snapshot_push_component_transfer",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "red",
+          "native": "const GskComponentTransfer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:ComponentTransfer>"
+        },
+        {
+          "name": "green",
+          "native": "const GskComponentTransfer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:ComponentTransfer>"
+        },
+        {
+          "name": "blue",
+          "native": "const GskComponentTransfer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:ComponentTransfer>"
+        },
+        {
+          "name": "alpha",
+          "native": "const GskComponentTransfer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:ComponentTransfer>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_composite",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_composite",
+      "native": "gtk_snapshot_push_composite",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "op",
+          "native": "GskPorterDuff",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gsk:PorterDuff>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_copy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_copy",
+      "native": "gtk_snapshot_push_copy",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_cross_fade",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_cross_fade",
+      "native": "gtk_snapshot_push_cross_fade",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "progress",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_debug",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_debug",
+      "native": "gtk_snapshot_push_debug",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "message",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_fill",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_fill",
+      "native": "gtk_snapshot_push_fill",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GskPath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Path>"
+        },
+        {
+          "name": "fill_rule",
+          "native": "GskFillRule",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gsk:FillRule>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_gl_shader",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_gl_shader",
+      "native": "gtk_snapshot_push_gl_shader",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "shader",
+          "native": "GskGLShader*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gsk:GLShader>"
+        },
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "take_args",
+          "native": "GBytes*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:Bytes>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_isolation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_isolation",
+      "native": "gtk_snapshot_push_isolation",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "features",
+          "native": "GskIsolation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gsk:Isolation>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_mask",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_mask",
+      "native": "gtk_snapshot_push_mask",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mask_mode",
+          "native": "GskMaskMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gsk:MaskMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_opacity",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_opacity",
+      "native": "gtk_snapshot_push_opacity",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "opacity",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_repeat",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_repeat",
+      "native": "gtk_snapshot_push_repeat",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        },
+        {
+          "name": "child_bounds",
+          "native": "const graphene_rect_t*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Rect>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_rounded_clip",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_rounded_clip",
+      "native": "gtk_snapshot_push_rounded_clip",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "bounds",
+          "native": "const GskRoundedRect*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "value<svelters-api:v1:type:gtk:Gsk:RoundedRect>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_shadow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_shadow",
+      "native": "gtk_snapshot_push_shadow",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "shadow",
+          "native": "const GskShadow*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<value<svelters-api:v1:type:gtk:Gsk:Shadow>>"
+        },
+        {
+          "name": "n_shadows",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:push_stroke",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "push_stroke",
+      "native": "gtk_snapshot_push_stroke",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GskPath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Path>"
+        },
+        {
+          "name": "stroke",
+          "native": "const GskStroke*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Stroke>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:render_background",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "render_background",
+      "native": "gtk_snapshot_render_background",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkStyleContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:StyleContext>"
+        },
+        {
+          "name": "x",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "width",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "height",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:render_focus",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "render_focus",
+      "native": "gtk_snapshot_render_focus",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkStyleContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:StyleContext>"
+        },
+        {
+          "name": "x",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "width",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "height",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:render_frame",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "render_frame",
+      "native": "gtk_snapshot_render_frame",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkStyleContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:StyleContext>"
+        },
+        {
+          "name": "x",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "width",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "height",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:render_insertion_cursor",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "render_insertion_cursor",
+      "native": "gtk_snapshot_render_insertion_cursor",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkStyleContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:StyleContext>"
+        },
+        {
+          "name": "x",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "layout",
+          "native": "PangoLayout*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:Layout>"
+        },
+        {
+          "name": "index",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "direction",
+          "native": "PangoDirection",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Pango:Direction>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:render_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "render_layout",
+      "native": "gtk_snapshot_render_layout",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkStyleContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:StyleContext>"
+        },
+        {
+          "name": "x",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "layout",
+          "native": "PangoLayout*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:Layout>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:restore",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "restore",
+      "native": "gtk_snapshot_restore",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:rotate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "rotate",
+      "native": "gtk_snapshot_rotate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "angle",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:rotate_3d",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "rotate_3d",
+      "native": "gtk_snapshot_rotate_3d",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "angle",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "axis",
+          "native": "const graphene_vec3_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Vec3>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:save",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "save",
+      "native": "gtk_snapshot_save",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:scale",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "scale",
+      "native": "gtk_snapshot_scale",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factor_x",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "factor_y",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:scale_3d",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "scale_3d",
+      "native": "gtk_snapshot_scale_3d",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factor_x",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "factor_y",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "factor_z",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:to_node",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "to_node",
+      "native": "gtk_snapshot_to_node",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GskRenderNode*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gsk:RenderNode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:to_paintable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "to_paintable",
+      "native": "gtk_snapshot_to_paintable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "size",
+          "native": "const graphene_size_t*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Size>"
+        }
+      ],
+      "returns": {
+        "native": "GdkPaintable*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:transform",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "transform",
+      "native": "gtk_snapshot_transform",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "transform",
+          "native": "GskTransform*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Transform>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:transform_matrix",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "transform_matrix",
+      "native": "gtk_snapshot_transform_matrix",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "matrix",
+          "native": "const graphene_matrix_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Matrix>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:translate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "translate",
+      "native": "gtk_snapshot_translate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "point",
+          "native": "const graphene_point_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Snapshot:method:translate_3d",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "translate_3d",
+      "native": "gtk_snapshot_translate_3d",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "point",
+          "native": "const graphene_point3d_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Graphene:Point3D>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": null,
+    "gtype": "GtkSnapshot",
+    "name": null
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,1378 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "append",
+        "insert",
+        "prepend",
+        "remove"
+      ],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_list_box_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "listbox"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ListTabBehavior",
+    "svelters-api:v1:type:gtk:Gtk:SelectionMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:ListBox",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:append",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "append",
+      "native": "gtk_list_box_append",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:bind_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "bind_model",
+      "native": "gtk_list_box_bind_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GListModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        },
+        {
+          "name": "create_widget_func",
+          "native": "GtkListBoxCreateWidgetFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:ListBoxCreateWidgetFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "user_data_free_func",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:drag_highlight_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "drag_highlight_row",
+      "native": "gtk_list_box_drag_highlight_row",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "row",
+          "native": "GtkListBoxRow*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:drag_unhighlight_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "drag_unhighlight_row",
+      "native": "gtk_list_box_drag_unhighlight_row",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_activate_on_single_click",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_activate_on_single_click",
+      "native": "gtk_list_box_get_activate_on_single_click",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_adjustment",
+      "native": "gtk_list_box_get_adjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_row_at_index",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_row_at_index",
+      "native": "gtk_list_box_get_row_at_index",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "index_",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "GtkListBoxRow*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_row_at_y",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_row_at_y",
+      "native": "gtk_list_box_get_row_at_y",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "y",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "GtkListBoxRow*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_selected_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selected_row",
+      "native": "gtk_list_box_get_selected_row",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListBoxRow*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_selected_rows",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selected_rows",
+      "native": "gtk_list_box_get_selected_rows",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GList*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_selection_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selection_mode",
+      "native": "gtk_list_box_get_selection_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSelectionMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_show_separators",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_separators",
+      "native": "gtk_list_box_get_show_separators",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:get_tab_behavior",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_tab_behavior",
+      "native": "gtk_list_box_get_tab_behavior",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListTabBehavior",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:insert",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "insert",
+      "native": "gtk_list_box_insert",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "position",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:invalidate_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "invalidate_filter",
+      "native": "gtk_list_box_invalidate_filter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:invalidate_headers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "invalidate_headers",
+      "native": "gtk_list_box_invalidate_headers",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:invalidate_sort",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "invalidate_sort",
+      "native": "gtk_list_box_invalidate_sort",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:prepend",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "prepend",
+      "native": "gtk_list_box_prepend",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:remove",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove",
+      "native": "gtk_list_box_remove",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:remove_all",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_all",
+      "native": "gtk_list_box_remove_all",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:select_all",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_all",
+      "native": "gtk_list_box_select_all",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:select_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_row",
+      "native": "gtk_list_box_select_row",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "row",
+          "native": "GtkListBoxRow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:selected_foreach",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "selected_foreach",
+      "native": "gtk_list_box_selected_foreach",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkListBoxForeachFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:ListBoxForeachFunc>"
+        },
+        {
+          "name": "data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_activate_on_single_click",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_activate_on_single_click",
+      "native": "gtk_list_box_set_activate_on_single_click",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "single",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_adjustment",
+      "native": "gtk_list_box_set_adjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_filter_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_filter_func",
+      "native": "gtk_list_box_set_filter_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter_func",
+          "native": "GtkListBoxFilterFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:ListBoxFilterFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_header_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_header_func",
+      "native": "gtk_list_box_set_header_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "update_header",
+          "native": "GtkListBoxUpdateHeaderFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:ListBoxUpdateHeaderFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_placeholder",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_placeholder",
+      "native": "gtk_list_box_set_placeholder",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "placeholder",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_selection_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_selection_mode",
+      "native": "gtk_list_box_set_selection_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mode",
+          "native": "GtkSelectionMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_show_separators",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_separators",
+      "native": "gtk_list_box_set_show_separators",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "show_separators",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_sort_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_sort_func",
+      "native": "gtk_list_box_set_sort_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sort_func",
+          "native": "GtkListBoxSortFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:ListBoxSortFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:set_tab_behavior",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_tab_behavior",
+      "native": "gtk_list_box_set_tab_behavior",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "behavior",
+          "native": "GtkListTabBehavior",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:unselect_all",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unselect_all",
+      "native": "gtk_list_box_unselect_all",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:method:unselect_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unselect_row",
+      "native": "gtk_list_box_unselect_row",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "row",
+          "native": "GtkListBoxRow*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkListBox",
+    "gtype": "GtkListBox",
+    "name": "GtkListBox"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:accept-unpaired-release",
+      "invocation": "reflected",
+      "js_name": "acceptUnpairedRelease",
+      "name": "accept-unpaired-release",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::accept-unpaired-release"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkListBox"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_list_box_get_activate_on_single_click",
+        "set": "gtk_list_box_set_activate_on_single_click"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:activate-on-single-click",
+      "invocation": "reflected",
+      "js_name": "activateOnSingleClick",
+      "name": "activate-on-single-click",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::activate-on-single-click"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkListBox"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_list_box_get_selection_mode",
+        "set": "gtk_list_box_set_selection_mode"
+      },
+      "default": "single",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:selection-mode",
+      "invocation": "reflected",
+      "js_name": "selectionMode",
+      "name": "selection-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::selection-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSelectionMode",
+        "origin": "runtime",
+        "owner": "GtkListBox"
+      },
+      "type": {
+        "gtype": "GtkSelectionMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_list_box_get_show_separators",
+        "set": "gtk_list_box_set_show_separators"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:show-separators",
+      "invocation": "reflected",
+      "js_name": "showSeparators",
+      "name": "show-separators",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-separators"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkListBox"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_list_box_get_tab_behavior",
+        "set": "gtk_list_box_set_tab_behavior"
+      },
+      "default": "all",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:tab-behavior",
+      "invocation": "reflected",
+      "js_name": "tabBehavior",
+      "name": "tab-behavior",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::tab-behavior"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListTabBehavior",
+        "origin": "runtime",
+        "owner": "GtkListBox"
+      },
+      "since": "4.18",
+      "type": {
+        "gtype": "GtkListTabBehavior",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:activate-cursor-row",
+      "js_event": "activate-cursor-row",
+      "name": "activate-cursor-row",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:move-cursor",
+      "js_event": "move-cursor",
+      "name": "move-cursor",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkMovementStep",
+          "name": "step",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:MovementStep>"
+        },
+        {
+          "gtype": "gint",
+          "name": "count",
+          "type": "i32"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "extend",
+          "type": "bool"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "modify",
+          "type": "bool"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-activated",
+      "js_event": "row-activated",
+      "name": "row-activated",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkListBoxRow",
+          "name": "row",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-selected",
+      "js_event": "row-selected",
+      "name": "row-selected",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkListBoxRow",
+          "name": "row",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListBoxRow>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:select-all",
+      "js_event": "select-all",
+      "name": "select-all",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:selected-rows-changed",
+      "js_event": "selected-rows-changed",
+      "name": "selected-rows-changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:toggle-cursor-row",
+      "js_event": "toggle-cursor-row",
+      "name": "toggle-cursor-row",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:unselect-all",
+      "js_event": "unselect-all",
+      "name": "unselect-all",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

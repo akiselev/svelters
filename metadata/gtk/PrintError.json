@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintError",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "general",
+      "native": "GTK_PRINT_ERROR_GENERAL",
+      "nick": "general",
+      "value": 0
+    },
+    {
+      "name": "internal_error",
+      "native": "GTK_PRINT_ERROR_INTERNAL_ERROR",
+      "nick": "internal-error",
+      "value": 1
+    },
+    {
+      "name": "nomem",
+      "native": "GTK_PRINT_ERROR_NOMEM",
+      "nick": "nomem",
+      "value": 2
+    },
+    {
+      "name": "invalid_file",
+      "native": "GTK_PRINT_ERROR_INVALID_FILE",
+      "nick": "invalid-file",
+      "value": 3
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintError",
+    "gtype": "GtkPrintError",
+    "name": "GtkPrintError"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

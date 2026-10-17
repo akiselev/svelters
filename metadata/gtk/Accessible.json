@@ -1,0 +1,684 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:AccessibleRole"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Accessible",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:announce",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "announce",
+      "native": "gtk_accessible_announce",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "message",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "priority",
+          "native": "GtkAccessibleAnnouncementPriority",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleAnnouncementPriority>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_accessible_id",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_accessible_id",
+      "native": "gtk_accessible_get_accessible_id",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_accessible_parent",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_accessible_parent",
+      "native": "gtk_accessible_get_accessible_parent",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAccessible*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Accessible>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_accessible_role",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_accessible_role",
+      "native": "gtk_accessible_get_accessible_role",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAccessibleRole",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleRole>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_at_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_at_context",
+      "native": "gtk_accessible_get_at_context",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkATContext*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ATContext>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_bounds",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_bounds",
+      "native": "gtk_accessible_get_bounds",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "x",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "y",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "width",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "height",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_first_accessible_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_first_accessible_child",
+      "native": "gtk_accessible_get_first_accessible_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAccessible*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Accessible>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_next_accessible_sibling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_next_accessible_sibling",
+      "native": "gtk_accessible_get_next_accessible_sibling",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAccessible*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Accessible>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:get_platform_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_platform_state",
+      "native": "gtk_accessible_get_platform_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "state",
+          "native": "GtkAccessiblePlatformState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessiblePlatformState>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:reset_property",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reset_property",
+      "native": "gtk_accessible_reset_property",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "property",
+          "native": "GtkAccessibleProperty",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleProperty>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:reset_relation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reset_relation",
+      "native": "gtk_accessible_reset_relation",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "relation",
+          "native": "GtkAccessibleRelation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleRelation>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:reset_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reset_state",
+      "native": "gtk_accessible_reset_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "state",
+          "native": "GtkAccessibleState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleState>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:set_accessible_parent",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_accessible_parent",
+      "native": "gtk_accessible_set_accessible_parent",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkAccessible*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Accessible>"
+        },
+        {
+          "name": "next_sibling",
+          "native": "GtkAccessible*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Accessible>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_next_accessible_sibling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_next_accessible_sibling",
+      "native": "gtk_accessible_update_next_accessible_sibling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "new_sibling",
+          "native": "GtkAccessible*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Accessible>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_platform_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_platform_state",
+      "native": "gtk_accessible_update_platform_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "state",
+          "native": "GtkAccessiblePlatformState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessiblePlatformState>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_property",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_property",
+      "native": "gtk_accessible_update_property",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "first_property",
+          "native": "GtkAccessibleProperty",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleProperty>"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_property_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_property_value",
+      "native": "gtk_accessible_update_property_value",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "n_properties",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "properties",
+          "native": "GtkAccessibleProperty*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<enum<svelters-api:v1:type:gtk:Gtk:AccessibleProperty>>"
+        },
+        {
+          "name": "values",
+          "native": "const GValue*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<boxed<svelters-api:v1:type:gtk:GObject:Value>>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_relation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_relation",
+      "native": "gtk_accessible_update_relation",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "first_relation",
+          "native": "GtkAccessibleRelation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleRelation>"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_relation_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_relation_value",
+      "native": "gtk_accessible_update_relation_value",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "n_relations",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "relations",
+          "native": "GtkAccessibleRelation*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<enum<svelters-api:v1:type:gtk:Gtk:AccessibleRelation>>"
+        },
+        {
+          "name": "values",
+          "native": "const GValue*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<boxed<svelters-api:v1:type:gtk:GObject:Value>>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_state",
+      "native": "gtk_accessible_update_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "first_state",
+          "native": "GtkAccessibleState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleState>"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:method:update_state_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update_state_value",
+      "native": "gtk_accessible_update_state_value",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "n_states",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "states",
+          "native": "GtkAccessibleState*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<enum<svelters-api:v1:type:gtk:Gtk:AccessibleState>>"
+        },
+        {
+          "name": "values",
+          "native": "const GValue*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<boxed<svelters-api:v1:type:gtk:GObject:Value>>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkAccessible",
+    "gtype": "GtkAccessible",
+    "name": "GtkAccessible"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_accessible_get_accessible_role",
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Accessible:prop:accessible-role",
+      "invocation": "reflected",
+      "js_name": "accessibleRole",
+      "name": "accessible-role",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::accessible-role"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkAccessibleRole",
+        "origin": "runtime",
+        "owner": "GtkAccessible"
+      },
+      "type": {
+        "gtype": "GtkAccessibleRole",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:AccessibleRole>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

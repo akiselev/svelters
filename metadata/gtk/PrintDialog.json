@@ -1,0 +1,742 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.14"
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_print_dialog_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:get_accept_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_accept_label",
+      "native": "gtk_print_dialog_get_accept_label",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:get_modal",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_modal",
+      "native": "gtk_print_dialog_get_modal",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:get_page_setup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_page_setup",
+      "native": "gtk_print_dialog_get_page_setup",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPageSetup*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:PageSetup>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:get_print_settings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_print_settings",
+      "native": "gtk_print_dialog_get_print_settings",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintSettings*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:PrintSettings>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:get_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_title",
+      "native": "gtk_print_dialog_get_title",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:print",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "print",
+      "native": "gtk_print_dialog_print",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "setup",
+          "native": "GtkPrintSetup*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:PrintSetup>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:print_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "print_file",
+      "native": "gtk_print_dialog_print_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "setup",
+          "native": "GtkPrintSetup*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:PrintSetup>"
+        },
+        {
+          "name": "file",
+          "native": "GFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:print_file_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "print_file_finish",
+      "native": "gtk_print_dialog_print_file_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:print_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "print_finish",
+      "native": "gtk_print_dialog_print_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        }
+      ],
+      "returns": {
+        "native": "GOutputStream*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:OutputStream>"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:set_accept_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_accept_label",
+      "native": "gtk_print_dialog_set_accept_label",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "accept_label",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:set_modal",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_modal",
+      "native": "gtk_print_dialog_set_modal",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "modal",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:set_page_setup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_page_setup",
+      "native": "gtk_print_dialog_set_page_setup",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "page_setup",
+          "native": "GtkPageSetup*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:PageSetup>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:set_print_settings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_print_settings",
+      "native": "gtk_print_dialog_set_print_settings",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "print_settings",
+          "native": "GtkPrintSettings*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:PrintSettings>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:set_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_title",
+      "native": "gtk_print_dialog_set_title",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "title",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:setup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "setup",
+      "native": "gtk_print_dialog_setup",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkWindow*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Window>"
+        },
+        {
+          "name": "cancellable",
+          "native": "GCancellable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Cancellable>"
+        },
+        {
+          "name": "callback",
+          "native": "GAsyncReadyCallback",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gio:AsyncReadyCallback>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:method:setup_finish",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "setup_finish",
+      "native": "gtk_print_dialog_setup_finish",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "result",
+          "native": "GAsyncResult*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:AsyncResult>"
+        }
+      ],
+      "returns": {
+        "native": "GtkPrintSetup*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:PrintSetup>"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintDialog",
+    "gtype": "GtkPrintDialog",
+    "name": "GtkPrintDialog"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_print_dialog_get_accept_label",
+        "set": "gtk_print_dialog_set_accept_label"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:accept-label",
+      "invocation": "reflected",
+      "js_name": "acceptLabel",
+      "name": "accept-label",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::accept-label"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkPrintDialog"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_print_dialog_get_modal",
+        "set": "gtk_print_dialog_set_modal"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:modal",
+      "invocation": "reflected",
+      "js_name": "modal",
+      "name": "modal",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::modal"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkPrintDialog"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_print_dialog_get_page_setup",
+        "set": "gtk_print_dialog_set_page_setup"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:page-setup",
+      "invocation": "reflected",
+      "js_name": "pageSetup",
+      "name": "page-setup",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::page-setup"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkPageSetup",
+        "origin": "runtime",
+        "owner": "GtkPrintDialog"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "GtkPageSetup",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:PageSetup>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_print_dialog_get_print_settings",
+        "set": "gtk_print_dialog_set_print_settings"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:print-settings",
+      "invocation": "reflected",
+      "js_name": "printSettings",
+      "name": "print-settings",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::print-settings"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkPrintSettings",
+        "origin": "runtime",
+        "owner": "GtkPrintDialog"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "GtkPrintSettings",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:PrintSettings>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_print_dialog_get_title",
+        "set": "gtk_print_dialog_set_title"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:title",
+      "invocation": "reflected",
+      "js_name": "title",
+      "name": "title",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::title"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkPrintDialog"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

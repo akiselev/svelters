@@ -1,0 +1,443 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter",
+  "interfaces": [
+    "Gtk.TreeDragSource",
+    "Gtk.TreeModel"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:clear_cache",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "clear_cache",
+      "native": "gtk_tree_model_filter_clear_cache",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:convert_child_iter_to_iter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "convert_child_iter_to_iter",
+      "native": "gtk_tree_model_filter_convert_child_iter_to_iter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter_iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        },
+        {
+          "name": "child_iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:convert_child_path_to_path",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "convert_child_path_to_path",
+      "native": "gtk_tree_model_filter_convert_child_path_to_path",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child_path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "GtkTreePath*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:convert_iter_to_child_iter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "convert_iter_to_child_iter",
+      "native": "gtk_tree_model_filter_convert_iter_to_child_iter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child_iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        },
+        {
+          "name": "filter_iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:convert_path_to_child_path",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "convert_path_to_child_path",
+      "native": "gtk_tree_model_filter_convert_path_to_child_path",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter_path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "GtkTreePath*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_tree_model_filter_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreeModel*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:refilter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "refilter",
+      "native": "gtk_tree_model_filter_refilter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:set_modify_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_modify_func",
+      "native": "gtk_tree_model_filter_set_modify_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "n_columns",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "types",
+          "native": "GType*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<u64>"
+        },
+        {
+          "name": "func",
+          "native": "GtkTreeModelFilterModifyFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:TreeModelFilterModifyFunc>"
+        },
+        {
+          "name": "data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:set_visible_column",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_visible_column",
+      "native": "gtk_tree_model_filter_set_visible_column",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "column",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:method:set_visible_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_visible_func",
+      "native": "gtk_tree_model_filter_set_visible_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkTreeModelFilterVisibleFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:TreeModelFilterVisibleFunc>"
+        },
+        {
+          "name": "data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    }
+  ],
+  "native": {
+    "c_type": "GtkTreeModelFilter",
+    "gtype": "GtkTreeModelFilter",
+    "name": "GtkTreeModelFilter"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:prop:child-model",
+      "invocation": "reflected",
+      "js_name": "childModel",
+      "name": "child-model",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::child-model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkTreeModel",
+        "origin": "runtime",
+        "owner": "GtkTreeModelFilter"
+      },
+      "type": {
+        "gtype": "GtkTreeModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFilter:prop:virtual-root",
+      "invocation": "reflected",
+      "js_name": "virtualRoot",
+      "name": "virtual-root",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::virtual-root"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkTreePath",
+        "origin": "runtime",
+        "owner": "GtkTreeModelFilter"
+      },
+      "type": {
+        "gtype": "GtkTreePath",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

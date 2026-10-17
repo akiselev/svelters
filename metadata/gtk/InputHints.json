@@ -1,0 +1,109 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:InputHints",
+  "kind": "flags",
+  "members": [
+    {
+      "name": "none",
+      "native": "GTK_INPUT_HINT_NONE",
+      "nick": "none",
+      "value": 0
+    },
+    {
+      "name": "spellcheck",
+      "native": "GTK_INPUT_HINT_SPELLCHECK",
+      "nick": "spellcheck",
+      "value": 1
+    },
+    {
+      "name": "no_spellcheck",
+      "native": "GTK_INPUT_HINT_NO_SPELLCHECK",
+      "nick": "no-spellcheck",
+      "value": 2
+    },
+    {
+      "name": "word_completion",
+      "native": "GTK_INPUT_HINT_WORD_COMPLETION",
+      "nick": "word-completion",
+      "value": 4
+    },
+    {
+      "name": "lowercase",
+      "native": "GTK_INPUT_HINT_LOWERCASE",
+      "nick": "lowercase",
+      "value": 8
+    },
+    {
+      "name": "uppercase_chars",
+      "native": "GTK_INPUT_HINT_UPPERCASE_CHARS",
+      "nick": "uppercase-chars",
+      "value": 16
+    },
+    {
+      "name": "uppercase_words",
+      "native": "GTK_INPUT_HINT_UPPERCASE_WORDS",
+      "nick": "uppercase-words",
+      "value": 32
+    },
+    {
+      "name": "uppercase_sentences",
+      "native": "GTK_INPUT_HINT_UPPERCASE_SENTENCES",
+      "nick": "uppercase-sentences",
+      "value": 64
+    },
+    {
+      "name": "inhibit_osk",
+      "native": "GTK_INPUT_HINT_INHIBIT_OSK",
+      "nick": "inhibit-osk",
+      "value": 128
+    },
+    {
+      "name": "vertical_writing",
+      "native": "GTK_INPUT_HINT_VERTICAL_WRITING",
+      "nick": "vertical-writing",
+      "value": 256
+    },
+    {
+      "name": "emoji",
+      "native": "GTK_INPUT_HINT_EMOJI",
+      "nick": "emoji",
+      "value": 512
+    },
+    {
+      "name": "no_emoji",
+      "native": "GTK_INPUT_HINT_NO_EMOJI",
+      "nick": "no-emoji",
+      "value": 1024
+    },
+    {
+      "name": "private",
+      "native": "GTK_INPUT_HINT_PRIVATE",
+      "nick": "private",
+      "value": 2048
+    }
+  ],
+  "native": {
+    "c_type": "GtkInputHints",
+    "gtype": "GtkInputHints",
+    "name": "GtkInputHints"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

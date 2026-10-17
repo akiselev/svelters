@@ -1,0 +1,155 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.12"
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SectionModel",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SectionModel:method:get_section",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_section",
+      "native": "gtk_section_model_get_section",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "out_start",
+          "native": "guint*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "u32"
+        },
+        {
+          "name": "out_end",
+          "native": "guint*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SectionModel:method:sections_changed",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "sections_changed",
+      "native": "gtk_section_model_sections_changed",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "n_items",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkSectionModel",
+    "gtype": "GtkSectionModel",
+    "name": "GtkSectionModel"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SectionModel:signal:sections-changed",
+      "js_event": "sections-changed",
+      "name": "sections-changed",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "guint",
+          "name": "position",
+          "type": "u32"
+        },
+        {
+          "gtype": "guint",
+          "name": "n_items",
+          "type": "u32"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,923 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_image_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new_from_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_file",
+      "native": "gtk_image_new_from_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filename",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new_from_gicon",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_gicon",
+      "native": "gtk_image_new_from_gicon",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon",
+          "native": "GIcon*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Icon>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new_from_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_icon_name",
+      "native": "gtk_image_new_from_icon_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new_from_paintable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_paintable",
+      "native": "gtk_image_new_from_paintable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "paintable",
+          "native": "GdkPaintable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new_from_pixbuf",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_pixbuf",
+      "native": "gtk_image_new_from_pixbuf",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "pixbuf",
+          "native": "GdkPixbuf*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GdkPixbuf:Pixbuf>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:new_from_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_resource",
+      "native": "gtk_image_new_from_resource",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resource_path",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "image"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:IconSize",
+    "svelters-api:v1:type:gtk:Gtk:ImageType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Image",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:clear",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "clear",
+      "native": "gtk_image_clear",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:get_gicon",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_gicon",
+      "native": "gtk_image_get_gicon",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GIcon*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:Icon>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:get_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_icon_name",
+      "native": "gtk_image_get_icon_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:get_icon_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_icon_size",
+      "native": "gtk_image_get_icon_size",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkIconSize",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:IconSize>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:get_paintable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_paintable",
+      "native": "gtk_image_get_paintable",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkPaintable*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:get_pixel_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_pixel_size",
+      "native": "gtk_image_get_pixel_size",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:get_storage_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_storage_type",
+      "native": "gtk_image_get_storage_type",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkImageType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ImageType>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_from_file",
+      "native": "gtk_image_set_from_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filename",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_gicon",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_from_gicon",
+      "native": "gtk_image_set_from_gicon",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon",
+          "native": "GIcon*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Icon>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_from_icon_name",
+      "native": "gtk_image_set_from_icon_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_paintable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_from_paintable",
+      "native": "gtk_image_set_from_paintable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "paintable",
+          "native": "GdkPaintable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_pixbuf",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_from_pixbuf",
+      "native": "gtk_image_set_from_pixbuf",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "pixbuf",
+          "native": "GdkPixbuf*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GdkPixbuf:Pixbuf>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_from_resource",
+      "native": "gtk_image_set_from_resource",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resource_path",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_icon_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_icon_size",
+      "native": "gtk_image_set_icon_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon_size",
+          "native": "GtkIconSize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:IconSize>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_pixel_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_pixel_size",
+      "native": "gtk_image_set_pixel_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "pixel_size",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkImage",
+    "gtype": "GtkImage",
+    "name": "GtkImage"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:file",
+      "invocation": "reflected",
+      "js_name": "file",
+      "name": "file",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::file"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_image_get_gicon",
+        "set": "gtk_image_set_from_gicon"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:gicon",
+      "invocation": "reflected",
+      "js_name": "gicon",
+      "name": "gicon",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gicon"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GIcon",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "GIcon",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:Icon>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_image_get_icon_name",
+        "set": "gtk_image_set_from_icon_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-name",
+      "invocation": "reflected",
+      "js_name": "iconName",
+      "name": "icon-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::icon-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_image_get_icon_size",
+        "set": "gtk_image_set_icon_size"
+      },
+      "default": "inherit",
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-size",
+      "invocation": "reflected",
+      "js_name": "iconSize",
+      "name": "icon-size",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::icon-size"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkIconSize",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "GtkIconSize",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:IconSize>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_image_get_paintable",
+        "set": "gtk_image_set_from_paintable"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:paintable",
+      "invocation": "reflected",
+      "js_name": "paintable",
+      "name": "paintable",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::paintable"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkPaintable",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "GdkPaintable",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_image_get_pixel_size",
+        "set": "gtk_image_set_pixel_size"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:pixel-size",
+      "invocation": "reflected",
+      "js_name": "pixelSize",
+      "name": "pixel-size",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::pixel-size"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:resource",
+      "invocation": "reflected",
+      "js_name": "resource",
+      "name": "resource",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::resource"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_image_get_storage_type",
+        "set": null
+      },
+      "default": "empty",
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:storage-type",
+      "invocation": "reflected",
+      "js_name": "storageType",
+      "name": "storage-type",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::storage-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GtkImageType",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "GtkImageType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ImageType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:use-fallback",
+      "invocation": "reflected",
+      "js_name": "useFallback",
+      "name": "use-fallback",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-fallback"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkImage"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

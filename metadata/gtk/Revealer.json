@@ -1,0 +1,488 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "set_child"
+      ],
+      "widget_props": [
+        "child"
+      ]
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_revealer_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "revealer"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:RevealerTransitionType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Revealer",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:get_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child",
+      "native": "gtk_revealer_get_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:get_child_revealed",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child_revealed",
+      "native": "gtk_revealer_get_child_revealed",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:get_reveal_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_reveal_child",
+      "native": "gtk_revealer_get_reveal_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:get_transition_duration",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_transition_duration",
+      "native": "gtk_revealer_get_transition_duration",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:get_transition_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_transition_type",
+      "native": "gtk_revealer_get_transition_type",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkRevealerTransitionType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:RevealerTransitionType>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:set_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_child",
+      "native": "gtk_revealer_set_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:set_reveal_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_reveal_child",
+      "native": "gtk_revealer_set_reveal_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "reveal_child",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:set_transition_duration",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_transition_duration",
+      "native": "gtk_revealer_set_transition_duration",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "duration",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:method:set_transition_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_transition_type",
+      "native": "gtk_revealer_set_transition_type",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "transition",
+          "native": "GtkRevealerTransitionType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:RevealerTransitionType>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkRevealer",
+    "gtype": "GtkRevealer",
+    "name": "GtkRevealer"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_revealer_get_child",
+        "set": "gtk_revealer_set_child"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:child",
+      "invocation": "reflected",
+      "js_name": "child",
+      "name": "child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkRevealer"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_revealer_get_child_revealed",
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:child-revealed",
+      "invocation": "reflected",
+      "js_name": "childRevealed",
+      "name": "child-revealed",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::child-revealed"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkRevealer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_revealer_get_reveal_child",
+        "set": "gtk_revealer_set_reveal_child"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:reveal-child",
+      "invocation": "reflected",
+      "js_name": "revealChild",
+      "name": "reveal-child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::reveal-child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkRevealer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_revealer_get_transition_duration",
+        "set": "gtk_revealer_set_transition_duration"
+      },
+      "default": 250,
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:transition-duration",
+      "invocation": "reflected",
+      "js_name": "transitionDuration",
+      "name": "transition-duration",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::transition-duration"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkRevealer"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_revealer_get_transition_type",
+        "set": "gtk_revealer_set_transition_type"
+      },
+      "default": "slide-down",
+      "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:transition-type",
+      "invocation": "reflected",
+      "js_name": "transitionType",
+      "name": "transition-type",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::transition-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkRevealerTransitionType",
+        "origin": "runtime",
+        "owner": "GtkRevealer"
+      },
+      "type": {
+        "gtype": "GtkRevealerTransitionType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:RevealerTransitionType>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,203 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "constructors": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_tree_row_reference_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GtkTreeModel*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "name": "path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "GtkTreeRowReference*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeRowReference>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:ctor:new_proxy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_proxy",
+      "native": "gtk_tree_row_reference_new_proxy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "proxy",
+          "native": "GObject*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        },
+        {
+          "name": "model",
+          "native": "GtkTreeModel*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "name": "path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "GtkTreeRowReference*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeRowReference>"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference",
+  "kind": "boxed",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:method:copy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "copy",
+      "native": "gtk_tree_row_reference_copy",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreeRowReference*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeRowReference>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:method:free",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "free",
+      "native": "gtk_tree_row_reference_free",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_tree_row_reference_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreeModel*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:method:get_path",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_path",
+      "native": "gtk_tree_row_reference_get_path",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreePath*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference:method:valid",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "valid",
+      "native": "gtk_tree_row_reference_valid",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkTreeRowReference",
+    "gtype": "GtkTreeRowReference",
+    "name": "GtkTreeRowReference"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

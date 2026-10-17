@@ -1,0 +1,511 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.18",
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "shortcutsshortcut"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ShortcutType",
+    "svelters-api:v1:type:gtk:Gtk:TextDirection"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "c_type": "GtkShortcutsShortcut",
+    "gtype": "GtkShortcutsShortcut",
+    "name": "GtkShortcutsShortcut"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:accel-size-group",
+      "invocation": "reflected",
+      "js_name": "accelSizeGroup",
+      "name": "accel-size-group",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::accel-size-group"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE"
+        ],
+        "gtype": "GtkSizeGroup",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "GtkSizeGroup",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:SizeGroup>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:accelerator",
+      "invocation": "reflected",
+      "js_name": "accelerator",
+      "name": "accelerator",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::accelerator"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:action-name",
+      "invocation": "reflected",
+      "js_name": "actionName",
+      "name": "action-name",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::action-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:direction",
+      "invocation": "reflected",
+      "js_name": "direction",
+      "name": "direction",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::direction"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkTextDirection",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "GtkTextDirection",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:TextDirection>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:icon",
+      "invocation": "reflected",
+      "js_name": "icon",
+      "name": "icon",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::icon"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GIcon",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "GIcon",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:Icon>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:icon-set",
+      "invocation": "reflected",
+      "js_name": "iconSet",
+      "name": "icon-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::icon-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "accelerator",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:shortcut-type",
+      "invocation": "reflected",
+      "js_name": "shortcutType",
+      "name": "shortcut-type",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::shortcut-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkShortcutType",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "GtkShortcutType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ShortcutType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:subtitle",
+      "invocation": "reflected",
+      "js_name": "subtitle",
+      "name": "subtitle",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::subtitle"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:subtitle-set",
+      "invocation": "reflected",
+      "js_name": "subtitleSet",
+      "name": "subtitle-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::subtitle-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:title",
+      "invocation": "reflected",
+      "js_name": "title",
+      "name": "title",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::title"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:title-size-group",
+      "invocation": "reflected",
+      "js_name": "titleSizeGroup",
+      "name": "title-size-group",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::title-size-group"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE"
+        ],
+        "gtype": "GtkSizeGroup",
+        "origin": "runtime",
+        "owner": "GtkShortcutsShortcut"
+      },
+      "type": {
+        "gtype": "GtkSizeGroup",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:SizeGroup>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

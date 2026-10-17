@@ -1,0 +1,206 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.ShortcutTrigger",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_alternative_trigger_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "first",
+          "native": "GtkShortcutTrigger*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ShortcutTrigger>"
+        },
+        {
+          "name": "second",
+          "native": "GtkShortcutTrigger*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ShortcutTrigger>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger:method:get_first",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_first",
+      "native": "gtk_alternative_trigger_get_first",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkShortcutTrigger*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ShortcutTrigger>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger:method:get_second",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_second",
+      "native": "gtk_alternative_trigger_get_second",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkShortcutTrigger*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ShortcutTrigger>"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkAlternativeTrigger",
+    "gtype": "GtkAlternativeTrigger",
+    "name": "GtkAlternativeTrigger"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_alternative_trigger_get_first",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger:prop:first",
+      "invocation": "reflected",
+      "js_name": "first",
+      "name": "first",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::first"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkShortcutTrigger",
+        "origin": "runtime",
+        "owner": "GtkAlternativeTrigger"
+      },
+      "type": {
+        "gtype": "GtkShortcutTrigger",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ShortcutTrigger>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_alternative_trigger_get_second",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger:prop:second",
+      "invocation": "reflected",
+      "js_name": "second",
+      "name": "second",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::second"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkShortcutTrigger",
+        "origin": "runtime",
+        "owner": "GtkAlternativeTrigger"
+      },
+      "type": {
+        "gtype": "GtkShortcutTrigger",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ShortcutTrigger>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

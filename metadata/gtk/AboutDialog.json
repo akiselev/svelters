@@ -1,0 +1,1498 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Window",
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_about_dialog_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "aboutdialog"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:License"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Native",
+    "Gtk.Root",
+    "Gtk.ShortcutManager"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:add_credit_section",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_credit_section",
+      "native": "gtk_about_dialog_add_credit_section",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "section_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "people",
+          "native": "const char**",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_artists",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_artists",
+      "native": "gtk_about_dialog_get_artists",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char* const*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<string>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_authors",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_authors",
+      "native": "gtk_about_dialog_get_authors",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char* const*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<string>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_comments",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_comments",
+      "native": "gtk_about_dialog_get_comments",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_copyright",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_copyright",
+      "native": "gtk_about_dialog_get_copyright",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_documenters",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_documenters",
+      "native": "gtk_about_dialog_get_documenters",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char* const*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<string>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_license",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_license",
+      "native": "gtk_about_dialog_get_license",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_license_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_license_type",
+      "native": "gtk_about_dialog_get_license_type",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkLicense",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:License>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_logo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_logo",
+      "native": "gtk_about_dialog_get_logo",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkPaintable*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_logo_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_logo_icon_name",
+      "native": "gtk_about_dialog_get_logo_icon_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_program_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_program_name",
+      "native": "gtk_about_dialog_get_program_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_system_information",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_system_information",
+      "native": "gtk_about_dialog_get_system_information",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_translator_credits",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_translator_credits",
+      "native": "gtk_about_dialog_get_translator_credits",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_version",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_version",
+      "native": "gtk_about_dialog_get_version",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_website",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_website",
+      "native": "gtk_about_dialog_get_website",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_website_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_website_label",
+      "native": "gtk_about_dialog_get_website_label",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:get_wrap_license",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_wrap_license",
+      "native": "gtk_about_dialog_get_wrap_license",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_artists",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_artists",
+      "native": "gtk_about_dialog_set_artists",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "artists",
+          "native": "const char**",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_authors",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_authors",
+      "native": "gtk_about_dialog_set_authors",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "authors",
+          "native": "const char**",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_comments",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_comments",
+      "native": "gtk_about_dialog_set_comments",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "comments",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_copyright",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_copyright",
+      "native": "gtk_about_dialog_set_copyright",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "copyright",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_documenters",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_documenters",
+      "native": "gtk_about_dialog_set_documenters",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "documenters",
+          "native": "const char**",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_license",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_license",
+      "native": "gtk_about_dialog_set_license",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "license",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_license_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_license_type",
+      "native": "gtk_about_dialog_set_license_type",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "license_type",
+          "native": "GtkLicense",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:License>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_logo",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_logo",
+      "native": "gtk_about_dialog_set_logo",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "logo",
+          "native": "GdkPaintable*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_logo_icon_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_logo_icon_name",
+      "native": "gtk_about_dialog_set_logo_icon_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "icon_name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_program_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_program_name",
+      "native": "gtk_about_dialog_set_program_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_system_information",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_system_information",
+      "native": "gtk_about_dialog_set_system_information",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "system_information",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_translator_credits",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_translator_credits",
+      "native": "gtk_about_dialog_set_translator_credits",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "translator_credits",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_version",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_version",
+      "native": "gtk_about_dialog_set_version",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "version",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_website",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_website",
+      "native": "gtk_about_dialog_set_website",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "website",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_website_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_website_label",
+      "native": "gtk_about_dialog_set_website_label",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "website_label",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:method:set_wrap_license",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_wrap_license",
+      "native": "gtk_about_dialog_set_wrap_license",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wrap_license",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkAboutDialog",
+    "gtype": "GtkAboutDialog",
+    "name": "GtkAboutDialog"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_artists",
+        "set": "gtk_about_dialog_set_artists"
+      },
+      "default": "[]",
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:artists",
+      "invocation": "reflected",
+      "js_name": "artists",
+      "name": "artists",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::artists"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GStrv",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "GStrv",
+        "native": null,
+        "nullable": false,
+        "ref": "list<string>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_authors",
+        "set": "gtk_about_dialog_set_authors"
+      },
+      "default": "[]",
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:authors",
+      "invocation": "reflected",
+      "js_name": "authors",
+      "name": "authors",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::authors"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GStrv",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "GStrv",
+        "native": null,
+        "nullable": false,
+        "ref": "list<string>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_comments",
+        "set": "gtk_about_dialog_set_comments"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:comments",
+      "invocation": "reflected",
+      "js_name": "comments",
+      "name": "comments",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::comments"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_copyright",
+        "set": "gtk_about_dialog_set_copyright"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:copyright",
+      "invocation": "reflected",
+      "js_name": "copyright",
+      "name": "copyright",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::copyright"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_documenters",
+        "set": "gtk_about_dialog_set_documenters"
+      },
+      "default": "[]",
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:documenters",
+      "invocation": "reflected",
+      "js_name": "documenters",
+      "name": "documenters",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::documenters"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GStrv",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "GStrv",
+        "native": null,
+        "nullable": false,
+        "ref": "list<string>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_license",
+        "set": "gtk_about_dialog_set_license"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license",
+      "invocation": "reflected",
+      "js_name": "license",
+      "name": "license",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::license"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_license_type",
+        "set": "gtk_about_dialog_set_license_type"
+      },
+      "default": "unknown",
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license-type",
+      "invocation": "reflected",
+      "js_name": "licenseType",
+      "name": "license-type",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::license-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkLicense",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "GtkLicense",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:License>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_logo",
+        "set": "gtk_about_dialog_set_logo"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:logo",
+      "invocation": "reflected",
+      "js_name": "logo",
+      "name": "logo",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::logo"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkPaintable",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "GdkPaintable",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gdk:Paintable>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_logo_icon_name",
+        "set": "gtk_about_dialog_set_logo_icon_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:logo-icon-name",
+      "invocation": "reflected",
+      "js_name": "logoIconName",
+      "name": "logo-icon-name",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::logo-icon-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_program_name",
+        "set": "gtk_about_dialog_set_program_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:program-name",
+      "invocation": "reflected",
+      "js_name": "programName",
+      "name": "program-name",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::program-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_system_information",
+        "set": "gtk_about_dialog_set_system_information"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:system-information",
+      "invocation": "reflected",
+      "js_name": "systemInformation",
+      "name": "system-information",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::system-information"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_translator_credits",
+        "set": "gtk_about_dialog_set_translator_credits"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:translator-credits",
+      "invocation": "reflected",
+      "js_name": "translatorCredits",
+      "name": "translator-credits",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::translator-credits"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_version",
+        "set": "gtk_about_dialog_set_version"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:version",
+      "invocation": "reflected",
+      "js_name": "version",
+      "name": "version",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::version"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_website",
+        "set": "gtk_about_dialog_set_website"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:website",
+      "invocation": "reflected",
+      "js_name": "website",
+      "name": "website",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::website"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_website_label",
+        "set": "gtk_about_dialog_set_website_label"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:website-label",
+      "invocation": "reflected",
+      "js_name": "websiteLabel",
+      "name": "website-label",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::website-label"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_about_dialog_get_wrap_license",
+        "set": "gtk_about_dialog_set_wrap_license"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:wrap-license",
+      "invocation": "reflected",
+      "js_name": "wrapLicense",
+      "name": "wrap-license",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::wrap-license"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkAboutDialog"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:signal:activate-link",
+      "js_event": "activate-link",
+      "name": "activate-link",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "uri",
+          "type": "string"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

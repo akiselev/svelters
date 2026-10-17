@@ -1,0 +1,3675 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_text_tag_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:Justification",
+    "svelters-api:v1:type:gtk:Gtk:TextDirection",
+    "svelters-api:v1:type:gtk:Gtk:WrapMode",
+    "svelters-api:v1:type:gtk:Pango:Overline",
+    "svelters-api:v1:type:gtk:Pango:Stretch",
+    "svelters-api:v1:type:gtk:Pango:Style",
+    "svelters-api:v1:type:gtk:Pango:TextTransform",
+    "svelters-api:v1:type:gtk:Pango:Underline",
+    "svelters-api:v1:type:gtk:Pango:Variant",
+    "svelters-api:v1:type:gtk:Pango:ShowFlags"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:TextTag",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:method:changed",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "changed",
+      "native": "gtk_text_tag_changed",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "size_changed",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:method:get_priority",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_priority",
+      "native": "gtk_text_tag_get_priority",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:method:set_priority",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_priority",
+      "native": "gtk_text_tag_set_priority",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "priority",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkTextTag",
+    "gtype": "GtkTextTag",
+    "name": "GtkTextTag"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:accumulative-margin",
+      "invocation": "reflected",
+      "js_name": "accumulativeMargin",
+      "name": "accumulative-margin",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::accumulative-margin"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:allow-breaks",
+      "invocation": "reflected",
+      "js_name": "allowBreaks",
+      "name": "allow-breaks",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::allow-breaks"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:allow-breaks-set",
+      "invocation": "reflected",
+      "js_name": "allowBreaksSet",
+      "name": "allow-breaks-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::allow-breaks-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background",
+      "invocation": "reflected",
+      "js_name": "background",
+      "name": "background",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::background"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-full-height",
+      "invocation": "reflected",
+      "js_name": "backgroundFullHeight",
+      "name": "background-full-height",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::background-full-height"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-full-height-set",
+      "invocation": "reflected",
+      "js_name": "backgroundFullHeightSet",
+      "name": "background-full-height-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::background-full-height-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-rgba",
+      "invocation": "reflected",
+      "js_name": "backgroundRgba",
+      "name": "background-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::background-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-set",
+      "invocation": "reflected",
+      "js_name": "backgroundSet",
+      "name": "background-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::background-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:direction",
+      "invocation": "reflected",
+      "js_name": "direction",
+      "name": "direction",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::direction"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkTextDirection",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GtkTextDirection",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:TextDirection>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:editable",
+      "invocation": "reflected",
+      "js_name": "editable",
+      "name": "editable",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::editable"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:editable-set",
+      "invocation": "reflected",
+      "js_name": "editableSet",
+      "name": "editable-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::editable-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:fallback",
+      "invocation": "reflected",
+      "js_name": "fallback",
+      "name": "fallback",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::fallback"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:fallback-set",
+      "invocation": "reflected",
+      "js_name": "fallbackSet",
+      "name": "fallback-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::fallback-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family",
+      "invocation": "reflected",
+      "js_name": "family",
+      "name": "family",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::family"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family-set",
+      "invocation": "reflected",
+      "js_name": "familySet",
+      "name": "family-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::family-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font",
+      "invocation": "reflected",
+      "js_name": "font",
+      "name": "font",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-desc",
+      "invocation": "reflected",
+      "js_name": "fontDesc",
+      "name": "font-desc",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font-desc"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoFontDescription",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoFontDescription",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-features",
+      "invocation": "reflected",
+      "js_name": "fontFeatures",
+      "name": "font-features",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font-features"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-features-set",
+      "invocation": "reflected",
+      "js_name": "fontFeaturesSet",
+      "name": "font-features-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font-features-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:foreground",
+      "invocation": "reflected",
+      "js_name": "foreground",
+      "name": "foreground",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::foreground"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:foreground-rgba",
+      "invocation": "reflected",
+      "js_name": "foregroundRgba",
+      "name": "foreground-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::foreground-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:foreground-set",
+      "invocation": "reflected",
+      "js_name": "foregroundSet",
+      "name": "foreground-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::foreground-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:indent",
+      "invocation": "reflected",
+      "js_name": "indent",
+      "name": "indent",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::indent"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -2147483648
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:indent-set",
+      "invocation": "reflected",
+      "js_name": "indentSet",
+      "name": "indent-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::indent-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:insert-hyphens",
+      "invocation": "reflected",
+      "js_name": "insertHyphens",
+      "name": "insert-hyphens",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::insert-hyphens"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:insert-hyphens-set",
+      "invocation": "reflected",
+      "js_name": "insertHyphensSet",
+      "name": "insert-hyphens-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::insert-hyphens-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:invisible",
+      "invocation": "reflected",
+      "js_name": "invisible",
+      "name": "invisible",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::invisible"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:invisible-set",
+      "invocation": "reflected",
+      "js_name": "invisibleSet",
+      "name": "invisible-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::invisible-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "left",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:justification",
+      "invocation": "reflected",
+      "js_name": "justification",
+      "name": "justification",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::justification"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkJustification",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GtkJustification",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:Justification>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:justification-set",
+      "invocation": "reflected",
+      "js_name": "justificationSet",
+      "name": "justification-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::justification-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:language",
+      "invocation": "reflected",
+      "js_name": "language",
+      "name": "language",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::language"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:language-set",
+      "invocation": "reflected",
+      "js_name": "languageSet",
+      "name": "language-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::language-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:left-margin",
+      "invocation": "reflected",
+      "js_name": "leftMargin",
+      "name": "left-margin",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::left-margin"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:left-margin-set",
+      "invocation": "reflected",
+      "js_name": "leftMarginSet",
+      "name": "left-margin-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::left-margin-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:letter-spacing",
+      "invocation": "reflected",
+      "js_name": "letterSpacing",
+      "name": "letter-spacing",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::letter-spacing"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:letter-spacing-set",
+      "invocation": "reflected",
+      "js_name": "letterSpacingSet",
+      "name": "letter-spacing-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::letter-spacing-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:line-height",
+      "invocation": "reflected",
+      "js_name": "lineHeight",
+      "name": "line-height",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::line-height"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 10.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:line-height-set",
+      "invocation": "reflected",
+      "js_name": "lineHeightSet",
+      "name": "line-height-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::line-height-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:name",
+      "invocation": "reflected",
+      "js_name": "name",
+      "name": "name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline",
+      "invocation": "reflected",
+      "js_name": "overline",
+      "name": "overline",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::overline"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoOverline",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoOverline",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:Overline>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-rgba",
+      "invocation": "reflected",
+      "js_name": "overlineRgba",
+      "name": "overline-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::overline-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-rgba-set",
+      "invocation": "reflected",
+      "js_name": "overlineRgbaSet",
+      "name": "overline-rgba-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::overline-rgba-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-set",
+      "invocation": "reflected",
+      "js_name": "overlineSet",
+      "name": "overline-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::overline-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background",
+      "invocation": "reflected",
+      "js_name": "paragraphBackground",
+      "name": "paragraph-background",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::paragraph-background"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background-rgba",
+      "invocation": "reflected",
+      "js_name": "paragraphBackgroundRgba",
+      "name": "paragraph-background-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::paragraph-background-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background-set",
+      "invocation": "reflected",
+      "js_name": "paragraphBackgroundSet",
+      "name": "paragraph-background-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::paragraph-background-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-above-lines",
+      "invocation": "reflected",
+      "js_name": "pixelsAboveLines",
+      "name": "pixels-above-lines",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::pixels-above-lines"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-above-lines-set",
+      "invocation": "reflected",
+      "js_name": "pixelsAboveLinesSet",
+      "name": "pixels-above-lines-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::pixels-above-lines-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-below-lines",
+      "invocation": "reflected",
+      "js_name": "pixelsBelowLines",
+      "name": "pixels-below-lines",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::pixels-below-lines"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-below-lines-set",
+      "invocation": "reflected",
+      "js_name": "pixelsBelowLinesSet",
+      "name": "pixels-below-lines-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::pixels-below-lines-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-inside-wrap",
+      "invocation": "reflected",
+      "js_name": "pixelsInsideWrap",
+      "name": "pixels-inside-wrap",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::pixels-inside-wrap"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-inside-wrap-set",
+      "invocation": "reflected",
+      "js_name": "pixelsInsideWrapSet",
+      "name": "pixels-inside-wrap-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::pixels-inside-wrap-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:right-margin",
+      "invocation": "reflected",
+      "js_name": "rightMargin",
+      "name": "right-margin",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::right-margin"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:right-margin-set",
+      "invocation": "reflected",
+      "js_name": "rightMarginSet",
+      "name": "right-margin-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::right-margin-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:rise",
+      "invocation": "reflected",
+      "js_name": "rise",
+      "name": "rise",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::rise"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -2147483648
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:rise-set",
+      "invocation": "reflected",
+      "js_name": "riseSet",
+      "name": "rise-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::rise-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 1.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:scale",
+      "invocation": "reflected",
+      "js_name": "scale",
+      "name": "scale",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::scale"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:scale-set",
+      "invocation": "reflected",
+      "js_name": "scaleSet",
+      "name": "scale-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::scale-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:sentence",
+      "invocation": "reflected",
+      "js_name": "sentence",
+      "name": "sentence",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::sentence"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:sentence-set",
+      "invocation": "reflected",
+      "js_name": "sentenceSet",
+      "name": "sentence-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::sentence-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces",
+      "invocation": "reflected",
+      "js_name": "showSpaces",
+      "name": "show-spaces",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::show-spaces"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoShowFlags",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoShowFlags",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Pango:ShowFlags>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces-set",
+      "invocation": "reflected",
+      "js_name": "showSpacesSet",
+      "name": "show-spaces-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::show-spaces-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size",
+      "invocation": "reflected",
+      "js_name": "size",
+      "name": "size",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::size"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size-points",
+      "invocation": "reflected",
+      "js_name": "sizePoints",
+      "name": "size-points",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::size-points"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size-set",
+      "invocation": "reflected",
+      "js_name": "sizeSet",
+      "name": "size-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::size-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "normal",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch",
+      "invocation": "reflected",
+      "js_name": "stretch",
+      "name": "stretch",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::stretch"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoStretch",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoStretch",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:Stretch>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch-set",
+      "invocation": "reflected",
+      "js_name": "stretchSet",
+      "name": "stretch-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::stretch-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough",
+      "invocation": "reflected",
+      "js_name": "strikethrough",
+      "name": "strikethrough",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::strikethrough"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-rgba",
+      "invocation": "reflected",
+      "js_name": "strikethroughRgba",
+      "name": "strikethrough-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::strikethrough-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-rgba-set",
+      "invocation": "reflected",
+      "js_name": "strikethroughRgbaSet",
+      "name": "strikethrough-rgba-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::strikethrough-rgba-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-set",
+      "invocation": "reflected",
+      "js_name": "strikethroughSet",
+      "name": "strikethrough-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::strikethrough-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "normal",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style",
+      "invocation": "reflected",
+      "js_name": "style",
+      "name": "style",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::style"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoStyle",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoStyle",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:Style>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style-set",
+      "invocation": "reflected",
+      "js_name": "styleSet",
+      "name": "style-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::style-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:tabs",
+      "invocation": "reflected",
+      "js_name": "tabs",
+      "name": "tabs",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::tabs"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoTabArray",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoTabArray",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:TabArray>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:tabs-set",
+      "invocation": "reflected",
+      "js_name": "tabsSet",
+      "name": "tabs-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::tabs-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:text-transform",
+      "invocation": "reflected",
+      "js_name": "textTransform",
+      "name": "text-transform",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::text-transform"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoTextTransform",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "PangoTextTransform",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:TextTransform>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:text-transform-set",
+      "invocation": "reflected",
+      "js_name": "textTransformSet",
+      "name": "text-transform-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::text-transform-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline",
+      "invocation": "reflected",
+      "js_name": "underline",
+      "name": "underline",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::underline"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoUnderline",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoUnderline",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:Underline>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-rgba",
+      "invocation": "reflected",
+      "js_name": "underlineRgba",
+      "name": "underline-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::underline-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-rgba-set",
+      "invocation": "reflected",
+      "js_name": "underlineRgbaSet",
+      "name": "underline-rgba-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::underline-rgba-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-set",
+      "invocation": "reflected",
+      "js_name": "underlineSet",
+      "name": "underline-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::underline-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "normal",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant",
+      "invocation": "reflected",
+      "js_name": "variant",
+      "name": "variant",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::variant"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoVariant",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "PangoVariant",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:Variant>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant-set",
+      "invocation": "reflected",
+      "js_name": "variantSet",
+      "name": "variant-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::variant-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 400,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight",
+      "invocation": "reflected",
+      "js_name": "weight",
+      "name": "weight",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::weight"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight-set",
+      "invocation": "reflected",
+      "js_name": "weightSet",
+      "name": "weight-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::weight-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:word",
+      "invocation": "reflected",
+      "js_name": "word",
+      "name": "word",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::word"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:word-set",
+      "invocation": "reflected",
+      "js_name": "wordSet",
+      "name": "word-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::word-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:wrap-mode",
+      "invocation": "reflected",
+      "js_name": "wrapMode",
+      "name": "wrap-mode",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::wrap-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkWrapMode",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "GtkWrapMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:WrapMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:wrap-mode-set",
+      "invocation": "reflected",
+      "js_name": "wrapModeSet",
+      "name": "wrap-mode-set",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::wrap-mode-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTextTag"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

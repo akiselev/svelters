@@ -1,0 +1,811 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:InputPurpose",
+    "svelters-api:v1:type:gtk:Gtk:InputHints"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:IMContext",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:activate_osk",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "activate_osk",
+      "native": "gtk_im_context_activate_osk",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "event",
+          "native": "GdkEvent*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:delete_surrounding",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "delete_surrounding",
+      "native": "gtk_im_context_delete_surrounding",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "offset",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "n_chars",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:filter_key",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "filter_key",
+      "native": "gtk_im_context_filter_key",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "press",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        },
+        {
+          "name": "surface",
+          "native": "GdkSurface*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Surface>"
+        },
+        {
+          "name": "device",
+          "native": "GdkDevice*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Device>"
+        },
+        {
+          "name": "time",
+          "native": "guint32",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "keycode",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "state",
+          "native": "GdkModifierType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+        },
+        {
+          "name": "group",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:filter_keypress",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "filter_keypress",
+      "native": "gtk_im_context_filter_keypress",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "event",
+          "native": "GdkEvent*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:focus_in",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "focus_in",
+      "native": "gtk_im_context_focus_in",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:focus_out",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "focus_out",
+      "native": "gtk_im_context_focus_out",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:get_preedit_string",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preedit_string",
+      "native": "gtk_im_context_get_preedit_string",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "char**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "string"
+        },
+        {
+          "name": "attrs",
+          "native": "PangoAttrList**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+        },
+        {
+          "name": "cursor_pos",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:get_surrounding",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_surrounding",
+      "native": "gtk_im_context_get_surrounding",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "char**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "string"
+        },
+        {
+          "name": "cursor_index",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:get_surrounding_with_selection",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_surrounding_with_selection",
+      "native": "gtk_im_context_get_surrounding_with_selection",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "char**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "string"
+        },
+        {
+          "name": "cursor_index",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "anchor_index",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:reset",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reset",
+      "native": "gtk_im_context_reset",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:set_client_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_client_widget",
+      "native": "gtk_im_context_set_client_widget",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:set_cursor_location",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_cursor_location",
+      "native": "gtk_im_context_set_cursor_location",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:set_surrounding",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_surrounding",
+      "native": "gtk_im_context_set_surrounding",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "cursor_index",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:set_surrounding_with_selection",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_surrounding_with_selection",
+      "native": "gtk_im_context_set_surrounding_with_selection",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "len",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "cursor_index",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "anchor_index",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:method:set_use_preedit",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_preedit",
+      "native": "gtk_im_context_set_use_preedit",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "use_preedit",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkIMContext",
+    "gtype": "GtkIMContext",
+    "name": "GtkIMContext"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:prop:input-hints",
+      "invocation": "reflected",
+      "js_name": "inputHints",
+      "name": "input-hints",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::input-hints"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkInputHints",
+        "origin": "runtime",
+        "owner": "GtkIMContext"
+      },
+      "type": {
+        "gtype": "GtkInputHints",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gtk:InputHints>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "free-form",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:prop:input-purpose",
+      "invocation": "reflected",
+      "js_name": "inputPurpose",
+      "name": "input-purpose",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::input-purpose"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkInputPurpose",
+        "origin": "runtime",
+        "owner": "GtkIMContext"
+      },
+      "type": {
+        "gtype": "GtkInputPurpose",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InputPurpose>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:commit",
+      "js_event": "commit",
+      "name": "commit",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "str",
+          "type": "string"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:delete-surrounding",
+      "js_event": "delete-surrounding",
+      "name": "delete-surrounding",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gint",
+          "name": "offset",
+          "type": "i32"
+        },
+        {
+          "gtype": "gint",
+          "name": "n_chars",
+          "type": "i32"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:invalid-composition",
+      "js_event": "invalid-composition",
+      "name": "invalid-composition",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "str",
+          "type": "string"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:preedit-changed",
+      "js_event": "preedit-changed",
+      "name": "preedit-changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:preedit-end",
+      "js_event": "preedit-end",
+      "name": "preedit-end",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:preedit-start",
+      "js_event": "preedit-start",
+      "name": "preedit-start",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:IMContext:signal:retrieve-surrounding",
+      "js_event": "retrieve-surrounding",
+      "name": "retrieve-surrounding",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

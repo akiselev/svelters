@@ -1,0 +1,144 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AppChooser",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:AppChooser:method:get_app_info",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_app_info",
+      "native": "gtk_app_chooser_get_app_info",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GAppInfo*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:AppInfo>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:AppChooser:method:get_content_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_content_type",
+      "native": "gtk_app_chooser_get_content_type",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:AppChooser:method:refresh",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "refresh",
+      "native": "gtk_app_chooser_refresh",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkAppChooser",
+    "gtype": "GtkAppChooser",
+    "name": "GtkAppChooser"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_app_chooser_get_content_type",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:AppChooser:prop:content-type",
+      "invocation": "reflected",
+      "js_name": "contentType",
+      "name": "content-type",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::content-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkAppChooser"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,1030 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.8"
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_inscription_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "inscription"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:InscriptionOverflow",
+    "svelters-api:v1:type:gtk:Pango:WrapMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Inscription",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.AccessibleText",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_attributes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_attributes",
+      "native": "gtk_inscription_get_attributes",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoAttrList*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_min_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_min_chars",
+      "native": "gtk_inscription_get_min_chars",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_min_lines",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_min_lines",
+      "native": "gtk_inscription_get_min_lines",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_nat_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_nat_chars",
+      "native": "gtk_inscription_get_nat_chars",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_nat_lines",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_nat_lines",
+      "native": "gtk_inscription_get_nat_lines",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_text",
+      "native": "gtk_inscription_get_text",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_text_overflow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_text_overflow",
+      "native": "gtk_inscription_get_text_overflow",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkInscriptionOverflow",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:InscriptionOverflow>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_wrap_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_wrap_mode",
+      "native": "gtk_inscription_get_wrap_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoWrapMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_xalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_xalign",
+      "native": "gtk_inscription_get_xalign",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "float",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_yalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_yalign",
+      "native": "gtk_inscription_get_yalign",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "float",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_attributes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_attributes",
+      "native": "gtk_inscription_set_attributes",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "attrs",
+          "native": "PangoAttrList*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_markup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_markup",
+      "native": "gtk_inscription_set_markup",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "markup",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_min_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_min_chars",
+      "native": "gtk_inscription_set_min_chars",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min_chars",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_min_lines",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_min_lines",
+      "native": "gtk_inscription_set_min_lines",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min_lines",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_nat_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_nat_chars",
+      "native": "gtk_inscription_set_nat_chars",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "nat_chars",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_nat_lines",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_nat_lines",
+      "native": "gtk_inscription_set_nat_lines",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "nat_lines",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_text",
+      "native": "gtk_inscription_set_text",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_text_overflow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_text_overflow",
+      "native": "gtk_inscription_set_text_overflow",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "overflow",
+          "native": "GtkInscriptionOverflow",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:InscriptionOverflow>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_wrap_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_wrap_mode",
+      "native": "gtk_inscription_set_wrap_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wrap_mode",
+          "native": "PangoWrapMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_xalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_xalign",
+      "native": "gtk_inscription_set_xalign",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "xalign",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_yalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_yalign",
+      "native": "gtk_inscription_set_yalign",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "yalign",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkInscription",
+    "gtype": "GtkInscription",
+    "name": "GtkInscription"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_attributes",
+        "set": "gtk_inscription_set_attributes"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:attributes",
+      "invocation": "reflected",
+      "js_name": "attributes",
+      "name": "attributes",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::attributes"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoAttrList",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "PangoAttrList",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": "gtk_inscription_set_markup"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:markup",
+      "invocation": "reflected",
+      "js_name": "markup",
+      "name": "markup",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::markup"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_min_chars",
+        "set": "gtk_inscription_set_min_chars"
+      },
+      "default": 3,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-chars",
+      "invocation": "reflected",
+      "js_name": "minChars",
+      "name": "min-chars",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::min-chars"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_min_lines",
+        "set": "gtk_inscription_set_min_lines"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-lines",
+      "invocation": "reflected",
+      "js_name": "minLines",
+      "name": "min-lines",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::min-lines"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_nat_chars",
+        "set": "gtk_inscription_set_nat_chars"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:nat-chars",
+      "invocation": "reflected",
+      "js_name": "natChars",
+      "name": "nat-chars",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::nat-chars"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_nat_lines",
+        "set": "gtk_inscription_set_nat_lines"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:nat-lines",
+      "invocation": "reflected",
+      "js_name": "natLines",
+      "name": "nat-lines",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::nat-lines"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_text",
+        "set": "gtk_inscription_set_text"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:text",
+      "invocation": "reflected",
+      "js_name": "text",
+      "name": "text",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::text"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_text_overflow",
+        "set": "gtk_inscription_set_text_overflow"
+      },
+      "default": "clip",
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:text-overflow",
+      "invocation": "reflected",
+      "js_name": "textOverflow",
+      "name": "text-overflow",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::text-overflow"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkInscriptionOverflow",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "GtkInscriptionOverflow",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InscriptionOverflow>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_wrap_mode",
+        "set": "gtk_inscription_set_wrap_mode"
+      },
+      "default": "word-char",
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:wrap-mode",
+      "invocation": "reflected",
+      "js_name": "wrapMode",
+      "name": "wrap-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::wrap-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoWrapMode",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "PangoWrapMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_xalign",
+        "set": "gtk_inscription_set_xalign"
+      },
+      "default": 0.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:xalign",
+      "invocation": "reflected",
+      "js_name": "xalign",
+      "name": "xalign",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::xalign"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_inscription_get_yalign",
+        "set": "gtk_inscription_set_yalign"
+      },
+      "default": 0.5,
+      "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:yalign",
+      "invocation": "reflected",
+      "js_name": "yalign",
+      "name": "yalign",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::yalign"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkInscription"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

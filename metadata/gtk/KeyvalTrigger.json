@@ -1,0 +1,211 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.ShortcutTrigger",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_keyval_trigger_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "keyval",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "modifiers",
+          "native": "GdkModifierType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gdk:ModifierType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger:method:get_keyval",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_keyval",
+      "native": "gtk_keyval_trigger_get_keyval",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger:method:get_modifiers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_modifiers",
+      "native": "gtk_keyval_trigger_get_modifiers",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkModifierType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkKeyvalTrigger",
+    "gtype": "GtkKeyvalTrigger",
+    "name": "GtkKeyvalTrigger"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_keyval_trigger_get_keyval",
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger:prop:keyval",
+      "invocation": "reflected",
+      "js_name": "keyval",
+      "name": "keyval",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::keyval"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkKeyvalTrigger"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_keyval_trigger_get_modifiers",
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:KeyvalTrigger:prop:modifiers",
+      "invocation": "reflected",
+      "js_name": "modifiers",
+      "name": "modifiers",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::modifiers"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GdkModifierType",
+        "origin": "runtime",
+        "owner": "GtkKeyvalTrigger"
+      },
+      "type": {
+        "gtype": "GdkModifierType",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

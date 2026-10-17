@@ -1,0 +1,61 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.14"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleTextGranularity",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "character",
+      "native": "GTK_ACCESSIBLE_TEXT_GRANULARITY_CHARACTER",
+      "nick": "character",
+      "value": 0
+    },
+    {
+      "name": "word",
+      "native": "GTK_ACCESSIBLE_TEXT_GRANULARITY_WORD",
+      "nick": "word",
+      "value": 1
+    },
+    {
+      "name": "sentence",
+      "native": "GTK_ACCESSIBLE_TEXT_GRANULARITY_SENTENCE",
+      "nick": "sentence",
+      "value": 2
+    },
+    {
+      "name": "line",
+      "native": "GTK_ACCESSIBLE_TEXT_GRANULARITY_LINE",
+      "nick": "line",
+      "value": 3
+    },
+    {
+      "name": "paragraph",
+      "native": "GTK_ACCESSIBLE_TEXT_GRANULARITY_PARAGRAPH",
+      "nick": "paragraph",
+      "value": 4
+    }
+  ],
+  "native": {
+    "c_type": "GtkAccessibleTextGranularity",
+    "gtype": "GtkAccessibleTextGranularity",
+    "name": "GtkAccessibleTextGranularity"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

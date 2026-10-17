@@ -1,0 +1,91 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:MovementStep",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "logical_positions",
+      "native": "GTK_MOVEMENT_LOGICAL_POSITIONS",
+      "nick": "logical-positions",
+      "value": 0
+    },
+    {
+      "name": "visual_positions",
+      "native": "GTK_MOVEMENT_VISUAL_POSITIONS",
+      "nick": "visual-positions",
+      "value": 1
+    },
+    {
+      "name": "words",
+      "native": "GTK_MOVEMENT_WORDS",
+      "nick": "words",
+      "value": 2
+    },
+    {
+      "name": "display_lines",
+      "native": "GTK_MOVEMENT_DISPLAY_LINES",
+      "nick": "display-lines",
+      "value": 3
+    },
+    {
+      "name": "display_line_ends",
+      "native": "GTK_MOVEMENT_DISPLAY_LINE_ENDS",
+      "nick": "display-line-ends",
+      "value": 4
+    },
+    {
+      "name": "paragraphs",
+      "native": "GTK_MOVEMENT_PARAGRAPHS",
+      "nick": "paragraphs",
+      "value": 5
+    },
+    {
+      "name": "paragraph_ends",
+      "native": "GTK_MOVEMENT_PARAGRAPH_ENDS",
+      "nick": "paragraph-ends",
+      "value": 6
+    },
+    {
+      "name": "pages",
+      "native": "GTK_MOVEMENT_PAGES",
+      "nick": "pages",
+      "value": 7
+    },
+    {
+      "name": "buffer_ends",
+      "native": "GTK_MOVEMENT_BUFFER_ENDS",
+      "nick": "buffer-ends",
+      "value": 8
+    },
+    {
+      "name": "horizontal_pages",
+      "native": "GTK_MOVEMENT_HORIZONTAL_PAGES",
+      "nick": "horizontal-pages",
+      "value": 9
+    }
+  ],
+  "native": {
+    "c_type": "GtkMovementStep",
+    "gtype": "GtkMovementStep",
+    "name": "GtkMovementStep"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,651 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:SelectionMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:count_selected_rows",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "count_selected_rows",
+      "native": "gtk_tree_selection_count_selected_rows",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:get_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_mode",
+      "native": "gtk_tree_selection_get_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSelectionMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:get_select_function",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_select_function",
+      "native": "gtk_tree_selection_get_select_function",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreeSelectionFunc",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "callback<svelters-api:v1:type:gtk:Gtk:TreeSelectionFunc>"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:get_selected",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selected",
+      "native": "gtk_tree_selection_get_selected",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GtkTreeModel**",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "name": "iter",
+          "native": "GtkTreeIter*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:get_selected_rows",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selected_rows",
+      "native": "gtk_tree_selection_get_selected_rows",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GtkTreeModel**",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        }
+      ],
+      "returns": {
+        "native": "GList*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "list<boxed<svelters-api:v1:type:gtk:Gtk:TreePath>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:get_tree_view",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_tree_view",
+      "native": "gtk_tree_selection_get_tree_view",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkTreeView*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TreeView>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:get_user_data",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_user_data",
+      "native": "gtk_tree_selection_get_user_data",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gpointer",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "pointer"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:iter_is_selected",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "iter_is_selected",
+      "native": "gtk_tree_selection_iter_is_selected",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:path_is_selected",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "path_is_selected",
+      "native": "gtk_tree_selection_path_is_selected",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:select_all",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_all",
+      "native": "gtk_tree_selection_select_all",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:select_iter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_iter",
+      "native": "gtk_tree_selection_select_iter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:select_path",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_path",
+      "native": "gtk_tree_selection_select_path",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:select_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_range",
+      "native": "gtk_tree_selection_select_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start_path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        },
+        {
+          "name": "end_path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:selected_foreach",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "selected_foreach",
+      "native": "gtk_tree_selection_selected_foreach",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkTreeSelectionForeachFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:TreeSelectionForeachFunc>"
+        },
+        {
+          "name": "data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:set_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_mode",
+      "native": "gtk_tree_selection_set_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "type",
+          "native": "GtkSelectionMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:set_select_function",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_select_function",
+      "native": "gtk_tree_selection_set_select_function",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "func",
+          "native": "GtkTreeSelectionFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:TreeSelectionFunc>"
+        },
+        {
+          "name": "data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:unselect_all",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unselect_all",
+      "native": "gtk_tree_selection_unselect_all",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:unselect_iter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unselect_iter",
+      "native": "gtk_tree_selection_unselect_iter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:unselect_path",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unselect_path",
+      "native": "gtk_tree_selection_unselect_path",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:method:unselect_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unselect_range",
+      "native": "gtk_tree_selection_unselect_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start_path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        },
+        {
+          "name": "end_path",
+          "native": "GtkTreePath*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreePath>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkTreeSelection",
+    "gtype": "GtkTreeSelection",
+    "name": "GtkTreeSelection"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_tree_selection_get_mode",
+        "set": "gtk_tree_selection_set_mode"
+      },
+      "default": "single",
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:prop:mode",
+      "invocation": "reflected",
+      "js_name": "mode",
+      "name": "mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSelectionMode",
+        "origin": "runtime",
+        "owner": "GtkTreeSelection"
+      },
+      "type": {
+        "gtype": "GtkSelectionMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection:signal:changed",
+      "js_event": "changed",
+      "name": "changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

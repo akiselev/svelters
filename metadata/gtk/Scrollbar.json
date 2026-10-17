@@ -1,0 +1,186 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_scrollbar_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "orientation",
+          "native": "GtkOrientation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Orientation>"
+        },
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "scrollbar"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.AccessibleRange",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar:method:get_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_adjustment",
+      "native": "gtk_scrollbar_get_adjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar:method:set_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_adjustment",
+      "native": "gtk_scrollbar_set_adjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkScrollbar",
+    "gtype": "GtkScrollbar",
+    "name": "GtkScrollbar"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrollbar_get_adjustment",
+        "set": "gtk_scrollbar_set_adjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar:prop:adjustment",
+      "invocation": "reflected",
+      "js_name": "adjustment",
+      "name": "adjustment",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::adjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkScrollbar"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

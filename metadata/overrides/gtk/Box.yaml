@@ -1,0 +1,19 @@
+properties:
+  - name: spacing
+    js_name: spacing
+    provenance: "GtkBox:spacing (Gtk 4 docs); P prop"
+children:
+  policy: ordered
+  default_slot: children
+  slots:
+    - name: children
+      cardinality: many
+      accepts: [Gtk.Widget]
+      ops:
+        insert: {method: insert_child_after, args: [child, prev_sibling]}
+        remove: {method: remove, args: [child]}
+      readback: {mode: parent}
+      order: ordered
+      ownership: parent_owned
+      attached_props: []
+      provenance: "gtk_box_insert_child_after / gtk_box_remove docs; insert-before is expressed as insert-after the anchor's previous sibling"

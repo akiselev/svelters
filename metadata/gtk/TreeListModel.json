@@ -1,0 +1,452 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_tree_list_model_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "root",
+          "native": "GListModel*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        },
+        {
+          "name": "passthrough",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        },
+        {
+          "name": "autoexpand",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        },
+        {
+          "name": "create_func",
+          "native": "GtkTreeListModelCreateModelFunc",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:TreeListModelCreateModelFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "user_destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel",
+  "interfaces": [
+    "Gio.ListModel"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:method:get_autoexpand",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_autoexpand",
+      "native": "gtk_tree_list_model_get_autoexpand",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:method:get_child_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child_row",
+      "native": "gtk_tree_list_model_get_child_row",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "GtkTreeListRow*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TreeListRow>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_tree_list_model_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GListModel*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:method:get_passthrough",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_passthrough",
+      "native": "gtk_tree_list_model_get_passthrough",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:method:get_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_row",
+      "native": "gtk_tree_list_model_get_row",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "GtkTreeListRow*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:TreeListRow>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:method:set_autoexpand",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_autoexpand",
+      "native": "gtk_tree_list_model_set_autoexpand",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "autoexpand",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkTreeListModel",
+    "gtype": "GtkTreeListModel",
+    "name": "GtkTreeListModel"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_tree_list_model_get_autoexpand",
+        "set": "gtk_tree_list_model_set_autoexpand"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:autoexpand",
+      "invocation": "reflected",
+      "js_name": "autoexpand",
+      "name": "autoexpand",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::autoexpand"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTreeListModel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:item-type",
+      "invocation": "reflected",
+      "js_name": "itemType",
+      "name": "item-type",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::item-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GType",
+        "origin": "runtime",
+        "owner": "GtkTreeListModel"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "GType",
+        "native": "GType",
+        "nullable": false,
+        "ref": "u64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_tree_list_model_get_model",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:model",
+      "invocation": "reflected",
+      "js_name": "model",
+      "name": "model",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GListModel",
+        "origin": "runtime",
+        "owner": "GtkTreeListModel"
+      },
+      "type": {
+        "gtype": "GListModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:n-items",
+      "invocation": "reflected",
+      "js_name": "nItems",
+      "name": "n-items",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::n-items"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkTreeListModel"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_tree_list_model_get_passthrough",
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:passthrough",
+      "invocation": "reflected",
+      "js_name": "passthrough",
+      "name": "passthrough",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::passthrough"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkTreeListModel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,664 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Gesture",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_bounding_box",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_bounding_box",
+      "native": "gtk_gesture_get_bounding_box",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "rect",
+          "native": "GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_bounding_box_center",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_bounding_box_center",
+      "native": "gtk_gesture_get_bounding_box_center",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "x",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_device",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_device",
+      "native": "gtk_gesture_get_device",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkDevice*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Device>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_group",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_group",
+      "native": "gtk_gesture_get_group",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GList*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<object<svelters-api:v1:type:gtk:Gtk:Gesture>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_last_event",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_last_event",
+      "native": "gtk_gesture_get_last_event",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sequence",
+          "native": "GdkEventSequence*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "returns": {
+        "native": "GdkEvent*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_last_updated_sequence",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_last_updated_sequence",
+      "native": "gtk_gesture_get_last_updated_sequence",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkEventSequence*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_point",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_point",
+      "native": "gtk_gesture_get_point",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sequence",
+          "native": "GdkEventSequence*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        },
+        {
+          "name": "x",
+          "native": "double*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "y",
+          "native": "double*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_sequence_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_sequence_state",
+      "native": "gtk_gesture_get_sequence_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sequence",
+          "native": "GdkEventSequence*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "returns": {
+        "native": "GtkEventSequenceState",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:EventSequenceState>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:get_sequences",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_sequences",
+      "native": "gtk_gesture_get_sequences",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GList*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:group",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "group",
+      "native": "gtk_gesture_group",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "gesture",
+          "native": "GtkGesture*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Gesture>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:handles_sequence",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "handles_sequence",
+      "native": "gtk_gesture_handles_sequence",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sequence",
+          "native": "GdkEventSequence*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:is_active",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_active",
+      "native": "gtk_gesture_is_active",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:is_grouped_with",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_grouped_with",
+      "native": "gtk_gesture_is_grouped_with",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "other",
+          "native": "GtkGesture*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Gesture>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:is_recognized",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_recognized",
+      "native": "gtk_gesture_is_recognized",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:set_sequence_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_sequence_state",
+      "native": "gtk_gesture_set_sequence_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sequence",
+          "native": "GdkEventSequence*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        },
+        {
+          "name": "state",
+          "native": "GtkEventSequenceState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:EventSequenceState>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:set_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_state",
+      "native": "gtk_gesture_set_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "state",
+          "native": "GtkEventSequenceState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:EventSequenceState>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:method:ungroup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "ungroup",
+      "native": "gtk_gesture_ungroup",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGesture",
+    "gtype": "GtkGesture",
+    "name": "GtkGesture"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:prop:n-points",
+      "invocation": "reflected",
+      "js_name": "nPoints",
+      "name": "n-points",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::n-points"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkGesture"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:signal:begin",
+      "js_event": "begin",
+      "name": "begin",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkEventSequence",
+          "name": "sequence",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:signal:cancel",
+      "js_event": "cancel",
+      "name": "cancel",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkEventSequence",
+          "name": "sequence",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:signal:end",
+      "js_event": "end",
+      "name": "end",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkEventSequence",
+          "name": "sequence",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:signal:sequence-state-changed",
+      "js_event": "sequence-state-changed",
+      "name": "sequence-state-changed",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkEventSequence",
+          "name": "sequence",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        },
+        {
+          "gtype": "GtkEventSequenceState",
+          "name": "state",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:EventSequenceState>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Gesture:signal:update",
+      "js_event": "update",
+      "name": "update",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkEventSequence",
+          "name": "sequence",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:EventSequence>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

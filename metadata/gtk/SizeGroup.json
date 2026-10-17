@@ -1,0 +1,240 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_size_group_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mode",
+          "native": "GtkSizeGroupMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:SizeGroupMode>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:SizeGroupMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup",
+  "interfaces": [
+    "Gtk.Buildable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:method:add_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_widget",
+      "native": "gtk_size_group_add_widget",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:method:get_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_mode",
+      "native": "gtk_size_group_get_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSizeGroupMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:SizeGroupMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:method:get_widgets",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_widgets",
+      "native": "gtk_size_group_get_widgets",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GSList*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<object<svelters-api:v1:type:gtk:Gtk:Widget>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:method:remove_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_widget",
+      "native": "gtk_size_group_remove_widget",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:method:set_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_mode",
+      "native": "gtk_size_group_set_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mode",
+          "native": "GtkSizeGroupMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:SizeGroupMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkSizeGroup",
+    "gtype": "GtkSizeGroup",
+    "name": "GtkSizeGroup"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_size_group_get_mode",
+        "set": "gtk_size_group_set_mode"
+      },
+      "default": "horizontal",
+      "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup:prop:mode",
+      "invocation": "reflected",
+      "js_name": "mode",
+      "name": "mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSizeGroupMode",
+        "origin": "runtime",
+        "owner": "GtkSizeGroup"
+      },
+      "type": {
+        "gtype": "GtkSizeGroupMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:SizeGroupMode>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

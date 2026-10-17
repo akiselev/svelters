@@ -1,0 +1,1658 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:CellRendererMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:activate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "activate",
+      "native": "gtk_cell_renderer_activate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "event",
+          "native": "GdkEvent*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "path",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "background_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_aligned_area",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_aligned_area",
+      "native": "gtk_cell_renderer_get_aligned_area",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "aligned_area",
+          "native": "GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_alignment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_alignment",
+      "native": "gtk_cell_renderer_get_alignment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "xalign",
+          "native": "float*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f32"
+        },
+        {
+          "name": "yalign",
+          "native": "float*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_fixed_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_fixed_size",
+      "native": "gtk_cell_renderer_get_fixed_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_is_expanded",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_is_expanded",
+      "native": "gtk_cell_renderer_get_is_expanded",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_is_expander",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_is_expander",
+      "native": "gtk_cell_renderer_get_is_expander",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_padding",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_padding",
+      "native": "gtk_cell_renderer_get_padding",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "xpad",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "ypad",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_preferred_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_height",
+      "native": "gtk_cell_renderer_get_preferred_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "minimum_size",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_size",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_preferred_height_for_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_height_for_width",
+      "native": "gtk_cell_renderer_get_preferred_height_for_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "width",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "minimum_height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_preferred_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_size",
+      "native": "gtk_cell_renderer_get_preferred_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "minimum_size",
+          "native": "GtkRequisition*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:Requisition>"
+        },
+        {
+          "name": "natural_size",
+          "native": "GtkRequisition*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:Requisition>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_preferred_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_width",
+      "native": "gtk_cell_renderer_get_preferred_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "minimum_size",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_size",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_preferred_width_for_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_width_for_height",
+      "native": "gtk_cell_renderer_get_preferred_width_for_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "height",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "minimum_width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_request_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_request_mode",
+      "native": "gtk_cell_renderer_get_request_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSizeRequestMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:SizeRequestMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_sensitive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_sensitive",
+      "native": "gtk_cell_renderer_get_sensitive",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_state",
+      "native": "gtk_cell_renderer_get_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "cell_state",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        }
+      ],
+      "returns": {
+        "native": "GtkStateFlags",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gtk:StateFlags>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:get_visible",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_visible",
+      "native": "gtk_cell_renderer_get_visible",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:is_activatable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_activatable",
+      "native": "gtk_cell_renderer_is_activatable",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_alignment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_alignment",
+      "native": "gtk_cell_renderer_set_alignment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "xalign",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        },
+        {
+          "name": "yalign",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_fixed_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_fixed_size",
+      "native": "gtk_cell_renderer_set_fixed_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "width",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "height",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_is_expanded",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_is_expanded",
+      "native": "gtk_cell_renderer_set_is_expanded",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "is_expanded",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_is_expander",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_is_expander",
+      "native": "gtk_cell_renderer_set_is_expander",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "is_expander",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_padding",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_padding",
+      "native": "gtk_cell_renderer_set_padding",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "xpad",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "ypad",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_sensitive",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_sensitive",
+      "native": "gtk_cell_renderer_set_sensitive",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sensitive",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:set_visible",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_visible",
+      "native": "gtk_cell_renderer_set_visible",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "visible",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:snapshot",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "snapshot",
+      "native": "gtk_cell_renderer_snapshot",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "snapshot",
+          "native": "GtkSnapshot*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Snapshot>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "background_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:start_editing",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "start_editing",
+      "native": "gtk_cell_renderer_start_editing",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "event",
+          "native": "GdkEvent*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "path",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "background_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        }
+      ],
+      "returns": {
+        "native": "GtkCellEditable*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellEditable>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:method:stop_editing",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "stop_editing",
+      "native": "gtk_cell_renderer_stop_editing",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "canceled",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkCellRenderer",
+    "gtype": "GtkCellRenderer",
+    "name": "GtkCellRenderer"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": false,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background",
+      "invocation": "reflected",
+      "js_name": "cellBackground",
+      "name": "cell-background",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::cell-background"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background-rgba",
+      "invocation": "reflected",
+      "js_name": "cellBackgroundRgba",
+      "name": "cell-background-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::cell-background-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background-set",
+      "invocation": "reflected",
+      "js_name": "cellBackgroundSet",
+      "name": "cell-background-set",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::cell-background-set"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:editing",
+      "invocation": "reflected",
+      "js_name": "editing",
+      "name": "editing",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::editing"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:height",
+      "invocation": "reflected",
+      "js_name": "height",
+      "name": "height",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::height"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_cell_renderer_get_is_expanded",
+        "set": "gtk_cell_renderer_set_is_expanded"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:is-expanded",
+      "invocation": "reflected",
+      "js_name": "isExpanded",
+      "name": "is-expanded",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::is-expanded"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_cell_renderer_get_is_expander",
+        "set": "gtk_cell_renderer_set_is_expander"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:is-expander",
+      "invocation": "reflected",
+      "js_name": "isExpander",
+      "name": "is-expander",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::is-expander"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "inert",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:mode",
+      "invocation": "reflected",
+      "js_name": "mode",
+      "name": "mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkCellRendererMode",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "GtkCellRendererMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:CellRendererMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_cell_renderer_get_sensitive",
+        "set": "gtk_cell_renderer_set_sensitive"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:sensitive",
+      "invocation": "reflected",
+      "js_name": "sensitive",
+      "name": "sensitive",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::sensitive"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_cell_renderer_get_visible",
+        "set": "gtk_cell_renderer_set_visible"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:visible",
+      "invocation": "reflected",
+      "js_name": "visible",
+      "name": "visible",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::visible"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:width",
+      "invocation": "reflected",
+      "js_name": "width",
+      "name": "width",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::width"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0.5,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:xalign",
+      "invocation": "reflected",
+      "js_name": "xalign",
+      "name": "xalign",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::xalign"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:xpad",
+      "invocation": "reflected",
+      "js_name": "xpad",
+      "name": "xpad",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::xpad"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0.5,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:yalign",
+      "invocation": "reflected",
+      "js_name": "yalign",
+      "name": "yalign",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::yalign"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:ypad",
+      "invocation": "reflected",
+      "js_name": "ypad",
+      "name": "ypad",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::ypad"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkCellRenderer"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:signal:editing-canceled",
+      "js_event": "editing-canceled",
+      "name": "editing-canceled",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:signal:editing-started",
+      "js_event": "editing-started",
+      "name": "editing-started",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkCellEditable",
+          "name": "editable",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellEditable>"
+        },
+        {
+          "gtype": "gchararray",
+          "name": "path",
+          "type": "string"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,3 @@
+# GtkApplicationWindow is the P 'window' element. It inherits the child/titlebar slots of
+# GtkWindow; the backend sets the 'application' property at creation.
+element: {tag: window}

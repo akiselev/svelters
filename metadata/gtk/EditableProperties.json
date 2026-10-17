@@ -1,0 +1,85 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:EditableProperties",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "prop_text",
+      "native": "GTK_EDITABLE_PROP_TEXT",
+      "nick": "prop-text",
+      "value": 0
+    },
+    {
+      "name": "prop_cursor_position",
+      "native": "GTK_EDITABLE_PROP_CURSOR_POSITION",
+      "nick": "prop-cursor-position",
+      "value": 1
+    },
+    {
+      "name": "prop_selection_bound",
+      "native": "GTK_EDITABLE_PROP_SELECTION_BOUND",
+      "nick": "prop-selection-bound",
+      "value": 2
+    },
+    {
+      "name": "prop_editable",
+      "native": "GTK_EDITABLE_PROP_EDITABLE",
+      "nick": "prop-editable",
+      "value": 3
+    },
+    {
+      "name": "prop_width_chars",
+      "native": "GTK_EDITABLE_PROP_WIDTH_CHARS",
+      "nick": "prop-width-chars",
+      "value": 4
+    },
+    {
+      "name": "prop_max_width_chars",
+      "native": "GTK_EDITABLE_PROP_MAX_WIDTH_CHARS",
+      "nick": "prop-max-width-chars",
+      "value": 5
+    },
+    {
+      "name": "prop_xalign",
+      "native": "GTK_EDITABLE_PROP_XALIGN",
+      "nick": "prop-xalign",
+      "value": 6
+    },
+    {
+      "name": "prop_enable_undo",
+      "native": "GTK_EDITABLE_PROP_ENABLE_UNDO",
+      "nick": "prop-enable-undo",
+      "value": 7
+    },
+    {
+      "name": "num_properties",
+      "native": "GTK_EDITABLE_NUM_PROPERTIES",
+      "nick": "num-properties",
+      "value": 8
+    }
+  ],
+  "native": {
+    "c_type": "GtkEditableProperties",
+    "gtype": "GtkEditableProperties",
+    "name": "GtkEditableProperties"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

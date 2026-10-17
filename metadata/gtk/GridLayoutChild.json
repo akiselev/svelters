@@ -1,0 +1,407 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.LayoutChild",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:get_column",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_column",
+      "native": "gtk_grid_layout_child_get_column",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:get_column_span",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_column_span",
+      "native": "gtk_grid_layout_child_get_column_span",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:get_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_row",
+      "native": "gtk_grid_layout_child_get_row",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:get_row_span",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_row_span",
+      "native": "gtk_grid_layout_child_get_row_span",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:set_column",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_column",
+      "native": "gtk_grid_layout_child_set_column",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "column",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:set_column_span",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_column_span",
+      "native": "gtk_grid_layout_child_set_column_span",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "span",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:set_row",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_row",
+      "native": "gtk_grid_layout_child_set_row",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "row",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:method:set_row_span",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_row_span",
+      "native": "gtk_grid_layout_child_set_row_span",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "span",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGridLayoutChild",
+    "gtype": "GtkGridLayoutChild",
+    "name": "GtkGridLayoutChild"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_layout_child_get_column",
+        "set": "gtk_grid_layout_child_set_column"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:prop:column",
+      "invocation": "reflected",
+      "js_name": "column",
+      "name": "column",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::column"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -2147483648
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkGridLayoutChild"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_layout_child_get_column_span",
+        "set": "gtk_grid_layout_child_set_column_span"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:prop:column-span",
+      "invocation": "reflected",
+      "js_name": "columnSpan",
+      "name": "column-span",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::column-span"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkGridLayoutChild"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_layout_child_get_row",
+        "set": "gtk_grid_layout_child_set_row"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:prop:row",
+      "invocation": "reflected",
+      "js_name": "row",
+      "name": "row",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::row"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -2147483648
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkGridLayoutChild"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_layout_child_get_row_span",
+        "set": "gtk_grid_layout_child_set_row_span"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild:prop:row-span",
+      "invocation": "reflected",
+      "js_name": "rowSpan",
+      "name": "row-span",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::row-span"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkGridLayoutChild"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

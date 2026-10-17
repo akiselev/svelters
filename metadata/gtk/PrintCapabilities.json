@@ -1,0 +1,91 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintCapabilities",
+  "kind": "flags",
+  "members": [
+    {
+      "name": "page_set",
+      "native": "GTK_PRINT_CAPABILITY_PAGE_SET",
+      "nick": "page-set",
+      "value": 1
+    },
+    {
+      "name": "copies",
+      "native": "GTK_PRINT_CAPABILITY_COPIES",
+      "nick": "copies",
+      "value": 2
+    },
+    {
+      "name": "collate",
+      "native": "GTK_PRINT_CAPABILITY_COLLATE",
+      "nick": "collate",
+      "value": 4
+    },
+    {
+      "name": "reverse",
+      "native": "GTK_PRINT_CAPABILITY_REVERSE",
+      "nick": "reverse",
+      "value": 8
+    },
+    {
+      "name": "scale",
+      "native": "GTK_PRINT_CAPABILITY_SCALE",
+      "nick": "scale",
+      "value": 16
+    },
+    {
+      "name": "generate_pdf",
+      "native": "GTK_PRINT_CAPABILITY_GENERATE_PDF",
+      "nick": "generate-pdf",
+      "value": 32
+    },
+    {
+      "name": "generate_ps",
+      "native": "GTK_PRINT_CAPABILITY_GENERATE_PS",
+      "nick": "generate-ps",
+      "value": 64
+    },
+    {
+      "name": "preview",
+      "native": "GTK_PRINT_CAPABILITY_PREVIEW",
+      "nick": "preview",
+      "value": 128
+    },
+    {
+      "name": "number_up",
+      "native": "GTK_PRINT_CAPABILITY_NUMBER_UP",
+      "nick": "number-up",
+      "value": 256
+    },
+    {
+      "name": "number_up_layout",
+      "native": "GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT",
+      "nick": "number-up-layout",
+      "value": 512
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintCapabilities",
+    "gtype": "GtkPrintCapabilities",
+    "name": "GtkPrintCapabilities"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

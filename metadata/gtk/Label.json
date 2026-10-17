@@ -1,0 +1,2186 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "set_mnemonic_widget"
+      ],
+      "widget_props": [
+        "mnemonic-widget"
+      ]
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_label_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:ctor:new_with_mnemonic",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_with_mnemonic",
+      "native": "gtk_label_new_with_mnemonic",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "label"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:Justification",
+    "svelters-api:v1:type:gtk:Gtk:NaturalWrapMode",
+    "svelters-api:v1:type:gtk:Pango:EllipsizeMode",
+    "svelters-api:v1:type:gtk:Pango:WrapMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Label",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.AccessibleHypertext",
+    "Gtk.AccessibleText",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_attributes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_attributes",
+      "native": "gtk_label_get_attributes",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoAttrList*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_current_uri",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_uri",
+      "native": "gtk_label_get_current_uri",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_ellipsize",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_ellipsize",
+      "native": "gtk_label_get_ellipsize",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoEllipsizeMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_extra_menu",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_extra_menu",
+      "native": "gtk_label_get_extra_menu",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GMenuModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_justify",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_justify",
+      "native": "gtk_label_get_justify",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkJustification",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:Justification>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_label",
+      "native": "gtk_label_get_label",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_layout",
+      "native": "gtk_label_get_layout",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoLayout*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Pango:Layout>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_layout_offsets",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_layout_offsets",
+      "native": "gtk_label_get_layout_offsets",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "x",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "y",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_lines",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_lines",
+      "native": "gtk_label_get_lines",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_max_width_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_max_width_chars",
+      "native": "gtk_label_get_max_width_chars",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_mnemonic_keyval",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_mnemonic_keyval",
+      "native": "gtk_label_get_mnemonic_keyval",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_mnemonic_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_mnemonic_widget",
+      "native": "gtk_label_get_mnemonic_widget",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_natural_wrap_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_natural_wrap_mode",
+      "native": "gtk_label_get_natural_wrap_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkNaturalWrapMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:NaturalWrapMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_selectable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selectable",
+      "native": "gtk_label_get_selectable",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_selection_bounds",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selection_bounds",
+      "native": "gtk_label_get_selection_bounds",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "end",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_single_line_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_single_line_mode",
+      "native": "gtk_label_get_single_line_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_tabs",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_tabs",
+      "native": "gtk_label_get_tabs",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoTabArray*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:TabArray>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_text",
+      "native": "gtk_label_get_text",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_use_markup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_markup",
+      "native": "gtk_label_get_use_markup",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_use_underline",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_underline",
+      "native": "gtk_label_get_use_underline",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_width_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_width_chars",
+      "native": "gtk_label_get_width_chars",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_wrap",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_wrap",
+      "native": "gtk_label_get_wrap",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_wrap_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_wrap_mode",
+      "native": "gtk_label_get_wrap_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoWrapMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_xalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_xalign",
+      "native": "gtk_label_get_xalign",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "float",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_yalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_yalign",
+      "native": "gtk_label_get_yalign",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "float",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:select_region",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "select_region",
+      "native": "gtk_label_select_region",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "start_offset",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "end_offset",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_attributes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_attributes",
+      "native": "gtk_label_set_attributes",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "attrs",
+          "native": "PangoAttrList*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_ellipsize",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_ellipsize",
+      "native": "gtk_label_set_ellipsize",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "mode",
+          "native": "PangoEllipsizeMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_extra_menu",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_extra_menu",
+      "native": "gtk_label_set_extra_menu",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GMenuModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_justify",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_justify",
+      "native": "gtk_label_set_justify",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "jtype",
+          "native": "GtkJustification",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Justification>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_label",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_label",
+      "native": "gtk_label_set_label",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_lines",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_lines",
+      "native": "gtk_label_set_lines",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "lines",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_markup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_markup",
+      "native": "gtk_label_set_markup",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_markup_with_mnemonic",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_markup_with_mnemonic",
+      "native": "gtk_label_set_markup_with_mnemonic",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_max_width_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_max_width_chars",
+      "native": "gtk_label_set_max_width_chars",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "n_chars",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_mnemonic_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_mnemonic_widget",
+      "native": "gtk_label_set_mnemonic_widget",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_natural_wrap_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_natural_wrap_mode",
+      "native": "gtk_label_set_natural_wrap_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wrap_mode",
+          "native": "GtkNaturalWrapMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:NaturalWrapMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_selectable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_selectable",
+      "native": "gtk_label_set_selectable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_single_line_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_single_line_mode",
+      "native": "gtk_label_set_single_line_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "single_line_mode",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_tabs",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_tabs",
+      "native": "gtk_label_set_tabs",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "tabs",
+          "native": "PangoTabArray*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:TabArray>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_text",
+      "native": "gtk_label_set_text",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_text_with_mnemonic",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_text_with_mnemonic",
+      "native": "gtk_label_set_text_with_mnemonic",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "str",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_use_markup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_markup",
+      "native": "gtk_label_set_use_markup",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_use_underline",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_underline",
+      "native": "gtk_label_set_use_underline",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "setting",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_width_chars",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_width_chars",
+      "native": "gtk_label_set_width_chars",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "n_chars",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_wrap",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_wrap",
+      "native": "gtk_label_set_wrap",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wrap",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_wrap_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_wrap_mode",
+      "native": "gtk_label_set_wrap_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wrap_mode",
+          "native": "PangoWrapMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_xalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_xalign",
+      "native": "gtk_label_set_xalign",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "xalign",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_yalign",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_yalign",
+      "native": "gtk_label_set_yalign",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "yalign",
+          "native": "float",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkLabel",
+    "gtype": "GtkLabel",
+    "name": "GtkLabel"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_attributes",
+        "set": "gtk_label_set_attributes"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:attributes",
+      "invocation": "reflected",
+      "js_name": "attributes",
+      "name": "attributes",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::attributes"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoAttrList",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "PangoAttrList",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:AttrList>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_ellipsize",
+        "set": "gtk_label_set_ellipsize"
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:ellipsize",
+      "invocation": "reflected",
+      "js_name": "ellipsize",
+      "name": "ellipsize",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::ellipsize"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoEllipsizeMode",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "PangoEllipsizeMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_extra_menu",
+        "set": "gtk_label_set_extra_menu"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:extra-menu",
+      "invocation": "reflected",
+      "js_name": "extraMenu",
+      "name": "extra-menu",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::extra-menu"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GMenuModel",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "GMenuModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_justify",
+        "set": "gtk_label_set_justify"
+      },
+      "default": "left",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:justify",
+      "invocation": "reflected",
+      "js_name": "justify",
+      "name": "justify",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::justify"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkJustification",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "GtkJustification",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:Justification>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_label",
+        "set": "gtk_label_set_label"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkLabel:label (Gtk 4 docs); P prop"
+      },
+      "default": "",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:label",
+      "invocation": "reflected",
+      "js_name": "label",
+      "name": "label",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::label"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_lines",
+        "set": "gtk_label_set_lines"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:lines",
+      "invocation": "reflected",
+      "js_name": "lines",
+      "name": "lines",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::lines"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_max_width_chars",
+        "set": "gtk_label_set_max_width_chars"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:max-width-chars",
+      "invocation": "reflected",
+      "js_name": "maxWidthChars",
+      "name": "max-width-chars",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::max-width-chars"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_label_get_mnemonic_keyval",
+        "set": null
+      },
+      "default": 16777215,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-keyval",
+      "invocation": "reflected",
+      "js_name": "mnemonicKeyval",
+      "name": "mnemonic-keyval",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::mnemonic-keyval"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_mnemonic_widget",
+        "set": "gtk_label_set_mnemonic_widget"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-widget",
+      "invocation": "reflected",
+      "js_name": "mnemonicWidget",
+      "name": "mnemonic-widget",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::mnemonic-widget"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_natural_wrap_mode",
+        "set": "gtk_label_set_natural_wrap_mode"
+      },
+      "default": "inherit",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:natural-wrap-mode",
+      "invocation": "reflected",
+      "js_name": "naturalWrapMode",
+      "name": "natural-wrap-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::natural-wrap-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkNaturalWrapMode",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "GtkNaturalWrapMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:NaturalWrapMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_selectable",
+        "set": "gtk_label_set_selectable"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:selectable",
+      "invocation": "reflected",
+      "js_name": "selectable",
+      "name": "selectable",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::selectable"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_single_line_mode",
+        "set": "gtk_label_set_single_line_mode"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:single-line-mode",
+      "invocation": "reflected",
+      "js_name": "singleLineMode",
+      "name": "single-line-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::single-line-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_tabs",
+        "set": "gtk_label_set_tabs"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:tabs",
+      "invocation": "reflected",
+      "js_name": "tabs",
+      "name": "tabs",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::tabs"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoTabArray",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "PangoTabArray",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:TabArray>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_use_markup",
+        "set": "gtk_label_set_use_markup"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-markup",
+      "invocation": "reflected",
+      "js_name": "useMarkup",
+      "name": "use-markup",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-markup"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_use_underline",
+        "set": "gtk_label_set_use_underline"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-underline",
+      "invocation": "reflected",
+      "js_name": "useUnderline",
+      "name": "use-underline",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-underline"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_width_chars",
+        "set": "gtk_label_set_width_chars"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:width-chars",
+      "invocation": "reflected",
+      "js_name": "widthChars",
+      "name": "width-chars",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::width-chars"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_wrap",
+        "set": "gtk_label_set_wrap"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap",
+      "invocation": "reflected",
+      "js_name": "wrap",
+      "name": "wrap",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::wrap"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_wrap_mode",
+        "set": "gtk_label_set_wrap_mode"
+      },
+      "default": "word",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap-mode",
+      "invocation": "reflected",
+      "js_name": "wrapMode",
+      "name": "wrap-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::wrap-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoWrapMode",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "PangoWrapMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_xalign",
+        "set": "gtk_label_set_xalign"
+      },
+      "default": 0.5,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:xalign",
+      "invocation": "reflected",
+      "js_name": "xalign",
+      "name": "xalign",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::xalign"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_label_get_yalign",
+        "set": "gtk_label_set_yalign"
+      },
+      "default": 0.5,
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:yalign",
+      "invocation": "reflected",
+      "js_name": "yalign",
+      "name": "yalign",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::yalign"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gfloat",
+        "origin": "runtime",
+        "owner": "GtkLabel"
+      },
+      "type": {
+        "gtype": "gfloat",
+        "native": "gfloat",
+        "nullable": false,
+        "ref": "f32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:signal:activate-current-link",
+      "js_event": "activate-current-link",
+      "name": "activate-current-link",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:signal:activate-link",
+      "js_event": "activate-link",
+      "name": "activate-link",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "uri",
+          "type": "string"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:signal:copy-clipboard",
+      "js_event": "copy-clipboard",
+      "name": "copy-clipboard",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Label:signal:move-cursor",
+      "js_event": "move-cursor",
+      "name": "move-cursor",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkMovementStep",
+          "name": "step",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:MovementStep>"
+        },
+        {
+          "gtype": "gint",
+          "name": "count",
+          "type": "i32"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "extend_selection",
+          "type": "bool"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": "overrides/gtk/Label.yaml",
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

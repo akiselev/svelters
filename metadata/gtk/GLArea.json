@@ -1,0 +1,878 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_gl_area_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "glarea"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gdk:GLAPI"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:GLArea",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:attach_buffers",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "attach_buffers",
+      "native": "gtk_gl_area_attach_buffers",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_allowed_apis",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_allowed_apis",
+      "native": "gtk_gl_area_get_allowed_apis",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkGLAPI",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:GLAPI>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_api",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_api",
+      "native": "gtk_gl_area_get_api",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkGLAPI",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:GLAPI>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_auto_render",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_auto_render",
+      "native": "gtk_gl_area_get_auto_render",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_context",
+      "native": "gtk_gl_area_get_context",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkGLContext*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:GLContext>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_error",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_error",
+      "native": "gtk_gl_area_get_error",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GError*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:GLib:Error>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_has_depth_buffer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_has_depth_buffer",
+      "native": "gtk_gl_area_get_has_depth_buffer",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_has_stencil_buffer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_has_stencil_buffer",
+      "native": "gtk_gl_area_get_has_stencil_buffer",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_required_version",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_required_version",
+      "native": "gtk_gl_area_get_required_version",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "major",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "minor",
+          "native": "int*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:get_use_es",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_es",
+      "native": "gtk_gl_area_get_use_es",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:make_current",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "make_current",
+      "native": "gtk_gl_area_make_current",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:queue_render",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "queue_render",
+      "native": "gtk_gl_area_queue_render",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_allowed_apis",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_allowed_apis",
+      "native": "gtk_gl_area_set_allowed_apis",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "apis",
+          "native": "GdkGLAPI",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:GLAPI>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_auto_render",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_auto_render",
+      "native": "gtk_gl_area_set_auto_render",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "auto_render",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_error",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_error",
+      "native": "gtk_gl_area_set_error",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "error",
+          "native": "const GError*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:Error>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_has_depth_buffer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_has_depth_buffer",
+      "native": "gtk_gl_area_set_has_depth_buffer",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "has_depth_buffer",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_has_stencil_buffer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_has_stencil_buffer",
+      "native": "gtk_gl_area_set_has_stencil_buffer",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "has_stencil_buffer",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_required_version",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_required_version",
+      "native": "gtk_gl_area_set_required_version",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "major",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "minor",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:set_use_es",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_es",
+      "native": "gtk_gl_area_set_use_es",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "use_es",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGLArea",
+    "gtype": "GtkGLArea",
+    "name": "GtkGLArea"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_allowed_apis",
+        "set": "gtk_gl_area_set_allowed_apis"
+      },
+      "default": 3,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:allowed-apis",
+      "invocation": "reflected",
+      "js_name": "allowedApis",
+      "name": "allowed-apis",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::allowed-apis"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkGLAPI",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "GdkGLAPI",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:GLAPI>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_api",
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:api",
+      "invocation": "reflected",
+      "js_name": "api",
+      "name": "api",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::api"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkGLAPI",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "GdkGLAPI",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:GLAPI>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_auto_render",
+        "set": "gtk_gl_area_set_auto_render"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:auto-render",
+      "invocation": "reflected",
+      "js_name": "autoRender",
+      "name": "auto-render",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::auto-render"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_context",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:context",
+      "invocation": "reflected",
+      "js_name": "context",
+      "name": "context",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::context"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GdkGLContext",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "type": {
+        "gtype": "GdkGLContext",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gdk:GLContext>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_has_depth_buffer",
+        "set": "gtk_gl_area_set_has_depth_buffer"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:has-depth-buffer",
+      "invocation": "reflected",
+      "js_name": "hasDepthBuffer",
+      "name": "has-depth-buffer",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::has-depth-buffer"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_has_stencil_buffer",
+        "set": "gtk_gl_area_set_has_stencil_buffer"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:has-stencil-buffer",
+      "invocation": "reflected",
+      "js_name": "hasStencilBuffer",
+      "name": "has-stencil-buffer",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::has-stencil-buffer"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gl_area_get_use_es",
+        "set": "gtk_gl_area_set_use_es"
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:use-es",
+      "invocation": "reflected",
+      "js_name": "useEs",
+      "name": "use-es",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-es"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGLArea"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:signal:create-context",
+      "js_event": "create-context",
+      "name": "create-context",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "object<svelters-api:v1:type:gtk:Gdk:GLContext>"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "GdkGLContext"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:signal:render",
+      "js_event": "render",
+      "name": "render",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkGLContext",
+          "name": "context",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:GLContext>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GLArea:signal:resize",
+      "js_event": "resize",
+      "name": "resize",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gint",
+          "name": "width",
+          "type": "i32"
+        },
+        {
+          "gtype": "gint",
+          "name": "height",
+          "type": "i32"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

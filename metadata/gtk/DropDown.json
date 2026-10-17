@@ -1,0 +1,970 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_drop_down_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GListModel*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        },
+        {
+          "name": "expression",
+          "native": "GtkExpression*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:ctor:new_from_strings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_from_strings",
+      "native": "gtk_drop_down_new_from_strings",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "strings",
+          "native": "const char* const*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "dropdown"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:DropDown",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_enable_search",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_enable_search",
+      "native": "gtk_drop_down_get_enable_search",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_expression",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_expression",
+      "native": "gtk_drop_down_get_expression",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkExpression*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_factory",
+      "native": "gtk_drop_down_get_factory",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListItemFactory*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_header_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_header_factory",
+      "native": "gtk_drop_down_get_header_factory",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListItemFactory*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_list_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_list_factory",
+      "native": "gtk_drop_down_get_list_factory",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListItemFactory*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_drop_down_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GListModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_search_match_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_search_match_mode",
+      "native": "gtk_drop_down_get_search_match_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkStringFilterMatchMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_selected",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selected",
+      "native": "gtk_drop_down_get_selected",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_selected_item",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_selected_item",
+      "native": "gtk_drop_down_get_selected_item",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gpointer",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:get_show_arrow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_arrow",
+      "native": "gtk_drop_down_get_show_arrow",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_enable_search",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_enable_search",
+      "native": "gtk_drop_down_set_enable_search",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "enable_search",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_expression",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_expression",
+      "native": "gtk_drop_down_set_expression",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "expression",
+          "native": "GtkExpression*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_factory",
+      "native": "gtk_drop_down_set_factory",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_header_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_header_factory",
+      "native": "gtk_drop_down_set_header_factory",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_list_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_list_factory",
+      "native": "gtk_drop_down_set_list_factory",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_model",
+      "native": "gtk_drop_down_set_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GListModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_search_match_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_search_match_mode",
+      "native": "gtk_drop_down_set_search_match_mode",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "search_match_mode",
+          "native": "GtkStringFilterMatchMode",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_selected",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_selected",
+      "native": "gtk_drop_down_set_selected",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "position",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:method:set_show_arrow",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_arrow",
+      "native": "gtk_drop_down_set_show_arrow",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "show_arrow",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkDropDown",
+    "gtype": "GtkDropDown",
+    "name": "GtkDropDown"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_enable_search",
+        "set": "gtk_drop_down_set_enable_search"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:enable-search",
+      "invocation": "reflected",
+      "js_name": "enableSearch",
+      "name": "enable-search",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::enable-search"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_expression",
+        "set": "gtk_drop_down_set_expression"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:expression",
+      "invocation": "reflected",
+      "js_name": "expression",
+      "name": "expression",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::expression"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkExpression",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "GtkExpression",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_factory",
+        "set": "gtk_drop_down_set_factory"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:factory",
+      "invocation": "reflected",
+      "js_name": "factory",
+      "name": "factory",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::factory"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListItemFactory",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "GtkListItemFactory",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_header_factory",
+        "set": "gtk_drop_down_set_header_factory"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:header-factory",
+      "invocation": "reflected",
+      "js_name": "headerFactory",
+      "name": "header-factory",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::header-factory"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListItemFactory",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "GtkListItemFactory",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_list_factory",
+        "set": "gtk_drop_down_set_list_factory"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:list-factory",
+      "invocation": "reflected",
+      "js_name": "listFactory",
+      "name": "list-factory",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::list-factory"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListItemFactory",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "GtkListItemFactory",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_model",
+        "set": "gtk_drop_down_set_model"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:model",
+      "invocation": "reflected",
+      "js_name": "model",
+      "name": "model",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GListModel",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "GListModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_search_match_mode",
+        "set": "gtk_drop_down_set_search_match_mode"
+      },
+      "default": "prefix",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:search-match-mode",
+      "invocation": "reflected",
+      "js_name": "searchMatchMode",
+      "name": "search-match-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::search-match-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkStringFilterMatchMode",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "GtkStringFilterMatchMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_selected",
+        "set": "gtk_drop_down_set_selected"
+      },
+      "default": 4294967295,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:selected",
+      "invocation": "reflected",
+      "js_name": "selected",
+      "name": "selected",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::selected"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_selected_item",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:selected-item",
+      "invocation": "reflected",
+      "js_name": "selectedItem",
+      "name": "selected-item",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::selected-item"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GObject",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "type": {
+        "gtype": "GObject",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:GObject:Object>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_down_get_show_arrow",
+        "set": "gtk_drop_down_set_show_arrow"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:show-arrow",
+      "invocation": "reflected",
+      "js_name": "showArrow",
+      "name": "show-arrow",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-arrow"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkDropDown"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropDown:signal:activate",
+      "js_event": "activate",
+      "name": "activate",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

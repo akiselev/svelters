@@ -1,0 +1,1318 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_spin_button_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        },
+        {
+          "name": "climb_rate",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "digits",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:ctor:new_with_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_with_range",
+      "native": "gtk_spin_button_new_with_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "max",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "step",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "spinbutton"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:SpinButton",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.AccessibleRange",
+    "Gtk.Buildable",
+    "Gtk.CellEditable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Editable",
+    "Gtk.Orientable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:configure",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "configure",
+      "native": "gtk_spin_button_configure",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        },
+        {
+          "name": "climb_rate",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "digits",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_activates_default",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_activates_default",
+      "native": "gtk_spin_button_get_activates_default",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_adjustment",
+      "native": "gtk_spin_button_get_adjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_climb_rate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_climb_rate",
+      "native": "gtk_spin_button_get_climb_rate",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_digits",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_digits",
+      "native": "gtk_spin_button_get_digits",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_increments",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_increments",
+      "native": "gtk_spin_button_get_increments",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "step",
+          "native": "double*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "page",
+          "native": "double*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_numeric",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_numeric",
+      "native": "gtk_spin_button_get_numeric",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_range",
+      "native": "gtk_spin_button_get_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min",
+          "native": "double*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "max",
+          "native": "double*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_snap_to_ticks",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_snap_to_ticks",
+      "native": "gtk_spin_button_get_snap_to_ticks",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_update_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_update_policy",
+      "native": "gtk_spin_button_get_update_policy",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSpinButtonUpdatePolicy",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_value",
+      "native": "gtk_spin_button_get_value",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_value_as_int",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_value_as_int",
+      "native": "gtk_spin_button_get_value_as_int",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_wrap",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_wrap",
+      "native": "gtk_spin_button_get_wrap",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_activates_default",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_activates_default",
+      "native": "gtk_spin_button_set_activates_default",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "activates_default",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_adjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_adjustment",
+      "native": "gtk_spin_button_set_adjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "adjustment",
+          "native": "GtkAdjustment*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_climb_rate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_climb_rate",
+      "native": "gtk_spin_button_set_climb_rate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "climb_rate",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_digits",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_digits",
+      "native": "gtk_spin_button_set_digits",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "digits",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_increments",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_increments",
+      "native": "gtk_spin_button_set_increments",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "step",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "page",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_numeric",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_numeric",
+      "native": "gtk_spin_button_set_numeric",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "numeric",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_range",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_range",
+      "native": "gtk_spin_button_set_range",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "max",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_snap_to_ticks",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_snap_to_ticks",
+      "native": "gtk_spin_button_set_snap_to_ticks",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "snap_to_ticks",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_update_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_update_policy",
+      "native": "gtk_spin_button_set_update_policy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "policy",
+          "native": "GtkSpinButtonUpdatePolicy",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_value",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_value",
+      "native": "gtk_spin_button_set_value",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "value",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_wrap",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_wrap",
+      "native": "gtk_spin_button_set_wrap",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "wrap",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:spin",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "spin",
+      "native": "gtk_spin_button_spin",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "direction",
+          "native": "GtkSpinType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:SpinType>"
+        },
+        {
+          "name": "increment",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:update",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "update",
+      "native": "gtk_spin_button_update",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkSpinButton",
+    "gtype": "GtkSpinButton",
+    "name": "GtkSpinButton"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_activates_default",
+        "set": "gtk_spin_button_set_activates_default"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:activates-default",
+      "invocation": "reflected",
+      "js_name": "activatesDefault",
+      "name": "activates-default",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::activates-default"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_adjustment",
+        "set": "gtk_spin_button_set_adjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:adjustment",
+      "invocation": "reflected",
+      "js_name": "adjustment",
+      "name": "adjustment",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::adjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_climb_rate",
+        "set": "gtk_spin_button_set_climb_rate"
+      },
+      "default": 0.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:climb-rate",
+      "invocation": "reflected",
+      "js_name": "climbRate",
+      "name": "climb-rate",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::climb-rate"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_digits",
+        "set": "gtk_spin_button_set_digits"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:digits",
+      "invocation": "reflected",
+      "js_name": "digits",
+      "name": "digits",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::digits"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 20,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_numeric",
+        "set": "gtk_spin_button_set_numeric"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:numeric",
+      "invocation": "reflected",
+      "js_name": "numeric",
+      "name": "numeric",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::numeric"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_snap_to_ticks",
+        "set": "gtk_spin_button_set_snap_to_ticks"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:snap-to-ticks",
+      "invocation": "reflected",
+      "js_name": "snapToTicks",
+      "name": "snap-to-ticks",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::snap-to-ticks"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_update_policy",
+        "set": "gtk_spin_button_set_update_policy"
+      },
+      "default": "always",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:update-policy",
+      "invocation": "reflected",
+      "js_name": "updatePolicy",
+      "name": "update-policy",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::update-policy"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSpinButtonUpdatePolicy",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "GtkSpinButtonUpdatePolicy",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_value",
+        "set": "gtk_spin_button_set_value"
+      },
+      "default": 0.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:value",
+      "invocation": "reflected",
+      "js_name": "value",
+      "name": "value",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::value"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": -1.7976931348623157e+308
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_spin_button_get_wrap",
+        "set": "gtk_spin_button_set_wrap"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:wrap",
+      "invocation": "reflected",
+      "js_name": "wrap",
+      "name": "wrap",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::wrap"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSpinButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:activate",
+      "js_event": "activate",
+      "name": "activate",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:change-value",
+      "js_event": "change-value",
+      "name": "change-value",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkScrollType",
+          "name": "scroll",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollType>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:input",
+      "js_event": "input",
+      "name": "input",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gpointer",
+          "name": "new_value",
+          "type": "pointer"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "i32"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gint"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:output",
+      "js_event": "output",
+      "name": "output",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:value-changed",
+      "js_event": "value-changed",
+      "name": "value-changed",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:wrapped",
+      "js_event": "wrapped",
+      "name": "wrapped",
+      "origin": "gir",
+      "params": [],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

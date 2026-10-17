@@ -1,0 +1,2004 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:CellArea",
+  "interfaces": [
+    "Gtk.Buildable",
+    "Gtk.CellLayout"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:activate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "activate",
+      "native": "gtk_cell_area_activate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        },
+        {
+          "name": "edit_only",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:activate_cell",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "activate_cell",
+      "native": "gtk_cell_area_activate_cell",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "event",
+          "native": "GdkEvent*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:add",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add",
+      "native": "gtk_cell_area_add",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:add_focus_sibling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_focus_sibling",
+      "native": "gtk_cell_area_add_focus_sibling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "sibling",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:add_with_properties",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_with_properties",
+      "native": "gtk_cell_area_add_with_properties",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "first_prop_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:apply_attributes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "apply_attributes",
+      "native": "gtk_cell_area_apply_attributes",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "tree_model",
+          "native": "GtkTreeModel*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "name": "iter",
+          "native": "GtkTreeIter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        },
+        {
+          "name": "is_expander",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        },
+        {
+          "name": "is_expanded",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:attribute_connect",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "attribute_connect",
+      "native": "gtk_cell_area_attribute_connect",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "attribute",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "column",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:attribute_disconnect",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "attribute_disconnect",
+      "native": "gtk_cell_area_attribute_disconnect",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "attribute",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:attribute_get_column",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "attribute_get_column",
+      "native": "gtk_cell_area_attribute_get_column",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "attribute",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:cell_get",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cell_get",
+      "native": "gtk_cell_area_cell_get",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "first_prop_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:cell_get_property",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cell_get_property",
+      "native": "gtk_cell_area_cell_get_property",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "property_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "GValue*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GObject:Value>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:cell_get_valist",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cell_get_valist",
+      "native": "gtk_cell_area_cell_get_valist",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "first_property_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "var_args",
+          "native": "va_list",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:cell_set",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cell_set",
+      "native": "gtk_cell_area_cell_set",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "first_prop_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "...",
+          "native": null,
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "varargs"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:cell_set_property",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cell_set_property",
+      "native": "gtk_cell_area_cell_set_property",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "property_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "native": "const GValue*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GObject:Value>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:cell_set_valist",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "cell_set_valist",
+      "native": "gtk_cell_area_cell_set_valist",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "first_property_name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "var_args",
+          "native": "va_list",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "non_introspectable"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:copy_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "copy_context",
+      "native": "gtk_cell_area_copy_context",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        }
+      ],
+      "returns": {
+        "native": "GtkCellAreaContext*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:create_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "create_context",
+      "native": "gtk_cell_area_create_context",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkCellAreaContext*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:event",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "event",
+      "native": "gtk_cell_area_event",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "event",
+          "native": "GdkEvent*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:focus",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "focus",
+      "native": "gtk_cell_area_focus",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "direction",
+          "native": "GtkDirectionType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:DirectionType>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:foreach",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "foreach",
+      "native": "gtk_cell_area_foreach",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "callback",
+          "native": "GtkCellCallback",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:CellCallback>"
+        },
+        {
+          "name": "callback_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:foreach_alloc",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "foreach_alloc",
+      "native": "gtk_cell_area_foreach_alloc",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "background_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "callback",
+          "native": "GtkCellAllocCallback",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:CellAllocCallback>"
+        },
+        {
+          "name": "callback_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_cell_allocation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_cell_allocation",
+      "native": "gtk_cell_area_get_cell_allocation",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "allocation",
+          "native": "GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_cell_at_position",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_cell_at_position",
+      "native": "gtk_cell_area_get_cell_at_position",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "x",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "y",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "alloc_area",
+          "native": "GdkRectangle*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "GtkCellRenderer*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_current_path_string",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_path_string",
+      "native": "gtk_cell_area_get_current_path_string",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_edit_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_edit_widget",
+      "native": "gtk_cell_area_get_edit_widget",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkCellEditable*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellEditable>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_edited_cell",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_edited_cell",
+      "native": "gtk_cell_area_get_edited_cell",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkCellRenderer*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_focus_cell",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_focus_cell",
+      "native": "gtk_cell_area_get_focus_cell",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkCellRenderer*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_focus_from_sibling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_focus_from_sibling",
+      "native": "gtk_cell_area_get_focus_from_sibling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "GtkCellRenderer*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_focus_siblings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_focus_siblings",
+      "native": "gtk_cell_area_get_focus_siblings",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "const GList*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "list<object<svelters-api:v1:type:gtk:Gtk:CellRenderer>>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_preferred_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_height",
+      "native": "gtk_cell_area_get_preferred_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "minimum_height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_preferred_height_for_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_height_for_width",
+      "native": "gtk_cell_area_get_preferred_height_for_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "width",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "minimum_height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_height",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_preferred_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_width",
+      "native": "gtk_cell_area_get_preferred_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "minimum_width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_preferred_width_for_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preferred_width_for_height",
+      "native": "gtk_cell_area_get_preferred_width_for_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "height",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "minimum_width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_width",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:get_request_mode",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_request_mode",
+      "native": "gtk_cell_area_get_request_mode",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSizeRequestMode",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:SizeRequestMode>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:has_renderer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "has_renderer",
+      "native": "gtk_cell_area_has_renderer",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:inner_cell_area",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "inner_cell_area",
+      "native": "gtk_cell_area_inner_cell_area",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "inner_area",
+          "native": "GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:is_activatable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_activatable",
+      "native": "gtk_cell_area_is_activatable",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:is_focus_sibling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_focus_sibling",
+      "native": "gtk_cell_area_is_focus_sibling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "sibling",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:remove",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove",
+      "native": "gtk_cell_area_remove",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:remove_focus_sibling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_focus_sibling",
+      "native": "gtk_cell_area_remove_focus_sibling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "sibling",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:request_renderer",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "request_renderer",
+      "native": "gtk_cell_area_request_renderer",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "name": "orientation",
+          "native": "GtkOrientation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:Orientation>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "for_size",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        },
+        {
+          "name": "minimum_size",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        },
+        {
+          "name": "natural_size",
+          "native": "int*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:set_focus_cell",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_focus_cell",
+      "native": "gtk_cell_area_set_focus_cell",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "renderer",
+          "native": "GtkCellRenderer*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:snapshot",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "snapshot",
+      "native": "gtk_cell_area_snapshot",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "context",
+          "native": "GtkCellAreaContext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellAreaContext>"
+        },
+        {
+          "name": "widget",
+          "native": "GtkWidget*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        },
+        {
+          "name": "snapshot",
+          "native": "GtkSnapshot*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Snapshot>"
+        },
+        {
+          "name": "background_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "cell_area",
+          "native": "const GdkRectangle*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "name": "flags",
+          "native": "GtkCellRendererState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:CellRendererState>"
+        },
+        {
+          "name": "paint_focus",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:method:stop_editing",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "stop_editing",
+      "native": "gtk_cell_area_stop_editing",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "canceled",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkCellArea",
+    "gtype": "GtkCellArea",
+    "name": "GtkCellArea"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_cell_area_get_edit_widget",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:edit-widget",
+      "invocation": "reflected",
+      "js_name": "editWidget",
+      "name": "edit-widget",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::edit-widget"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GtkCellEditable",
+        "origin": "runtime",
+        "owner": "GtkCellArea"
+      },
+      "type": {
+        "gtype": "GtkCellEditable",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:CellEditable>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_cell_area_get_edited_cell",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:edited-cell",
+      "invocation": "reflected",
+      "js_name": "editedCell",
+      "name": "edited-cell",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::edited-cell"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GtkCellRenderer",
+        "origin": "runtime",
+        "owner": "GtkCellArea"
+      },
+      "type": {
+        "gtype": "GtkCellRenderer",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_cell_area_get_focus_cell",
+        "set": "gtk_cell_area_set_focus_cell"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:focus-cell",
+      "invocation": "reflected",
+      "js_name": "focusCell",
+      "name": "focus-cell",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::focus-cell"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkCellRenderer",
+        "origin": "runtime",
+        "owner": "GtkCellArea"
+      },
+      "type": {
+        "gtype": "GtkCellRenderer",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:signal:add-editable",
+      "js_event": "add-editable",
+      "name": "add-editable",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkCellRenderer",
+          "name": "renderer",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "gtype": "GtkCellEditable",
+          "name": "editable",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellEditable>"
+        },
+        {
+          "gtype": "GdkRectangle",
+          "name": "cell_area",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>"
+        },
+        {
+          "gtype": "gchararray",
+          "name": "path",
+          "type": "string"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:signal:apply-attributes",
+      "js_event": "apply-attributes",
+      "name": "apply-attributes",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkTreeModel",
+          "name": "model",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:TreeModel>"
+        },
+        {
+          "gtype": "GtkTreeIter",
+          "name": "iter",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:TreeIter>"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "is_expander",
+          "type": "bool"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "is_expanded",
+          "type": "bool"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:signal:focus-changed",
+      "js_event": "focus-changed",
+      "name": "focus-changed",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkCellRenderer",
+          "name": "renderer",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "gtype": "gchararray",
+          "name": "path",
+          "type": "string"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellArea:signal:remove-editable",
+      "js_event": "remove-editable",
+      "name": "remove-editable",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkCellRenderer",
+          "name": "renderer",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellRenderer>"
+        },
+        {
+          "gtype": "GtkCellEditable",
+          "name": "editable",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:CellEditable>"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,137 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.22"
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AccessibleHyperlink:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_accessible_hyperlink_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "parent",
+          "native": "GtkAccessibleHypertext*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:AccessibleHypertext>"
+        },
+        {
+          "name": "index",
+          "native": "unsigned int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "uri",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "bounds",
+          "native": "GtkAccessibleTextRange*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "value<svelters-api:v1:type:gtk:Gtk:AccessibleTextRange>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AccessibleHyperlink:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleHyperlink",
+  "interfaces": [
+    "Gtk.Accessible"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:AccessibleHyperlink:method:set_platform_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_platform_state",
+      "native": "gtk_accessible_hyperlink_set_platform_state",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "state",
+          "native": "GtkAccessiblePlatformState",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:AccessiblePlatformState>"
+        },
+        {
+          "name": "enabled",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkAccessibleHyperlink",
+    "gtype": "GtkAccessibleHyperlink",
+    "name": "GtkAccessibleHyperlink"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

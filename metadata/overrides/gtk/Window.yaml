@@ -1,0 +1,28 @@
+properties:
+  - name: title
+    js_name: title
+    provenance: "GtkWindow:title (Gtk 4 docs); P prop"
+children:
+  policy: named_slots
+  default_slot: child
+  slots:
+    - name: child
+      cardinality: one
+      accepts: [Gtk.Widget]
+      ops:
+        set: {property: child}
+        clear: {property: child, value: null}
+      readback: {mode: property, property: child}
+      ownership: parent_owned
+      attached_props: []
+      provenance: "GtkWindow:child property; gtk_window_set_child docs"
+    - name: titlebar
+      cardinality: one
+      accepts: [Gtk.Widget]
+      ops:
+        set: {property: titlebar}
+        clear: {property: titlebar, value: null}
+      readback: {mode: property, property: titlebar}
+      ownership: parent_owned
+      attached_props: []
+      provenance: "GtkWindow:titlebar property; gtk_window_set_titlebar docs"

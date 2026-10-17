@@ -1,0 +1,161 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.6"
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SymbolicPaintable",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SymbolicPaintable:method:snapshot_symbolic",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "snapshot_symbolic",
+      "native": "gtk_symbolic_paintable_snapshot_symbolic",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "snapshot",
+          "native": "GdkSnapshot*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Snapshot>"
+        },
+        {
+          "name": "width",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "height",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "colors",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<boxed<svelters-api:v1:type:gtk:Gdk:RGBA>>"
+        },
+        {
+          "name": "n_colors",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SymbolicPaintable:method:snapshot_with_weight",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "snapshot_with_weight",
+      "native": "gtk_symbolic_paintable_snapshot_with_weight",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "snapshot",
+          "native": "GdkSnapshot*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Snapshot>"
+        },
+        {
+          "name": "width",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "height",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "colors",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<boxed<svelters-api:v1:type:gtk:Gdk:RGBA>>"
+        },
+        {
+          "name": "n_colors",
+          "native": "gsize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u64"
+        },
+        {
+          "name": "weight",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkSymbolicPaintable",
+    "gtype": "GtkSymbolicPaintable",
+    "name": "GtkSymbolicPaintable"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

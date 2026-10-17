@@ -1,0 +1,475 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:PropagationLimit",
+    "svelters-api:v1:type:gtk:Gtk:PropagationPhase"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:EventController",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_current_event",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_event",
+      "native": "gtk_event_controller_get_current_event",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkEvent*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Event>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_current_event_device",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_event_device",
+      "native": "gtk_event_controller_get_current_event_device",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkDevice*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:Device>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_current_event_state",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_event_state",
+      "native": "gtk_event_controller_get_current_event_state",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkModifierType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_current_event_time",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_event_time",
+      "native": "gtk_event_controller_get_current_event_time",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint32",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_name",
+      "native": "gtk_event_controller_get_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_propagation_limit",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_propagation_limit",
+      "native": "gtk_event_controller_get_propagation_limit",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPropagationLimit",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PropagationLimit>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_propagation_phase",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_propagation_phase",
+      "native": "gtk_event_controller_get_propagation_phase",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPropagationPhase",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:PropagationPhase>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_widget",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_widget",
+      "native": "gtk_event_controller_get_widget",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:reset",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reset",
+      "native": "gtk_event_controller_reset",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:set_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_name",
+      "native": "gtk_event_controller_set_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:set_propagation_limit",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_propagation_limit",
+      "native": "gtk_event_controller_set_propagation_limit",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "limit",
+          "native": "GtkPropagationLimit",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PropagationLimit>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:set_propagation_phase",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_propagation_phase",
+      "native": "gtk_event_controller_set_propagation_phase",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "phase",
+          "native": "GtkPropagationPhase",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PropagationPhase>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:set_static_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_static_name",
+      "native": "gtk_event_controller_set_static_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkEventController",
+    "gtype": "GtkEventController",
+    "name": "GtkEventController"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_event_controller_get_name",
+        "set": "gtk_event_controller_set_name"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:prop:name",
+      "invocation": "reflected",
+      "js_name": "name",
+      "name": "name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkEventController"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_event_controller_get_propagation_limit",
+        "set": "gtk_event_controller_set_propagation_limit"
+      },
+      "default": "same-native",
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:prop:propagation-limit",
+      "invocation": "reflected",
+      "js_name": "propagationLimit",
+      "name": "propagation-limit",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::propagation-limit"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkPropagationLimit",
+        "origin": "runtime",
+        "owner": "GtkEventController"
+      },
+      "type": {
+        "gtype": "GtkPropagationLimit",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:PropagationLimit>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_event_controller_get_propagation_phase",
+        "set": "gtk_event_controller_set_propagation_phase"
+      },
+      "default": "bubble",
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:prop:propagation-phase",
+      "invocation": "reflected",
+      "js_name": "propagationPhase",
+      "name": "propagation-phase",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::propagation-phase"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkPropagationPhase",
+        "origin": "runtime",
+        "owner": "GtkEventController"
+      },
+      "type": {
+        "gtype": "GtkPropagationPhase",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:PropagationPhase>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_event_controller_get_widget",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:EventController:prop:widget",
+      "invocation": "reflected",
+      "js_name": "widget",
+      "name": "widget",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::widget"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkEventController"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

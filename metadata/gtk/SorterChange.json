@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SorterChange",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "different",
+      "native": "GTK_SORTER_CHANGE_DIFFERENT",
+      "nick": "different",
+      "value": 0
+    },
+    {
+      "name": "inverted",
+      "native": "GTK_SORTER_CHANGE_INVERTED",
+      "nick": "inverted",
+      "value": 1
+    },
+    {
+      "name": "less_strict",
+      "native": "GTK_SORTER_CHANGE_LESS_STRICT",
+      "nick": "less-strict",
+      "value": 2
+    },
+    {
+      "name": "more_strict",
+      "native": "GTK_SORTER_CHANGE_MORE_STRICT",
+      "nick": "more-strict",
+      "value": 3
+    }
+  ],
+  "native": {
+    "c_type": "GtkSorterChange",
+    "gtype": "GtkSorterChange",
+    "name": "GtkSorterChange"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

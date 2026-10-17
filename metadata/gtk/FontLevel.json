@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.10"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:FontLevel",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "family",
+      "native": "GTK_FONT_LEVEL_FAMILY",
+      "nick": "family",
+      "value": 0
+    },
+    {
+      "name": "face",
+      "native": "GTK_FONT_LEVEL_FACE",
+      "nick": "face",
+      "value": 1
+    },
+    {
+      "name": "font",
+      "native": "GTK_FONT_LEVEL_FONT",
+      "nick": "font",
+      "value": 2
+    },
+    {
+      "name": "features",
+      "native": "GTK_FONT_LEVEL_FEATURES",
+      "nick": "features",
+      "value": 3
+    }
+  ],
+  "native": {
+    "c_type": "GtkFontLevel",
+    "gtype": "GtkFontLevel",
+    "name": "GtkFontLevel"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

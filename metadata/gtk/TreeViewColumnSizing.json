@@ -1,0 +1,49 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumnSizing",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "grow_only",
+      "native": "GTK_TREE_VIEW_COLUMN_GROW_ONLY",
+      "nick": "grow-only",
+      "value": 0
+    },
+    {
+      "name": "autosize",
+      "native": "GTK_TREE_VIEW_COLUMN_AUTOSIZE",
+      "nick": "autosize",
+      "value": 1
+    },
+    {
+      "name": "fixed",
+      "native": "GTK_TREE_VIEW_COLUMN_FIXED",
+      "nick": "fixed",
+      "value": 2
+    }
+  ],
+  "native": {
+    "c_type": "GtkTreeViewColumnSizing",
+    "gtype": "GtkTreeViewColumnSizing",
+    "name": "GtkTreeViewColumnSizing"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

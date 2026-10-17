@@ -1,0 +1,801 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:FontChooserLevel"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:FontChooser",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font",
+      "native": "gtk_font_chooser_get_font",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font_desc",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_desc",
+      "native": "gtk_font_chooser_get_font_desc",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontDescription*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font_face",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_face",
+      "native": "gtk_font_chooser_get_font_face",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontFace*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontFace>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font_family",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_family",
+      "native": "gtk_font_chooser_get_font_family",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontFamily*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontFamily>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font_features",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_features",
+      "native": "gtk_font_chooser_get_font_features",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font_map",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_map",
+      "native": "gtk_font_chooser_get_font_map",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontMap*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontMap>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_font_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_size",
+      "native": "gtk_font_chooser_get_font_size",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_language",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_language",
+      "native": "gtk_font_chooser_get_language",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_level",
+      "native": "gtk_font_chooser_get_level",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkFontChooserLevel",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gtk:FontChooserLevel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_preview_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_preview_text",
+      "native": "gtk_font_chooser_get_preview_text",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:get_show_preview_entry",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_show_preview_entry",
+      "native": "gtk_font_chooser_get_show_preview_entry",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_filter_func",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_filter_func",
+      "native": "gtk_font_chooser_set_filter_func",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter",
+          "native": "GtkFontFilterFunc",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:FontFilterFunc>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": "callback_scope"
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_font",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_font",
+      "native": "gtk_font_chooser_set_font",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "fontname",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_font_desc",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_font_desc",
+      "native": "gtk_font_chooser_set_font_desc",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "font_desc",
+          "native": "const PangoFontDescription*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_font_map",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_font_map",
+      "native": "gtk_font_chooser_set_font_map",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "fontmap",
+          "native": "PangoFontMap*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Pango:FontMap>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_language",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_language",
+      "native": "gtk_font_chooser_set_language",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "language",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_level",
+      "native": "gtk_font_chooser_set_level",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "level",
+          "native": "GtkFontChooserLevel",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:FontChooserLevel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_preview_text",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_preview_text",
+      "native": "gtk_font_chooser_set_preview_text",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "text",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:method:set_show_preview_entry",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_show_preview_entry",
+      "native": "gtk_font_chooser_set_show_preview_entry",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "show_preview_entry",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkFontChooser",
+    "gtype": "GtkFontChooser",
+    "name": "GtkFontChooser"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_font",
+        "set": "gtk_font_chooser_set_font"
+      },
+      "default": "Sans 10",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:font",
+      "invocation": "reflected",
+      "js_name": "font",
+      "name": "font",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_font_desc",
+        "set": "gtk_font_chooser_set_font_desc"
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:font-desc",
+      "invocation": "reflected",
+      "js_name": "fontDesc",
+      "name": "font-desc",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font-desc"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "PangoFontDescription",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "PangoFontDescription",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_font_features",
+        "set": null
+      },
+      "default": "",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:font-features",
+      "invocation": "reflected",
+      "js_name": "fontFeatures",
+      "name": "font-features",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::font-features"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_language",
+        "set": "gtk_font_chooser_set_language"
+      },
+      "default": "",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:language",
+      "invocation": "reflected",
+      "js_name": "language",
+      "name": "language",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::language"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_level",
+        "set": "gtk_font_chooser_set_level"
+      },
+      "default": 3,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:level",
+      "invocation": "reflected",
+      "js_name": "level",
+      "name": "level",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::level"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkFontChooserLevel",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "GtkFontChooserLevel",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gtk:FontChooserLevel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_preview_text",
+        "set": "gtk_font_chooser_set_preview_text"
+      },
+      "default": "The wizard quickly jinxed the gnomes before they vaporized.",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:preview-text",
+      "invocation": "reflected",
+      "js_name": "previewText",
+      "name": "preview-text",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::preview-text"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_chooser_get_show_preview_entry",
+        "set": "gtk_font_chooser_set_show_preview_entry"
+      },
+      "default": true,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:show-preview-entry",
+      "invocation": "reflected",
+      "js_name": "showPreviewEntry",
+      "name": "show-preview-entry",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::show-preview-entry"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkFontChooser"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:signal:font-activated",
+      "js_event": "font-activated",
+      "name": "font-activated",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "fontname",
+          "type": "string"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

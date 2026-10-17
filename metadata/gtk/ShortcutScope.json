@@ -1,0 +1,49 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutScope",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "local",
+      "native": "GTK_SHORTCUT_SCOPE_LOCAL",
+      "nick": "local",
+      "value": 0
+    },
+    {
+      "name": "managed",
+      "native": "GTK_SHORTCUT_SCOPE_MANAGED",
+      "nick": "managed",
+      "value": 1
+    },
+    {
+      "name": "global",
+      "native": "GTK_SHORTCUT_SCOPE_GLOBAL",
+      "nick": "global",
+      "value": 2
+    }
+  ],
+  "native": {
+    "c_type": "GtkShortcutScope",
+    "gtype": "GtkShortcutScope",
+    "name": "GtkShortcutScope"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

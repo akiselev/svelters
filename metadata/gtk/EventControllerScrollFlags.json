@@ -1,0 +1,73 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags",
+  "kind": "flags",
+  "members": [
+    {
+      "name": "none",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_NONE",
+      "nick": "none",
+      "value": 0
+    },
+    {
+      "name": "vertical",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_VERTICAL",
+      "nick": "vertical",
+      "value": 1
+    },
+    {
+      "name": "horizontal",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_HORIZONTAL",
+      "nick": "horizontal",
+      "value": 2
+    },
+    {
+      "name": "discrete",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_DISCRETE",
+      "nick": "discrete",
+      "value": 4
+    },
+    {
+      "name": "kinetic",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_KINETIC",
+      "nick": "kinetic",
+      "value": 8
+    },
+    {
+      "name": "physical_direction",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_PHYSICAL_DIRECTION",
+      "nick": "physical-direction",
+      "value": 16
+    },
+    {
+      "name": "both_axes",
+      "native": "GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES",
+      "nick": "both-axes",
+      "value": 3
+    }
+  ],
+  "native": {
+    "c_type": "GtkEventControllerScrollFlags",
+    "gtype": "GtkEventControllerScrollFlags",
+    "name": "GtkEventControllerScrollFlags"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

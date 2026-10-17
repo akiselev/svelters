@@ -1,0 +1,914 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:FileChooserAction"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:FileChooser",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:add_choice",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_choice",
+      "native": "gtk_file_chooser_add_choice",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "id",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "label",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "native": "const char**",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        },
+        {
+          "name": "option_labels",
+          "native": "const char**",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "list<string>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:add_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_filter",
+      "native": "gtk_file_chooser_add_filter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter",
+          "native": "GtkFileFilter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:FileFilter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:add_shortcut_folder",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "add_shortcut_folder",
+      "native": "gtk_file_chooser_add_shortcut_folder",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "folder",
+          "native": "GFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_action",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_action",
+      "native": "gtk_file_chooser_get_action",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkFileChooserAction",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:FileChooserAction>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_choice",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_choice",
+      "native": "gtk_file_chooser_get_choice",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "id",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_create_folders",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_create_folders",
+      "native": "gtk_file_chooser_get_create_folders",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_current_folder",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_folder",
+      "native": "gtk_file_chooser_get_current_folder",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GFile*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_current_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_current_name",
+      "native": "gtk_file_chooser_get_current_name",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_file",
+      "native": "gtk_file_chooser_get_file",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GFile*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_files",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_files",
+      "native": "gtk_file_chooser_get_files",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GListModel*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_filter",
+      "native": "gtk_file_chooser_get_filter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkFileFilter*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:FileFilter>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_filters",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_filters",
+      "native": "gtk_file_chooser_get_filters",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GListModel*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_select_multiple",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_select_multiple",
+      "native": "gtk_file_chooser_get_select_multiple",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:get_shortcut_folders",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_shortcut_folders",
+      "native": "gtk_file_chooser_get_shortcut_folders",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GListModel*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:remove_choice",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_choice",
+      "native": "gtk_file_chooser_remove_choice",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "id",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:remove_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_filter",
+      "native": "gtk_file_chooser_remove_filter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter",
+          "native": "GtkFileFilter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:FileFilter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:remove_shortcut_folder",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "remove_shortcut_folder",
+      "native": "gtk_file_chooser_remove_shortcut_folder",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "folder",
+          "native": "GFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_action",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_action",
+      "native": "gtk_file_chooser_set_action",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "action",
+          "native": "GtkFileChooserAction",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:FileChooserAction>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_choice",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_choice",
+      "native": "gtk_file_chooser_set_choice",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "id",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "option",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_create_folders",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_create_folders",
+      "native": "gtk_file_chooser_set_create_folders",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "create_folders",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_current_folder",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_current_folder",
+      "native": "gtk_file_chooser_set_current_folder",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file",
+          "native": "GFile*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_current_name",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_current_name",
+      "native": "gtk_file_chooser_set_current_name",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_file",
+      "native": "gtk_file_chooser_set_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file",
+          "native": "GFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "throws": true,
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_filter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_filter",
+      "native": "gtk_file_chooser_set_filter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "filter",
+          "native": "GtkFileFilter*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:FileFilter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:method:set_select_multiple",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_select_multiple",
+      "native": "gtk_file_chooser_set_select_multiple",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "select_multiple",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkFileChooser",
+    "gtype": "GtkFileChooser",
+    "name": "GtkFileChooser"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_file_chooser_get_action",
+        "set": "gtk_file_chooser_set_action"
+      },
+      "default": "open",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:action",
+      "invocation": "reflected",
+      "js_name": "action",
+      "name": "action",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::action"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkFileChooserAction",
+        "origin": "runtime",
+        "owner": "GtkFileChooser"
+      },
+      "type": {
+        "gtype": "GtkFileChooserAction",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:FileChooserAction>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_file_chooser_get_create_folders",
+        "set": "gtk_file_chooser_set_create_folders"
+      },
+      "default": true,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:create-folders",
+      "invocation": "reflected",
+      "js_name": "createFolders",
+      "name": "create-folders",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::create-folders"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkFileChooser"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_file_chooser_get_filter",
+        "set": "gtk_file_chooser_set_filter"
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:filter",
+      "invocation": "reflected",
+      "js_name": "filter",
+      "name": "filter",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::filter"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkFileFilter",
+        "origin": "runtime",
+        "owner": "GtkFileChooser"
+      },
+      "type": {
+        "gtype": "GtkFileFilter",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:FileFilter>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_file_chooser_get_filters",
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:filters",
+      "invocation": "reflected",
+      "js_name": "filters",
+      "name": "filters",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::filters"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GListModel",
+        "origin": "runtime",
+        "owner": "GtkFileChooser"
+      },
+      "type": {
+        "gtype": "GListModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_file_chooser_get_select_multiple",
+        "set": "gtk_file_chooser_set_select_multiple"
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:select-multiple",
+      "invocation": "reflected",
+      "js_name": "selectMultiple",
+      "name": "select-multiple",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::select-multiple"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkFileChooser"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_file_chooser_get_shortcut_folders",
+        "set": null
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:shortcut-folders",
+      "invocation": "reflected",
+      "js_name": "shortcutFolders",
+      "name": "shortcut-folders",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::shortcut-folders"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GListModel",
+        "origin": "runtime",
+        "owner": "GtkFileChooser"
+      },
+      "type": {
+        "gtype": "GListModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}
