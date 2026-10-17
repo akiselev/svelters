@@ -1,29 +1,13 @@
 name: macos-appkit
 
-# macOS minutes cost 10x on a private repo: only run when something the AppKit build uses changed.
 on:
   push:
     branches: [master, 'ci/**']
-    paths: &paths
-      - 'crates/svelters-abi/**'
-      - 'crates/svelters-host/**'
-      - 'crates/svelters-backend-log/**'
-      - 'crates/svelters-apple/**'
-      - 'crates/svelters-appkit/**'
-      - 'examples/counter-mac/**'
-      - 'fixtures/counter-mac/**'
-      - 'fixtures/gallery-appkit/**'
-      - 'packages/**'
-      - 'vendor/**'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'rust-toolchain.toml'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/macos-appkit.yml'
-      - '.github/actions/**'
   pull_request:
-    paths: *paths
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
