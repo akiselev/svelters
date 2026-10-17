@@ -26,13 +26,7 @@ kinds:
   button:
     text_content: label
     provenance: "@svelters/renderer LABEL_KINDS"
-  entry:
-    bindings:
-      text:
-        event: changed
-        value: { arg: 0 }
-        echo: backend_blocks
-        provenance: "QLineEdit.yaml: text suppress_signals: true; changed = textChanged(QString) carries the text"
+  # entry bind:text comes from the `bindings` annotation in metadata/overrides/qt/QLineEdit.yaml.
 
 # Qt metaobject dumps carry no defaults for these properties; values from the Qt 6 docs.
 defaults:

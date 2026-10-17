@@ -147,7 +147,10 @@ fn events_aliases_and_signals() {
     let close = gtk.event(&el(&gtk, "window"), "onclose-request").unwrap();
     assert_eq!((close.owner.as_str(), close.handler_result), ("Gtk.Window", HandlerResult::BoolStop));
     let qt = load("qt");
-    assert_eq!(qt.event(&el(&qt, "window"), "onclose").unwrap().handler_result, HandlerResult::None);
+    let close = qt.event(&el(&qt, "window"), "onclose").unwrap();
+    assert_eq!((close.handler_result, close.sync_required), (HandlerResult::BoolStop, true), "synthetic close filter is sync");
+    let key = qt.event(&el(&qt, "entry"), "onkey-press").unwrap();
+    assert_eq!((key.signal.as_str(), key.sync_required), ("key-press", true));
     assert!(qt.event(&el(&qt, "label"), "onclick").is_err(), "QLabel has no annotated signal");
 }
 
@@ -155,19 +158,38 @@ fn events_aliases_and_signals() {
 fn bind_text_on_entry() {
     for b in both() {
         let plan = b.plan_binding(&el(&b, "entry"), "text").unwrap();
+        let sync: Vec<String> = if b.backend() == "gtk" { vec!["changed".into(), "notify::text".into()] } else { vec!["textChanged(QString)".into()] };
         assert_eq!(
             plan,
-            BindingPlan { prop: "text".into(), prop_type: PropType::String, signal: "changed".into(), value: BindingValue::Arg(0), echo: Echo::BackendBlocks },
+            BindingPlan {
+                prop: "text".into(),
+                prop_type: PropType::String,
+                signal: "changed".into(),
+                value: BindingValue::Arg(0),
+                echo: Echo::BackendBlocks,
+                direction: BindingDirection::TwoWay,
+                compare_before_set: true,
+                read_back: false,
+                natively_normalizes: false,
+                sync_signals_on_set: sync,
+            },
             "{}",
             b.backend()
         );
         assert_eq!(plan.arg_operand(), 0);
+        // The binding comes from the `bindings` annotation, not the hand-written rules.
+        let k = &b.spec().kinds[&el(&b, "entry").kind];
+        let spec = k.bindings.get("text").or_else(|| b.spec().kinds["Gtk.Entry"].bindings.get("text")).unwrap();
+        assert!(spec.provenance.contains("signals-and-slots-semantics.md"), "{}", spec.provenance);
+        assert_eq!(spec.lifetime["on_native_death"], "end_binding");
     }
 }
 
 #[test]
 fn no_binding_for_label() {
     let gtk = load("gtk");
+    // Gtk.Text is a Gtk.Editable too, but only Gtk.Entry annotates bind:text.
+    assert_eq!(gtk.plan_binding(&el(&gtk, "text"), "text").unwrap_err().code, codes::BIND_NO_PLAN);
     let e = gtk.plan_binding(&el(&gtk, "label"), "label").unwrap_err();
     assert_eq!(e.code, codes::BIND_NO_PLAN);
     assert!(e.message.contains("notify::label"), "{}", e.message);
@@ -328,7 +350,7 @@ fn coerce_static_attributes() {
     match gtk.coerce_static(hints, Some("spellcheck | lowercase")).unwrap() {
         StaticValue::Flags { nicks, bits } => {
             assert_eq!(nicks, ["spellcheck", "lowercase"]);
-            assert_eq!(bits, hints.bits.as_ref().unwrap()["spellcheck"] | hints.bits.as_ref().unwrap()["lowercase"]);
+            assert_eq!(bits, Some(hints.bits.as_ref().unwrap()["spellcheck"] | hints.bits.as_ref().unwrap()["lowercase"]));
         }
         other => panic!("{other:?}"),
     }
@@ -339,4 +361,41 @@ fn coerce_static_attributes() {
     assert!(qt.coerce_static(qt.property(&qbx, "orientation").unwrap(), Some("diagonal")).is_err());
     let def = qt.property(&el(&qt, "button"), "default").unwrap();
     assert_eq!(qt.coerce_static(def, None), Ok(StaticValue::Bool(true)));
+}
+
+#[test]
+fn abi_v3_value_types() {
+    let gtk = load("gtk");
+    let button = el(&gtk, "button");
+    let css = gtk.property(&button, "cssClasses").unwrap();
+    assert_eq!((css.ty, css.of.as_deref(), css.type_ref.as_deref()), (PropType::List, Some("string"), Some("list<string>")));
+    let v = gtk.coerce_static(css, Some("pill  flat")).unwrap();
+    assert_eq!(v, StaticValue::StrList(vec!["pill".into(), "flat".into()]));
+    assert_eq!(v.to_json(), serde_json::json!(["pill", "flat"]));
+    // AddToken still targets the list prop.
+    match gtk.style_declaration(&button, "emphasis", &ident("accent")).unwrap() {
+        StyleLowering::Intent { actions, .. } => {
+            assert_eq!(actions, vec![StyleLowering::AddToken { prop: "cssClasses".into(), token: "suggested-action".into() }])
+        }
+        other => panic!("{other:?}"),
+    }
+
+    let qt = load("qt");
+    let geo = qt.property(&el(&qt, "box"), "geometry").unwrap();
+    assert_eq!((geo.ty, geo.of.as_deref(), geo.type_ref.as_deref()), (PropType::Record, Some("Rect"), Some("record<Rect>")));
+    assert!(qt.coerce_static(geo, Some("0 0 10 10")).unwrap_err().contains("record<Rect>"));
+    let pos = qt.property(&el(&qt, "box"), "pos").unwrap();
+    assert!(!pos.writable && pos.readable);
+    let icon = qt.property(&el(&qt, "button"), "icon").unwrap();
+    assert_eq!((icon.ty, icon.of.as_deref()), (PropType::Boxed, Some("QIcon")));
+    let date = qt.property(&el(&qt, "dateedit"), "date").unwrap();
+    assert_eq!((date.ty, date.type_ref.as_deref()), (PropType::Other, Some("date")));
+    let align = qt.property(&el(&qt, "entry"), "alignment").unwrap();
+    assert_eq!(align.ty, PropType::Flags);
+    let v = qt.coerce_static(align, Some("left vcenter")).unwrap();
+    assert_eq!(v, StaticValue::Flags { nicks: vec!["left".into(), "vcenter".into()], bits: None });
+    assert_eq!(v.to_json(), serde_json::json!(["left", "vcenter"]));
+    assert!(qt.coerce_static(align, Some("middle")).is_err());
+    let echo = qt.property(&el(&qt, "entry"), "echoMode").unwrap();
+    assert_eq!(qt.coerce_static(echo, Some("password")), Ok(StaticValue::Enum("password".into())));
 }
