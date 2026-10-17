@@ -30,7 +30,7 @@
             "native": "QBoxLayout::Direction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QBoxLayout::Direction>"
           }
         },
         {
@@ -52,35 +52,44 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QBoxLayout::Direction",
       "members": [
         {
+          "cpp": "QBoxLayout::LeftToRight",
           "name": "LeftToRight",
           "value": "0"
         },
         {
+          "cpp": "QBoxLayout::RightToLeft",
           "name": "RightToLeft",
           "value": "1"
         },
         {
+          "cpp": "QBoxLayout::TopToBottom",
           "name": "TopToBottom",
           "value": "2"
         },
         {
+          "cpp": "QBoxLayout::BottomToTop",
           "name": "BottomToTop",
           "value": "3"
         },
         {
+          "cpp": "QBoxLayout::Down",
           "name": "Down",
           "value": "TopToBottom"
         },
         {
+          "cpp": "QBoxLayout::Up",
           "name": "Up",
           "value": "BottomToTop"
         }
       ],
       "metaobject": null,
       "name": "Direction",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout",
@@ -361,7 +370,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -421,7 +430,7 @@
         "native": "QBoxLayout::Direction",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QBoxLayout::Direction>"
       },
       "signature": "QBoxLayout::Direction direction() const",
       "since": null,
@@ -447,7 +456,7 @@
         "native": "Qt::Orientations",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::Orientation>"
       },
       "signature": "Qt::Orientations expandingDirections() const override",
       "since": null,
@@ -814,7 +823,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -911,7 +920,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize maximumSize() const override",
       "since": null,
@@ -974,7 +983,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const override",
       "since": null,
@@ -1003,7 +1012,7 @@
             "native": "QBoxLayout::Direction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QBoxLayout::Direction>"
           }
         }
       ],
@@ -1040,7 +1049,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -1252,7 +1261,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,

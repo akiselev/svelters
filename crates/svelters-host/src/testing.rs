@@ -6,7 +6,7 @@
 use crate::{ConsoleLine, Host, HostConfig, JsError};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
-use svelters_backend_log::{LogBackend, LogOptions, Step, parse_script};
+use svelters_backend_log::{LogBackend, LogOptions, Step, parse_schema, parse_script};
 
 /// Everything observable after a bundle ran to completion on the log backend.
 pub struct RunReport {
@@ -47,6 +47,10 @@ pub fn run_bundle(
 /// The configuration fixtures run under: scripted stepping (virtual clock, see
 /// [`HostConfig::scripted`]), quiet output, and a loop that returns as soon as the script ends.
 pub fn fixture_config() -> (HostConfig, LogOptions) {
+    // The descriptors the log backend stands in for; the Node TestHost loads the same file.
+    if let Ok(schema) = parse_schema(include_str!("../../../packages/testhost/src/schema.json")) {
+        svelters_backend_log::set_default_schema(schema);
+    }
     let cfg = HostConfig {
         scripted: true,
         echo_console: false,

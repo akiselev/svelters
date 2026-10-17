@@ -38,11 +38,11 @@ fn id(what: u32, kind: svl_id, name: &str) -> svl_id {
 }
 
 fn s(v: &str) -> svl_value {
-    svl_value { tag: SVL_STR, u: svl_value_u { s: svl_str { ptr: v.as_ptr().cast(), len: v.len() } } }
+    svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: v.as_ptr().cast(), len: v.len() } })
 }
 
 fn i(v: i64) -> svl_value {
-    svl_value { tag: SVL_I64, u: svl_value_u { i: v } }
+    svl_value::new(SVL_I64, svl_value_u { i: v })
 }
 
 fn ok(rc: i32, what: &str) {
@@ -61,7 +61,7 @@ fn insert(parent: svl_handle, child: svl_handle) {
 }
 
 fn get_str(h: svl_handle, prop: svl_id) -> String {
-    let mut out = svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } };
+    let mut out = svl_value::null();
     ok(unsafe { (be().get_prop)(be().self_, h, prop, &mut out) }, "get_prop");
     assert_eq!(out.tag, SVL_STR);
     let s = unsafe { std::slice::from_raw_parts(out.u.s.ptr.cast::<u8>(), out.u.s.len) };
@@ -72,6 +72,10 @@ unsafe extern "C" fn post_event(_: *mut c_void, h: svl_handle, sig: svl_id, _: *
     STATE.lock().unwrap().as_mut().unwrap().events.push((h, sig));
 }
 
+unsafe extern "C" fn invoke_callback(_: *mut c_void, _: u64, _: *const svl_value, _: usize, _: *mut svl_value) -> i32 {
+    -1
+}
+unsafe extern "C" fn release_callback(_: *mut c_void, _: u64) {}
 unsafe extern "C" fn on_destroyed(_: *mut c_void, _: svl_handle, _: u32) {}
 
 unsafe extern "C" fn call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> i32 {
@@ -119,7 +123,7 @@ fn main() {
 
 fn demo() {
     let b = be();
-    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed };
+    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback };
 
     let kind = |name: &str| id(SVL_KIND, 0, name);
     let (k_window, k_box, k_label, k_button) = (kind("window"), kind("box"), kind("label"), kind("button"));

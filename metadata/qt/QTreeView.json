@@ -530,7 +530,7 @@
             "native": "const QList<int> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<i32>"
           }
         }
       ],
@@ -614,7 +614,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -728,7 +728,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         }
       ],
@@ -1090,7 +1090,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1732,7 +1732,7 @@
             "native": "QAbstractItemView::CursorAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::CursorAction>"
           }
         },
         {
@@ -1742,7 +1742,7 @@
             "native": "Qt::KeyboardModifiers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::KeyboardModifier>"
           }
         }
       ],
@@ -2196,7 +2196,7 @@
             "native": "QAbstractItemView::ScrollHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollHint>"
           }
         }
       ],
@@ -2994,7 +2994,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3004,7 +3004,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -3310,7 +3310,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],
@@ -3522,7 +3522,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize viewportSizeHint() const override",
       "since": null,
@@ -3559,7 +3559,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect visualRect(const QModelIndex &index) const override",
       "since": null,
@@ -3596,7 +3596,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion visualRegionForSelection(const QItemSelection &selection) const override",
       "since": null,

@@ -6,7 +6,8 @@
 //! drops its reference, so a handler can never run against a freed entry. Natively destroyed
 //! toplevels are reported through `host.on_destroyed`.
 
-use crate::convert::{self, StrBuf};
+use crate::convert::{self, Env, StrBuf};
+use crate::types::{self, TypeTable};
 use crate::generated::{slots, tables::*};
 use crate::lookup;
 use gtk::glib;
@@ -19,6 +20,9 @@ use std::rc::Rc;
 use std::sync::atomic::{AtomicPtr, Ordering};
 use std::sync::Arc;
 use svelters_abi::*;
+
+mod extras;
+use extras::CallErr;
 
 struct Entry {
     /// Weak: toplevels are kept alive by GTK itself, so natively closing one really destroys it.
@@ -37,6 +41,8 @@ struct State {
     next: u64,
     entries: HashMap<u64, Entry>,
     by_obj: HashMap<usize, u64>,
+    /// Opaque boxed values (and objects without a kind) handed to JS as `BOXED` handles.
+    boxed: HashMap<u64, glib::Value>,
 }
 
 pub(crate) struct Inner {
@@ -45,11 +51,41 @@ pub(crate) struct Inner {
     state: RefCell<State>,
     error: RefCell<CString>,
     out: RefCell<StrBuf>,
+    types: RefCell<TypeTable>,
+    descs: DescStore,
     /// The pending `schedule_wake` source, if any. Cleared by the source's own callback.
     wake_timer: RefCell<Option<glib::SourceId>>,
+    /// State of the `gio-file` services (see `extras.rs`).
+    files: RefCell<HashMap<u64, extras::FileState>>,
 }
 
 type Res<T> = Result<T, String>;
+
+impl Env for Inner {
+    fn object(&self, h: u64) -> Option<glib::Object> {
+        self.obj_of(h).ok().map(|x| x.0)
+    }
+
+    fn boxed(&self, h: u64) -> Option<glib::Value> {
+        self.state.borrow().boxed.get(&h).cloned()
+    }
+
+    fn handle_of(&self, o: &glib::Object) -> u64 {
+        self.state.borrow().by_obj.get(&(o.as_ptr() as usize)).copied().unwrap_or(0)
+    }
+
+    fn mint_boxed(&self, v: glib::Value) -> u64 {
+        let mut st = self.state.borrow_mut();
+        st.next += 1;
+        let h = st.next;
+        st.boxed.insert(h, v);
+        h
+    }
+
+    fn type_id(&self, t: glib::Type) -> svl_id {
+        self.types.borrow_mut().id(t)
+    }
+}
 
 impl Inner {
     fn obj_of(&self, h: u64) -> Res<(glib::Object, u32)> {
@@ -64,15 +100,14 @@ impl Inner {
         Ok((w, k))
     }
 
-    fn handle_of(&self, o: &glib::Object) -> u64 {
-        self.state.borrow().by_obj.get(&(o.as_ptr() as usize)).copied().unwrap_or(0)
-    }
-
     fn set_error(&self, msg: String) {
         *self.error.borrow_mut() = CString::new(msg.replace('\0', " ")).unwrap_or_default();
     }
 
     fn create(self: &Rc<Self>, kind: u32) -> Res<u64> {
+        if extras::is_extra(kind) {
+            return self.create_extra(kind);
+        }
         let k = KINDS.get((kind as usize).wrapping_sub(1)).ok_or("unknown kind")?;
         if k.is_abstract || k.is_interface {
             return Err(format!("{} is not instantiable", k.gtype));
@@ -167,6 +202,13 @@ impl Inner {
     /// caller may be inside a signal emission: a toplevel is hidden now and destroyed from an
     /// idle, and the table's strong reference is dropped from an idle.
     fn destroy(&self, h: u64) -> Res<()> {
+        // A boxed handle: drop the held value (idempotent).
+        if self.state.borrow_mut().boxed.remove(&h).is_some() {
+            return Ok(());
+        }
+        if self.extra_kind(h).is_some() {
+            self.destroy_extra(h);
+        }
         let entry = {
             let mut st = self.state.borrow_mut();
             let Some(e) = st.entries.remove(&h) else { return Ok(()) };
@@ -246,6 +288,9 @@ impl Inner {
     }
 
     fn set_prop(&self, h: u64, prop: u32, v: &svl_value) -> Res<()> {
+        if self.extra_kind(h).is_some() {
+            return self.extra_set_prop(h, prop, v);
+        }
         let (obj, kind) = self.obj_of(h)?;
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
@@ -259,11 +304,10 @@ impl Inner {
                 SVL_NULL => None,
                 _ => Some(unsafe { convert::as_str(v) }.ok_or("expected string")?),
             };
-            return slots::virtual_set(prop, &obj, text);
+            return slots::virtual_set(prop, &obj, text.as_deref());
         }
         let pspec = obj.find_property(p.name).ok_or_else(|| format!("{} has no property {}", obj.type_().name(), p.name))?;
-        let value = unsafe { convert::to_value(p.ty, &pspec, v, &|h| self.obj_of(h).ok().map(|x| x.0)) }
-            .map_err(|e| format!("{}: {e}", p.name))?;
+        let value = unsafe { convert::to_value(pspec.value_type(), v, self) }.map_err(|e| format!("{}: {e}", p.name))?;
         // Echo suppression: handlers for the signals this property would raise are blocked while JS writes it.
         let st = self.state.borrow();
         let blocked: Vec<&glib::SignalHandlerId> = st
@@ -288,6 +332,9 @@ impl Inner {
     }
 
     fn get_prop(&self, h: u64, prop: u32, out: &mut svl_value) -> Res<()> {
+        if self.extra_kind(h).is_some() {
+            return self.extra_get_prop(h, prop, out);
+        }
         let (obj, kind) = self.obj_of(h)?;
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
@@ -309,7 +356,7 @@ impl Inner {
             return Err(format!("{} has no property {}", obj.type_().name(), p.name));
         }
         let value = obj.property_value(p.name);
-        *out = convert::from_value(&value, &|o| self.handle_of(o), &mut buf);
+        *out = convert::from_value(&value, self, &mut buf);
         Ok(())
     }
 
@@ -352,7 +399,7 @@ impl Inner {
         let host = self.host.load(Ordering::Acquire);
         if !host.is_null() {
             let mut buf = StrBuf::default();
-            let mut args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, &|o| self.handle_of(o), &mut buf)).collect();
+            let mut args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, self, &mut buf)).collect();
             // GtkEditable::changed has no arguments; the JS contract (and the Qt backend) delivers `[text]`.
             if sig.name == "changed" && args.is_empty() {
                 if let Some(e) = vals.first().and_then(|v| v.get::<glib::Object>().ok()).and_then(|o| o.downcast::<gtk::Editable>().ok()) {
@@ -370,6 +417,65 @@ impl Inner {
             1 => Some(false.to_value()),
             _ => None,
         }
+    }
+}
+
+impl Inner {
+    /// The descriptor of a property of the handle kind `kind` (`SVL_PROP` only; other member
+    /// kinds have no value descriptors yet).
+    fn describe_member(&self, what: u32, kind: u32, member: u32) -> Option<MemberDesc> {
+        if extras::is_extra(kind) {
+            return extras::describe_member(what, member);
+        }
+        if what != SVL_PROP {
+            return None;
+        }
+        let p = PROPS.get((member as usize).checked_sub(1)?)?;
+        let k = KINDS.get((kind as usize).checked_sub(1)?)?;
+        if !lookup::in_chain(kind, p.kind) {
+            return None;
+        }
+        let mut table = self.types.borrow_mut();
+        let readable = p.flags & F_READ != 0;
+        let writable = p.flags & F_WRITE != 0;
+        if p.flags & F_VIRTUAL != 0 {
+            let s = SlotDesc::new(SVL_STR).flags(SVL_D_NULLABLE).named("value");
+            return Some(MemberDesc {
+                name: p.name.to_string(),
+                params: if writable { vec![s.clone()] } else { vec![] },
+                ret: if readable { s } else { SlotDesc::new(SVL_NULL) },
+                flags: 0,
+            });
+        }
+        // The class (not the interface) of the handle kind knows the GParamSpec, inherited
+        // and interface-provided properties included.
+        crate::generated::types::ensure_registered(k.gtype);
+        let t = glib::Type::from_name(k.gtype)?;
+        let ps = if convert::is_iface(t) {
+            None
+        } else {
+            glib::object::ObjectClass::from_type(t).and_then(|c| c.find_property(p.name))
+        };
+        let vt = match &ps {
+            Some(ps) => ps.value_type(),
+            None => glib::Type::from_name(p.gtype).unwrap_or(glib::Type::INVALID),
+        };
+        let slot = types::slot_for(&mut table, vt, ps.as_ref()).named(p.js_name);
+        Some(MemberDesc {
+            name: p.name.to_string(),
+            params: if writable { vec![slot.clone()] } else { vec![] },
+            ret: if readable { slot } else { SlotDesc::new(SVL_NULL) },
+            flags: 0,
+        })
+    }
+
+    fn describe_type(&self, id: u32) -> Option<TypeDesc> {
+        if let Some(t) = extras::describe_type(id) {
+            return Some(t);
+        }
+        let mut table = self.types.borrow_mut();
+        let t = table.lookup(id)?;
+        Some(types::type_desc(&mut table, t))
     }
 }
 
@@ -414,7 +520,10 @@ impl GtkBackend {
             state: RefCell::new(State::default()),
             error: RefCell::new(CString::default()),
             out: RefCell::new(StrBuf::default()),
+            types: RefCell::new(TypeTable::default()),
+            descs: DescStore::default(),
             wake_timer: RefCell::new(None),
+            files: RefCell::new(HashMap::new()),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -435,6 +544,10 @@ impl GtkBackend {
             schedule_wake: b_schedule_wake,
             quit: b_quit,
             last_error: b_last_error,
+            caps: 0,
+            describe: Some(b_describe),
+            describe_type: Some(b_describe_type),
+            cancel: Some(b_cancel),
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -482,7 +595,11 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     let _ = p;
     match what {
-        SVL_KIND => lookup::kind_by_name(name),
+        SVL_KIND => match extras::kind_by_name(name) {
+            0 => lookup::kind_by_name(name),
+            k => k,
+        },
+        _ if extras::is_extra(kind) => extras::find_member(what, kind, name),
         SVL_PROP => lookup::find_prop(kind, name),
         SVL_SIGNAL => lookup::find_signal(kind, name),
         SVL_METHOD => lookup::find_method(kind, name),
@@ -521,8 +638,38 @@ unsafe extern "C" fn b_get_prop(p: *mut c_void, h: svl_handle, prop: svl_id, out
     run_int(unsafe { ctl(p) }, |i| i.get_prop(h, prop, unsafe { &mut *out }))
 }
 
-unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, _args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
-    run_int(unsafe { ctl(p) }, |i| i.call(h, method, n, unsafe { &mut *out }))
+unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
+    let c = unsafe { ctl(p) };
+    let _t = crate::timing::scope();
+    let out = unsafe { &mut *out };
+    let r = catch_unwind(AssertUnwindSafe(|| {
+        if c.local.extra_kind(h).is_some() {
+            c.local.extra_call(h, method, args, n, out)
+        } else {
+            c.local.call(h, method, n, out).map_err(CallErr::Plain)
+        }
+    }));
+    match r {
+        Ok(Ok(())) => 0,
+        Ok(Err(CallErr::Plain(e))) => {
+            c.local.set_error(e);
+            -1
+        }
+        // A GError crosses as an ERROR value in `out` (and its message as `last_error`).
+        Ok(Err(CallErr::Gerror(e))) => {
+            c.local.set_error(e.message().to_string());
+            c.local.write_error(&e, out);
+            -1
+        }
+        Err(_) => {
+            c.local.set_error("internal panic in svelters-gtk".into());
+            -1
+        }
+    }
+}
+
+unsafe extern "C" fn b_cancel(p: *mut c_void, callback: u64) -> c_int {
+    unsafe { ctl(p) }.local.cancel_callback(callback) as c_int
 }
 
 unsafe extern "C" fn b_listen(p: *mut c_void, h: svl_handle, signal: svl_id, on: bool) -> c_int {
@@ -600,4 +747,16 @@ unsafe extern "C" fn b_last_error(p: *mut c_void) -> *const c_char {
     // The CString is only replaced by the next failing call, which the ABI allows to invalidate it.
     let s: &CStr = e.as_c_str();
     s.as_ptr()
+}
+
+unsafe extern "C" fn b_describe(p: *mut c_void, what: u32, kind: svl_id, member: svl_id) -> *const svl_member_desc {
+    let c = unsafe { ctl(p) };
+    let i = &c.local;
+    i.descs.member((what, kind, member), || catch_unwind(AssertUnwindSafe(|| i.describe_member(what, kind, member))).ok().flatten())
+}
+
+unsafe extern "C" fn b_describe_type(p: *mut c_void, ty: svl_id) -> *const svl_type_desc {
+    let c = unsafe { ctl(p) };
+    let i = &c.local;
+    i.descs.type_desc(ty, || catch_unwind(AssertUnwindSafe(|| i.describe_type(ty))).ok().flatten())
 }

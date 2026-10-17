@@ -43,16 +43,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QToolButton::ToolButtonPopupMode",
       "members": [
         {
+          "cpp": "QToolButton::DelayedPopup",
           "name": "DelayedPopup",
           "value": "0"
         },
         {
+          "cpp": "QToolButton::MenuButtonPopup",
           "name": "MenuButtonPopup",
           "value": "1"
         },
         {
+          "cpp": "QToolButton::InstantPopup",
           "name": "InstantPopup",
           "value": "2"
         }
@@ -67,7 +72,8 @@
         "scoped": false
       },
       "name": "ToolButtonPopupMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QToolButton",
@@ -130,7 +136,7 @@
         "native": "Qt::ArrowType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ArrowType>"
       },
       "signature": "Qt::ArrowType arrowType() const",
       "since": null,
@@ -348,7 +354,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -482,7 +488,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -645,7 +651,7 @@
         "native": "QToolButton::ToolButtonPopupMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QToolButton::ToolButtonPopupMode>"
       },
       "signature": "QToolButton::ToolButtonPopupMode popupMode() const",
       "since": null,
@@ -674,7 +680,7 @@
             "native": "Qt::ArrowType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ArrowType>"
           }
         }
       ],
@@ -822,7 +828,7 @@
             "native": "QToolButton::ToolButtonPopupMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QToolButton::ToolButtonPopupMode>"
           }
         }
       ],
@@ -859,7 +865,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],
@@ -919,7 +925,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -982,7 +988,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       },
       "signature": "Qt::ToolButtonStyle toolButtonStyle() const",
       "since": null,
@@ -1044,7 +1050,7 @@
         "native": "Qt::ArrowType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ArrowType>"
       }
     },
     {
@@ -1124,7 +1130,7 @@
         "native": "ToolButtonPopupMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ToolButtonPopupMode>"
+        "ref": "enum<QToolButton::ToolButtonPopupMode>"
       }
     },
     {
@@ -1164,7 +1170,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       }
     }
   ],

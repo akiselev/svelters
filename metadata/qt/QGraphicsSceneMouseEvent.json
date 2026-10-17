@@ -38,7 +38,7 @@
         "native": "Qt::MouseButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::MouseButton>"
       },
       "signature": "Qt::MouseButton button() const",
       "since": null,
@@ -67,7 +67,7 @@
             "native": "Qt::MouseButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::MouseButton>"
           }
         }
       ],
@@ -75,7 +75,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF buttonDownPos(Qt::MouseButton button) const",
       "since": null,
@@ -104,7 +104,7 @@
             "native": "Qt::MouseButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::MouseButton>"
           }
         }
       ],
@@ -112,7 +112,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF buttonDownScenePos(Qt::MouseButton button) const",
       "since": null,
@@ -141,7 +141,7 @@
             "native": "Qt::MouseButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::MouseButton>"
           }
         }
       ],
@@ -149,7 +149,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint buttonDownScreenPos(Qt::MouseButton button) const",
       "since": null,
@@ -175,7 +175,7 @@
         "native": "Qt::MouseButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MouseButton>"
       },
       "signature": "Qt::MouseButtons buttons() const",
       "since": null,
@@ -201,7 +201,7 @@
         "native": "Qt::MouseEventFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MouseEventFlag>"
       },
       "signature": "Qt::MouseEventFlags flags() const",
       "since": null,
@@ -227,7 +227,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF lastPos() const",
       "since": null,
@@ -253,7 +253,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF lastScenePos() const",
       "since": null,
@@ -279,7 +279,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint lastScreenPos() const",
       "since": null,
@@ -305,7 +305,7 @@
         "native": "Qt::KeyboardModifiers",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::KeyboardModifier>"
       },
       "signature": "Qt::KeyboardModifiers modifiers() const",
       "since": null,
@@ -331,7 +331,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF pos() const",
       "since": null,
@@ -357,7 +357,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF scenePos() const",
       "since": null,
@@ -383,7 +383,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint screenPos() const",
       "since": null,
@@ -409,7 +409,7 @@
         "native": "Qt::MouseEventSource",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::MouseEventSource>"
       },
       "signature": "Qt::MouseEventSource source() const",
       "since": null,

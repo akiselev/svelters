@@ -43,31 +43,39 @@
   ],
   "enums": [
     {
+      "flags_alias": "QFontComboBox::FontFilters",
+      "fullname": "QFontComboBox::FontFilter",
       "members": [
         {
+          "cpp": "QFontComboBox::AllFonts",
           "name": "AllFonts",
           "value": "0"
         },
         {
+          "cpp": "QFontComboBox::ScalableFonts",
           "name": "ScalableFonts",
           "value": "0x1"
         },
         {
+          "cpp": "QFontComboBox::NonScalableFonts",
           "name": "NonScalableFonts",
           "value": "0x2"
         },
         {
+          "cpp": "QFontComboBox::MonospacedFonts",
           "name": "MonospacedFonts",
           "value": "0x4"
         },
         {
+          "cpp": "QFontComboBox::ProportionalFonts",
           "name": "ProportionalFonts",
           "value": "0x8"
         }
       ],
       "metaobject": null,
       "name": "FontFilter",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QFontComboBox",
@@ -93,7 +101,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont currentFont() const",
       "since": null,
@@ -193,7 +201,7 @@
         "native": "QFontComboBox::FontFilters",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QFontComboBox::FontFilter>"
       },
       "signature": "QFontComboBox::FontFilters fontFilters() const",
       "since": null,
@@ -259,7 +267,7 @@
             "native": "QFontDatabase::WritingSystem",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFontDatabase::WritingSystem>"
           }
         }
       ],
@@ -296,7 +304,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -343,7 +351,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -380,7 +388,7 @@
             "native": "QFontComboBox::FontFilters",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFontComboBox::FontFilter>"
           }
         }
       ],
@@ -464,7 +472,7 @@
             "native": "QFontDatabase::WritingSystem",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFontDatabase::WritingSystem>"
           }
         },
         {
@@ -511,7 +519,7 @@
             "native": "QFontDatabase::WritingSystem",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFontDatabase::WritingSystem>"
           }
         }
       ],
@@ -545,7 +553,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -571,7 +579,7 @@
         "native": "QFontDatabase::WritingSystem",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFontDatabase::WritingSystem>"
       },
       "signature": "QFontDatabase::WritingSystem writingSystem() const",
       "since": null,
@@ -627,7 +635,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       }
     },
     {
@@ -667,7 +675,7 @@
         "native": "FontFilters",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QFontComboBox::FontFilter>"
       }
     },
     {
@@ -707,7 +715,7 @@
         "native": "QFontDatabase::WritingSystem",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFontDatabase::WritingSystem>"
       }
     }
   ],
@@ -736,7 +744,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],

@@ -29,26 +29,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionRubberBand::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionRubberBand::Type",
           "name": "Type",
           "value": "SO_RubberBand"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionRubberBand::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionRubberBand::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionRubberBand",

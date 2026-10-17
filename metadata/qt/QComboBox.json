@@ -42,32 +42,41 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QComboBox::InsertPolicy",
       "members": [
         {
+          "cpp": "QComboBox::NoInsert",
           "name": "NoInsert",
           "value": "0"
         },
         {
+          "cpp": "QComboBox::InsertAtTop",
           "name": "InsertAtTop",
           "value": "1"
         },
         {
+          "cpp": "QComboBox::InsertAtCurrent",
           "name": "InsertAtCurrent",
           "value": "2"
         },
         {
+          "cpp": "QComboBox::InsertAtBottom",
           "name": "InsertAtBottom",
           "value": "3"
         },
         {
+          "cpp": "QComboBox::InsertAfterCurrent",
           "name": "InsertAfterCurrent",
           "value": "4"
         },
         {
+          "cpp": "QComboBox::InsertBeforeCurrent",
           "name": "InsertBeforeCurrent",
           "value": "5"
         },
         {
+          "cpp": "QComboBox::InsertAlphabetically",
           "name": "InsertAlphabetically",
           "value": "6"
         }
@@ -86,15 +95,20 @@
         "scoped": false
       },
       "name": "InsertPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QComboBox::LabelDrawingMode",
       "members": [
         {
+          "cpp": "QComboBox::LabelDrawingMode::UseStyle",
           "name": "UseStyle",
           "value": "0"
         },
         {
+          "cpp": "QComboBox::LabelDrawingMode::UseDelegate",
           "name": "UseDelegate",
           "value": "1"
         }
@@ -108,19 +122,25 @@
         "scoped": true
       },
       "name": "LabelDrawingMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": true
     },
     {
+      "flags_alias": null,
+      "fullname": "QComboBox::SizeAdjustPolicy",
       "members": [
         {
+          "cpp": "QComboBox::AdjustToContents",
           "name": "AdjustToContents",
           "value": "0"
         },
         {
+          "cpp": "QComboBox::AdjustToContentsOnFirstShow",
           "name": "AdjustToContentsOnFirstShow",
           "value": "1"
         },
         {
+          "cpp": "QComboBox::AdjustToMinimumContentsLengthWithIcon",
           "name": "AdjustToMinimumContentsLengthWithIcon",
           "value": "2"
         }
@@ -135,7 +155,8 @@
         "scoped": false
       },
       "name": "SizeAdjustPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QComboBox",
@@ -164,7 +185,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -268,7 +289,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -655,7 +676,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -702,7 +723,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -899,7 +920,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -1002,7 +1023,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -1049,7 +1070,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -1173,7 +1194,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -1207,7 +1228,7 @@
         "native": "QComboBox::InsertPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QComboBox::InsertPolicy>"
       },
       "signature": "QComboBox::InsertPolicy insertPolicy() const",
       "since": null,
@@ -1380,7 +1401,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon itemIcon(int index) const",
       "since": null,
@@ -1517,7 +1538,7 @@
         "native": "QComboBox::LabelDrawingMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QComboBox::LabelDrawingMode>"
       },
       "signature": "QComboBox::LabelDrawingMode labelDrawingMode() const",
       "since": null,
@@ -1647,7 +1668,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -2224,7 +2245,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -2261,7 +2282,7 @@
             "native": "QComboBox::InsertPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QComboBox::InsertPolicy>"
           }
         }
       ],
@@ -2402,7 +2423,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -2486,7 +2507,7 @@
             "native": "QComboBox::LabelDrawingMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QComboBox::LabelDrawingMode>"
           }
         }
       ],
@@ -2819,7 +2840,7 @@
             "native": "QComboBox::SizeAdjustPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QComboBox::SizeAdjustPolicy>"
           }
         }
       ],
@@ -2990,7 +3011,7 @@
         "native": "QComboBox::SizeAdjustPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QComboBox::SizeAdjustPolicy>"
       },
       "signature": "QComboBox::SizeAdjustPolicy sizeAdjustPolicy() const",
       "since": null,
@@ -3016,7 +3037,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -3493,7 +3514,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -3533,7 +3554,7 @@
         "native": "InsertPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<InsertPolicy>"
+        "ref": "enum<QComboBox::InsertPolicy>"
       }
     },
     {
@@ -3573,7 +3594,7 @@
         "native": "LabelDrawingMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<LabelDrawingMode>"
+        "ref": "enum<QComboBox::LabelDrawingMode>"
       }
     },
     {
@@ -3813,7 +3834,7 @@
         "native": "SizeAdjustPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SizeAdjustPolicy>"
+        "ref": "enum<QComboBox::SizeAdjustPolicy>"
       }
     }
   ],

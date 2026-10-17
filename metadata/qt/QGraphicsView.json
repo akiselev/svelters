@@ -78,31 +78,41 @@
   ],
   "enums": [
     {
+      "flags_alias": "QGraphicsView::CacheMode",
+      "fullname": "QGraphicsView::CacheModeFlag",
       "members": [
         {
+          "cpp": "QGraphicsView::CacheNone",
           "name": "CacheNone",
           "value": "0x0"
         },
         {
+          "cpp": "QGraphicsView::CacheBackground",
           "name": "CacheBackground",
           "value": "0x1"
         }
       ],
       "metaobject": null,
       "name": "CacheModeFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsView::DragMode",
       "members": [
         {
+          "cpp": "QGraphicsView::NoDrag",
           "name": "NoDrag",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsView::ScrollHandDrag",
           "name": "ScrollHandDrag",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsView::RubberBandDrag",
           "name": "RubberBandDrag",
           "value": "2"
         }
@@ -117,38 +127,50 @@
         "scoped": false
       },
       "name": "DragMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QGraphicsView::OptimizationFlags",
+      "fullname": "QGraphicsView::OptimizationFlag",
       "members": [
         {
+          "cpp": "QGraphicsView::DontSavePainterState",
           "name": "DontSavePainterState",
           "value": "0x1"
         },
         {
+          "cpp": "QGraphicsView::DontAdjustForAntialiasing",
           "name": "DontAdjustForAntialiasing",
           "value": "0x2"
         },
         {
+          "cpp": "QGraphicsView::IndirectPainting",
           "name": "IndirectPainting",
           "value": "0x4"
         }
       ],
       "metaobject": null,
       "name": "OptimizationFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsView::ViewportAnchor",
       "members": [
         {
+          "cpp": "QGraphicsView::NoAnchor",
           "name": "NoAnchor",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsView::AnchorViewCenter",
           "name": "AnchorViewCenter",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsView::AnchorUnderMouse",
           "name": "AnchorUnderMouse",
           "value": "2"
         }
@@ -163,27 +185,35 @@
         "scoped": false
       },
       "name": "ViewportAnchor",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsView::ViewportUpdateMode",
       "members": [
         {
+          "cpp": "QGraphicsView::FullViewportUpdate",
           "name": "FullViewportUpdate",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsView::MinimalViewportUpdate",
           "name": "MinimalViewportUpdate",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsView::SmartViewportUpdate",
           "name": "SmartViewportUpdate",
           "value": "2"
         },
         {
+          "cpp": "QGraphicsView::NoViewportUpdate",
           "name": "NoViewportUpdate",
           "value": "3"
         },
         {
+          "cpp": "QGraphicsView::BoundingRectViewportUpdate",
           "name": "BoundingRectViewportUpdate",
           "value": "4"
         }
@@ -200,7 +230,8 @@
         "scoped": false
       },
       "name": "ViewportUpdateMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsView",
@@ -226,7 +257,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -252,7 +283,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush backgroundBrush() const",
       "since": null,
@@ -278,7 +309,7 @@
         "native": "QGraphicsView::CacheMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsView::CacheModeFlag>"
       },
       "signature": "QGraphicsView::CacheMode cacheMode() const",
       "since": null,
@@ -344,7 +375,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -536,7 +567,7 @@
         "native": "QGraphicsView::DragMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsView::DragMode>"
       },
       "signature": "QGraphicsView::DragMode dragMode() const",
       "since": null,
@@ -612,7 +643,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -659,7 +690,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -857,7 +888,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1048,7 +1079,7 @@
             "native": "Qt::AspectRatioMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AspectRatioMode>"
           }
         }
       ],
@@ -1085,7 +1116,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1095,7 +1126,7 @@
             "native": "Qt::AspectRatioMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AspectRatioMode>"
           }
         }
       ],
@@ -1172,7 +1203,7 @@
             "native": "Qt::AspectRatioMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AspectRatioMode>"
           }
         }
       ],
@@ -1317,7 +1348,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush foregroundBrush() const",
       "since": null,
@@ -1383,7 +1414,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -1420,7 +1451,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1430,7 +1461,7 @@
             "native": "QGraphicsScene::SceneLayers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsScene::SceneLayer>"
           }
         }
       ],
@@ -1519,7 +1550,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1629,7 +1660,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -1639,7 +1670,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -1676,7 +1707,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1723,7 +1754,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -1760,7 +1791,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1770,7 +1801,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -1894,7 +1925,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -2005,7 +2036,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -2013,7 +2044,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapFromScene(const QPainterPath &path) const",
       "since": null,
@@ -2042,7 +2073,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -2050,7 +2081,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapFromScene(const QPointF &point) const",
       "since": null,
@@ -2097,7 +2128,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapFromScene(qreal x, qreal y) const",
       "since": null,
@@ -2163,7 +2194,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -2267,7 +2298,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -2275,7 +2306,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapToScene(const QPainterPath &path) const",
       "since": null,
@@ -2304,7 +2335,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -2312,7 +2343,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToScene(const QPoint &point) const",
       "since": null,
@@ -2359,7 +2390,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToScene(int x, int y) const",
       "since": null,
@@ -2425,7 +2456,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -2674,7 +2705,7 @@
         "native": "QGraphicsView::OptimizationFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsView::OptimizationFlag>"
       },
       "signature": "QGraphicsView::OptimizationFlags optimizationFlags() const",
       "since": null,
@@ -2750,7 +2781,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -2760,7 +2791,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -2770,7 +2801,7 @@
             "native": "Qt::AspectRatioMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AspectRatioMode>"
           }
         }
       ],
@@ -2804,7 +2835,7 @@
         "native": "QPainter::RenderHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QPainter::RenderHint>"
       },
       "signature": "QPainter::RenderHints renderHints() const",
       "since": null,
@@ -2882,7 +2913,7 @@
         "native": "QGraphicsView::ViewportAnchor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsView::ViewportAnchor>"
       },
       "signature": "QGraphicsView::ViewportAnchor resizeAnchor() const",
       "since": null,
@@ -2982,7 +3013,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect rubberBandRect() const",
       "since": null,
@@ -3008,7 +3039,7 @@
         "native": "Qt::ItemSelectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ItemSelectionMode>"
       },
       "signature": "Qt::ItemSelectionMode rubberBandSelectionMode() const",
       "since": null,
@@ -3107,7 +3138,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF sceneRect() const",
       "since": null,
@@ -3183,7 +3214,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -3220,7 +3251,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -3257,7 +3288,7 @@
             "native": "QGraphicsView::CacheMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsView::CacheModeFlag>"
           }
         }
       ],
@@ -3294,7 +3325,7 @@
             "native": "QGraphicsView::DragMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsView::DragMode>"
           }
         }
       ],
@@ -3331,7 +3362,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -3405,7 +3436,7 @@
             "native": "QGraphicsView::OptimizationFlag",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsView::OptimizationFlag>"
           }
         },
         {
@@ -3452,7 +3483,7 @@
             "native": "QGraphicsView::OptimizationFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsView::OptimizationFlag>"
           }
         }
       ],
@@ -3489,7 +3520,7 @@
             "native": "QPainter::RenderHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPainter::RenderHint>"
           }
         },
         {
@@ -3536,7 +3567,7 @@
             "native": "QPainter::RenderHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QPainter::RenderHint>"
           }
         }
       ],
@@ -3573,7 +3604,7 @@
             "native": "QGraphicsView::ViewportAnchor",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsView::ViewportAnchor>"
           }
         }
       ],
@@ -3610,7 +3641,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -3684,7 +3715,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3788,7 +3819,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         },
         {
@@ -3835,7 +3866,7 @@
             "native": "QGraphicsView::ViewportAnchor",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsView::ViewportAnchor>"
           }
         }
       ],
@@ -3872,7 +3903,7 @@
             "native": "QGraphicsView::ViewportUpdateMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsView::ViewportUpdateMode>"
           }
         }
       ],
@@ -4027,7 +4058,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -4053,7 +4084,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform transform() const",
       "since": null,
@@ -4079,7 +4110,7 @@
         "native": "QGraphicsView::ViewportAnchor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsView::ViewportAnchor>"
       },
       "signature": "QGraphicsView::ViewportAnchor transformationAnchor() const",
       "since": null,
@@ -4155,7 +4186,7 @@
             "native": "const QList<QRectF> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<record<Rect>>"
           }
         }
       ],
@@ -4192,7 +4223,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -4263,7 +4294,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform viewportTransform() const",
       "since": null,
@@ -4289,7 +4320,7 @@
         "native": "QGraphicsView::ViewportUpdateMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsView::ViewportUpdateMode>"
       },
       "signature": "QGraphicsView::ViewportUpdateMode viewportUpdateMode() const",
       "since": null,
@@ -4453,7 +4484,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -4493,7 +4524,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       }
     },
     {
@@ -4533,7 +4564,7 @@
         "native": "CacheMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<CacheMode>"
+        "ref": "flags<QGraphicsView::CacheModeFlag>"
       }
     },
     {
@@ -4573,7 +4604,7 @@
         "native": "DragMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<DragMode>"
+        "ref": "enum<QGraphicsView::DragMode>"
       }
     },
     {
@@ -4613,7 +4644,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       }
     },
     {
@@ -4693,7 +4724,7 @@
         "native": "OptimizationFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsView::OptimizationFlag>"
       }
     },
     {
@@ -4733,7 +4764,7 @@
         "native": "QPainter::RenderHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QPainter::RenderHint>"
       }
     },
     {
@@ -4773,7 +4804,7 @@
         "native": "ViewportAnchor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ViewportAnchor>"
+        "ref": "enum<QGraphicsView::ViewportAnchor>"
       }
     },
     {
@@ -4813,7 +4844,7 @@
         "native": "Qt::ItemSelectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ItemSelectionMode>"
       }
     },
     {
@@ -4853,7 +4884,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -4893,7 +4924,7 @@
         "native": "ViewportAnchor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ViewportAnchor>"
+        "ref": "enum<QGraphicsView::ViewportAnchor>"
       }
     },
     {
@@ -4933,7 +4964,7 @@
         "native": "ViewportUpdateMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ViewportUpdateMode>"
+        "ref": "enum<QGraphicsView::ViewportUpdateMode>"
       }
     }
   ],
@@ -4962,7 +4993,7 @@
             "native": "QRect",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -4972,7 +5003,7 @@
             "native": "QPointF",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -4982,7 +5013,7 @@
             "native": "QPointF",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],

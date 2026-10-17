@@ -54,7 +54,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -324,7 +324,7 @@
         "native": "QKeySequence",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QKeySequence>"
       },
       "signature": "QKeySequence keySequence() const",
       "since": null,
@@ -453,7 +453,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -671,7 +671,7 @@
         "native": "QKeySequence",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QKeySequence>"
       }
     },
     {
@@ -764,7 +764,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],

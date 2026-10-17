@@ -42,16 +42,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSpinBox::ButtonSymbols",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::UpDownArrows",
           "name": "UpDownArrows",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSpinBox::PlusMinus",
           "name": "PlusMinus",
           "value": "1"
         },
         {
+          "cpp": "QAbstractSpinBox::NoButtons",
           "name": "NoButtons",
           "value": "2"
         }
@@ -66,15 +71,20 @@
         "scoped": false
       },
       "name": "ButtonSymbols",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSpinBox::CorrectionMode",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::CorrectToPreviousValue",
           "name": "CorrectToPreviousValue",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSpinBox::CorrectToNearestValue",
           "name": "CorrectToNearestValue",
           "value": "1"
         }
@@ -88,34 +98,45 @@
         "scoped": false
       },
       "name": "CorrectionMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QAbstractSpinBox::StepEnabled",
+      "fullname": "QAbstractSpinBox::StepEnabledFlag",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::StepNone",
           "name": "StepNone",
           "value": "0x00"
         },
         {
+          "cpp": "QAbstractSpinBox::StepUpEnabled",
           "name": "StepUpEnabled",
           "value": "0x01"
         },
         {
+          "cpp": "QAbstractSpinBox::StepDownEnabled",
           "name": "StepDownEnabled",
           "value": "0x02"
         }
       ],
       "metaobject": null,
       "name": "StepEnabledFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSpinBox::StepType",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::DefaultStepType",
           "name": "DefaultStepType",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSpinBox::AdaptiveDecimalStepType",
           "name": "AdaptiveDecimalStepType",
           "value": "1"
         }
@@ -129,7 +150,8 @@
         "scoped": false
       },
       "name": "StepType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox",
@@ -155,7 +177,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -181,7 +203,7 @@
         "native": "QAbstractSpinBox::ButtonSymbols",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
       },
       "signature": "QAbstractSpinBox::ButtonSymbols buttonSymbols() const",
       "since": null,
@@ -344,7 +366,7 @@
         "native": "QAbstractSpinBox::CorrectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSpinBox::CorrectionMode>"
       },
       "signature": "QAbstractSpinBox::CorrectionMode correctionMode() const",
       "since": null,
@@ -647,7 +669,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -911,7 +933,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -1188,7 +1210,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1225,7 +1247,7 @@
             "native": "QAbstractSpinBox::ButtonSymbols",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
           }
         }
       ],
@@ -1262,7 +1284,7 @@
             "native": "QAbstractSpinBox::CorrectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSpinBox::CorrectionMode>"
           }
         }
       ],
@@ -1592,7 +1614,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1707,7 +1729,7 @@
         "native": "QAbstractSpinBox::StepEnabled",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QAbstractSpinBox::StepEnabledFlag>"
       },
       "signature": "QAbstractSpinBox::StepEnabled stepEnabled() const",
       "since": null,
@@ -1843,7 +1865,7 @@
         "native": "QValidator::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QValidator::State>"
       },
       "signature": "QValidator::State validate(QString &input, int &pos) const",
       "since": null,
@@ -2075,7 +2097,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -2115,7 +2137,7 @@
         "native": "ButtonSymbols",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ButtonSymbols>"
+        "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
       }
     },
     {
@@ -2155,7 +2177,7 @@
         "native": "CorrectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<CorrectionMode>"
+        "ref": "enum<QAbstractSpinBox::CorrectionMode>"
       }
     },
     {

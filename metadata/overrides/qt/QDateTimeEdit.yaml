@@ -1,0 +1,6 @@
+elements:
+  - tag: datetimeedit
+    construct: { class: QDateTimeEdit }
+    props:
+      - { js: dateTime, native: dateTime }
+      - { js: displayFormat, native: displayFormat }

@@ -1,0 +1,5 @@
+elements:
+  - tag: timeedit
+    construct: { class: QTimeEdit }
+    props:
+      - { js: time, native: time }

@@ -28,7 +28,7 @@
             "native": "const QList<QGesture *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QGesture>>"
           }
         }
       ],
@@ -102,7 +102,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -136,7 +136,7 @@
         "native": "QList<QGesture *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QGesture>>"
       },
       "signature": "QList<QGesture *> activeGestures() const",
       "since": null,
@@ -162,7 +162,7 @@
         "native": "QList<QGesture *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QGesture>>"
       },
       "signature": "QList<QGesture *> canceledGestures() const",
       "since": null,
@@ -191,7 +191,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -225,7 +225,7 @@
         "native": "QList<QGesture *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QGesture>>"
       },
       "signature": "QList<QGesture *> gestures() const",
       "since": null,
@@ -291,7 +291,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -365,7 +365,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -402,7 +402,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -410,7 +410,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToGraphicsScene(const QPointF &gesturePoint) const",
       "since": null,
@@ -486,7 +486,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         },
         {
