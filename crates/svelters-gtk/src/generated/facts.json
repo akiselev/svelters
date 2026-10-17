@@ -1214,7 +1214,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops",
-   "fingerprint": "025152acba241209",
+   "fingerprint": "3290a6758578cc90",
    "kind": "DrawingArea",
    "name": "ops",
    "section": "properties",

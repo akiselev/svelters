@@ -5,7 +5,8 @@ properties:
   - name: content-height
     js_name: contentHeight
     provenance: "GtkDrawingArea:content-height (Gtk 4 docs)"
-  - name: ops
+  - id: "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops"
+    name: ops
     js_name: ops
     new: true
     type: {ref: string, nullable: true, native: "gchar*", gtype: gchararray}

@@ -480,6 +480,7 @@
           "access",
           "accessors",
           "default",
+          "id",
           "invocation",
           "js_name",
           "new",
@@ -494,6 +495,7 @@
         "provenance": "X8 recording canvas: the display list (JSON array of [op, ...args]) replayed by the draw func (crates/svelters-gtk/src/backend/canvas.rs); pixels are checked by tests/canvas.rs"
       },
       "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops",
       "invocation": "virtual",
       "js_name": "ops",
       "name": "ops",
