@@ -137,8 +137,22 @@ class Frontend:
         for ov in self.overrides.values():
             for el in ov["data"].get("elements", []) or []:
                 if (el.get("construct") or {}).get("class") == self.meta[stem]["native"]["name"]:
-                    out.append(el)
+                    out.append(self.with_inherited(stem, el))
         return out
+
+    def with_inherited(self, stem: str, el: dict) -> dict:
+        """The element plus the `inherit:` facts of its class and bases (as gen_cpp.py applies them):
+        nearest class first, skipping JS names the element declares or excludes."""
+        el = dict(el)
+        excl = set(el.get("exclude") or [])
+        for c in self.chain(stem):
+            block = (self.overrides.get(c) or {}).get("data", {}).get("inherit") or {}
+            for key in ("props", "signals", "methods"):
+                have = {r["js"] for r in el.get(key) or []}
+                extra = [r for r in block.get(key) or [] if r["js"] not in have and r["js"] not in excl]
+                if extra:
+                    el[key] = list(el.get(key) or []) + extra
+        return el
 
     # ----- members -----
     def find_prop(self, stem: str, native: str) -> tuple[str, dict] | None:
@@ -208,7 +222,7 @@ class Frontend:
                     out[rec["name"]] = rec
                 rec["js_name"] = ap["js"]
                 rec["annotated"] = True
-                if any(f.endswith(f":prop:{ap['js']}") and f in self.verified and (f":{stem}:" in f) for f in self.facts):
+                if any(f.endswith(f":prop:{ap['js']}") and f in self.verified and any(f":{c}:" in f for c in self.chain(stem)) for f in self.facts):
                     rec["verified"] = True
                 rec["origins"] = sorted(set(rec["origins"]) | {"manual"})
                 if ap.get("type") == "enum" and ap.get("values"):

@@ -13,12 +13,12 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | F1 fork bindings | DONE | 32fe00a | element bind:this (call/getProp/StaleHandleError) + renderer bind hook in fork 27b7dfb70 (pushed to akiselev/svelte master + svelters/renderer); entry.text two-way on GTK+Qt with native echo check |
 | D1 docs generator | DONE | 77addd6 | per-toolkit docs IR frontends → Starlight site (881 pages, link-checked); docs ingestion pass; GFDL-safe Qt `brief` policy; `pnpm docs:build` / `docs:test` |
 | S1 serdes main types | DONE | 8071bb2 | ABI v3 value model (tags, descriptors, records, boxed, ERROR, CALLBACK, async, variants, dates) on GTK+Qt; 114/114 nextest; remainder → S2 |
-| S2 ABI v3 remainder | IN PROGRESS | | out/in-out params, Qt callbacks + async, Qt UTF-16, GVariant typing, GValue props; from docs/notes/s1-handoff.md |
+| S2 ABI v3 remainder | DONE | e5a208d | out/in-out params (host+GTK+Qt), Qt callbacks + async (QMenu::addAction functor, QDialog::open Promise), Qt UTF-16 results (1 KiB wide getProp 32.6→1.8 µs), typed GVariant, GValue props, VALUE-class handle_info; 167/167 nextest |
 | X3 child attrs + listen phases | IN PROGRESS | | set_child_attr (G1) and listen_ex after/capture (G5), ABI additive |
-| X5 lists (M5) | IN PROGRESS | | JS-backed GListModel / QAbstractItemModel, pooled virtual list component, sort/filter callbacks (G6, part of G8) |
+| X5 lists (M5) | DONE | 013f593 | portable `virtuallist` (GTK GListModel+ListView/GridView, Qt QAbstractListModel+viewport-pooled rows), JS-owned ids + LIS keyed diff → minimal splices, `@svelters/lists` ListView; 10k/100k rows e2e on both; 422/422 nextest |
 | M2a ABI v2 | DONE | 417093a | schedule_wake native timers (no host thread), lifetime classes/handle_info/dead-handle ring, cascading on_destroyed reasons, onRequestClose + host-decided quit; 74/74 nextest |
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
-| A1 API surface + galleries | IN PROGRESS | | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |
+| A1 API surface + galleries | IN PROGRESS |  4893be5 (wave 1) | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |
 | X1 object returns + GTK GI calls | DONE | 5ea82a6 | borrowed handles with stable identity + weak refs (GTK qdata, Qt by_obj map); GTK dynamic calls via GIRepository (scalars, strings, enums/flags, objects, GStrv, boxed); ~110 Qt object getters; 156/156 nextest; out params wait on S2 |
 | X2 sync handlers + frame clock | DONE | ba5bb65 | call_sync with event-object results (e.result / preventDefault), close-request per-event veto, key handled on GTK+Qt, rAF on GdkFrameClock / QWindow::requestUpdate; ABI v2.1 additive; 127/127 nextest; listen phases deferred (listen_ex proposal) |
 | P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
