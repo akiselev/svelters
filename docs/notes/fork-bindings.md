@@ -187,7 +187,7 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
         read_back: false
         sync_signals_on_set: [changed]
       lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-      origin: probe
+      origin: manual                          # provenance cites the probe (svmeta ORIGINS has no `probe`)
 
 - id: "svelters-api:v1:type:gtk:Gtk:CheckButton"
   bindings:
@@ -203,7 +203,7 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
         read_back: false
         sync_signals_on_set: [toggled]
       lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-      origin: docs
+      origin: manual                          # provenance cites the toolkit docs
       verified_by: [echo_probe]
     # A group of CheckButtons (radio) is not bind:checked on each; it is the RadioGroup wrapper (bind:group stays unsupported).
 
@@ -224,7 +224,7 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
         read_back: true                     # probed: clamped value is emitted; still read back, never rely on the echo
         sync_signals_on_set: [value-changed]
       lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-      origin: probe
+      origin: manual                          # provenance cites the probe (svmeta ORIGINS has no `probe`)
     - name: width
       direction: read_only                  # GTK4 has no size-allocate; needs a host pseudo-signal (survey §4.4)
       property: { via: { getter: get_width, signal: "host:resized" } }
@@ -244,15 +244,15 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
       type: { ref: string, nullable: false }
       change:
         signals: [{ signal: "textEdited(QString)", role: user_edit }, { signal: "textChanged(QString)", role: any_change }]
-        preferred: "textEdited(QString)"    # probed: textEdited never fires for setText
+        preferred: "textEdited(QString)"    # probed: textEdited never fires for setText. The P4 mapping (js `changed`) uses textChanged + suppress_signals; switching to textEdited would need no suppression
       write: { accessor: setText, natively_normalizes: false }   # a validator/inputMask can still reject: set read_back true when present
       echo:
-        strategy: none                      # user_edit signal; no suppression needed for this property
+        strategy: none                      # with textEdited; the implemented P4 annotation says host_suppressed (textChanged)
         compare_before_set: true            # probed: unchanged setText does not emit textChanged
         read_back: true                     # validator/inputMask/maxLength may alter the text
         sync_signals_on_set: ["textChanged(QString)"]   # only matters if textChanged is bound instead
       lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }   # Qt: destroyed() drops our connection
-      origin: probe
+      origin: manual                          # provenance cites the probe (svmeta ORIGINS has no `probe`)
 
 - id: "svelters-api:v1:type:qt:QCheckBox"
   bindings:
@@ -268,7 +268,7 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
         read_back: false
         sync_signals_on_set: ["toggled(bool)", "stateChanged(int)"]
       lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-      origin: docs
+      origin: manual                          # provenance cites the toolkit docs
       verified_by: [echo_probe]
 
 - id: "svelters-api:v1:type:qt:QSpinBox"
@@ -285,7 +285,7 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
         read_back: true                     # probed: setValue(500) with max 99 -> valueChanged [5, 99]
         sync_signals_on_set: ["valueChanged(int)"]
       lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-      origin: probe
+      origin: manual                          # provenance cites the probe (svmeta ORIGINS has no `probe`)
 ```
 
 ### 6.4 Rules the renderer applies (from §1.6 of the signals note, mapped onto the hook)
@@ -307,3 +307,16 @@ Facts marked *probed* come from `signals-and-slots-semantics.md` §1.6 (`gtk_syn
 6. Conformance: add `bind:this` and one `bind:value` (op-log fixtures) to `tests/renderer-conformance` and the host-level fixtures; check dev, prod, values2 and hmr bundles. The shim backend (`SVELTERS_BACKEND=shim`) has no `bind` hook, so it either gets one in `@svelters/dom` or those fixtures are renderer-only.
 7. Keep `bind:group` on wrapper components (survey §4.1) and revisit after the first release; dimension bindings need the host `resized` pseudo-signal.
 8. Decide what `update` does in the egui backend (value round-trips every frame, no change signal): `bind` there would poll in the frame callback; out of scope until M7.
+
+## 8. Phase B: what was built
+
+Done in the `fork-bindings` branch after P5 merged (`eca1f3a`), on the new tarball.
+
+- **`bind:this`** on a native element gives the renderer's node. New on the node: `call(method, ...args)`, `getProp(name)`, `handle`, `dead`, and `StaleHandleError` (exported). A node that was never realized throws a plain `Error` ("no native widget yet"); a destroyed one throws `StaleHandleError` with `reason` `"destroyed"`; a re-inserted dead node is realized again and works. The native-death reasons of ABI v2 (`__svelters_destroyed(h, reason)`) are not delivered to JS yet (M2a), so `dead` only ever becomes `"destroyed"` today; setting `el.dead = reason` there is the whole hook-up.
+- **`bind` hook** in `packages/renderer/src/index.js`, driven by `src/bindings.generated.js`. Only `entry.text` exists (both toolkits). The renderer registers the change signal through its normal listener bookkeeping (one native `listen` however many handlers), compares before set against `el.props` (also updated by natively made edits), implements `readBack` (tested with a fake kind, no real kind needs it yet) and drops its handler on `destroy`. Updates for a not-yet-realized or dead node touch no host op and are replayed on realize.
+- **Echo** is done natively: the GTK backend blocks `changed` and `notify::text` and the Qt backend uses the `suppress_signals` flag during a programmatic `setProp`. `bind-value` shows it end to end on both toolkits: the count of native `changed` signals that reach JS is the same with and without the app writing to the entry.
+- **Metadata**: `bindings:` in `metadata/overrides/gtk/Entry.yaml` (merged into `metadata/gtk/Entry.json` by `ingest.py` as an additive key, no generated Rust changed) and in the `entry` element of `metadata/overrides/qt/QLineEdit.yaml` (ignored by `gen_cpp.py`). `tools/metadata/common/gen_bindings.py` (separate file, `--check` for CI, tests in `test_gen_bindings.py`) validates each binding against the facts it cites (property exists and is writable, the change signal exists, `host_suppressed` is backed by `echo_suppress` or `suppress_signals`, both toolkits agree) and emits `bindings.generated.js` and `types/bindings.d.ts`. The existing generators were not edited.
+- **Types**: `BindableProps` feeds `bind:<name>` attributes on the intrinsic elements (a wrongly typed `bind:text` fails `svelte-check`); `NativeElement` types the `bind:this` value. `packages/renderer/check/svelte.config.js` gives svelte-check the same `customRenderer` option the build uses.
+- **Window title**: no binding. Nothing edits it natively (the user cannot type into a title; the window manager does not write it back), so there is nothing to read back. `title` stays a one-way prop.
+- **Fixtures**: `bind-this` (reads the native text typed into an entry, calls `present` on the window, probes a stale node) and `bind-value`, with integration tests on GTK and Qt. Both are renderer-only (`SVELTERS_BACKEND=shim` skips them).
+- Not done: read-only bindings (`bind:width`): they need the host `resized` pseudo-signal; the generator and renderer already accept `direction: read_only`, there is just no kind annotated.

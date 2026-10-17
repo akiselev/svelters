@@ -1,0 +1,49 @@
+create window #1
+set #1 title "bind:this"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 6
+create entry #3
+set #3 text "seed"
+listen #3 changed on
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+set #4 label "Read"
+insert #2 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "Hide"
+insert #2 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "Probe"
+insert #2 #6 before=end slot=default
+create label #7
+set #7 label "(none)"
+insert #2 #7 before=end slot=default
+create label #8
+set #8 label "reads: 0"
+insert #2 #8 before=end slot=default
+create label #9
+set #9 label "edited: no"
+insert #2 #9 before=end slot=default
+create label #10
+set #10 label "stale: (none)"
+insert #2 #10 before=end slot=default
+create entry #11
+set #11 text "temp"
+insert #2 #11 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #3 changed ["hello"]
+set #9 label "edited: yes"
+event #4 clicked []
+call #1 present []
+set #7 label "seed"
+set #8 label "reads: 1"
+event #5 clicked []
+remove #2 #11
+destroy #11
+event #6 clicked []
+set #10 label "stale: StaleHandleError: destroyed"

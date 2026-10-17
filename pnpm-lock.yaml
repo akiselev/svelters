@@ -27,6 +27,38 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(esbuild@0.28.2)
 
+  fixtures/bind-this:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(esbuild@0.28.2)
+
+  fixtures/bind-value:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(esbuild@0.28.2)
+
   fixtures/counter:
     dependencies:
       svelte:
