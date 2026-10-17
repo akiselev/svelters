@@ -4,8 +4,14 @@ export interface BindableProps {
   action: {
     checked: boolean; // gtk/qt
   };
+  button: {
+    state: string; // appkit
+  };
   calendar: {
     day: number; // gtk
+  };
+  "check-box": {
+    "is-checked": boolean; // winui
   };
   checkbox: {
     checked: boolean; // qt
@@ -70,8 +76,12 @@ export interface BindableProps {
   searchentry: {
     text: string; // gtk
   };
+  "secure-text-field": {
+    "string-value": string; // appkit
+  };
   slider: {
-    value: number; // qt
+    "double-value": number; // appkit
+    value: number; // qt/winui
   };
   spinbox: {
     value: number; // qt
@@ -96,6 +106,12 @@ export interface BindableProps {
   };
   text: {
     text: string; // gtk
+  };
+  "text-box": {
+    text: string; // winui
+  };
+  "text-field": {
+    "string-value": string; // appkit
   };
   textedit: {
     plainText: string; // qt

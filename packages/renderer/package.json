@@ -18,7 +18,7 @@
     "@svelters/style": "workspace:*"
   },
   "scripts": {
-    "test": "node --conditions=custom-renderer --test test/renderer.test.mjs test/serdes.test.mjs test/style.test.mjs test/style-setters.test.mjs test/style-setters-qt.test.mjs && pnpm run check",
+    "test": "node --conditions=custom-renderer --test test/renderer.test.mjs test/bindings-toolkits.test.mjs test/serdes.test.mjs test/style.test.mjs test/style-setters.test.mjs test/style-setters-qt.test.mjs && pnpm run check",
     "check": "svelte-check --workspace check --tsconfig ./tsconfig.json --threshold error"
   },
   "devDependencies": {
