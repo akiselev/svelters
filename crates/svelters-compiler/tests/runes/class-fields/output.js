@@ -30,8 +30,8 @@ export default function input($$anchor, $$props) {
     }
   }
 	const counter = new Counter(2);
-	const n1 = $n.element("label");
-	$.template_effect(() => $n.set(n1, "label", `${counter.count} / ${counter.double}`));
-	$n.append($$anchor, n1);
+	const $$n1 = $n.element("label");
+	$.template_effect(() => $n.set($$n1, "label", `${counter.count} / ${counter.double}`));
+	$n.append($$anchor, $$n1);
 	$.pop();
 }

@@ -18,8 +18,8 @@ export default function input($$anchor, $$props) {
     $.set(rawChanged, { big: 2 });
     $.set(empty, [], true);
   }
-	const n1 = $n.element("label");
-	$.template_effect(() => $n.set(n1, "label", `${never} ${obj.n} ${arr.length} ${$.get(changed)} ${$.get(rawChanged).big} ${$.get(empty)}`));
-	$n.append($$anchor, n1);
+	const $$n1 = $n.element("label");
+	$.template_effect(() => $n.set($$n1, "label", `${never} ${obj.n} ${arr.length} ${$.get(changed)} ${$.get(rawChanged).big} ${$.get(empty)}`));
+	$n.append($$anchor, $$n1);
 	$.pop();
 }

@@ -13,8 +13,8 @@ export default function input($$anchor, $$props) {
     b(2);
     e(e().x = 1, true);
   }
-	const n1 = $n.element("label");
-	$.template_effect(() => $n.set(n1, "label", `${uid} ${$$props.a} ${b()} ${c()} ${d()} ${e()} ${$$props.f} ${$$props["g-h"]} ${rest.z}`));
-	$n.append($$anchor, n1);
+	const $$n1 = $n.element("label");
+	$.template_effect(() => $n.set($$n1, "label", `${uid} ${$$props.a} ${b()} ${c()} ${d()} ${e()} ${$$props.f} ${$$props["g-h"]} ${rest.z}`));
+	$n.append($$anchor, $$n1);
 	$.pop();
 }

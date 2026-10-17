@@ -19,8 +19,8 @@ export default function input($$anchor, $$props) {
 	function reassign() {
     $.set(count, 1);
   }
-	const n1 = $n.element("label");
-	$.template_effect(() => $n.set(n1, "label", `${$.get(count)} ${$.get(d)} ${items.length}`));
-	$n.append($$anchor, n1);
+	const $$n1 = $n.element("label");
+	$.template_effect(() => $n.set($$n1, "label", `${$.get(count)} ${$.get(d)} ${items.length}`));
+	$n.append($$anchor, $$n1);
 	$.pop();
 }

@@ -17,8 +17,8 @@ export default function input($$anchor, $$props) {
     $.set(p, 3);
     $.set(source, { s: 2 }, true);
   }
-	const n1 = $n.element("label");
-	$.template_effect(() => $n.set(n1, "label", `${$.get(a)} ${renamed} ${others.c} ${$.get(x)} ${$.get(y)} ${tail} ${$.get(p)} ${$.get(q)} ${$.get(m)} ${$.get(nA)} ${$.get(nB)} ${$.get(first)} ${$.get(second)} ${$.get(s)}`));
-	$n.append($$anchor, n1);
+	const $$n1 = $n.element("label");
+	$.template_effect(() => $n.set($$n1, "label", `${$.get(a)} ${renamed} ${others.c} ${$.get(x)} ${$.get(y)} ${tail} ${$.get(p)} ${$.get(q)} ${$.get(m)} ${$.get(nA)} ${$.get(nB)} ${$.get(first)} ${$.get(second)} ${$.get(s)}`));
+	$n.append($$anchor, $$n1);
 	$.pop();
 }

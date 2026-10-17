@@ -126,7 +126,7 @@ impl Codegen<'_, '_> {
     }
 
     fn element(&mut self, e: &Element, container: &str) {
-        let n = format!("n{}", e.id + 1);
+        let n = format!("$$n{}", e.id + 1); // `$$` is reserved by Svelte, so user bindings cannot collide
         self.line();
         self.w.map(e.span.start);
         match &e.present {

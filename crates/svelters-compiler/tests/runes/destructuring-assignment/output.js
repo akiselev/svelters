@@ -24,8 +24,8 @@ export default function input($$anchor, $$props) {
 	function untouched() {
     [plain1, plain2] = [plain2, plain1];
   }
-	const n1 = $n.element("label");
-	$.template_effect(() => $n.set(n1, "label", `${$.get(a)} ${$.get(b)} ${left()} ${right()}`));
-	$n.append($$anchor, n1);
+	const $$n1 = $n.element("label");
+	$.template_effect(() => $n.set($$n1, "label", `${$.get(a)} ${$.get(b)} ${left()} ${right()}`));
+	$n.append($$anchor, $$n1);
 	$.pop();
 }
