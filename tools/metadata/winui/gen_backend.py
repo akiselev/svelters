@@ -29,6 +29,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE.parent / "common"))
+import naming  # noqa: E402
 import svmeta  # noqa: E402
 
 META = ROOT / "metadata/winui"
@@ -99,9 +100,8 @@ class GenError(Exception):
 
 
 def kebab(name: str) -> str:
-    """Native PascalCase -> kebab-case: StackPanel -> stack-panel, IsChecked -> is-checked."""
-    s = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "-", name)
-    return s.lower()
+    """Native PascalCase -> kebab-case: StackPanel -> stack-panel, IsChecked -> is-checked (tools/metadata/common/naming.py)."""
+    return naming.kebab(name)
 
 
 def snake(name: str) -> str:
@@ -151,9 +151,9 @@ class Model:
             k = self.classes[cls]
             if k["abstract"]:
                 raise GenError(f"{self.ovr_file[cls]}: {cls} is not constructible (winmd), it cannot be an element")
-            tag = el.get("tag", kebab(short(cls)))
-            if tag != kebab(short(cls)) and not el.get("tag_reason"):
-                raise GenError(f"{self.ovr_file[cls]}: tag {tag!r} breaks the naming rule ({kebab(short(cls))!r}) without tag_reason")
+            tag = el.get("tag", naming.tag_for("winui", cls))
+            if tag != naming.tag_for("winui", cls) and not el.get("tag_reason"):
+                raise GenError(f"{self.ovr_file[cls]}: tag {tag!r} breaks the naming rule ({naming.tag_for('winui', cls)!r}) without tag_reason")
             self.kinds.append({"class": cls, "tag": tag, "chain": [cls] + k["bases"], "el": el})
         names = sorted({c for k in self.kinds for c in k["chain"]}, key=short)
         self.class_index = {c: i for i, c in enumerate(names)}
