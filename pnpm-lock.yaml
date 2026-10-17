@@ -27,6 +27,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(esbuild@0.28.2)
 
+  experiments/native-compiler/handwritten:
+    dependencies:
+      '@svelters/native-runtime':
+        specifier: workspace:*
+        version: link:../../../packages/native-runtime
+      svelte:
+        specifier: file:../../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+    devDependencies:
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(esbuild@0.28.2)
+
   fixtures/counter:
     dependencies:
       svelte:
@@ -142,6 +158,16 @@ importers:
         version: 8.3.4(esbuild@0.28.2)
 
   packages/dom: {}
+
+  packages/native-runtime:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+    devDependencies:
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../testhost
 
   packages/renderer:
     dependencies:
