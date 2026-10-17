@@ -66,7 +66,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - M: MenuButton `popup`, `popdown` (zero-arg; expect on `active`/visibility of the popover).
 - Gallery: `02-buttons.svelte`.
 - Tests `<re>`: `_(button|togglebutton|checkbutton|switch|linkbutton|lockbutton|menubutton|scalebutton|volumebutton)_`.
-- Status: done (~45 facts verified: props, signals incl. sync state-set/activate-link, 4 bindings, popup/popdown + 8 dynamic methods; not attempted: CheckButton.group, ScaleButton.icons, LockButton.permission; blocked: MenuButton `popover` slot (new gap: typed child slots, generator casts to gtk::Widget); see docs/notes/a1-gtk-buttons.md)
+- Status: done (~45 facts verified: props, signals incl. sync state-set/activate-link, 4 bindings, popup/popdown + 8 dynamic methods; not attempted: CheckButton.group, ScaleButton.icons, LockButton.permission; blocked: MenuButton `popover` slot (new gap: typed child slots, generator casts to gtk::Widget); see docs/notes/a1-gtk-buttons.md; recovered by gtk-followups: MenuButton popover slot verified (G10), LockButton.permission round trip; CheckButton.group is write-only so not testable)
 
 ### gtk-text: text entry and display text
 
@@ -85,7 +85,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Blocked: TextView text (G3: buffer), Label `attributes` (G4).
 - Gallery: `03-text.svelte`.
 - Tests `<re>`: `_(entry|passwordentry|searchentry|text|editablelabel|label|inscription|textview|shortcutlabel)_`.
-- Status: done (~64 facts verified: 40 props, 8 signals, 5 bindings, 8 methods, plus the 4 bind:text; dropped: Label.ellipsize and Label.wrap-mode (Pango enums not in metadata); blocked: TextView text and buffer methods (GtkTextBuffer has no kind; only get_buffer verified), Label.attributes (no value form for Pango AttrList), Label activate-link verified as bool_stop sync; see docs/notes/a1-gtk-text.md)
+- Status: done (~64 facts verified: 40 props, 8 signals, 5 bindings, 8 methods, plus the 4 bind:text; dropped: Label.ellipsize and Label.wrap-mode (Pango enums not in metadata); blocked: TextView text and buffer methods (GtkTextBuffer has no kind; only get_buffer verified), Label.attributes (no value form for Pango AttrList), Label activate-link verified as bool_stop sync; see docs/notes/a1-gtk-text.md; recovered by gtk-followups: Label.ellipsize and wrap-mode verified (G11); TextView buffer/Label.attributes still open (G12))
 
 ### gtk-ranges: ranges, progress and levels
 
@@ -102,7 +102,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   `set_range` needs G2); SpinButton `input`/`output` (G5).
 - Gallery: `04-ranges.svelte`.
 - Tests `<re>`: `_(progressbar|levelbar|scale|spinbutton|scrollbar|range)_`.
-- Status: done (44 facts, 47 tests: 27 P (ProgressBar 6, LevelBar 5, Scale 4, SpinButton 7, Range 4, Scrollbar 1), 6 S incl. 2 notify::value, 9 M, 2 B; dropped: none; blocked: gap:G5 for SpinButton input/output, gap:G12 for adjustment object facts, Scale bind:value (no value prop))
+- Status: done (44 facts, 47 tests: 27 P (ProgressBar 6, LevelBar 5, Scale 4, SpinButton 7, Range 4, Scrollbar 1), 6 S incl. 2 notify::value, 9 M, 2 B; dropped: none; blocked: gap:G5 for SpinButton input/output, gap:G12 for adjustment object facts, Scale bind:value (no value prop); recovered by gtk-followups: ScaleButton.icons round trip; SpinButton input/output (G5 value results) and G12 still open)
 
 ### gtk-containers-a: single-child and two-pane containers
 
@@ -120,7 +120,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - B: Expander `bind:expanded` (notify::expanded); Revealer `bind:reveal-child`? (one-way: read_only `child-revealed`).
 - Gallery: `05-containers.svelte`.
 - Tests `<re>`: `_(centerbox|paned|frame|expander|revealer|aspectframe|overlay|windowhandle|viewport|scrolledwindow|searchbar)_`.
-- Status: done (79 facts verified across gtk ledger incl. 63 batch tests; dropped: Viewport.scroll_to and SearchBar.connect_entry (need object/adjustment args, not useful), Revealer bind (child-revealed read-only), Overlay get-child-position (needs sync value result, G5), Paned/Frame/Expander child attributes (G1); edge-reached delivery-only via emit_by_name; one test flaky once, passed on rerun)
+- Status: done (79 facts verified across gtk ledger incl. 63 batch tests; dropped: Viewport.scroll_to and SearchBar.connect_entry (need object/adjustment args, not useful), Revealer bind (child-revealed read-only), Overlay get-child-position (needs sync value result, G5), Paned/Frame/Expander child attributes (G1); edge-reached delivery-only via emit_by_name; one test flaky once, passed on rerun; recovered by gtk-followups: Paned/Frame/Expander have no child attributes in GTK; Overlay measure/clip verified by X3; get-child-position still gap:G5)
 
 ### gtk-containers-b: multi-child layouts and pages
 
@@ -140,7 +140,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   ListBox/FlowBox sort/filter (G8).
 - Gallery: `06-layout.svelte`.
 - Tests `<re>`: `_(stack|stackswitcher|stacksidebar|notebook|flowbox|flowboxchild|listbox|listboxrow|actionbar|grid|fixed)_`.
-- Status: done (dropped: ListBox.children, generator gap: GtkListBox::remove needs the wrapper row and no op arg yields it; blocked: gap:G1 for Grid/Fixed children, Notebook tab labels, Stack names/titles; gap:G8 sort/filter; Fixed has no props/signals to annotate)
+- Status: done (dropped: ListBox.children, generator gap: GtkListBox::remove needs the wrapper row and no op arg yields it; blocked: gap:G1 for Grid/Fixed children, Notebook tab labels, Stack names/titles; gap:G8 sort/filter; Fixed has no props/signals to annotate; recovered by gtk-followups: ListBox.children verified (G14), Grid/Fixed children and attrs, Notebook tab labels, Stack names/titles verified by X3 attr facts; gap:G8 sort/filter still open)
 
 ### gtk-bars: header bars, window controls, status
 
@@ -187,7 +187,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   media streams (G7).
 - Gallery: `09-display.svelte`.
 - Tests `<re>`: `_(image|picture|separator|spinner|calendar|video|mediacontrols|drawingarea|graphicsoffload)_`.
-- Status: done (31 generated tests: 18 props, 2 notify signals + day-selected, 2 bindings (spinning, day) with echo tests, 5 methods; dropped: Calendar.date (no generated test for boxed props), Image.file/resource/gicon/paintable, Picture.file/paintable (no verifiable generated test form), Calendar next/prev-month/year signals (no trigger); blocked: gap:G7 for Video/MediaControls, gap:G8 for DrawingArea drawing/resize; Separator has no own facts)
+- Status: done (31 generated tests: 18 props, 2 notify signals + day-selected, 2 bindings (spinning, day) with echo tests, 5 methods; dropped: Calendar.date (no generated test for boxed props), Image.file/resource/gicon/paintable, Picture.file/paintable (no verifiable generated test form), Calendar next/prev-month/year signals (no trigger); blocked: gap:G7 for Video/MediaControls, gap:G8 for DrawingArea drawing/resize; Separator has no own facts; recovered by gtk-followups: Calendar.date and Image.file/gicon/paintable, Picture.file/paintable verified as round trips (Image.file with a loadable file; Image/Picture resource not testable), Calendar next/prev-month/year signals and mark_day/clear_marks added; still open: gap:G7 Video/MediaControls, gap:G8 DrawingArea)
 
 ### gtk-leftovers: everything not worth exposing yet
 
@@ -395,7 +395,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   X1 dynamic methods. Annotate what now passes; list what still does not, with the gap.
 - Gallery: show attribute use on `06-layout` (grid cells, notebook tab labels, stack names/titles, overlay
   measure/clip), ListBox children (now a verified slot), MenuButton with a popover on `02-buttons`.
-- Status: todo
+- Status: done (new verified: Image.file/gicon/paintable, Picture.file/paintable, ScaleButton.icons, LockButton.permission, Calendar 4 month/year signals + 2 methods; ListBox children, MenuButton popover, Label ellipsize/wrap-mode, Calendar.date and css-classes were already recovered by the lead's generator fixes; galleries 06-layout (attrs, ListBox rows, fixed, overlay) and 02-buttons (MenuButton+Popover) updated; dropped: Image/Picture resource (needs a registered GResource), CheckButton.group (write-only); still open: Widget map/unmap, TextView buffer (G12), SpinButton input/output (G5), DrawingArea (G8), PopoverMenuBar (G7))
 
 ### qt-followups
 

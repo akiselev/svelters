@@ -3618,7 +3618,7 @@ fn prop_image_gicon() {
         
         let before = h.get_value(o, "gicon");
         h.set_value(o, "gicon", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "gicon")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "gicon")), crate::testing::shape(&before));
     });
 }
 
@@ -3661,7 +3661,7 @@ fn prop_image_paintable() {
         
         let before = h.get_value(o, "paintable");
         h.set_value(o, "paintable", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "paintable")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "paintable")), crate::testing::shape(&before));
     });
 }
 
@@ -4428,7 +4428,7 @@ fn prop_lockbutton_permission() {
         
         let before = h.get_value(o, "permission");
         h.set_value(o, "permission", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "permission")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "permission")), crate::testing::shape(&before));
     });
 }
 
@@ -5170,7 +5170,7 @@ fn prop_picture_file() {
         
         let before = h.get_value(o, "file");
         h.set_value(o, "file", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "file")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "file")), crate::testing::shape(&before));
     });
 }
 
@@ -5198,7 +5198,7 @@ fn prop_picture_paintable() {
         
         let before = h.get_value(o, "paintable");
         h.set_value(o, "paintable", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "paintable")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "paintable")), crate::testing::shape(&before));
     });
 }
 
@@ -5763,7 +5763,7 @@ fn prop_scalebutton_icons() {
         
         let before = h.get_value(o, "icons");
         h.set_value(o, "icons", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "icons")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "icons")), crate::testing::shape(&before));
     });
 }
 

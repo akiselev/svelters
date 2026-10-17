@@ -1677,7 +1677,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:gicon",
-   "fingerprint": "809e6e81674faa98",
+   "fingerprint": "534d3341417fd3a6",
    "kind": "Image",
    "name": "gicon",
    "section": "properties",
@@ -1707,7 +1707,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:paintable",
-   "fingerprint": "9b1d6ee5adab5283",
+   "fingerprint": "ec480fc56d6902a6",
    "kind": "Image",
    "name": "paintable",
    "section": "properties",
@@ -2128,7 +2128,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:permission",
-   "fingerprint": "42b2e6d0c4e342d4",
+   "fingerprint": "822e1803e3054be8",
    "kind": "LockButton",
    "name": "permission",
    "section": "properties",
@@ -2559,7 +2559,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:file",
-   "fingerprint": "d39dac4a0af2279c",
+   "fingerprint": "1e15cb041a5f3b12",
    "kind": "Picture",
    "name": "file",
    "section": "properties",
@@ -2579,7 +2579,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:paintable",
-   "fingerprint": "1815b9323c45150b",
+   "fingerprint": "8c3a3a46f063b878",
    "kind": "Picture",
    "name": "paintable",
    "section": "properties",
@@ -2919,7 +2919,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:icons",
-   "fingerprint": "116535412cd4a51d",
+   "fingerprint": "56c83e632fb5c359",
    "kind": "ScaleButton",
    "name": "icons",
    "section": "properties",
