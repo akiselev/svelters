@@ -1942,8 +1942,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   6,
-   6
+   7,
+   7
   ]
  },
  {
@@ -2125,7 +2125,7 @@
    58
   ],
   "native": "QTabWidget",
-  "ownership": false,
+  "ownership": true,
   "props": [
    6,
    11
@@ -2136,12 +2136,12 @@
    3,
    4
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   13,
+   13
   ]
  },
  {
@@ -2544,7 +2544,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 39,
-  "element": "box",
+  "element": "box, grid",
   "gallery": "00-overview",
   "inherited": 15,
   "kind": "QWidget",
@@ -2560,17 +2560,17 @@
    61
   ],
   "props_annotated": 17,
-  "signal_results": 0,
+  "signal_results": 1,
   "signals": [
    0,
    4
   ],
-  "slots": 1,
-  "slots_own": 1,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   32,
-   32
+   40,
+   40
   ]
  },
  {

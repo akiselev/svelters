@@ -11,11 +11,11 @@ some blocked facts are not worth exposing anyway.
 
 | Id | Gap | Blocked facts (approx.) | Batches |
 | --- | --- | --- | --- |
-| G1 | Child attributes (`set_child_attr`) | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow |
+| G1 | Child attributes (`set_child_attr`): **closed by lane X3 (branch worktree-agent-a16928a5b92b85e0a; commits d0aeb4c, 1604f6d, 4d16716, ab8bba5)**; open: QMainWindow toolbar/dock areas, `tabIcon` | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow (areas only) |
 | G2 | GTK method calls with arguments or return values: **closed by X1 (master 865482d)** except out/in-out params, arrays and callbacks (S2) | out params, arrays | - |
 | G3 | Object-returning getters (borrowed handles): **closed by X1** (GTK: any GI getter; Qt: ~110 generated getters) | Qt methods with required args on unannotated classes, list returns | - |
 | G4 | Boxed/value types: **closed by S1 + S2** (typed values, out/in-out params, exact GVariant, GValue props, VALUE handles); open: GTK time-only/date-only records, model data | few | - |
-| G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; open: typed `value` results, listen phases, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
+| G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; **listen phases (after, capture) closed by X3**; open: typed `value` results, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
 | G6 | Model-backed views (GListModel, QAbstractItemModel): **closed by X5 (branch worktree-agent-a8dce564007788244, 28a8e17 GTK, abd7024 Qt)** through the portable `virtuallist` kind (`packages/lists`, `plans/milestones/M5-lists.md`). Open: ColumnView/TableView/TreeView columns, `GtkDropDown`/`GtkComboBox`/`QComboBox` models, `GtkTreeView`/`QTreeView` hierarchies | the 12 GTK / 11 Qt view kinds map to `virtuallist` (list, grid); the rest stay as listed | gtk-lists-b, qt-lists-b (re-run) |
 | G7 | Non-widget child objects (QAction, GMenuModel); S2 added `QMenu.yaml` (tag `menu`) with callbacks as a proof: extend it | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
 | G8 | Native-to-JS callbacks: **closed on Qt by S2** (`callbacks:`, async methods); **sort/filter for model-backed views closed by X5 by design** (JS sorts and filters, keyed diff pushes minimal splices; see M5-lists.md). Open on GTK: DrawingArea draw func, `GtkListBox`/`GtkFlowBox` sort/filter/header funcs, `scale_format_value_func` | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
@@ -26,6 +26,18 @@ some blocked facts are not worth exposing anyway.
 | G13 | Qt many-slots without an index/list API: **closed by the A1 lead** (`order: append_only` slots, membership by isAncestorOf; QStatusBar `widgets`/`permanent` verified) | QStatusBar `widgets`/`permanent`, QDialogButtonBox buttons | qt-bars |
 
 ## G1: child attributes
+
+**Status 2026-10-17: closed by lane X3** (ABI v2.2 `set_child_attr`/`get_child_attr`, `docs/notes/x3-childattr-listen.md`,
+commits d0aeb4c, 1604f6d, 4d16716, ab8bba5). JS: `<label parent:column={1} parent:row={2}>`; metadata: slot `attrs[]`
+(typed in both override schemas; see the notes for the format). Verified facts: GTK `grid` (column, row, columnSpan,
+rowSpan), `fixed` (x, y), `notebook` (tabLabel, menuLabel, reorderable, detachable, tabExpand, tabFill), `stack` (name,
+title, iconName, needsAttention, useUnderline), `overlay` (measure, clip); Qt `grid`, `box` (stretch, align), `tabwidget`
+(tabLabel, tabToolTip, tabEnabled), `splitter` (stretch). X3 created `Grid/Fixed/Notebook/Stack.yaml` (GTK) and the
+attr-bearing slots of `Overlay.yaml` (`overlays`), `QTabWidget.yaml` (`pages`), `QSplitter.yaml`, and the `grid`/`box` elements
+in `QWidget.yaml`: A1 batches extend those files with props/signals. Slot order `unordered` (positional containers ignore
+`before`) and `nested: true` for QTabWidget are used. Still open: QMainWindow toolbar/dock areas (`QMainWindow` has no
+indexOf/count for them, needs `toolbar`/`dockwidget` elements), Qt `tabIcon`, GTK `Paned` resize/shrink and `Box`
+(no attrs exist). The original text follows.
 
 Per-child facts that are neither a property of the child nor of the parent: grid cell and span,
 notebook/tab label text, stack page name and title, paned resize/shrink, form-layout label,
@@ -101,6 +113,12 @@ implemented: props and signal args of boxed/value types are not converted.
   `QDate` <-> ISO string both ways.
 
 ## G5: sync signal handlers with return values
+
+**Status 2026-10-17 (X3): listen phases closed.** `listen_ex` flags `after` and `capture` (JS: `on<event>capture`,
+`{@attach listen(name, fn, {after: true})}`). GTK: `connect_after` on any signal; `capture` on event controllers (the
+controller goes into the capture phase). Qt: `after` on QObject signals (kept behind plain listeners); `capture` for the
+synthetic `key-press` (application event filter over descendants). Everything else is refused with a reason, see the
+notes ("Listener phases per backend").
 
 **Status 2026-10-17: bool results closed by lane X2** (`docs/notes/x2-sync-frame.md`, "What A1
 should annotate"): GTK signals with `handler_result: bool_stop` (and `sync_required: true` for

@@ -1,0 +1,20 @@
+create window #1
+set #1 title "Phases"
+create box #2
+set #2 orientation "vertical"
+create label #3
+insert #2 #3 before=end slot=default
+create entry #4
+listen #4 key-pressed on
+listen #4 key-pressed on capture
+insert #2 #4 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+listen #4 key-pressed on after
+sync #4 key-pressed [97,38,0] capture
+result #4 null
+sync #4 key-pressed [97,38,0]
+result #4 null
+sync #4 key-pressed [97,38,0] after
+result #4 null
+set #3 label "cba"

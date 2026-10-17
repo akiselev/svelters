@@ -402,16 +402,24 @@
         "args": {
           "type": "array",
           "items": {
-            "enum": [
-              "child",
-              "null",
-              "prev_sibling",
-              "before",
-              "index",
-              "index_opt",
-              "child_index",
-              "child_index_opt",
-              null
+            "anyOf": [
+              {
+                "enum": [
+                  "child",
+                  "null",
+                  "prev_sibling",
+                  "before",
+                  "index",
+                  "index_opt",
+                  "child_index",
+                  "child_index_opt",
+                  null
+                ]
+              },
+              {
+                "type": "string",
+                "pattern": "^const:-?[0-9]+(\\.[0-9]+)?$"
+              }
             ]
           }
         },
@@ -468,7 +476,8 @@
             "none",
             "append_only",
             "before_sibling",
-            "native_index"
+            "native_index",
+            "unordered"
           ]
         },
         "default": {
@@ -482,7 +491,10 @@
           ]
         },
         "attrs": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attr"
+          }
         },
         "requires": {
           "type": "array"
@@ -652,6 +664,152 @@
         },
         "note": {
           "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "attr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "provenance"
+      ],
+      "description": "A per-child attribute of a slot (ABI v2.2 set_child_attr), spelled `parent:<name>` on the child. Either `property` + `via`, or `set` + `get`.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][A-Za-z0-9]*$",
+          "description": "JS name, camelCase."
+        },
+        "type": {
+          "enum": [
+            "bool",
+            "i32",
+            "u32",
+            "i64",
+            "f64",
+            "string"
+          ]
+        },
+        "default": {
+          "description": "Value after `null` (reset) and after remove + insert."
+        },
+        "samples": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Two different non-default values the generated test writes."
+        },
+        "via": {
+          "oneOf": [
+            {
+              "const": "layout_child"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "native"
+              ],
+              "properties": {
+                "native": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "property": {
+          "type": "string",
+          "description": "GObject property of the `via` object."
+        },
+        "set": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "native",
+            "args"
+          ],
+          "properties": {
+            "native": {
+              "type": "string"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(child|value|current:[A-Za-z0-9]+|const:-?[0-9]+(\\.[0-9]+)?)$"
+              }
+            },
+            "rust": {
+              "type": "string",
+              "description": "gtk4-rs method name when it differs from the C name (bool getters are `is_*`)."
+            },
+            "result": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Element of a tuple the getter returns (out parameters)."
+            }
+          }
+        },
+        "get": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "native",
+                "args"
+              ],
+              "properties": {
+                "native": {
+                  "type": "string"
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^(child|value|current:[A-Za-z0-9]+|const:-?[0-9]+(\\.[0-9]+)?)$"
+                  }
+                },
+                "result": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Element of a tuple the getter returns (out parameters)."
+                },
+                "rust": {
+                  "type": "string",
+                  "description": "gtk4-rs method name when it differs from the C name (bool getters are `is_*`)."
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "class",
+                "expr"
+              ],
+              "properties": {
+                "class": {
+                  "type": "string",
+                  "description": "gtk4-rs class of the parent (without the Gtk prefix)."
+                },
+                "expr": {
+                  "type": "string",
+                  "description": "Rust expression over `p` (typed parent) and `child` whose value is the attribute."
+                }
+              }
+            }
+          ]
+        },
+        "expect": {
+          "type": "string",
+          "description": "Rust bool expression checked after sample 1 is set: `h`, `parent`, `c` (handles), `w` (child widget), `pw` (parent widget)."
         },
         "provenance": {
           "$ref": "#/$defs/provenance"

@@ -27,6 +27,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-press": () => void;
     };
     methods: {
       saveGeometry(): Uint8Array;
@@ -74,6 +75,50 @@ export interface QtElementDescriptors {
       click(): void;
       toggle(): void;
       animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  calendar: {
+    props: {
+      gridVisible?: boolean;
+      navigationBarVisible?: boolean;
+      firstDayOfWeek?: "friday" | "monday" | "saturday" | "sunday" | "thursday" | "tuesday" | "wednesday";
+      horizontalHeaderFormat?: "long-day-names" | "no-horizontal-header" | "short-day-names" | "single-letter-day-names";
+      verticalHeaderFormat?: "iso-week-numbers" | "no-vertical-header";
+      dateEditEnabled?: boolean;
+      dateEditAcceptDelay?: number;
+      selectionMode?: "no-selection" | "single-selection";
+      selectedDate?: DateParts;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "selection-changed": () => void;
+      "page-changed": (year: number, month: number) => void;
+      clicked: (date: DateParts) => void;
+      activated: (date: DateParts) => void;
+    };
+    methods: {
+      showToday(): void;
+      showNextMonth(): void;
+      showPreviousMonth(): void;
+      showNextYear(): void;
+      showPreviousYear(): void;
+      monthShown(): number;
+      yearShown(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -240,6 +285,8 @@ export interface QtElementDescriptors {
   dateedit: {
     props: {
       date?: DateParts;
+      displayFormat?: string;
+      calendarPopup?: boolean;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -258,6 +305,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "date-changed": (date: DateParts) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -273,6 +321,7 @@ export interface QtElementDescriptors {
     props: {
       dateTime?: Date;
       displayFormat?: string;
+      calendarPopup?: boolean;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -291,6 +340,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "date-time-changed": (datetime: Date) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -683,6 +733,30 @@ export interface QtElementDescriptors {
       adjustSize(): void;
     };
     slots: "children";
+  };
+  grid: {
+    props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "cells";
   };
   groupbox: {
     props: {
@@ -1510,7 +1584,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   textbrowser: {
     props: {
@@ -1613,6 +1687,7 @@ export interface QtElementDescriptors {
   timeedit: {
     props: {
       time?: TimeParts;
+      displayFormat?: string;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -1631,6 +1706,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "time-changed": (time: TimeParts) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -1843,3 +1919,16 @@ export interface QtElementDescriptors {
 }
 
 export type QtElementTag = keyof QtElementDescriptors;
+
+/** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
+export interface QtChildAttrs {
+  'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:column'?: number;
+  'parent:columnSpan'?: number;
+  'parent:row'?: number;
+  'parent:rowSpan'?: number;
+  'parent:stretch'?: number;
+  'parent:tabEnabled'?: boolean;
+  'parent:tabLabel'?: string;
+  'parent:tabToolTip'?: string;
+}

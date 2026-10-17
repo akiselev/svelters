@@ -11,11 +11,13 @@ properties:
     provenance: "GtkStack:transition-duration (Gtk 4 docs); P prop"
   - name: interpolate-size
     provenance: "GtkStack:interpolate-size (Gtk 4 docs); P prop"
+# GtkStack pages. Name, title and the page flags are properties of the child's GtkStackPage (X3).
+# Svelte: <stack><label parent:name="a" parent:title="First">x</label></stack>
 children:
-  policy: ordered
-  default_slot: children
+  policy: pages
+  default_slot: pages
   slots:
-    - name: children
+    - name: pages
       content: widget
       accepts: [Gtk.Widget]
       route_by_kind: false
@@ -23,7 +25,43 @@ children:
       order: append_only
       default: {kind: none}
       on_remove: empty
-      attrs: []
+      attrs:
+        - name: name
+          type: string
+          default: null
+          samples: ["first", "second"]
+          via: {native: "GtkStack::get_page(GtkWidget*)"}
+          property: name
+          expect: 'pw.downcast_ref::<gtk::Stack>().unwrap().child_by_name("first").as_ref() == Some(&w)'
+          provenance: [{origin: gir, ref: "GtkStackPage:name"}, {origin: gir, ref: "gtk_stack_get_child_by_name"}]
+        - name: title
+          type: string
+          default: null
+          samples: ["First page", "Second page"]
+          via: {native: "GtkStack::get_page(GtkWidget*)"}
+          property: title
+          provenance: [{origin: gir, ref: "GtkStackPage:title"}]
+        - name: iconName
+          type: string
+          default: null
+          samples: ["document-new", "edit-copy"]
+          via: {native: "GtkStack::get_page(GtkWidget*)"}
+          property: icon-name
+          provenance: [{origin: gir, ref: "GtkStackPage:icon-name"}]
+        - name: needsAttention
+          type: bool
+          default: false
+          samples: [true, false]
+          via: {native: "GtkStack::get_page(GtkWidget*)"}
+          property: needs-attention
+          provenance: [{origin: gir, ref: "GtkStackPage:needs-attention"}]
+        - name: useUnderline
+          type: bool
+          default: false
+          samples: [true, false]
+          via: {native: "GtkStack::get_page(GtkWidget*)"}
+          property: use-underline
+          provenance: [{origin: gir, ref: "GtkStackPage:use-underline"}]
       requires: []
       ops:
         get:    {contains: parent}

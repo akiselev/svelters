@@ -268,6 +268,7 @@ impl JsEngine for QjsEngine {
         signal: &str,
         args: &[AV],
         deferred: bool,
+        flags: u32,
     ) -> Result<(), JsError> {
         let core = self.core.clone();
         self.call_guarded(|ctx| {
@@ -281,12 +282,12 @@ impl JsEngine for QjsEngine {
             let conv = QjsConv::new(ctx.clone(), core, None);
             let list = convert::decode(&conv, &AV::List(args.to_vec()), &*conv.core)
                 .map_err(|m| Exception::throw_message(ctx, &m))?;
-            f.call::<_, Value>((handle as f64, signal, list, deferred))
+            f.call::<_, Value>((handle as f64, signal, list, deferred, flags))
                 .map(|_| ())
         })
     }
 
-    fn dispatch_sync(&mut self, handle: u64, signal: &str, args: &[AV]) -> Result<AV, JsError> {
+    fn dispatch_sync(&mut self, handle: u64, signal: &str, args: &[AV], flags: u32) -> Result<AV, JsError> {
         let core = self.core.clone();
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_dispatch_sync")?;
@@ -299,7 +300,7 @@ impl JsEngine for QjsEngine {
             let conv = QjsConv::new(ctx.clone(), core, None);
             let list = convert::decode(&conv, &AV::List(args.to_vec()), &*conv.core)
                 .map_err(|m| Exception::throw_message(ctx, &m))?;
-            let res: Value = f.call((handle as f64, signal, list))?;
+            let res: Value = f.call((handle as f64, signal, list, flags))?;
             // A sync result is a primitive: no decision (null/undefined), a flag, a number or a string.
             Ok(match res.type_of() {
                 rquickjs::Type::Null | rquickjs::Type::Undefined | rquickjs::Type::Uninitialized => AV::Null,
@@ -737,17 +738,50 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 },
             )?,
         )?;
-        let w = core;
+        let w = core.clone();
         let cb = cbs.clone();
         host.set(
             "listen",
             Function::new(
                 ctx.clone(),
-                move |ctx: Ctx<'js>, h: f64, signal: Value<'js>, on: bool| -> Res<()> {
+                move |ctx: Ctx<'js>, h: f64, signal: Value<'js>, on: bool, flags: Opt<u32>| -> Res<()> {
                     let c = core_of(&ctx, &w)?;
                     let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
                     let h = handle_of(&ctx, h)?;
-                    let r = msg(&ctx, conv.with_name(&signal, |n| c.op_listen(h, n, on)))?;
+                    let flags = flags.0.unwrap_or(0);
+                    let r = msg(&ctx, conv.with_name(&signal, |n| c.op_listen(h, n, on, flags)))?;
+                    op(&ctx, r)
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        let cb = cbs.clone();
+        host.set(
+            "setChildAttr",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, parent: f64, child: f64, name: Value<'js>, value: Value<'js>| -> Res<()> {
+                    let c = core_of(&ctx, &w)?;
+                    let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
+                    let parent = handle_of(&ctx, parent)?;
+                    let child = handle_of(&ctx, child)?;
+                    let r = msg(&ctx, conv.with_name(&name, |n| c.op_set_child_attr(&conv, parent, child, n, &value)))?;
+                    op_conv(&ctx, &conv, r)
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        let cb = cbs.clone();
+        host.set(
+            "getChildAttr",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, parent: f64, child: f64, name: Value<'js>| -> Res<Value<'js>> {
+                    let c = core_of(&ctx, &w)?;
+                    let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
+                    let parent = handle_of(&ctx, parent)?;
+                    let child = handle_of(&ctx, child)?;
+                    let r = msg(&ctx, conv.with_name(&name, |n| c.op_get_child_attr(&conv, parent, child, n)))?;
                     op(&ctx, r)
                 },
             )?,

@@ -21,8 +21,8 @@
         "visible-child"
       ]
     },
-    "default_slot": "children",
-    "policy": "ordered",
+    "default_slot": "pages",
+    "policy": "pages",
     "slots": [
       {
         "accepts": [
@@ -54,15 +54,126 @@
             }
           ]
         },
-        "attrs": [],
+        "attrs": [
+          {
+            "default": null,
+            "expect": "pw.downcast_ref::<gtk::Stack>().unwrap().child_by_name(\"first\").as_ref() == Some(&w)",
+            "name": "name",
+            "origin": "manual",
+            "property": "name",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "GtkStackPage:name"
+              },
+              {
+                "origin": "gir",
+                "ref": "gtk_stack_get_child_by_name"
+              }
+            ],
+            "samples": [
+              "first",
+              "second"
+            ],
+            "type": "string",
+            "via": {
+              "native": "GtkStack::get_page(GtkWidget*)",
+              "origin": "manual"
+            }
+          },
+          {
+            "default": null,
+            "name": "title",
+            "origin": "manual",
+            "property": "title",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "GtkStackPage:title"
+              }
+            ],
+            "samples": [
+              "First page",
+              "Second page"
+            ],
+            "type": "string",
+            "via": {
+              "native": "GtkStack::get_page(GtkWidget*)",
+              "origin": "manual"
+            }
+          },
+          {
+            "default": null,
+            "name": "iconName",
+            "origin": "manual",
+            "property": "icon-name",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "GtkStackPage:icon-name"
+              }
+            ],
+            "samples": [
+              "document-new",
+              "edit-copy"
+            ],
+            "type": "string",
+            "via": {
+              "native": "GtkStack::get_page(GtkWidget*)",
+              "origin": "manual"
+            }
+          },
+          {
+            "default": false,
+            "name": "needsAttention",
+            "origin": "manual",
+            "property": "needs-attention",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "GtkStackPage:needs-attention"
+              }
+            ],
+            "samples": [
+              true,
+              false
+            ],
+            "type": "bool",
+            "via": {
+              "native": "GtkStack::get_page(GtkWidget*)",
+              "origin": "manual"
+            }
+          },
+          {
+            "default": false,
+            "name": "useUnderline",
+            "origin": "manual",
+            "property": "use-underline",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "GtkStackPage:use-underline"
+              }
+            ],
+            "samples": [
+              true,
+              false
+            ],
+            "type": "bool",
+            "via": {
+              "native": "GtkStack::get_page(GtkWidget*)",
+              "origin": "manual"
+            }
+          }
+        ],
         "cardinality": "many",
         "content": "widget",
         "default": {
           "kind": "none",
           "origin": "manual"
         },
-        "id": "svelters-api:v1:type:gtk:Gtk:Stack:slot:children",
-        "name": "children",
+        "id": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages",
+        "name": "pages",
         "on_remove": "empty",
         "ops": {
           "get": {

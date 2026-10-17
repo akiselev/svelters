@@ -1,8 +1,38 @@
 {
  "facts": [
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:slot:center",
+   "fingerprint": "8e3b854617bd9ffd",
+   "kind": "ActionBar",
+   "name": "center",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_actionbar_center"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:slot:end",
+   "fingerprint": "2ded5d2ce7f03092",
+   "kind": "ActionBar",
+   "name": "end",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_actionbar_end"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:slot:start",
+   "fingerprint": "76f9f70be365311d",
+   "kind": "ActionBar",
+   "name": "start",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_actionbar_start"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:slot:child",
-   "fingerprint": "446c2652b188b5bd",
+   "fingerprint": "2ca191679a8e338b",
    "kind": "AspectFrame",
    "name": "child",
    "section": "slots",
@@ -12,7 +42,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Box:slot:children",
-   "fingerprint": "e056f754c37013cf",
+   "fingerprint": "6d6a32c3031fd280",
    "kind": "Box",
    "name": "children",
    "section": "slots",
@@ -22,7 +52,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:center",
-   "fingerprint": "cf97e579582d5b7b",
+   "fingerprint": "36a6aa31f27a5b77",
    "kind": "CenterBox",
    "name": "center",
    "section": "slots",
@@ -32,7 +62,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:end",
-   "fingerprint": "266e9c376713aac8",
+   "fingerprint": "d5c7a9ef5e0f09fe",
    "kind": "CenterBox",
    "name": "end",
    "section": "slots",
@@ -42,7 +72,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:slot:start",
-   "fingerprint": "e6c21dcb22714a6d",
+   "fingerprint": "abaf41a5f62af877",
    "kind": "CenterBox",
    "name": "start",
    "section": "slots",
@@ -52,7 +82,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:slot:child",
-   "fingerprint": "aab7794d81f6ec11",
+   "fingerprint": "1cf57a90a17e821d",
    "kind": "Expander",
    "name": "child",
    "section": "slots",
@@ -62,7 +92,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:slot:label",
-   "fingerprint": "d6e46285dec0e328",
+   "fingerprint": "86a64e5f8564980f",
    "kind": "Expander",
    "name": "label",
    "section": "slots",
@@ -71,8 +101,28 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children",
+   "fingerprint": "b77bebcaa20832ae",
+   "kind": "Fixed",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_fixed_children"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:slot:children",
+   "fingerprint": "0223561ba845201d",
+   "kind": "FlowBox",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_flowbox_children"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:slot:child",
-   "fingerprint": "9f7203337a1d5c0a",
+   "fingerprint": "19f6dd80d8bc2ca6",
    "kind": "Frame",
    "name": "child",
    "section": "slots",
@@ -82,7 +132,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:slot:label",
-   "fingerprint": "58b6be84b023c36b",
+   "fingerprint": "2a9fada55dbdcc66",
    "kind": "Frame",
    "name": "label",
    "section": "slots",
@@ -91,8 +141,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells",
+   "fingerprint": "addf0cc395a3bfd2",
+   "kind": "Grid",
+   "name": "cells",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_grid_cells"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:end",
-   "fingerprint": "66a0966464afaf7c",
+   "fingerprint": "d9a1a91005f8a387",
    "kind": "HeaderBar",
    "name": "end",
    "section": "slots",
@@ -102,7 +162,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:start",
-   "fingerprint": "1347cea50567263f",
+   "fingerprint": "2ed59828fca63acd",
    "kind": "HeaderBar",
    "name": "start",
    "section": "slots",
@@ -112,7 +172,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:title",
-   "fingerprint": "2013f0c14893cc73",
+   "fingerprint": "4e69017e70282a13",
    "kind": "HeaderBar",
    "name": "title",
    "section": "slots",
@@ -122,7 +182,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:slot:popover",
-   "fingerprint": "7a7a59180603db81",
+   "fingerprint": "d69a0710007c9d23",
    "kind": "MenuButton",
    "name": "popover",
    "section": "slots",
@@ -131,8 +191,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages",
+   "fingerprint": "a3917241e1b7629f",
+   "kind": "Notebook",
+   "name": "pages",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_notebook_pages"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:child",
-   "fingerprint": "53514ef48aa3c7a6",
+   "fingerprint": "b96456d3b42424cd",
    "kind": "Overlay",
    "name": "child",
    "section": "slots",
@@ -142,7 +212,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays",
-   "fingerprint": "a344c0731283cf62",
+   "fingerprint": "e779cd762a629316",
    "kind": "Overlay",
    "name": "overlays",
    "section": "slots",
@@ -152,7 +222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Paned:slot:end",
-   "fingerprint": "c6338d2a86d451ce",
+   "fingerprint": "50805b148937cd06",
    "kind": "Paned",
    "name": "end",
    "section": "slots",
@@ -162,7 +232,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Paned:slot:start",
-   "fingerprint": "41a75d8a81c3263a",
+   "fingerprint": "4d39af7d77dd1e94",
    "kind": "Paned",
    "name": "start",
    "section": "slots",
@@ -172,7 +242,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Popover:slot:child",
-   "fingerprint": "a0f5066e80edeab4",
+   "fingerprint": "97ba1d56d471785d",
    "kind": "Popover",
    "name": "child",
    "section": "slots",
@@ -182,7 +252,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Revealer:slot:child",
-   "fingerprint": "90f95478876c6e73",
+   "fingerprint": "94c67fdd4362572e",
    "kind": "Revealer",
    "name": "child",
    "section": "slots",
@@ -192,7 +262,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:slot:child",
-   "fingerprint": "91b083ff7d4d4650",
+   "fingerprint": "46cbc9c352d10f8f",
    "kind": "ScrolledWindow",
    "name": "child",
    "section": "slots",
@@ -202,7 +272,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchBar:slot:child",
-   "fingerprint": "f1e598e614c998c1",
+   "fingerprint": "77cabe48d85b385e",
    "kind": "SearchBar",
    "name": "child",
    "section": "slots",
@@ -211,8 +281,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages",
+   "fingerprint": "587ff0f4c06efe0c",
+   "kind": "Stack",
+   "name": "pages",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_stack_pages"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Viewport:slot:child",
-   "fingerprint": "f93ca3b440d5468a",
+   "fingerprint": "93ab6f9d77a71c27",
    "kind": "Viewport",
    "name": "child",
    "section": "slots",
@@ -222,7 +302,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child",
-   "fingerprint": "6e63505943ca5cb1",
+   "fingerprint": "41959c5e4a9a8818",
    "kind": "Window",
    "name": "child",
    "section": "slots",
@@ -232,7 +312,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar",
-   "fingerprint": "71f29029b6117503",
+   "fingerprint": "06f7abc487afa030",
    "kind": "Window",
    "name": "titlebar",
    "section": "slots",
@@ -242,12 +322,202 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:WindowHandle:slot:child",
-   "fingerprint": "19d956d937694a21",
+   "fingerprint": "0c00716545cbf418",
    "kind": "WindowHandle",
    "name": "child",
    "section": "slots",
    "tests": [
     "generated::verify::slot_windowhandle_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children:attr:x",
+   "fingerprint": "1ee0f62ca2a568e1",
+   "kind": "Fixed",
+   "name": "children.x",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_fixed_children_x"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children:attr:y",
+   "fingerprint": "8a501184752ddba0",
+   "kind": "Fixed",
+   "name": "children.y",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_fixed_children_y"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:column",
+   "fingerprint": "71160d922933ec30",
+   "kind": "Grid",
+   "name": "cells.column",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_column"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:row",
+   "fingerprint": "b15de7e59bf41e9d",
+   "kind": "Grid",
+   "name": "cells.row",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_row"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:columnSpan",
+   "fingerprint": "3b5702340463a9f8",
+   "kind": "Grid",
+   "name": "cells.columnSpan",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_columnspan"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:rowSpan",
+   "fingerprint": "5487cee7bf73c039",
+   "kind": "Grid",
+   "name": "cells.rowSpan",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_rowspan"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabLabel",
+   "fingerprint": "4b2732ddaa71ac92",
+   "kind": "Notebook",
+   "name": "pages.tabLabel",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_tablabel"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:menuLabel",
+   "fingerprint": "99366056953715a8",
+   "kind": "Notebook",
+   "name": "pages.menuLabel",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_menulabel"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:reorderable",
+   "fingerprint": "73b536a3424f692e",
+   "kind": "Notebook",
+   "name": "pages.reorderable",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_reorderable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:detachable",
+   "fingerprint": "c7ff1a2768f94dd6",
+   "kind": "Notebook",
+   "name": "pages.detachable",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_detachable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabExpand",
+   "fingerprint": "dcc672426a350225",
+   "kind": "Notebook",
+   "name": "pages.tabExpand",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_tabexpand"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabFill",
+   "fingerprint": "c95864715cb7d070",
+   "kind": "Notebook",
+   "name": "pages.tabFill",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_tabfill"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays:attr:measure",
+   "fingerprint": "a96e9249375089a4",
+   "kind": "Overlay",
+   "name": "overlays.measure",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_overlay_overlays_measure"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays:attr:clip",
+   "fingerprint": "8487784061e2ada8",
+   "kind": "Overlay",
+   "name": "overlays.clip",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_overlay_overlays_clip"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:name",
+   "fingerprint": "d9f6b68566d8c83f",
+   "kind": "Stack",
+   "name": "pages.name",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:title",
+   "fingerprint": "9031298a21e3ed31",
+   "kind": "Stack",
+   "name": "pages.title",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:iconName",
+   "fingerprint": "e52020cfb7b11621",
+   "kind": "Stack",
+   "name": "pages.iconName",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_iconname"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:needsAttention",
+   "fingerprint": "ca83476b4cfcca50",
+   "kind": "Stack",
+   "name": "pages.needsAttention",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_needsattention"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:useUnderline",
+   "fingerprint": "2678eaabab3e3559",
+   "kind": "Stack",
+   "name": "pages.useUnderline",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_useunderline"
    ]
   },
   {
@@ -318,6 +588,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_aboutdialog_wrap_license"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:prop:revealed",
+   "fingerprint": "0a4d48385271a568",
+   "kind": "ActionBar",
+   "name": "revealed",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_actionbar_revealed"
    ]
   },
   {
@@ -1066,6 +1346,86 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:signal:child-activated",
+   "fingerprint": "ba8bb29b2df69141",
+   "kind": "FlowBox",
+   "name": "child-activated",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_flowbox_child_activated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:signal:selected-children-changed",
+   "fingerprint": "e656e24a6096c15a",
+   "kind": "FlowBox",
+   "name": "selected-children-changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_flowbox_selected_children_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:column-spacing",
+   "fingerprint": "35a648c8d51905e6",
+   "kind": "FlowBox",
+   "name": "column-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:homogeneous",
+   "fingerprint": "57090fff2843d639",
+   "kind": "FlowBox",
+   "name": "homogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_homogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:max-children-per-line",
+   "fingerprint": "f6f9b1b9e10fd956",
+   "kind": "FlowBox",
+   "name": "max-children-per-line",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_max_children_per_line"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:min-children-per-line",
+   "fingerprint": "59411304829ba586",
+   "kind": "FlowBox",
+   "name": "min-children-per-line",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_min_children_per_line"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:row-spacing",
+   "fingerprint": "881c2981cf4b0164",
+   "kind": "FlowBox",
+   "name": "row-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_row_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:selection-mode",
+   "fingerprint": "02aca84f06dc5b6e",
+   "kind": "FlowBox",
+   "name": "selection-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_selection_mode"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:prop:label",
    "fingerprint": "3ad0a4fb8a44d8b1",
    "kind": "Frame",
@@ -1103,6 +1463,46 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_graphicsoffload_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-homogeneous",
+   "fingerprint": "6dc10b33d5e7920d",
+   "kind": "Grid",
+   "name": "column-homogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_column_homogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-spacing",
+   "fingerprint": "37f8b2ca92f61933",
+   "kind": "Grid",
+   "name": "column-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-homogeneous",
+   "fingerprint": "db17a4fce250abcc",
+   "kind": "Grid",
+   "name": "row-homogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_row_homogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-spacing",
+   "fingerprint": "3b538d5f70d9d40c",
+   "kind": "Grid",
+   "name": "row-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_row_spacing"
    ]
   },
   {
@@ -1527,6 +1927,56 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-activated",
+   "fingerprint": "87b648fbafc2540a",
+   "kind": "ListBox",
+   "name": "row-activated",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_listbox_row_activated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-selected",
+   "fingerprint": "e8c3ac484f599821",
+   "kind": "ListBox",
+   "name": "row-selected",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_listbox_row_selected"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:activate-on-single-click",
+   "fingerprint": "41fadf2545fa6953",
+   "kind": "ListBox",
+   "name": "activate-on-single-click",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_listbox_activate_on_single_click"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:selection-mode",
+   "fingerprint": "71f4726f1d8a81f3",
+   "kind": "ListBox",
+   "name": "selection-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_listbox_selection_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:show-separators",
+   "fingerprint": "c974a0afa81f0dbb",
+   "kind": "ListBox",
+   "name": "show-separators",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_listbox_show_separators"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock",
    "fingerprint": "a204a609db80f9d2",
    "kind": "LockButton",
@@ -1694,6 +2144,87 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_menubutton_set_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:signal:switch-page",
+   "fingerprint": "231c32d3ce7878ac",
+   "kind": "Notebook",
+   "name": "switch-page",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_notebook_switch_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:signal:notify::page",
+   "fingerprint": "252f9d9739796a5c",
+   "kind": "Notebook",
+   "name": "notify::page",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_notebook_notify_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:page",
+   "fingerprint": "2d6bb3d7e327a3f3",
+   "kind": "Notebook",
+   "name": "page",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_page",
+    "generated::verify::echo_notebook_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:scrollable",
+   "fingerprint": "48c950a7ca27ecaa",
+   "kind": "Notebook",
+   "name": "scrollable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_scrollable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-border",
+   "fingerprint": "27334f4300908391",
+   "kind": "Notebook",
+   "name": "show-border",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_show_border"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-tabs",
+   "fingerprint": "a965a9da15e90bf6",
+   "kind": "Notebook",
+   "name": "show-tabs",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_show_tabs"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:tab-pos",
+   "fingerprint": "dc619d932c0b93f9",
+   "kind": "Notebook",
+   "name": "tab-pos",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_tab_pos"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:binding:page",
+   "fingerprint": "64e7c32b22c98061",
+   "kind": "Notebook",
+   "name": "page",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_notebook_page"
    ]
   },
   {
@@ -2646,6 +3177,86 @@
    "section": "bindings",
    "tests": [
     "generated::verify::binding_spinner_spinning"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:hhomogeneous",
+   "fingerprint": "ab399d14d3f60cf0",
+   "kind": "Stack",
+   "name": "hhomogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_hhomogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:interpolate-size",
+   "fingerprint": "277a6239a7efb84d",
+   "kind": "Stack",
+   "name": "interpolate-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_interpolate_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-duration",
+   "fingerprint": "3bbd26258ba86556",
+   "kind": "Stack",
+   "name": "transition-duration",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_transition_duration"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-type",
+   "fingerprint": "cbb7cffbc760b45a",
+   "kind": "Stack",
+   "name": "transition-type",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_transition_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:vhomogeneous",
+   "fingerprint": "c31c8d084a2a57f8",
+   "kind": "Stack",
+   "name": "vhomogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_vhomogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child",
+   "fingerprint": "816d0e79a8f3739c",
+   "kind": "Stack",
+   "name": "visible-child",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_visible_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StackSidebar:prop:stack",
+   "fingerprint": "1c55615d74d5e4ab",
+   "kind": "StackSidebar",
+   "name": "stack",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stacksidebar_stack"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:prop:stack",
+   "fingerprint": "3b04b3c685d503ba",
+   "kind": "StackSwitcher",
+   "name": "stack",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stackswitcher_stack"
    ]
   },
   {
