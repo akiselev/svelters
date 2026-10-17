@@ -159,3 +159,13 @@ event #<h> <signal> <json-args-array>        # an injected native event, logged 
 Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}` and `{"checkpoint": true}` steps.
 
 Prop values never use the `SVL_LIST` tag or nested objects in P.
+
+## Planned extension: foreign runtimes (post-P5)
+
+From `docs/notes/node-deno-integration.md`. To let stock Node (N-API addon) or Deno (FFI) drive a backend while the toolkit loop stays authoritative, add these optional members:
+
+- host callbacks `foreign_fd()` and `foreign_timeout_ms()`, which the backend's loop watches (GLib source / `QSocketNotifier` + `aboutToBlock`), calling `checkpoint` when either fires;
+- backend `poll_prepare`/`poll_dispatch` for runtimes that insist on owning the main thread (stock Deno), with the known limitation that JS freezes during nested modal loops;
+- the rule that nested toolkit loops (modal dialogs, DnD) may re-enter `checkpoint`.
+
+Priority after QuickJS: (1) stock Node via N-API on Linux, (2) embedded deno_core as a cargo feature, (3) stock Deno via FFI. Bun is not supported (no libuv, no async FFI).

@@ -26,4 +26,4 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | GIR / Qt metadata ingestion | widget-metadata-ingestion.md | done |
 | Signals, return values, child slots | signals-and-slots-semantics.md | in progress |
 | Custom renderer PR hands-on trial | custom-renderer-trial.md | in progress |
-| Node / Deno runtime integration | node-deno-integration.md | in progress |
+| Node / Deno runtime integration | node-deno-integration.md | done |
