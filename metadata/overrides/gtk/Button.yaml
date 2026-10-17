@@ -28,3 +28,6 @@ methods:
     args: ["via method"]
     expect: 'h.get(o, "label") == V::Str("via method".into())'
     provenance: "gtk_button_set_label (Gtk 4 docs); called through GIRepository (X1)"
+text_prop:
+  name: label
+  provenance: "GtkButton:label holds the button text (Gtk 4 docs); inherited by Button subclasses (ToggleButton, LinkButton)"

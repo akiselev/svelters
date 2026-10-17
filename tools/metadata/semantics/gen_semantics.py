@@ -27,6 +27,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = ROOT / "tools/metadata"
 RULES = ROOT / "metadata/semantics/rules"
+OVERRIDES = ROOT / "metadata/overrides"
 OUT = ROOT / "metadata/semantics"
 GTK_TABLES = ROOT / "crates/svelters-gtk/src/generated/tables.rs"
 SCHEMA = "svelters-semantics/v0"
@@ -413,6 +414,22 @@ def gtk_spec() -> dict:
         for f in ("lifetime", "present", "text_content"):
             if f in r:
                 kinds[k]["provenance"][f] = prov
+    # text_prop: metadata/overrides/gtk/<Kind>.yaml (not merged into metadata/gtk); inherited like the rules
+    for path in sorted(OVERRIDES.joinpath("gtk").glob("*.yaml")):
+        tp = svmeta.load_yaml(path).get("text_prop")
+        if not tp:
+            continue
+        k = f"Gtk.{path.stem}"
+        w = f"metadata/overrides/gtk/{path.name} text_prop"
+        if k not in kinds:
+            fail(f"{w}: no such kind")
+        if "text_content" in krules.get(k, {}):
+            fail(f"{w}: also set in the rules")
+        p = find_prop(k, tp["name"])
+        if p is None or not p["writable"] or p["type"] != "string":
+            fail(f"{w}: {tp['name']!r} must be a writable string property")
+        krules.setdefault(k, {})["text_content"] = p["js"]
+        kinds[k]["provenance"]["text_content"] = need_prov(w, tp)
     for k in kinds:
         for f, default in (("lifetime", "owned"), ("present", None), ("text_content", None)):
             src = next((c for c in chains[k] if c in krules and f in krules[c]), None)
@@ -577,6 +594,17 @@ def qt_spec() -> dict:
         if sigs:
             kinds[tag]["provenance"]["signals.disconnect_on_drop"] = sd["provenance"]
 
+    # text_prop: `elements[].text_prop` in metadata/overrides/qt (native or JS name of an annotated prop)
+    for el in m.elements:
+        tp = el.get("text_prop")
+        if not tp:
+            continue
+        kd = kinds[el["tag"]]
+        p = next((p for p in kd["props"].values() if tp in (p["js"], p["native"])), None)
+        if p is None or not p["writable"] or p["type"] != "string":
+            fail(f"qt <{el['tag']}> text_prop {tp!r} must be an annotated writable string property")
+        kd["text_content"] = p["js"]
+        kd["provenance"]["text_content"] = f"metadata/overrides/qt text_prop ({p['native']})"
     for k, r in sorted((rules.get("kinds") or {}).items()):
         w = f"qt rules kinds.{k}"
         if k not in kinds:

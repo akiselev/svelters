@@ -1,6 +1,7 @@
 elements:
   - tag: label
     construct: { class: QLabel }
+    text_prop: text   # QLabel::text (qdoc); text children fold into it
     props:
       - { js: label, native: text, provenance: "QLabel::text Q_PROPERTY (qdoc); P prop" }
       - { js: alignment, native: alignment, provenance: "QLabel::alignment (qdoc); typed by the S1 value model (ABI v3)" }
