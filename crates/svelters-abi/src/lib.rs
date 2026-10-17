@@ -219,7 +219,15 @@ pub struct svl_host {
     pub invoke_callback:
         unsafe extern "C" fn(*mut c_void, u64, *const svl_value, usize, *mut svl_value) -> c_int,
     pub release_callback: unsafe extern "C" fn(*mut c_void, u64),
+    /// ABI v2.1: a requested frame is due.
+    pub frame: unsafe extern "C" fn(*mut c_void),
 }
+
+pub const SVL_SYNC_OK: i32 = 0;
+/// `call_sync` ran nothing or failed: the backend uses the toolkit default.
+pub const SVL_SYNC_FAILED: i32 = -1;
+/// `call_sync` found JS running: the host queued the event for async delivery.
+pub const SVL_SYNC_BUSY: i32 = -2;
 
 #[repr(C)]
 pub struct svl_backend {
@@ -252,6 +260,8 @@ pub struct svl_backend {
     pub describe: Option<unsafe extern "C" fn(*mut c_void, u32, svl_id, svl_id) -> *const svl_member_desc>,
     pub describe_type: Option<unsafe extern "C" fn(*mut c_void, svl_id) -> *const svl_type_desc>,
     pub cancel: Option<unsafe extern "C" fn(*mut c_void, u64) -> c_int>,
+    /// ABI v2.1: one `host.frame` on the toolkit's next frame.
+    pub request_frame: unsafe extern "C" fn(*mut c_void),
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.
