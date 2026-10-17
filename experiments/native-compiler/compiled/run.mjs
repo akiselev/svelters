@@ -36,6 +36,12 @@ for (const backend of BACKENDS) {
         console.log(`PASS ${tag}: rejected as expected`);
         continue;
       }
+    } else if (c.rejectOn?.[backend]) {
+      const got = fs.existsSync(diagFile) ? fs.readFileSync(diagFile, 'utf8') : '';
+      const ok = got.includes(`${c.rejectOn[backend]} (${backend})`);
+      if (!ok) failed = true;
+      console.log(`${ok ? 'PASS' : 'FAIL'} ${tag}: ${ok ? 'rejected at compile time' : 'expected a compile-time rejection'} (${c.rejectOn[backend]})`);
+      continue;
     } else if (fs.existsSync(diagFile)) {
       failed = true;
       console.log(`FAIL ${tag}: did not compile\n${fs.readFileSync(diagFile, 'utf8')}`);

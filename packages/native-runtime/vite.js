@@ -9,6 +9,9 @@ import fs from 'node:fs';
 /** The specifier src/index.js imports for block/branch/destroy_effect/component_root. */
 export const EFFECTS_SPECIFIER = 'svelte/internal/client/reactivity/effects';
 
+/** Absolute path of this package's runtime entry. */
+export const runtimePath = fileURLToPath(new URL('./src/index.js', import.meta.url));
+
 /** Absolute path of Svelte's effects module (hidden by the package's exports map). */
 export const effectsPath = path.join(
   path.dirname(createRequire(import.meta.url).resolve('svelte/internal/client')),
@@ -27,7 +30,12 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
     logLevel: 'warn',
     resolve: {
       conditions: ['custom-renderer', 'browser'],
-      alias: [{ find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath }],
+      alias: [
+        { find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath },
+        // generated components import the runtime from wherever the .svelte file lives
+        { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
+      ],
+      dedupe: ['svelte'],
     },
     build: {
       target: 'es2022',
@@ -44,14 +52,15 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-/** The `svelters-compile` binary: $SVELTERS_COMPILE, else the workspace's release or debug build. */
+/** The `svelters-compile` binary: $SVELTERS_COMPILE, else the newest of the workspace's release/debug builds. */
 export function compilerPath() {
   if (process.env.SVELTERS_COMPILE) return process.env.SVELTERS_COMPILE;
-  for (const p of ['target/release/svelters-compile', 'target/debug/svelters-compile']) {
-    const abs = path.join(repoRoot, p);
-    if (fs.existsSync(abs)) return abs;
-  }
-  throw new Error('svelters-compile not found: run `cargo build -p svelters-compiler` or set SVELTERS_COMPILE');
+  const found = ['target/release/svelters-compile', 'target/debug/svelters-compile']
+    .map((p) => path.join(repoRoot, p))
+    .filter((p) => fs.existsSync(p))
+    .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+  if (!found.length) throw new Error('svelters-compile not found: run `cargo build -p svelters-compiler` or set SVELTERS_COMPILE');
+  return found[0];
 }
 
 /**

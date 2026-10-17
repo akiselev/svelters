@@ -125,9 +125,8 @@ impl Rewriter for ScopeRewriter<'_> {
     fn assign(&self, target: &Expression, value: &str) -> String {
         match target {
             Expression::Identifier(id) => match classify(&self.an.arena, id) {
-                Class::Source { writable: true, proxied, .. } => {
-                    format!("$.set({}, {value}{})", id.name, if proxied { ", true" } else { "" })
-                }
+                // never proxied: bound values are native values or runtime nodes (Svelte does the same)
+                Class::Source { writable: true, .. } => format!("$.set({}, {value})", id.name),
                 Class::Prop => format!("{}({value})", id.name),
                 Class::Source { writable: false, .. } | Class::EachSource => {
                     self.diags.borrow_mut().error("bind_invalid_target", (id.start, id.end), format!("cannot bind to `{}`: it is not assignable", id.name));

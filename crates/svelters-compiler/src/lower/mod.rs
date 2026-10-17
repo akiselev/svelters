@@ -21,7 +21,7 @@ use serde_json::Value as Json;
 use std::collections::HashSet;
 
 pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a StyleSheet>, diags: &mut Diagnostics) -> Component<'a> {
-    let mut l = Lower { sem, diags, next_id: 0, styles, reported: HashSet::new() };
+    let mut l = Lower { sem, diags, next_id: 0, styles, reported: HashSet::new(), single_slots: Default::default(), in_block: false };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
     Component { root: root_fragment, elements: l.next_id }
@@ -29,7 +29,8 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a 
 
 enum Parent {
     Root,
-    Element(ElementRef),
+    /// The parent element and its IR id.
+    Element(ElementRef, usize),
 }
 
 /// What style matching needs to know about an element (and its ancestors in this component).
@@ -47,6 +48,10 @@ struct Lower<'a, 's, 'd> {
     styles: Option<&'a StyleSheet>,
     /// (span, code) pairs already reported, so a declaration matching many elements reports once.
     reported: HashSet<(u32, u32, &'static str)>,
+    /// Single-child slots already filled by a static element: (parent id, slot) -> byte offset.
+    single_slots: std::collections::HashMap<(usize, String), u32>,
+    /// Inside an {#if}/{#each} branch: alternatives may share a single-child slot.
+    in_block: bool,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -79,7 +84,7 @@ impl<'a> Lower<'a, '_, '_> {
                     if !t.data.trim().is_empty() {
                         let msg = match parent {
                             Parent::Root => "text is not allowed at the top level of a native component".to_string(),
-                            Parent::Element(p) => format!("<{}> cannot contain text on {}", p.tag, self.sem.backend()),
+                            Parent::Element(p, _) => format!("<{}> cannot contain text on {}", p.tag, self.sem.backend()),
                         };
                         self.diags
                             .native_error("text_not_allowed", (t.start, t.end), msg)
@@ -105,8 +110,10 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                 }
                 FragmentNode::IfBlock(b) => {
+                    let outer = std::mem::replace(&mut self.in_block, true);
                     let consequent = self.fragment(&b.consequent, parent, ancestors);
                     let alternate = b.alternate.as_ref().map(|a| self.fragment(a, parent, ancestors));
+                    self.in_block = outer;
                     let slot = self.block_slot((b.start, b.end), [Some(&consequent), alternate.as_ref()]);
                     out.items.push(Item::If(IfBlock { span: b.span(), slot, test: &b.test, consequent, alternate }));
                 }
@@ -121,8 +128,10 @@ impl<'a> Lower<'a, '_, '_> {
                             "destructuring in {#each} is not supported by the native compiler yet; use a plain identifier",
                         );
                     }
+                    let outer = std::mem::replace(&mut self.in_block, true);
                     let body = self.fragment(&b.body, parent, ancestors);
                     let fallback = b.fallback.as_ref().map(|f| self.fragment(f, parent, ancestors));
+                    self.in_block = outer;
                     let slot = self.block_slot((b.start, b.end), [Some(&body), fallback.as_ref()]);
                     out.items.push(Item::Each(EachBlock {
                         span: b.span(),
@@ -211,17 +220,32 @@ impl<'a> Lower<'a, '_, '_> {
         // placement
         let (slot, present) = match parent {
             Parent::Root => {
+                // A toplevel kind is presented when mounted at the root. Other kinds are allowed at a
+                // component's top level: a child component's root elements go to the container the
+                // parent passes in (placement is then checked at runtime; the compiler cannot see
+                // across component boundaries). Mounting a non-toplevel at the app root throws.
                 let lt = self.sem.lifetime(&er);
-                if lt.lifetime != Lifetime::Toplevel {
-                    self.diags
-                        .native_error("root_not_toplevel", tag_span, format!("<{}> is not a toplevel on {}; only windows can be top-level elements", el.name, self.sem.backend()))
-                        .help("put it inside a <window>");
-                    return None;
-                }
-                (None, lt.present)
+                (None, if lt.lifetime == Lifetime::Toplevel { lt.present } else { None })
             }
-            Parent::Element(p) => match self.sem.place_child(p, &er, requested_slot.as_deref()) {
-                Ok(plan) => ((!plan.is_default).then_some(plan.slot), None),
+            Parent::Element(p, pid) => match self.sem.place_child(p, &er, requested_slot.as_deref()) {
+                Ok(plan) => {
+                    if !plan.many {
+                        // a single-child slot: a second statically placed element is an error
+                        let key = (*pid, plan.slot.clone());
+                        if let Some(first) = self.single_slots.get(&key) {
+                            self.diags
+                                .native_error(
+                                    "slot_cardinality",
+                                    tag_span,
+                                    format!("<{}>'s `{}` slot takes one child on {}, and it already has one (at byte {})", p.tag, plan.slot, self.sem.backend(), first),
+                                )
+                                .help("wrap the children in a container such as <box>");
+                        } else if !self.in_block {
+                            self.single_slots.insert(key, tag_span.0);
+                        }
+                    }
+                    ((!plan.is_default).then_some(plan.slot), None)
+                }
                 Err(u) => {
                     u.report(self.diags, tag_span);
                     (None, None)
@@ -278,7 +302,8 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                 }
                 AttributeLike::BindDirective(d) if d.name == "this" => {
-                    self.diags.error("unsupported_feature", sp(d.span()), "bind:this is not supported by the native compiler yet");
+                    let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
+                    ops.push(Op::BindThis { target, span: d.span() });
                 }
                 AttributeLike::BindDirective(d) => {
                     let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
@@ -321,7 +346,7 @@ impl<'a> Lower<'a, '_, '_> {
             self.text_content(el, &tc.js, &mut ops);
             Fragment::default()
         } else {
-            self.fragment(&el.fragment, &Parent::Element(er.clone()), &chain)
+            self.fragment(&el.fragment, &Parent::Element(er.clone(), id), &chain)
         };
 
         Some(Element { id, span: el.span(), kind: er.tag.clone(), present, slot, ops, children })

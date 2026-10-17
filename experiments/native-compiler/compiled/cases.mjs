@@ -17,6 +17,8 @@ export function cases() {
       script: path.join(repo, 'fixtures', name, 'script.json'),
       jsExpected: path.join(repo, 'fixtures', name, 'expected.oplog'),
       handwritten: path.join(here, '../handwritten', name, 'expected.oplog'),
+      // Rejected at compile time by the backend spec (the JS pipeline fails at runtime instead).
+      rejectOn: name === 'if-toggle' ? { qt: 'unknown_element' } : {},
     });
   }
   const own = path.join(here, '../fixtures');

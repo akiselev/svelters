@@ -170,6 +170,13 @@ impl Codegen<'_, '_> {
                 let set = self.rw.assign(target, "$$value");
                 self.w.write(&format!(", ($$value) => {{ {set}; }});"));
             }
+            Op::BindThis { target, span } => {
+                self.w.map(span.start);
+                let set = self.rw.assign(target, "$$value");
+                self.w.write(&format!("$.bind_this({n}, ($$value) => {{ {set}; }}, () => "));
+                self.expr_text(target, Mode::Read);
+                self.w.write(");");
+            }
             Op::Track { prop, signal, arg } => {
                 self.w.write(&format!("$n.track({n}, {}, {}, {arg});", js_str(prop), js_str(signal)));
             }
@@ -185,8 +192,13 @@ impl Codegen<'_, '_> {
             }
             Op::StyleProp { prop, candidates, fallback, span } => {
                 self.w.map(span.start);
-                if *fallback == Fallback::Restore {
-                    self.w.write(&format!("$n.capture({n}, {});", js_str(prop)));
+                match fallback {
+                    Fallback::Restore => self.w.write(&format!("$n.capture({n}, {});", js_str(prop))),
+                    // the widget starts at the spec's native default: don't write it redundantly
+                    Fallback::Default(d) if !d.is_null() => self.w.write(&format!("$n.assume({n}, {}, {d});", js_str(prop))),
+                    Fallback::Default(_) => {}
+                }
+                if !matches!(fallback, Fallback::Default(d) if d.is_null()) {
                     self.line();
                 }
                 self.w.write(&format!("$.template_effect(() => $n.set({n}, {}, ", js_str(prop)));

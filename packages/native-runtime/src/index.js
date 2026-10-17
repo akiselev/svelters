@@ -53,6 +53,46 @@ class Native {
     this.listening = new Set();
     this.slots = new Map(); // slot name (null = default) -> Slot
   }
+
+  // Native access for `bind:this`, the same surface as @svelters/renderer's nodes.
+
+  /** Native handle while alive, else null. */
+  get handle() {
+    return alive(this) ? this.h : null;
+  }
+
+  /** What the host converts a node argument to; null when dead. */
+  get svlHandle() {
+    return this.handle;
+  }
+
+  /** Calls a native method; throws StaleHandleError (with the death reason) when dead. */
+  call(method, ...args) {
+    return this.host.call(liveHandle(this), method, args);
+  }
+
+  /** Reads a native property; throws StaleHandleError when dead. */
+  getProp(name) {
+    return this.host.getProp(liveHandle(this), name);
+  }
+}
+
+/**
+ * Thrown by a node's native-access methods when it has no live native object. `reason` is
+ * 'destroyed' once the runtime destroyed it, or the native death reason (ABI v2 `gone`).
+ */
+export class StaleHandleError extends Error {
+  constructor(kind, reason) {
+    super(`<${kind}> is dead: ${reason}`);
+    this.name = 'StaleHandleError';
+    this.reason = reason;
+  }
+}
+
+function liveHandle(n) {
+  if (n.dead) throw new StaleHandleError(n.kind, n.dead);
+  if (n.destroyed) throw new StaleHandleError(n.kind, 'destroyed');
+  return n.h;
 }
 
 const alive = (n) => !n.dead && !n.destroyed;
@@ -165,6 +205,14 @@ export function set(node, prop, value) {
   if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
   node.last.set(prop, value);
   node.host.setProp(node.h, prop, value);
+}
+
+/**
+ * Records `value` as the native value of `prop` without writing it: the spec's native default of a
+ * freshly created widget. A later `set` of the same value is then a no-op.
+ */
+export function assume(node, prop, value) {
+  if (!node.last.has(prop)) node.last.set(prop, value);
 }
 
 export function capture(node, prop) {

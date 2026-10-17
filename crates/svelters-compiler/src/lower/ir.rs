@@ -58,6 +58,8 @@ pub enum Op<'a> {
     Listen { signal: String, handler: &'a Expression, span: Span },
     /// `$n.bind(node, prop, signal, arg, get, set)`; `target` is the bound lvalue.
     Bind { prop: String, signal: String, arg: i64, target: &'a Expression, span: Span },
+    /// `bind:this={target}`: Svelte's `$.bind_this(node, set, get)` with the runtime node.
+    BindThis { target: &'a Expression, span: Span },
     /// `$n.track(node, prop, signal, arg)` for a one-way prop the native side also edits.
     Track { prop: String, signal: String, arg: i64 },
     /// `$n.token(node, prop, token, cond)`; static when `cond` is empty.
