@@ -687,18 +687,23 @@ impl Codegen<'_, '_> {
             ComponentProp::Bind { name, target } if name == "this" => Some(*target),
             _ => None,
         });
-        if this_bind.is_some() {
+        let dynamic_get = if c.this.is_some() { None } else { c.node.and_then(|n| self.rw.dynamic_component(n)) };
+        let dynamic = c.this.is_some() || dynamic_get.is_some();
+        // a dynamic component binds the exports of each instance inside its branch: cleared when
+        // the branch goes, bound again by the next component (Svelte binds inside `$.component`)
+        let open = if dynamic && this_bind.is_some() { "$n.component" } else { "$n.snippet" };
+        if this_bind.is_some() && !dynamic {
             self.w.write("$.bind_this(");
         }
         if let Some(this) = c.this {
             // `<svelte:component this>`: re-created when the function changes, nothing if nullish
-            self.w.write(&format!("$n.snippet({container}, () => "));
+            self.w.write(&format!("{open}({container}, () => "));
             self.paren_expr(this, Mode::Read);
             self.w.write(", ");
         } else {
-            match c.node.and_then(|n| self.rw.dynamic_component(n)) {
+            match dynamic_get {
                 // re-created when the component function changes (Svelte's `$.component`)
-                Some(get) => self.w.write(&format!("$n.snippet({container}, () => {get}, ")),
+                Some(get) => self.w.write(&format!("{open}({container}, () => {get}, ")),
                 None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
             }
         }
@@ -792,8 +797,13 @@ impl Codegen<'_, '_> {
         if spread {
             self.w.write(")");
         }
-        self.w.write(")");
+        if !(dynamic && this_bind.is_some()) {
+            self.w.write(")");
+        }
         if let Some(target) = this_bind {
+            if dynamic {
+                self.w.write(", ($$exports) => $.bind_this($$exports");
+            }
             match function_binding(target) {
                 Some((get, set)) => {
                     self.w.write(", ");

@@ -635,17 +635,30 @@ export function key_block(container, getKey, render) {
  * function replaces the branch, a nullish one renders nothing. `args` are thunks.
  */
 export function snippet(container, getSnippet, ...args) {
+  swapping(container, getSnippet, (s, anchor) => s(anchor, ...args));
+}
+
+/**
+ * A dynamic component with `bind:this`: like `snippet(container, getComponent, props)`, and
+ * `bind(exports)` runs inside each instance's branch (`$.bind_this`), so the binding is cleared
+ * when the component goes and set again for the next one.
+ */
+export function component(container, getComponent, props, bind) {
+  swapping(container, getComponent, (c, anchor) => bind(c(anchor, props)));
+}
+
+function swapping(container, get, render) {
   const r = newRegion(container);
   const owner = scope;
   let current = null;
   let fn;
   let first = true;
   block(() => {
-    const s = getSnippet() ?? null;
+    const s = get() ?? null;
     if (!first && s === fn) return;
     first = false;
     fn = s;
-    current = swap(r, owner, current, s && ((anchor) => s(anchor, ...args)));
+    current = swap(r, owner, current, s && ((anchor) => render(s, anchor)));
   });
 }
 

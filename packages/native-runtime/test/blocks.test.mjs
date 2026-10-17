@@ -221,6 +221,33 @@ test('await: a promise settling after teardown produces no ops', async () => {
   assert.deepEqual(t.take(), []);
 });
 
+test('component: bind:this follows the instance of a dynamic component (Codex P2, PR #3)', () => {
+  const t = harness();
+  const make = (name) => ($$anchor, props) => {
+    label($$anchor, `${name} ${props.label}`);
+    return { name };
+  };
+  const A = make('A');
+  const B = make('B');
+  const C = $.state(A);
+  let ref = 'unset';
+  mountInBox((c) => {
+    $n.component(c, () => $.get(C), { label: 'x' }, ($$exports) =>
+      $.bind_this($$exports, ($$value) => (ref = $$value), () => ref),
+    );
+  });
+  $.flush();
+  assert.deepEqual(ref, { name: 'A' });
+  t.take();
+  $.set(C, B);
+  $.flush();
+  assert.deepEqual(ref, { name: 'B' }, 'rebound to the new instance');
+  assert.ok(t.take().some((l) => l.includes('"B x"')));
+  $.set(C, null);
+  $.flush();
+  assert.equal(ref, null, 'cleared when the component goes');
+});
+
 test('classes: clsx semantics', () => {
   assert.deepEqual([...$n.classes('a  b')], ['a', 'b']);
   assert.deepEqual([...$n.classes(['a', { b: true, c: false }, null])], ['a', 'b']);
