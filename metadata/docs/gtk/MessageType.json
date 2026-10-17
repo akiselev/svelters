@@ -1,0 +1,55 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The type of message being displayed in a [`MessageDialog`](xref:gtk:MessageDialog).",
+    "file": "gtk/gtkenums.h",
+    "line": 333,
+    "md": "The type of message being displayed in a [`MessageDialog`](xref:gtk:MessageDialog)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MessageType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "error": {
+      "brief": "Fatal error message",
+      "file": "gtk/gtkenums.h",
+      "line": 338,
+      "md": "Fatal error message"
+    },
+    "info": {
+      "brief": "Informational message",
+      "file": "gtk/gtkenums.h",
+      "line": 335,
+      "md": "Informational message"
+    },
+    "other": {
+      "brief": "None of the above",
+      "file": "gtk/gtkenums.h",
+      "line": 339,
+      "md": "None of the above"
+    },
+    "question": {
+      "brief": "Question requiring a choice",
+      "file": "gtk/gtkenums.h",
+      "line": 337,
+      "md": "Question requiring a choice"
+    },
+    "warning": {
+      "brief": "Non-fatal warning message",
+      "file": "gtk/gtkenums.h",
+      "line": 336,
+      "md": "Non-fatal warning message"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,97 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The widget attributes that can be used when creating a [`Constraint`](xref:gtk:Constraint).",
+    "file": "gtk/gtkenums.h",
+    "line": 1160,
+    "md": "The widget attributes that can be used when creating a [`Constraint`](xref:gtk:Constraint)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintAttribute",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "baseline": {
+      "brief": "The baseline of a widget",
+      "file": "gtk/gtkenums.h",
+      "line": 1182,
+      "md": "The baseline of a widget"
+    },
+    "bottom": {
+      "brief": "The bottom edge of a widget",
+      "file": "gtk/gtkenums.h",
+      "line": 1169,
+      "md": "The bottom edge of a widget"
+    },
+    "center_x": {
+      "brief": "The center of a widget, on the horizontal axis",
+      "file": "gtk/gtkenums.h",
+      "line": 1178,
+      "md": "The center of a widget, on the\n  horizontal axis"
+    },
+    "center_y": {
+      "brief": "The center of a widget, on the vertical axis",
+      "file": "gtk/gtkenums.h",
+      "line": 1180,
+      "md": "The center of a widget, on the\n  vertical axis"
+    },
+    "end": {
+      "brief": "The trailing edge of a widget, depending on text direction; equivalent to %GTK_CONSTRAINT_ATTRIBUTE_RIGHT for LTR languages, and %GTK_CONSTRAINT_ATTRIBUTE_LEFT for RTL ones",
+      "file": "gtk/gtkenums.h",
+      "line": 1173,
+      "md": "The trailing edge of a widget, depending\n  on text direction; equivalent to %GTK_CONSTRAINT_ATTRIBUTE_RIGHT for LTR\n  languages, and %GTK_CONSTRAINT_ATTRIBUTE_LEFT for RTL ones"
+    },
+    "height": {
+      "brief": "The height of a widget",
+      "file": "gtk/gtkenums.h",
+      "line": 1177,
+      "md": "The height of a widget"
+    },
+    "left": {
+      "brief": "The left edge of a widget, regardless of text direction",
+      "file": "gtk/gtkenums.h",
+      "line": 1164,
+      "md": "The left edge of a widget, regardless of\n  text direction"
+    },
+    "none": {
+      "brief": "No attribute, used for constant relations",
+      "file": "gtk/gtkenums.h",
+      "line": 1162,
+      "md": "No attribute, used for constant\n  relations"
+    },
+    "right": {
+      "brief": "The right edge of a widget, regardless of text direction",
+      "file": "gtk/gtkenums.h",
+      "line": 1166,
+      "md": "The right edge of a widget, regardless\n  of text direction"
+    },
+    "start": {
+      "brief": "The leading edge of a widget, depending on text direction; equivalent to %GTK_CONSTRAINT_ATTRIBUTE_LEFT for LTR languages, and %GTK_CONSTRAINT_ATTRIBUTE_RIGHT for RTL ones",
+      "file": "gtk/gtkenums.h",
+      "line": 1170,
+      "md": "The leading edge of a widget, depending\n  on text direction; equivalent to %GTK_CONSTRAINT_ATTRIBUTE_LEFT for LTR\n  languages, and %GTK_CONSTRAINT_ATTRIBUTE_RIGHT for RTL ones"
+    },
+    "top": {
+      "brief": "The top edge of a widget",
+      "file": "gtk/gtkenums.h",
+      "line": 1168,
+      "md": "The top edge of a widget"
+    },
+    "width": {
+      "brief": "The width of a widget",
+      "file": "gtk/gtkenums.h",
+      "line": 1176,
+      "md": "The width of a widget"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

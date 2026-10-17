@@ -1,0 +1,208 @@
+{
+  "doc": {
+    "brief": "The QTextBrowser class provides a rich text browser with hypertext navigation.",
+    "index_brief": "Rich text browser with hypertext navigation",
+    "url": "https://doc.qt.io/qt-6/qtextbrowser.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTextBrowser",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QString historyTitle(int i) const": {
+      "brief": "Returns the [documentTitle](xref:qt:QTextEdit)() of the HistoryItem.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#historyTitle"
+    },
+    "QStringList searchPaths() const": {
+      "brief": "This property holds the search paths used by the text browser to find supporting content",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#searchPaths-prop"
+    },
+    "QTextBrowser(QWidget *parent)": {
+      "brief": "Constructs an empty QTextBrowser with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#QTextBrowser"
+    },
+    "QTextDocument::ResourceType sourceType() const": {
+      "brief": "This property holds the type of the displayed document",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#sourceType-prop"
+    },
+    "QUrl historyUrl(int i) const": {
+      "brief": "Returns the url of the HistoryItem.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#historyUrl"
+    },
+    "QUrl source() const": {
+      "brief": "This property holds the name of the displayed document.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#source-prop"
+    },
+    "QVariant loadResource(int type, const QUrl &name) override": {
+      "brief": "Reimplements: [QTextEdit::loadResource](xref:qt:QTextEdit)(int type, const QUrl &name).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#loadResource"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::event](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#event"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QTextEdit::focusNextPrevChild](xref:qt:QTextEdit)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#focusNextPrevChild"
+    },
+    "bool isBackwardAvailable() const": {
+      "brief": "Returns `true` if the text browser can go backward in the document history using [backward](xref:qt:QTextBrowser)().",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#isBackwardAvailable"
+    },
+    "bool isForwardAvailable() const": {
+      "brief": "Returns `true` if the text browser can go forward in the document history using [forward](xref:qt:QTextBrowser)().",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#isForwardAvailable"
+    },
+    "bool openExternalLinks() const": {
+      "brief": "Specifies whether [QTextBrowser](xref:qt:QTextBrowser) should automatically open links to external sources using [QDesktopServices::openUrl](xref:qt:QDesktopServices)() instead of emitting the...",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#openExternalLinks-prop"
+    },
+    "bool openLinks() const": {
+      "brief": "This property specifies whether [QTextBrowser](xref:qt:QTextBrowser) should automatically open links the user tries to activate by mouse or keyboard.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#openLinks-prop"
+    },
+    "int backwardHistoryCount() const": {
+      "brief": "Returns the number of locations backward in the history.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#backwardHistoryCount"
+    },
+    "int forwardHistoryCount() const": {
+      "brief": "Returns the number of locations forward in the history.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#forwardHistoryCount"
+    },
+    "void anchorClicked(const QUrl &link)": {
+      "brief": "This signal is emitted when the user clicks an anchor.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#anchorClicked"
+    },
+    "void backward()": {
+      "brief": "Changes the document displayed to the previous document in the list of documents built by navigating links.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#backward"
+    },
+    "void backwardAvailable(bool available)": {
+      "brief": "This signal is emitted when the availability of [backward](xref:qt:QTextBrowser)() changes. *available* is false when the user is at [home](xref:qt:QTextBrowser)(); otherwise it is true.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#backwardAvailable"
+    },
+    "void clearHistory()": {
+      "brief": "Clears the history of visited documents and disables the forward and backward navigation.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#clearHistory"
+    },
+    "void doSetSource(const QUrl &url, QTextDocument::ResourceType type)": {
+      "brief": "Attempts to load the document at the given *url* with the specified *type*.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#doSetSource"
+    },
+    "void focusOutEvent(QFocusEvent *ev) override": {
+      "brief": "Reimplements: [QTextEdit::focusOutEvent](xref:qt:QTextEdit)(QFocusEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#focusOutEvent"
+    },
+    "void forward()": {
+      "brief": "Changes the document displayed to the next document in the list of documents built by navigating links.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#forward"
+    },
+    "void forwardAvailable(bool available)": {
+      "brief": "This signal is emitted when the availability of [forward](xref:qt:QTextBrowser)() changes. *available* is true after the user navigates [backward](xref:qt:QTextBrowser)() and false when the user...",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#forwardAvailable"
+    },
+    "void highlighted(const QUrl &link)": {
+      "brief": "This signal is emitted when the user has selected but not activated an anchor in the document.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#highlighted"
+    },
+    "void historyChanged()": {
+      "brief": "This signal is emitted when the history changes.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#historyChanged"
+    },
+    "void home()": {
+      "brief": "Changes the document displayed to be the first document from the history.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#home"
+    },
+    "void keyPressEvent(QKeyEvent *ev) override": {
+      "brief": "Reimplements: [QTextEdit::keyPressEvent](xref:qt:QTextEdit)(QKeyEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#keyPressEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QTextEdit::mouseMoveEvent](xref:qt:QTextEdit)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QTextEdit::mousePressEvent](xref:qt:QTextEdit)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QTextEdit::mouseReleaseEvent](xref:qt:QTextEdit)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QTextEdit::paintEvent](xref:qt:QTextEdit)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#paintEvent"
+    },
+    "void reload()": {
+      "brief": "Reloads the current set source.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#reload"
+    },
+    "void setOpenExternalLinks(bool open)": {
+      "brief": "Specifies whether [QTextBrowser](xref:qt:QTextBrowser) should automatically open links to external sources using [QDesktopServices::openUrl](xref:qt:QDesktopServices)() instead of emitting the...",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#openExternalLinks-prop"
+    },
+    "void setOpenLinks(bool open)": {
+      "brief": "This property specifies whether [QTextBrowser](xref:qt:QTextBrowser) should automatically open links the user tries to activate by mouse or keyboard.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#openLinks-prop"
+    },
+    "void setSearchPaths(const QStringList &paths)": {
+      "brief": "This property holds the search paths used by the text browser to find supporting content",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#searchPaths-prop"
+    },
+    "void setSource(const QUrl &url, QTextDocument::ResourceType type)": {
+      "brief": "Attempts to load the document at the given *url* with the specified *type*.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#setSource"
+    },
+    "void sourceChanged(const QUrl &src)": {
+      "brief": "This signal is emitted when the source has changed, *src* being the new source.",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#sourceChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "modified": {
+      "brief": "Whether the contents of the text browser have been modified",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#modified-prop"
+    },
+    "openExternalLinks": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#openExternalLinks-prop"
+    },
+    "openLinks": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#openLinks-prop"
+    },
+    "readOnly": {
+      "brief": "Whether the text browser is read-only",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#readOnly-prop"
+    },
+    "searchPaths": {
+      "brief": "The search paths used by the text browser to find supporting content",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#searchPaths-prop"
+    },
+    "source": {
+      "brief": "The name of the displayed document",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#source-prop"
+    },
+    "sourceType": {
+      "brief": "The type of the displayed document",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#sourceType-prop"
+    },
+    "undoRedoEnabled": {
+      "brief": "Whether the text browser supports undo/redo operations",
+      "url": "https://doc.qt.io/qt-6/qtextbrowser.html#undoRedoEnabled-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible values for the %GTK_ACCESSIBLE_PROPERTY_SORT accessible property.",
+    "file": "gtk/gtkenums.h",
+    "line": 1895,
+    "md": "The possible values for the %GTK_ACCESSIBLE_PROPERTY_SORT\naccessible property."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleSort",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "ascending": {
+      "brief": "Items are sorted in ascending order by this column.",
+      "file": "gtk/gtkenums.h",
+      "line": 1898,
+      "md": "Items are sorted in ascending order by this column."
+    },
+    "descending": {
+      "brief": "Items are sorted in descending order by this column.",
+      "file": "gtk/gtkenums.h",
+      "line": 1899,
+      "md": "Items are sorted in descending order by this column."
+    },
+    "none": {
+      "brief": "There is no defined sort applied to the column.",
+      "file": "gtk/gtkenums.h",
+      "line": 1897,
+      "md": "There is no defined sort applied to the column."
+    },
+    "other": {
+      "brief": "A sort algorithm other than ascending or descending has been applied.",
+      "file": "gtk/gtkenums.h",
+      "line": 1900,
+      "md": "A sort algorithm other than ascending or\n   descending has been applied."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

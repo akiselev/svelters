@@ -1,0 +1,691 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new text buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1120,
+      "md": "Creates a new text buffer."
+    }
+  },
+  "doc": {
+    "brief": "Stores text and attributes for display in a `GtkTextView`.",
+    "file": "gtk/gtktextbuffer.c",
+    "line": 43,
+    "md": "Stores text and attributes for display in a `GtkTextView`.\n\nYou may wish to begin by reading the\n[text widget conceptual overview](section-text-widget.html),\nwhich gives an overview of all the objects and data types\nrelated to the text widget and how they work together.\n\nGtkTextBuffer can support undoing changes to the buffer\ncontent, see [`TextBuffer.set_enable_undo()`](xref:gtk:Gtk.TextBuffer#method:set_enable_undo)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_commit_notify": {
+      "brief": "Adds a [`TextBufferCommitNotify`](xref:gtk:Gtk.TextBufferCommitNotify) to be called when a change is to be made to the [`TextBuffer`](xref:gtk:Gtk.TextBuffer).",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5860,
+      "md": "Adds a [`TextBufferCommitNotify`](xref:gtk:Gtk.TextBufferCommitNotify) to be called when a change\nis to be made to the [`TextBuffer`](xref:gtk:Gtk.TextBuffer).\n\nFunctions are explicitly forbidden from making changes to the\n[`TextBuffer`](xref:gtk:Gtk.TextBuffer) from this callback. It is intended for tracking\nchanges to the buffer only.\n\nIt may be advantageous to use [`TextBufferCommitNotify`](xref:gtk:Gtk.TextBufferCommitNotify) over\nconnecting to the [`TextBuffer::insert-text`](xref:gtk:Gtk.TextBuffer#event:insert-text) or\n[`TextBuffer::delete-range`](xref:gtk:Gtk.TextBuffer#event:delete-range) signals to avoid ordering issues with\nother signal handlers which may further modify the [`TextBuffer`](xref:gtk:Gtk.TextBuffer).",
+      "since": "4.16"
+    },
+    "add_mark": {
+      "brief": "Adds the mark at position `where`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2608,
+      "md": "Adds the mark at position `where`.\n\nThe mark must not be added to another buffer, and if its name\nis not `NULL` then there must not be another mark in the buffer\nwith the same name.\n\nEmits the [`TextBuffer::mark-set`](xref:gtk:Gtk.TextBuffer#event:mark-set) signal as notification\nof the mark's initial placement."
+    },
+    "add_selection_clipboard": {
+      "brief": "Adds `clipboard` to the list of clipboards in which the selection contents of `buffer` are available.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3959,
+      "md": "Adds `clipboard` to the list of clipboards in which the selection\ncontents of `buffer` are available.\n\nIn most cases, `clipboard` will be the `GdkClipboard` returned by\n[`Widget.get_primary_clipboard()`](xref:gtk:Gtk.Widget#method:get_primary_clipboard) for a view of `buffer`."
+    },
+    "apply_tag": {
+      "brief": "Emits the “apply-tag” signal on `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3094,
+      "md": "Emits the “apply-tag” signal on `buffer`.\n\nThe default handler for the signal applies\n`tag` to the given range. `start` and `end` do\nnot have to be in order."
+    },
+    "apply_tag_by_name": {
+      "brief": "Emits the “apply-tag” signal on `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3155,
+      "md": "Emits the “apply-tag” signal on `buffer`.\n\nCalls [`TextTagTable.lookup()`](xref:gtk:Gtk.TextTagTable#method:lookup) on the buffer’s\ntag table to get a `GtkTextTag`, then calls\n[`TextBuffer.apply_tag()`](xref:gtk:Gtk.TextBuffer#method:apply_tag)."
+    },
+    "backspace": {
+      "brief": "Performs the appropriate action as if the user hit the delete key with the cursor at the position specified by `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4144,
+      "md": "Performs the appropriate action as if the user hit the delete\nkey with the cursor at the position specified by `iter`.\n\nIn the normal case a single character will be deleted, but when\ncombining accents are involved, more than one character can\nbe deleted, and when precomposed character and accent combinations\nare involved, less than one character will be deleted.\n\nBecause the buffer is modified, all outstanding iterators become\ninvalid after calling this function; however, the `iter` will be\nre-initialized to point to the location where text was deleted."
+    },
+    "begin_irreversible_action": {
+      "brief": "Denotes the beginning of an action that may not be undone.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5177,
+      "md": "Denotes the beginning of an action that may not be undone.\n\nThis will cause any previous operations in the undo/redo queue\nto be cleared.\n\nThis should be paired with a call to\n[`TextBuffer.end_irreversible_action()`](xref:gtk:Gtk.TextBuffer#method:end_irreversible_action) after the irreversible\naction has completed.\n\nYou may nest calls to gtk_text_buffer_begin_irreversible_action()\nand gtk_text_buffer_end_irreversible_action() pairs."
+    },
+    "begin_user_action": {
+      "brief": "Called to indicate that the buffer operations between here and a call to gtk_text_buffer_end_user_action() are part of a single user-visible operation.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4361,
+      "md": "Called to indicate that the buffer operations between here and a\ncall to gtk_text_buffer_end_user_action() are part of a single\nuser-visible operation.\n\nThe operations between gtk_text_buffer_begin_user_action() and\ngtk_text_buffer_end_user_action() can then be grouped when creating\nan undo stack. `GtkTextBuffer` maintains a count of calls to\ngtk_text_buffer_begin_user_action() that have not been closed with\na call to gtk_text_buffer_end_user_action(), and emits the\n“begin-user-action” and “end-user-action” signals only for the\noutermost pair of calls. This allows you to build user actions\nfrom other user actions.\n\nThe “interactive” buffer mutation functions, such as\n[`TextBuffer.insert_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_interactive), automatically call\nbegin/end user action around the buffer operations they perform,\nso there's no need to add extra calls if you user action consists\nsolely of a single call to one of those functions."
+    },
+    "copy_clipboard": {
+      "brief": "Copies the currently-selected text to a clipboard.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4321,
+      "md": "Copies the currently-selected text to a clipboard."
+    },
+    "create_child_anchor": {
+      "brief": "Creates and inserts a child anchor.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2456,
+      "md": "Creates and inserts a child anchor.\n\nThis is a convenience function which simply creates a child anchor\nwith [`TextChildAnchor.new()`](xref:gtk:Gtk.TextChildAnchor#constructor:new) and inserts it into the buffer\nwith [`TextBuffer.insert_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:insert_child_anchor).\n\nThe new anchor is owned by the buffer; no reference count is\nreturned to the caller of this function."
+    },
+    "create_mark": {
+      "brief": "Creates a mark at position `where`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2567,
+      "md": "Creates a mark at position `where`.\n\nIf `mark_name` is `NULL`, the mark is anonymous; otherwise, the mark\ncan be retrieved by name using [`TextBuffer.get_mark()`](xref:gtk:Gtk.TextBuffer#method:get_mark).\nIf a mark has left gravity, and text is inserted at the mark’s\ncurrent location, the mark will be moved to the left of the\nnewly-inserted text. If the mark has right gravity\n(`left_gravity` = `FALSE`), the mark will end up on the right of\nnewly-inserted text. The standard left-to-right cursor is a mark\nwith right gravity (when you type, the cursor stays on the right\nside of the text you’re typing).\n\nThe caller of this function does not own a\nreference to the returned `GtkTextMark`, so you can ignore the\nreturn value if you like. Marks are owned by the buffer and go\naway when the buffer does.\n\nEmits the [`TextBuffer::mark-set`](xref:gtk:Gtk.TextBuffer#event:mark-set) signal as notification\nof the mark's initial placement."
+    },
+    "create_tag": {
+      "brief": "Creates a tag and adds it to the tag table for `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2948,
+      "md": "Creates a tag and adds it to the tag table for `buffer`.\n\nEquivalent to calling [`TextTag.new()`](xref:gtk:Gtk.TextTag#constructor:new) and then adding the\ntag to the buffer’s tag table. The returned tag is owned by\nthe buffer’s tag table, so the ref count will be equal to one.\n\nIf `tag_name` is `NULL`, the tag is anonymous.\n\nIf `tag_name` is non-`NULL`, a tag called `tag_name` must not already\nexist in the tag table for this buffer.\n\nThe `first_property_name` argument and subsequent arguments are a list\nof properties to set on the tag, as with g_object_set()."
+    },
+    "cut_clipboard": {
+      "brief": "Copies the currently-selected text to a clipboard, then deletes said text if it’s editable.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4302,
+      "md": "Copies the currently-selected text to a clipboard,\nthen deletes said text if it’s editable."
+    },
+    "delete": {
+      "brief": "Deletes text between `start` and `end`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2114,
+      "md": "Deletes text between `start` and `end`.\n\nThe order of `start` and `end` is not actually relevant;\ngtk_text_buffer_delete() will reorder them.\n\nThis function actually emits the “delete-range” signal, and\nthe default handler of that signal deletes the text. Because the\nbuffer is modified, all outstanding iterators become invalid after\ncalling this function; however, the `start` and `end` will be\nre-initialized to point to the location where text was deleted."
+    },
+    "delete_interactive": {
+      "brief": "Deletes all editable text in the given range.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2145,
+      "md": "Deletes all editable text in the given range.\n\nCalls [`TextBuffer.delete()`](xref:gtk:Gtk.TextBuffer#method:delete) for each editable\nsub-range of [`start`,`end`). `start` and `end` are revalidated\nto point to the location of the last deleted range, or left\nuntouched if no text was deleted."
+    },
+    "delete_mark": {
+      "brief": "Deletes `mark`, so that it’s no longer located anywhere in the buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2691,
+      "md": "Deletes `mark`, so that it’s no longer located anywhere in the\nbuffer.\n\nRemoves the reference the buffer holds to the mark, so if\nyou haven’t called g_object_ref() on the mark, it will be freed.\nEven if the mark isn’t freed, most operations on `mark` become\ninvalid, until it gets added to a buffer again with\n[`TextBuffer.add_mark()`](xref:gtk:Gtk.TextBuffer#method:add_mark). Use [`TextMark.get_deleted()`](xref:gtk:Gtk.TextMark#method:get_deleted)\nto find out if a mark has been removed from its buffer.\n\nThe [`TextBuffer::mark-deleted`](xref:gtk:Gtk.TextBuffer#event:mark-deleted) signal will be emitted as\nnotification after the mark is deleted."
+    },
+    "delete_mark_by_name": {
+      "brief": "Deletes the mark named `name`; the mark must exist.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2787,
+      "md": "Deletes the mark named `name`; the mark must exist.\n\nSee [`TextBuffer.delete_mark()`](xref:gtk:Gtk.TextBuffer#method:delete_mark) for details."
+    },
+    "delete_selection": {
+      "brief": "Deletes the range between the “insert” and “selection_bound” marks, that is, the currently-selected text.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4107,
+      "md": "Deletes the range between the “insert” and “selection_bound” marks,\nthat is, the currently-selected text.\n\nIf `interactive` is `TRUE`, the editability of the selection will be\nconsidered (users can’t delete uneditable text)."
+    },
+    "end_irreversible_action": {
+      "brief": "Denotes the end of an action that may not be undone.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5201,
+      "md": "Denotes the end of an action that may not be undone.\n\nThis will cause any previous operations in the undo/redo\nqueue to be cleared.\n\nThis should be called after completing modifications to the\ntext buffer after [`TextBuffer.begin_irreversible_action()`](xref:gtk:Gtk.TextBuffer#method:begin_irreversible_action)\nwas called.\n\nYou may nest calls to gtk_text_buffer_begin_irreversible_action()\nand gtk_text_buffer_end_irreversible_action() pairs."
+    },
+    "end_user_action": {
+      "brief": "Ends a user-visible operation.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4399,
+      "md": "Ends a user-visible operation.\n\nShould be paired with a call to\n[`TextBuffer.begin_user_action()`](xref:gtk:Gtk.TextBuffer#method:begin_user_action).\nSee that function for a full explanation."
+    },
+    "get_bounds": {
+      "brief": "Retrieves the first and last iterators in the buffer, i.e. the entire buffer lies within the range [`start`,`end`).",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3557,
+      "md": "Retrieves the first and last iterators in the buffer, i.e. the\nentire buffer lies within the range [`start`,`end`)."
+    },
+    "get_can_redo": {
+      "brief": "Gets whether there is a redoable action in the history.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5008,
+      "md": "Gets whether there is a redoable action in the history."
+    },
+    "get_can_undo": {
+      "brief": "Gets whether there is an undoable action in the history.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4992,
+      "md": "Gets whether there is an undoable action in the history."
+    },
+    "get_char_count": {
+      "brief": "Gets the number of characters in the buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3673,
+      "md": "Gets the number of characters in the buffer.\n\nNote that characters and bytes are not the same, you can’t e.g.\nexpect the contents of the buffer in string form to be this\nmany bytes long.\n\nThe character count is cached, so this function is very fast."
+    },
+    "get_enable_undo": {
+      "brief": "Gets whether the buffer is saving modifications to the buffer to allow for undo and redo actions.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5125,
+      "md": "Gets whether the buffer is saving modifications to the buffer\nto allow for undo and redo actions.\n\nSee [`TextBuffer.begin_irreversible_action()`](xref:gtk:Gtk.TextBuffer#method:begin_irreversible_action) and\n[`TextBuffer.end_irreversible_action()`](xref:gtk:Gtk.TextBuffer#method:end_irreversible_action) to create\nchanges to the buffer that cannot be undone."
+    },
+    "get_end_iter": {
+      "brief": "Initializes `iter` with the “end iterator,” one past the last valid character in the text buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3533,
+      "md": "Initializes `iter` with the “end iterator,” one past the last valid\ncharacter in the text buffer.\n\nIf dereferenced with [`TextIter.get_char()`](xref:gtk:Gtk.TextIter#method:get_char), the end\niterator has a character value of 0.\nThe entire buffer lies in the range from the first position in\nthe buffer (call [`TextBuffer.get_start_iter()`](xref:gtk:Gtk.TextBuffer#method:get_start_iter) to get\ncharacter position 0) to the end iterator."
+    },
+    "get_has_selection": {
+      "brief": "Indicates whether the buffer has some text currently selected.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3634,
+      "md": "Indicates whether the buffer has some text currently selected."
+    },
+    "get_insert": {
+      "brief": "Returns the mark that represents the cursor (insertion point).",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2816,
+      "md": "Returns the mark that represents the cursor (insertion point).\n\nEquivalent to calling [`TextBuffer.get_mark()`](xref:gtk:Gtk.TextBuffer#method:get_mark)\nto get the mark named “insert”, but very slightly more\nefficient, and involves less typing."
+    },
+    "get_iter_at_child_anchor": {
+      "brief": "Obtains the location of `anchor` within `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2863,
+      "md": "Obtains the location of `anchor` within `buffer`."
+    },
+    "get_iter_at_line": {
+      "brief": "Initializes `iter` to the start of the given line.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3465,
+      "md": "Initializes `iter` to the start of the given line.\n\nIf `line_number` is greater than or equal to the number of lines\nin the `buffer`, the end iterator is returned."
+    },
+    "get_iter_at_line_index": {
+      "brief": "Obtains an iterator pointing to `byte_index` within the given line.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3414,
+      "md": "Obtains an iterator pointing to `byte_index` within the given line.\n\n`byte_index` must be the start of a UTF-8 character. Note bytes, not\ncharacters; UTF-8 may encode one character as multiple bytes.\n\nIf `line_number` is greater than or equal to the number of lines in the `buffer`,\nthe end iterator is returned. And if `byte_index` is off the\nend of the line, the iterator at the end of the line is returned."
+    },
+    "get_iter_at_line_offset": {
+      "brief": "Obtains an iterator pointing to `char_offset` within the given line.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3363,
+      "md": "Obtains an iterator pointing to `char_offset` within the given line.\n\nNote characters, not bytes; UTF-8 may encode one character as multiple\nbytes.\n\nIf `line_number` is greater than or equal to the number of lines in the `buffer`,\nthe end iterator is returned. And if `char_offset` is off the\nend of the line, the iterator at the end of the line is returned."
+    },
+    "get_iter_at_mark": {
+      "brief": "Initializes `iter` with the current position of `mark`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2669,
+      "md": "Initializes `iter` with the current position of `mark`."
+    },
+    "get_iter_at_offset": {
+      "brief": "Initializes `iter` to a position `char_offset` chars from the start of the entire buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3489,
+      "md": "Initializes `iter` to a position `char_offset` chars from the start\nof the entire buffer.\n\nIf `char_offset` is -1 or greater than the number\nof characters in the buffer, `iter` is initialized to the end iterator,\nthe iterator one past the last valid character in the buffer."
+    },
+    "get_line_count": {
+      "brief": "Obtains the number of lines in the buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3655,
+      "md": "Obtains the number of lines in the buffer.\n\nThis value is cached, so the function is very fast."
+    },
+    "get_mark": {
+      "brief": "Returns the mark named `name` in buffer `buffer`, or `NULL` if no such mark exists in the buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2732,
+      "md": "Returns the mark named `name` in buffer `buffer`, or `NULL` if no such\nmark exists in the buffer."
+    },
+    "get_max_undo_levels": {
+      "brief": "Gets the maximum number of undo levels to perform.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5225,
+      "md": "Gets the maximum number of undo levels to perform.\n\nIf 0, unlimited undo actions may be performed. Note that this may\nhave a memory usage impact as it requires storing an additional\ncopy of the inserted or removed text within the text buffer."
+    },
+    "get_modified": {
+      "brief": "Indicates whether the buffer has been modified since the last call to [`TextBuffer.set_modified()`](xref:gtk:Gtk.TextBuffer#method:set_modified) set the modification flag to `FALSE`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3583,
+      "md": "Indicates whether the buffer has been modified since the last call\nto [`TextBuffer.set_modified()`](xref:gtk:Gtk.TextBuffer#method:set_modified) set the modification flag to\n`FALSE`.\n\nUsed for example to enable a “save” function in a text editor."
+    },
+    "get_selection_bound": {
+      "brief": "Returns the mark that represents the selection bound.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2836,
+      "md": "Returns the mark that represents the selection bound.\n\nEquivalent to calling [`TextBuffer.get_mark()`](xref:gtk:Gtk.TextBuffer#method:get_mark)\nto get the mark named “selection_bound”, but very slightly\nmore efficient, and involves less typing.\n\nThe currently-selected text in `buffer` is the region between the\n“selection_bound” and “insert” marks. If “selection_bound” and\n“insert” are in the same place, then there is no current selection.\n[`TextBuffer.get_selection_bounds()`](xref:gtk:Gtk.TextBuffer#method:get_selection_bounds) is another convenient\nfunction for handling the selection, if you just want to know whether\nthere’s a selection and what its bounds are."
+    },
+    "get_selection_bounds": {
+      "brief": "Returns `TRUE` if some text is selected; places the bounds of the selection in `start` and `end`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4335,
+      "md": "Returns `TRUE` if some text is selected; places the bounds\nof the selection in `start` and `end`.\n\nIf the selection has length 0, then `start` and `end` are filled\nin with the same value. `start` and `end` will be in ascending order.\nIf `start` and `end` are `NULL`, then they are not filled in, but the\nreturn value still indicates whether text is selected."
+    },
+    "get_selection_content": {
+      "brief": "Get a content provider for this buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4284,
+      "md": "Get a content provider for this buffer.\n\nIt can be used to make the content of `buffer` available\nin a `GdkClipboard`, see [`Clipboard.set_content()`](xref:gtk:Gdk.Clipboard#method:set_content)."
+    },
+    "get_slice": {
+      "brief": "Returns the text in the range [`start`,`end`).",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2326,
+      "md": "Returns the text in the range [`start`,`end`).\n\nExcludes undisplayed text (text marked with tags that set the\ninvisibility attribute) if `include_hidden_chars` is `FALSE`.\nThe returned string includes a 0xFFFC character whenever the\nbuffer contains embedded images, so byte and character indexes\ninto the returned string do correspond to byte and character\nindexes into the buffer. Contrast with [`TextBuffer.get_text()`](xref:gtk:Gtk.TextBuffer#method:get_text).\nNote that 0xFFFC can occur in normal text as well, so it is not a\nreliable indicator that a paintable or widget is in the buffer."
+    },
+    "get_start_iter": {
+      "brief": "Initialized `iter` with the first position in the text buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3513,
+      "md": "Initialized `iter` with the first position in the text buffer.\n\nThis is the same as using [`TextBuffer.get_iter_at_offset()`](xref:gtk:Gtk.TextBuffer#method:get_iter_at_offset)\nto get the iter at character offset 0."
+    },
+    "get_tag_table": {
+      "brief": "Get the `GtkTextTagTable` associated with this buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1192,
+      "md": "Get the `GtkTextTagTable` associated with this buffer."
+    },
+    "get_text": {
+      "brief": "Returns the text in the range [`start`,`end`).",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2290,
+      "md": "Returns the text in the range [`start`,`end`).\n\nExcludes undisplayed text (text marked with tags that set the\ninvisibility attribute) if `include_hidden_chars` is `FALSE`.\nDoes not include characters representing embedded images, so\nbyte and character indexes into the returned string do not\ncorrespond to byte and character indexes into the buffer.\nContrast with [`TextBuffer.get_slice()`](xref:gtk:Gtk.TextBuffer#method:get_slice)."
+    },
+    "insert": {
+      "brief": "Inserts `len` bytes of `text` at position `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1319,
+      "md": "Inserts `len` bytes of `text` at position `iter`.\n\nIf `len` is -1, `text` must be nul-terminated and will be inserted in its\nentirety. Emits the “insert-text” signal; insertion actually occurs\nin the default handler for the signal. `iter` is invalidated when\ninsertion occurs (because the buffer contents change), but the\ndefault signal handler revalidates it to point to the end of the\ninserted text."
+    },
+    "insert_at_cursor": {
+      "brief": "Inserts `text` in `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1349,
+      "md": "Inserts `text` in `buffer`.\n\nSimply calls [`TextBuffer.insert()`](xref:gtk:Gtk.TextBuffer#method:insert),\nusing the current cursor position as the insertion point."
+    },
+    "insert_child_anchor": {
+      "brief": "Inserts a child widget anchor into the text buffer at `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2422,
+      "md": "Inserts a child widget anchor into the text buffer at `iter`.\n\nThe anchor will be counted as one character in character counts, and\nwhen obtaining the buffer contents as a string, will be represented\nby the Unicode “object replacement character” 0xFFFC. Note that the\n“slice” variants for obtaining portions of the buffer as a string\ninclude this character for child anchors, but the “text” variants do\nnot. E.g. see [`TextBuffer.get_slice()`](xref:gtk:Gtk.TextBuffer#method:get_slice) and\n[`TextBuffer.get_text()`](xref:gtk:Gtk.TextBuffer#method:get_text).\n\nConsider [`TextBuffer.create_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:create_child_anchor) as a more\nconvenient alternative to this function. The buffer will add a\nreference to the anchor, so you can unref it after insertion."
+    },
+    "insert_interactive": {
+      "brief": "Inserts `text` in `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1376,
+      "md": "Inserts `text` in `buffer`.\n\nLike [`TextBuffer.insert()`](xref:gtk:Gtk.TextBuffer#method:insert), but the insertion will not occur\nif `iter` is at a non-editable location in the buffer. Usually you\nwant to prevent insertions at ineditable locations if the insertion\nresults from a user action (is interactive).\n\n`default_editable` indicates the editability of text that doesn't\nhave a tag affecting editability applied to it. Typically the\nresult of [`TextView.get_editable()`](xref:gtk:Gtk.TextView#method:get_editable) is appropriate here."
+    },
+    "insert_interactive_at_cursor": {
+      "brief": "Inserts `text` in `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1419,
+      "md": "Inserts `text` in `buffer`.\n\nCalls [`TextBuffer.insert_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_interactive)\nat the cursor position.\n\n`default_editable` indicates the editability of text that doesn't\nhave a tag affecting editability applied to it. Typically the\nresult of [`TextView.get_editable()`](xref:gtk:Gtk.TextView#method:get_editable) is appropriate here."
+    },
+    "insert_markup": {
+      "brief": "Inserts the text in `markup` at position `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4941,
+      "md": "Inserts the text in `markup` at position `iter`.\n\n`markup` will be inserted in its entirety and must be nul-terminated\nand valid UTF-8. Emits the [`TextBuffer::insert-text`](xref:gtk:Gtk.TextBuffer#event:insert-text) signal,\npossibly multiple times; insertion actually occurs in the default handler\nfor the signal. `iter` will point to the end of the inserted text on return."
+    },
+    "insert_paintable": {
+      "brief": "Inserts an image into the text buffer at `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2378,
+      "md": "Inserts an image into the text buffer at `iter`.\n\nThe image will be counted as one character in character counts,\nand when obtaining the buffer contents as a string, will be\nrepresented by the Unicode “object replacement character” 0xFFFC.\nNote that the “slice” variants for obtaining portions of the buffer\nas a string include this character for paintable, but the “text”\nvariants do not. e.g. see [`TextBuffer.get_slice()`](xref:gtk:Gtk.TextBuffer#method:get_slice) and\n[`TextBuffer.get_text()`](xref:gtk:Gtk.TextBuffer#method:get_text)."
+    },
+    "insert_range": {
+      "brief": "Copies text, tags, and paintables between `start` and `end` and inserts the copy at `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1806,
+      "md": "Copies text, tags, and paintables between `start` and `end`\nand inserts the copy at `iter`.\n\nThe order of `start` and `end` doesn’t matter.\n\nUsed instead of simply getting/inserting text because it preserves\nimages and tags. If `start` and `end` are in a different buffer from\n`buffer`, the two buffers must share the same tag table.\n\nImplemented via emissions of the ::insert-text and ::apply-tag signals,\nso expect those."
+    },
+    "insert_range_interactive": {
+      "brief": "Copies text, tags, and paintables between `start` and `end` and inserts the copy at `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1844,
+      "md": "Copies text, tags, and paintables between `start` and `end`\nand inserts the copy at `iter`.\n\nSame as [`TextBuffer.insert_range()`](xref:gtk:Gtk.TextBuffer#method:insert_range), but does nothing\nif the insertion point isn’t editable. The `default_editable`\nparameter indicates whether the text is editable at `iter` if\nno tags enclosing `iter` affect editability. Typically the result\nof [`TextView.get_editable()`](xref:gtk:Gtk.TextView#method:get_editable) is appropriate here."
+    },
+    "insert_with_tags": {
+      "brief": "Inserts `text` into `buffer` at `iter`, applying the list of tags to the newly-inserted text.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1888,
+      "md": "Inserts `text` into `buffer` at `iter`, applying the list of tags to\nthe newly-inserted text.\n\nThe last tag specified must be `NULL` to terminate the list.\nEquivalent to calling [`TextBuffer.insert()`](xref:gtk:Gtk.TextBuffer#method:insert),\nthen [`TextBuffer.apply_tag()`](xref:gtk:Gtk.TextBuffer#method:apply_tag) on the inserted text;\nthis is just a convenience function."
+    },
+    "insert_with_tags_by_name": {
+      "brief": "Inserts `text` into `buffer` at `iter`, applying the list of tags to the newly-inserted text.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1944,
+      "md": "Inserts `text` into `buffer` at `iter`, applying the list of tags to\nthe newly-inserted text.\n\nSame as [`TextBuffer.insert_with_tags()`](xref:gtk:Gtk.TextBuffer#method:insert_with_tags), but allows you\nto pass in tag names instead of tag objects."
+    },
+    "move_mark": {
+      "brief": "Moves `mark` to the new location `where`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2646,
+      "md": "Moves `mark` to the new location `where`.\n\nEmits the [`TextBuffer::mark-set`](xref:gtk:Gtk.TextBuffer#event:mark-set) signal\nas notification of the move."
+    },
+    "move_mark_by_name": {
+      "brief": "Moves the mark named `name` (which must exist) to location `where`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2756,
+      "md": "Moves the mark named `name` (which must exist) to location `where`.\n\nSee [`TextBuffer.move_mark()`](xref:gtk:Gtk.TextBuffer#method:move_mark) for details."
+    },
+    "paste_clipboard": {
+      "brief": "Pastes the contents of a clipboard.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4049,
+      "md": "Pastes the contents of a clipboard.\n\nIf `override_location` is `NULL`, the pasted text will be inserted\nat the cursor position, or the buffer selection will be replaced\nif the selection is non-empty.\n\nNote: pasting is asynchronous, that is, we’ll ask for the paste data\nand return, and at some point later after the main loop runs, the paste\ndata will be inserted."
+    },
+    "place_cursor": {
+      "brief": "This function moves the “insert” and “selection_bound” marks simultaneously.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2886,
+      "md": "This function moves the “insert” and “selection_bound” marks\nsimultaneously.\n\nIf you move them to the same place in two steps with\n[`TextBuffer.move_mark()`](xref:gtk:Gtk.TextBuffer#method:move_mark), you will temporarily select a\nregion in between their old and new locations, which can be pretty\ninefficient since the temporarily-selected region will force stuff\nto be recalculated. This function moves them as a unit, which can\nbe optimized."
+    },
+    "redo": {
+      "brief": "Redoes the next redoable action on the buffer, if there is one.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5110,
+      "md": "Redoes the next redoable action on the buffer, if there is one."
+    },
+    "remove_all_tags": {
+      "brief": "Removes all tags in the range between `start` and `end`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3247,
+      "md": "Removes all tags in the range between `start` and `end`.\n\nBe careful with this function; it could remove tags added in code\nunrelated to the code you’re currently writing. That is, using this\nfunction is probably a bad idea if you have two or more unrelated\ncode sections that add tags."
+    },
+    "remove_commit_notify": {
+      "brief": "Removes the `GtkTextBufferCommitNotify` handler previously registered with [`TextBuffer.add_commit_notify()`](xref:gtk:Gtk.TextBuffer#method:add_commit_notify).",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5915,
+      "md": "Removes the `GtkTextBufferCommitNotify` handler previously registered\nwith [`TextBuffer.add_commit_notify()`](xref:gtk:Gtk.TextBuffer#method:add_commit_notify).\n\nThis may result in the `user_data_destroy` being called that was passed when registering\nthe commit notify functions.",
+      "since": "4.16"
+    },
+    "remove_selection_clipboard": {
+      "brief": "Removes a `GdkClipboard` added with [`TextBuffer.add_selection_clipboard()`](xref:gtk:Gtk.TextBuffer#method:add_selection_clipboard)",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3996,
+      "md": "Removes a `GdkClipboard` added with\n[`TextBuffer.add_selection_clipboard()`](xref:gtk:Gtk.TextBuffer#method:add_selection_clipboard)"
+    },
+    "remove_tag": {
+      "brief": "Emits the “remove-tag” signal.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3124,
+      "md": "Emits the “remove-tag” signal.\n\nThe default handler for the signal removes all occurrences\nof `tag` from the given range. `start` and `end` don’t have\nto be in order."
+    },
+    "remove_tag_by_name": {
+      "brief": "Emits the “remove-tag” signal.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3195,
+      "md": "Emits the “remove-tag” signal.\n\nCalls [`TextTagTable.lookup()`](xref:gtk:Gtk.TextTagTable#method:lookup) on the buffer’s\ntag table to get a `GtkTextTag`, then calls\n[`TextBuffer.remove_tag()`](xref:gtk:Gtk.TextBuffer#method:remove_tag)."
+    },
+    "select_range": {
+      "brief": "This function moves the “insert” and “selection_bound” marks simultaneously.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2908,
+      "md": "This function moves the “insert” and “selection_bound” marks\nsimultaneously.\n\nIf you move them in two steps with\n[`TextBuffer.move_mark()`](xref:gtk:Gtk.TextBuffer#method:move_mark), you will temporarily select a\nregion in between their old and new locations, which can be pretty\ninefficient since the temporarily-selected region will force stuff\nto be recalculated. This function moves them as a unit, which can\nbe optimized."
+    },
+    "set_enable_undo": {
+      "brief": "Sets whether or not to enable undoable actions in the text buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5146,
+      "md": "Sets whether or not to enable undoable actions in the text buffer.\n\nUndoable actions in this context are changes to the text content of\nthe buffer. Changes to tags and marks are not tracked.\n\nIf enabled, the user will be able to undo the last number of actions\nup to [`TextBuffer.get_max_undo_levels()`](xref:gtk:Gtk.TextBuffer#method:get_max_undo_levels).\n\nSee [`TextBuffer.begin_irreversible_action()`](xref:gtk:Gtk.TextBuffer#method:begin_irreversible_action) and\n[`TextBuffer.end_irreversible_action()`](xref:gtk:Gtk.TextBuffer#method:end_irreversible_action) to create\nchanges to the buffer that cannot be undone."
+    },
+    "set_max_undo_levels": {
+      "brief": "Sets the maximum number of undo levels to perform.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5245,
+      "md": "Sets the maximum number of undo levels to perform.\n\nIf 0, unlimited undo actions may be performed. Note that this may\nhave a memory usage impact as it requires storing an additional\ncopy of the inserted or removed text within the text buffer."
+    },
+    "set_modified": {
+      "brief": "Used to keep track of whether the buffer has been modified since the last time it was saved.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3603,
+      "md": "Used to keep track of whether the buffer has been\nmodified since the last time it was saved.\n\nWhenever the buffer is saved to disk, call\n`gtk_text_buffer_set_modified (`buffer`, FALSE)`.\nWhen the buffer is modified, it will automatically\ntoggle on the modified bit again. When the modified\nbit flips, the buffer emits the\n[`TextBuffer::modified-changed`](xref:gtk:Gtk.TextBuffer#event:modified-changed) signal."
+    },
+    "set_text": {
+      "brief": "Deletes current contents of `buffer`, and inserts `text` instead.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 1208,
+      "md": "Deletes current contents of `buffer`, and inserts `text` instead. This is\nautomatically marked as an irreversible action in the undo stack. If you\nwish to mark this action as part of a larger undo operation, call\n[`TextBuffer.delete()`](xref:gtk:TextBuffer#method:delete) and [`TextBuffer.insert()`](xref:gtk:TextBuffer#method:insert) directly instead.\n\nIf `len` is -1, `text` must be nul-terminated.\n`text` must be valid UTF-8."
+    },
+    "undo": {
+      "brief": "Undoes the last undoable action on the buffer, if there is one.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5095,
+      "md": "Undoes the last undoable action on the buffer, if there is one."
+    }
+  },
+  "properties": {
+    "can-redo": {
+      "brief": "Denotes that the buffer can reapply the last undone action.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 568,
+      "md": "Denotes that the buffer can reapply the last undone action."
+    },
+    "can-undo": {
+      "brief": "Denotes that the buffer can undo the last applied action.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 558,
+      "md": "Denotes that the buffer can undo the last applied action."
+    },
+    "cursor-position": {
+      "brief": "The position of the insert mark.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 588,
+      "md": "The position of the insert mark.\n\nThis is an offset from the beginning of the buffer.\nIt is useful for getting notified when the cursor moves."
+    },
+    "enable-undo": {
+      "brief": "Denotes if support for undoing and redoing changes to the buffer is allowed.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 578,
+      "md": "Denotes if support for undoing and redoing changes to the buffer is allowed."
+    },
+    "has-selection": {
+      "brief": "Whether the buffer has some text currently selected.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 548,
+      "md": "Whether the buffer has some text currently selected."
+    },
+    "tag-table": {
+      "brief": "The GtkTextTagTable for the buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 523,
+      "md": "The GtkTextTagTable for the buffer."
+    },
+    "text": {
+      "brief": "The text content of the buffer.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 535,
+      "md": "The text content of the buffer.\n\nWithout child widgets and images,\nsee [`TextBuffer.get_text()`](xref:gtk:Gtk.TextBuffer#method:get_text) for more information."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "apply-tag": {
+      "brief": "Emitted to apply a tag to a range of text in a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 817,
+      "md": "Emitted to apply a tag to a range of text in a `GtkTextBuffer`.\n\nApplying actually occurs in the default handler.\n\nNote that if your handler runs before the default handler\nit must not invalidate the `start` and `end` iters (or has to\nrevalidate them).\n\nSee also:\n[`TextBuffer.apply_tag()`](xref:gtk:Gtk.TextBuffer#method:apply_tag),\n[`TextBuffer.insert_with_tags()`](xref:gtk:Gtk.TextBuffer#method:insert_with_tags),\n[`TextBuffer.insert_range()`](xref:gtk:Gtk.TextBuffer#method:insert_range)."
+    },
+    "begin-user-action": {
+      "brief": "Emitted at the beginning of a single user-visible operation on a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 887,
+      "md": "Emitted at the beginning of a single user-visible\noperation on a `GtkTextBuffer`.\n\nSee also:\n[`TextBuffer.begin_user_action()`](xref:gtk:Gtk.TextBuffer#method:begin_user_action),\n[`TextBuffer.insert_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_interactive),\n[`TextBuffer.insert_range_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_range_interactive),\n[`TextBuffer.delete_interactive()`](xref:gtk:Gtk.TextBuffer#method:delete_interactive),\n[`TextBuffer.backspace()`](xref:gtk:Gtk.TextBuffer#method:backspace),\n[`TextBuffer.delete_selection()`](xref:gtk:Gtk.TextBuffer#method:delete_selection)."
+    },
+    "changed": {
+      "brief": "Emitted when the content of a `GtkTextBuffer` has changed.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 736,
+      "md": "Emitted when the content of a `GtkTextBuffer` has changed."
+    },
+    "delete-range": {
+      "brief": "Emitted to delete a range from a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 703,
+      "md": "Emitted to delete a range from a `GtkTextBuffer`.\n\nNote that if your handler runs before the default handler\nit must not invalidate the `start` and `end` iters (or has\nto revalidate them). The default signal handler revalidates\nthe `start` and `end` iters to both point to the location\nwhere text was deleted. Handlers which run after the default\nhandler (see g_signal_connect_after()) do not have access to\nthe deleted text.\n\nSee also: [`TextBuffer.delete()`](xref:gtk:Gtk.TextBuffer#method:delete)."
+    },
+    "end-user-action": {
+      "brief": "Emitted at the end of a single user-visible operation on the `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 912,
+      "md": "Emitted at the end of a single user-visible\noperation on the `GtkTextBuffer`.\n\nSee also:\n[`TextBuffer.end_user_action()`](xref:gtk:Gtk.TextBuffer#method:end_user_action),\n[`TextBuffer.insert_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_interactive),\n[`TextBuffer.insert_range_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_range_interactive),\n[`TextBuffer.delete_interactive()`](xref:gtk:Gtk.TextBuffer#method:delete_interactive),\n[`TextBuffer.backspace()`](xref:gtk:Gtk.TextBuffer#method:backspace),\n[`TextBuffer.delete_selection()`](xref:gtk:Gtk.TextBuffer#method:delete_selection),\n[`TextBuffer.backspace()`](xref:gtk:Gtk.TextBuffer#method:backspace)."
+    },
+    "insert-child-anchor": {
+      "brief": "Emitted to insert a `GtkTextChildAnchor` in a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 671,
+      "md": "Emitted to insert a `GtkTextChildAnchor` in a `GtkTextBuffer`.\n\nInsertion actually occurs in the default handler.\n\nNote that if your handler runs before the default handler\nit must not invalidate the `location` iter (or has to\nrevalidate it). The default signal handler revalidates\nit to be placed after the inserted `anchor`.\n\nSee also: [`TextBuffer.insert_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:insert_child_anchor)."
+    },
+    "insert-paintable": {
+      "brief": "Emitted to insert a `GdkPaintable` in a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 638,
+      "md": "Emitted to insert a `GdkPaintable` in a `GtkTextBuffer`.\n\nInsertion actually occurs in the default handler.\n\nNote that if your handler runs before the default handler\nit must not invalidate the `location` iter (or has to\nrevalidate it). The default signal handler revalidates\nit to be placed after the inserted `paintable`.\n\nSee also: [`TextBuffer.insert_paintable()`](xref:gtk:Gtk.TextBuffer#method:insert_paintable)."
+    },
+    "insert-text": {
+      "brief": "Emitted to insert text in a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 604,
+      "md": "Emitted to insert text in a `GtkTextBuffer`.\n\nInsertion actually occurs in the default handler.\n\nNote that if your handler runs before the default handler\nit must not invalidate the `location` iter (or has to\nrevalidate it). The default signal handler revalidates\nit to point to the end of the inserted text.\n\nSee also: [`TextBuffer.insert()`](xref:gtk:Gtk.TextBuffer#method:insert),\n[`TextBuffer.insert_range()`](xref:gtk:Gtk.TextBuffer#method:insert_range)."
+    },
+    "mark-deleted": {
+      "brief": "Emitted as notification after a `GtkTextMark` is deleted.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 797,
+      "md": "Emitted as notification after a `GtkTextMark` is deleted.\n\nSee also: [`TextBuffer.delete_mark()`](xref:gtk:Gtk.TextBuffer#method:delete_mark)."
+    },
+    "mark-set": {
+      "brief": "Emitted as notification after a `GtkTextMark` is set.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 770,
+      "md": "Emitted as notification after a `GtkTextMark` is set.\n\nSee also:\n[`TextBuffer.create_mark()`](xref:gtk:Gtk.TextBuffer#method:create_mark),\n[`TextBuffer.move_mark()`](xref:gtk:Gtk.TextBuffer#method:move_mark)."
+    },
+    "modified-changed": {
+      "brief": "Emitted when the modified bit of a `GtkTextBuffer` flips.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 752,
+      "md": "Emitted when the modified bit of a `GtkTextBuffer` flips.\n\nSee also: [`TextBuffer.set_modified()`](xref:gtk:Gtk.TextBuffer#method:set_modified)."
+    },
+    "paste-done": {
+      "brief": "Emitted after paste operation has been completed.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 938,
+      "md": "Emitted after paste operation has been completed.\n\nThis is useful to properly scroll the view to the end\nof the pasted text. See [`TextBuffer.paste_clipboard()`](xref:gtk:Gtk.TextBuffer#method:paste_clipboard)\nfor more details."
+    },
+    "redo": {
+      "brief": "Emitted when a request has been made to redo the previously undone operation.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 960,
+      "md": "Emitted when a request has been made to redo the\npreviously undone operation."
+    },
+    "remove-tag": {
+      "brief": "Emitted to remove all occurrences of `tag` from a range of text in a `GtkTextBuffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 853,
+      "md": "Emitted to remove all occurrences of `tag` from a range\nof text in a `GtkTextBuffer`.\n\nRemoval actually occurs in the default handler.\n\nNote that if your handler runs before the default handler\nit must not invalidate the `start` and `end` iters (or has\nto revalidate them).\n\nSee also: [`TextBuffer.remove_tag()`](xref:gtk:Gtk.TextBuffer#method:remove_tag)."
+    },
+    "undo": {
+      "brief": "Emitted when a request has been made to undo the previous operation or set of operations that have been grouped together.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 974,
+      "md": "Emitted when a request has been made to undo the\nprevious operation or set of operations that have\nbeen grouped together."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "apply_tag": {
+      "brief": "Emits the “apply-tag” signal on `buffer`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3094,
+      "md": "Emits the “apply-tag” signal on `buffer`.\n\nThe default handler for the signal applies\n`tag` to the given range. `start` and `end` do\nnot have to be in order."
+    },
+    "begin_user_action": {
+      "brief": "Called to indicate that the buffer operations between here and a call to gtk_text_buffer_end_user_action() are part of a single user-visible operation.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4361,
+      "md": "Called to indicate that the buffer operations between here and a\ncall to gtk_text_buffer_end_user_action() are part of a single\nuser-visible operation.\n\nThe operations between gtk_text_buffer_begin_user_action() and\ngtk_text_buffer_end_user_action() can then be grouped when creating\nan undo stack. `GtkTextBuffer` maintains a count of calls to\ngtk_text_buffer_begin_user_action() that have not been closed with\na call to gtk_text_buffer_end_user_action(), and emits the\n“begin-user-action” and “end-user-action” signals only for the\noutermost pair of calls. This allows you to build user actions\nfrom other user actions.\n\nThe “interactive” buffer mutation functions, such as\n[`TextBuffer.insert_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_interactive), automatically call\nbegin/end user action around the buffer operations they perform,\nso there's no need to add extra calls if you user action consists\nsolely of a single call to one of those functions."
+    },
+    "changed": {
+      "brief": "The class handler for the `GtkTextBuffer::changed` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 112,
+      "md": "The class handler for the `GtkTextBuffer::changed` signal."
+    },
+    "delete_range": {
+      "brief": "The class handler for the `GtkTextBuffer::delete-range` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 111,
+      "md": "The class handler for the `GtkTextBuffer::delete-range` signal."
+    },
+    "end_user_action": {
+      "brief": "Ends a user-visible operation.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 4399,
+      "md": "Ends a user-visible operation.\n\nShould be paired with a call to\n[`TextBuffer.begin_user_action()`](xref:gtk:Gtk.TextBuffer#method:begin_user_action).\nSee that function for a full explanation."
+    },
+    "insert_child_anchor": {
+      "brief": "Inserts a child widget anchor into the text buffer at `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2422,
+      "md": "Inserts a child widget anchor into the text buffer at `iter`.\n\nThe anchor will be counted as one character in character counts, and\nwhen obtaining the buffer contents as a string, will be represented\nby the Unicode “object replacement character” 0xFFFC. Note that the\n“slice” variants for obtaining portions of the buffer as a string\ninclude this character for child anchors, but the “text” variants do\nnot. E.g. see [`TextBuffer.get_slice()`](xref:gtk:Gtk.TextBuffer#method:get_slice) and\n[`TextBuffer.get_text()`](xref:gtk:Gtk.TextBuffer#method:get_text).\n\nConsider [`TextBuffer.create_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:create_child_anchor) as a more\nconvenient alternative to this function. The buffer will add a\nreference to the anchor, so you can unref it after insertion."
+    },
+    "insert_paintable": {
+      "brief": "Inserts an image into the text buffer at `iter`.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 2378,
+      "md": "Inserts an image into the text buffer at `iter`.\n\nThe image will be counted as one character in character counts,\nand when obtaining the buffer contents as a string, will be\nrepresented by the Unicode “object replacement character” 0xFFFC.\nNote that the “slice” variants for obtaining portions of the buffer\nas a string include this character for paintable, but the “text”\nvariants do not. e.g. see [`TextBuffer.get_slice()`](xref:gtk:Gtk.TextBuffer#method:get_slice) and\n[`TextBuffer.get_text()`](xref:gtk:Gtk.TextBuffer#method:get_text)."
+    },
+    "insert_text": {
+      "brief": "The class handler for the `GtkTextBuffer::insert-text` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 108,
+      "md": "The class handler for the `GtkTextBuffer::insert-text` signal."
+    },
+    "mark_deleted": {
+      "brief": "The class handler for the `GtkTextBuffer::mark-deleted` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 115,
+      "md": "The class handler for the `GtkTextBuffer::mark-deleted` signal."
+    },
+    "mark_set": {
+      "brief": "The class handler for the `GtkTextBuffer::mark-set` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 114,
+      "md": "The class handler for the `GtkTextBuffer::mark-set` signal."
+    },
+    "modified_changed": {
+      "brief": "The class handler for the `GtkTextBuffer::modified-changed` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 113,
+      "md": "The class handler for the `GtkTextBuffer::modified-changed` signal."
+    },
+    "paste_done": {
+      "brief": "The class handler for the `GtkTextBuffer::paste-done` signal.",
+      "file": "gtk/gtktextbuffer.h",
+      "line": 120,
+      "md": "The class handler for the `GtkTextBuffer::paste-done` signal."
+    },
+    "redo": {
+      "brief": "Redoes the next redoable action on the buffer, if there is one.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5110,
+      "md": "Redoes the next redoable action on the buffer, if there is one."
+    },
+    "remove_tag": {
+      "brief": "Emits the “remove-tag” signal.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 3124,
+      "md": "Emits the “remove-tag” signal.\n\nThe default handler for the signal removes all occurrences\nof `tag` from the given range. `start` and `end` don’t have\nto be in order."
+    },
+    "undo": {
+      "brief": "Undoes the last undoable action on the buffer, if there is one.",
+      "file": "gtk/gtktextbuffer.c",
+      "line": 5095,
+      "md": "Undoes the last undoable action on the buffer, if there is one."
+    }
+  }
+}

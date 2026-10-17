@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes limits of a [`EventController`](xref:gtk:EventController) for handling events targeting other widgets.",
+    "file": "gtk/gtkenums.h",
+    "line": 1044,
+    "md": "Describes limits of a [`EventController`](xref:gtk:EventController) for handling events\ntargeting other widgets."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PropagationLimit",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "none": {
+      "brief": "Events are handled regardless of what their target is.",
+      "file": "gtk/gtkenums.h",
+      "line": 1046,
+      "md": "Events are handled regardless of what their\n  target is."
+    },
+    "same_native": {
+      "brief": "Events are only handled if their target is in the same [`Native`](xref:gtk:Native) (or widget with [`Widget:limit-events`](xref:gtk:Gtk.Widget#property:limit-events) set) as the event controllers widget.",
+      "file": "gtk/gtkenums.h",
+      "line": 1048,
+      "md": "Events are only handled if their target is in\n  the same [`Native`](xref:gtk:Native) (or widget with [`Widget:limit-events`](xref:gtk:Gtk.Widget#property:limit-events)\n  set) as the event controllers widget.\n  Note that some event types have two targets (origin and destination)."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

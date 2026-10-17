@@ -13,7 +13,7 @@ This file records what was built, where it deviates from the design and why, and
 | QuickJS reader/writer | `crates/svelters-host/src/quickjs/conv.rs`, bindings in `quickjs.rs`, wrappers in `prelude.js` |
 | GTK converters and descriptors | `crates/svelters-gtk/src/convert.rs` (GType-keyed), `types.rs` (type ids, descriptors) |
 | Qt converters | `tools/metadata/qt/templates/serdes.hpp.in` (`Conv<T>`), emission in `tools/metadata/qt/gen_cpp.py` |
-| Qt type classification | `tools/metadata/qt/ingest.py` (`EnumIndex`, `neutral_type`), enum table `metadata/qt/Qt.json` |
+| Qt type classification | `tools/metadata/qt/ingest.py` (`EnumIndex`, `neutral_type`), enum table `metadata/qt/_enums/Qt.json` |
 | Renderer | `packages/renderer/src/hostops.js` (ids), `coerce.js` (descriptor-driven coercion) |
 | Typings | `tools/metadata/common/tsvalues.py` -> `packages/renderer/types/values.d.ts`; per toolkit in `gtk.d.ts`/`qt.d.ts` |
 | Tests | `crates/svelters-host/tests/serdes.rs` (+ `tests/js/serdes_*.js`), `crates/svelters-gtk/tests/serdes.rs`, `examples/counter-qt/tests/serdes.rs`, `packages/renderer/test/serdes.test.mjs` |
@@ -39,7 +39,7 @@ v2 (timers + lifetime) landed on master first (`schedule_wake`, `handle_info`, `
 - **Records have per-backend integer variants.** `QRect`/`QSize`/`QPoint`/`QMargins` and `GdkRectangle`/`GtkBorder` are separate record types (backend ids) with integral fields and the same name (`Rect`); the float forms use the well-known ids. The host rejects `{x: 1.5}` for an integral field with a `RangeError`.
 - **Enums on the wire are native values.** `ENUM{type, i}`; the host owns the name lookup (design 2.2). Both toolkits therefore return names once the host decodes. The raw GTK/Qt vtable no longer returns nick strings; the GTK test harness (`Harness::named`, `Harness::get`) plays the host's part for tests that drive the vtable by name.
 - **Qt enum names** are kebab-case with the common leading words stripped only when names stay unique (`AlignHCenter` -> `hcenter`, `PasswordEchoOnEdit` -> `password-echo-on-edit`). An override `values:` table (e.g. `QBoxLayout::Direction` -> `horizontal|vertical`) replaces the generated table for that enum everywhere.
-- **Enum table in the metadata.** The ingest writes `metadata/qt/Qt.json` (kind `namespace`) with the members and C++ expressions of every enum or flags type a slot mentions, whichever class declares it (QtCore, QtGui, QtWidgets). Class JSONs keep their own enums.
+- **Enum table in the metadata.** The ingest writes `metadata/qt/_enums/Qt.json` (kind `namespace`) with the members and C++ expressions of every enum or flags type a slot mentions, whichever class declares it (QtCore, QtGui, QtWidgets). Class JSONs keep their own enums.
 - **FinalizationRegistry without an unregister token.** QuickJS-NG holds the unregister token strongly, so `register(this, h, this)` keeps the wrapper alive forever (covered by a test). `dispose()` therefore releases immediately and the registry callback of a disposed wrapper is ignored by the core (`boxed` set), which also makes double release harmless.
 - **Release at checkpoints.** The registry callback only calls `Core::queue_release` (a `RefCell` push, no backend call); `Core::process_releases` runs at the end of every checkpoint, outside any JS entry. `Host::collect_garbage` is a test hook.
 - **Exceptions from user JS during conversion** (a getter, a Proxy trap) propagate unchanged: the reader keeps the pending exception and the op rethrows it instead of wrapping its message.

@@ -91,13 +91,29 @@ impl Core {
         }
     }
 
+    /// The kind of a live handle; an error that says why for a dead one.
     pub(crate) fn kind_of(&self, h: svl_handle) -> Result<svl_id, String> {
-        self.st
-            .borrow()
-            .handles
-            .get(&h)
-            .copied()
-            .ok_or_else(|| format!("stale or foreign handle {h}"))
+        let st = self.st.borrow();
+        if let Some(k) = st.handles.get(&h) {
+            return Ok(*k);
+        }
+        Err(match st.dead.why.get(&h) {
+            Some(d) => format!("handle #{h} was destroyed ({})", d.describe()),
+            None => format!("stale or foreign handle {h}"),
+        })
+    }
+
+    /// `Some(kind)` for a live handle, `None` for one that is known to be dead (teardown-shaped
+    /// ops treat that as a no-op), an error for a handle the host never issued.
+    pub(crate) fn live_kind(&self, h: svl_handle) -> Result<Option<svl_id>, String> {
+        let st = self.st.borrow();
+        if let Some(k) = st.handles.get(&h) {
+            return Ok(Some(*k));
+        }
+        if st.dead.why.contains_key(&h) {
+            return Ok(None);
+        }
+        Err(format!("stale or foreign handle {h}"))
     }
 
     pub(super) fn kind_name(&self, k: svl_id) -> String {
@@ -214,7 +230,20 @@ impl Core {
 
     fn create_kind(&self, kid: svl_id) -> Result<svl_handle, OpError> {
         let h = self.backend.create(kid).map_err(|e| self.backend_err(e))?;
-        self.st.borrow_mut().handles.insert(h, kid);
+        if h >= MAX_HANDLE {
+            self.backend.destroy(h);
+            return Err(format!("backend issued handle {h}, which JS cannot represent exactly").into());
+        }
+        let top = self
+            .backend
+            .handle_info(h)
+            .is_ok_and(|i| i.lifetime == SVL_LIFE_TOPLEVEL);
+        let mut st = self.st.borrow_mut();
+        st.handles.insert(h, kid);
+        if top {
+            st.toplevels.insert(h);
+            st.top_seen = true;
+        }
         Ok(h)
     }
 
@@ -238,24 +267,39 @@ impl Core {
             };
             self.backend
                 .insert(parent, child, before, slot)
-                .map_err(|e| self.backend_err(e))
+                .map_err(|e| self.backend_err(e))?;
+            self.st.borrow_mut().tree.insert(child, parent);
+            Ok(())
         })
     }
 
     pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
             self.tree_ops_allowed()?;
-            self.kind_of(parent)?;
-            self.kind_of(child)?;
-            self.backend.remove(parent, child).map_err(|e| self.backend_err(e))
+            // A dead parent or child has nothing left to remove.
+            if self.live_kind(parent)?.is_none() || self.live_kind(child)?.is_none() {
+                return Ok(());
+            }
+            self.backend.remove(parent, child).map_err(|e| self.backend_err(e))?;
+            self.st.borrow_mut().tree.remove(&child);
+            Ok(())
         })
     }
 
     pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
             self.tree_ops_allowed()?;
-            self.kind_of(h)?;
-            self.st.borrow_mut().handles.remove(&h);
+            // Idempotent: destroying a dead handle (already destroyed, or died natively) is a no-op.
+            if self.live_kind(h)?.is_none() {
+                return Ok(());
+            }
+            {
+                let mut st = self.st.borrow_mut();
+                st.handles.remove(&h);
+                st.toplevels.remove(&h);
+                st.tree.remove(&h);
+                st.dead.push(h, Death::Destroyed);
+            }
             self.cb_release_owner(h);
             self.backend.destroy(h);
             Ok(())
@@ -272,7 +316,9 @@ impl Core {
         v: &R::V,
     ) -> Result<(), OpError> {
         self.timed(|| {
-            let k = self.kind_of(h)?;
+            let Some(k) = self.live_kind(h)? else {
+                return Ok(());
+            };
             let p = self.resolve_name(NameKind::Prop, k, prop)?;
             let desc = self.member(NameKind::Prop, k, p);
             let any = SlotDesc::new(SVL_NULL);
@@ -448,7 +494,11 @@ impl Core {
 
     pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool) -> Result<(), OpError> {
         self.timed(|| {
-            let k = self.kind_of(h)?;
+            let k = match self.live_kind(h)? {
+                Some(k) => k,
+                None if !on => return Ok(()),
+                None => return Err(self.kind_of(h).unwrap_err().into()),
+            };
             let s = self.resolve_name(NameKind::Signal, k, signal)?;
             if let Name::Str(name) = signal {
                 self.st.borrow_mut().signal_names.insert((k, s), name.to_string());

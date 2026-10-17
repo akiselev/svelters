@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes a type of line wrapping.",
+    "file": "gtk/gtkenums.h",
+    "line": 565,
+    "md": "Describes a type of line wrapping."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:WrapMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "char": {
+      "brief": "wrap text, breaking lines anywhere the cursor can appear (between characters, usually - if you want to be technical, between graphemes, see pango_get_log_attrs())",
+      "file": "gtk/gtkenums.h",
+      "line": 568,
+      "md": "wrap text, breaking lines anywhere the cursor can\n  appear (between characters, usually - if you want to be technical,\n  between graphemes, see pango_get_log_attrs())"
+    },
+    "none": {
+      "brief": "do not wrap lines; just make the text area wider",
+      "file": "gtk/gtkenums.h",
+      "line": 567,
+      "md": "do not wrap lines; just make the text area wider"
+    },
+    "word": {
+      "brief": "wrap text, breaking lines in between words",
+      "file": "gtk/gtkenums.h",
+      "line": 571,
+      "md": "wrap text, breaking lines in between words"
+    },
+    "word_char": {
+      "brief": "wrap text, breaking lines in between words, or if that is not enough, also between graphemes",
+      "file": "gtk/gtkenums.h",
+      "line": 572,
+      "md": "wrap text, breaking lines in between words, or if\n  that is not enough, also between graphemes"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

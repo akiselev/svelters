@@ -1,0 +1,101 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new lock button which reflects the `permission`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 533,
+      "md": "Creates a new lock button which reflects the `permission`."
+    }
+  },
+  "doc": {
+    "brief": "`GtkLockButton` is a widget to obtain and revoke authorizations needed to operate the controls.",
+    "deprecated": "4.10",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtklockbutton.c",
+    "line": 33,
+    "md": "`GtkLockButton` is a widget to obtain and revoke authorizations\nneeded to operate the controls.\n\nIt is typically used in preference dialogs or control panels.\n\nThe required authorization is represented by a `GPermission` object.\nConcrete implementations of `GPermission` may use PolicyKit or some\nother authorization framework. To obtain a PolicyKit-based\n`GPermission`, use `polkit_permission_new()`.\n\nIf the user is not currently allowed to perform the action, but can\nobtain the permission, the widget looks like this:\n\nand the user can click the button to request the permission. Depending\non the platform, this may pop up an authentication dialog or ask the user\nto authenticate in some other way. Once the user has obtained the permission,\nthe widget changes to this:\n\nand the permission can be dropped again by clicking the button. If the user\nis not able to obtain the permission at all, the widget looks like this:\n\nIf the user has the permission and cannot drop it, the button is hidden.\n\nThe text (and tooltips) that are shown in the various cases can be adjusted\nwith the [`LockButton:text-lock`](xref:gtk:Gtk.LockButton#property:text-lock),\n[`LockButton:text-unlock`](xref:gtk:Gtk.LockButton#property:text-unlock),\n[`LockButton:tooltip-lock`](xref:gtk:Gtk.LockButton#property:tooltip-lock),\n[`LockButton:tooltip-unlock`](xref:gtk:Gtk.LockButton#property:tooltip-unlock) and\n[`LockButton:tooltip-not-authorized`](xref:gtk:Gtk.LockButton#property:tooltip-not-authorized) properties."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:LockButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_permission": {
+      "brief": "Obtains the `GPermission` object that controls `button`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 551,
+      "md": "Obtains the `GPermission` object that controls `button`."
+    },
+    "set_permission": {
+      "brief": "Sets the `GPermission` object that controls `button`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 569,
+      "md": "Sets the `GPermission` object that controls `button`."
+    }
+  },
+  "properties": {
+    "permission": {
+      "brief": "The `GPermission object controlling this button.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 284,
+      "md": "The `GPermission object controlling this button."
+    },
+    "text-lock": {
+      "brief": "The text to display when prompting the user to lock.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 297,
+      "md": "The text to display when prompting the user to lock."
+    },
+    "text-unlock": {
+      "brief": "The text to display when prompting the user to unlock.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 311,
+      "md": "The text to display when prompting the user to unlock."
+    },
+    "tooltip-lock": {
+      "brief": "The tooltip to display when prompting the user to lock.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 325,
+      "md": "The tooltip to display when prompting the user to lock."
+    },
+    "tooltip-not-authorized": {
+      "brief": "The tooltip to display when the user cannot obtain authorization.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 353,
+      "md": "The tooltip to display when the user cannot obtain authorization."
+    },
+    "tooltip-unlock": {
+      "brief": "The tooltip to display when prompting the user to unlock.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtklockbutton.c",
+      "line": 339,
+      "md": "The tooltip to display when prompting the user to unlock."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

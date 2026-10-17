@@ -1,0 +1,48 @@
+{
+  "doc": {
+    "brief": "The QTapAndHoldGesture class describes a tap-and-hold (aka LongTap) gesture made by the user.",
+    "index_brief": "Describes a tap-and-hold (aka LongTap) gesture made by the user",
+    "url": "https://doc.qt.io/qt-6/qtapandholdgesture.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTapAndHoldGesture",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QPointF position() const": {
+      "brief": "This property holds the position of the tap",
+      "url": "https://doc.qt.io/qt-6/qtapandholdgesture.html#position-prop"
+    },
+    "int timeout()": {
+      "brief": "Gets the timeout, in milliseconds, before the gesture triggers.",
+      "url": "https://doc.qt.io/qt-6/qtapandholdgesture.html#timeout"
+    },
+    "void setPosition(const QPointF &pos)": {
+      "brief": "This property holds the position of the tap",
+      "url": "https://doc.qt.io/qt-6/qtapandholdgesture.html#position-prop"
+    },
+    "void setTimeout(int msecs)": {
+      "brief": "Set the timeout, in milliseconds, before the gesture triggers.",
+      "url": "https://doc.qt.io/qt-6/qtapandholdgesture.html#setTimeout"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "position": {
+      "brief": "The position of the tap",
+      "url": "https://doc.qt.io/qt-6/qtapandholdgesture.html#position-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

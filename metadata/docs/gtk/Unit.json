@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "See also gtk_print_settings_set_paper_width().",
+    "file": "gtk/gtkenums.h",
+    "line": 749,
+    "md": "See also gtk_print_settings_set_paper_width()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Unit",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "inch": {
+      "brief": "Dimensions in inches.",
+      "file": "gtk/gtkenums.h",
+      "line": 753,
+      "md": "Dimensions in inches."
+    },
+    "mm": {
+      "brief": "Dimensions in millimeters",
+      "file": "gtk/gtkenums.h",
+      "line": 754,
+      "md": "Dimensions in millimeters"
+    },
+    "none": {
+      "brief": "No units.",
+      "file": "gtk/gtkenums.h",
+      "line": 751,
+      "md": "No units."
+    },
+    "points": {
+      "brief": "Dimensions in points.",
+      "file": "gtk/gtkenums.h",
+      "line": 752,
+      "md": "Dimensions in points."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,55 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface that supports symbolic colors in paintables.",
+    "file": "gtk/gtksymbolicpaintable.c",
+    "line": 26,
+    "md": "An interface that supports symbolic colors in paintables.\n\n`GdkPaintable`s implementing the interface will have the\n[`SymbolicPaintable.snapshot_symbolic()`](xref:gtk:Gtk.SymbolicPaintable#vfunc:snapshot_symbolic) function called and\nhave the colors for drawing symbolic icons passed. At least 5 colors\nare guaranteed to be passed every time. These 5 colors are the\nforeground color, and the colors to use for errors, warnings\nand success information in that order, followed by the system\naccent color.\n\nThe system accent color has been added in GTK 4.22.\nMore colors may be added in the future.",
+    "since": "4.6"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SymbolicPaintable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "snapshot_symbolic": {
+      "brief": "Snapshots the paintable with the given colors.",
+      "file": "gtk/gtksymbolicpaintable.c",
+      "line": 86,
+      "md": "Snapshots the paintable with the given colors.\n\nIf less than 5 colors are provided, GTK will pad the array with default\ncolors.",
+      "since": "4.6"
+    },
+    "snapshot_with_weight": {
+      "brief": "Snapshots the paintable with the given colors and weight.",
+      "file": "gtk/gtksymbolicpaintable.c",
+      "line": 138,
+      "md": "Snapshots the paintable with the given colors and weight.\n\nIf less than 5 colors are provided, GTK will pad the array with default\ncolors.",
+      "since": "4.22"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "snapshot_symbolic": {
+      "brief": "Snapshots the paintable with the given colors.",
+      "file": "gtk/gtksymbolicpaintable.c",
+      "line": 86,
+      "md": "Snapshots the paintable with the given colors.\n\nIf less than 5 colors are provided, GTK will pad the array with default\ncolors.",
+      "since": "4.6"
+    },
+    "snapshot_with_weight": {
+      "brief": "Snapshots the paintable with the given colors and weight.",
+      "file": "gtk/gtksymbolicpaintable.c",
+      "line": 138,
+      "md": "Snapshots the paintable with the given colors and weight.\n\nIf less than 5 colors are provided, GTK will pad the array with default\ncolors.",
+      "since": "4.22"
+    }
+  }
+}

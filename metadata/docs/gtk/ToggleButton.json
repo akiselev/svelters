@@ -1,0 +1,99 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new toggle button.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 348,
+      "md": "Creates a new toggle button.\n\nA widget should be packed into the button, as in [`Button.new()`](xref:gtk:Gtk.Button#constructor:new)."
+    },
+    "new_with_label": {
+      "brief": "Creates a new toggle button with a text label.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 363,
+      "md": "Creates a new toggle button with a text label."
+    },
+    "new_with_mnemonic": {
+      "brief": "Creates a new `GtkToggleButton` containing a label.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 377,
+      "md": "Creates a new `GtkToggleButton` containing a label.\n\nThe label will be created using [`Label.new_with_mnemonic()`](xref:gtk:Gtk.Label#constructor:new_with_mnemonic),\nso underscores in `label` indicate the mnemonic for the button."
+    }
+  },
+  "doc": {
+    "brief": "Shows a button which remains “pressed-in” when clicked.",
+    "file": "gtk/gtktogglebutton.c",
+    "line": 37,
+    "md": "Shows a button which remains “pressed-in” when clicked.\n\nClicking again will cause the toggle button to return to its normal state.\n\nA toggle button is created by calling either [`ToggleButton.new()`](xref:gtk:Gtk.ToggleButton#constructor:new) or\n[`ToggleButton.new_with_label()`](xref:gtk:Gtk.ToggleButton#constructor:new_with_label). If using the former, it is advisable\nto pack a widget, (such as a `GtkLabel` and/or a `GtkImage`), into the toggle\nbutton’s container. (See [`Button`](xref:gtk:Gtk.Button) for more information).\n\nThe state of a `GtkToggleButton` can be set specifically using\n[`ToggleButton.set_active()`](xref:gtk:Gtk.ToggleButton#method:set_active), and retrieved using\n[`ToggleButton.get_active()`](xref:gtk:Gtk.ToggleButton#method:get_active).\n\n## Grouping\n\nToggle buttons can be grouped together, to form mutually exclusive\ngroups - only one of the buttons can be toggled at a time, and toggling\nanother one will switch the currently toggled one off.\n\nTo add a `GtkToggleButton` to a group, use [`ToggleButton.set_group()`](xref:gtk:Gtk.ToggleButton#method:set_group).\n\n## CSS nodes\n\n`GtkToggleButton` has a single CSS node with name button. To differentiate\nit from a plain `GtkButton`, it gets the `.toggle` style class.\n\n## Accessibility\n\n`GtkToggleButton` uses the [`AccessibleRole.toggle_button`](xref:gtk:Gtk.AccessibleRole#value:toggle_button) role.\n\n## Creating two `GtkToggleButton` widgets.\n\n```c\nstatic void\noutput_state (GtkToggleButton *source,\n              gpointer         user_data)\n{\n  g_print (\"Toggle button \"%s\" is active: %s\",\n           gtk_button_get_label (GTK_BUTTON (source)),\n           gtk_toggle_button_get_active (source) ? \"Yes\" : \"No\");\n}\n\nstatic void\nmake_toggles (void)\n{\n  GtkWidget *window, *toggle1, *toggle2;\n  GtkWidget *box;\n  const char *text;\n\n  window = gtk_window_new ();\n  box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);\n\n  text = \"Hi, I’m toggle button one\";\n  toggle1 = gtk_toggle_button_new_with_label (text);\n\n  g_signal_connect (toggle1, \"toggled\",\n                    G_CALLBACK (output_state),\n                    NULL);\n  gtk_box_append (GTK_BOX (box), toggle1);\n\n  text = \"Hi, I’m toggle button two\";\n  toggle2 = gtk_toggle_button_new_with_label (text);\n  g_signal_connect (toggle2, \"toggled\",\n                    G_CALLBACK (output_state),\n                    NULL);\n  gtk_box_append (GTK_BOX (box), toggle2);\n\n  gtk_window_set_child (GTK_WINDOW (window), box);\n  gtk_window_present (GTK_WINDOW (window));\n}\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ToggleButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_active": {
+      "brief": "Queries a `GtkToggleButton` and returns its current state.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 455,
+      "md": "Queries a `GtkToggleButton` and returns its current state.\n\nReturns `TRUE` if the toggle button is pressed in and `FALSE`\nif it is raised."
+    },
+    "set_active": {
+      "brief": "Sets the status of the toggle button.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 398,
+      "md": "Sets the status of the toggle button.\n\nSet to `TRUE` if you want the `GtkToggleButton` to be “pressed in”,\nand `FALSE` to raise it.\n\nIf the status of the button changes, this action causes the\n[`ToggleButton::toggled`](xref:gtk:Gtk.ToggleButton#event:toggled) signal to be emitted."
+    },
+    "set_group": {
+      "brief": "Adds `self` to the group of `group`.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 492,
+      "md": "Adds `self` to the group of `group`.\n\nIn a group of multiple toggle buttons, only one button can be active\nat a time.\n\nSetting up groups in a cycle leads to undefined behavior.\n\nNote that the same effect can be achieved via the [`Actionable`](xref:gtk:Gtk.Actionable)\nAPI, by using the same action with parameter type and state type 's'\nfor all buttons in the group, and giving each button its own target\nvalue."
+    },
+    "toggled": {
+      "brief": "Emits the ::toggled signal on the `GtkToggleButton`.",
+      "deprecated": "4.10",
+      "deprecated_md": "There is no good reason for an application ever to call this function.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 476,
+      "md": "Emits the ::toggled signal on the `GtkToggleButton`."
+    }
+  },
+  "properties": {
+    "active": {
+      "brief": "If the toggle button should be pressed in.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 295,
+      "md": "If the toggle button should be pressed in."
+    },
+    "group": {
+      "brief": "The toggle button whose group this widget belongs to.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 305,
+      "md": "The toggle button whose group this widget belongs to."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "toggled": {
+      "brief": "Emitted whenever the `GtkToggleButton`'s state is changed.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 317,
+      "md": "Emitted whenever the `GtkToggleButton`'s state is changed."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "toggled": {
+      "brief": "Emits the ::toggled signal on the `GtkToggleButton`.",
+      "deprecated": "4.10",
+      "deprecated_md": "There is no good reason for an application ever to call this function.",
+      "file": "gtk/gtktogglebutton.c",
+      "line": 476,
+      "md": "Emits the ::toggled signal on the `GtkToggleButton`."
+    }
+  }
+}

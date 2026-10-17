@@ -1,0 +1,232 @@
+{
+  "doc": {
+    "brief": "The QCompleter class provides completions based on an item model.",
+    "index_brief": "Completions based on an item model",
+    "url": "https://doc.qt.io/qt-6/qcompleter.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractItemModel * completionModel() const": {
+      "brief": "Returns the completion model.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionModel"
+    },
+    "QAbstractItemModel * model() const": {
+      "brief": "Returns the model that provides completion strings.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#model"
+    },
+    "QAbstractItemView * popup() const": {
+      "brief": "Returns the popup used to display completions.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#popup"
+    },
+    "QCompleter(QAbstractItemModel *model, QObject *parent)": {
+      "brief": "Constructs a completer object with the given *parent* that provides completions from the specified *model*.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#QCompleter-1"
+    },
+    "QCompleter(QObject *parent)": {
+      "brief": "Constructs a completer object with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#QCompleter"
+    },
+    "QCompleter(const QStringList &list, QObject *parent)": {
+      "brief": "Constructs a QCompleter object with the given *parent* that uses the specified *list* as a source of possible completions.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#QCompleter-2"
+    },
+    "QCompleter::CompletionMode completionMode() const": {
+      "brief": "how the completions are provided to the user",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionMode-prop"
+    },
+    "QCompleter::ModelSorting modelSorting() const": {
+      "brief": "This property holds the way the model is sorted",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#modelSorting-prop"
+    },
+    "QModelIndex currentIndex() const": {
+      "brief": "Returns the model index of the current completion in the [completionModel](xref:qt:QCompleter)().",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#currentIndex"
+    },
+    "QString completionPrefix() const": {
+      "brief": "This property holds the completion prefix used to provide completions.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionPrefix-prop"
+    },
+    "QString currentCompletion() const": {
+      "brief": "Returns the current completion string.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#currentCompletion"
+    },
+    "QString pathFromIndex(const QModelIndex &index) const": {
+      "brief": "Returns the path for the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#pathFromIndex"
+    },
+    "QStringList splitPath(const QString &path) const": {
+      "brief": "Splits the given *path* into strings that are used to match at each level in the [model](xref:qt:QCompleter)().",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#splitPath"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns the widget for which the completer object is providing completions.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#widget"
+    },
+    "Qt::CaseSensitivity caseSensitivity() const": {
+      "brief": "This property holds the case sensitivity of the matching",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#caseSensitivity-prop"
+    },
+    "Qt::MatchFlags filterMode() const": {
+      "brief": "This property controls how filtering is performed.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#filterMode-prop"
+    },
+    "bool event(QEvent *ev) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#event"
+    },
+    "bool eventFilter(QObject *o, QEvent *e) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#eventFilter"
+    },
+    "bool setCurrentRow(int row)": {
+      "brief": "Sets the current row to the *row* specified.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#setCurrentRow"
+    },
+    "bool wrapAround() const": {
+      "brief": "This property holds the completions wrap around when navigating through items",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#wrapAround-prop"
+    },
+    "int completionColumn() const": {
+      "brief": "This property holds the column in the model in which completions are searched for.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionColumn-prop"
+    },
+    "int completionCount() const": {
+      "brief": "Returns the number of completions for the current prefix.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionCount"
+    },
+    "int completionRole() const": {
+      "brief": "This property holds the item role to be used to query the contents of items for matching.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionRole-prop"
+    },
+    "int currentRow() const": {
+      "brief": "Returns the current row.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#currentRow"
+    },
+    "int maxVisibleItems() const": {
+      "brief": "This property holds the maximum allowed size on screen of the completer, measured in items",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#maxVisibleItems-prop"
+    },
+    "void activated(const QModelIndex &index)": {
+      "brief": "This signal is sent when an item in the [popup](xref:qt:QCompleter)() is activated by the user. (by clicking or pressing return).",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#activated"
+    },
+    "void activated(const QString &text)": {
+      "brief": "This signal is sent when an item in the [popup](xref:qt:QCompleter)() is activated by the user (by clicking or pressing return).",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#activated-1"
+    },
+    "void complete(const QRect &rect)": {
+      "brief": "For [QCompleter::PopupCompletion](xref:qt:QCompleter) and QCompletion::UnfilteredPopupCompletion modes, calling this function displays the popup displaying the current completions.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#complete"
+    },
+    "void highlighted(const QModelIndex &index)": {
+      "brief": "This signal is sent when an item in the [popup](xref:qt:QCompleter)() is highlighted by the user.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#highlighted"
+    },
+    "void highlighted(const QString &text)": {
+      "brief": "This signal is sent when an item in the [popup](xref:qt:QCompleter)() is highlighted by the user.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#highlighted-1"
+    },
+    "void setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)": {
+      "brief": "This property holds the case sensitivity of the matching",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#caseSensitivity-prop"
+    },
+    "void setCompletionColumn(int column)": {
+      "brief": "This property holds the column in the model in which completions are searched for.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionColumn-prop"
+    },
+    "void setCompletionMode(QCompleter::CompletionMode mode)": {
+      "brief": "how the completions are provided to the user",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionMode-prop"
+    },
+    "void setCompletionPrefix(const QString &prefix)": {
+      "brief": "This property holds the completion prefix used to provide completions.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionPrefix-prop"
+    },
+    "void setCompletionRole(int role)": {
+      "brief": "This property holds the item role to be used to query the contents of items for matching.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionRole-prop"
+    },
+    "void setFilterMode(Qt::MatchFlags filterMode)": {
+      "brief": "This property controls how filtering is performed.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#filterMode-prop"
+    },
+    "void setMaxVisibleItems(int maxItems)": {
+      "brief": "This property holds the maximum allowed size on screen of the completer, measured in items",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#maxVisibleItems-prop"
+    },
+    "void setModel(QAbstractItemModel *model)": {
+      "brief": "Sets the model which provides completions to *model*.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#setModel"
+    },
+    "void setModelSorting(QCompleter::ModelSorting sorting)": {
+      "brief": "This property holds the way the model is sorted",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#modelSorting-prop"
+    },
+    "void setPopup(QAbstractItemView *popup)": {
+      "brief": "Sets the popup used to display completions to *popup*.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#setPopup"
+    },
+    "void setWidget(QWidget *widget)": {
+      "brief": "Sets the widget for which completion are provided for to *widget*.",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#setWidget"
+    },
+    "void setWrapAround(bool wrap)": {
+      "brief": "This property holds the completions wrap around when navigating through items",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#wrapAround-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "caseSensitivity": {
+      "brief": "The case sensitivity of the matching",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#caseSensitivity-prop"
+    },
+    "completionColumn": {
+      "brief": "The column in the model in which completions are searched for",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionColumn-prop"
+    },
+    "completionMode": {
+      "brief": "How the completions are provided to the user",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionMode-prop"
+    },
+    "completionPrefix": {
+      "brief": "The completion prefix used to provide completions",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionPrefix-prop"
+    },
+    "completionRole": {
+      "brief": "The item role to be used to query the contents of items for matching",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#completionRole-prop"
+    },
+    "filterMode": {
+      "brief": "This property controls how filtering is performed",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#filterMode-prop"
+    },
+    "maxVisibleItems": {
+      "brief": "The maximum allowed size on screen of the completer, measured in items",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#maxVisibleItems-prop"
+    },
+    "modelSorting": {
+      "brief": "The way the model is sorted",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#modelSorting-prop"
+    },
+    "wrapAround": {
+      "brief": "The completions wrap around when navigating through items",
+      "url": "https://doc.qt.io/qt-6/qcompleter.html#wrapAround-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

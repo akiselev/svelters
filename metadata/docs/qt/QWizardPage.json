@@ -1,0 +1,128 @@
+{
+  "doc": {
+    "brief": "The QWizardPage class is the base class for wizard pages.",
+    "index_brief": "The base class for wizard pages",
+    "url": "https://doc.qt.io/qt-6/qwizardpage.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QWizardPage",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QPixmap pixmap(QWizard::WizardPixmap which) const": {
+      "brief": "Returns the pixmap set for role *which*.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#pixmap"
+    },
+    "QString buttonText(QWizard::WizardButton which) const": {
+      "brief": "Returns the text on button *which* on this page.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#buttonText"
+    },
+    "QString subTitle() const": {
+      "brief": "This property holds the subtitle of the page",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#subTitle-prop"
+    },
+    "QString title() const": {
+      "brief": "This property holds the title of the page",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#title-prop"
+    },
+    "QVariant field(const QString &name) const": {
+      "brief": "Returns the value of the field called *name*.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#field"
+    },
+    "QWizard * wizard() const": {
+      "brief": "Returns the wizard associated with this page, or `nullptr` if this page hasn't been inserted into a [QWizard](xref:qt:QWizard) yet.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#wizard"
+    },
+    "QWizardPage(QWidget *parent)": {
+      "brief": "Constructs a wizard page with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#QWizardPage"
+    },
+    "bool isCommitPage() const": {
+      "brief": "Returns `true` if this page is a commit page; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#isCommitPage"
+    },
+    "bool isComplete() const": {
+      "brief": "This virtual function is called by [QWizard](xref:qt:QWizard) to determine whether the **Next** or **Finish** button should be enabled or disabled.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#isComplete"
+    },
+    "bool isFinalPage() const": {
+      "brief": "This function is called by [QWizard](xref:qt:QWizard) to determine whether the **Finish** button should be shown for this page or not.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#isFinalPage"
+    },
+    "bool validatePage()": {
+      "brief": "This virtual function is called by [QWizard::validateCurrentPage](xref:qt:QWizard)() when the user clicks **Next** or **Finish** to perform some last-minute validation.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#validatePage"
+    },
+    "int nextId() const": {
+      "brief": "This virtual function is called by [QWizard::nextId](xref:qt:QWizard)() to find out which page to show when the user clicks the **Next** button.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#nextId"
+    },
+    "void cleanupPage()": {
+      "brief": "This virtual function is called by [QWizard::cleanupPage](xref:qt:QWizard)() when the user leaves the page by clicking **Back** (unless the [QWizard::IndependentPages](xref:qt:QWizard) option is set).",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#cleanupPage"
+    },
+    "void completeChanged()": {
+      "brief": "This signal is emitted whenever the complete state of the page (i.e., the value of [isComplete](xref:qt:QWizardPage)()) changes.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#completeChanged"
+    },
+    "void initializePage()": {
+      "brief": "This virtual function is called by [QWizard::initializePage](xref:qt:QWizard)() to prepare the page just before it is shown either as a result of [QWizard::restart](xref:qt:QWizard)() being called...",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#initializePage"
+    },
+    "void registerField(const QString &name, QWidget *widget, const char *property, const char *changedSignal)": {
+      "brief": "Creates a field called *name* associated with the given *property* of the given *widget*.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#registerField"
+    },
+    "void setButtonText(QWizard::WizardButton which, const QString &text)": {
+      "brief": "Sets the text on button *which* to be *text* on this page.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#setButtonText"
+    },
+    "void setCommitPage(bool commitPage)": {
+      "brief": "Sets this page to be a commit page if *commitPage* is true; otherwise, sets it to be a normal page.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#setCommitPage"
+    },
+    "void setField(const QString &name, const QVariant &value)": {
+      "brief": "Sets the value of the field called *name* to *value*.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#setField"
+    },
+    "void setFinalPage(bool finalPage)": {
+      "brief": "Explicitly sets this page to be final if *finalPage* is true.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#setFinalPage"
+    },
+    "void setPixmap(QWizard::WizardPixmap which, const QPixmap &pixmap)": {
+      "brief": "Sets the pixmap for role *which* to *pixmap*.",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#setPixmap"
+    },
+    "void setSubTitle(const QString &subTitle)": {
+      "brief": "This property holds the subtitle of the page",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#subTitle-prop"
+    },
+    "void setTitle(const QString &title)": {
+      "brief": "This property holds the title of the page",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#title-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "subTitle": {
+      "brief": "The subtitle of the page",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#subTitle-prop"
+    },
+    "title": {
+      "brief": "The title of the page",
+      "url": "https://doc.qt.io/qt-6/qwizardpage.html#title-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

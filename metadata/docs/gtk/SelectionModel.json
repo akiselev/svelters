@@ -1,0 +1,153 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface that adds support for selection to list models.",
+    "file": "gtk/gtkselectionmodel.c",
+    "line": 27,
+    "md": "An interface that adds support for selection to list models.\n\nThis support is then used by widgets using list models to add the ability\nto select and unselect various items.\n\nGTK provides default implementations of the most common selection modes such\nas [`SingleSelection`](xref:gtk:Gtk.SingleSelection), so you will only need to implement this\ninterface if you want detailed control about how selections should be handled.\n\nA `GtkSelectionModel` supports a single boolean per item indicating if an item is\nselected or not. This can be queried via [`SelectionModel.is_selected()`](xref:gtk:Gtk.SelectionModel#method:is_selected).\nWhen the selected state of one or more items changes, the model will emit the\n[`SelectionModel::selection-changed`](xref:gtk:Gtk.SelectionModel#event:selection-changed) signal by calling the\n[`SelectionModel.selection_changed()`](xref:gtk:Gtk.SelectionModel#method:selection_changed) function. The positions given\nin that signal may have their selection state changed, though that is not a\nrequirement. If new items added to the model via the\n[`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) signal are selected or not is up to the\nimplementation.\n\nNote that items added via [`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) may already\nbe selected and no [`SelectionModel::selection-changed`](xref:gtk:Gtk.SelectionModel#event:selection-changed) will be\nemitted for them. So to track which items are selected, it is necessary to\nlisten to both signals.\n\nAdditionally, the interface can expose functionality to select and unselect\nitems. If these functions are implemented, GTK's list widgets will allow users\nto select and unselect items. However, `GtkSelectionModel`s are free to only\nimplement them partially or not at all. In that case the widgets will not\nsupport the unimplemented operations.\n\nWhen selecting or unselecting is supported by a model, the return values of\nthe selection functions do *not* indicate if selection or unselection happened.\nThey are only meant to indicate complete failure, like when this mode of\nselecting is not supported by the model.\n\nSelections may happen asynchronously, so the only reliable way to find out\nwhen an item was selected is to listen to the signals that indicate selection."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SelectionModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_selection": {
+      "brief": "Gets the set containing all currently selected items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 291,
+      "md": "Gets the set containing all currently selected items in the model.\n\nThis function may be slow, so if you are only interested in single item,\nconsider using [`SelectionModel.is_selected()`](xref:gtk:Gtk.SelectionModel#method:is_selected) or if you are only\ninterested in a few, consider [`SelectionModel.get_selection_in_range()`](xref:gtk:Gtk.SelectionModel#method:get_selection_in_range)."
+    },
+    "get_selection_in_range": {
+      "brief": "Gets the set of selected items in a range.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 313,
+      "md": "Gets the set of selected items in a range.\n\nThis function is an optimization for\n[`SelectionModel.get_selection()`](xref:gtk:Gtk.SelectionModel#method:get_selection) when you are only\ninterested in part of the model's selected state. A common use\ncase is in response to the [`SelectionModel::selection-changed`](xref:gtk:Gtk.SelectionModel#event:selection-changed)\nsignal."
+    },
+    "is_selected": {
+      "brief": "Checks if the given item is selected.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 270,
+      "md": "Checks if the given item is selected."
+    },
+    "select_all": {
+      "brief": "Requests to select all items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 443,
+      "md": "Requests to select all items in the model."
+    },
+    "select_item": {
+      "brief": "Requests to select an item in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 347,
+      "md": "Requests to select an item in the model."
+    },
+    "select_range": {
+      "brief": "Requests to select a range of items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 393,
+      "md": "Requests to select a range of items in the model."
+    },
+    "selection_changed": {
+      "brief": "Helper function for implementations of `GtkSelectionModel`.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 542,
+      "md": "Helper function for implementations of `GtkSelectionModel`.\n\nCall this when the selection changes to emit the\n[`SelectionModel::selection-changed`](xref:gtk:Gtk.SelectionModel#event:selection-changed) signal."
+    },
+    "set_selection": {
+      "brief": "Make selection changes.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 483,
+      "md": "Make selection changes.\n\nThis is the most advanced selection updating method that allows\nthe most fine-grained control over selection changes. If you can,\nyou should try the simpler versions, as implementations are more\nlikely to implement support for those.\n\nRequests that the selection state of all positions set in `mask`\nbe updated to the respective value in the `selected` bitmask.\n\nIn pseudocode, it would look something like this:\n\n```c\nfor (i = 0; i < n_items; i++)\n  {\n    // don't change values not in the mask\n    if (!gtk_bitset_contains (mask, i))\n      continue;\n\n    if (gtk_bitset_contains (selected, i))\n      select_item (i);\n    else\n      unselect_item (i);\n  }\n\ngtk_selection_model_selection_changed (model,\n                                       first_changed_item,\n                                       n_changed_items);\n```\n\n`mask` and `selected` must not be modified. They may refer to the\nsame bitset, which would mean that every item in the set should\nbe selected."
+    },
+    "unselect_all": {
+      "brief": "Requests to unselect all items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 463,
+      "md": "Requests to unselect all items in the model."
+    },
+    "unselect_item": {
+      "brief": "Requests to unselect an item in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 371,
+      "md": "Requests to unselect an item in the model."
+    },
+    "unselect_range": {
+      "brief": "Requests to unselect a range of items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 419,
+      "md": "Requests to unselect a range of items in the model."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "selection-changed": {
+      "brief": "Emitted when the selection state of some of the items in `model` changes.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 244,
+      "md": "Emitted when the selection state of some of the items in `model` changes.\n\nNote that this signal does not specify the new selection state of the\nitems, they need to be queried manually. It is also not necessary for\na model to change the selection state of any of the items in the selection\nmodel, though it would be rather useless to emit such a signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_selection_in_range": {
+      "brief": "Gets the set of selected items in a range.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 313,
+      "md": "Gets the set of selected items in a range.\n\nThis function is an optimization for\n[`SelectionModel.get_selection()`](xref:gtk:Gtk.SelectionModel#method:get_selection) when you are only\ninterested in part of the model's selected state. A common use\ncase is in response to the [`SelectionModel::selection-changed`](xref:gtk:Gtk.SelectionModel#event:selection-changed)\nsignal."
+    },
+    "is_selected": {
+      "brief": "Checks if the given item is selected.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 270,
+      "md": "Checks if the given item is selected."
+    },
+    "select_all": {
+      "brief": "Requests to select all items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 443,
+      "md": "Requests to select all items in the model."
+    },
+    "select_item": {
+      "brief": "Requests to select an item in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 347,
+      "md": "Requests to select an item in the model."
+    },
+    "select_range": {
+      "brief": "Requests to select a range of items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 393,
+      "md": "Requests to select a range of items in the model."
+    },
+    "set_selection": {
+      "brief": "Make selection changes.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 483,
+      "md": "Make selection changes.\n\nThis is the most advanced selection updating method that allows\nthe most fine-grained control over selection changes. If you can,\nyou should try the simpler versions, as implementations are more\nlikely to implement support for those.\n\nRequests that the selection state of all positions set in `mask`\nbe updated to the respective value in the `selected` bitmask.\n\nIn pseudocode, it would look something like this:\n\n```c\nfor (i = 0; i < n_items; i++)\n  {\n    // don't change values not in the mask\n    if (!gtk_bitset_contains (mask, i))\n      continue;\n\n    if (gtk_bitset_contains (selected, i))\n      select_item (i);\n    else\n      unselect_item (i);\n  }\n\ngtk_selection_model_selection_changed (model,\n                                       first_changed_item,\n                                       n_changed_items);\n```\n\n`mask` and `selected` must not be modified. They may refer to the\nsame bitset, which would mean that every item in the set should\nbe selected."
+    },
+    "unselect_all": {
+      "brief": "Requests to unselect all items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 463,
+      "md": "Requests to unselect all items in the model."
+    },
+    "unselect_item": {
+      "brief": "Requests to unselect an item in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 371,
+      "md": "Requests to unselect an item in the model."
+    },
+    "unselect_range": {
+      "brief": "Requests to unselect a range of items in the model.",
+      "file": "gtk/gtkselectionmodel.c",
+      "line": 419,
+      "md": "Requests to unselect a range of items in the model."
+    }
+  }
+}

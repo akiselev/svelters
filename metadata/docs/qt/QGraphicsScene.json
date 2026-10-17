@@ -1,0 +1,491 @@
+{
+  "doc": {
+    "brief": "The QGraphicsScene class provides a surface for managing a large number of 2D graphical items.",
+    "index_brief": "Surface for managing a large number of 2D graphical items",
+    "url": "https://doc.qt.io/qt-6/qgraphicsscene.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScene",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBrush backgroundBrush() const": {
+      "brief": "This property holds the background brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#backgroundBrush-prop"
+    },
+    "QBrush foregroundBrush() const": {
+      "brief": "This property holds the foreground brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#foregroundBrush-prop"
+    },
+    "QFont font() const": {
+      "brief": "This property holds the scene's default font",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#font-prop"
+    },
+    "QGraphicsEllipseItem * addEllipse(const QRectF &rect, const QPen &pen, const QBrush &brush)": {
+      "brief": "Creates and adds an ellipse item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addEllipse"
+    },
+    "QGraphicsEllipseItem * addEllipse(qreal x, qreal y, qreal w, qreal h, const QPen &pen, const QBrush &brush)": {
+      "brief": "This convenience function is equivalent to calling addEllipse([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*), *pen*, *brush*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addEllipse-1"
+    },
+    "QGraphicsItem * activePanel() const": {
+      "brief": "Returns the current active panel, or `nullptr` if no panel is currently active.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#activePanel"
+    },
+    "QGraphicsItem * focusItem() const": {
+      "brief": "When the scene is active, this functions returns the scene's current focus item, or `nullptr` if no item currently has focus.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusItem"
+    },
+    "QGraphicsItem * itemAt(const QPointF &position, const QTransform &deviceTransform) const": {
+      "brief": "Returns the topmost visible item at the specified *position*, or `nullptr` if there are no items at this position.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#itemAt"
+    },
+    "QGraphicsItem * itemAt(qreal x, qreal y, const QTransform &deviceTransform) const": {
+      "brief": "Returns the topmost visible item at the position specified by (*x*, *y*), or `nullptr` if there are no items at this position.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#itemAt-1"
+    },
+    "QGraphicsItem * mouseGrabberItem() const": {
+      "brief": "Returns the current mouse grabber item, or `nullptr` if no item is currently grabbing the mouse.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#mouseGrabberItem"
+    },
+    "QGraphicsItemGroup * createItemGroup(const QList<QGraphicsItem *> &items)": {
+      "brief": "Groups all items in *items* into a new [QGraphicsItemGroup](xref:qt:QGraphicsItemGroup), and returns a pointer to the group.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#createItemGroup"
+    },
+    "QGraphicsLineItem * addLine(const QLineF &line, const QPen &pen)": {
+      "brief": "Creates and adds a line item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addLine"
+    },
+    "QGraphicsLineItem * addLine(qreal x1, qreal y1, qreal x2, qreal y2, const QPen &pen)": {
+      "brief": "This convenience function is equivalent to calling addLine([QLineF](xref:qt:QLineF)(*x1*, *y1*, *x2*, *y2*), *pen*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addLine-1"
+    },
+    "QGraphicsPathItem * addPath(const QPainterPath &path, const QPen &pen, const QBrush &brush)": {
+      "brief": "Creates and adds a path item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addPath"
+    },
+    "QGraphicsPixmapItem * addPixmap(const QPixmap &pixmap)": {
+      "brief": "Creates and adds a pixmap item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addPixmap"
+    },
+    "QGraphicsPolygonItem * addPolygon(const QPolygonF &polygon, const QPen &pen, const QBrush &brush)": {
+      "brief": "Creates and adds a polygon item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addPolygon"
+    },
+    "QGraphicsProxyWidget * addWidget(QWidget *widget, Qt::WindowFlags wFlags)": {
+      "brief": "Creates a new [QGraphicsProxyWidget](xref:qt:QGraphicsProxyWidget) for *widget*, adds it to the scene, and returns a pointer to the proxy. *wFlags* set the default window flags for the embedding...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addWidget"
+    },
+    "QGraphicsRectItem * addRect(const QRectF &rect, const QPen &pen, const QBrush &brush)": {
+      "brief": "Creates and adds a rectangle item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addRect"
+    },
+    "QGraphicsRectItem * addRect(qreal x, qreal y, qreal w, qreal h, const QPen &pen, const QBrush &brush)": {
+      "brief": "This convenience function is equivalent to calling addRect([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*), *pen*, *brush*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addRect-1"
+    },
+    "QGraphicsScene(QObject *parent)": {
+      "brief": "Constructs a QGraphicsScene object.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#QGraphicsScene"
+    },
+    "QGraphicsScene(const QRectF &sceneRect, QObject *parent)": {
+      "brief": "Constructs a QGraphicsScene object, using *sceneRect* for its scene rectangle.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#QGraphicsScene-1"
+    },
+    "QGraphicsScene(qreal x, qreal y, qreal width, qreal height, QObject *parent)": {
+      "brief": "Constructs a QGraphicsScene object, using the rectangle specified by (*x*, *y*), and the given *width* and *height* for its scene rectangle.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#QGraphicsScene-2"
+    },
+    "QGraphicsScene::ItemIndexMethod itemIndexMethod() const": {
+      "brief": "This property holds the item indexing method.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#itemIndexMethod-prop"
+    },
+    "QGraphicsSimpleTextItem * addSimpleText(const QString &text, const QFont &font)": {
+      "brief": "Creates and adds a [QGraphicsSimpleTextItem](xref:qt:QGraphicsSimpleTextItem) to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addSimpleText"
+    },
+    "QGraphicsTextItem * addText(const QString &text, const QFont &font)": {
+      "brief": "Creates and adds a text item to the scene, and returns the item pointer.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addText"
+    },
+    "QGraphicsWidget * activeWindow() const": {
+      "brief": "Returns the current active window, or `nullptr` if no window is currently active.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#activeWindow"
+    },
+    "QList<QGraphicsItem *> collidingItems(const QGraphicsItem *item, Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns a list of all items that collide with *item*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#collidingItems"
+    },
+    "QList<QGraphicsItem *> items(Qt::SortOrder order) const": {
+      "brief": "Returns an ordered list of all items on the scene. *order* decides the stacking order.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#items"
+    },
+    "QList<QGraphicsItem *> items(const QPainterPath &path, Qt::ItemSelectionMode mode, Qt::SortOrder order, const QTransform &deviceTransform) const": {
+      "brief": "Returns all visible items that, depending on *mode*, are either inside or intersect with the specified *path*, in a list sorted using *order*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#items-2"
+    },
+    "QList<QGraphicsItem *> items(const QPointF &pos, Qt::ItemSelectionMode mode, Qt::SortOrder order, const QTransform &deviceTransform) const": {
+      "brief": "Returns all visible items that, depending on *mode*, are at the specified *pos* in a list sorted using *order*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#items-1"
+    },
+    "QList<QGraphicsItem *> items(const QPolygonF &polygon, Qt::ItemSelectionMode mode, Qt::SortOrder order, const QTransform &deviceTransform) const": {
+      "brief": "Returns all visible items that, depending on *mode*, are either inside or intersect with the specified *polygon*, in a list sorted using *order*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#items-3"
+    },
+    "QList<QGraphicsItem *> items(const QRectF &rect, Qt::ItemSelectionMode mode, Qt::SortOrder order, const QTransform &deviceTransform) const": {
+      "brief": "Returns all visible items that, depending on *mode*, are either inside or intersect with the specified *rect*, in a list sorted using *order*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#items-4"
+    },
+    "QList<QGraphicsItem *> items(qreal x, qreal y, qreal w, qreal h, Qt::ItemSelectionMode mode, Qt::SortOrder order, const QTransform &deviceTransform) const": {
+      "brief": "Returns all visible items that, depending on *mode*, are either inside or intersect with the rectangle defined by *x*, *y*, *w* and *h*, in a list sorted using *order*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#items-5"
+    },
+    "QList<QGraphicsItem *> selectedItems() const": {
+      "brief": "Returns a list of all currently selected items.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#selectedItems"
+    },
+    "QList<QGraphicsView *> views() const": {
+      "brief": "Returns a list of all the views that display this scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#views"
+    },
+    "QPainterPath selectionArea() const": {
+      "brief": "Returns the selection area that was previously set with [setSelectionArea](xref:qt:QGraphicsScene)(), or an empty [QPainterPath](xref:qt:QPainterPath) if no selection area has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#selectionArea"
+    },
+    "QPalette palette() const": {
+      "brief": "This property holds the scene's default palette",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#palette-prop"
+    },
+    "QRectF itemsBoundingRect() const": {
+      "brief": "Calculates and returns the bounding rect of all items on the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#itemsBoundingRect"
+    },
+    "QRectF sceneRect() const": {
+      "brief": "This property holds the scene rectangle; the bounding rectangle of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#sceneRect-prop"
+    },
+    "QStyle * style() const": {
+      "brief": "Returns the scene's style, or the same as [QApplication::style](xref:qt:QApplication)() if the scene has not been explicitly assigned a style.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#style"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const": {
+      "brief": "This method is used by input methods to query a set of properties of the scene to be able to support complex input method operations as support for surrounding text and reconversions.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#inputMethodQuery"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#event"
+    },
+    "bool eventFilter(QObject *watched, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#eventFilter"
+    },
+    "bool focusNextPrevChild(bool next)": {
+      "brief": "Finds a new widget to give the keyboard focus to, as appropriate for Tab and Shift+Tab, and returns `true` if it can find a new widget, or false if it cannot.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusNextPrevChild"
+    },
+    "bool focusOnTouch() const": {
+      "brief": "This property holds whether items gain focus when receiving a *touch begin* event.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusOnTouch-prop"
+    },
+    "bool hasFocus() const": {
+      "brief": "Returns `true` if the scene has focus; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#hasFocus"
+    },
+    "bool isActive() const": {
+      "brief": "Returns `true` if the scene is active (e.g., it's viewed by at least one [QGraphicsView](xref:qt:QGraphicsView) that is active); otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#isActive"
+    },
+    "bool sendEvent(QGraphicsItem *item, QEvent *event)": {
+      "brief": "Sends event *event* to item *item* through possible event filters.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#sendEvent"
+    },
+    "bool stickyFocus() const": {
+      "brief": "This property holds whether clicking into the scene background will clear focus",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#stickyFocus-prop"
+    },
+    "int bspTreeDepth() const": {
+      "brief": "This property holds the depth of [QGraphicsScene](xref:qt:QGraphicsScene)'s BSP index tree",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#bspTreeDepth-prop"
+    },
+    "qreal height() const": {
+      "brief": "This convenience function is equivalent to calling `sceneRect().height()`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#height"
+    },
+    "qreal minimumRenderSize() const": {
+      "brief": "This property holds the minimal view-transformed size an item must have to be drawn",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#minimumRenderSize-prop"
+    },
+    "qreal width() const": {
+      "brief": "This convenience function is equivalent to calling [sceneRect](xref:qt:QGraphicsScene)().width().",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#width"
+    },
+    "void addItem(QGraphicsItem *item)": {
+      "brief": "Adds or moves the *item* and all its children to this scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#addItem"
+    },
+    "void advance()": {
+      "brief": "This slot *advances* the scene by one step, by calling [QGraphicsItem::advance](xref:qt:QGraphicsItem)() for all items on the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#advance"
+    },
+    "void changed(const QList<QRectF> &region)": {
+      "brief": "This signal is emitted by [QGraphicsScene](xref:qt:QGraphicsScene) when control reaches the event loop, if the scene content changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#changed"
+    },
+    "void clear()": {
+      "brief": "Removes and deletes all items from the scene, but otherwise leaves the state of the scene unchanged.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#clear"
+    },
+    "void clearFocus()": {
+      "brief": "Clears focus from the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#clearFocus"
+    },
+    "void clearSelection()": {
+      "brief": "Clears the current selection.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#clearSelection"
+    },
+    "void contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)": {
+      "brief": "This event handler, for event *contextMenuEvent*, can be reimplemented in a subclass to receive context menu events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#contextMenuEvent"
+    },
+    "void destroyItemGroup(QGraphicsItemGroup *group)": {
+      "brief": "Reparents all items in *group* to *group*'s parent item, then removes *group* from the scene, and finally deletes it.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#destroyItemGroup"
+    },
+    "void dragEnterEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive drag enter events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive drag leave events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive drag move events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#dragMoveEvent"
+    },
+    "void drawBackground(QPainter *painter, const QRectF &rect)": {
+      "brief": "Draws the background of the scene using *painter*, before any items and the foreground are drawn.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#drawBackground"
+    },
+    "void drawForeground(QPainter *painter, const QRectF &rect)": {
+      "brief": "Draws the foreground of the scene using *painter*, after the background and all items have been drawn.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#drawForeground"
+    },
+    "void drawItems(QPainter *painter, int numItems, QGraphicsItem *[] items, const QStyleOptionGraphicsItem[] options, QWidget *widget)": {
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene-obsolete.html#drawItems"
+    },
+    "void dropEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive drop events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#dropEvent"
+    },
+    "void focusInEvent(QFocusEvent *focusEvent)": {
+      "brief": "This event handler, for event *focusEvent*, can be reimplemented in a subclass to receive focus in events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusInEvent"
+    },
+    "void focusItemChanged(QGraphicsItem *newFocusItem, QGraphicsItem *oldFocusItem, Qt::FocusReason reason)": {
+      "brief": "This signal is emitted by [QGraphicsScene](xref:qt:QGraphicsScene) whenever focus changes in the scene (i.e., when an item gains or loses input focus, or when focus passes from one item to another).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusItemChanged"
+    },
+    "void focusOutEvent(QFocusEvent *focusEvent)": {
+      "brief": "This event handler, for event *focusEvent*, can be reimplemented in a subclass to receive focus out events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusOutEvent"
+    },
+    "void helpEvent(QGraphicsSceneHelpEvent *helpEvent)": {
+      "brief": "This event handler, for event *helpEvent*, can be reimplemented in a subclass to receive help events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#helpEvent"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive input method events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#inputMethodEvent"
+    },
+    "void invalidate(const QRectF &rect, QGraphicsScene::SceneLayers layers)": {
+      "brief": "Invalidates and schedules a redraw of the *layers* in *rect* on the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#invalidate"
+    },
+    "void invalidate(qreal x, qreal y, qreal w, qreal h, QGraphicsScene::SceneLayers layers)": {
+      "brief": "This convenience function is equivalent to calling invalidate([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*), *layers*);",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#invalidate-1"
+    },
+    "void keyPressEvent(QKeyEvent *keyEvent)": {
+      "brief": "This event handler, for event *keyEvent*, can be reimplemented in a subclass to receive keypress events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *keyEvent)": {
+      "brief": "This event handler, for event *keyEvent*, can be reimplemented in a subclass to receive key release events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#keyReleaseEvent"
+    },
+    "void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)": {
+      "brief": "This event handler, for event *mouseEvent*, can be reimplemented in a subclass to receive mouse double-click events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)": {
+      "brief": "This event handler, for event *mouseEvent*, can be reimplemented in a subclass to receive mouse move events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)": {
+      "brief": "This event handler, for event *mouseEvent*, can be reimplemented in a subclass to receive mouse press events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)": {
+      "brief": "This event handler, for event *mouseEvent*, can be reimplemented in a subclass to receive mouse release events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#mouseReleaseEvent"
+    },
+    "void removeItem(QGraphicsItem *item)": {
+      "brief": "Removes the item *item* and all its children from the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#removeItem"
+    },
+    "void render(QPainter *painter, const QRectF &target, const QRectF &source, Qt::AspectRatioMode aspectRatioMode)": {
+      "brief": "Renders the *source* rect from scene into *target*, using *painter*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#render"
+    },
+    "void sceneRectChanged(const QRectF &rect)": {
+      "brief": "This signal is emitted by [QGraphicsScene](xref:qt:QGraphicsScene) whenever the scene rect changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#sceneRectChanged"
+    },
+    "void selectionChanged()": {
+      "brief": "This signal is emitted by [QGraphicsScene](xref:qt:QGraphicsScene) whenever the selection changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#selectionChanged"
+    },
+    "void setActivePanel(QGraphicsItem *item)": {
+      "brief": "Activates *item*, which must be an item in this scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setActivePanel"
+    },
+    "void setActiveWindow(QGraphicsWidget *widget)": {
+      "brief": "Activates *widget*, which must be a widget in this scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setActiveWindow"
+    },
+    "void setBackgroundBrush(const QBrush &brush)": {
+      "brief": "This property holds the background brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#backgroundBrush-prop"
+    },
+    "void setBspTreeDepth(int depth)": {
+      "brief": "This property holds the depth of [QGraphicsScene](xref:qt:QGraphicsScene)'s BSP index tree",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#bspTreeDepth-prop"
+    },
+    "void setFocus(Qt::FocusReason focusReason)": {
+      "brief": "Sets focus on the scene by sending a [QFocusEvent](xref:qt:QFocusEvent) to the scene, passing *focusReason* as the reason.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setFocus"
+    },
+    "void setFocusItem(QGraphicsItem *item, Qt::FocusReason focusReason)": {
+      "brief": "Sets the scene's focus item to *item*, with the focus reason *focusReason*, after removing focus from any previous item that may have had focus.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setFocusItem"
+    },
+    "void setFocusOnTouch(bool enabled)": {
+      "brief": "This property holds whether items gain focus when receiving a *touch begin* event.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusOnTouch-prop"
+    },
+    "void setFont(const QFont &font)": {
+      "brief": "This property holds the scene's default font",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#font-prop"
+    },
+    "void setForegroundBrush(const QBrush &brush)": {
+      "brief": "This property holds the foreground brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#foregroundBrush-prop"
+    },
+    "void setItemIndexMethod(QGraphicsScene::ItemIndexMethod method)": {
+      "brief": "This property holds the item indexing method.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#itemIndexMethod-prop"
+    },
+    "void setMinimumRenderSize(qreal minSize)": {
+      "brief": "This property holds the minimal view-transformed size an item must have to be drawn",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#minimumRenderSize-prop"
+    },
+    "void setPalette(const QPalette &palette)": {
+      "brief": "This property holds the scene's default palette",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#palette-prop"
+    },
+    "void setSceneRect(const QRectF &rect)": {
+      "brief": "This property holds the scene rectangle; the bounding rectangle of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#sceneRect-prop"
+    },
+    "void setSceneRect(qreal x, qreal y, qreal w, qreal h)": {
+      "brief": "This property holds the scene rectangle; the bounding rectangle of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#sceneRect-prop"
+    },
+    "void setSelectionArea(const QPainterPath &path, Qt::ItemSelectionOperation selectionOperation, Qt::ItemSelectionMode mode, const QTransform &deviceTransform)": {
+      "brief": "Sets the selection area to *path* using *mode* to determine if items are included in the selection area.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setSelectionArea-1"
+    },
+    "void setSelectionArea(const QPainterPath &path, const QTransform &deviceTransform)": {
+      "brief": "Sets the selection area to *path*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setSelectionArea"
+    },
+    "void setStickyFocus(bool enabled)": {
+      "brief": "This property holds whether clicking into the scene background will clear focus",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#stickyFocus-prop"
+    },
+    "void setStyle(QStyle *style)": {
+      "brief": "Sets or replaces the style of the scene to *style*, and reparents the style to this scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#setStyle"
+    },
+    "void update(const QRectF &rect)": {
+      "brief": "Schedules a redraw of the area *rect* on the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#update"
+    },
+    "void update(qreal x, qreal y, qreal w, qreal h)": {
+      "brief": "This function is equivalent to calling update([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*));",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#update-1"
+    },
+    "void wheelEvent(QGraphicsSceneWheelEvent *wheelEvent)": {
+      "brief": "This event handler, for event *wheelEvent*, can be reimplemented in a subclass to receive mouse wheel events for the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "backgroundBrush": {
+      "brief": "The background brush of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#backgroundBrush-prop"
+    },
+    "bspTreeDepth": {
+      "brief": "The depth of QGraphicsScene's BSP index tree",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#bspTreeDepth-prop"
+    },
+    "focusOnTouch": {
+      "brief": "Whether items gain focus when receiving a touch begin event",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#focusOnTouch-prop"
+    },
+    "font": {
+      "brief": "The scene's default font",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#font-prop"
+    },
+    "foregroundBrush": {
+      "brief": "The foreground brush of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#foregroundBrush-prop"
+    },
+    "itemIndexMethod": {
+      "brief": "The item indexing method",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#itemIndexMethod-prop"
+    },
+    "minimumRenderSize": {
+      "brief": "The minimal view-transformed size an item must have to be drawn",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#minimumRenderSize-prop"
+    },
+    "palette": {
+      "brief": "The scene's default palette",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#palette-prop"
+    },
+    "sceneRect": {
+      "brief": "The scene rectangle; the bounding rectangle of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#sceneRect-prop"
+    },
+    "stickyFocus": {
+      "brief": "Whether clicking into the scene background will clear focus",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscene.html#stickyFocus-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

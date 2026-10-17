@@ -1,0 +1,50 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkWindowGroup` object.",
+      "file": "gtk/gtkwindowgroup.c",
+      "line": 81,
+      "md": "Creates a new `GtkWindowGroup` object.\n\nModality of windows only affects windows\nwithin the same `GtkWindowGroup`."
+    }
+  },
+  "doc": {
+    "brief": "Creates groups of windows that behave like separate applications.",
+    "file": "gtk/gtkwindowgroup.c",
+    "line": 33,
+    "md": "Creates groups of windows that behave like separate applications.\n\nIt achieves this by limiting the effect of GTK grabs and modality\nto windows in the same group.\n\nA window can be a member in at most one window group at a time.\nWindows that have not been explicitly assigned to a group are\nimplicitly treated like windows of the default window group.\n\n`GtkWindowGroup` objects are referenced by each window in the group,\nso once you have added all windows to a `GtkWindowGroup`, you can drop\nthe initial reference to the window group with g_object_unref(). If the\nwindows in the window group are subsequently destroyed, then they will\nbe removed from the window group and drop their references on the window\ngroup; when all window have been removed, the window group will be\nfreed."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:WindowGroup",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_window": {
+      "brief": "Adds a window to a `GtkWindowGroup`.",
+      "file": "gtk/gtkwindowgroup.c",
+      "line": 123,
+      "md": "Adds a window to a `GtkWindowGroup`."
+    },
+    "list_windows": {
+      "brief": "Returns a list of the `GtkWindows` that belong to `window_group`.",
+      "file": "gtk/gtkwindowgroup.c",
+      "line": 181,
+      "md": "Returns a list of the `GtkWindows` that belong to `window_group`."
+    },
+    "remove_window": {
+      "brief": "Removes a window from a `GtkWindowGroup`.",
+      "file": "gtk/gtkwindowgroup.c",
+      "line": 157,
+      "md": "Removes a window from a `GtkWindowGroup`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

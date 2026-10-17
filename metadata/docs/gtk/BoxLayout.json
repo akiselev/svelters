@@ -1,0 +1,108 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkBoxLayout`.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1260,
+      "md": "Creates a new `GtkBoxLayout`."
+    }
+  },
+  "doc": {
+    "brief": "Arranges children in a single row or column.",
+    "file": "gtk/gtkboxlayout.c",
+    "line": 31,
+    "md": "Arranges children in a single row or column.\n\nWhether it is a row or column depends on the value of its\n[`Orientable:orientation`](xref:gtk:Gtk.Orientable#property:orientation) property. Within the other dimension\nall children all allocated the same size. The `GtkBoxLayout` will respect\nthe [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and [`Widget:valign`](xref:gtk:Gtk.Widget#property:valign)\nproperties of each child widget.\n\nIf you want all children to be assigned the same size, you can use\nthe [`BoxLayout:homogeneous`](xref:gtk:Gtk.BoxLayout#property:homogeneous) property.\n\nIf you want to specify the amount of space placed between each child,\nyou can use the [`BoxLayout:spacing`](xref:gtk:Gtk.BoxLayout#property:spacing) property."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BoxLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_baseline_child": {
+      "brief": "Gets the value set by gtk_box_layout_set_baseline_child().",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1426,
+      "md": "Gets the value set by gtk_box_layout_set_baseline_child().",
+      "since": "4.12"
+    },
+    "get_baseline_position": {
+      "brief": "Gets the value set by gtk_box_layout_set_baseline_position().",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1383,
+      "md": "Gets the value set by gtk_box_layout_set_baseline_position()."
+    },
+    "get_homogeneous": {
+      "brief": "Returns whether the layout is set to be homogeneous.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1300,
+      "md": "Returns whether the layout is set to be homogeneous."
+    },
+    "get_spacing": {
+      "brief": "Returns the space that `box_layout` puts between children.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1338,
+      "md": "Returns the space that `box_layout` puts between children."
+    },
+    "set_baseline_child": {
+      "brief": "Sets the index of the child that determines the baseline in vertical layout.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1399,
+      "md": "Sets the index of the child that determines the baseline\nin vertical layout.",
+      "since": "4.12"
+    },
+    "set_baseline_position": {
+      "brief": "Sets the baseline position of a box layout.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1354,
+      "md": "Sets the baseline position of a box layout.\n\nThe baseline position affects only horizontal boxes with at least one\nbaseline aligned child. If there is more vertical space available than\nrequested, and the baseline is not allocated by the parent then the\ngiven `position` is used to allocate the baseline within the extra\nspace available."
+    },
+    "set_homogeneous": {
+      "brief": "Sets whether the box layout will allocate the same size to all children.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1276,
+      "md": "Sets whether the box layout will allocate the same\nsize to all children."
+    },
+    "set_spacing": {
+      "brief": "Sets how much spacing to put between children.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1316,
+      "md": "Sets how much spacing to put between children."
+    }
+  },
+  "properties": {
+    "baseline-child": {
+      "brief": "The child that determines the baseline of the box in vertical layout.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1212,
+      "md": "The child that determines the baseline of the box\nin vertical layout.\n\nIf the child does baseline positioning, then its baseline\nis lined up with the baseline of the box. If it doesn't, then\nthe bottom edge of the child is used.",
+      "since": "4.12"
+    },
+    "baseline-position": {
+      "brief": "The position of the allocated baseline within the extra space allocated to each child.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1230,
+      "md": "The position of the allocated baseline within the extra space\nallocated to each child.\n\nThis property is only relevant for horizontal layouts containing\nat least one child with a baseline alignment."
+    },
+    "homogeneous": {
+      "brief": "Whether the box layout should distribute the available space equally among the children.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1189,
+      "md": "Whether the box layout should distribute the available space\nequally among the children."
+    },
+    "spacing": {
+      "brief": "The space to put between the children.",
+      "file": "gtk/gtkboxlayout.c",
+      "line": 1201,
+      "md": "The space to put between the children."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

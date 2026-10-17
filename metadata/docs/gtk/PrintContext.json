@@ -1,0 +1,91 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Encapsulates context information that is required when drawing pages for printing.",
+    "file": "gtk/print/gtkprintcontext.c",
+    "line": 23,
+    "md": "Encapsulates context information that is required when\ndrawing pages for printing.\n\nThis includes the cairo context and important parameters like page size\nand resolution. It also lets you easily create [`Layout`](xref:gtk:Pango.Layout) and\n[`Context`](xref:gtk:Pango.Context) objects that match the font metrics of the cairo surface.\n\n`GtkPrintContext` objects get passed to the\n[`PrintOperation::begin-print`](xref:gtk:Gtk.PrintOperation#event:begin-print),\n[`PrintOperation::end-print`](xref:gtk:Gtk.PrintOperation#event:end-print),\n[`PrintOperation::request-page-setup`](xref:gtk:Gtk.PrintOperation#event:request-page-setup) and\n[`PrintOperation::draw-page`](xref:gtk:Gtk.PrintOperation#event:draw-page) signals on the\n[`PrintOperation`](xref:gtk:Gtk.PrintOperation) object.\n\n## Using GtkPrintContext in a ::draw-page callback\n\n```c\nstatic void\ndraw_page (GtkPrintOperation *operation,\n           GtkPrintContext   *context,\n           int                page_nr)\n{\n  cairo_t *cr;\n  PangoLayout *layout;\n  PangoFontDescription *desc;\n\n  cr = gtk_print_context_get_cairo_context (context);\n\n  // Draw a red rectangle, as wide as the paper (inside the margins)\n  cairo_set_source_rgb (cr, 1.0, 0, 0);\n  cairo_rectangle (cr, 0, 0, gtk_print_context_get_width (context), 50);\n\n  cairo_fill (cr);\n\n  // Draw some lines\n  cairo_move_to (cr, 20, 10);\n  cairo_line_to (cr, 40, 20);\n  cairo_arc (cr, 60, 60, 20, 0, M_PI);\n  cairo_line_to (cr, 80, 20);\n\n  cairo_set_source_rgb (cr, 0, 0, 0);\n  cairo_set_line_width (cr, 5);\n  cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);\n  cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);\n\n  cairo_stroke (cr);\n\n  // Draw some text\n  layout = gtk_print_context_create_pango_layout (context);\n  pango_layout_set_text (layout, \"Hello World! Printing is easy\", -1);\n  desc = pango_font_description_from_string (\"sans 28\");\n  pango_layout_set_font_description (layout, desc);\n  pango_font_description_free (desc);\n\n  cairo_move_to (cr, 30, 20);\n  pango_cairo_layout_path (cr, layout);\n\n  // Font Outline\n  cairo_set_source_rgb (cr, 0.93, 1.0, 0.47);\n  cairo_set_line_width (cr, 0.5);\n  cairo_stroke_preserve (cr);\n\n  // Font Fill\n  cairo_set_source_rgb (cr, 0, 0.0, 1.0);\n  cairo_fill (cr);\n\n  g_object_unref (layout);\n}\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintContext",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "create_pango_context": {
+      "brief": "Creates a new `PangoContext` that can be used with the `GtkPrintContext`.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 560,
+      "md": "Creates a new `PangoContext` that can be used with the\n`GtkPrintContext`."
+    },
+    "create_pango_layout": {
+      "brief": "Creates a new `PangoLayout` that is suitable for use with the `GtkPrintContext`.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 592,
+      "md": "Creates a new `PangoLayout` that is suitable for use\nwith the `GtkPrintContext`."
+    },
+    "get_cairo_context": {
+      "brief": "Obtains the cairo context that is associated with the `GtkPrintContext`.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 366,
+      "md": "Obtains the cairo context that is associated with the\n`GtkPrintContext`."
+    },
+    "get_dpi_x": {
+      "brief": "Obtains the horizontal resolution of the `GtkPrintContext`, in dots per inch.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 454,
+      "md": "Obtains the horizontal resolution of the `GtkPrintContext`,\nin dots per inch."
+    },
+    "get_dpi_y": {
+      "brief": "Obtains the vertical resolution of the `GtkPrintContext`, in dots per inch.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 471,
+      "md": "Obtains the vertical resolution of the `GtkPrintContext`,\nin dots per inch."
+    },
+    "get_hard_margins": {
+      "brief": "Obtains the hardware printer margins of the `GtkPrintContext`, in units.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 488,
+      "md": "Obtains the hardware printer margins of the `GtkPrintContext`,\nin units."
+    },
+    "get_height": {
+      "brief": "Obtains the height of the `GtkPrintContext`, in pixels.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 427,
+      "md": "Obtains the height of the `GtkPrintContext`, in pixels."
+    },
+    "get_page_setup": {
+      "brief": "Obtains the `GtkPageSetup` that determines the page dimensions of the `GtkPrintContext`.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 383,
+      "md": "Obtains the `GtkPageSetup` that determines the page\ndimensions of the `GtkPrintContext`."
+    },
+    "get_pango_fontmap": {
+      "brief": "Returns a `PangoFontMap` that is suitable for use with the `GtkPrintContext`.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 543,
+      "md": "Returns a `PangoFontMap` that is suitable for use\nwith the `GtkPrintContext`."
+    },
+    "get_width": {
+      "brief": "Obtains the width of the `GtkPrintContext`, in pixels.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 400,
+      "md": "Obtains the width of the `GtkPrintContext`, in pixels."
+    },
+    "set_cairo_context": {
+      "brief": "Sets a new cairo context on a print context.",
+      "file": "gtk/print/gtkprintcontext.c",
+      "line": 184,
+      "md": "Sets a new cairo context on a print context.\n\nThis function is intended to be used when implementing\nan internal print preview, it is not needed for printing,\nsince GTK itself creates a suitable cairo context in that\ncase."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

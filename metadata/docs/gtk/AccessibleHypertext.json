@@ -1,0 +1,40 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for accessible objects containing links.",
+    "file": "gtk/gtkaccessiblehypertext.h",
+    "line": 26,
+    "md": "An interface for accessible objects containing links.\n\nThe `GtkAccessibleHypertext` interfaces is meant to be implemented by accessible\nobjects that contain links. Those links don't necessarily have to be part\nof text, they can be associated with images and other things.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleHypertext",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_link": {
+      "brief": "Retrieve the n-th link in the accessible object.",
+      "file": "gtk/gtkaccessiblehypertext.h",
+      "line": 66,
+      "md": "Retrieve the n-th link in the accessible object.\n\n`index` must be smaller than the number of links.",
+      "since": "4.22"
+    },
+    "get_n_links": {
+      "brief": "Retrieve the number of links in the accessible object.",
+      "file": "gtk/gtkaccessiblehypertext.h",
+      "line": 54,
+      "md": "Retrieve the number of links in the accessible object.",
+      "since": "4.22"
+    }
+  }
+}

@@ -42,6 +42,8 @@ pub trait Toolkit {
     fn render(&self, h: u64) -> Result<(), String>;
     /// Close the top-level behind `h` as the user would.
     fn close(&self, h: u64) -> Result<(), String>;
+    /// Native toplevel windows that still exist (a leak check after reload).
+    fn native_toplevels(&self) -> usize;
     /// Run `f` on the toolkit loop after `ms` milliseconds.
     fn schedule(&self, ms: u32, f: Box<dyn FnOnce()>);
     /// `(nanoseconds, calls)` spent inside backend calls since the last take.
@@ -220,12 +222,19 @@ impl Driver {
         let what = match &step {
             Step::Checkpoint => "checkpoint".to_string(),
             Step::Event { handle, signal, .. } => format!("{signal}#{handle}"),
+            Step::Gone { handle, .. } => format!("gone#{handle}"),
         };
         if self.opts.measure {
             let _ = self.host.take_timing();
             let _ = self.tk.take_toolkit_timing();
         }
         self.st.borrow_mut().pending = Some(Pending { index, what, started: Instant::now(), first_idle: None });
+        // A native death in the script is produced by closing the window the way a user would.
+        if let Step::Gone { handle, .. } = step {
+            if let Err(e) = self.tk.close(handle) {
+                self.fail(format!("step {index} (close #{handle}): {e}"));
+            }
+        }
         if let Step::Event { handle, signal, args } = step {
             let res = match (signal.as_str(), args.first()) {
                 ("clicked", _) => self.tk.click(handle),

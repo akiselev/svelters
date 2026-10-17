@@ -77,7 +77,7 @@ typedef struct svl_host {
   /* synchronous handler call for return-value signals/virtuals (M4; see open questions) */
   int  (*call_sync)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n, svl_value *out);
   /* native object went away underneath us (parent destroyed it, window closed) */
-  void (*on_destroyed)(void *self, svl_handle h);
+  void (*on_destroyed)(void *self, svl_handle h, uint32_t reason /* svl_gone */);
 } svl_host;
 ```
 
@@ -157,9 +157,12 @@ set #<h> <prop> <json>
 call #<h> <method> <json-args-array>
 listen #<h> <signal> on|off
 event #<h> <signal> <json-args-array>        # an injected native event, logged when delivered
+gone #<h> <reason>                           # the native object died (ABI v2), logged when it happens
 ```
 
-Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}` and `{"checkpoint": true}` steps.
+Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
+
+`gone` is a native death. `<reason>` is the lower-case `svl_gone` name: `unknown`, `closed`, `parent`, `owner`, `replaced`, `shutdown`. A scripted `gone` step kills the handle with the given reason, and the log gets one `gone` line for it followed by one line per descendant (pre-order, reason `parent`). The Node TestHost and the log backend both do the cascade themselves. On a real toolkit the replay produces the first death natively (closing the window) and checks the rest against what the backend reports. Ops the host swallows for dead handles (`setProp`, `listen off`, `remove`, `destroy`) are not logged.
 
 Prop values never use the `SVL_LIST` tag or nested objects in P.
 
@@ -204,6 +207,8 @@ void (*schedule_wake)(void *self, int64_t ms);
 
 ## ABI v2 (approved 2026-10-17, lands at the start of M2)
 
+**Status: implemented in M2a** (host, log backend, GTK, Qt, renderer). Deviations from the text below are listed under "As implemented" at the end of this section.
+
 ABI v2 bundles two approved changes: toolkit-native timers (above) and the lifetime model from `docs/notes/ownership-and-lifetimes.md`. `SVL_ABI_VERSION` becomes 2.
 
 ```c
@@ -228,6 +233,22 @@ Rules:
 - **Native code never holds a JS value.** Events are (handle, signal, args), and JS-implemented native objects (models, factories) hold an integer ID into a host table.
 - **Window close** follows React Native's `onRequestClose`. If JS listens for the close signal, the backend vetoes the native close and posts the event. Otherwise the window is destroyed natively and reported as `SVL_GONE_CLOSED`. The host, not the toolkit, decides when the app quits (Qt: `setQuitOnLastWindowClosed(false)`).
 - **Backends never delete synchronously** inside signal emission: Qt uses `deleteLater`, GTK an idle-deferred unref.
+
+### As implemented (M2a)
+
+- **Vtable order.** `handle_info` follows `listen`; `schedule_wake` follows `wake`. `svl_handle_info.flags` is 0 for now.
+- **Timers.** After every checkpoint (and when a timer is set or cleared) the host arms `schedule_wake` for the earliest deadline, in whole milliseconds rounded up, and cancels it when the host is dropped. The host starts no threads. The `wake` entry stays for thread-safe requests (the dev loop's file watcher uses it).
+  - GTK: `glib::timeout_add_local_once`, one pending source, replaced on every call.
+  - Qt: one single-shot `QTimer`, `Qt::PreciseTimer` under 20 ms and `Qt::CoarseTimer` otherwise.
+  - Log backend: scripted fixtures (`HostConfig::scripted`) keep the host's own virtual clock, which is deterministic and instant and never calls `schedule_wake`. Unscripted runs on the log backend honour `schedule_wake` in wall time, so the real-timer test exercises the same path as the toolkits. A virtual clock inside the backend would need the host to read the backend's time, which the ABI does not offer.
+- **Handles.** Backends mint monotonic handles that are never reused. The host rejects a handle at or above 2^53. The dead-handle ring keeps the last 4096 dead handles. Errors read `handle #12 was destroyed (its window was closed)`; a handle that fell out of the ring or was never issued reads `stale or foreign handle 12`.
+- **Destroy.** The host's `destroy` is idempotent and silent (no `on_destroyed` for the app's own destroy). `setProp`, `listen(off)`, `remove` and `destroy` on a dead handle are no-ops; `getProp`, `call`, `insert` and `listen(on)` throw.
+- **Native death.** `on_destroyed(h, reason)` only records the death and queues a `gone` event; the next checkpoint calls `globalThis.__svelters_gone(h, reasonName)` (installed by `@svelters/renderer`). The renderer drops the handle from its tables and sends nothing more for that node. Signals queued for a handle that died are dropped silently.
+- **Cascade.** GTK reports the window (`closed`) first, then every handle inserted below it (`parent`), from its slot records, because GTK has already unparented the children when `destroy` is emitted. Qt does the same eagerly in the close filter while the object tree is intact.
+- **Classes.** The four lifetime classes exist in the ABI. Only `owned` and `toplevel` are minted today; no `get_prop`/`call` returns a borrowed or value handle yet (M4/M5). A toplevel is a window or dialog kind (GTK: `GtkWindow`; Qt: derived from `QMainWindow`/`QDialog`, decided by the generator).
+- **Deferred deletion.** Qt `destroy` hides a toplevel and calls `deleteLater`. GTK `destroy` hides a toplevel, then destroys it and drops the table's reference from idles.
+- **Window close.** JS listens with `onclose` (the DOM alias of `close-request`). GTK's `close-request` handler returns `Stop` while listened. Qt has no such signal, so `close-request` is a synthetic signal declared in the `window` override (`synthetic: close_request`); the backend's event filter vetoes the `QCloseEvent` and posts it. Without a listener the window is closed for good and reported as `SVL_GONE_CLOSED`.
+- **Quit.** `HostConfig::quit_on_last_window` (default true) makes the host call `backend.quit()` at the end of the checkpoint after the last toplevel handle is gone, once at least one existed. Not applied in scripted mode. GTK's `run` holds the application and Qt sets `setQuitOnLastWindowClosed(false)`.
 
 Later ABI additions, not part of v2:
 

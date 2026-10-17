@@ -1,0 +1,79 @@
+{
+  "doc": {
+    "brief": "The QSplashScreen widget provides a splash screen that can be shown during application startup.",
+    "index_brief": "Splash screen that can be shown during application startup",
+    "url": "https://doc.qt.io/qt-6/qsplashscreen.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSplashScreen",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QSplashScreen(QScreen *screen, const QPixmap &pixmap, Qt::WindowFlags f)": {
+      "brief": "This function allows you to specify the screen for your splashscreen.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#QSplashScreen-1"
+    },
+    "QSplashScreen(const QPixmap &pixmap, Qt::WindowFlags f)": {
+      "brief": "Construct a splash screen that will display the *pixmap*.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#QSplashScreen"
+    },
+    "QString message() const": {
+      "brief": "Returns the message that is currently displayed on the splash screen.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#message"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#event"
+    },
+    "const QPixmap pixmap() const": {
+      "brief": "Returns the pixmap that is used in the splash screen.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#pixmap"
+    },
+    "void clearMessage()": {
+      "brief": "Removes the message being displayed on the splash screen",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#clearMessage"
+    },
+    "void drawContents(QPainter *painter)": {
+      "brief": "Draw the contents of the splash screen using painter *painter*.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#drawContents"
+    },
+    "void finish(QWidget *mainWin)": {
+      "brief": "Makes the splash screen wait until the widget *mainWin* is displayed before calling [close](xref:qt:QWidget)() on itself.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#finish"
+    },
+    "void messageChanged(const QString &message)": {
+      "brief": "This signal is emitted when the message on the splash screen changes. *message* is the new message and is a null-string when the message has been removed.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#messageChanged"
+    },
+    "void mousePressEvent(QMouseEvent *) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#mousePressEvent"
+    },
+    "void repaint()": {
+      "brief": "This overrides [QWidget::repaint](xref:qt:QWidget)().",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#repaint"
+    },
+    "void setPixmap(const QPixmap &pixmap)": {
+      "brief": "Sets the pixmap that will be used as the splash screen's image to *pixmap*.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#setPixmap"
+    },
+    "void showMessage(const QString &message, int alignment, const QColor &color)": {
+      "brief": "Draws the *message* text onto the splash screen with color *color* and aligns the text according to the flags in *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qsplashscreen.html#showMessage"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

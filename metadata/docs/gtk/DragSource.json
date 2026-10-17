@@ -1,0 +1,112 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkDragSource` object.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 631,
+      "md": "Creates a new `GtkDragSource` object."
+    }
+  },
+  "doc": {
+    "brief": "An event controller to initiate Drag-And-Drop operations.",
+    "file": "gtk/gtkdragsource.c",
+    "line": 44,
+    "md": "An event controller to initiate Drag-And-Drop operations.\n\n`GtkDragSource` can be set up with the necessary\ningredients for a DND operation ahead of time. This includes\nthe source for the data that is being transferred, in the form\nof a [`ContentProvider`](xref:gtk:Gdk.ContentProvider), the desired action, and the icon to\nuse during the drag operation. After setting it up, the drag\nsource must be added to a widget as an event controller, using\n[`Widget.add_controller()`](xref:gtk:Gtk.Widget#method:add_controller).\n\n```c\nstatic void\nmy_widget_init (MyWidget *self)\n{\n  GtkDragSource *drag_source = gtk_drag_source_new ();\n\n  g_signal_connect (drag_source, \"prepare\", G_CALLBACK (on_drag_prepare), self);\n  g_signal_connect (drag_source, \"drag-begin\", G_CALLBACK (on_drag_begin), self);\n\n  gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (drag_source));\n}\n```\n\nSetting up the content provider and icon ahead of time only makes\nsense when the data does not change. More commonly, you will want\nto set them up just in time. To do so, `GtkDragSource` has\n[`DragSource::prepare`](xref:gtk:Gtk.DragSource#event:prepare) and [`DragSource::drag-begin`](xref:gtk:Gtk.DragSource#event:drag-begin)\nsignals.\n\nThe ::prepare signal is emitted before a drag is started, and\ncan be used to set the content provider and actions that the\ndrag should be started with.\n\n```c\nstatic GdkContentProvider *\non_drag_prepare (GtkDragSource *source,\n                 double         x,\n                 double         y,\n                 MyWidget      *self)\n{\n  // This widget supports two types of content: GFile objects\n  // and GdkPixbuf objects; GTK will handle the serialization\n  // of these types automatically\n  GFile *file = my_widget_get_file (self);\n  GdkPixbuf *pixbuf = my_widget_get_pixbuf (self);\n\n  return gdk_content_provider_new_union ((GdkContentProvider *[2]) {\n      gdk_content_provider_new_typed (G_TYPE_FILE, file),\n      gdk_content_provider_new_typed (GDK_TYPE_PIXBUF, pixbuf),\n    }, 2);\n}\n```\n\nThe ::drag-begin signal is emitted after the `GdkDrag` object has\nbeen created, and can be used to set up the drag icon.\n\n```c\nstatic void\non_drag_begin (GtkDragSource *source,\n               GdkDrag       *drag,\n               MyWidget      *self)\n{\n  // Set the widget as the drag icon\n  GdkPaintable *paintable = gtk_widget_paintable_new (GTK_WIDGET (self));\n  gtk_drag_source_set_icon (source, paintable, 0, 0);\n  g_object_unref (paintable);\n}\n```\n\nDuring the DND operation, `GtkDragSource` emits signals that\ncan be used to obtain updates about the status of the operation,\nbut it is not normally necessary to connect to any signals,\nexcept for one case: when the supported actions include\n%GDK_ACTION_MOVE, you need to listen for the\n[`DragSource::drag-end`](xref:gtk:Gtk.DragSource#event:drag-end) signal and delete the\ndata after it has been transferred."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DragSource",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "drag_cancel": {
+      "brief": "Cancels a currently ongoing drag operation.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 782,
+      "md": "Cancels a currently ongoing drag operation."
+    },
+    "get_actions": {
+      "brief": "Gets the actions that are currently set on the `GtkDragSource`.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 688,
+      "md": "Gets the actions that are currently set on the `GtkDragSource`."
+    },
+    "get_content": {
+      "brief": "Gets the current content provider of a `GtkDragSource`.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 644,
+      "md": "Gets the current content provider of a `GtkDragSource`."
+    },
+    "get_drag": {
+      "brief": "Returns the underlying `GdkDrag` object for an ongoing drag.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 765,
+      "md": "Returns the underlying `GdkDrag` object for an ongoing drag."
+    },
+    "set_actions": {
+      "brief": "Sets the actions on the `GtkDragSource`.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 704,
+      "md": "Sets the actions on the `GtkDragSource`.\n\nDuring a DND operation, the actions are offered to potential\ndrop targets. If `actions` include %GDK_ACTION_MOVE, you need\nto listen to the [`DragSource::drag-end`](xref:gtk:Gtk.DragSource#event:drag-end) signal and\nhandle `delete_data` being `TRUE`.\n\nThis function can be called before a drag is started,\nor in a handler for the [`DragSource::prepare`](xref:gtk:Gtk.DragSource#event:prepare) signal."
+    },
+    "set_content": {
+      "brief": "Sets a content provider on a `GtkDragSource`.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 660,
+      "md": "Sets a content provider on a `GtkDragSource`.\n\nWhen the data is requested in the cause of a DND operation,\nit will be obtained from the content provider.\n\nThis function can be called before a drag is started,\nor in a handler for the [`DragSource::prepare`](xref:gtk:Gtk.DragSource#event:prepare) signal.\n\nYou may consider setting the content provider back to\n`NULL` in a [`DragSource::drag-end`](xref:gtk:Gtk.DragSource#event:drag-end) signal handler."
+    },
+    "set_icon": {
+      "brief": "Sets a paintable to use as icon during DND operations.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 733,
+      "md": "Sets a paintable to use as icon during DND operations.\n\nThe hotspot coordinates determine the point on the icon\nthat gets aligned with the hotspot of the cursor.\n\nIf `paintable` is `NULL`, a default icon is used.\n\nThis function can be called before a drag is started, or in\na [`DragSource::prepare`](xref:gtk:Gtk.DragSource#event:prepare) or\n[`DragSource::drag-begin`](xref:gtk:Gtk.DragSource#event:drag-begin) signal handler."
+    }
+  },
+  "properties": {
+    "actions": {
+      "brief": "The actions that are supported by drag operations from the source.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 345,
+      "md": "The actions that are supported by drag operations from the source.\n\nNote that you must handle the [`DragSource::drag-end`](xref:gtk:Gtk.DragSource#event:drag-end) signal\nif the actions include %GDK_ACTION_MOVE."
+    },
+    "content": {
+      "brief": "The data that is offered by drag operations from this source.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 335,
+      "md": "The data that is offered by drag operations from this source."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "drag-begin": {
+      "brief": "Emitted on the drag source when a drag is started.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 388,
+      "md": "Emitted on the drag source when a drag is started.\n\nIt can be used to e.g. set a custom drag icon with\n[`DragSource.set_icon()`](xref:gtk:Gtk.DragSource#method:set_icon)."
+    },
+    "drag-cancel": {
+      "brief": "Emitted on the drag source when a drag has failed.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 435,
+      "md": "Emitted on the drag source when a drag has failed.\n\nThe signal handler may handle a failed drag operation based on\nthe type of error. It should return `TRUE` if the failure has been handled\nand the default \"drag operation failed\" animation should not be shown."
+    },
+    "drag-end": {
+      "brief": "Emitted on the drag source when a drag is finished.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 408,
+      "md": "Emitted on the drag source when a drag is finished.\n\nA typical reason to connect to this signal is to undo\nthings done in [`DragSource::prepare`](xref:gtk:Gtk.DragSource#event:prepare) or\n[`DragSource::drag-begin`](xref:gtk:Gtk.DragSource#event:drag-begin) handlers."
+    },
+    "prepare": {
+      "brief": "Emitted when a drag is about to be initiated.",
+      "file": "gtk/gtkdragsource.c",
+      "line": 360,
+      "md": "Emitted when a drag is about to be initiated.\n\nIt returns the `GdkContentProvider` to use for the drag that is about\nto start. The default handler for this signal returns the value of\nthe [`DragSource:content`](xref:gtk:Gtk.DragSource#property:content) property, so if you set up that\nproperty ahead of time, you don't need to connect to this signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

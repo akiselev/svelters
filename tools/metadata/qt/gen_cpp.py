@@ -181,9 +181,10 @@ class Model:
         self.by_tag = {e["tag"]: e for e in self.elements}
         # Enum definitions (every enum a slot type mentions) live in the `Qt` namespace record.
         self.enum_defs = {}
-        qt = self.kind("Qt")
-        if qt:
-            self.enum_defs = {e["fullname"]: e for e in qt["enums"]}
+        table = meta_dir / "_enums" / "Qt.json"
+        if table.exists():
+            self.read_files.append(table)
+            self.enum_defs = {e["fullname"]: e for e in svmeta.load_json(table)["enums"]}
         self.enums_used: dict[str, dict[str, str]] = {}  # enum full name -> JS name -> C++ expression
         self.enum_override: set[str] = set()
         self.boxed_used: set[str] = set()
@@ -353,6 +354,13 @@ class Model:
 
     def _resolve_signal(self, el: dict, s: dict) -> None:
         tag, cls = el["tag"], el["cls"]
+        if s.get("synthetic"):
+            # Raised by the backend itself, not by a QObject signal. Only `close_request` exists.
+            if s["synthetic"] != "close_request":
+                raise GenError(f"{tag}: unknown synthetic signal {s['synthetic']}")
+            s.setdefault("args", [])
+            s["decl_cls"], s["rec"], s["qparams"] = None, None, []
+            return
         c, rec = self.find(cls, "signals", lambda r: r["name"] == s["native"])
         if not rec:
             raise GenError(f"{tag}: signal {s['native']} not found on {cls}")
@@ -803,6 +811,10 @@ def emit_listen(m: Model) -> str:
         out.append(f"    case K_{t}:\n      switch (sig) {{")
         for s in e["signals"]:
             sid = f"G_{t}_{cident(s['js'])}"
+            if s.get("synthetic"):
+                # onRequestClose: while listened, the backend vetoes the native close and posts it.
+                out.append(f"        case {sid}: {{ e.close_listen = on; e.close_sig = sig; return 0; }}")
+                continue
             ptypes = ", ".join(tn for _, tn in s["qparams"])
             lam_params = ", ".join(f"{tn} a{i}" for i, (_, tn) in enumerate(s["qparams"]))
             out.append(f"        case {sid}: {{")
@@ -831,6 +843,16 @@ def emit_listen(m: Model) -> str:
     return "\n".join(out)
 
 
+def emit_toplevel(m: Model) -> str:
+    """Kinds of the toplevel lifetime class: windows and dialogs. A parentless QWidget is a Qt
+    window too (until it is inserted somewhere), so the class cannot be read off the object."""
+    tops = [e for e in m.elements if m.derives(e["cls"], "QMainWindow") or m.derives(e["cls"], "QDialog")]
+    out = ["bool gen_is_toplevel(svl_id kind) {", "  switch (kind) {"]
+    out += [f"    case K_{cident(e['tag'])}: return true;" for e in tops]
+    out += ["    default: return false;", "  }", "}"]
+    return "\n".join(out)
+
+
 def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     classes = set()
     for e in m.elements:
@@ -838,13 +860,15 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
         if e["layout_cls"]:
             classes.add(e["layout_cls"])
         for s in e.get("signals", []):
-            classes.add(s["decl_cls"])
+            if s["decl_cls"]:
+                classes.add(s["decl_cls"])
         for s in (e.get("children") or {}).get("slots", []):
             classes.update(s["accepts"])
     parts = {
         "DIGEST": digest, "INCLUDES": inc(m, classes), "IDS": emit_ids(m), "TABLES": emit_tables(m),
         "CREATE": emit_create(m), "SET_PROP": prop_cases(m, True), "GET_PROP": prop_cases(m, False),
         "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
+        "TOPLEVEL": emit_toplevel(m),
     }
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
     for k, v in parts.items():
@@ -951,6 +975,8 @@ class Tests:
     def signals(self, e):
         t = e["tag"]
         for s in e.get("signals", []):
+            if s.get("synthetic"):
+                continue  # covered by the hand-written close tests in verify.cpp.in
             trig = lambda i: s["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", str(i))
             expect = s.get("expect_args", [])
             lines = [f'  svl_handle h = mk("{t}");', f'  svl_id sig = G("{t}", "{s["js"]}");',

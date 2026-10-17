@@ -5,7 +5,7 @@ import { createTestHost } from '@svelters/testhost';
 
 const th = createTestHost();
 globalThis.__svelters_host = th.host;
-const { default: r, root, dispatch } = await import('../src/index.js');
+const { default: r, root, dispatch, StaleHandleError, BINDINGS } = await import('../src/index.js');
 
 const el = (tag, attrs = {}) => {
   const e = r.createElement(tag);
@@ -210,4 +210,129 @@ test('reordering many rows is not quadratic', async () => {
   const big = await run(4000);
   // linear work grows 4x; a linear scan per move would grow 16x
   assert.ok(big < Math.max(small, 5) * 9, `1000 rows ${small.toFixed(1)} ms, 4000 rows ${big.toFixed(1)} ms`);
+});
+
+// ---- bind:this: native access through the node ----
+
+test('bind:this node: call and getProp reach the host, dead nodes throw StaleHandleError', async () => {
+  const win = el('window');
+  const e = el('entry', { text: 'seed' });
+  r.insert(win, e, null);
+  assert.throws(() => e.call('x'), /no native widget yet/);
+  assert.throws(() => r.createTextNode('t').call('x'), TypeError);
+  r.insert(root, win, null);
+  take();
+  assert.equal(win.call('present'), null);
+  assert.equal(take(), `call #${win.handle} present []`);
+  assert.equal(e.getProp('text'), 'seed');
+  assert.equal(take(), '', 'getProp is not logged');
+
+  r.remove(win);
+  await tick();
+  assert.equal(e.dead, 'destroyed');
+  assert.equal(e.handle, null);
+  for (const f of [() => e.call('present'), () => e.getProp('text')]) {
+    assert.throws(f, (err) => err instanceof StaleHandleError && err.reason === 'destroyed' && err.name === 'StaleHandleError');
+  }
+
+  // re-inserting a dead node re-realizes it as a new native object
+  const win2 = el('window');
+  r.insert(win2, e, null);
+  r.insert(root, win2, null);
+  assert.equal(e.dead, null);
+  assert.equal(e.getProp('text'), 'seed');
+  r.remove(win2);
+  await tick();
+  take();
+});
+
+// ---- bind hook ----
+
+test('bind:text: update, native change, compare before set, destroy', async () => {
+  const win = el('window');
+  const e = el('entry');
+  r.insert(win, e, null);
+  r.insert(root, win, null);
+  take();
+  const h = e.handle;
+  const seen = [];
+  const b = r.bind(e, 'text', () => 'unused', (v) => seen.push(v));
+  assert.equal(take(), `listen #${h} changed on`);
+
+  b.update('x');
+  assert.equal(take(), `set #${h} text "x"`);
+  b.update('x');
+  assert.equal(take(), '', 'same value: no native write');
+  b.update(null);
+  assert.equal(take(), `set #${h} text ""`, 'null clears the native text');
+
+  // a native edit reaches set() and is remembered, so writing it back is a no-op
+  dispatch(h, 'changed', ['typed']);
+  assert.deepEqual(seen, ['typed']);
+  b.update('typed');
+  assert.equal(take(), '');
+  dispatch(h, 'changed', [{ detail: 'viaEvent' }]);
+  assert.deepEqual(seen, ['typed', 'viaEvent']);
+
+  b.destroy();
+  assert.equal(take(), `listen #${h} changed off`);
+  dispatch(h, 'changed', ['after']);
+  assert.deepEqual(seen, ['typed', 'viaEvent'], 'no set() after destroy');
+
+  // destroy after the native widget died is harmless
+  const b2 = r.bind(e, 'text', () => '', () => {});
+  r.remove(win);
+  await tick();
+  take();
+  b2.update('late');
+  b2.destroy();
+  assert.equal(take(), '', 'no host ops for a dead node');
+  assert.equal(e.props.get('text'), 'late', 'state is kept for a later re-realization');
+});
+
+test('bind: update before the widget exists is replayed on realize', () => {
+  const win = el('window');
+  const e = el('entry');
+  r.insert(win, e, null);
+  const b = r.bind(e, 'text', () => '', () => {});
+  b.update('early');
+  assert.equal(take(), '');
+  r.insert(root, win, null);
+  const lines = take().split('\n');
+  assert.ok(lines.includes('set #' + e.handle + ' text "early"'));
+  assert.ok(lines.includes('listen #' + e.handle + ' changed on'));
+  r.remove(win);
+});
+
+test('bind: unsupported names and kinds throw with the element kind', () => {
+  const lbl = el('label');
+  assert.throws(() => r.bind(lbl, 'text', () => '', () => {}), /bind:text is not supported on <label> \(it has no bindable properties\)/);
+  const e = el('entry');
+  assert.throws(() => r.bind(e, 'value', () => '', () => {}), /bind:value is not supported on <entry> \(bindable: text\)/);
+});
+
+test('bind: read-back reports a value the native side changed', async () => {
+  BINDINGS.spinner = { value: { prop: 'value', signal: 'changed', type: 'number', direction: 'two_way', compare: true, readBack: true, toolkits: ['gtk'] } };
+  const win = el('window');
+  const s = el('spinner');
+  r.insert(win, s, null);
+  r.insert(root, win, null);
+  take();
+  const real = th.host.getProp;
+  th.host.getProp = (h, name) => Math.min(real(h, name), 10); // the native side clamps to 10
+  try {
+    const seen = [];
+    const b = r.bind(s, 'value', () => 0, (v) => seen.push(v));
+    b.update('50');
+    assert.equal(take(), `listen #${s.handle} changed on\nset #${s.handle} value 50`);
+    assert.deepEqual(seen, [10], 'the clamped value is reported');
+    b.update(10);
+    assert.equal(take(), '', 'the clamped value is already the native value');
+  } finally {
+    th.host.getProp = real;
+    delete BINDINGS.spinner;
+  }
+  r.remove(win);
+  await tick();
+  take();
 });

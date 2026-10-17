@@ -12,25 +12,29 @@
 //! `engine` is the boundary trait, `quickjs` is the rquickjs implementation.
 //!
 //! Threading: a `Host` is pinned to the thread that created it (the toolkit's main thread).
-//! The only cross-thread call is the timer thread invoking the backend's thread-safe `wake`.
+//! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
+//! backend's one-shot `schedule_wake` for the earliest deadline.
 
 mod convert;
 mod core;
 mod engine;
 mod quickjs;
+mod reload;
+mod sourcemap;
 pub mod testing;
 
 pub use crate::core::{ConsoleLine, HostConfig, Timing};
 pub use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
+pub use crate::reload::ReloadReport;
 
-use crate::core::{Core, Sched};
+use crate::core::Core;
+use crate::reload::{MakeEngine, Reloader};
 use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use std::thread::JoinHandle;
 use svelters_abi::{AbiError, BackendRef, HostCallbacks, HostVtable, Value, svl_handle, svl_id};
 
 type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
@@ -38,6 +42,7 @@ type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
 struct Callbacks {
     core: Rc<Core>,
     engine: SharedEngine,
+    reloader: Rc<Reloader>,
 }
 
 impl HostCallbacks for Callbacks {
@@ -51,6 +56,11 @@ impl HostCallbacks for Callbacks {
     }
 
     fn checkpoint(&self) {
+        // A reload runs first, and only from the toolkit loop: while JS is running (a nested
+        // loop inside a host op) the flag stays set and the deferred wake comes back here.
+        if !self.core.js_running() && self.reloader.take_pending() {
+            self.reloader.reload(&self.core, &self.engine);
+        }
         core::checkpoint(&self.core, &self.engine);
     }
 
@@ -66,8 +76,12 @@ impl HostCallbacks for Callbacks {
         self.core.release_callback_from_native(callback);
     }
 
-    fn on_destroyed(&self, h: svl_handle, _reason: u32) {
-        self.core.forget_handle(h);
+    fn on_destroyed(&self, h: svl_handle, reason: u32) {
+        self.core.native_gone(h, reason);
+        // Delivering the death is a checkpoint's job; a live backend needs one scheduled.
+        if !self.core.cfg.scripted {
+            self.core.backend().wake();
+        }
     }
 }
 
@@ -76,53 +90,74 @@ pub struct Host<'a> {
     core: Rc<Core>,
     engine: SharedEngine,
     vt: HostVtable,
-    timer_thread: Option<JoinHandle<()>>,
+    reloader: Rc<Reloader>,
     _backend: PhantomData<BackendRef<'a>>,
 }
 
 impl<'a> Host<'a> {
     /// Creates a host with the QuickJS engine. The backend must outlive the host (`'a`).
     pub fn new(backend: BackendRef<'a>, cfg: HostConfig) -> Result<Host<'a>, JsError> {
-        Host::with_engine(backend, cfg, |core| {
+        Host::with_engine(backend, cfg, Rc::new(|core| {
             Ok(Box::new(quickjs::QjsEngine::new(core)?))
-        })
+        }))
     }
 
     pub(crate) fn with_engine(
         backend: BackendRef<'a>,
         cfg: HostConfig,
-        make: impl FnOnce(&Rc<Core>) -> Result<Box<dyn JsEngine>, JsError>,
+        make: MakeEngine,
     ) -> Result<Host<'a>, JsError> {
-        // SAFETY: `'a` ties the host to the backend borrow, and `Drop` joins the only other user
-        // of the erased reference (the timer thread) before `'a` can end.
+        // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
         let backend_static = unsafe { backend.erase_lifetime() };
-        let sched = Sched::new();
-        let core = Rc::new(Core::new(backend_static, cfg, sched.clone()));
+        let core = Rc::new(Core::new(backend_static, cfg));
         let engine: SharedEngine = Rc::new(RefCell::new(make(&core)?));
+        let reloader = Reloader::new(make);
         let vt = HostVtable::new(Callbacks {
             core: core.clone(),
             engine: engine.clone(),
+            reloader: reloader.clone(),
         });
-
-        let wake = backend.wake_handle();
-        let timer_thread = std::thread::Builder::new()
-            .name("svelters-timers".into())
-            .spawn(move || sched.run(wake))
-            .map_err(|e| JsError::new(ErrorKind::Host, format!("spawn timer thread: {e}")))?;
 
         Ok(Host {
             core,
             engine,
             vt,
-            timer_thread: Some(timer_thread),
+            reloader,
             _backend: PhantomData,
         })
     }
 
     /// Loads and evaluates an ESM entry module. Imports resolve relative to the entry file's
     /// directory and cannot leave it. Installs `globalThis.__svelters_host` first.
+    ///
+    /// The path is remembered for hot reload. A load error is returned with its stack mapped to
+    /// the original sources when the bundle has a `.map` next to it.
     pub fn load_bundle(&self, path: impl AsRef<Path>) -> Result<(), JsError> {
-        core::load_bundle(&self.core, &self.engine, path.as_ref())
+        self.reloader.set_bundle(path.as_ref());
+        core::load_bundle(&self.core, &self.engine, path.as_ref()).map_err(|e| self.core.map_error(e))
+    }
+
+    /// Hot reload: watches the bundle loaded by `load_bundle` (and its `.map`) and reloads it in
+    /// this process whenever it changes, see `reload.rs`. Requires a backend whose `wake` can be
+    /// called from another thread, and a running loop (`run`) to deliver the reload.
+    pub fn watch(&self) -> Result<(), JsError> {
+        self.reloader.start_watch(self.core.backend().wake_handle())
+    }
+
+    /// Reloads at the next checkpoint, as if the watcher had fired (also wakes the backend).
+    pub fn request_reload(&self) {
+        self.reloader.request();
+        self.core.backend().wake();
+    }
+
+    /// Called after every reload attempt, successful or not, on the toolkit thread.
+    pub fn on_reload(&self, f: impl Fn(&ReloadReport) + 'static) {
+        self.reloader.set_hook(Rc::new(f));
+    }
+
+    /// Live handles that are not inserted under another handle: the app's toplevels.
+    pub fn toplevels(&self) -> Vec<svl_handle> {
+        self.core.roots()
     }
 
     /// Runs the backend's loop. Returns when the backend quits.
@@ -190,9 +225,8 @@ impl<'a> Host<'a> {
 
 impl Drop for Host<'_> {
     fn drop(&mut self) {
-        self.core.sched.shutdown();
-        if let Some(t) = self.timer_thread.take() {
-            let _ = t.join();
-        }
+        self.reloader.stop_watch();
+        // A pending backend wakeup would call back into a vtable that is about to be freed.
+        self.core.disarm();
     }
 }

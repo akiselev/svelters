@@ -1,0 +1,69 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new numeric sorter using the given `expression`.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 574,
+      "md": "Creates a new numeric sorter using the given `expression`.\n\nSmaller numbers will be sorted first. You can call\n[`NumericSorter.set_sort_order()`](xref:gtk:Gtk.NumericSorter#method:set_sort_order) to change this."
+    }
+  },
+  "doc": {
+    "brief": "Sorts items numerically.",
+    "file": "gtk/gtknumericsorter.c",
+    "line": 29,
+    "md": "Sorts items numerically.\n\nTo obtain the numbers to compare, this sorter evaluates a\n[`Expression`](xref:gtk:Gtk.Expression)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NumericSorter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_expression": {
+      "brief": "Gets the expression that is evaluated to obtain numbers from items.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 599,
+      "md": "Gets the expression that is evaluated to obtain numbers from items."
+    },
+    "get_sort_order": {
+      "brief": "Gets whether this sorter will sort smaller numbers first.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 673,
+      "md": "Gets whether this sorter will sort smaller numbers first."
+    },
+    "set_expression": {
+      "brief": "Sets the expression that is evaluated to obtain numbers from items.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 615,
+      "md": "Sets the expression that is evaluated to obtain numbers from items.\n\nUnless an expression is set on `self`, the sorter will always\ncompare items as invalid.\n\nThe expression must have a return type that can be compared\nnumerically, such as %G_TYPE_INT or %G_TYPE_DOUBLE."
+    },
+    "set_sort_order": {
+      "brief": "Sets whether to sort smaller numbers before larger ones.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 648,
+      "md": "Sets whether to sort smaller numbers before larger ones."
+    }
+  },
+  "properties": {
+    "expression": {
+      "brief": "The expression to evaluate on items to get a number to compare with.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 540,
+      "md": "The expression to evaluate on items to get a number to compare with."
+    },
+    "sort-order": {
+      "brief": "Whether the sorter will sort smaller numbers first.",
+      "file": "gtk/gtknumericsorter.c",
+      "line": 549,
+      "md": "Whether the sorter will sort smaller numbers first."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

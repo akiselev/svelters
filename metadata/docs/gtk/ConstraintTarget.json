@@ -1,0 +1,24 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Makes it possible to use an object as source or target in a [`Constraint`](xref:gtk:Gtk.Constraint).",
+    "file": "gtk/gtkconstraint.h",
+    "line": 31,
+    "md": "Makes it possible to use an object as source or target in a\n[`Constraint`](xref:gtk:Gtk.Constraint).\n\nBesides `GtkWidget`, it is also implemented by `GtkConstraintGuide`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintTarget",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

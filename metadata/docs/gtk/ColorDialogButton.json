@@ -1,0 +1,85 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkColorDialogButton` with the given `GtkColorDialog`.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 435,
+      "md": "Creates a new `GtkColorDialogButton` with the\ngiven `GtkColorDialog`.\n\nYou can pass `NULL` to this function and set a `GtkColorDialog`\nlater. The button will be insensitive until that happens.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Opens a color chooser dialog to select a color.",
+    "file": "gtk/gtkcolordialogbutton.c",
+    "line": 53,
+    "md": "Opens a color chooser dialog to select a color.\n\nIt is suitable widget for selecting a color in a preference dialog.\n\n# CSS nodes\n\n```\ncolorbutton\n╰── button.color\n    ╰── [content]\n```\n\n`GtkColorDialogButton` has a single CSS node with name colorbutton which\ncontains a button node. To differentiate it from a plain `GtkButton`,\nit gets the .color style class.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_dialog": {
+      "brief": "Returns the `GtkColorDialog` of `self`.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 468,
+      "md": "Returns the `GtkColorDialog` of `self`.",
+      "since": "4.10"
+    },
+    "get_rgba": {
+      "brief": "Returns the color of the button.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 512,
+      "md": "Returns the color of the button.\n\nThis function is what should be used to obtain\nthe color that was chosen by the user. To get\ninformed about changes, listen to \"notify::rgba\".",
+      "since": "4.10"
+    },
+    "set_dialog": {
+      "brief": "Sets a `GtkColorDialog` object to use for creating the color chooser dialog that is presented when the user clicks the button.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 486,
+      "md": "Sets a `GtkColorDialog` object to use for\ncreating the color chooser dialog that is\npresented when the user clicks the button.",
+      "since": "4.10"
+    },
+    "set_rgba": {
+      "brief": "Sets the color of the button.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 534,
+      "md": "Sets the color of the button.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "dialog": {
+      "brief": "The `GtkColorDialog` that contains parameters for the color chooser dialog.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 265,
+      "md": "The `GtkColorDialog` that contains parameters for\nthe color chooser dialog.",
+      "since": "4.10"
+    },
+    "rgba": {
+      "brief": "The selected color.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 278,
+      "md": "The selected color.\n\nThis property can be set to give the button its initial\ncolor, and it will be updated to reflect the users choice\nin the color chooser dialog.\n\nListen to `notify::rgba` to get informed about changes\nto the buttons color.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when the color dialog button is activated.",
+      "file": "gtk/gtkcolordialogbutton.c",
+      "line": 299,
+      "md": "Emitted when the color dialog button is activated.\n\nThe `::activate` signal on `GtkColorDialogButton` is an action signal\nand emitting it causes the button to pop up its dialog.",
+      "since": "4.14"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for widgets that can act as the root of a widget hierarchy.",
+    "file": "gtk/gtkroot.c",
+    "line": 32,
+    "md": "An interface for widgets that can act as the root of a widget hierarchy.\n\nThe root widget takes care of providing the connection to the windowing\nsystem and manages layout, drawing and event delivery for its widget\nhierarchy.\n\nThe obvious example of a `GtkRoot` is `GtkWindow`.\n\nTo get the display to which a `GtkRoot` belongs, use\n[`Root.get_display()`](xref:gtk:Gtk.Root#method:get_display).\n\n`GtkRoot` also maintains the location of keyboard focus inside its widget\nhierarchy, with [`Root.set_focus()`](xref:gtk:Gtk.Root#method:set_focus) and [`Root.get_focus()`](xref:gtk:Gtk.Root#method:get_focus)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Root",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_display": {
+      "brief": "Returns the display that this `GtkRoot` is on.",
+      "file": "gtk/gtkroot.c",
+      "line": 87,
+      "md": "Returns the display that this `GtkRoot` is on."
+    },
+    "get_focus": {
+      "brief": "Retrieves the current focused widget within the root.",
+      "file": "gtk/gtkroot.c",
+      "line": 142,
+      "md": "Retrieves the current focused widget within the root.\n\nNote that this is the widget that would have the focus\nif the root is active; if the root is not focused then\n`gtk_widget_has_focus (widget)` will be `FALSE` for the\nwidget."
+    },
+    "set_focus": {
+      "brief": "If `focus` is not the current focus widget, and is focusable, sets it as the focus widget for the root.",
+      "file": "gtk/gtkroot.c",
+      "line": 117,
+      "md": "If `focus` is not the current focus widget, and is focusable, sets\nit as the focus widget for the root.\n\nIf `focus` is `NULL`, unsets the focus widget for the root.\n\nTo set the focus to a particular widget in the root, it is usually\nmore convenient to use [`Widget.grab_focus()`](xref:gtk:Gtk.Widget#method:grab_focus) instead of\nthis function."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

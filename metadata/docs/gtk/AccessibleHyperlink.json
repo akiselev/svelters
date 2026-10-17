@@ -1,0 +1,41 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates an accessible object that represents a hyperlink.",
+      "file": "gtk/gtkaccessiblehypertext.c",
+      "line": 285,
+      "md": "Creates an accessible object that represents a hyperlink.\n\nThis is meant to be used with an implementation of the\n[`AccessibleHypertext`](xref:gtk:Gtk.AccessibleHypertext) interface.",
+      "since": "4.22"
+    }
+  },
+  "doc": {
+    "brief": "Represents a link (i.e. a uri).",
+    "file": "gtk/gtkaccessiblehypertext.c",
+    "line": 113,
+    "md": "Represents a link (i.e. a uri).\n\nA widget that contains one or more links should implement\nthe [`AccessibleHypertext`](xref:gtk:Gtk.AccessibleHypertext) interface and return\n`GtkAccessibleHyperlink` objects for each of the links.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleHyperlink",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "set_platform_state": {
+      "brief": "Sets a platform state on the accessible.",
+      "file": "gtk/gtkaccessiblehypertext.c",
+      "line": 319,
+      "md": "Sets a platform state on the accessible.",
+      "since": "4.22"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

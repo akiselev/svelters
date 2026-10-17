@@ -1,0 +1,102 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkWindowControls`.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 649,
+      "md": "Creates a new `GtkWindowControls`."
+    }
+  },
+  "doc": {
+    "brief": "Shows window frame controls.",
+    "file": "gtk/gtkwindowcontrols.c",
+    "line": 39,
+    "md": "Shows window frame controls.\n\nTypical window frame controls are minimize, maximize and close buttons,\nand the window icon.\n\n`GtkWindowControls` only displays start or end side of the controls (see\n[`WindowControls:side`](xref:gtk:Gtk.WindowControls#property:side)), so it's intended to be always used\nin pair with another `GtkWindowControls` for the opposite side, for example:\n\n```xml\n<object class=\"GtkBox\">\n  <child>\n    <object class=\"GtkWindowControls\">\n      <property name=\"side\">start</property>\n    </object>\n  </child>\n\n  ...\n\n  <child>\n    <object class=\"GtkWindowControls\">\n      <property name=\"side\">end</property>\n    </object>\n  </child>\n</object>\n```\n\n# CSS nodes\n\n```\nwindowcontrols\n├── [image.icon]\n├── [button.minimize]\n├── [button.maximize]\n╰── [button.close]\n```\n\nA `GtkWindowControls`' CSS node is called windowcontrols. It contains\nsubnodes corresponding to each title button. Which of the title buttons\nexist and where they are placed exactly depends on the desktop environment\nand [`WindowControls:decoration-layout`](xref:gtk:Gtk.WindowControls#property:decoration-layout) value.\n\nWhen [`WindowControls:empty`](xref:gtk:Gtk.WindowControls#property:empty) is true, it gets the .empty\nstyle class.\n\n# Accessibility\n\n`GtkWindowControls` uses the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:WindowControls",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_decoration_layout": {
+      "brief": "Gets the decoration layout of this window controls widget",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 724,
+      "md": "Gets the decoration layout of this window controls widget"
+    },
+    "get_empty": {
+      "brief": "Gets whether the widget has any window buttons.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 825,
+      "md": "Gets whether the widget has any window buttons."
+    },
+    "get_side": {
+      "brief": "Gets the side to which this window controls widget belongs.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 665,
+      "md": "Gets the side to which this window controls widget belongs."
+    },
+    "get_use_native_controls": {
+      "brief": "Returns whether platform native window controls are shown.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 775,
+      "md": "Returns whether platform native window controls are shown.",
+      "since": "4.18"
+    },
+    "set_decoration_layout": {
+      "brief": "Sets the decoration layout for the title buttons.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 740,
+      "md": "Sets the decoration layout for the title buttons.\n\nThis overrides the [`Settings:gtk-decoration-layout`](xref:gtk:Gtk.Settings#property:gtk-decoration-layout)\nsetting.\n\nThe format of the string is button names, separated by commas.\nA colon separates the buttons that should appear on the left\nfrom those on the right. Recognized button names are minimize,\nmaximize, close and icon (the window icon).\n\nFor example, “icon:minimize,maximize,close” specifies a icon\non the left, and minimize, maximize and close buttons on the right.\n\nIf [`WindowControls:side`](xref:gtk:Gtk.WindowControls#property:side) value is [`PackType.start`](xref:gtk:Gtk.PackType#value:start),\n`self` will display the part before the colon, otherwise after that."
+    },
+    "set_side": {
+      "brief": "Determines which part of decoration layout the window controls widget uses.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 681,
+      "md": "Determines which part of decoration layout\nthe window controls widget uses.\n\nSee [`WindowControls:decoration-layout`](xref:gtk:Gtk.WindowControls#property:decoration-layout)."
+    },
+    "set_use_native_controls": {
+      "brief": "Sets whether platform native window controls are used.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 793,
+      "md": "Sets whether platform native window controls are used.\n\nThis option shows the \"stoplight\" buttons on macOS.\nFor Linux, this option has no effect.\n\nSee also [Using GTK on Apple macOS](osx.html?native-window-controls).",
+      "since": "4.18"
+    }
+  },
+  "properties": {
+    "decoration-layout": {
+      "brief": "The decoration layout for window buttons.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 585,
+      "md": "The decoration layout for window buttons.\n\nIf this property is not set, the\n[`Settings:gtk-decoration-layout`](xref:gtk:Gtk.Settings#property:gtk-decoration-layout) setting is used."
+    },
+    "empty": {
+      "brief": "Whether the widget has any window buttons.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 618,
+      "md": "Whether the widget has any window buttons."
+    },
+    "side": {
+      "brief": "Whether the widget shows start or end side of the decoration layout.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 572,
+      "md": "Whether the widget shows start or end side of the decoration layout.\n\nSee [`WindowControls:decoration_layout`](xref:gtk:Gtk.WindowControls#property:decoration_layout)."
+    },
+    "use-native-controls": {
+      "brief": "Whether to show platform native close/minimize/maximize buttons.",
+      "file": "gtk/gtkwindowcontrols.c",
+      "line": 599,
+      "md": "Whether to show platform native close/minimize/maximize buttons.\n\nFor macOS, the [`HeaderBar:decoration-layout`](xref:gtk:Gtk.HeaderBar#property:decoration-layout) property\ncontrols the use of native window controls.\n\nOn other platforms, this option has no effect.\n\nSee also [Using GTK on Apple macOS](osx.html?native-window-controls).",
+      "since": "4.18"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

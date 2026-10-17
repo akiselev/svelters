@@ -51,6 +51,7 @@ fn replay(name: &str, log: String) {
         let h = Harness::new();
         let mut map: HashMap<String, u64> = HashMap::new();
         let mut events = 0;
+        let mut gone_queue: Vec<(u64, u32)> = Vec::new();
         for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
             let ctx = format!("{name}:{}: {line}", n + 1);
             let parts: Vec<&str> = line.splitn(4, ' ').collect();
@@ -86,6 +87,23 @@ fn replay(name: &str, log: String) {
                 }
                 "call" => h.call(hd(parts[1]), parts[2]).unwrap_or_else(|e| panic!("{ctx}: {e}")),
                 "listen" => h.listen(hd(parts[1]), parts[2], parts[3] == "on").unwrap_or_else(|e| panic!("{ctx}: {e}")),
+                // A native death in the log: the first `gone` of a run is produced by closing
+                // the window natively; the descendants it lists (`parent`) must be reported by the
+                // backend's cascade, in order.
+                "gone" => {
+                    let o = hd(parts[1]);
+                    let reason = svelters_abi::gone_from_name(parts[2]).unwrap_or_else(|| panic!("{ctx}: bad reason"));
+                    if reason == svelters_abi::SVL_GONE_PARENT {
+                        let first = gone_queue.remove(0);
+                        assert_eq!(first, (o, reason), "{ctx}: cascade order/reason");
+                    } else {
+                        assert_eq!(reason, svelters_abi::SVL_GONE_CLOSED, "{ctx}: only closed can be produced natively");
+                        svelters_gtk::testing::pump(150); // realize the window; close() ignores unrealized ones
+                        h.widget(o).downcast::<gtk::Window>().unwrap().close();
+                        gone_queue = h.take_gone();
+                        assert_eq!(gone_queue.remove(0), (o, reason), "{ctx}: window death not reported");
+                    }
+                }
                 "event" => {
                     let (o, sig) = (hd(parts[1]), parts[2]);
                     h.take_events();

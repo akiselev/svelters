@@ -1,0 +1,98 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a row reference based on `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2405,
+      "md": "Creates a row reference based on `path`.\n\nThis reference will keep pointing to the node pointed to\nby `path`, so long as it exists. Any changes that occur on `model` are\npropagated, and the path is updated appropriately. If\n`path` isn’t a valid path in `model`, then `NULL` is returned."
+    },
+    "new_proxy": {
+      "brief": "You do not need to use this function.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2435,
+      "md": "You do not need to use this function.\n\nCreates a row reference based on `path`.\n\nThis reference will keep pointing to the node pointed to\nby `path`, so long as it exists. If `path` isn’t a valid\npath in `model`, then `NULL` is returned. However, unlike\nreferences created with gtk_tree_row_reference_new(), it\ndoes not listen to the model for changes. The creator of\nthe row reference must do this explicitly using\ngtk_tree_row_reference_inserted(), gtk_tree_row_reference_deleted(),\ngtk_tree_row_reference_reordered().\n\nThese functions must be called exactly once per proxy when the\ncorresponding signal on the model is emitted. This single call\nupdates all row references for that proxy. Since built-in GTK\nobjects like `GtkTreeView` already use this mechanism internally,\nusing them as the proxy object will produce unpredictable results.\nFurther more, passing the same object as `model` and `proxy`\ndoesn’t work for reasons of internal implementation.\n\nThis type of row reference is primarily meant by structures that\nneed to carefully monitor exactly when a row reference updates\nitself, and is not generally needed by most applications."
+    }
+  },
+  "doc": {
+    "brief": "A GtkTreeRowReference tracks model changes so that it always refers to the same row (a `GtkTreePath` refers to a position, not a fixed row).",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`ListModel`](xref:gtk:Gio.ListModel) instead",
+    "file": "gtk/deprecated/gtktreemodel.h",
+    "line": 253,
+    "md": "A GtkTreeRowReference tracks model changes so that it always refers to the\nsame row (a `GtkTreePath` refers to a position, not a fixed row). Create a\nnew GtkTreeRowReference with gtk_tree_row_reference_new()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeRowReference",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Copies a `GtkTreeRowReference`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2591,
+      "md": "Copies a `GtkTreeRowReference`."
+    },
+    "deleted": {
+      "brief": "Lets a set of row reference created by gtk_tree_row_reference_new_proxy() know that the model emitted the ::row-deleted signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2673,
+      "md": "Lets a set of row reference created by\ngtk_tree_row_reference_new_proxy() know that the\nmodel emitted the ::row-deleted signal."
+    },
+    "free": {
+      "brief": "Free’s `reference`. `reference` may be `NULL`",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2609,
+      "md": "Free’s `reference`. `reference` may be `NULL`"
+    },
+    "get_model": {
+      "brief": "Returns the model that the row reference is monitoring.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2552,
+      "md": "Returns the model that the row reference is monitoring."
+    },
+    "get_path": {
+      "brief": "Returns a path that the row reference currently points to, or `NULL` if the path pointed to is no longer valid.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2527,
+      "md": "Returns a path that the row reference currently points to,\nor `NULL` if the path pointed to is no longer valid."
+    },
+    "inserted": {
+      "brief": "Lets a set of row reference created by gtk_tree_row_reference_new_proxy() know that the model emitted the ::row-inserted signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2653,
+      "md": "Lets a set of row reference created by\ngtk_tree_row_reference_new_proxy() know that the\nmodel emitted the ::row-inserted signal."
+    },
+    "reordered": {
+      "brief": "Lets a set of row reference created by gtk_tree_row_reference_new_proxy() know that the model emitted the ::rows-reordered signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2693,
+      "md": "Lets a set of row reference created by\ngtk_tree_row_reference_new_proxy() know that the\nmodel emitted the ::rows-reordered signal."
+    },
+    "valid": {
+      "brief": "Returns `TRUE` if the `reference` is non-`NULL` and refers to a current valid path.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2570,
+      "md": "Returns `TRUE` if the `reference` is non-`NULL` and refers to\na current valid path."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

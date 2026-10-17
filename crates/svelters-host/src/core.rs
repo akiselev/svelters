@@ -16,15 +16,20 @@
 //! double-borrow.
 
 use crate::engine::{ErrorKind, JsEngine, JsError};
+use crate::sourcemap::SourceMaps;
 use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
 use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
-use std::sync::{Arc, Condvar, Mutex, MutexGuard};
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 use crate::convert::TypeInfo;
-use svelters_abi::{BackendRef, MemberDesc, SVL_CB_ASYNC, SVL_CB_CALL, SVL_CB_FOREVER, SVL_CB_NOTIFIED, Value, WakeHandle, svl_handle, svl_id};
+use svelters_abi::{
+    BackendRef, MemberDesc, NameKind, SVL_CB_ASYNC, SVL_CB_CALL, SVL_CB_FOREVER, SVL_CB_NOTIFIED, SVL_GONE_CLOSED,
+    SVL_GONE_OWNER, SVL_GONE_PARENT, SVL_GONE_REPLACED, SVL_GONE_SHUTDOWN, SVL_LIFE_TOPLEVEL, Value, gone_name, svl_handle,
+    svl_id,
+};
 
 mod asyncs;
 mod callbacks;
@@ -56,6 +61,9 @@ pub struct HostConfig {
     pub max_virtual_timer_fires: usize,
     /// Accumulate [`Timing`] counters (two clock reads per host op and per entry into JS).
     pub timing: bool,
+    /// Ask the backend to quit once the last toplevel handle is gone (after the first one was
+    /// created). The host, not the toolkit, decides when the app ends. Ignored in scripted mode.
+    pub quit_on_last_window: bool,
 }
 
 impl Default for HostConfig {
@@ -70,6 +78,7 @@ impl Default for HostConfig {
             scripted: false,
             max_virtual_timer_fires: 10_000,
             timing: false,
+            quit_on_last_window: true,
         }
     }
 }
@@ -94,21 +103,81 @@ pub struct ConsoleLine {
     pub text: String,
 }
 
-struct Event {
-    handle: svl_handle,
-    signal: svl_id,
-    args: Vec<Value>,
+enum Event {
+    Signal {
+        handle: svl_handle,
+        signal: svl_id,
+        args: Vec<Value>,
+    },
+    /// The native object behind `handle` died (`reason` is an `SVL_GONE_*` code).
+    Gone { handle: svl_handle, reason: u32 },
 }
 
-/// An event with its signal name resolved, ready for `__svelters_dispatch`.
-pub(crate) struct DispatchEvent {
-    pub handle: svl_handle,
-    pub signal: String,
-    pub args: Vec<Value>,
+/// A queued event ready for JS: a signal with its name resolved (`__svelters_dispatch`), or a
+/// native death (`__svelters_gone`).
+pub(crate) enum DispatchEvent {
+    Signal {
+        handle: svl_handle,
+        signal: String,
+        args: Vec<Value>,
+    },
+    Gone {
+        handle: svl_handle,
+        reason: &'static str,
+    },
+}
+
+/// Why a handle is no longer live.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Death {
+    /// The app called `destroy`.
+    Destroyed,
+    /// The backend reported it (`SVL_GONE_*`).
+    Gone(u32),
+}
+
+impl Death {
+    fn describe(self) -> &'static str {
+        match self {
+            Death::Destroyed => "destroyed by the app",
+            Death::Gone(SVL_GONE_CLOSED) => "its window was closed",
+            Death::Gone(SVL_GONE_PARENT) => "its parent was destroyed",
+            Death::Gone(SVL_GONE_OWNER) => "its owner deleted it",
+            Death::Gone(SVL_GONE_REPLACED) => "it was replaced",
+            Death::Gone(SVL_GONE_SHUTDOWN) => "the app is shutting down",
+            Death::Gone(_) => "destroyed natively",
+        }
+    }
+}
+
+/// How many dead handles are remembered for error messages.
+const DEAD_RING: usize = 4096;
+/// Handles must stay exactly representable as JS numbers.
+const MAX_HANDLE: svl_handle = 1 << 53;
+
+/// Bounded memory of dead handles. Handles are never reused, so an entry can only ever describe
+/// the one object that held that handle.
+#[derive(Default)]
+struct DeadRing {
+    order: VecDeque<svl_handle>,
+    why: HashMap<svl_handle, Death>,
+}
+
+impl DeadRing {
+    fn push(&mut self, h: svl_handle, d: Death) {
+        if self.why.insert(h, d).is_none() {
+            self.order.push_back(h);
+            if self.order.len() > DEAD_RING {
+                if let Some(old) = self.order.pop_front() {
+                    self.why.remove(&old);
+                }
+            }
+        }
+    }
 }
 
 #[derive(Default)]
-struct Timers {
+pub(crate) struct Timers {
     heap: BinaryHeap<Reverse<(Instant, u64, u32)>>,
     live: HashMap<u32, (u64, Option<Duration>)>,
     seq: u64,
@@ -168,83 +237,18 @@ impl Timers {
     }
 }
 
-struct SchedState {
-    deadline: Option<Instant>,
-    gen_: u64,
-    fired_gen: u64,
-    shutdown: bool,
-}
-
-/// Timer thread state. The thread sleeps until the earliest timer deadline and calls the
-/// backend's thread-safe `wake` once per deadline update, so the host never polls.
-pub(crate) struct Sched {
-    m: Mutex<SchedState>,
-    cv: Condvar,
-}
-
-impl Sched {
-    pub(crate) fn new() -> Arc<Sched> {
-        Arc::new(Sched {
-            m: Mutex::new(SchedState {
-                deadline: None,
-                gen_: 0,
-                fired_gen: 0,
-                shutdown: false,
-            }),
-            cv: Condvar::new(),
-        })
-    }
-
-    fn lock(&self) -> MutexGuard<'_, SchedState> {
-        self.m.lock().unwrap_or_else(|e| e.into_inner())
-    }
-
-    fn set(&self, deadline: Option<Instant>, force: bool) {
-        let mut g = self.lock();
-        if force || g.deadline != deadline {
-            g.deadline = deadline;
-            g.gen_ += 1;
-            self.cv.notify_all();
-        }
-    }
-
-    pub(crate) fn shutdown(&self) {
-        self.lock().shutdown = true;
-        self.cv.notify_all();
-    }
-
-    pub(crate) fn run(&self, wake: WakeHandle) {
-        let mut g = self.lock();
-        loop {
-            if g.shutdown {
-                return;
-            }
-            match g.deadline {
-                Some(d) if g.fired_gen != g.gen_ => {
-                    let now = Instant::now();
-                    if now >= d {
-                        g.fired_gen = g.gen_;
-                        drop(g);
-                        wake.wake();
-                        g = self.lock();
-                    } else {
-                        g = self
-                            .cv
-                            .wait_timeout(g, d - now)
-                            .unwrap_or_else(|e| e.into_inner())
-                            .0;
-                    }
-                }
-                _ => g = self.cv.wait(g).unwrap_or_else(|e| e.into_inner()),
-            }
-        }
-    }
-}
-
 #[derive(Default)]
 struct CoreState {
-    /// handle → kind id
+    /// live handle → kind id
     handles: HashMap<svl_handle, svl_id>,
+    /// live handles of the toplevel lifetime class
+    toplevels: HashSet<svl_handle>,
+    top_seen: bool,
+    quit_sent: bool,
+    dead: DeadRing,
+    /// child -> parent for handles currently inserted somewhere; a live handle that is not a key
+    /// is a root (a toplevel, or not attached yet). Used by reload teardown.
+    tree: HashMap<svl_handle, svl_handle>,
     kinds: HashMap<String, svl_id>,
     /// kind id → name, for error messages
     kind_names: HashMap<svl_id, String>,
@@ -271,7 +275,8 @@ pub(crate) struct Core {
     st: RefCell<CoreState>,
     busy: Cell<u32>,
     deferred: Cell<bool>,
-    pub(crate) sched: Arc<Sched>,
+    /// The deadline last passed to `backend.schedule_wake` (None: cancelled or never armed).
+    armed: Cell<Option<Instant>>,
     pub(crate) interrupt: Arc<AtomicBool>,
     epoch: Instant,
     vnow: Cell<Duration>,
@@ -280,6 +285,7 @@ pub(crate) struct Core {
     cb_engine: RefCell<Option<Rc<dyn CallbackEngine>>>,
     /// Depth of native-callback invocations in progress (see `callbacks.rs`).
     cb_depth: Cell<u32>,
+    maps: RefCell<SourceMaps>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -301,14 +307,14 @@ impl Drop for JsGuard<'_> {
 }
 
 impl Core {
-    pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig, sched: Arc<Sched>) -> Core {
+    pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig) -> Core {
         Core {
             backend,
             cfg,
             st: RefCell::new(CoreState::default()),
             busy: Cell::new(0),
             deferred: Cell::new(false),
-            sched,
+            armed: Cell::new(None),
             interrupt: Arc::new(AtomicBool::new(false)),
             epoch: Instant::now(),
             vnow: Cell::new(Duration::ZERO),
@@ -316,6 +322,7 @@ impl Core {
             checkpoints: Cell::new(0),
             cb_engine: RefCell::new(None),
             cb_depth: Cell::new(0),
+            maps: RefCell::default(),
         }
     }
 
@@ -374,6 +381,7 @@ impl Core {
     // ---- sinks ----
 
     pub(crate) fn report(&self, err: JsError) {
+        let err = self.map_error(err);
         if self.cfg.echo_errors {
             eprintln!("[svelters] {err}");
         }
@@ -387,6 +395,11 @@ impl Core {
     }
 
     pub(crate) fn console(&self, level: &str, text: String) {
+        let text = if matches!(level, "error" | "warn" | "trace") {
+            self.maps.borrow_mut().map_text(&text)
+        } else {
+            text
+        };
         if self.cfg.echo_console {
             eprintln!("[{level}] {text}");
         }
@@ -407,7 +420,7 @@ impl Core {
     // ---- events ----
 
     pub(crate) fn push_event(&self, handle: svl_handle, signal: svl_id, args: Vec<Value>) {
-        self.st.borrow_mut().events.push_back(Event {
+        self.st.borrow_mut().events.push_back(Event::Signal {
             handle,
             signal,
             args,
@@ -418,30 +431,46 @@ impl Core {
         !self.st.borrow().events.is_empty()
     }
 
-    /// Drains the queue, resolving signal ids to names. Events that cannot be mapped are
-    /// reported and dropped.
+    /// Drains the queue, resolving signal ids to names. Signals for handles that died are
+    /// dropped; other events that cannot be mapped are reported and dropped.
     pub(crate) fn take_events(&self) -> Vec<DispatchEvent> {
         let events: Vec<Event> = self.st.borrow_mut().events.drain(..).collect();
         let mut out = Vec::new();
         for e in events {
+            let (handle, signal, args) = match e {
+                Event::Gone { handle, reason } => {
+                    out.push(DispatchEvent::Gone {
+                        handle,
+                        reason: gone_name(reason),
+                    });
+                    continue;
+                }
+                Event::Signal {
+                    handle,
+                    signal,
+                    args,
+                } => (handle, signal, args),
+            };
             let name = {
                 let st = self.st.borrow();
+                if st.dead.why.contains_key(&handle) {
+                    continue;
+                }
                 st.handles
-                    .get(&e.handle)
-                    .and_then(|k| st.signal_names.get(&(*k, e.signal)))
+                    .get(&handle)
+                    .and_then(|k| st.signal_names.get(&(*k, signal)))
                     .cloned()
             };
             match name {
-                Some(signal) => out.push(DispatchEvent {
-                    handle: e.handle,
+                Some(signal) => out.push(DispatchEvent::Signal {
+                    handle,
                     signal,
-                    args: e.args,
+                    args,
                 }),
                 None => self.report(JsError::new(
                     ErrorKind::Host,
                     format!(
-                        "dropped event for handle {} signal id {}: no listener or stale handle",
-                        e.handle, e.signal
+                        "dropped event for handle {handle} signal id {signal}: no listener or stale handle"
                     ),
                 )),
             }
@@ -449,11 +478,38 @@ impl Core {
         out
     }
 
-    /// The backend reports that a native object went away.
-    pub(crate) fn forget_handle(&self, h: svl_handle) {
-        self.st.borrow_mut().handles.remove(&h);
-        // Only marks the callbacks dead; their JS functions are dropped at the next checkpoint.
+    /// The backend reports that a native object went away. Records the death and queues the
+    /// notification for the next checkpoint; never runs JS. At most once per handle: a handle
+    /// the app already destroyed, or one reported before, is ignored.
+    pub(crate) fn native_gone(&self, h: svl_handle, reason: u32) {
+        {
+            let mut st = self.st.borrow_mut();
+            if st.handles.remove(&h).is_none() {
+                return;
+            }
+            st.toplevels.remove(&h);
+            st.tree.remove(&h);
+            st.dead.push(h, Death::Gone(reason));
+            st.events.push_back(Event::Gone { handle: h, reason });
+        }
+        // Only marks the owner's callbacks dead; their JS functions are dropped at the next checkpoint.
         self.cb_release_owner(h);
+    }
+
+    /// Asks the backend to quit once, when the last toplevel is gone.
+    fn quit_if_last_window_gone(&self) {
+        if self.cfg.scripted || !self.cfg.quit_on_last_window {
+            return;
+        }
+        let quit = {
+            let mut st = self.st.borrow_mut();
+            let q = st.top_seen && st.toplevels.is_empty() && !st.quit_sent;
+            st.quit_sent |= q;
+            q
+        };
+        if quit {
+            self.backend.quit();
+        }
     }
 
     // ---- timers ----
@@ -474,9 +530,32 @@ impl Core {
         self.arm_sched(deadline, false);
     }
 
+    /// Arms the backend's one-shot wakeup for the earliest timer deadline. Scripted mode keeps
+    /// timers on its virtual clock and never touches the backend. `force` re-arms even when the
+    /// deadline is unchanged (the previous wakeup has fired).
     fn arm_sched(&self, deadline: Option<Instant>, force: bool) {
-        if !self.cfg.scripted {
-            self.sched.set(deadline, force);
+        if self.cfg.scripted {
+            return;
+        }
+        if !force && self.armed.get() == deadline {
+            return;
+        }
+        self.armed.set(deadline);
+        let ms = match deadline {
+            Some(d) => {
+                let left = d.saturating_duration_since(Instant::now());
+                let ms = left.as_nanos().div_ceil(1_000_000);
+                i64::try_from(ms).unwrap_or(i64::MAX)
+            }
+            None => -1,
+        };
+        self.backend.schedule_wake(ms);
+    }
+
+    /// Cancels any pending backend wakeup. Called when the host goes away.
+    pub(crate) fn disarm(&self) {
+        if self.armed.replace(None).is_some() {
+            self.backend.schedule_wake(-1);
         }
     }
 
@@ -518,7 +597,8 @@ impl Core {
 /// 1. deliver queued events to JS, draining jobs after each;
 /// 2. fire due timers, draining jobs after each;
 /// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
-/// 4. `wake` if jobs or events remain, and re-arm the timer thread.
+/// 4. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
+///    timer deadline (`schedule_wake`).
 ///
 /// Ops reach the backend directly while JS runs (no batching in P). Scripted mode has its own
 /// stepping, see [`HostConfig::scripted`].
@@ -547,7 +627,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     };
 
     for ev in core.take_events() {
-        if let Err(e) = eng.dispatch(ev.handle, &ev.signal, &ev.args) {
+        if let Err(e) = deliver(&mut eng, ev) {
             core.report(e);
         }
         pending |= drain(&mut eng, &mut budget);
@@ -574,6 +654,18 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     if pending || core.has_events() {
         core.backend.wake();
     }
+    core.quit_if_last_window_gone();
+}
+
+fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError> {
+    match ev {
+        DispatchEvent::Signal {
+            handle,
+            signal,
+            args,
+        } => eng.dispatch(handle, &signal, &args),
+        DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
+    }
 }
 
 /// Scripted-mode checkpoint; see [`HostConfig::scripted`].
@@ -582,7 +674,7 @@ fn checkpoint_scripted(core: &Core, eng: &mut Box<dyn JsEngine>) {
     let events = core.take_events();
     if !events.is_empty() {
         for ev in events {
-            if let Err(e) = eng.dispatch(ev.handle, &ev.signal, &ev.args) {
+            if let Err(e) = deliver(eng, ev) {
                 core.report(e);
             }
             core.report_all(eng.take_errors());
@@ -638,6 +730,7 @@ pub(crate) fn load_bundle(
             "load_bundle called while JS is running",
         ));
     };
+    core.maps.borrow_mut().set_entry(entry);
     let mut eng = engine.borrow_mut();
     let res = eng.load_module(entry);
     let mut pending = false;
@@ -667,4 +760,66 @@ pub(crate) fn drain_jobs(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         }
     }
     core.report(JsError::new(ErrorKind::Host, "job queue did not drain"));
+}
+
+// ---- reload support (see reload.rs) ----
+
+impl Core {
+    /// True while JS is running (an entry guard is held).
+    pub(crate) fn js_running(&self) -> bool {
+        self.busy.get() > 0
+    }
+
+    /// Live handles that are not inserted under another handle, in creation order.
+    pub(crate) fn roots(&self) -> Vec<svl_handle> {
+        let st = self.st.borrow();
+        let mut v: Vec<svl_handle> = st.handles.keys().filter(|h| !st.tree.contains_key(h)).copied().collect();
+        v.sort_unstable();
+        v
+    }
+
+    /// Destroys `root` and everything inserted below it through the ordinary destroy op,
+    /// descendants first (the order the renderer itself uses). Handles the backend already
+    /// reported dead are skipped.
+    pub(crate) fn destroy_subtree(&self, root: svl_handle) {
+        fn collect(children: &HashMap<svl_handle, Vec<svl_handle>>, h: svl_handle, out: &mut Vec<svl_handle>) {
+            for c in children.get(&h).into_iter().flatten() {
+                collect(children, *c, out);
+            }
+            out.push(h);
+        }
+        let mut children: HashMap<svl_handle, Vec<svl_handle>> = HashMap::new();
+        {
+            let st = self.st.borrow();
+            for (c, p) in &st.tree {
+                children.entry(*p).or_default().push(*c);
+            }
+        }
+        for v in children.values_mut() {
+            v.sort_unstable();
+        }
+        let mut order = Vec::new();
+        collect(&children, root, &mut order);
+        for h in order {
+            if self.st.borrow().handles.contains_key(&h) {
+                let _ = self.op_destroy(h);
+            }
+        }
+    }
+
+    pub(crate) fn clear_events(&self) {
+        self.st.borrow_mut().events.clear();
+    }
+
+    /// Replaces the timer heap (reload keeps the old runtime's timers aside while the new bundle
+    /// loads, and puts them back if that fails). Returns the previous one.
+    pub(crate) fn swap_timers(&self, t: Timers) -> Timers {
+        let old = std::mem::replace(&mut self.st.borrow_mut().timers, t);
+        self.sync_sched();
+        old
+    }
+
+    pub(crate) fn map_error(&self, e: JsError) -> JsError {
+        self.maps.borrow_mut().map_error(e)
+    }
 }

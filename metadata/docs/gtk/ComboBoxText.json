@@ -1,0 +1,116 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkComboBoxText`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 355,
+      "md": "Creates a new `GtkComboBoxText`."
+    },
+    "new_with_entry": {
+      "brief": "Creates a new `GtkComboBoxText` with an entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 371,
+      "md": "Creates a new `GtkComboBoxText` with an entry."
+    }
+  },
+  "doc": {
+    "brief": "A `GtkComboBoxText` is a simple variant of `GtkComboBox` for text-only use cases.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown) with a [`StringList`](xref:gtk:Gtk.StringList)\n  instead",
+    "file": "gtk/deprecated/gtkcomboboxtext.c",
+    "line": 33,
+    "md": "A `GtkComboBoxText` is a simple variant of `GtkComboBox` for text-only\nuse cases.\n\n`GtkComboBoxText` hides the model-view complexity of `GtkComboBox`.\n\nTo create a `GtkComboBoxText`, use [`ComboBoxText.new()`](xref:gtk:Gtk.ComboBoxText#constructor:new) or\n[`ComboBoxText.new_with_entry()`](xref:gtk:Gtk.ComboBoxText#constructor:new_with_entry).\n\nYou can add items to a `GtkComboBoxText` with\n[`ComboBoxText.append_text()`](xref:gtk:Gtk.ComboBoxText#method:append_text),\n[`ComboBoxText.insert_text()`](xref:gtk:Gtk.ComboBoxText#method:insert_text) or\n[`ComboBoxText.prepend_text()`](xref:gtk:Gtk.ComboBoxText#method:prepend_text) and remove options with\n[`ComboBoxText.remove()`](xref:gtk:Gtk.ComboBoxText#method:remove).\n\nIf the `GtkComboBoxText` contains an entry (via the\n[`ComboBox:has-entry`](xref:gtk:Gtk.ComboBox#property:has-entry) property), its contents can be retrieved\nusing [`ComboBoxText.get_active_text()`](xref:gtk:Gtk.ComboBoxText#method:get_active_text).\n\nYou should not call [`ComboBox.set_model()`](xref:gtk:Gtk.ComboBox#method:set_model) or attempt to pack more\ncells into this combo box via its [`CellLayout`](xref:gtk:Gtk.CellLayout) interface.\n\n## GtkComboBoxText as GtkBuildable\n\nThe `GtkComboBoxText` implementation of the `GtkBuildable` interface supports\nadding items directly using the `<items>` element and specifying `<item>`\nelements for each item. Each `<item>` element can specify the “id”\ncorresponding to the appended text and also supports the regular\ntranslation attributes “translatable”, “context” and “comments”.\n\nHere is a UI definition fragment specifying `GtkComboBoxText` items:\n```xml\n<object class=\"GtkComboBoxText\">\n  <items>\n    <item translatable=\"yes\" id=\"factory\">Factory</item>\n    <item translatable=\"yes\" id=\"home\">Home</item>\n    <item translatable=\"yes\" id=\"subway\">Subway</item>\n  </items>\n</object>\n```\n\n## CSS nodes\n\n```\ncombobox\n╰── box.linked\n    ├── entry.combo\n    ├── button.combo\n    ╰── window.popup\n```\n\n`GtkComboBoxText` has a single CSS node with name combobox. It adds\nthe style class .combo to the main CSS nodes of its entry and button\nchildren, and the .linked class to the node of its internal box."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ComboBoxText",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Appends `text` to the list of strings stored in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 449,
+      "md": "Appends `text` to the list of strings stored in `combo_box`.\n\nIf `id` is non-`NULL` then it is used as the ID of the row.\n\nThis is the same as calling [`ComboBoxText.insert()`](xref:gtk:Gtk.ComboBoxText#method:insert)\nwith a position of -1."
+    },
+    "append_text": {
+      "brief": "Appends `text` to the list of strings stored in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 388,
+      "md": "Appends `text` to the list of strings stored in `combo_box`.\n\nThis is the same as calling [`ComboBoxText.insert_text()`](xref:gtk:Gtk.ComboBoxText#method:insert_text)\nwith a position of -1."
+    },
+    "get_active_text": {
+      "brief": "Returns the currently active string in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 603,
+      "md": "Returns the currently active string in `combo_box`.\n\nIf no row is currently selected, `NULL` is returned.\nIf `combo_box` contains an entry, this function will\nreturn its contents (which will not necessarily\nbe an item from the list)."
+    },
+    "insert": {
+      "brief": "Inserts `text` at `position` in the list of strings stored in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 496,
+      "md": "Inserts `text` at `position` in the list of strings stored in `combo_box`.\n\nIf `id` is non-`NULL` then it is used as the ID of the row.\nSee [`ComboBox:id-column`](xref:gtk:Gtk.ComboBox#property:id-column).\n\nIf `position` is negative then `text` is appended."
+    },
+    "insert_text": {
+      "brief": "Inserts `text` at `position` in the list of strings stored in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 426,
+      "md": "Inserts `text` at `position` in the list of strings stored in `combo_box`.\n\nIf `position` is negative then `text` is appended.\n\nThis is the same as calling [`ComboBoxText.insert()`](xref:gtk:Gtk.ComboBoxText#method:insert)\nwith a `NULL` ID string."
+    },
+    "prepend": {
+      "brief": "Prepends `text` to the list of strings stored in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 472,
+      "md": "Prepends `text` to the list of strings stored in `combo_box`.\n\nIf `id` is non-`NULL` then it is used as the ID of the row.\n\nThis is the same as calling [`ComboBoxText.insert()`](xref:gtk:Gtk.ComboBoxText#method:insert)\nwith a position of 0."
+    },
+    "prepend_text": {
+      "brief": "Prepends `text` to the list of strings stored in `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 407,
+      "md": "Prepends `text` to the list of strings stored in `combo_box`.\n\nThis is the same as calling [`ComboBoxText.insert_text()`](xref:gtk:Gtk.ComboBoxText#method:insert_text)\nwith a position of 0."
+    },
+    "remove": {
+      "brief": "Removes the string at `position` from `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 556,
+      "md": "Removes the string at `position` from `combo_box`."
+    },
+    "remove_all": {
+      "brief": "Removes all the text entries from the combo box.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcomboboxtext.c",
+      "line": 584,
+      "md": "Removes all the text entries from the combo box."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

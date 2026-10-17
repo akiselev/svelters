@@ -1,0 +1,76 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Interface for Drag-and-Drop destinations in `GtkTreeView`.",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You can use [`DragSource`](xref:gtk:Gtk.DragSource) to implement a drag source",
+    "file": "gtk/deprecated/gtktreednd.c",
+    "line": 57,
+    "md": "Interface for Drag-and-Drop destinations in `GtkTreeView`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeDragSource",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "drag_data_delete": {
+      "brief": "Asks the `GtkTreeDragSource` to delete the row at `path`, because it was moved somewhere else via drag-and-drop.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 152,
+      "md": "Asks the `GtkTreeDragSource` to delete the row at `path`, because\nit was moved somewhere else via drag-and-drop. Returns `FALSE`\nif the deletion fails because `path` no longer exists, or for\nsome model-specific reason. Should robustly handle a `path` no\nlonger found in the model!"
+    },
+    "drag_data_get": {
+      "brief": "Asks the `GtkTreeDragSource` to return a `GdkContentProvider` representing the row at `path`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 179,
+      "md": "Asks the `GtkTreeDragSource` to return a `GdkContentProvider` representing\nthe row at `path`. Should robustly handle a `path` no\nlonger found in the model!"
+    },
+    "row_draggable": {
+      "brief": "Asks the `GtkTreeDragSource` whether a particular row can be used as the source of a DND operation.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 121,
+      "md": "Asks the `GtkTreeDragSource` whether a particular row can be used as\nthe source of a DND operation. If the source doesn’t implement\nthis interface, the row is assumed draggable."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "drag_data_delete": {
+      "brief": "Asks the `GtkTreeDragSource` to delete the row at `path`, because it was moved somewhere else via drag-and-drop.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 152,
+      "md": "Asks the `GtkTreeDragSource` to delete the row at `path`, because\nit was moved somewhere else via drag-and-drop. Returns `FALSE`\nif the deletion fails because `path` no longer exists, or for\nsome model-specific reason. Should robustly handle a `path` no\nlonger found in the model!"
+    },
+    "drag_data_get": {
+      "brief": "Asks the `GtkTreeDragSource` to return a `GdkContentProvider` representing the row at `path`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 179,
+      "md": "Asks the `GtkTreeDragSource` to return a `GdkContentProvider` representing\nthe row at `path`. Should robustly handle a `path` no\nlonger found in the model!"
+    },
+    "row_draggable": {
+      "brief": "Asks the `GtkTreeDragSource` whether a particular row can be used as the source of a DND operation.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 121,
+      "md": "Asks the `GtkTreeDragSource` whether a particular row can be used as\nthe source of a DND operation. If the source doesn’t implement\nthis interface, the row is assumed draggable."
+    }
+  }
+}

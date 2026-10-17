@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface that is used to implement shortcut scopes.",
+    "file": "gtk/gtkshortcutmanager.c",
+    "line": 26,
+    "md": "An interface that is used to implement shortcut scopes.\n\nThis is important for [`Native`](xref:gtk:Gtk.Native) widgets that have their\nown surface, since the event controllers that are used to implement\nmanaged and global scopes are limited to the same native.\n\nExamples for widgets implementing `GtkShortcutManager` are\n[`Window`](xref:gtk:Gtk.Window) and [`Popover`](xref:gtk:Gtk.Popover).\n\nEvery widget that implements `GtkShortcutManager` will be used as a\n`GTK_SHORTCUT_SCOPE_MANAGED`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutManager",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "add_controller": {
+      "brief": "Add a `GtkShortcutController` to be managed.",
+      "file": "gtk/gtkshortcutmanager.h",
+      "line": 38,
+      "md": "Add a `GtkShortcutController` to be managed."
+    },
+    "remove_controller": {
+      "brief": "Remove a `GtkShortcutController` that had previously been added",
+      "file": "gtk/gtkshortcutmanager.h",
+      "line": 39,
+      "md": "Remove a `GtkShortcutController` that had previously\n  been added"
+    }
+  }
+}

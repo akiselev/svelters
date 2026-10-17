@@ -1,0 +1,31 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new legacy layout manager.",
+      "file": "gtk/gtkcustomlayout.c",
+      "line": 95,
+      "md": "Creates a new legacy layout manager.\n\nLegacy layout managers map to the old `GtkWidget` size negotiation\nvirtual functions, and are meant to be used during the transition\nfrom layout containers to layout manager delegates."
+    }
+  },
+  "doc": {
+    "brief": "Uses closures for size negotiation.",
+    "file": "gtk/gtkcustomlayout.c",
+    "line": 1,
+    "md": "Uses closures for size negotiation.\n\nA `GtkCustomLayout` uses closures matching to the old `GtkWidget`\nvirtual functions for size negotiation, as a convenience API to\nease the porting towards the corresponding `GtkLayoutManager`\nvirtual functions."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CustomLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

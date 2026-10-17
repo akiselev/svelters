@@ -1,0 +1,77 @@
+{
+  "constructors": {
+    "create": {
+      "brief": "Creates a new `GtkATContext` instance for the given accessible role, accessible instance, and display connection.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 709,
+      "md": "Creates a new `GtkATContext` instance for the given accessible role,\naccessible instance, and display connection.\n\nThe `GtkATContext` implementation being instantiated will depend on the\nplatform."
+    }
+  },
+  "doc": {
+    "brief": "Communicates with platform-specific assistive technologies API.",
+    "file": "gtk/gtkatcontext.c",
+    "line": 21,
+    "md": "Communicates with platform-specific assistive technologies API.\n\nEach platform supported by GTK implements a `GtkATContext` subclass, and\nis responsible for updating the accessible state in response to state\nchanges in `GtkAccessible`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ATContext",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_accessible": {
+      "brief": "Retrieves the `GtkAccessible` using this context.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 467,
+      "md": "Retrieves the `GtkAccessible` using this context."
+    },
+    "get_accessible_role": {
+      "brief": "Retrieves the accessible role of this context.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 507,
+      "md": "Retrieves the accessible role of this context."
+    }
+  },
+  "properties": {
+    "accessible": {
+      "brief": "The `GtkAccessible` that created the `GtkATContext` instance.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 272,
+      "md": "The `GtkAccessible` that created the `GtkATContext` instance."
+    },
+    "accessible-role": {
+      "brief": "The accessible role used by the AT context.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 256,
+      "md": "The accessible role used by the AT context.\n\nDepending on the given role, different states and properties can be\nset or retrieved."
+    },
+    "display": {
+      "brief": "The `GdkDisplay` for the `GtkATContext`.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 284,
+      "md": "The `GdkDisplay` for the `GtkATContext`."
+    },
+    "realized": {
+      "brief": "Whether the `GtkATContext` has been realized or not.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 296,
+      "md": "Whether the `GtkATContext` has been realized or not.",
+      "since": "4.24"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "state-change": {
+      "brief": "Emitted when the attributes of the accessible for the `GtkATContext` instance change.",
+      "file": "gtk/gtkatcontext.c",
+      "line": 309,
+      "md": "Emitted when the attributes of the accessible for the\n`GtkATContext` instance change."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,31 @@
+---
+title: Svelters
+description: Write stock Svelte 5, render with native toolkits (GTK 4, Qt 6, later more).
+template: splash
+hero:
+  tagline: Stock Svelte 5 components running in embedded QuickJS, rendered by native GTK 4 and Qt Widgets. Documentation generated from the widget metadata.
+  actions:
+    - text: Get started
+      link: /guides/getting-started/
+      icon: right-arrow
+    - text: API reference
+      link: /api/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="1 element tags" icon="puzzle">
+    3 kinds ingested across 1 toolkits. Each page lists props, events, slots, lifetime and provenance. [Support matrix](/api/matrix/).
+  </Card>
+  <Card title="Honest about status" icon="approve-check">
+    Annotated and tested kinds are marked; raw ingested ones are too. Planned features say so. [Coverage](/coverage/).
+  </Card>
+  <Card title="One bundle, many toolkits" icon="rocket">
+    The same JS bundle runs on GTK and Qt. [Architecture](/guides/architecture/).
+  </Card>
+  <Card title="Contribute annotations" icon="pencil">
+    Agents draft, generated tests verify. [Workflow](/guides/annotation-workflow/).
+  </Card>
+</CardGrid>

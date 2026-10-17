@@ -1,0 +1,31 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkOverlayLayout` instance.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 452,
+      "md": "Creates a new `GtkOverlayLayout` instance."
+    }
+  },
+  "doc": {
+    "brief": "The layout manager used by [`Overlay`](xref:gtk:Gtk.Overlay).",
+    "file": "gtk/gtkoverlaylayout.c",
+    "line": 33,
+    "md": "The layout manager used by [`Overlay`](xref:gtk:Gtk.Overlay).\n\nIt places widgets as overlays on top of the main child.\n\nThis is not a reusable layout manager, since it expects its widget\nto be a `GtkOverlay`. It is only listed here so that its layout\nproperties get documented."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:OverlayLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

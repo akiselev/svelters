@@ -1,0 +1,179 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkListView` that uses the given `factory` for mapping items to widgets.",
+      "file": "gtk/gtklistview.c",
+      "line": 1013,
+      "md": "Creates a new `GtkListView` that uses the given `factory` for\nmapping items to widgets.\n\nThe function takes ownership of the\narguments, so you can write code like\n```c\nlist_view = gtk_list_view_new (create_model (),\n  gtk_builder_list_item_factory_new_from_resource (\"/resource.ui\"));\n```"
+    }
+  },
+  "doc": {
+    "brief": "Presents a large dynamic list of items.",
+    "file": "gtk/gtklistview.c",
+    "line": 42,
+    "md": "Presents a large dynamic list of items.\n\n`GtkListView` uses its factory to generate one row widget for each visible\nitem and shows them in a linear display, either vertically or horizontally.\n\nThe [`ListView:show-separators`](xref:gtk:Gtk.ListView#property:show-separators) property offers a simple way to\ndisplay separators between the rows.\n\n`GtkListView` allows the user to select items according to the selection\ncharacteristics of the model. For models that allow multiple selected items,\nit is possible to turn on _rubberband selection_, using\n[`ListView:enable-rubberband`](xref:gtk:Gtk.ListView#property:enable-rubberband).\n\nIf you need multiple columns with headers, see [`ColumnView`](xref:gtk:Gtk.ColumnView).\n\nTo learn more about the list widget framework, see the\n[overview](section-list-widget.html).\n\nAn example of using `GtkListView`:\n```c\nstatic void\nsetup_listitem_cb (GtkListItemFactory *factory,\n                   GtkListItem        *list_item)\n{\n  GtkWidget *image;\n\n  image = gtk_image_new ();\n  gtk_image_set_icon_size (GTK_IMAGE (image), GTK_ICON_SIZE_LARGE);\n  gtk_list_item_set_child (list_item, image);\n}\n\nstatic void\nbind_listitem_cb (GtkListItemFactory *factory,\n                  GtkListItem        *list_item)\n{\n  GtkWidget *image;\n  GAppInfo *app_info;\n\n  image = gtk_list_item_get_child (list_item);\n  app_info = gtk_list_item_get_item (list_item);\n  gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (app_info));\n}\n\nstatic void\nactivate_cb (GtkListView  *list,\n             guint         position,\n             gpointer      unused)\n{\n  GAppInfo *app_info;\n\n  app_info = g_list_model_get_item (G_LIST_MODEL (gtk_list_view_get_model (list)), position);\n  g_app_info_launch (app_info, NULL, NULL, NULL);\n  g_object_unref (app_info);\n}\n\n...\n\n  model = create_application_list ();\n\n  factory = gtk_signal_list_item_factory_new ();\n  g_signal_connect (factory, \"setup\", G_CALLBACK (setup_listitem_cb), NULL);\n  g_signal_connect (factory, \"bind\", G_CALLBACK (bind_listitem_cb), NULL);\n\n  list = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (model)), factory);\n\n  g_signal_connect (list, \"activate\", G_CALLBACK (activate_cb), NULL);\n\n  gtk_scrolled_window_set_child (GTK_SCROLLED_WINDOW (sw), list);\n```\n\n# Actions\n\n`GtkListView` defines a set of built-in actions:\n\n- `list.activate-item` activates the item at given position by emitting\n  the [`ListView::activate`](xref:gtk:Gtk.ListView#event:activate) signal.\n\n# CSS nodes\n\n```\nlistview[.separators][.rich-list][.navigation-sidebar][.data-table]\n├── row[.activatable]\n│\n├── row[.activatable]\n│\n┊\n╰── [rubberband]\n```\n\n`GtkListView` uses a single CSS node named `listview`. It may carry the\n`.separators` style class, when [`ListView:show-separators`](xref:gtk:Gtk.ListView#property:show-separators)\nproperty is set. Each child widget uses a single CSS node named `row`.\nIf the [`ListItem:activatable`](xref:gtk:Gtk.ListItem#property:activatable) property is set, the\ncorresponding row will have the `.activatable` style class. For\nrubberband selection, a node with name `rubberband` is used.\n\nThe main listview node may also carry style classes to select\nthe style of [list presentation](section-list-widget.html#list-styles):\n.rich-list, .navigation-sidebar or .data-table.\n\n# Accessibility\n\n`GtkListView` uses the [`AccessibleRole.list`](xref:gtk:Gtk.AccessibleRole#value:list) role, and the list\nitems use the [`AccessibleRole.list_item`](xref:gtk:Gtk.AccessibleRole#value:list_item) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListView",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_enable_rubberband": {
+      "brief": "Returns whether rows can be selected by dragging with the mouse.",
+      "file": "gtk/gtklistview.c",
+      "line": 1309,
+      "md": "Returns whether rows can be selected by dragging with the mouse."
+    },
+    "get_factory": {
+      "brief": "Gets the factory that's currently used to populate list items.",
+      "file": "gtk/gtklistview.c",
+      "line": 1093,
+      "md": "Gets the factory that's currently used to populate list items."
+    },
+    "get_header_factory": {
+      "brief": "Gets the factory that's currently used to populate section headers.",
+      "file": "gtk/gtklistview.c",
+      "line": 1131,
+      "md": "Gets the factory that's currently used to populate section headers.",
+      "since": "4.12"
+    },
+    "get_model": {
+      "brief": "Gets the model that's currently used to read the items displayed.",
+      "file": "gtk/gtklistview.c",
+      "line": 1051,
+      "md": "Gets the model that's currently used to read the items displayed."
+    },
+    "get_show_separators": {
+      "brief": "Returns whether the listview should show separators between rows.",
+      "file": "gtk/gtklistview.c",
+      "line": 1222,
+      "md": "Returns whether the listview should show separators\nbetween rows."
+    },
+    "get_single_click_activate": {
+      "brief": "Returns whether rows will be activated on single click and selected on hover.",
+      "file": "gtk/gtklistview.c",
+      "line": 1271,
+      "md": "Returns whether rows will be activated on single click and\nselected on hover."
+    },
+    "get_tab_behavior": {
+      "brief": "Gets the behavior set for the <kbd>Tab</kbd> key.",
+      "file": "gtk/gtklistview.c",
+      "line": 1352,
+      "md": "Gets the behavior set for the <kbd>Tab</kbd> key.",
+      "since": "4.12"
+    },
+    "scroll_to": {
+      "brief": "Scrolls to the item at the given position and performs the actions specified in `flags`.",
+      "file": "gtk/gtklistview.c",
+      "line": 1370,
+      "md": "Scrolls to the item at the given position and performs the actions\nspecified in `flags`.\n\nThis function works no matter if the listview is shown or focused.\nIf it isn't, then the changes will take effect once that happens.",
+      "since": "4.12"
+    },
+    "set_enable_rubberband": {
+      "brief": "Sets whether selections can be changed by dragging with the mouse.",
+      "file": "gtk/gtklistview.c",
+      "line": 1288,
+      "md": "Sets whether selections can be changed by dragging with the mouse."
+    },
+    "set_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for populating list items.",
+      "file": "gtk/gtklistview.c",
+      "line": 1109,
+      "md": "Sets the `GtkListItemFactory` to use for populating list items."
+    },
+    "set_header_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for populating the [`ListHeader`](xref:gtk:Gtk.ListHeader) objects used in section headers.",
+      "file": "gtk/gtklistview.c",
+      "line": 1149,
+      "md": "Sets the `GtkListItemFactory` to use for populating the\n[`ListHeader`](xref:gtk:Gtk.ListHeader) objects used in section headers.\n\nIf this factory is set to `NULL`, the list will not show\nsection headers.",
+      "since": "4.12"
+    },
+    "set_model": {
+      "brief": "Sets the model to use.",
+      "file": "gtk/gtklistview.c",
+      "line": 1067,
+      "md": "Sets the model to use.\n\nThis must be a [`SelectionModel`](xref:gtk:Gtk.SelectionModel) to use."
+    },
+    "set_show_separators": {
+      "brief": "Sets whether the listview should show separators between rows.",
+      "file": "gtk/gtklistview.c",
+      "line": 1195,
+      "md": "Sets whether the listview should show separators\nbetween rows."
+    },
+    "set_single_click_activate": {
+      "brief": "Sets whether rows should be activated on single click and selected on hover.",
+      "file": "gtk/gtklistview.c",
+      "line": 1239,
+      "md": "Sets whether rows should be activated on single click and\nselected on hover."
+    },
+    "set_tab_behavior": {
+      "brief": "Sets the <kbd>Tab</kbd> key behavior.",
+      "file": "gtk/gtklistview.c",
+      "line": 1325,
+      "md": "Sets the <kbd>Tab</kbd> key behavior.\n\nThis influences how the <kbd>Tab</kbd> and\n<kbd>Shift</kbd>+<kbd>Tab</kbd> keys move the\nfocus in the listview.",
+      "since": "4.12"
+    }
+  },
+  "properties": {
+    "enable-rubberband": {
+      "brief": "Allow rubberband selection.",
+      "file": "gtk/gtklistview.c",
+      "line": 877,
+      "md": "Allow rubberband selection."
+    },
+    "factory": {
+      "brief": "Factory for populating list items.",
+      "file": "gtk/gtklistview.c",
+      "line": 887,
+      "md": "Factory for populating list items.\n\nThe factory must be for configuring [`ListItem`](xref:gtk:Gtk.ListItem) objects."
+    },
+    "header-factory": {
+      "brief": "Factory for creating header widgets.",
+      "file": "gtk/gtklistview.c",
+      "line": 899,
+      "md": "Factory for creating header widgets.\n\nThe factory must be for configuring [`ListHeader`](xref:gtk:Gtk.ListHeader) objects.",
+      "since": "4.12"
+    },
+    "model": {
+      "brief": "Model for the items displayed.",
+      "file": "gtk/gtklistview.c",
+      "line": 913,
+      "md": "Model for the items displayed."
+    },
+    "show-separators": {
+      "brief": "Show separators between rows.",
+      "file": "gtk/gtklistview.c",
+      "line": 923,
+      "md": "Show separators between rows."
+    },
+    "single-click-activate": {
+      "brief": "Activate rows on single click and select them on hover.",
+      "file": "gtk/gtklistview.c",
+      "line": 933,
+      "md": "Activate rows on single click and select them on hover."
+    },
+    "tab-behavior": {
+      "brief": "Behavior of the <kbd>Tab</kbd> key",
+      "file": "gtk/gtklistview.c",
+      "line": 943,
+      "md": "Behavior of the <kbd>Tab</kbd> key",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when a row has been activated by the user.",
+      "file": "gtk/gtklistview.c",
+      "line": 958,
+      "md": "Emitted when a row has been activated by the user.\n\nActivation usually happens via the list.activate-item action of\nthe `GtkListView`.\n\nThis allows for a convenient way to handle activation in a listview.\nSee [`ListItem.set_activatable()`](xref:gtk:Gtk.ListItem#method:set_activatable) for details on how to use\nthis signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

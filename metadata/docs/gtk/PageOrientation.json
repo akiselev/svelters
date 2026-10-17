@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "See also gtk_print_settings_set_orientation().",
+    "file": "gtk/gtkenums.h",
+    "line": 699,
+    "md": "See also gtk_print_settings_set_orientation()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PageOrientation",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "landscape": {
+      "brief": "Landscape mode.",
+      "file": "gtk/gtkenums.h",
+      "line": 702,
+      "md": "Landscape mode."
+    },
+    "portrait": {
+      "brief": "Portrait mode.",
+      "file": "gtk/gtkenums.h",
+      "line": 701,
+      "md": "Portrait mode."
+    },
+    "reverse_landscape": {
+      "brief": "Reverse landscape mode.",
+      "file": "gtk/gtkenums.h",
+      "line": 704,
+      "md": "Reverse landscape mode."
+    },
+    "reverse_portrait": {
+      "brief": "Reverse portrait mode.",
+      "file": "gtk/gtkenums.h",
+      "line": 703,
+      "md": "Reverse portrait mode."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

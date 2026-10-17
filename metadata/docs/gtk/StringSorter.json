@@ -1,0 +1,90 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new string sorter that compares items using the given `expression`.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 378,
+      "md": "Creates a new string sorter that compares items using the given\n`expression`.\n\nUnless an expression is set on it, this sorter will always\ncompare items as invalid."
+    }
+  },
+  "doc": {
+    "brief": "Sorts items by comparing strings.",
+    "file": "gtk/gtkstringsorter.c",
+    "line": 27,
+    "md": "Sorts items by comparing strings.\n\nTo obtain the strings to compare, this sorter evaluates a\n[`Expression`](xref:gtk:Gtk.Expression).\n\nIt does the comparison in a linguistically correct way using the\ncurrent locale by normalizing Unicode strings and possibly case-folding\nthem before performing the comparison."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StringSorter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_collation": {
+      "brief": "Gets which collation method the sorter uses.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 491,
+      "md": "Gets which collation method the sorter uses.",
+      "since": "4.10"
+    },
+    "get_expression": {
+      "brief": "Gets the expression that is evaluated to obtain strings from items.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 404,
+      "md": "Gets the expression that is evaluated to obtain strings from items."
+    },
+    "get_ignore_case": {
+      "brief": "Gets whether the sorter ignores case differences.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 450,
+      "md": "Gets whether the sorter ignores case differences."
+    },
+    "set_collation": {
+      "brief": "Sets the collation method to use for sorting.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 509,
+      "md": "Sets the collation method to use for sorting.",
+      "since": "4.10"
+    },
+    "set_expression": {
+      "brief": "Sets the expression that is evaluated to obtain strings from items.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 420,
+      "md": "Sets the expression that is evaluated to obtain strings from items.\n\nThe expression must have the type %G_TYPE_STRING."
+    },
+    "set_ignore_case": {
+      "brief": "Sets whether the sorter will ignore case differences.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 466,
+      "md": "Sets whether the sorter will ignore case differences."
+    }
+  },
+  "properties": {
+    "collation": {
+      "brief": "The collation method to use for sorting.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 344,
+      "md": "The collation method to use for sorting.\n\nThe `GTK_COLLATION_NONE` value is useful when the expression already\nreturns collation keys, or strings that need to be compared byte-by-byte.\n\nThe default value, `GTK_COLLATION_UNICODE`, compares strings according\nto the [Unicode collation algorithm](https://www.unicode.org/reports/tr10/).",
+      "since": "4.10"
+    },
+    "expression": {
+      "brief": "The expression to evaluate on item to get a string to compare with.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 325,
+      "md": "The expression to evaluate on item to get a string to compare with."
+    },
+    "ignore-case": {
+      "brief": "If sorting is case sensitive.",
+      "file": "gtk/gtkstringsorter.c",
+      "line": 334,
+      "md": "If sorting is case sensitive."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

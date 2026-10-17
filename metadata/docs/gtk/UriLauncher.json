@@ -1,0 +1,77 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkUriLauncher` object.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 149,
+      "md": "Creates a new `GtkUriLauncher` object.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Asynchronous API to open a uri with an application.",
+    "file": "gtk/gtkurilauncher.c",
+    "line": 30,
+    "md": "Asynchronous API to open a uri with an application.\n\n`GtkUriLauncher` collects the arguments that are needed to open the uri.\n\nDepending on system configuration, user preferences and available APIs, this\nmay or may not show an app chooser dialog or launch the default application\nright away.\n\nThe operation is started with the [`UriLauncher.launch()`](xref:gtk:Gtk.UriLauncher#method:launch) function.\n\nTo launch a file, use [`FileLauncher`](xref:gtk:Gtk.FileLauncher).",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:UriLauncher",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "can_launch": {
+      "brief": "Returns whether the launcher is likely to succeed in launching an application for its uri.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 390,
+      "md": "Returns whether the launcher is likely to succeed\nin launching an application for its uri.\n\nThis can be used to disable controls that trigger\nthe launcher when they are known not to work.",
+      "since": "4.20"
+    },
+    "get_uri": {
+      "brief": "Gets the uri that will be opened.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 170,
+      "md": "Gets the uri that will be opened.",
+      "since": "4.10"
+    },
+    "launch": {
+      "brief": "Launches an application to open the uri.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 290,
+      "md": "Launches an application to open the uri.\n\nThis may present an app chooser dialog to the user.",
+      "since": "4.10"
+    },
+    "launch_finish": {
+      "brief": "Finishes the [`UriLauncher.launch()`](xref:gtk:Gtk.UriLauncher#method:launch) call and returns the result.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 362,
+      "md": "Finishes the [`UriLauncher.launch()`](xref:gtk:Gtk.UriLauncher#method:launch) call and\nreturns the result.",
+      "since": "4.10"
+    },
+    "set_uri": {
+      "brief": "Sets the uri that will be opened.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 188,
+      "md": "Sets the uri that will be opened.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "uri": {
+      "brief": "The uri to launch.",
+      "file": "gtk/gtkurilauncher.c",
+      "line": 131,
+      "md": "The uri to launch.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,179 @@
+{
+  "doc": {
+    "brief": "The QGraphicsProxyWidget class provides a proxy layer for embedding a [QWidget](xref:qt:QWidget) in a [QGraphicsScene](xref:qt:QGraphicsScene).",
+    "index_brief": "Proxy layer for embedding a QWidget in a QGraphicsScene",
+    "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsProxyWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsProxyWidget * createProxyForChildWidget(QWidget *child)": {
+      "brief": "Creates a proxy widget for the given *child* of the widget contained in this proxy.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#createProxyForChildWidget"
+    },
+    "QGraphicsProxyWidget * newProxyWidget(const QWidget *child)": {
+      "brief": "Creates a proxy widget for the given *child* of the widget contained in this proxy.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#newProxyWidget"
+    },
+    "QGraphicsProxyWidget(QGraphicsItem *parent, Qt::WindowFlags wFlags)": {
+      "brief": "Constructs a new QGraphicsProxy widget. *parent* and *wFlags* are passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#QGraphicsProxyWidget"
+    },
+    "QRectF subWidgetRect(const QWidget *widget) const": {
+      "brief": "Returns the rectangle for *widget*, which must be a descendant of [widget](xref:qt:QGraphicsProxyWidget)(), or [widget](xref:qt:QGraphicsProxyWidget)() itself, in this proxy item's local coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#subWidgetRect"
+    },
+    "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override": {
+      "brief": "Reimplements: [QGraphicsWidget::sizeHint](xref:qt:QGraphicsWidget)(Qt::SizeHint which, const QSizeF &constraint) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#sizeHint"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override": {
+      "brief": "Reimplements: [QGraphicsItem::inputMethodQuery](xref:qt:QGraphicsItem)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#inputMethodQuery"
+    },
+    "QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override": {
+      "brief": "Reimplements: [QGraphicsWidget::itemChange](xref:qt:QGraphicsWidget)(QGraphicsItem::GraphicsItemChange change, const QVariant &value).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#itemChange"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns a pointer to the embedded widget.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#widget"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::event](xref:qt:QGraphicsWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#event"
+    },
+    "bool eventFilter(QObject *object, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#eventFilter"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QGraphicsWidget::focusNextPrevChild](xref:qt:QGraphicsWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#focusNextPrevChild"
+    },
+    "int type() const override": {
+      "brief": "Reimplements: [QGraphicsWidget::type](xref:qt:QGraphicsWidget)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#type"
+    },
+    "void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::contextMenuEvent](xref:qt:QGraphicsItem)(QGraphicsSceneContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#contextMenuEvent"
+    },
+    "void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dragEnterEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dragLeaveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dragMoveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#dragMoveEvent"
+    },
+    "void dropEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dropEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#dropEvent"
+    },
+    "void focusInEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::focusInEvent](xref:qt:QGraphicsWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::focusOutEvent](xref:qt:QGraphicsWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#focusOutEvent"
+    },
+    "void grabMouseEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::grabMouseEvent](xref:qt:QGraphicsWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#grabMouseEvent"
+    },
+    "void hideEvent(QHideEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::hideEvent](xref:qt:QGraphicsWidget)(QHideEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#hideEvent"
+    },
+    "void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::hoverEnterEvent](xref:qt:QGraphicsItem)(QGraphicsSceneHoverEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#hoverEnterEvent"
+    },
+    "void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::hoverLeaveEvent](xref:qt:QGraphicsWidget)(QGraphicsSceneHoverEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#hoverLeaveEvent"
+    },
+    "void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::hoverMoveEvent](xref:qt:QGraphicsWidget)(QGraphicsSceneHoverEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#hoverMoveEvent"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::inputMethodEvent](xref:qt:QGraphicsItem)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#inputMethodEvent"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::keyPressEvent](xref:qt:QGraphicsItem)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::keyReleaseEvent](xref:qt:QGraphicsItem)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#keyReleaseEvent"
+    },
+    "void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mouseDoubleClickEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mouseMoveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mousePressEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mouseReleaseEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#mouseReleaseEvent"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override": {
+      "brief": "Reimplements: [QGraphicsWidget::paint](xref:qt:QGraphicsWidget)(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#paint"
+    },
+    "void resizeEvent(QGraphicsSceneResizeEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::resizeEvent](xref:qt:QGraphicsWidget)(QGraphicsSceneResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#resizeEvent"
+    },
+    "void setGeometry(const QRectF &rect) override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::setGeometry](xref:qt:QGraphicsLayoutItem)(const QRectF &rect).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#setGeometry"
+    },
+    "void setWidget(QWidget *widget)": {
+      "brief": "Embeds *widget* into this proxy widget.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#setWidget"
+    },
+    "void showEvent(QShowEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::showEvent](xref:qt:QGraphicsWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#showEvent"
+    },
+    "void ungrabMouseEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsWidget::ungrabMouseEvent](xref:qt:QGraphicsWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#ungrabMouseEvent"
+    },
+    "void wheelEvent(QGraphicsSceneWheelEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::wheelEvent](xref:qt:QGraphicsItem)(QGraphicsSceneWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsproxywidget.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

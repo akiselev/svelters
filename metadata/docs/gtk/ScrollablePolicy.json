@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Defines the policy to be used in a scrollable widget when updating the scrolled window adjustments in a given orientation.",
+    "file": "gtk/gtkenums.h",
+    "line": 820,
+    "md": "Defines the policy to be used in a scrollable widget when updating\nthe scrolled window adjustments in a given orientation."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrollablePolicy",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "minimum": {
+      "brief": "Scrollable adjustments are based on the minimum size",
+      "file": "gtk/gtkenums.h",
+      "line": 822,
+      "md": "Scrollable adjustments are based on the minimum size"
+    },
+    "natural": {
+      "brief": "Scrollable adjustments are based on the natural size",
+      "file": "gtk/gtkenums.h",
+      "line": 823,
+      "md": "Scrollable adjustments are based on the natural size"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

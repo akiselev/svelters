@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Represents the packing location of a children in its parent.",
+    "file": "gtk/gtkenums.h",
+    "line": 462,
+    "md": "Represents the packing location of a children in its parent.\n\nSee [`WindowControls`](xref:gtk:WindowControls) for example."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PackType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "end": {
+      "brief": "The child is packed into the end of the widget",
+      "file": "gtk/gtkenums.h",
+      "line": 465,
+      "md": "The child is packed into the end of the widget"
+    },
+    "start": {
+      "brief": "The child is packed into the start of the widget",
+      "file": "gtk/gtkenums.h",
+      "line": 464,
+      "md": "The child is packed into the start of the widget"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

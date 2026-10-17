@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "test": "vite build && node --experimental-vm-modules --no-warnings ../../packages/testhost/bin/svelters-test.mjs ."
+    "test": "vite build && node --experimental-vm-modules --no-warnings ../../packages/testhost/bin/svelters-test.mjs .",
+    "watch": "svelters-build --watch"
   },
   "dependencies": {
     "svelte": "5.57.2"

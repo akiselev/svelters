@@ -326,7 +326,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
 
 
 def build_enum_table(name, node, enums, kinds, src):
-    """`Qt.json`: member tables for every enum and flags type that a slot type in the metadata mentions,
+    """`_enums/Qt.json` (not a kind: the docs and the kind loaders read only `metadata/qt/*.json`): member tables for every enum and flags type that a slot type in the metadata mentions,
     whichever class (QtCore, QtGui or QtWidgets) declares it. The Qt backend generator reads member
     names and C++ expressions from here; the Qt namespace record itself carries no members of its own."""
     import json
@@ -389,7 +389,7 @@ def main() -> int:
             return 1
         built.append(kind)
         wrote += svmeta.write_json(out / f"{n}.json", kind)
-    wrote += svmeta.write_json(out / "Qt.json", build_enum_table("Qt", namespaces["Qt"][1], enums, [{k: v for k, v in b.items() if k in ("properties", "methods", "signals")} for b in built], src))
+    wrote += svmeta.write_json(out / "_enums" / "Qt.json", build_enum_table("Qt", namespaces["Qt"][1], enums, [{k: v for k, v in b.items() if k in ("properties", "methods", "signals")} for b in built], src))
     print(f"{len(widget_classes)} classes ({len(meta)} QObject with metaobject); {wrote} files changed")
     return 0
 

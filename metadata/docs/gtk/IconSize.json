@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Built-in icon sizes.",
+    "file": "gtk/gtkenums.h",
+    "line": 217,
+    "md": "Built-in icon sizes.\n\nIcon sizes default to being inherited. Where they cannot be\ninherited, text size is the default.\n\nAll widgets which use `GtkIconSize` set the normal-icons or\nlarge-icons style classes correspondingly, and let themes\ndetermine the actual size to be used with the\n`-gtk-icon-size` CSS property."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IconSize",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "inherit": {
+      "brief": "Keep the size of the parent element",
+      "file": "gtk/gtkenums.h",
+      "line": 219,
+      "md": "Keep the size of the parent element"
+    },
+    "large": {
+      "brief": "Large size, for example in an icon view",
+      "file": "gtk/gtkenums.h",
+      "line": 221,
+      "md": "Large size, for example in an icon view"
+    },
+    "normal": {
+      "brief": "Size similar to text size",
+      "file": "gtk/gtkenums.h",
+      "line": 220,
+      "md": "Size similar to text size"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

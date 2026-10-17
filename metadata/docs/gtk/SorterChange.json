@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes changes in a sorter in more detail and allows users to optimize resorting.",
+    "file": "gtk/gtksorter.h",
+    "line": 48,
+    "md": "Describes changes in a sorter in more detail and allows users\nto optimize resorting."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SorterChange",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "different": {
+      "brief": "The sorter change cannot be described by any of the other enumeration values",
+      "file": "gtk/gtksorter.h",
+      "line": 50,
+      "md": "The sorter change cannot be described\n  by any of the other enumeration values"
+    },
+    "inverted": {
+      "brief": "The sort order was inverted.",
+      "file": "gtk/gtksorter.h",
+      "line": 52,
+      "md": "The sort order was inverted. Comparisons\n  that returned %GTK_ORDERING_SMALLER now return %GTK_ORDERING_LARGER\n  and vice versa. Other comparisons return the same values as before."
+    },
+    "less_strict": {
+      "brief": "The sorter is less strict: Comparisons may now return %GTK_ORDERING_EQUAL that did not do so before.",
+      "file": "gtk/gtksorter.h",
+      "line": 55,
+      "md": "The sorter is less strict: Comparisons\n  may now return %GTK_ORDERING_EQUAL that did not do so before."
+    },
+    "more_strict": {
+      "brief": "The sorter is more strict: Comparisons that did return %GTK_ORDERING_EQUAL may not do so anymore.",
+      "file": "gtk/gtksorter.h",
+      "line": 57,
+      "md": "The sorter is more strict: Comparisons\n  that did return %GTK_ORDERING_EQUAL may not do so anymore."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,77 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "A `GtkShortcutsGroup` represents a group of related keyboard shortcuts or gestures.",
+    "deprecated": "4.18",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkshortcutsgroup.c",
+    "line": 34,
+    "md": "A `GtkShortcutsGroup` represents a group of related keyboard shortcuts\nor gestures.\n\nThe group has a title. It may optionally be associated with a view\nof the application, which can be used to show only relevant shortcuts\ndepending on the application context.\n\nThis widget is only meant to be used with [`ShortcutsWindow`](xref:gtk:Gtk.ShortcutsWindow).\n\nThe recommended way to construct a `GtkShortcutsGroup` is with\n[`Builder`](xref:gtk:Gtk.Builder), by using the `<child>` tag to populate a\n`GtkShortcutsGroup` with one or more [`ShortcutsShortcut`](xref:gtk:Gtk.ShortcutsShortcut)\ninstances.\n\nIf you need to add a shortcut programmatically, use\n[`ShortcutsGroup.add_shortcut()`](xref:gtk:Gtk.ShortcutsGroup#method:add_shortcut)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsGroup",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_shortcut": {
+      "brief": "Adds a shortcut to the shortcuts group.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsgroup.c",
+      "line": 386,
+      "md": "Adds a shortcut to the shortcuts group.\n\nThis is the programmatic equivalent to using [`Builder`](xref:gtk:Gtk.Builder) and a\n`<child>` tag to add the child. Adding children with other API is not\nappropriate as `GtkShortcutsGroup` manages its children internally.",
+      "since": "4.14"
+    }
+  },
+  "properties": {
+    "accel-size-group": {
+      "brief": "The size group for the accelerator portion of shortcuts in this group.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsgroup.c",
+      "line": 313,
+      "md": "The size group for the accelerator portion of shortcuts in this group.\n\nThis is used internally by GTK, and must not be modified by applications."
+    },
+    "height": {
+      "brief": "A rough measure for the number of lines in this group.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsgroup.c",
+      "line": 341,
+      "md": "A rough measure for the number of lines in this group.\n\nThis is used internally by GTK, and is not useful for applications."
+    },
+    "title": {
+      "brief": "The title for this group of shortcuts.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsgroup.c",
+      "line": 284,
+      "md": "The title for this group of shortcuts."
+    },
+    "title-size-group": {
+      "brief": "The size group for the textual portion of shortcuts in this group.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsgroup.c",
+      "line": 327,
+      "md": "The size group for the textual portion of shortcuts in this group.\n\nThis is used internally by GTK, and must not be modified by applications."
+    },
+    "view": {
+      "brief": "An optional view that the shortcuts in this group are relevant for.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsgroup.c",
+      "line": 296,
+      "md": "An optional view that the shortcuts in this group are relevant for.\n\nThe group will be hidden if the [`ShortcutsWindow:view-name`](xref:gtk:Gtk.ShortcutsWindow#property:view-name)\nproperty does not match the view of this group.\n\nSet this to `NULL` to make the group always visible."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

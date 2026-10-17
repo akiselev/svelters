@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes which edge of a widget a certain feature is positioned at.",
+    "file": "gtk/gtkenums.h",
+    "line": 477,
+    "md": "Describes which edge of a widget a certain feature is positioned at.\n\nFor examples, see the tabs of a [`Notebook`](xref:gtk:Notebook), or the label\nof a [`Scale`](xref:gtk:Scale)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PositionType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "bottom": {
+      "brief": "The feature is at the bottom edge.",
+      "file": "gtk/gtkenums.h",
+      "line": 482,
+      "md": "The feature is at the bottom edge."
+    },
+    "left": {
+      "brief": "The feature is at the left edge.",
+      "file": "gtk/gtkenums.h",
+      "line": 479,
+      "md": "The feature is at the left edge."
+    },
+    "right": {
+      "brief": "The feature is at the right edge.",
+      "file": "gtk/gtkenums.h",
+      "line": 480,
+      "md": "The feature is at the right edge."
+    },
+    "top": {
+      "brief": "The feature is at the top edge.",
+      "file": "gtk/gtkenums.h",
+      "line": 481,
+      "md": "The feature is at the top edge."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

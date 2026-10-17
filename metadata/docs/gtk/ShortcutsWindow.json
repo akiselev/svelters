@@ -1,0 +1,70 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "A `GtkShortcutsWindow` shows information about the keyboard shortcuts and gestures of an application.",
+    "deprecated": "4.18",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkshortcutswindow.c",
+    "line": 48,
+    "md": "A `GtkShortcutsWindow` shows information about the keyboard shortcuts\nand gestures of an application.\n\nThe shortcuts can be grouped, and you can have multiple sections in this\nwindow, corresponding to the major modes of your application.\n\nAdditionally, the shortcuts can be filtered by the current view, to avoid\nshowing information that is not relevant in the current application context.\n\nThe recommended way to construct a `GtkShortcutsWindow` is with\n[`Builder`](xref:gtk:Gtk.Builder), by using the `<child>` tag to populate a\n`GtkShortcutsWindow` with one or more [`ShortcutsSection`](xref:gtk:Gtk.ShortcutsSection) objects,\nwhich contain one or more [`ShortcutsGroup`](xref:gtk:Gtk.ShortcutsGroup) instances, which, in turn,\ncontain [`ShortcutsShortcut`](xref:gtk:Gtk.ShortcutsShortcut) instances.\n\nIf you need to add a section programmatically, use [`ShortcutsWindow.add_section()`](xref:gtk:Gtk.ShortcutsWindow#method:add_section)\ninstead of [`Window.set_child()`](xref:gtk:Gtk.Window#method:set_child), as the shortcuts window manages\nits children directly.\n\n# A simple example:\n\nThis example has as single section. As you can see, the shortcut groups\nare arranged in columns, and spread across several pages if there are too\nmany to find on a single page.\n\nThe .ui file for this example can be found [here](https://gitlab.gnome.org/GNOME/gtk/tree/main/demos/gtk-demo/shortcuts-gedit.ui).\n\n# An example with multiple views:\n\nThis example shows a `GtkShortcutsWindow` that has been configured to show only\nthe shortcuts relevant to the “Stopwatch” view.\n\nThe .ui file for this example can be found [here](https://gitlab.gnome.org/GNOME/gtk/tree/main/demos/gtk-demo/shortcuts-clocks.ui).\n\n# An example with multiple sections:\n\nThis example shows a `GtkShortcutsWindow` with two sections, “Editor Shortcuts”\nand “Terminal Shortcuts”.\n\nThe .ui file for this example can be found [here](https://gitlab.gnome.org/GNOME/gtk/tree/main/demos/gtk-demo/shortcuts-builder.ui).\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`ShortcutsWindow::close`](xref:gtk:Gtk.ShortcutsWindow#event:close)\n- [`ShortcutsWindow::search`](xref:gtk:Gtk.ShortcutsWindow#event:search)\n\n# CSS nodes\n\n`GtkShortcutsWindow` has a single CSS node with the name `window` and style\nclass `.shortcuts`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsWindow",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_section": {
+      "brief": "Adds a section to the shortcuts window.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutswindow.c",
+      "line": 360,
+      "md": "Adds a section to the shortcuts window.\n\nThis is the programmatic equivalent to using [`Builder`](xref:gtk:Gtk.Builder) and a\n`<child>` tag to add the child.\n\nUsing [`Window.set_child()`](xref:gtk:Gtk.Window#method:set_child) is not appropriate as the shortcuts\nwindow manages its children internally.",
+      "since": "4.14"
+    }
+  },
+  "properties": {
+    "section-name": {
+      "brief": "The name of the section to show.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutswindow.c",
+      "line": 789,
+      "md": "The name of the section to show.\n\nThis should be the section-name of one of the `GtkShortcutsSection`\nobjects that are in this shortcuts window."
+    },
+    "view-name": {
+      "brief": "The view name by which to filter the contents.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutswindow.c",
+      "line": 804,
+      "md": "The view name by which to filter the contents.\n\nThis should correspond to the [`ShortcutsGroup:view`](xref:gtk:Gtk.ShortcutsGroup#property:view)\nproperty of some of the [`ShortcutsGroup`](xref:gtk:Gtk.ShortcutsGroup) objects that\nare inside this shortcuts window.\n\nSet this to `NULL` to show all groups."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "close": {
+      "brief": "Emitted when the user uses a keybinding to close the window.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutswindow.c",
+      "line": 824,
+      "md": "Emitted when the user uses a keybinding to close the window.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is the <kbd>Escape</kbd> key."
+    },
+    "search": {
+      "brief": "Emitted when the user uses a keybinding to start a search.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutswindow.c",
+      "line": 843,
+      "md": "Emitted when the user uses a keybinding to start a search.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Control</kbd>+<kbd>F</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

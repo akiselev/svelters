@@ -1,0 +1,163 @@
+{
+  "doc": {
+    "brief": "The QBoxLayout class lines up child widgets horizontally or vertically.",
+    "index_brief": "Lines up child widgets horizontally or vertically",
+    "url": "https://doc.qt.io/qt-6/qboxlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBoxLayout(QBoxLayout::Direction dir, QWidget *parent)": {
+      "brief": "Constructs a new QBoxLayout with direction *dir* and parent widget *parent*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#QBoxLayout"
+    },
+    "QBoxLayout::Direction direction() const": {
+      "brief": "Returns the direction of the box.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#direction"
+    },
+    "QLayoutItem * itemAt(int index) const override": {
+      "brief": "Reimplements: [QLayout::itemAt](xref:qt:QLayout)(int index) const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#itemAt"
+    },
+    "QLayoutItem * takeAt(int index) override": {
+      "brief": "Reimplements: [QLayout::takeAt](xref:qt:QLayout)(int index).",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#takeAt"
+    },
+    "QSize maximumSize() const override": {
+      "brief": "Reimplements: [QLayout::maximumSize](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#maximumSize"
+    },
+    "QSize minimumSize() const override": {
+      "brief": "Reimplements: [QLayout::minimumSize](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#minimumSize"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QLayoutItem::sizeHint](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#sizeHint"
+    },
+    "Qt::Orientations expandingDirections() const override": {
+      "brief": "Reimplements: [QLayout::expandingDirections](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#expandingDirections"
+    },
+    "bool hasHeightForWidth() const override": {
+      "brief": "Reimplements: [QLayoutItem::hasHeightForWidth](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#hasHeightForWidth"
+    },
+    "bool setStretchFactor(QLayout *layout, int stretch)": {
+      "brief": "Sets the stretch factor for the layout *layout* to *stretch* and returns `true` if *layout* is found in this layout (not including child layouts); otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#setStretchFactor-1"
+    },
+    "bool setStretchFactor(QWidget *widget, int stretch)": {
+      "brief": "Sets the stretch factor for *widget* to *stretch* and returns true if *widget* is found in this layout (not including child layouts); otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#setStretchFactor"
+    },
+    "int count() const override": {
+      "brief": "Reimplements: [QLayout::count](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#count"
+    },
+    "int heightForWidth(int w) const override": {
+      "brief": "Reimplements: [QLayoutItem::heightForWidth](xref:qt:QLayoutItem)(int) const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#heightForWidth"
+    },
+    "int minimumHeightForWidth(int w) const override": {
+      "brief": "Reimplements: [QLayoutItem::minimumHeightForWidth](xref:qt:QLayoutItem)(int w) const.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#minimumHeightForWidth"
+    },
+    "int spacing() const override": {
+      "brief": "Reimplements an access function for property: [QLayout::spacing](xref:qt:QLayout).",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#spacing"
+    },
+    "int stretch(int index) const": {
+      "brief": "Returns the stretch factor at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#stretch"
+    },
+    "void addItem(QLayoutItem *item) override": {
+      "brief": "Reimplements: [QLayout::addItem](xref:qt:QLayout)(QLayoutItem *item).",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addItem"
+    },
+    "void addLayout(QLayout *layout, int stretch)": {
+      "brief": "Adds *layout* to the end of the box, with serial stretch factor *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addLayout"
+    },
+    "void addSpacerItem(QSpacerItem *spacerItem)": {
+      "brief": "Adds *spacerItem* to the end of this box layout.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addSpacerItem"
+    },
+    "void addSpacing(int size)": {
+      "brief": "Adds a non-stretchable space (a [QSpacerItem](xref:qt:QSpacerItem)) with size *size* to the end of this box layout.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addSpacing"
+    },
+    "void addStretch(int stretch)": {
+      "brief": "Adds a stretchable space (a [QSpacerItem](xref:qt:QSpacerItem)) with zero minimum size and stretch factor *stretch* to the end of this box layout.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addStretch"
+    },
+    "void addStrut(int size)": {
+      "brief": "Limits the perpendicular dimension of the box (e.g. height if the box is [LeftToRight](xref:qt:QBoxLayout)) to a minimum of *size*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addStrut"
+    },
+    "void addWidget(QWidget *widget, int stretch, Qt::Alignment alignment)": {
+      "brief": "Adds *widget* to the end of this box layout, with a stretch factor of *stretch* and alignment *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#addWidget"
+    },
+    "void insertItem(int index, QLayoutItem *item)": {
+      "brief": "Inserts *item* into this box layout at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#insertItem"
+    },
+    "void insertLayout(int index, QLayout *layout, int stretch)": {
+      "brief": "Inserts *layout* at position *index*, with stretch factor *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#insertLayout"
+    },
+    "void insertSpacerItem(int index, QSpacerItem *spacerItem)": {
+      "brief": "Inserts *spacerItem* at position *index*, with zero minimum size and stretch factor.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#insertSpacerItem"
+    },
+    "void insertSpacing(int index, int size)": {
+      "brief": "Inserts a non-stretchable space (a [QSpacerItem](xref:qt:QSpacerItem)) at position *index*, with size *size*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#insertSpacing"
+    },
+    "void insertStretch(int index, int stretch)": {
+      "brief": "Inserts a stretchable space (a [QSpacerItem](xref:qt:QSpacerItem)) at position *index*, with zero minimum size and stretch factor *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#insertStretch"
+    },
+    "void insertWidget(int index, QWidget *widget, int stretch, Qt::Alignment alignment)": {
+      "brief": "Inserts *widget* at position *index*, with stretch factor *stretch* and alignment *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#insertWidget"
+    },
+    "void invalidate() override": {
+      "brief": "Reimplements: [QLayout::invalidate](xref:qt:QLayout)().",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#invalidate"
+    },
+    "void setDirection(QBoxLayout::Direction direction)": {
+      "brief": "Sets the direction of this layout to *direction*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#setDirection"
+    },
+    "void setGeometry(const QRect &r) override": {
+      "brief": "Reimplements: [QLayout::setGeometry](xref:qt:QLayout)(const QRect &r).",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#setGeometry"
+    },
+    "void setSpacing(int spacing) override": {
+      "brief": "Reimplements an access function for property: [QLayout::spacing](xref:qt:QLayout).",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#setSpacing"
+    },
+    "void setStretch(int index, int stretch)": {
+      "brief": "Sets the stretch factor at position *index*. to *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qboxlayout.html#setStretch"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

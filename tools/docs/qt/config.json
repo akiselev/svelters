@@ -1,0 +1,4 @@
+{
+  "text_policy": "brief",
+  "_doc": "GFDL-1.3 switch. brief = short briefs + deep links to doc.qt.io (safe default). links = qdoc index briefs only. full = full class/member text (requires metadata/docs/qt ingested with --mode full; the site then must carry the GFDL notice and licence text, which it does whenever text_policy is full)."
+}

@@ -1,0 +1,103 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkGestureStylus`.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 259,
+      "md": "Creates a new `GtkGestureStylus`."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes tablet stylus input.",
+    "file": "gtk/gtkgesturestylus.c",
+    "line": 20,
+    "md": "Recognizes tablet stylus input.\n\nThe provided signals just relay the basic information of the\nstylus events."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_axes": {
+      "brief": "Returns the current values for the requested `axes`.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 356,
+      "md": "Returns the current values for the requested `axes`.\n\nThis function must be called from the handler of one of the\n[`GestureStylus::down`](xref:gtk:Gtk.GestureStylus#event:down), [`GestureStylus::motion`](xref:gtk:Gtk.GestureStylus#event:motion),\n[`GestureStylus::up`](xref:gtk:Gtk.GestureStylus#event:up) or [`GestureStylus::proximity`](xref:gtk:Gtk.GestureStylus#event:proximity)\nsignals."
+    },
+    "get_axis": {
+      "brief": "Returns the current value for the requested `axis`.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 323,
+      "md": "Returns the current value for the requested `axis`.\n\nThis function must be called from the handler of one of the\n[`GestureStylus::down`](xref:gtk:Gtk.GestureStylus#event:down), [`GestureStylus::motion`](xref:gtk:Gtk.GestureStylus#event:motion),\n[`GestureStylus::up`](xref:gtk:Gtk.GestureStylus#event:up) or [`GestureStylus::proximity`](xref:gtk:Gtk.GestureStylus#event:proximity)\nsignals."
+    },
+    "get_backlog": {
+      "brief": "Returns the accumulated backlog of tracking information.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 411,
+      "md": "Returns the accumulated backlog of tracking information.\n\nBy default, GTK will limit rate of input events. On stylus input\nwhere accuracy of strokes is paramount, this function returns the\naccumulated coordinate/timing state before the emission of the\ncurrent [Gtk.GestureStylus::motion] signal.\n\nThis function may only be called within a [`GestureStylus::motion`](xref:gtk:Gtk.GestureStylus#event:motion)\nsignal handler, the state given in this signal and obtainable through\n[`GestureStylus.get_axis()`](xref:gtk:Gtk.GestureStylus#method:get_axis) express the latest (most up-to-date)\nstate in motion history.\n\nThe `backlog` is provided in chronological order."
+    },
+    "get_device_tool": {
+      "brief": "Returns the `GdkDeviceTool` currently driving input through this gesture.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 494,
+      "md": "Returns the `GdkDeviceTool` currently driving input through this gesture.\n\nThis function must be called from the handler of one of the\n[`GestureStylus::down`](xref:gtk:Gtk.GestureStylus#event:down), [`GestureStylus::motion`](xref:gtk:Gtk.GestureStylus#event:motion),\n[`GestureStylus::up`](xref:gtk:Gtk.GestureStylus#event:up) or [`GestureStylus::proximity`](xref:gtk:Gtk.GestureStylus#event:proximity)\nsignals."
+    },
+    "get_stylus_only": {
+      "brief": "Checks whether the gesture is for styluses only.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 273,
+      "md": "Checks whether the gesture is for styluses only.\n\nStylus-only gestures will signal events exclusively from stylus\ninput devices.",
+      "since": "4.10"
+    },
+    "set_stylus_only": {
+      "brief": "Sets the state of stylus-only",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 296,
+      "md": "Sets the state of stylus-only\n\nIf true, the gesture will exclusively handle events from stylus input devices,\notherwise it'll handle events from any pointing device.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "stylus-only": {
+      "brief": "If this gesture should exclusively react to stylus input devices.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 153,
+      "md": "If this gesture should exclusively react to stylus input devices.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "down": {
+      "brief": "Emitted when the stylus touches the device.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 190,
+      "md": "Emitted when the stylus touches the device."
+    },
+    "motion": {
+      "brief": "Emitted when the stylus moves while touching the device.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 210,
+      "md": "Emitted when the stylus moves while touching the device."
+    },
+    "proximity": {
+      "brief": "Emitted when the stylus is in proximity of the device.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 170,
+      "md": "Emitted when the stylus is in proximity of the device."
+    },
+    "up": {
+      "brief": "Emitted when the stylus no longer touches the device.",
+      "file": "gtk/gtkgesturestylus.c",
+      "line": 230,
+      "md": "Emitted when the stylus no longer touches the device."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,144 @@
+{
+  "doc": {
+    "brief": "The QScroller class enables kinetic scrolling for any scrolling widget or graphics item.",
+    "index_brief": "Enables kinetic scrolling for any scrolling widget or graphics item",
+    "url": "https://doc.qt.io/qt-6/qscroller.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QScroller",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QList<QScroller *> activeScrollers()": {
+      "brief": "Returns an application wide list of currently active [QScroller](xref:qt:QScroller) objects.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#activeScrollers"
+    },
+    "QObject * target() const": {
+      "brief": "Returns the target object of this scroller.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#target"
+    },
+    "QPointF finalPosition() const": {
+      "brief": "Returns the estimated final position for the current scroll movement.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#finalPosition"
+    },
+    "QPointF pixelPerMeter() const": {
+      "brief": "Returns the pixel per meter metric for the scrolled widget.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#pixelPerMeter"
+    },
+    "QPointF velocity() const": {
+      "brief": "Returns the current scrolling velocity in meter per second when the state is Scrolling or Dragging.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#velocity"
+    },
+    "QScroller * scroller(QObject *target)": {
+      "brief": "Returns the scroller for the given *target*.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scroller"
+    },
+    "QScroller::State state() const": {
+      "brief": "This property holds the state of the scroller",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#state-prop"
+    },
+    "QScrollerProperties scrollerProperties() const": {
+      "brief": "This property holds the scroller properties of this scroller.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scrollerProperties-prop"
+    },
+    "Qt::GestureType grabGesture(QObject *target, QScroller::ScrollerGestureType scrollGestureType)": {
+      "brief": "Registers a custom scroll gesture recognizer, grabs it for the *target* and returns the resulting gesture type.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#grabGesture"
+    },
+    "Qt::GestureType grabbedGesture(QObject *target)": {
+      "brief": "Returns the gesture type currently grabbed for the *target* or 0 if no gesture is grabbed.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#grabbedGesture"
+    },
+    "bool handleInput(QScroller::Input input, const QPointF &position, qint64 timestamp)": {
+      "brief": "This function is used by gesture recognizers to inform the scroller about a new input event.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#handleInput"
+    },
+    "bool hasScroller(QObject *target)": {
+      "brief": "Returns `true` if a [QScroller](xref:qt:QScroller) object was already created for *target*; `false` otherwise.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#hasScroller"
+    },
+    "const QScroller * scroller(const QObject *target)": {
+      "brief": "This is the const version of scroller().",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scroller-1"
+    },
+    "void ensureVisible(const QRectF &rect, qreal xmargin, qreal ymargin)": {
+      "brief": "Starts scrolling so that the rectangle *rect* is visible inside the viewport with additional margins specified in pixels by *xmargin* and *ymargin* around the rect.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#ensureVisible"
+    },
+    "void ensureVisible(const QRectF &rect, qreal xmargin, qreal ymargin, int scrollTime)": {
+      "brief": "This version will reach its destination position in *scrollTime* milliseconds.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#ensureVisible-1"
+    },
+    "void resendPrepareEvent()": {
+      "brief": "This function resends the [QScrollPrepareEvent](xref:qt:QScrollPrepareEvent).",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#resendPrepareEvent"
+    },
+    "void scrollTo(const QPointF &pos)": {
+      "brief": "Starts scrolling the widget so that point *pos* is at the top-left position in the viewport.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scrollTo"
+    },
+    "void scrollTo(const QPointF &pos, int scrollTime)": {
+      "brief": "This version will reach its destination position in *scrollTime* milliseconds.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scrollTo-1"
+    },
+    "void scrollerPropertiesChanged(const QScrollerProperties &newProperties)": {
+      "brief": "[QScroller](xref:qt:QScroller) emits this signal whenever its scroller properties change. *newProperties* are the new scroller properties.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scrollerPropertiesChanged"
+    },
+    "void setScrollerProperties(const QScrollerProperties &prop)": {
+      "brief": "This property holds the scroller properties of this scroller.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scrollerProperties-prop"
+    },
+    "void setSnapPositionsX(const QList<qreal> &positions)": {
+      "brief": "Set the snap positions for the horizontal axis to a list of *positions*.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#setSnapPositionsX"
+    },
+    "void setSnapPositionsX(qreal first, qreal interval)": {
+      "brief": "Set the snap positions for the horizontal axis to regular spaced intervals.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#setSnapPositionsX-1"
+    },
+    "void setSnapPositionsY(const QList<qreal> &positions)": {
+      "brief": "Set the snap positions for the vertical axis to a list of *positions*.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#setSnapPositionsY"
+    },
+    "void setSnapPositionsY(qreal first, qreal interval)": {
+      "brief": "Set the snap positions for the vertical axis to regular spaced intervals.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#setSnapPositionsY-1"
+    },
+    "void stateChanged(QScroller::State newState)": {
+      "brief": "[QScroller](xref:qt:QScroller) emits this signal whenever the state changes. *newState* is the new State.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#stateChanged"
+    },
+    "void stop()": {
+      "brief": "Stops the scroller and resets its state back to Inactive.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#stop"
+    },
+    "void ungrabGesture(QObject *target)": {
+      "brief": "Ungrabs the gesture for the *target*.",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#ungrabGesture"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "scrollerProperties": {
+      "brief": "Scroller properties of this scroller. The properties are used by the QScroller to determine its scrolling behavior",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#scrollerProperties-prop"
+    },
+    "state": {
+      "brief": "The state of the scroller",
+      "url": "https://doc.qt.io/qt-6/qscroller.html#state-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

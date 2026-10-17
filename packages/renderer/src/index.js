@@ -4,14 +4,17 @@
 // only elements become native widgets, created lazily when first inserted under a native parent.
 // Mapping rules and the dispatch return shape: docs/notes/p1-js-lane.md. Plain ES2022, no globals.
 import { createRenderer } from 'svelte/renderer';
+import { BINDINGS } from './bindings.generated.js';
 import { coerceAttribute } from './coerce.js';
 import { kindRef, methodRef, propRef } from './hostops.js';
+
+export { BINDINGS };
 
 /** Kinds whose Text children are folded into the `label` prop. */
 export const LABEL_KINDS = new Set(['label', 'button']);
 
 /** DOM-ish event name -> native signal. Anything not listed passes through unchanged. */
-export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed' };
+export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed', close: 'close-request' };
 const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
 const signalFor = (type) => EVENT_TO_SIGNAL[type] ?? type;
 const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
@@ -20,6 +23,26 @@ const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
 const JS_ONLY_ATTRS = new Set(['class', 'style', 'id']);
 
 const PROXY_TAG = 'sv-slot';
+
+/**
+ * Thrown by the native-access methods of a node (`call`, `getProp`) when it has no live native
+ * widget. `reason` is 'destroyed' once the renderer destroyed it, or the native death reason.
+ */
+export class StaleHandleError extends Error {
+  constructor(tag, reason) {
+    super(`<${tag}> is dead: ${reason}`);
+    this.name = 'StaleHandleError';
+    this.reason = reason;
+  }
+}
+
+/** The live native handle of `el`, or a StaleHandleError / Error saying why there is none. */
+function liveHandle(el) {
+  if (el.kind !== 'element' || isProxy(el)) throw new TypeError(`<${el.tag ?? el.kind}> has no native widget`);
+  if (el.dead) throw new StaleHandleError(el.tag, el.dead);
+  if (el.h == null) throw new Error(`<${el.tag}> has no native widget yet: it is created when inserted into the window tree`);
+  return el.h;
+}
 
 class WNode {
   constructor(kind, tag, value) {
@@ -40,9 +63,26 @@ class WNode {
       this.signals = new Set(); // native signals with >= 1 listener
       this.slot = null; // from data-slot / slot
       this.h = null; // native handle once realized
+      this.dead = null; // why the native widget is gone: 'destroyed' or a native death reason
       this.np = null; // native parent this element is inserted under
+      this.dead = null; // reason the native object died (see `gone`), cleared when re-realized
       this.lastLabel = '';
     }
+  }
+
+  /** Native handle of a realized element, else null. */
+  get handle() {
+    return this.h ?? null;
+  }
+
+  /** Call a native method through the bound node (`bind:this`); throws StaleHandleError when dead. */
+  call(method, ...args) {
+    return host().call(liveHandle(this), method, args);
+  }
+
+  /** Read a native property through the bound node (`bind:this`); throws StaleHandleError when dead. */
+  getProp(name) {
+    return host().getProp(liveHandle(this), name);
   }
 }
 
@@ -102,6 +142,7 @@ function destroyTree(el) {
     byHandle.delete(el.h);
     host().destroy(el.h);
     el.h = null;
+    el.dead = 'destroyed';
     el.np = null;
     el.lastLabel = '';
   }
@@ -136,7 +177,9 @@ function updateLabel(el) {
 function realize(el) {
   if (el.h != null) return;
   const hs = host();
+  el.dead = null;
   el.h = hs.create(kindRef(hs, el.tag));
+  el.dead = null;
   byHandle.set(el.h, el);
   for (const [k, v] of el.props) hs.setProp(el.h, propRef(hs, el.tag, k), v);
   for (const sig of el.signals) hs.listen(el.h, sig, true);
@@ -220,7 +263,7 @@ function detach(n) {
     const pl = places[i];
     if (!pl.parent || t.h == null) return;
     if (pl.parent === root) markDetached(t);
-    else if (t.np === pl.parent) {
+    else if (t.np === pl.parent && pl.parent.h != null) {
       host().remove(pl.parent.h, t.h);
       t.np = null;
       markDetached(t);
@@ -248,6 +291,55 @@ function bumpListener(el, type, delta) {
     el.signals.delete(sig);
     if (el.h != null) host().listen(el.h, sig, false);
   }
+}
+
+const nativeIn = {
+  string: (v) => (typeof v === 'string' ? v : v !== null && typeof v === 'object' ? String(v.detail ?? '') : String(v ?? '')),
+  bool: Boolean,
+  number: Number,
+};
+const nativeOut = {
+  string: (v) => (v == null ? '' : String(v)),
+  bool: Boolean,
+  number: (v) => (v == null ? 0 : Number(v)),
+};
+
+// `bind:<name>` on a native element (the fork's renderer.bind hook). The descriptor comes from the
+// binding metadata. The backend already blocks the change signal during a programmatic set, so
+// the echo is handled natively; the renderer only compares before setting (`el.props` mirrors the
+// native value, also for natively made edits) and, if the descriptor says the native side
+// normalizes, reads the value back and reports it.
+function bind(el, name, get, set) {
+  const spec = BINDINGS[el.tag]?.[name];
+  if (!spec) {
+    const known = Object.keys(BINDINGS[el.tag] ?? {});
+    throw new Error(`bind:${name} is not supported on <${el.tag}>${known.length ? ` (bindable: ${known.join(', ')})` : ' (it has no bindable properties)'}`);
+  }
+  const twoWay = spec.direction === 'two_way';
+  const handler = (arg) => {
+    const value = nativeIn[spec.type](arg);
+    if (spec.compare) el.props.set(spec.prop, value);
+    set(value);
+  };
+  if (spec.signal) renderer.addEventListener(el, spec.signal, handler);
+  return {
+    update: twoWay
+      ? (value) => {
+          const next = nativeOut[spec.type](value);
+          setNativeProp(el, spec.prop, next);
+          if (spec.readBack && el.h != null) {
+            const actual = host().getProp(el.h, spec.prop);
+            if (actual !== next) {
+              el.props.set(spec.prop, actual);
+              set(actual);
+            }
+          }
+        }
+      : undefined,
+    destroy() {
+      if (spec.signal) renderer.removeEventListener(el, spec.signal, handler);
+    },
+  };
 }
 
 const renderer = createRenderer({
@@ -324,9 +416,26 @@ const renderer = createRenderer({
       bumpListener(target, type, -1);
     }
   },
+  bind,
 });
 
 export default renderer;
+
+/**
+ * The host reports that the native object behind handle `h` died (`reason`: 'closed' | 'parent' |
+ * 'owner' | 'replaced' | 'shutdown' | 'unknown'). The node stays in the JS tree but loses its
+ * handle, so nothing further is sent for it: no remove, no destroy. The backend reports every
+ * descendant separately. Unknown handles (already destroyed here) are ignored.
+ */
+export function gone(h, reason) {
+  const el = byHandle.get(h);
+  if (!el) return;
+  byHandle.delete(h);
+  el.h = null;
+  el.np = null;
+  el.lastLabel = '';
+  el.dead = reason;
+}
 
 /**
  * Deliver a native signal to JS. Handlers registered for the signal (`onclicked`) and for its

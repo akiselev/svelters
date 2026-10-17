@@ -72,6 +72,10 @@ pub trait JsEngine {
     /// Calls `globalThis.__svelters_dispatch(handle, signal, args)`.
     fn dispatch(&mut self, handle: u64, signal: &str, args: &[Value]) -> Result<(), JsError>;
 
+    /// Calls `globalThis.__svelters_gone(handle, reason)` if the renderer installed it: the
+    /// native object behind `handle` died (`reason` is a `gone_name`).
+    fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError>;
+
     /// Runs the callback registered for a timer id.
     fn fire_timer(&mut self, id: u32) -> Result<(), JsError>;
 

@@ -1,0 +1,190 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new, empty SVG paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26096,
+      "md": "Creates a new, empty SVG paintable.",
+      "since": "4.22"
+    },
+    "new_from_bytes": {
+      "brief": "Parses the SVG data in `bytes` and creates a paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26111,
+      "md": "Parses the SVG data in `bytes` and creates a paintable.",
+      "since": "4.22"
+    },
+    "new_from_resource": {
+      "brief": "Parses the SVG data in the resource and creates a paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26131,
+      "md": "Parses the SVG data in the resource and creates a paintable.",
+      "since": "4.22"
+    }
+  },
+  "doc": {
+    "brief": "A paintable implementation that renders SVG, with animations.",
+    "file": "gtk/gtksvg.c",
+    "line": 56,
+    "md": "A paintable implementation that renders SVG, with animations.\n\n`GtkSvg` objects are created by parsing a subset of SVG,\nincluding SVG animations.\n\n`GtkSvg` fills or strokes paths with symbolic or fixed colors.\nIt can have multiple states, and paths can be included in a subset\nof the states. States can have animations, and the transition\nbetween different states can also be animated.\n\nTo show a static SVG image, it is enough to load the\nthe SVG and use it like any other paintable.\n\nTo play an SVG animation, use [`Svg.set_frame_clock()`](xref:gtk:Gtk.Svg#method:set_frame_clock)\nto connect the paintable to a frame clock, and call\n[`Svg.play()`](xref:gtk:Gtk.Svg#method:play) after loading the SVG. The animation can\nbe paused using [`Svg.pause()`](xref:gtk:Gtk.Svg#method:pause).\n\nTo set the current state, use [`Svg.set_state()`](xref:gtk:Gtk.Svg#method:set_state).\n\n## Error handling\n\nLoading an SVG into `GtkSvg` will always produce a (possibly empty)\npaintable. GTK will drop things that it can't handle and try to make\nsense of the rest.\n\nTo track errors during parsing or rendering, connect to the\n[`Svg::error`](xref:gtk:Gtk.Svg#event:error) signal.\n\nFor parsing errors in the `GTK_SVG_ERROR` domain, the functions\n`get_start`, `get_end`,\n`get_element` and `get_attribute`\ncan be used to obtain information about where the error occurred.\n\n## The supported subset of SVG\n\nThe paintable supports much of SVG 2, with some exceptions.\n\nAmong the graphical elements, `<textPath>` and `<foreignObject>`\nare not supported.\n\nAmong the structural elements, `<a>` and `<view>` are not supported.\n\nIn the `<filter>` element, the following primitives are not\nsupported: feConvolveMatrix, feDiffuseLighting,\nfeMorphology, feSpecularLighting and feTurbulence.\n\nSupport for the `mask` attribute is limited to just a url\nreferring to the `<mask>` element by ID.\n\nIn animation elements, the parsing of `begin` and `end` attributes\nis limited, and the `min` and `max` attributes are not supported.\n\nLastly, there is only minimal CSS support (the style attribute,\nbut not `<style>`), and no interactivity.\n\n## SVG Extensions\n\nThe paintable supports a number of [custom attributes](icon-format.html)\nthat offer a convenient way to define states, transitions and animations.\nFor example,\n\n    <circle cx='5' cy='5' r='5'\n            gpa:states='0 1'\n            gpa:animation-type='automatic'\n            gpa:animation-direction='segment'\n            gpa:animation-duration='600ms'/>\n\ndefines the circle to be shown in states 0 and 1, and animates a segment\nof the circle.\n\n<image src=\"svg-renderer1.svg\">\n\nNote that the generated animations are implemented using standard\nSVG attributes (`visibility`, `stroke-dasharray, `stroke-dashoffset`,\n`pathLength` and `filter`). Setting these attributes in your SVG\nis therefore going to interfere with generated animations.\n\nTo connect general SVG animations to the states of the paintable,\nuse the custom `gpa:states(...)` condition in the `begin` and `end`\nattributes of SVG animation elements. For example,\n\n    <animate href='path1'\n             attributeName='fill'\n             begin='gpa:states(0).begin'\n             dur='300ms'\n             fill='freeze'\n             from='black'\n             to='magenta'/>\n\nwill make the fill color of path1 transition from black to\nmagenta when the renderer enters state 0.\n\n<image src=\"svg-renderer2.svg\">\n\nThe `gpa:states(...)` condition triggers for upcoming state changes\nas well, to support fade-out transitions. For example,\n\n    <animate href='path1'\n             attributeName='opacity'\n             begin='gpa:states(0).end -300ms'\n             dur='300ms'\n             fill='freeze'\n             from='1'\n             to='0'/>\n\nwill start a fade-out of path1 300ms before state 0 ends.\n\nA variant of the `gpa:states(...)` condition allows specifying\nboth before and after states:\n\n    <animate href='path1'\n             attributeName='opacity'\n             begin='gpa:states(0, 1 2)'\n             dur='300ms'\n             fill='freeze'\n             from='1'\n             to='0'/>\n\nwill start the animation when the state changes from 0 to 1 or\nfrom 0 to 2, but not when it changes from 0 to 3.\n\nIn addition to the `gpa:fill` and `gpa:stroke` attributes, symbolic\ncolors can also be specified as a custom paint server reference,\nlike this: `url(#gpa:warning)`. This works in `fill` and `stroke`\nattributes, but also when specifying colors in SVG animation\nattributes like `to` or `values`.\n\nNote that the SVG syntax allows for a fallback RGB color to be\nspecified after the url, for compatibility with other SVG consumers:\n\n    fill='url(#gpa:warning) orange'\n\nIn contrast to SVG 1.1 and 2.0, we allow the `transform` attribute\nto be animated with `<animate>`.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Svg",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_features": {
+      "brief": "Returns the currently enabled features.",
+      "file": "gtk/gtksvg.c",
+      "line": 26464,
+      "md": "Returns the currently enabled features.",
+      "since": "4.22"
+    },
+    "get_state": {
+      "brief": "Gets the current state of the paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26392,
+      "md": "Gets the current state of the paintable.",
+      "since": "4.22"
+    },
+    "get_state_names": {
+      "brief": "Returns a `NULL`-terminated array of state names, if available.",
+      "file": "gtk/gtksvg.c",
+      "line": 26410,
+      "md": "Returns a `NULL`-terminated array of\nstate names, if available.\n\nNote that the returned array and the strings\ncontained in it will only be valid until the\n`GtkSvg` is cleared or reloaded, so if you\nwant to keep it around, you should make a copy.",
+      "since": "4.22"
+    },
+    "get_weight": {
+      "brief": "Gets the value of the weight property.",
+      "file": "gtk/gtksvg.c",
+      "line": 26304,
+      "md": "Gets the value of the weight property.",
+      "since": "4.22"
+    },
+    "load_from_bytes": {
+      "brief": "Loads SVG content into an existing SVG paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26154,
+      "md": "Loads SVG content into an existing SVG paintable.\n\nTo track errors while loading SVG content,\nconnect to the [`Svg::error`](xref:gtk:Gtk.Svg#event:error) signal.\n\nThis clears any previously loaded content.",
+      "since": "4.22"
+    },
+    "load_from_resource": {
+      "brief": "Loads SVG content into an existing SVG paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26183,
+      "md": "Loads SVG content into an existing SVG paintable.\n\nTo track errors while loading SVG content,\nconnect to the [`Svg::error`](xref:gtk:Gtk.Svg#event:error) signal.\n\nThis clears any previously loaded content.",
+      "since": "4.22"
+    },
+    "pause": {
+      "brief": "Stop any playing animations and state transitions.",
+      "file": "gtk/gtksvg.c",
+      "line": 26547,
+      "md": "Stop any playing animations and state transitions.\n\nAnimations can be paused and started repeatedly.",
+      "since": "4.22"
+    },
+    "play": {
+      "brief": "Start playing animations and state transitions.",
+      "file": "gtk/gtksvg.c",
+      "line": 26529,
+      "md": "Start playing animations and state transitions.\n\nAnimations can be paused and started repeatedly.",
+      "since": "4.22"
+    },
+    "serialize": {
+      "brief": "Serializes the content of the renderer as SVG.",
+      "file": "gtk/gtksvg.c",
+      "line": 26217,
+      "md": "Serializes the content of the renderer as SVG.\n\nThe SVG will be similar to the orignally loaded one,\nbut is not guaranteed to be 100% identical.\n\nThis function serializes the DOM, i.e. the results\nof parsing the SVG. It does not reflect the effect\nof applying animations.",
+      "since": "4.22"
+    },
+    "set_features": {
+      "brief": "Enables or disables features of the SVG paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26436,
+      "md": "Enables or disables features of the SVG paintable.\n\nBy default, all features are enabled.\n\nNote that this call only has an effect before the\nSVG is loaded.",
+      "since": "4.22"
+    },
+    "set_frame_clock": {
+      "brief": "Sets a frame clock.",
+      "file": "gtk/gtksvg.c",
+      "line": 26485,
+      "md": "Sets a frame clock.\n\nWithout a frame clock, GtkSvg will not advance animations.",
+      "since": "4.22"
+    },
+    "set_state": {
+      "brief": "Sets the state of the paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 26322,
+      "md": "Sets the state of the paintable.\n\nIf the paintable is currently playing, the state change\nwill apply transitions that are defined in the SVG. If\nthe paintable is not playing, the state change will take\neffect instantaneously.",
+      "since": "4.22"
+    },
+    "set_weight": {
+      "brief": "Sets the weight that is used when rendering.",
+      "file": "gtk/gtksvg.c",
+      "line": 26273,
+      "md": "Sets the weight that is used when rendering.\n\nThe weight affects the effective linewidth when stroking\npaths.\n\nThe default value of -1 means to use the font weight\nfrom CSS.",
+      "since": "4.22"
+    },
+    "write_to_file": {
+      "brief": "Serializes the paintable, and saves the result to a file.",
+      "file": "gtk/gtksvg.c",
+      "line": 26240,
+      "md": "Serializes the paintable, and saves the result to a file.",
+      "since": "4.22"
+    }
+  },
+  "properties": {
+    "features": {
+      "brief": "Enabled features for this paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 24623,
+      "md": "Enabled features for this paintable.\n\nNote that features have to be set before\nloading SVG data to take effect.",
+      "since": "4.22"
+    },
+    "playing": {
+      "brief": "Whether the paintable is currently animating its content.",
+      "file": "gtk/gtksvg.c",
+      "line": 24638,
+      "md": "Whether the paintable is currently animating its content.\n\nTo set this property, use the [`Svg.play()`](xref:gtk:Gtk.Svg#method:play) and\n[`Svg.pause()`](xref:gtk:Gtk.Svg#method:pause) functions.",
+      "since": "4.22"
+    },
+    "resource": {
+      "brief": "Resource to load SVG data from.",
+      "file": "gtk/gtksvg.c",
+      "line": 24608,
+      "md": "Resource to load SVG data from.\n\nThis property is meant to create a paintable\nfrom a resource in ui files.",
+      "since": "4.22"
+    },
+    "state": {
+      "brief": "The current state of the renderer.",
+      "file": "gtk/gtksvg.c",
+      "line": 24666,
+      "md": "The current state of the renderer.\n\nThis can be a number between 0 and 63.",
+      "since": "4.22"
+    },
+    "weight": {
+      "brief": "If not set to -1, this value overrides the weight used when rendering the paintable.",
+      "file": "gtk/gtksvg.c",
+      "line": 24653,
+      "md": "If not set to -1, this value overrides the weight used\nwhen rendering the paintable.",
+      "since": "4.22"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "error": {
+      "brief": "Signals that an error occurred.",
+      "file": "gtk/gtksvg.c",
+      "line": 24682,
+      "md": "Signals that an error occurred.\n\nErrors can occur both during parsing and during rendering.\n\nThe expected error values are in the [`SvgError`](xref:gtk:Gtk.SvgError) enumeration,\ncontext information about the location of parsing errors can\nbe obtained with the various `gtk_svg_error` functions.\n\nParsing errors are never fatal, so the parsing will resume after\nthe error. Errors may however cause parts of the given data or\neven all of it to not be parsed at all. So it is a useful idea\nto check that the parsing succeeds by connecting to this signal.\n\n::: note\n    This signal is emitted in the middle of parsing or rendering,\n    and if you handle it, you must be careful. Logging the errors\n    you receive is fine, but modifying the widget hierarchy or\n    changing the paintable state definitively isn't.\n\n    If in doubt, defer to an idle.",
+      "since": "4.22"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

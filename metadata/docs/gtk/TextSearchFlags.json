@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Flags affecting how a search is done.",
+    "file": "gtk/gtktextiter.h",
+    "line": 36,
+    "md": "Flags affecting how a search is done.\n\nIf neither `GTK_TEXT_SEARCH_VISIBLE_ONLY` nor `GTK_TEXT_SEARCH_TEXT_ONLY`\nare enabled, the match must be exact; the special 0xFFFC character will\nmatch embedded paintables or child widgets."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextSearchFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "case_insensitive": {
+      "brief": "The text will be matched regardless of what case it is in.",
+      "file": "gtk/gtktextiter.h",
+      "line": 42,
+      "md": "The text will be matched regardless of\nwhat case it is in."
+    },
+    "text_only": {
+      "brief": "Search only text. A match may have paintables or child widgets mixed inside the matched range.",
+      "file": "gtk/gtktextiter.h",
+      "line": 40,
+      "md": "Search only text. A match may have paintables or\nchild widgets mixed inside the matched range."
+    },
+    "visible_only": {
+      "brief": "Search only visible data.",
+      "file": "gtk/gtktextiter.h",
+      "line": 38,
+      "md": "Search only visible data. A search match may\nhave invisible text interspersed."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

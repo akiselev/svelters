@@ -1,0 +1,126 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new popover bin widget.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 389,
+      "md": "Creates a new popover bin widget.",
+      "since": "4.22"
+    }
+  },
+  "doc": {
+    "brief": "A single child container with a popover.",
+    "file": "gtk/gtkpopoverbin.c",
+    "line": 23,
+    "md": "A single child container with a popover.\n\nYou should use `GtkPopoverBin` whenever you need to present a [`Popover`](xref:gtk:Gtk.Popover)\nto the user.\n\n## Actions\n\n`GtkPopoverBin` defines the `menu.popup` action, which can be activated\nto present the popover to the user.\n\n## CSS nodes\n\n`GtkPopoverBin` has a single CSS node with the name `popoverbin`.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PopoverBin",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Retrieves the child widget of the popover bin.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 434,
+      "md": "Retrieves the child widget of the popover bin.",
+      "since": "4.22"
+    },
+    "get_menu_model": {
+      "brief": "Retrieves the menu model set using [`PopoverBin.set_menu_model()`](xref:gtk:Gtk.PopoverBin#method:set_menu_model).",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 507,
+      "md": "Retrieves the menu model set using [`PopoverBin.set_menu_model()`](xref:gtk:Gtk.PopoverBin#method:set_menu_model).",
+      "since": "4.22"
+    },
+    "get_popover": {
+      "brief": "Retrieves the `GtkPopover` set using [`PopoverBin.set_popover()`](xref:gtk:Gtk.PopoverBin#method:set_popover).",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 592,
+      "md": "Retrieves the `GtkPopover` set using [`PopoverBin.set_popover()`](xref:gtk:Gtk.PopoverBin#method:set_popover).",
+      "since": "4.22"
+    },
+    "popdown": {
+      "brief": "Hides the popover from the user.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 708,
+      "md": "Hides the popover from the user.\n\nSee: [`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup)",
+      "since": "4.22"
+    },
+    "popup": {
+      "brief": "Presents the popover to the user.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 683,
+      "md": "Presents the popover to the user.\n\nUse [`PopoverBin.set_popover()`](xref:gtk:Gtk.PopoverBin#method:set_popover) or\n[`PopoverBin.set_menu_model()`](xref:gtk:Gtk.PopoverBin#method:set_menu_model) to define the popover.\n\nSee: [`PopoverBin.popdown()`](xref:gtk:Gtk.PopoverBin#method:popdown)",
+      "since": "4.22"
+    },
+    "set_child": {
+      "brief": "Sets the child of the popover bin.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 404,
+      "md": "Sets the child of the popover bin.",
+      "since": "4.22"
+    },
+    "set_handle_input": {
+      "brief": "Enables or disables input handling.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 610,
+      "md": "Enables or disables input handling.\n\nIf enabled, the popover bin will pop up the\npopover on right-click or long press, as expected\nfor a context menu.",
+      "since": "4.22"
+    },
+    "set_menu_model": {
+      "brief": "Sets the menu model used to create the popover that will be presented when calling [`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup).",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 452,
+      "md": "Sets the menu model used to create the popover that will be\npresented when calling [`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup).\n\nIf `model` is `NULL`, the popover will be unset.\n\nA [`Popover`](xref:gtk:Gtk.Popover) will be created from the menu model with\n[`PopoverMenu.new_from_model()`](xref:gtk:Gtk.PopoverMenu#constructor:new_from_model). Actions will be connected\nas documented for this function.\n\nIf [`PopoverBin:popover`](xref:gtk:Gtk.PopoverBin#property:popover) is already set, it will be\ndissociated from the popover bin, and the property is set to `NULL`.\n\nSee: [`PopoverBin.set_popover()`](xref:gtk:Gtk.PopoverBin#method:set_popover)",
+      "since": "4.22"
+    },
+    "set_popover": {
+      "brief": "Sets the `GtkPopover` that will be presented when calling [`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup).",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 525,
+      "md": "Sets the `GtkPopover` that will be presented when calling\n[`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup).\n\nIf `popover` is `NULL`, the popover will be unset.\n\nIf [`PopoverBin:menu-model`](xref:gtk:Gtk.PopoverBin#property:menu-model) is set before calling\nthis function, then the menu model property will be unset.\n\nSee: [`PopoverBin.set_menu_model()`](xref:gtk:Gtk.PopoverBin#method:set_menu_model)",
+      "since": "4.22"
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget of the popover bin.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 350,
+      "md": "The child widget of the popover bin.",
+      "since": "4.22"
+    },
+    "handle-input": {
+      "brief": "Whether the popover bin will handle input to trigger the popup.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 362,
+      "md": "Whether the popover bin will handle input\nto trigger the popup.",
+      "since": "4.22"
+    },
+    "menu-model": {
+      "brief": "The `GMenuModel` from which the popup will be created.",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 322,
+      "md": "The `GMenuModel` from which the popup will be created.\n\nSee [`PopoverBin.set_menu_model()`](xref:gtk:Gtk.PopoverBin#method:set_menu_model) for the interaction\nwith the [`PopoverBin:popover`](xref:gtk:Gtk.PopoverBin#property:popover) property.",
+      "since": "4.22"
+    },
+    "popover": {
+      "brief": "The `GtkPopover` that will be popped up when calling [`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup).",
+      "file": "gtk/gtkpopoverbin.c",
+      "line": 337,
+      "md": "The `GtkPopover` that will be popped up when calling\n[`PopoverBin.popup()`](xref:gtk:Gtk.PopoverBin#method:popup).",
+      "since": "4.22"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

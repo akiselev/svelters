@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used to control what selections users are allowed to make.",
+    "file": "gtk/gtkenums.h",
+    "line": 538,
+    "md": "Used to control what selections users are allowed to make."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SelectionMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "browse": {
+      "brief": "Exactly one element is selected.",
+      "file": "gtk/gtkenums.h",
+      "line": 542,
+      "md": "Exactly one element is selected.\n  In some circumstances, such as initially or during a search\n  operation, it’s possible for no element to be selected with\n  %GTK_SELECTION_BROWSE. What is really enforced is that the user\n  can’t deselect a currently selected element except by selecting\n  another element."
+    },
+    "multiple": {
+      "brief": "Any number of elements may be selected.",
+      "file": "gtk/gtkenums.h",
+      "line": 548,
+      "md": "Any number of elements may be selected.\n  The Ctrl key may be used to enlarge the selection, and Shift\n  key to select between the focus and the child pointed to.\n  Some widgets may also allow Click-drag to select a range of elements."
+    },
+    "none": {
+      "brief": "No selection is possible.",
+      "file": "gtk/gtkenums.h",
+      "line": 540,
+      "md": "No selection is possible."
+    },
+    "single": {
+      "brief": "Zero or one element may be selected.",
+      "file": "gtk/gtkenums.h",
+      "line": 541,
+      "md": "Zero or one element may be selected."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

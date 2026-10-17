@@ -1,0 +1,273 @@
+{
+  "doc": {
+    "brief": "The QListWidget class provides an item-based list widget.",
+    "index_brief": "Item-based list widget",
+    "url": "https://doc.qt.io/qt-6/qlistwidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QListWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QList<QListWidgetItem *> findItems(const QString &text, Qt::MatchFlags flags) const": {
+      "brief": "Finds items with the text that matches the string *text* using the given *flags*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#findItems"
+    },
+    "QList<QListWidgetItem *> items(const QMimeData *data) const": {
+      "brief": "Returns a list of pointers to the items contained in the *data* object.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#items"
+    },
+    "QList<QListWidgetItem *> selectedItems() const": {
+      "brief": "Returns a list of all selected items in the list widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#selectedItems"
+    },
+    "QListWidget(QWidget *parent)": {
+      "brief": "Constructs an empty QListWidget with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#QListWidget"
+    },
+    "QListWidgetItem * currentItem() const": {
+      "brief": "Returns the current item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentItem"
+    },
+    "QListWidgetItem * item(int row) const": {
+      "brief": "Returns the item that occupies the given *row* in the list if one has been set; otherwise returns `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#item"
+    },
+    "QListWidgetItem * itemAt(const QPoint &p) const": {
+      "brief": "Returns a pointer to the item at the coordinates *p*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemAt"
+    },
+    "QListWidgetItem * itemAt(int x, int y) const": {
+      "brief": "Returns a pointer to the item at the coordinates (*x*, *y*).",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemAt-1"
+    },
+    "QListWidgetItem * itemFromIndex(const QModelIndex &index) const": {
+      "brief": "Returns a pointer to the [QListWidgetItem](xref:qt:QListWidgetItem) associated with the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemFromIndex"
+    },
+    "QListWidgetItem * takeItem(int row)": {
+      "brief": "Removes and returns the item from the given *row* in the list widget; otherwise returns `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#takeItem"
+    },
+    "QMimeData * mimeData(const QList<QListWidgetItem *> &items) const": {
+      "brief": "Returns an object that contains a serialized description of the specified *items*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#mimeData"
+    },
+    "QModelIndex indexFromItem(const QListWidgetItem *item) const": {
+      "brief": "Returns the [QModelIndex](xref:qt:QModelIndex) associated with the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#indexFromItem"
+    },
+    "QRect visualItemRect(const QListWidgetItem *item) const": {
+      "brief": "Returns the rectangle on the viewport occupied by the item at *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#visualItemRect"
+    },
+    "QStringList mimeTypes() const": {
+      "brief": "Returns a list of MIME types that can be used to describe a list of listwidget items.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#mimeTypes"
+    },
+    "QWidget * itemWidget(QListWidgetItem *item) const": {
+      "brief": "Returns the widget displayed in the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemWidget"
+    },
+    "Qt::DropActions supportedDragActions() const": {
+      "brief": "This property holds the drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#supportedDragActions-prop"
+    },
+    "Qt::DropActions supportedDropActions() const": {
+      "brief": "Returns the drop actions supported by this view.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#supportedDropActions"
+    },
+    "bool dropMimeData(int index, const QMimeData *data, Qt::DropAction action)": {
+      "brief": "Handles *data* supplied by an external drag and drop operation that ended with the given *action* in the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#dropMimeData"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QListView::event](xref:qt:QListView)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#event"
+    },
+    "bool isPersistentEditorOpen(QListWidgetItem *item) const": {
+      "brief": "Returns whether a persistent editor is open for item *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#isPersistentEditorOpen"
+    },
+    "bool isSortingEnabled() const": {
+      "brief": "This property holds whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#sortingEnabled-prop"
+    },
+    "int count() const": {
+      "brief": "This property holds the number of items in the list including any hidden items.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#count-prop"
+    },
+    "int currentRow() const": {
+      "brief": "This property holds the row of the current item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentRow-prop"
+    },
+    "int row(const QListWidgetItem *item) const": {
+      "brief": "Returns the row containing the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#row"
+    },
+    "void addItem(QListWidgetItem *item)": {
+      "brief": "Inserts the *item* at the end of the list widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#addItem"
+    },
+    "void addItem(const QString &label)": {
+      "brief": "Inserts an item with the text *label* at the end of the list widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#addItem-1"
+    },
+    "void addItems(const QStringList &labels)": {
+      "brief": "Inserts items with the text *labels* at the end of the list widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#addItems"
+    },
+    "void clear()": {
+      "brief": "Removes all items and selections in the view.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#clear"
+    },
+    "void closePersistentEditor(QListWidgetItem *item)": {
+      "brief": "Closes the persistent editor for the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#closePersistentEditor"
+    },
+    "void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)": {
+      "brief": "This signal is emitted whenever the current item changes.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentItemChanged"
+    },
+    "void currentRowChanged(int currentRow)": {
+      "brief": "This signal is emitted whenever the current item changes.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentRowChanged"
+    },
+    "void currentTextChanged(const QString &currentText)": {
+      "brief": "This signal is emitted whenever the current item changes.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentTextChanged"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QListView::dropEvent](xref:qt:QListView)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#dropEvent"
+    },
+    "void editItem(QListWidgetItem *item)": {
+      "brief": "Starts editing the *item* if it is editable.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#editItem"
+    },
+    "void insertItem(int row, QListWidgetItem *item)": {
+      "brief": "Inserts the *item* at the position in the list given by *row*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#insertItem"
+    },
+    "void insertItem(int row, const QString &label)": {
+      "brief": "Inserts an item with the text *label* in the list widget at the position given by *row*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#insertItem-1"
+    },
+    "void insertItems(int row, const QStringList &labels)": {
+      "brief": "Inserts items from the list of *labels* into the list, starting at the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#insertItems"
+    },
+    "void itemActivated(QListWidgetItem *item)": {
+      "brief": "This signal is emitted when the *item* is activated.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemActivated"
+    },
+    "void itemChanged(QListWidgetItem *item)": {
+      "brief": "This signal is emitted whenever the data of *item* has changed.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemChanged"
+    },
+    "void itemClicked(QListWidgetItem *item)": {
+      "brief": "This signal is emitted with the specified *item* when a mouse button is clicked on an item in the widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemClicked"
+    },
+    "void itemDoubleClicked(QListWidgetItem *item)": {
+      "brief": "This signal is emitted with the specified *item* when a mouse button is double clicked on an item in the widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemDoubleClicked"
+    },
+    "void itemEntered(QListWidgetItem *item)": {
+      "brief": "This signal is emitted when the mouse cursor enters an item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemEntered"
+    },
+    "void itemPressed(QListWidgetItem *item)": {
+      "brief": "This signal is emitted with the specified *item* when a mouse button is pressed on an item in the widget.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemPressed"
+    },
+    "void itemSelectionChanged()": {
+      "brief": "This signal is emitted whenever the selection changes.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#itemSelectionChanged"
+    },
+    "void openPersistentEditor(QListWidgetItem *item)": {
+      "brief": "Opens an editor for the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#openPersistentEditor"
+    },
+    "void removeItemWidget(QListWidgetItem *item)": {
+      "brief": "Removes the widget set on the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#removeItemWidget"
+    },
+    "void scrollToItem(const QListWidgetItem *item, QAbstractItemView::ScrollHint hint)": {
+      "brief": "Scrolls the view if necessary to ensure that the *item* is visible.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#scrollToItem"
+    },
+    "void setCurrentItem(QListWidgetItem *item)": {
+      "brief": "Sets the current item to *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#setCurrentItem"
+    },
+    "void setCurrentItem(QListWidgetItem *item, QItemSelectionModel::SelectionFlags command)": {
+      "brief": "Set the current item to *item*, using the given *command*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#setCurrentItem-1"
+    },
+    "void setCurrentRow(int row)": {
+      "brief": "This property holds the row of the current item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentRow-prop"
+    },
+    "void setCurrentRow(int row, QItemSelectionModel::SelectionFlags command)": {
+      "brief": "Sets the current row to be the given *row*, using the given *command*,",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#setCurrentRow"
+    },
+    "void setItemWidget(QListWidgetItem *item, QWidget *widget)": {
+      "brief": "Sets the *widget* to be displayed in the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#setItemWidget"
+    },
+    "void setSelectionModel(QItemSelectionModel *selectionModel) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelectionModel](xref:qt:QAbstractItemView)(QItemSelectionModel *selectionModel).",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#setSelectionModel"
+    },
+    "void setSortingEnabled(bool enable)": {
+      "brief": "This property holds whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#sortingEnabled-prop"
+    },
+    "void setSupportedDragActions(Qt::DropActions actions)": {
+      "brief": "This property holds the drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#supportedDragActions-prop"
+    },
+    "void sortItems(Qt::SortOrder order)": {
+      "brief": "Sorts all the items in the list widget according to the specified *order*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#sortItems"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "count": {
+      "brief": "The number of items in the list including any hidden items",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#count-prop"
+    },
+    "currentRow": {
+      "brief": "The row of the current item",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#currentRow-prop"
+    },
+    "sortingEnabled": {
+      "brief": "Whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#sortingEnabled-prop"
+    },
+    "supportedDragActions": {
+      "brief": "The drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qlistwidget.html#supportedDragActions-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qlistwidget-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,357 @@
+{
+  "doc": {
+    "brief": "The QTableWidget class provides an item-based table view with a default model.",
+    "index_brief": "Item-based table view with a default model",
+    "url": "https://doc.qt.io/qt-6/qtablewidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QList<QTableWidgetItem *> findItems(const QString &text, Qt::MatchFlags flags) const": {
+      "brief": "Finds items that matches the *text* using the given *flags*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#findItems"
+    },
+    "QList<QTableWidgetItem *> items(const QMimeData *data) const": {
+      "brief": "Returns a list of pointers to the items contained in the *data* object.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#items"
+    },
+    "QList<QTableWidgetItem *> selectedItems() const": {
+      "brief": "Returns a list of all selected items.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#selectedItems"
+    },
+    "QList<QTableWidgetSelectionRange> selectedRanges() const": {
+      "brief": "Returns a list of all selected ranges.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#selectedRanges"
+    },
+    "QMimeData * mimeData(const QList<QTableWidgetItem *> &items) const": {
+      "brief": "Returns an object that contains a serialized description of the specified *items*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#mimeData"
+    },
+    "QModelIndex indexFromItem(const QTableWidgetItem *item) const": {
+      "brief": "Returns the [QModelIndex](xref:qt:QModelIndex) associated with the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#indexFromItem"
+    },
+    "QRect visualItemRect(const QTableWidgetItem *item) const": {
+      "brief": "Returns the rectangle on the viewport occupied by the item at *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#visualItemRect"
+    },
+    "QStringList mimeTypes() const": {
+      "brief": "Returns a list of MIME types that can be used to describe a list of tablewidget items.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#mimeTypes"
+    },
+    "QTableWidget(QWidget *parent)": {
+      "brief": "Creates a new table view with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#QTableWidget"
+    },
+    "QTableWidget(int rows, int columns, QWidget *parent)": {
+      "brief": "Creates a new table view with the given *rows* and *columns*, and with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#QTableWidget-1"
+    },
+    "QTableWidgetItem * currentItem() const": {
+      "brief": "Returns the current item.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#currentItem"
+    },
+    "QTableWidgetItem * horizontalHeaderItem(int column) const": {
+      "brief": "Returns the horizontal header item for column, *column*, if one has been set; otherwise returns `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#horizontalHeaderItem"
+    },
+    "QTableWidgetItem * item(int row, int column) const": {
+      "brief": "Returns the item for the given *row* and *column* if one has been set; otherwise returns `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#item"
+    },
+    "QTableWidgetItem * itemAt(const QPoint &point) const": {
+      "brief": "Returns a pointer to the item at the given *point*, or returns `nullptr` if *point* is not covered by an item in the table widget.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemAt"
+    },
+    "QTableWidgetItem * itemAt(int ax, int ay) const": {
+      "brief": "Returns the item at the position equivalent to [QPoint](xref:qt:QPoint)(*ax*, *ay*) in the table widget's coordinate system, or returns `nullptr` if the specified point is not covered by an item in...",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemAt-1"
+    },
+    "QTableWidgetItem * itemFromIndex(const QModelIndex &index) const": {
+      "brief": "Returns a pointer to the [QTableWidgetItem](xref:qt:QTableWidgetItem) associated with the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemFromIndex"
+    },
+    "QTableWidgetItem * takeHorizontalHeaderItem(int column)": {
+      "brief": "Removes the horizontal header item at *column* from the header without deleting it.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#takeHorizontalHeaderItem"
+    },
+    "QTableWidgetItem * takeItem(int row, int column)": {
+      "brief": "Removes the item at *row* and *column* from the table without deleting it.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#takeItem"
+    },
+    "QTableWidgetItem * takeVerticalHeaderItem(int row)": {
+      "brief": "Removes the vertical header item at *row* from the header without deleting it.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#takeVerticalHeaderItem"
+    },
+    "QTableWidgetItem * verticalHeaderItem(int row) const": {
+      "brief": "Returns the vertical header item for row *row*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#verticalHeaderItem"
+    },
+    "QWidget * cellWidget(int row, int column) const": {
+      "brief": "Returns the widget displayed in the cell in the given *row* and *column*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellWidget"
+    },
+    "Qt::DropActions supportedDragActions() const": {
+      "brief": "This property holds the drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#supportedDragActions-prop"
+    },
+    "Qt::DropActions supportedDropActions() const": {
+      "brief": "Returns the drop actions supported by this view.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#supportedDropActions"
+    },
+    "bool dropMimeData(int row, int column, const QMimeData *data, Qt::DropAction action)": {
+      "brief": "Handles the *data* supplied by a drag and drop operation that ended with the given *action* in the given *row* and *column*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#dropMimeData"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::event](xref:qt:QAbstractItemView)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#event"
+    },
+    "bool isPersistentEditorOpen(QTableWidgetItem *item) const": {
+      "brief": "Returns whether a persistent editor is open for item *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#isPersistentEditorOpen"
+    },
+    "const QTableWidgetItem * itemPrototype() const": {
+      "brief": "Returns the item prototype used by the table.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemPrototype"
+    },
+    "int column(const QTableWidgetItem *item) const": {
+      "brief": "Returns the column for the *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#column"
+    },
+    "int columnCount() const": {
+      "brief": "Returns the number of columns.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#columnCount"
+    },
+    "int currentColumn() const": {
+      "brief": "Returns the column of the current item.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#currentColumn"
+    },
+    "int currentRow() const": {
+      "brief": "Returns the row of the current item.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#currentRow"
+    },
+    "int row(const QTableWidgetItem *item) const": {
+      "brief": "Returns the row for the *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#row"
+    },
+    "int rowCount() const": {
+      "brief": "Returns the number of rows.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#rowCount"
+    },
+    "int visualColumn(int logicalColumn) const": {
+      "brief": "Returns the visual column of the given *logicalColumn*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#visualColumn"
+    },
+    "int visualRow(int logicalRow) const": {
+      "brief": "Returns the visual row of the given *logicalRow*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#visualRow"
+    },
+    "void cellActivated(int row, int column)": {
+      "brief": "This signal is emitted when the cell specified by *row* and *column* has been activated",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellActivated"
+    },
+    "void cellChanged(int row, int column)": {
+      "brief": "This signal is emitted whenever the data of the item in the cell specified by *row* and *column* has changed.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellChanged"
+    },
+    "void cellClicked(int row, int column)": {
+      "brief": "This signal is emitted whenever a cell in the table is clicked.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellClicked"
+    },
+    "void cellDoubleClicked(int row, int column)": {
+      "brief": "This signal is emitted whenever a cell in the table is double clicked.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellDoubleClicked"
+    },
+    "void cellEntered(int row, int column)": {
+      "brief": "This signal is emitted when the mouse cursor enters a cell.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellEntered"
+    },
+    "void cellPressed(int row, int column)": {
+      "brief": "This signal is emitted whenever a cell in the table is pressed.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#cellPressed"
+    },
+    "void clear()": {
+      "brief": "Removes all items in the view.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#clear"
+    },
+    "void clearContents()": {
+      "brief": "Removes all items not in the headers from the view.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#clearContents"
+    },
+    "void closePersistentEditor(QTableWidgetItem *item)": {
+      "brief": "Closes the persistent editor for *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#closePersistentEditor"
+    },
+    "void currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)": {
+      "brief": "This signal is emitted whenever the current cell changes.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#currentCellChanged"
+    },
+    "void currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)": {
+      "brief": "This signal is emitted whenever the current item changes.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#currentItemChanged"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QTableView::dropEvent](xref:qt:QTableView)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#dropEvent"
+    },
+    "void editItem(QTableWidgetItem *item)": {
+      "brief": "Starts editing the *item* if it is editable.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#editItem"
+    },
+    "void insertColumn(int column)": {
+      "brief": "Inserts an empty column into the table at *column*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#insertColumn"
+    },
+    "void insertRow(int row)": {
+      "brief": "Inserts an empty row into the table at *row*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#insertRow"
+    },
+    "void itemActivated(QTableWidgetItem *item)": {
+      "brief": "This signal is emitted when the specified *item* has been activated",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemActivated"
+    },
+    "void itemChanged(QTableWidgetItem *item)": {
+      "brief": "This signal is emitted whenever the data of *item* has changed.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemChanged"
+    },
+    "void itemClicked(QTableWidgetItem *item)": {
+      "brief": "This signal is emitted whenever an item in the table is clicked.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemClicked"
+    },
+    "void itemDoubleClicked(QTableWidgetItem *item)": {
+      "brief": "This signal is emitted whenever an item in the table is double clicked.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemDoubleClicked"
+    },
+    "void itemEntered(QTableWidgetItem *item)": {
+      "brief": "This signal is emitted when the mouse cursor enters an item.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemEntered"
+    },
+    "void itemPressed(QTableWidgetItem *item)": {
+      "brief": "This signal is emitted whenever an item in the table is pressed.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemPressed"
+    },
+    "void itemSelectionChanged()": {
+      "brief": "This signal is emitted whenever the selection changes.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#itemSelectionChanged"
+    },
+    "void openPersistentEditor(QTableWidgetItem *item)": {
+      "brief": "Opens an editor for the give *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#openPersistentEditor"
+    },
+    "void removeCellWidget(int row, int column)": {
+      "brief": "Removes the widget set on the cell indicated by *row* and *column*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#removeCellWidget"
+    },
+    "void removeColumn(int column)": {
+      "brief": "Removes the column *column* and all its items from the table.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#removeColumn"
+    },
+    "void removeRow(int row)": {
+      "brief": "Removes the row *row* and all its items from the table.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#removeRow"
+    },
+    "void scrollToItem(const QTableWidgetItem *item, QAbstractItemView::ScrollHint hint)": {
+      "brief": "Scrolls the view if necessary to ensure that the *item* is visible.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#scrollToItem"
+    },
+    "void setCellWidget(int row, int column, QWidget *widget)": {
+      "brief": "Sets the given *widget* to be displayed in the cell in the given *row* and *column*, passing the ownership of the widget to the table.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setCellWidget"
+    },
+    "void setColumnCount(int columns)": {
+      "brief": "Sets the number of columns in this table's model to *columns*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setColumnCount"
+    },
+    "void setCurrentCell(int row, int column)": {
+      "brief": "Sets the current cell to be the cell at position (*row*, *column*).",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setCurrentCell"
+    },
+    "void setCurrentCell(int row, int column, QItemSelectionModel::SelectionFlags command)": {
+      "brief": "Sets the current cell to be the cell at position (*row*, *column*), using the given *command*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setCurrentCell-1"
+    },
+    "void setCurrentItem(QTableWidgetItem *item)": {
+      "brief": "Sets the current item to *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setCurrentItem"
+    },
+    "void setCurrentItem(QTableWidgetItem *item, QItemSelectionModel::SelectionFlags command)": {
+      "brief": "Sets the current item to be *item*, using the given *command*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setCurrentItem-1"
+    },
+    "void setHorizontalHeaderItem(int column, QTableWidgetItem *item)": {
+      "brief": "Sets the horizontal header item for column *column* to *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setHorizontalHeaderItem"
+    },
+    "void setHorizontalHeaderLabels(const QStringList &labels)": {
+      "brief": "Sets the horizontal header labels using *labels*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setHorizontalHeaderLabels"
+    },
+    "void setItem(int row, int column, QTableWidgetItem *item)": {
+      "brief": "Sets the item for the given *row* and *column* to *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setItem"
+    },
+    "void setItemPrototype(const QTableWidgetItem *item)": {
+      "brief": "Sets the item prototype for the table to the specified *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setItemPrototype"
+    },
+    "void setRangeSelected(const QTableWidgetSelectionRange &range, bool select)": {
+      "brief": "Selects or deselects the *range* depending on *select*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setRangeSelected"
+    },
+    "void setRowCount(int rows)": {
+      "brief": "Sets the number of rows in this table's model to *rows*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setRowCount"
+    },
+    "void setSupportedDragActions(Qt::DropActions actions)": {
+      "brief": "This property holds the drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#supportedDragActions-prop"
+    },
+    "void setVerticalHeaderItem(int row, QTableWidgetItem *item)": {
+      "brief": "Sets the vertical header item for row *row* to *item*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setVerticalHeaderItem"
+    },
+    "void setVerticalHeaderLabels(const QStringList &labels)": {
+      "brief": "Sets the vertical header labels using *labels*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#setVerticalHeaderLabels"
+    },
+    "void sortItems(int column, Qt::SortOrder order)": {
+      "brief": "Sorts all the rows in the table widget based on *column* and *order*.",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#sortItems"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "columnCount": {
+      "brief": "The number of columns in the table",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#columnCount-prop"
+    },
+    "rowCount": {
+      "brief": "The number of rows in the table",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#rowCount-prop"
+    },
+    "supportedDragActions": {
+      "brief": "The drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qtablewidget.html#supportedDragActions-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtablewidget-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

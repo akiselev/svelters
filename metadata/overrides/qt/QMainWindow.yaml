@@ -12,6 +12,11 @@ elements:
       - { js: present, native: show }
       - { js: close, native: close }
       - { js: resize, native: resize, params: [i32, i32] }
+    signals:
+      # Synthetic: the backend vetoes a native close while this is listened to and posts the
+      # event (React Native's onRequestClose). Without a listener the window is destroyed and
+      # reported as closed.
+      - { js: close-request, synthetic: close_request }
     children:
       policy: named_slots
       default_slot: central

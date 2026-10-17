@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new widget paintable observing the given widget.",
+      "file": "gtk/gtkwidgetpaintable.c",
+      "line": 258,
+      "md": "Creates a new widget paintable observing the given widget."
+    }
+  },
+  "doc": {
+    "brief": "A `GdkPaintable` that displays the contents of a widget.",
+    "file": "gtk/gtkwidgetpaintable.c",
+    "line": 29,
+    "md": "A `GdkPaintable` that displays the contents of a widget.\n\n`GtkWidgetPaintable` will also take care of the widget not being in a\nstate where it can be drawn (like when it isn't shown) and just draw\nnothing or where it does not have a size (like when it is hidden) and\nreport no size in that case.\n\nOf course, `GtkWidgetPaintable` allows you to monitor widgets for size\nchanges by emitting the [`Paintable::invalidate-size`](xref:gtk:Gdk.Paintable#event:invalidate-size) signal\nwhenever the size of the widget changes as well as for visual changes by\nemitting the [`Paintable::invalidate-contents`](xref:gtk:Gdk.Paintable#event:invalidate-contents) signal whenever\nthe widget changes.\n\nYou can use a `GtkWidgetPaintable` everywhere a `GdkPaintable` is allowed,\nincluding using it on a `GtkPicture` (or one of its parents) that it was\nset on itself via gtk_picture_set_paintable(). The paintable will take care\nof recursion when this happens. If you do this however, ensure that the\n[`Picture:can-shrink`](xref:gtk:Gtk.Picture#property:can-shrink) property is set to `TRUE` or you might\nend up with an infinitely growing widget."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:WidgetPaintable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_widget": {
+      "brief": "Returns the widget that is observed or `NULL` if none.",
+      "file": "gtk/gtkwidgetpaintable.c",
+      "line": 293,
+      "md": "Returns the widget that is observed or `NULL` if none."
+    },
+    "set_widget": {
+      "brief": "Sets the widget that should be observed.",
+      "file": "gtk/gtkwidgetpaintable.c",
+      "line": 309,
+      "md": "Sets the widget that should be observed."
+    }
+  },
+  "properties": {
+    "widget": {
+      "brief": "The observed widget or `NULL` if none.",
+      "file": "gtk/gtkwidgetpaintable.c",
+      "line": 239,
+      "md": "The observed widget or `NULL` if none."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

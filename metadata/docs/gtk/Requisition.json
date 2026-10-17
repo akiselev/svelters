@@ -1,0 +1,44 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Allocates a new `GtkRequisition`.",
+      "file": "gtk/gtkwidget.c",
+      "line": 8250,
+      "md": "Allocates a new `GtkRequisition`.\n\nThe struct is initialized to zero."
+    }
+  },
+  "doc": {
+    "brief": "Represents the desired size of a widget.",
+    "file": "gtk/gtkwidget.h",
+    "line": 84,
+    "md": "Represents the desired size of a widget.\n\nSee [GtkWidget’s geometry management section](class.Widget.html#height-for-width-geometry-management)\nfor more information."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Requisition",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Copies a `GtkRequisition`.",
+      "file": "gtk/gtkwidget.c",
+      "line": 8265,
+      "md": "Copies a `GtkRequisition`."
+    },
+    "free": {
+      "brief": "Frees a `GtkRequisition`.",
+      "file": "gtk/gtkwidget.c",
+      "line": 8281,
+      "md": "Frees a `GtkRequisition`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,214 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPopover`.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2072,
+      "md": "Creates a new `GtkPopover`."
+    }
+  },
+  "doc": {
+    "brief": "Presents a bubble-like popup.",
+    "file": "gtk/gtkpopover.c",
+    "line": 21,
+    "md": "Presents a bubble-like popup.\n\nIt is primarily meant to provide context-dependent information\nor options. Popovers are attached to a parent widget. The parent widget\nmust support popover children, as [`MenuButton`](xref:gtk:Gtk.MenuButton) and\n[`PopoverMenuBar`](xref:gtk:Gtk.PopoverMenuBar) do. If you want to make a custom widget that\nhas an attached popover, you need to call [`Popover.present()`](xref:gtk:Gtk.Popover#method:present)\nin your [`Widget.size_allocate()`](xref:gtk:Gtk.Widget#vfunc:size_allocate) vfunc, in order to update the\npositioning of the popover.\n\nThe position of a popover relative to the widget it is attached to\ncan also be changed with [`Popover.set_position()`](xref:gtk:Gtk.Popover#method:set_position). By default,\nit points to the whole widget area, but it can be made to point to\na specific area using [`Popover.set_pointing_to()`](xref:gtk:Gtk.Popover#method:set_pointing_to).\n\nBy default, `GtkPopover` performs a grab, in order to ensure input\nevents get redirected to it while it is shown, and also so the popover\nis dismissed in the expected situations (clicks outside the popover,\nor the Escape key being pressed). If no such modal behavior is desired\non a popover, [`Popover.set_autohide()`](xref:gtk:Gtk.Popover#method:set_autohide) may be called on it to\ntweak its behavior.\n\n## GtkPopover as menu replacement\n\n`GtkPopover` is often used to replace menus. The best way to do this\nis to use the [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu) subclass which supports being\npopulated from a `GMenuModel` with [`PopoverMenu.new_from_model()`](xref:gtk:Gtk.PopoverMenu#constructor:new_from_model).\n\n```xml\n<section>\n  <attribute name=\"display-hint\">horizontal-buttons</attribute>\n  <item>\n    <attribute name=\"label\">Cut</attribute>\n    <attribute name=\"action\">app.cut</attribute>\n    <attribute name=\"verb-icon\">edit-cut-symbolic</attribute>\n  </item>\n  <item>\n    <attribute name=\"label\">Copy</attribute>\n    <attribute name=\"action\">app.copy</attribute>\n    <attribute name=\"verb-icon\">edit-copy-symbolic</attribute>\n  </item>\n  <item>\n    <attribute name=\"label\">Paste</attribute>\n    <attribute name=\"action\">app.paste</attribute>\n    <attribute name=\"verb-icon\">edit-paste-symbolic</attribute>\n  </item>\n</section>\n```\n\n# Shortcuts and Gestures\n\n`GtkPopover` supports the following keyboard shortcuts:\n\n- <kbd>Escape</kbd> closes the popover.\n- <kbd>Alt</kbd> makes the mnemonics visible.\n\nThe following signals have default keybindings:\n\n- [`Popover::activate-default`](xref:gtk:Gtk.Popover#event:activate-default)\n\n# CSS nodes\n\n```\npopover.background[.menu]\n├── arrow\n╰── contents\n    ╰── <child>\n```\n\n`GtkPopover` has a main node with name `popover`, an arrow with name `arrow`,\nand another node for the content named `contents`. The `popover` node always\ngets the `.background` style class. It also gets the `.menu` style class\nif the popover is menu-like, e.g. is a [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu).\n\nParticular uses of `GtkPopover`, such as touch selection popups or\nmagnifiers in `GtkEntry` or `GtkTextView` get style classes like\n`.touch-selection` or `.magnifier` to differentiate from plain popovers.\n\nWhen styling a popover directly, the `popover` node should usually\nnot have any background. The visible part of the popover can have\na shadow. To specify it in CSS, set the box-shadow of the `contents` node.\n\nNote that, in order to accomplish appropriate arrow visuals, `GtkPopover`\nuses custom drawing for the `arrow` node. This makes it possible for the\narrow to change its shape dynamically, but it also limits the possibilities\nof styling it using CSS. In particular, the `arrow` gets drawn over the\n`content` node's border and shadow, so they look like one shape, which\nmeans that the border width of the `content` node and the `arrow` node should\nbe the same. The arrow also does not support any border shape other than\nsolid, no border-radius, only one border width (border-bottom-width is\nused) and no box-shadow."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Popover",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_autohide": {
+      "brief": "Returns whether the popover is modal.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2384,
+      "md": "Returns whether the popover is modal.\n\nSee [`Popover.set_autohide()`](xref:gtk:Gtk.Popover#method:set_autohide) for the\nimplications of this."
+    },
+    "get_cascade_popdown": {
+      "brief": "Returns whether the popover will close after a modal child is closed.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2650,
+      "md": "Returns whether the popover will close after a modal child is closed."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `popover`.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2115,
+      "md": "Gets the child widget of `popover`."
+    },
+    "get_has_arrow": {
+      "brief": "Gets whether this popover is showing an arrow pointing at the widget that it is relative to.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2505,
+      "md": "Gets whether this popover is showing an arrow\npointing at the widget that it is relative to."
+    },
+    "get_mnemonics_visible": {
+      "brief": "Gets whether mnemonics are visible.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2554,
+      "md": "Gets whether mnemonics are visible."
+    },
+    "get_offset": {
+      "brief": "Gets the offset previous set with [`Popover.set_offset()`](xref:gtk:Gtk.Popover#method:set_offset).",
+      "file": "gtk/gtkpopover.c",
+      "line": 2603,
+      "md": "Gets the offset previous set with [`Popover.set_offset()`](xref:gtk:Gtk.Popover#method:set_offset)."
+    },
+    "get_pointing_to": {
+      "brief": "Gets the rectangle that the popover points to.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2250,
+      "md": "Gets the rectangle that the popover points to.\n\nIf a rectangle to point to has been set, this function will\nreturn `TRUE` and fill in `rect` with such rectangle, otherwise\nit will return `FALSE` and fill in `rect` with the parent\nwidget coordinates."
+    },
+    "get_position": {
+      "brief": "Returns the preferred position of `popover`.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2331,
+      "md": "Returns the preferred position of `popover`."
+    },
+    "popdown": {
+      "brief": "Pops `popover` down.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2450,
+      "md": "Pops `popover` down.\n\nThis may have the side-effect of closing a parent popover\nas well. See [`Popover:cascade-popdown`](xref:gtk:Gtk.Popover#property:cascade-popdown)."
+    },
+    "popup": {
+      "brief": "Pops `popover` up.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2405,
+      "md": "Pops `popover` up."
+    },
+    "present": {
+      "brief": "Allocate a size for the `GtkPopover`.",
+      "file": "gtk/gtkpopover.c",
+      "line": 662,
+      "md": "Allocate a size for the `GtkPopover`.\n\nThis function needs to be called in size-allocate by widgets\nwho have a `GtkPopover` as child. When using a layout manager,\nthis is happening automatically.\n\nTo make a popover appear on screen, use [`Popover.popup()`](xref:gtk:Gtk.Popover#method:popup)."
+    },
+    "set_autohide": {
+      "brief": "Sets whether `popover` is modal.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2349,
+      "md": "Sets whether `popover` is modal.\n\nA modal popover will grab the keyboard focus on it when being\ndisplayed. Focus will wrap around within the popover. Clicking\noutside the popover area or pressing Esc will dismiss the popover.\n\nCalled this function on an already showing popup with a new\nautohide value different from the current one, will cause the\npopup to be hidden."
+    },
+    "set_cascade_popdown": {
+      "brief": "If `cascade_popdown` is `TRUE`, the popover will be closed when a child modal popover is closed.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2627,
+      "md": "If `cascade_popdown` is `TRUE`, the popover will be\nclosed when a child modal popover is closed.\n\nIf `FALSE`, `popover` will stay visible."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `popover`.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2085,
+      "md": "Sets the child widget of `popover`."
+    },
+    "set_default_widget": {
+      "brief": "Sets the default widget of a `GtkPopover`.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2134,
+      "md": "Sets the default widget of a `GtkPopover`.\n\nThe default widget is the widget that’s activated when the user\npresses Enter in a dialog (for example). This function sets or\nunsets the default widget for a `GtkPopover`."
+    },
+    "set_has_arrow": {
+      "brief": "Sets whether this popover should draw an arrow pointing at the widget it is relative to.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2480,
+      "md": "Sets whether this popover should draw an arrow\npointing at the widget it is relative to."
+    },
+    "set_mnemonics_visible": {
+      "brief": "Sets whether mnemonics should be visible.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2524,
+      "md": "Sets whether mnemonics should be visible."
+    },
+    "set_offset": {
+      "brief": "Sets the offset to use when calculating the position of the popover.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2573,
+      "md": "Sets the offset to use when calculating the position\nof the popover.\n\nThese values are used when preparing the [`PopupLayout`](xref:gtk:Gdk.PopupLayout)\nfor positioning the popover."
+    },
+    "set_pointing_to": {
+      "brief": "Sets the rectangle that `popover` points to.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2217,
+      "md": "Sets the rectangle that `popover` points to.\n\nThis is in the coordinate space of the `popover` parent."
+    },
+    "set_position": {
+      "brief": "Sets the preferred position for `popover` to appear.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2295,
+      "md": "Sets the preferred position for `popover` to appear.\n\nIf the `popover` is currently visible, it will be immediately\nupdated.\n\nThis preference will be respected where possible, although\non lack of space (eg. if close to the window edges), the\n`GtkPopover` may choose to appear on the opposite side."
+    }
+  },
+  "properties": {
+    "autohide": {
+      "brief": "Whether to dismiss the popover on outside clicks.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1952,
+      "md": "Whether to dismiss the popover on outside clicks."
+    },
+    "cascade-popdown": {
+      "brief": "Whether the popover pops down after a child popover.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2002,
+      "md": "Whether the popover pops down after a child popover.\n\nThis is used to implement the expected behavior of submenus."
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1992,
+      "md": "The child widget."
+    },
+    "default-widget": {
+      "brief": "The default widget inside the popover.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1962,
+      "md": "The default widget inside the popover."
+    },
+    "has-arrow": {
+      "brief": "Whether to draw an arrow.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1972,
+      "md": "Whether to draw an arrow."
+    },
+    "mnemonics-visible": {
+      "brief": "Whether mnemonics are currently visible in this popover.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1982,
+      "md": "Whether mnemonics are currently visible in this popover."
+    },
+    "pointing-to": {
+      "brief": "Rectangle in the parent widget that the popover points to.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1932,
+      "md": "Rectangle in the parent widget that the popover points to."
+    },
+    "position": {
+      "brief": "How to place the popover, relative to its parent.",
+      "file": "gtk/gtkpopover.c",
+      "line": 1942,
+      "md": "How to place the popover, relative to its parent."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-default": {
+      "brief": "Emitted whend the user activates the default widget.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2032,
+      "md": "Emitted whend the user activates the default widget.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Enter</kbd>."
+    },
+    "closed": {
+      "brief": "Emitted when the popover is closed.",
+      "file": "gtk/gtkpopover.c",
+      "line": 2016,
+      "md": "Emitted when the popover is closed."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

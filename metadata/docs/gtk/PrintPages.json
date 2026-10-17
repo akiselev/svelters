@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "See also gtk_print_job_set_pages()",
+    "file": "gtk/gtkenums.h",
+    "line": 598,
+    "md": "See also gtk_print_job_set_pages()"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintPages",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "all": {
+      "brief": "All pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 600,
+      "md": "All pages."
+    },
+    "current": {
+      "brief": "Current page.",
+      "file": "gtk/gtkenums.h",
+      "line": 601,
+      "md": "Current page."
+    },
+    "ranges": {
+      "brief": "Range of pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 602,
+      "md": "Range of pages."
+    },
+    "selection": {
+      "brief": "Selected pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 603,
+      "md": "Selected pages."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

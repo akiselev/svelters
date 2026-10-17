@@ -1,0 +1,50 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The base class for objects that are meant to hold layout properties.",
+    "file": "gtk/gtklayoutchild.c",
+    "line": 8,
+    "md": "The base class for objects that are meant to hold layout properties.\n\nIf a `GtkLayoutManager` has per-child properties, like their packing type,\nor the horizontal and vertical span, or the icon name, then the layout\nmanager should use a `GtkLayoutChild` implementation to store those properties.\n\nA `GtkLayoutChild` instance is only ever valid while a widget is part\nof a layout."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:LayoutChild",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child_widget": {
+      "brief": "Retrieves the `GtkWidget` associated to the given `layout_child`.",
+      "file": "gtk/gtklayoutchild.c",
+      "line": 168,
+      "md": "Retrieves the `GtkWidget` associated to the given `layout_child`."
+    },
+    "get_layout_manager": {
+      "brief": "Retrieves the `GtkLayoutManager` instance that created the given `layout_child`.",
+      "file": "gtk/gtklayoutchild.c",
+      "line": 149,
+      "md": "Retrieves the `GtkLayoutManager` instance that created the\ngiven `layout_child`."
+    }
+  },
+  "properties": {
+    "child-widget": {
+      "brief": "The widget that is associated to the `GtkLayoutChild` instance.",
+      "file": "gtk/gtklayoutchild.c",
+      "line": 130,
+      "md": "The widget that is associated to the `GtkLayoutChild` instance."
+    },
+    "layout-manager": {
+      "brief": "The layout manager that created the `GtkLayoutChild` instance.",
+      "file": "gtk/gtklayoutchild.c",
+      "line": 119,
+      "md": "The layout manager that created the `GtkLayoutChild` instance."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,73 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used to determine the layout of pages on a sheet when printing multiple pages per sheet.",
+    "file": "gtk/gtkenums.h",
+    "line": 630,
+    "md": "Used to determine the layout of pages on a sheet when printing\nmultiple pages per sheet."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NumberUpLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "btlr": {
+      "brief": "![](layout-btlr.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 638,
+      "md": "![](layout-btlr.png)"
+    },
+    "btrl": {
+      "brief": "![](layout-btrl.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 639,
+      "md": "![](layout-btrl.png)"
+    },
+    "lrbt": {
+      "brief": "![](layout-lrbt.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 633,
+      "md": "![](layout-lrbt.png)"
+    },
+    "lrtb": {
+      "brief": "![](layout-lrtb.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 632,
+      "md": "![](layout-lrtb.png)"
+    },
+    "rlbt": {
+      "brief": "![](layout-rlbt.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 635,
+      "md": "![](layout-rlbt.png)"
+    },
+    "rltb": {
+      "brief": "![](layout-rltb.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 634,
+      "md": "![](layout-rltb.png)"
+    },
+    "tblr": {
+      "brief": "![](layout-tblr.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 636,
+      "md": "![](layout-tblr.png)"
+    },
+    "tbrl": {
+      "brief": "![](layout-tbrl.png)",
+      "file": "gtk/gtkenums.h",
+      "line": 637,
+      "md": "![](layout-tbrl.png)"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

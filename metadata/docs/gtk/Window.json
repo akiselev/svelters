@@ -1,0 +1,642 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkWindow`.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2366,
+      "md": "Creates a new `GtkWindow`.\n\nTo get an undecorated window (without window borders),\nuse [`Window.set_decorated()`](xref:gtk:Gtk.Window#method:set_decorated).\n\nAll top-level windows created by this function are stored\nin an internal top-level window list. This list can be obtained\nfrom `list_toplevels`. Due to GTK keeping a\nreference to the window internally, this function does not\nreturn a reference to the caller.\n\nTo delete a `GtkWindow`, call [`Window.destroy()`](xref:gtk:Gtk.Window#method:destroy)."
+    }
+  },
+  "doc": {
+    "brief": "A toplevel window which can contain other widgets.",
+    "file": "gtk/gtkwindow.c",
+    "line": 111,
+    "md": "A toplevel window which can contain other widgets.\n\nWindows normally have decorations that are under the control\nof the windowing system and allow the user to manipulate the window\n(resize it, move it, close it,...).\n\n# GtkWindow as GtkBuildable\n\nThe `GtkWindow` implementation of the [`Buildable`](xref:gtk:Gtk.Buildable) interface supports\nsetting a child as the titlebar by specifying “titlebar” as the “type”\nattribute of a `<child>` element.\n\n# Shortcuts and Gestures\n\n`GtkWindow` supports the following keyboard shortcuts:\n\n- <kbd>F10</kbd> activates the menubar, if present.\n- <kbd>Alt</kbd> makes the mnemonics visible while pressed.\n\nThe following signals have default keybindings:\n\n- [`Window::activate-default`](xref:gtk:Gtk.Window#event:activate-default)\n- [`Window::activate-focus`](xref:gtk:Gtk.Window#event:activate-focus)\n- [`Window::enable-debugging`](xref:gtk:Gtk.Window#event:enable-debugging)\n\n# Actions\n\n`GtkWindow` defines a set of built-in actions:\n\n- `default.activate` activates the default widget.\n- `window.minimize` minimizes the window.\n- `window.toggle-maximized` maximizes or restores the window.\n- `window.close` closes the window.\n\n# CSS nodes\n\n```\nwindow.background [.csd / .solid-csd / .ssd] [.maximized / .fullscreen / .tiled]\n├── <child>\n╰── <titlebar child>.titlebar [.default-decoration]\n```\n\n`GtkWindow` has a main CSS node with name window and style class .background.\n\nStyle classes that are typically used with the main CSS node are .csd (when\nclient-side decorations are in use), .solid-csd (for client-side decorations\nwithout invisible borders), .ssd (used by mutter when rendering server-side\ndecorations). GtkWindow also represents window states with the following\nstyle classes on the main node: .maximized, .fullscreen, .tiled (when supported,\nalso .tiled-top, .tiled-left, .tiled-right, .tiled-bottom).\n\n`GtkWindow` subclasses often add their own discriminating style classes,\nsuch as .dialog, .popup or .tooltip.\n\nGenerally, some CSS properties don't make sense on the toplevel window node,\nsuch as margins or padding. When client-side decorations without invisible\nborders are in use (i.e. the .solid-csd style class is added to the\nmain window node), the CSS border of the toplevel window is used for\nresize drags. In the .csd case, the shadow area outside of the window\ncan be used to resize it.\n\n`GtkWindow` adds the .titlebar and .default-decoration style classes to the\nwidget that is added as a titlebar child.\n\n# Accessibility\n\n`GtkWindow` uses the [`AccessibleRole.window`](xref:gtk:Gtk.AccessibleRole#value:window) role.\n\nFrom GTK 4.12 to 4.18, it used the [`AccessibleRole.application`](xref:gtk:Gtk.AccessibleRole#value:application) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Window",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "close": {
+      "brief": "Requests that the window is closed.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1455,
+      "md": "Requests that the window is closed.\n\nThis is similar to what happens when a window manager\nclose button is clicked.\n\nThis function can be used with close buttons in custom\ntitlebars."
+    },
+    "destroy": {
+      "brief": "Drops the internal reference GTK holds on toplevel windows.",
+      "file": "gtk/gtkwindow.c",
+      "line": 7040,
+      "md": "Drops the internal reference GTK holds on toplevel windows."
+    },
+    "fullscreen": {
+      "brief": "Asks to place the window in the fullscreen state.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5721,
+      "md": "Asks to place the window in the fullscreen state.\n\nNote that you shouldn’t assume the window is definitely fullscreen\nafterward, because other entities (e.g. the user or window manager)\nunfullscreen it again, and not all window managers honor requests\nto fullscreen windows.\n\nIf a window is not explicitly fullscreened or unfullscreened before\nit is shown, the initial state is at the window managers discretion.\n\nYou can track the result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property, or by listening to\nnotifications of the [`Window:fullscreened`](xref:gtk:Gtk.Window#property:fullscreened) property."
+    },
+    "fullscreen_on_monitor": {
+      "brief": "Asks to place the window in the fullscreen state on the given monitor.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5764,
+      "md": "Asks to place the window in the fullscreen state on the given monitor.\n\nNote that you shouldn't assume the window is definitely fullscreen\nafterward, or that the windowing system allows fullscreen windows on\nany given monitor.\n\nYou can track the result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property, or by listening to\nnotifications of the [`Window:fullscreened`](xref:gtk:Gtk.Window#property:fullscreened) property."
+    },
+    "get_application": {
+      "brief": "Gets the application object associated with the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2906,
+      "md": "Gets the application object associated with the window."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 7022,
+      "md": "Gets the child widget of the window."
+    },
+    "get_decorated": {
+      "brief": "Returns whether the window has been set to have decorations.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3296,
+      "md": "Returns whether the window has been set to have decorations."
+    },
+    "get_default_icon_name": {
+      "brief": "Returns the fallback icon name for windows.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3690,
+      "md": "Returns the fallback icon name for windows.\n\nThe returned string is owned by GTK and should not\nbe modified. It is only valid until the next call to\n`set_default_icon_name`."
+    },
+    "get_default_size": {
+      "brief": "Gets the default size of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3823,
+      "md": "Gets the default size of the window.\n\nA value of 0 for the width or height indicates that a default\nsize has not been explicitly set for that dimension, so the\n“natural” size of the window will be used.\n\nThis function is the recommended way for [saving window state\nacross restarts of applications](https://developer.gnome.org/documentation/tutorials/save-state.html)."
+    },
+    "get_default_widget": {
+      "brief": "Returns the default widget for `window`.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2510,
+      "md": "Returns the default widget for `window`."
+    },
+    "get_deletable": {
+      "brief": "Returns whether the window has been set to have a close button.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3355,
+      "md": "Returns whether the window has been set to have a close button."
+    },
+    "get_destroy_with_parent": {
+      "brief": "Returns whether the window will be destroyed with its transient parent.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3028,
+      "md": "Returns whether the window will be destroyed with its transient parent."
+    },
+    "get_focus": {
+      "brief": "Retrieves the current focused widget within the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2559,
+      "md": "Retrieves the current focused widget within the window.\n\nNote that this is the widget that would have the focus\nif the toplevel window focused; if the toplevel window\nis not focused then `gtk_widget_has_focus (widget)` will\nnot be false for the widget."
+    },
+    "get_focus_visible": {
+      "brief": "Gets whether “focus rectangles” are supposed to be visible.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6292,
+      "md": "Gets whether “focus rectangles” are supposed to be visible."
+    },
+    "get_gravity": {
+      "brief": "Returns the gravity that is used when changing the window size programmatically.",
+      "file": "gtk/gtkwindow.c",
+      "line": 7260,
+      "md": "Returns the gravity that is used when changing the window size programmatically.",
+      "since": "4.20"
+    },
+    "get_group": {
+      "brief": "Returns the group for the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6033,
+      "md": "Returns the group for the window.\n\nIf the window has no group, then the default group is returned."
+    },
+    "get_handle_menubar_accel": {
+      "brief": "Returns whether this window reacts to <kbd>F10</kbd> presses by activating a menubar it contains.",
+      "file": "gtk/gtkwindow.c",
+      "line": 7236,
+      "md": "Returns whether this window reacts to <kbd>F10</kbd>\npresses by activating a menubar it contains.",
+      "since": "4.2"
+    },
+    "get_hide_on_close": {
+      "brief": "Returns whether the window will be hidden instead of destroyed when the close button is clicked.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3070,
+      "md": "Returns whether the window will be hidden instead of destroyed when the close\nbutton is clicked."
+    },
+    "get_icon_name": {
+      "brief": "Returns the name of the themed icon for the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3630,
+      "md": "Returns the name of the themed icon for the window."
+    },
+    "get_mnemonics_visible": {
+      "brief": "Gets whether mnemonics are supposed to be visible.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6212,
+      "md": "Gets whether mnemonics are supposed to be visible."
+    },
+    "get_modal": {
+      "brief": "Returns whether the window is modal.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2643,
+      "md": "Returns whether the window is modal."
+    },
+    "get_resizable": {
+      "brief": "Gets whether the user can resize the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5893,
+      "md": "Gets whether the user can resize the window."
+    },
+    "get_title": {
+      "brief": "Retrieves the title of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2429,
+      "md": "Retrieves the title of the window."
+    },
+    "get_titlebar": {
+      "brief": "Returns the titlebar that has been set with [`Window.set_titlebar()`](xref:gtk:Gtk.Window#method:set_titlebar).",
+      "file": "gtk/gtkwindow.c",
+      "line": 3234,
+      "md": "Returns the titlebar that has been set with\n[`Window.set_titlebar()`](xref:gtk:Gtk.Window#method:set_titlebar)."
+    },
+    "get_toplevels": {
+      "brief": "Returns the list of all existing toplevel windows.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2662,
+      "md": "Returns the list of all existing toplevel windows.\n\nIf you want to iterate through the list and perform actions involving\ncallbacks that might destroy the widgets or add new ones, be aware that\nthe list of toplevels will change and emit the \"items-changed\" signal."
+    },
+    "get_transient_for": {
+      "brief": "Fetches the transient parent for this window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2888,
+      "md": "Fetches the transient parent for this window."
+    },
+    "has_group": {
+      "brief": "Returns whether the window has an explicit window group.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6063,
+      "md": "Returns whether the window has an explicit window group."
+    },
+    "is_active": {
+      "brief": "Returns whether the window is part of the current active toplevel.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6009,
+      "md": "Returns whether the window is part of the current active toplevel.\n\nThe active toplevel is the window receiving keystrokes.\n\nThe return value is `TRUE` if the window is active toplevel itself.\nYou might use this function if you wanted to draw a widget\ndifferently in an active window from a widget in an inactive window."
+    },
+    "is_fullscreen": {
+      "brief": "Retrieves the current fullscreen state of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1393,
+      "md": "Retrieves the current fullscreen state of the window.\n\nNote that since fullscreening is ultimately handled by the window\nmanager and happens asynchronously to an application request, you\nshouldn’t assume the return value of this function changing\nimmediately (or at all), as an effect of calling\n[`Window.fullscreen()`](xref:gtk:Gtk.Window#method:fullscreen) or [`Window.unfullscreen()`](xref:gtk:Gtk.Window#method:unfullscreen).\n\nIf the window isn't yet mapped, the value returned will whether the\ninitial requested state is fullscreen."
+    },
+    "is_maximized": {
+      "brief": "Retrieves the current maximized state of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1366,
+      "md": "Retrieves the current maximized state of the window.\n\nNote that since maximization is ultimately handled by the window\nmanager and happens asynchronously to an application request, you\nshouldn’t assume the return value of this function changing\nimmediately (or at all), as an effect of calling\n[`Window.maximize()`](xref:gtk:Gtk.Window#method:maximize) or [`Window.unmaximize()`](xref:gtk:Gtk.Window#method:unmaximize).\n\nIf the window isn't yet mapped, the value returned will whether the\ninitial requested state is maximized."
+    },
+    "is_suspended": {
+      "brief": "Retrieves the current suspended state of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1420,
+      "md": "Retrieves the current suspended state of the window.\n\nA window being suspended means it's currently not visible\nto the user, for example by being on a inactive workspace,\nminimized, obstructed.",
+      "since": "4.12"
+    },
+    "list_toplevels": {
+      "brief": "Returns the list of all existing toplevel windows.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2683,
+      "md": "Returns the list of all existing toplevel windows.\n\nThe widgets in the list are not individually referenced.\nIf you want to iterate through the list and perform actions\ninvolving callbacks that might destroy the widgets, you must\ncall `g_list_foreach (result, (GFunc)g_object_ref, NULL)` first,\nand then unref all the widgets afterwards."
+    },
+    "maximize": {
+      "brief": "Asks to maximize the window, so that it fills the screen.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5617,
+      "md": "Asks to maximize the window, so that it fills the screen.\n\nNote that you shouldn’t assume the window is definitely maximized\nafterward, because other entities (e.g. the user or window manager)\ncould unmaximize it again, and not all window managers support\nmaximization.\n\nIt’s permitted to call this function before showing a window,\nin which case the window will be maximized when it appears onscreen\ninitially.\n\nIf a window is not explicitly maximized or unmaximized before it is\nshown, the initial state is at the window managers discretion. For\nexample, it might decide to maximize a window that almost fills the\nscreen.\n\nYou can track the result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property, or by listening to\nnotifications on the [`Window:maximized`](xref:gtk:Gtk.Window#property:maximized)\nproperty."
+    },
+    "minimize": {
+      "brief": "Asks to minimize the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5557,
+      "md": "Asks to minimize the window.\n\nNote that you shouldn’t assume the window is definitely minimized\nafterward, because the windowing system might not support this\nfunctionality; other entities (e.g. the user or the window manager)\ncould unminimize it again, or there may not be a window manager in\nwhich case minimization isn’t possible, etc.\n\nIt’s permitted to call this function before showing a window,\nin which case the window will be minimized before it ever appears\nonscreen.\n\nYou can track result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property."
+    },
+    "present": {
+      "brief": "Presents a window to the user.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5511,
+      "md": "Presents a window to the user.\n\nThis may mean raising the window in the stacking order,\nunminimizing it, moving it to the current desktop and/or\ngiving it the keyboard focus (possibly dependent on the user’s\nplatform, window manager and preferences).\n\nIf `window` is hidden, this function also makes it visible."
+    },
+    "present_with_time": {
+      "brief": "Presents a window to the user in response to an user interaction.",
+      "deprecated": "4.14",
+      "deprecated_md": "Use [`Window.present()`](xref:gtk:Gtk.Window#method:present)",
+      "file": "gtk/gtkwindow.c",
+      "line": 5532,
+      "md": "Presents a window to the user in response to an user interaction.\n\nSee [`Window.present()`](xref:gtk:Gtk.Window#method:present) for more details.\n\nThe timestamp should be gathered when the window was requested\nto be shown (when clicking a link for example), rather than once\nthe window is ready to be shown."
+    },
+    "set_application": {
+      "brief": "Sets or unsets the application object associated with the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2945,
+      "md": "Sets or unsets the application object associated with the window.\n\nThe application will be kept alive for at least as long as it has\nany windows associated with it (see [`Application.hold()`](xref:gtk:Gio.Application#method:hold)\nfor a way to keep it alive without windows).\n\nNormally, the connection between the application and the window will\nremain until the window is destroyed, but you can explicitly remove\nit by setting the `application` to `NULL`.\n\nThis is equivalent to calling [`Application.remove_window()`](xref:gtk:Gtk.Application#method:remove_window)\nand/or [`Application.add_window()`](xref:gtk:Gtk.Application#method:add_window) on the old/new applications\nas relevant."
+    },
+    "set_auto_startup_notification": {
+      "brief": "Sets whether the window should request startup notification.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6189,
+      "md": "Sets whether the window should request startup notification.\n\nBy default, after showing the first window, GTK calls\n[`Toplevel.set_startup_id()`](xref:gtk:Gdk.Toplevel#method:set_startup_id). Call this function\nto disable the automatic startup notification. You might do this\nif your first window is a splash screen, and you want to delay\nnotification until after your real main window has been shown,\nfor example.\n\nIn that example, you would disable startup notification\ntemporarily, show your splash screen, then re-enable it so that\nshowing the main window would automatically result in notification."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6992,
+      "md": "Sets the child widget of the window."
+    },
+    "set_decorated": {
+      "brief": "Sets whether the window should be decorated.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3253,
+      "md": "Sets whether the window should be decorated.\n\nBy default, windows are decorated with a title bar, resize\ncontrols, etc. Some window managers allow GTK to disable these\ndecorations, creating a borderless window. If you set the decorated\nproperty to false using this function, GTK will do its best to\nconvince the window manager not to decorate the window. Depending on\nthe system, this function may not have any effect when called on a\nwindow that is already visible, so you should call it before calling\n[`Widget.show()`](xref:gtk:Gtk.Widget#method:show).\n\nOn Windows, this function always works, since there’s no window manager\npolicy involved."
+    },
+    "set_default_icon_name": {
+      "brief": "Sets an icon to be used as fallback.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3650,
+      "md": "Sets an icon to be used as fallback.\n\nThe fallback icon is used for windows that\nhaven't had [`Window.set_icon_name()`](xref:gtk:Gtk.Window#method:set_icon_name)\ncalled on them."
+    },
+    "set_default_size": {
+      "brief": "Sets the default size of a window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3773,
+      "md": "Sets the default size of a window.\n\nThe default size of a window is the size that will be used\nif no other constraints apply.\n\nThe default size will be updated whenever the window is resized\nto reflect the new size, unless the window is forced to a size,\nlike when it is maximized or fullscreened.\n\nIf the window’s minimum size request is larger than\nthe default, the default will be ignored.\n\nSetting the default size to a value <= 0 will cause it to be\nignored and the natural size request will be used instead. It\nis possible to do this while the window is showing to \"reset\"\nit to its initial size.\n\nUnlike [`Widget.set_size_request()`](xref:gtk:Gtk.Widget#method:set_size_request), which sets a size\nrequest for a widget and thus would keep users from shrinking\nthe window, this function only sets the initial size, just as\nif the user had resized the window themselves. Users can still\nshrink the window again as they normally would. Setting a default\nsize of -1 means to use the “natural” default size (the size request\nof the window).\n\nIf you use this function to reestablish a previously saved window size,\nnote that the appropriate size to save is the one returned by\n[`Window.get_default_size()`](xref:gtk:Gtk.Window#method:get_default_size). Using the window allocation\ndirectly will not work in all circumstances and can lead to growing\nor shrinking windows."
+    },
+    "set_default_widget": {
+      "brief": "Sets the default widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2447,
+      "md": "Sets the default widget.\n\nThe default widget is the widget that is activated\nwhen the user presses <kbd>Enter</kbd> in a dialog\n(for example)."
+    },
+    "set_deletable": {
+      "brief": "Sets whether the window should be deletable.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3314,
+      "md": "Sets whether the window should be deletable.\n\nBy default, windows have a close button in the window frame.\nSome  window managers allow GTK to disable this button. If you\nset the deletable property to false using this function, GTK\nwill do its best to convince the window manager not to show a\nclose button. Depending on the system, this function may not\nhave any effect when called on a window that is already visible,\nso you should call it before calling [`Widget.show()`](xref:gtk:Gtk.Widget#method:show).\n\nOn Windows, this function always works, since there’s no window\nmanager policy involved."
+    },
+    "set_destroy_with_parent": {
+      "brief": "Sets whether to destroy the window when the transient parent is destroyed.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3002,
+      "md": "Sets whether to destroy the window when the transient parent is destroyed.\n\nThis is useful for dialogs that shouldn’t persist beyond the lifetime\nof the main window they are associated with, for example."
+    },
+    "set_display": {
+      "brief": "Sets the display where the window is displayed.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5911,
+      "md": "Sets the display where the window is displayed.\n\nIf the window is already mapped, it will be unmapped,\nand then remapped on the new display."
+    },
+    "set_focus": {
+      "brief": "Sets the focus widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5338,
+      "md": "Sets the focus widget.\n\nIf `focus` is not the current focus widget, and is focusable,\nsets it as the focus widget for the window. If `focus` is `NULL`,\nunsets the focus widget for this window. To set the focus to a\nparticular widget in the toplevel, it is usually more convenient\nto use [`Widget.grab_focus()`](xref:gtk:Gtk.Widget#method:grab_focus) instead of this function."
+    },
+    "set_focus_visible": {
+      "brief": "Sets whether “focus rectangles” are supposed to be visible.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6324,
+      "md": "Sets whether “focus rectangles” are supposed to be visible.\n\nThis property is maintained by GTK based on user input,\nand should not be set by applications."
+    },
+    "set_gravity": {
+      "brief": "Sets the gravity that is used when changing the window size programmatically.",
+      "file": "gtk/gtkwindow.c",
+      "line": 7280,
+      "md": "Sets the gravity that is used when changing the window size programmatically.",
+      "since": "4.20"
+    },
+    "set_handle_menubar_accel": {
+      "brief": "Sets whether this window should react to <kbd>F10</kbd> presses by activating a menubar it contains.",
+      "file": "gtk/gtkwindow.c",
+      "line": 7207,
+      "md": "Sets whether this window should react to <kbd>F10</kbd>\npresses by activating a menubar it contains.",
+      "since": "4.2"
+    },
+    "set_hide_on_close": {
+      "brief": "Sets whether clicking the close button will hide the window instead of destroying it.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3046,
+      "md": "Sets whether clicking the close button will hide the window instead\nof destroying it."
+    },
+    "set_icon_name": {
+      "brief": "Sets the icon for the window from a named themed icon.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3594,
+      "md": "Sets the icon for the window from a named themed icon.\n\nSee the docs for [`IconTheme`](xref:gtk:Gtk.IconTheme) for more details.\nOn some platforms, the window icon is not used at all.\n\nNote that this has nothing to do with the WM_ICON_NAME\nproperty which is mentioned in the ICCCM."
+    },
+    "set_interactive_debugging": {
+      "brief": "Opens or closes the [interactive debugger](running.html#interactive-debugging).",
+      "file": "gtk/gtkwindow.c",
+      "line": 6487,
+      "md": "Opens or closes the [interactive debugger](running.html#interactive-debugging).\n\nThe debugger offers access to the widget hierarchy of the application\nand to useful debugging tools.\n\nThis function allows applications that already use\n<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd>\n(or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd>)\nfor their own key shortcuts to add a different shortcut to open the Inspector.\n\nIf you are not overriding the default key shortcuts for the Inspector,\nyou should not use this function."
+    },
+    "set_mnemonics_visible": {
+      "brief": "Sets whether mnemonics are supposed to be visible.",
+      "file": "gtk/gtkwindow.c",
+      "line": 6231,
+      "md": "Sets whether mnemonics are supposed to be visible.\n\nThis property is maintained by GTK based on user input,\nand should not be set by applications."
+    },
+    "set_modal": {
+      "brief": "Sets a window modal or non-modal.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2594,
+      "md": "Sets a window modal or non-modal.\n\nModal windows prevent interaction with other windows in the same\napplication. To keep modal dialogs on top of main application windows,\nuse [`Window.set_transient_for()`](xref:gtk:Gtk.Window#method:set_transient_for) to make the dialog transient\nfor the parent; most window managers will then disallow lowering the\ndialog below the parent."
+    },
+    "set_resizable": {
+      "brief": "Sets whether the user can resize a window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5859,
+      "md": "Sets whether the user can resize a window.\n\nWindows are user resizable by default."
+    },
+    "set_startup_id": {
+      "brief": "Sets the startup notification ID.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5445,
+      "md": "Sets the startup notification ID.\n\nStartup notification identifiers are used by desktop environment\nto track application startup, to provide user feedback and other\nfeatures. This function changes the corresponding property on the\nunderlying `GdkSurface`.\n\nNormally, startup identifier is managed automatically and you should\nonly use this function in special cases like transferring focus from\nother processes. You should use this function before calling\n[`Window.present()`](xref:gtk:Gtk.Window#method:present) or any equivalent function generating\na window map event.\n\nThis function is only useful on Wayland or X11, not with other GDK\nbackends."
+    },
+    "set_title": {
+      "brief": "Sets the title of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2390,
+      "md": "Sets the title of the window.\n\nThe title of a window will be displayed in its title bar; on the\nX Window System, the title bar is rendered by the window manager\nso exactly how the title appears to users may vary according to a\nuser’s exact configuration. The title should help a user distinguish\nthis window from other windows they may have open. A good title might\ninclude the application name and current document filename, for example.\n\nPassing `NULL` does the same as setting the title to an empty string."
+    },
+    "set_titlebar": {
+      "brief": "Sets a custom titlebar for the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 3165,
+      "md": "Sets a custom titlebar for the window.\n\nA typical widget used here is [`HeaderBar`](xref:gtk:Gtk.HeaderBar), as it\nprovides various features expected of a titlebar while allowing\nthe addition of child widgets to it.\n\nIf you set a custom titlebar, GTK will do its best to convince\nthe window manager not to put its own titlebar on the window.\nDepending on the system, this function may not work for a window\nthat is already visible, so you set the titlebar before calling\n[`Widget.show()`](xref:gtk:Gtk.Widget#method:show)."
+    },
+    "set_transient_for": {
+      "brief": "Sets a transient parent for the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 2816,
+      "md": "Sets a transient parent for the window.\n\nDialog windows should be set transient for the main application\nwindow they were spawned from. This allows window managers to e.g.\nkeep the dialog on top of the main window, or center the dialog\nover the main window. [`Dialog.new_with_buttons()`](xref:gtk:Gtk.Dialog#constructor:new_with_buttons) and other\nconvenience functions in GTK will sometimes call this function on\nyour behalf.\n\nPassing `NULL` for `parent` unsets the current transient window.\n\nOn Windows, this function puts the child window on top of the parent,\nmuch as the window manager would have done on X."
+    },
+    "unfullscreen": {
+      "brief": "Asks to remove the fullscreen state for the window, and return to its previous state.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5813,
+      "md": "Asks to remove the fullscreen state for the window, and return to\nits previous state.\n\nNote that you shouldn’t assume the window is definitely not\nfullscreen afterward, because other entities (e.g. the user or\nwindow manager) could fullscreen it again, and not all window\nmanagers honor requests to unfullscreen windows; normally the\nwindow will end up restored to its normal state. Just don’t\nwrite code that crashes if not.\n\nIf a window is not explicitly fullscreened or unfullscreened before\nit is shown, the initial state is at the window managers discretion.\n\nYou can track the result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property, or by listening to\nnotifications of the [`Window:fullscreened`](xref:gtk:Gtk.Window#property:fullscreened) property."
+    },
+    "unmaximize": {
+      "brief": "Asks to unmaximize the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5665,
+      "md": "Asks to unmaximize the window.\n\nNote that you shouldn’t assume the window is definitely unmaximized\nafterward, because other entities (e.g. the user or window manager)\nmaximize it again, and not all window managers honor requests to\nunmaximize.\n\nIf a window is not explicitly maximized or unmaximized before it is\nshown, the initial state is at the window managers discretion. For\nexample, it might decide to maximize a window that almost fills the\nscreen.\n\nYou can track the result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property, or by listening to\nnotifications on the [`Window:maximized`](xref:gtk:Gtk.Window#property:maximized) property."
+    },
+    "unminimize": {
+      "brief": "Asks to unminimize the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 5589,
+      "md": "Asks to unminimize the window.\n\nNote that you shouldn’t assume the window is definitely unminimized\nafterward, because the windowing system might not support this\nfunctionality; other entities (e.g. the user or the window manager)\ncould minimize it again, or there may not be a window manager in\nwhich case minimization isn’t possible, etc.\n\nYou can track result of this operation via the\n[`Toplevel:state`](xref:gtk:Gdk.Toplevel#property:state) property."
+    }
+  },
+  "properties": {
+    "application": {
+      "brief": "The `GtkApplication` associated with the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1090,
+      "md": "The `GtkApplication` associated with the window.\n\nThe application will be kept alive for at least as long as it\nhas any windows associated with it (see g_application_hold()\nfor a way to keep it alive without windows).\n\nNormally, the connection between the application and the window\nwill remain until the window is destroyed, but you can explicitly\nremove it by setting the this property to `NULL`."
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1128,
+      "md": "The child widget."
+    },
+    "decorated": {
+      "brief": "Whether the window should have a frame (also known as *decorations*).",
+      "file": "gtk/gtkwindow.c",
+      "line": 1014,
+      "md": "Whether the window should have a frame (also known as *decorations*)."
+    },
+    "default-height": {
+      "brief": "The default height of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 924,
+      "md": "The default height of the window."
+    },
+    "default-widget": {
+      "brief": "The default widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1108,
+      "md": "The default widget."
+    },
+    "default-width": {
+      "brief": "The default width of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 913,
+      "md": "The default width of the window."
+    },
+    "deletable": {
+      "brief": "Whether the window frame should have a close button.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1024,
+      "md": "Whether the window frame should have a close button."
+    },
+    "destroy-with-parent": {
+      "brief": "If this window should be destroyed when the parent is destroyed.",
+      "file": "gtk/gtkwindow.c",
+      "line": 935,
+      "md": "If this window should be destroyed when the parent is destroyed."
+    },
+    "display": {
+      "brief": "The display that will display this window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 994,
+      "md": "The display that will display this window."
+    },
+    "focus-visible": {
+      "brief": "Whether 'focus rectangles' are currently visible in this window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 969,
+      "md": "Whether 'focus rectangles' are currently visible in this window.\n\nThis property is maintained by GTK based on user input\nand should not be set by applications."
+    },
+    "focus-widget": {
+      "brief": "The focus widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1118,
+      "md": "The focus widget."
+    },
+    "fullscreened": {
+      "brief": "Whether the window is fullscreen.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1060,
+      "md": "Whether the window is fullscreen.\n\nSetting this property is the equivalent of calling\n[`Window.fullscreen()`](xref:gtk:Gtk.Window#method:fullscreen) or [`Window.unfullscreen()`](xref:gtk:Gtk.Window#method:unfullscreen);\neither operation is asynchronous, which means you will need to\nconnect to the ::notify signal in order to know whether the\noperation was successful."
+    },
+    "gravity": {
+      "brief": "The gravity to use when resizing the window programmatically.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1163,
+      "md": "The gravity to use when resizing the window programmatically.\n\nGravity describes which point of the window we want to keep\nfixed (meaning that the window will grow in the opposite direction).\nFor example, a gravity of `GTK_WINDOW_GRAVITY_TOP_RIGHT` means that we\nwant the to fix top right corner of the window.",
+      "since": "4.20"
+    },
+    "handle-menubar-accel": {
+      "brief": "Whether the window frame should handle <kbd>F10</kbd> for activating menubars.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1150,
+      "md": "Whether the window frame should handle <kbd>F10</kbd> for activating\nmenubars.",
+      "since": "4.2"
+    },
+    "hide-on-close": {
+      "brief": "If this window should be hidden instead of destroyed when the user clicks the close button.",
+      "file": "gtk/gtkwindow.c",
+      "line": 945,
+      "md": "If this window should be hidden instead of destroyed when the user clicks\nthe close button."
+    },
+    "icon-name": {
+      "brief": "Specifies the name of the themed icon to use as the window icon.",
+      "file": "gtk/gtkwindow.c",
+      "line": 982,
+      "md": "Specifies the name of the themed icon to use as the window icon.\n\nSee [`IconTheme`](xref:gtk:Gtk.IconTheme) for more details."
+    },
+    "is-active": {
+      "brief": "Whether the toplevel is the currently active window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1004,
+      "md": "Whether the toplevel is the currently active window."
+    },
+    "maximized": {
+      "brief": "Whether the window is maximized.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1044,
+      "md": "Whether the window is maximized.\n\nSetting this property is the equivalent of calling\n[`Window.maximize()`](xref:gtk:Gtk.Window#method:maximize) or [`Window.unmaximize()`](xref:gtk:Gtk.Window#method:unmaximize);\neither operation is asynchronous, which means you will need to\nconnect to the ::notify signal in order to know whether the\noperation was successful."
+    },
+    "mnemonics-visible": {
+      "brief": "Whether mnemonics are currently visible in this window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 956,
+      "md": "Whether mnemonics are currently visible in this window.\n\nThis property is maintained by GTK based on user input,\nand should not be set by applications."
+    },
+    "modal": {
+      "brief": "If true, the window is modal.",
+      "file": "gtk/gtkwindow.c",
+      "line": 903,
+      "md": "If true, the window is modal."
+    },
+    "resizable": {
+      "brief": "If true, users can resize the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 893,
+      "md": "If true, users can resize the window."
+    },
+    "startup-id": {
+      "brief": "A write-only property for setting window's startup notification identifier.",
+      "file": "gtk/gtkwindow.c",
+      "line": 883,
+      "md": "A write-only property for setting window's startup notification identifier."
+    },
+    "suspended": {
+      "brief": "Whether the window is suspended.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1076,
+      "md": "Whether the window is suspended.\n\nSee [`Window.is_suspended()`](xref:gtk:Gtk.Window#method:is_suspended) for details about what suspended means.",
+      "since": "4.12"
+    },
+    "title": {
+      "brief": "The title of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 873,
+      "md": "The title of the window."
+    },
+    "titlebar": {
+      "brief": "The titlebar widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1138,
+      "md": "The titlebar widget.",
+      "since": "4.6"
+    },
+    "transient-for": {
+      "brief": "The transient parent of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1034,
+      "md": "The transient parent of the window."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-default": {
+      "brief": "Emitted when the user activates the default widget.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1204,
+      "md": "Emitted when the user activates the default widget.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe keybindings for this signal are all forms of the <kbd>Enter</kbd> key."
+    },
+    "activate-focus": {
+      "brief": "Emitted when the user activates the currently focused widget of `window`.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1183,
+      "md": "Emitted when the user activates the currently focused\nwidget of `window`.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>␣</kbd>."
+    },
+    "close-request": {
+      "brief": "Emitted when the user clicks on the close button of the window.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1276,
+      "md": "Emitted when the user clicks on the close button of the window."
+    },
+    "enable-debugging": {
+      "brief": "Emitted when the user enables or disables interactive debugging.",
+      "file": "gtk/gtkwindow.c",
+      "line": 1244,
+      "md": "Emitted when the user enables or disables interactive debugging.\n\nWhen `toggle` is true, interactive debugging is toggled on or off,\nwhen it is false, the debugger will be pointed at the widget\nunder the pointer.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> and\n<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd>."
+    },
+    "keys-changed": {
+      "brief": "Emitted when the set of accelerators or mnemonics that are associated with the window changes.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Shortcut`](xref:gtk:Gtk.Shortcut) and [`EventController`](xref:gtk:Gtk.EventController)\n  to implement keyboard shortcuts",
+      "file": "gtk/gtkwindow.c",
+      "line": 1224,
+      "md": "Emitted when the set of accelerators or mnemonics that\nare associated with the window changes."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "activate_default": {
+      "brief": "Activates the default widget for the window.",
+      "file": "gtk/gtkwindow.h",
+      "line": 59,
+      "md": "Activates the default widget for the window."
+    },
+    "activate_focus": {
+      "brief": "Activates the current focused widget within the window.",
+      "file": "gtk/gtkwindow.h",
+      "line": 58,
+      "md": "Activates the current focused widget within the window."
+    },
+    "close_request": {
+      "brief": "Class handler for the [`Window::close-request`](xref:gtk:Window#event:close-request) signal.",
+      "file": "gtk/gtkwindow.h",
+      "line": 78,
+      "md": "Class handler for the [`Window::close-request`](xref:gtk:Window#event:close-request) signal."
+    },
+    "enable_debugging": {
+      "brief": "Class handler for the `GtkWindow::enable-debugging` keybinding signal.",
+      "file": "gtk/gtkwindow.h",
+      "line": 62,
+      "md": "Class handler for the `GtkWindow::enable-debugging`\n  keybinding signal."
+    },
+    "keys_changed": {
+      "brief": "Signal gets emitted when the set of accelerators or mnemonics that are associated with window changes.",
+      "file": "gtk/gtkwindow.h",
+      "line": 60,
+      "md": "Signal gets emitted when the set of accelerators or\n  mnemonics that are associated with window changes."
+    }
+  }
+}

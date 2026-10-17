@@ -1,0 +1,55 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Indicates the direction in which an arrow should point.",
+    "file": "gtk/gtkenums.h",
+    "line": 94,
+    "md": "Indicates the direction in which an arrow should point."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ArrowType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "down": {
+      "brief": "Represents a downward pointing arrow.",
+      "file": "gtk/gtkenums.h",
+      "line": 97,
+      "md": "Represents a downward pointing arrow."
+    },
+    "left": {
+      "brief": "Represents a left pointing arrow.",
+      "file": "gtk/gtkenums.h",
+      "line": 98,
+      "md": "Represents a left pointing arrow."
+    },
+    "none": {
+      "brief": "No arrow.",
+      "file": "gtk/gtkenums.h",
+      "line": 100,
+      "md": "No arrow."
+    },
+    "right": {
+      "brief": "Represents a right pointing arrow.",
+      "file": "gtk/gtkenums.h",
+      "line": 99,
+      "md": "Represents a right pointing arrow."
+    },
+    "up": {
+      "brief": "Represents an upward pointing arrow.",
+      "file": "gtk/gtkenums.h",
+      "line": 96,
+      "md": "Represents an upward pointing arrow."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

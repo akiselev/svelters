@@ -1,0 +1,118 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for accessible objects containing formatted text.",
+    "file": "gtk/gtkaccessibletext.h",
+    "line": 20,
+    "md": "An interface for accessible objects containing formatted text.\n\nThe `GtkAccessibleText` interfaces is meant to be implemented by accessible\nobjects that have text formatted with attributes, or non-trivial text contents.\n\nYou should use the [`AccessibleProperty.LABEL`](xref:gtk:Gtk.AccessibleProperty#value:LABEL) or the\n[`AccessibleProperty.DESCRIPTION`](xref:gtk:Gtk.AccessibleProperty#value:DESCRIPTION) properties for accessible\nobjects containing simple, unformatted text.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleText",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "update_caret_position": {
+      "brief": "Updates the position of the caret.",
+      "file": "gtk/gtkaccessibletext.c",
+      "line": 582,
+      "md": "Updates the position of the caret.\n\nImplementations of the `GtkAccessibleText` interface should call this\nfunction every time the caret has moved, in order to notify assistive\ntechnologies.",
+      "since": "4.14"
+    },
+    "update_contents": {
+      "brief": "Notifies assistive technologies of a change in contents.",
+      "file": "gtk/gtkaccessibletext.c",
+      "line": 638,
+      "md": "Notifies assistive technologies of a change in contents.\n\nImplementations of the `GtkAccessibleText` interface should call this\nfunction every time their contents change as the result of an operation,\nlike an insertion or a removal.\n\nNote: If the change is a deletion, this function must be called *before*\nremoving the contents, if it is an insertion, it must be called *after*\ninserting the new contents.",
+      "since": "4.14"
+    },
+    "update_selection_bound": {
+      "brief": "Updates the boundary of the selection.",
+      "file": "gtk/gtkaccessibletext.c",
+      "line": 610,
+      "md": "Updates the boundary of the selection.\n\nImplementations of the `GtkAccessibleText` interface should call this\nfunction every time the selection has moved, in order to notify assistive\ntechnologies.",
+      "since": "4.14"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_attributes": {
+      "brief": "Retrieves the text attributes inside the accessible object.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 191,
+      "md": "Retrieves the text attributes inside the accessible object.\n\nEach attribute is composed by:\n\n- a range\n- a name\n- a value\n\nIt is left to the implementation to determine the serialization format\nof the value to a string.\n\nGTK provides support for various text attribute names and values, but\nimplementations of this interface are free to add their own attributes.\n\nIf this function returns true, `n_ranges` will be set to a value\ngreater than or equal to one, `ranges` will be set to a newly\nallocated array of [struct#Gtk.AccessibleTextRange].",
+      "since": "4.14"
+    },
+    "get_caret_position": {
+      "brief": "Retrieves the position of the caret inside the accessible object.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 158,
+      "md": "Retrieves the position of the caret inside the accessible object.",
+      "since": "4.14"
+    },
+    "get_contents": {
+      "brief": "Retrieve the current contents of the accessible object within the given range.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 111,
+      "md": "Retrieve the current contents of the accessible object within\nthe given range.\n\nIf `end` is `G_MAXUINT`, the end of the range is the full content\nof the accessible object.",
+      "since": "4.14"
+    },
+    "get_contents_at": {
+      "brief": "Retrieve the current contents of the accessible object starting from the given offset, and using the given granularity.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 133,
+      "md": "Retrieve the current contents of the accessible object starting\nfrom the given offset, and using the given granularity.\n\nThe `start` and `end` values contain the boundaries of the text.",
+      "since": "4.14"
+    },
+    "get_default_attributes": {
+      "brief": "Retrieves the default text attributes inside the accessible object.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 233,
+      "md": "Retrieves the default text attributes inside the accessible object.\n\nEach attribute is composed by:\n\n- a name\n- a value\n\nIt is left to the implementation to determine the serialization format\nof the value to a string.\n\nGTK provides support for various text attribute names and values, but\nimplementations of this interface are free to add their own attributes.",
+      "since": "4.14"
+    },
+    "get_extents": {
+      "brief": "Obtains the extents of a range of text, in widget coordinates.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 260,
+      "md": "Obtains the extents of a range of text, in widget coordinates.",
+      "since": "4.16"
+    },
+    "get_offset": {
+      "brief": "Gets the text offset at a given point.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 278,
+      "md": "Gets the text offset at a given point.",
+      "since": "4.16"
+    },
+    "get_selection": {
+      "brief": "Retrieves the selection ranges in the accessible object.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 170,
+      "md": "Retrieves the selection ranges in the accessible object.\n\nIf this function returns true, `n_ranges` will be set to a value\ngreater than or equal to one, and `ranges` will be set to a newly\nallocated array of [struct#Gtk.AccessibleTextRange].",
+      "since": "4.14"
+    },
+    "set_caret_position": {
+      "brief": "Sets the caret position.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 294,
+      "md": "Sets the caret position.",
+      "since": "4.22"
+    },
+    "set_selection": {
+      "brief": "Sets the caret position.",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 308,
+      "md": "Sets the caret position.",
+      "since": "4.22"
+    }
+  }
+}

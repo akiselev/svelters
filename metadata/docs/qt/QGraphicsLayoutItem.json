@@ -1,0 +1,187 @@
+{
+  "doc": {
+    "brief": "The QGraphicsLayoutItem class can be inherited to allow your custom items to be managed by layouts.",
+    "index_brief": "Can be inherited to allow your custom items to be managed by layouts",
+    "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsLayoutItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsItem * graphicsItem() const": {
+      "brief": "Returns the [QGraphicsItem](xref:qt:QGraphicsItem) that this layout item represents.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#graphicsItem"
+    },
+    "QGraphicsLayoutItem * parentLayoutItem() const": {
+      "brief": "Returns the parent of this [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem), or `nullptr` if there is no parent, or if the parent does not inherit from...",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#parentLayoutItem"
+    },
+    "QGraphicsLayoutItem(QGraphicsLayoutItem *parent, bool isLayout)": {
+      "brief": "Constructs the QGraphicsLayoutItem object. *parent* becomes the object's parent.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#QGraphicsLayoutItem"
+    },
+    "QRectF contentsRect() const": {
+      "brief": "Returns the contents rect in local coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#contentsRect"
+    },
+    "QRectF geometry() const": {
+      "brief": "Returns the item's geometry (e.g., position and size) as a [QRectF](xref:qt:QRectF).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#geometry"
+    },
+    "QSizeF effectiveSizeHint(Qt::SizeHint which, const QSizeF &constraint) const": {
+      "brief": "Returns the effective size hint for this [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#effectiveSizeHint"
+    },
+    "QSizeF maximumSize() const": {
+      "brief": "Returns the maximum size.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#maximumSize"
+    },
+    "QSizeF minimumSize() const": {
+      "brief": "Returns the minimum size.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#minimumSize"
+    },
+    "QSizeF preferredSize() const": {
+      "brief": "Returns the preferred size.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#preferredSize"
+    },
+    "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const = 0": {
+      "brief": "This pure virtual function returns the size hint for *which* of the [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem), using the width or height of *constraint* to constrain the output.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#sizeHint"
+    },
+    "QSizePolicy sizePolicy() const": {
+      "brief": "Returns the current size policy.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#sizePolicy"
+    },
+    "bool isEmpty() const": {
+      "brief": "Returns `true` if this item is empty, i.e whether it has no content and should not occupy any space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#isEmpty"
+    },
+    "bool isLayout() const": {
+      "brief": "Returns `true` if this [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem) is a layout (e.g., is inherited by an object that arranges other [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem) objects)...",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#isLayout"
+    },
+    "bool ownedByLayout() const": {
+      "brief": "Returns whether a layout should delete this item in its destructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#ownedByLayout"
+    },
+    "qreal maximumHeight() const": {
+      "brief": "Returns the maximum height.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#maximumHeight"
+    },
+    "qreal maximumWidth() const": {
+      "brief": "Returns the maximum width.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#maximumWidth"
+    },
+    "qreal minimumHeight() const": {
+      "brief": "Returns the minimum height.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#minimumHeight"
+    },
+    "qreal minimumWidth() const": {
+      "brief": "Returns the minimum width.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#minimumWidth"
+    },
+    "qreal preferredHeight() const": {
+      "brief": "Returns the preferred height.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#preferredHeight"
+    },
+    "qreal preferredWidth() const": {
+      "brief": "Returns the preferred width.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#preferredWidth"
+    },
+    "void getContentsMargins(qreal *left, qreal *top, qreal *right, qreal *bottom) const": {
+      "brief": "This virtual function provides the *left*, *top*, *right* and *bottom* contents margins for this [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#getContentsMargins"
+    },
+    "void setGeometry(const QRectF &rect)": {
+      "brief": "This virtual function sets the geometry of the [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem) to *rect*, which is in parent coordinates (e.g., the top-left corner of *rect* is equivalent to the...",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setGeometry"
+    },
+    "void setGraphicsItem(QGraphicsItem *item)": {
+      "brief": "If the [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem) represents a [QGraphicsItem](xref:qt:QGraphicsItem), and it wants to take advantage of the automatic reparenting capabilities of...",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setGraphicsItem"
+    },
+    "void setMaximumHeight(qreal height)": {
+      "brief": "Sets the maximum height to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMaximumHeight"
+    },
+    "void setMaximumSize(const QSizeF &size)": {
+      "brief": "Sets the maximum size to *size*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMaximumSize"
+    },
+    "void setMaximumSize(qreal w, qreal h)": {
+      "brief": "This convenience function is equivalent to calling setMaximumSize([QSizeF](xref:qt:QSizeF)(*w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMaximumSize-1"
+    },
+    "void setMaximumWidth(qreal width)": {
+      "brief": "Sets the maximum width to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMaximumWidth"
+    },
+    "void setMinimumHeight(qreal height)": {
+      "brief": "Sets the minimum height to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMinimumHeight"
+    },
+    "void setMinimumSize(const QSizeF &size)": {
+      "brief": "Sets the minimum size to *size*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMinimumSize"
+    },
+    "void setMinimumSize(qreal w, qreal h)": {
+      "brief": "This convenience function is equivalent to calling setMinimumSize([QSizeF](xref:qt:QSizeF)(*w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMinimumSize-1"
+    },
+    "void setMinimumWidth(qreal width)": {
+      "brief": "Sets the minimum width to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setMinimumWidth"
+    },
+    "void setOwnedByLayout(bool ownership)": {
+      "brief": "Sets whether a layout should delete this item in its destructor or not. *ownership* must be true to in order for the layout to delete it.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setOwnedByLayout"
+    },
+    "void setParentLayoutItem(QGraphicsLayoutItem *parent)": {
+      "brief": "Sets the parent of this [QGraphicsLayoutItem](xref:qt:QGraphicsLayoutItem) to *parent*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setParentLayoutItem"
+    },
+    "void setPreferredHeight(qreal height)": {
+      "brief": "Sets the preferred height to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setPreferredHeight"
+    },
+    "void setPreferredSize(const QSizeF &size)": {
+      "brief": "Sets the preferred size to *size*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setPreferredSize"
+    },
+    "void setPreferredSize(qreal w, qreal h)": {
+      "brief": "This convenience function is equivalent to calling setPreferredSize([QSizeF](xref:qt:QSizeF)(*w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setPreferredSize-1"
+    },
+    "void setPreferredWidth(qreal width)": {
+      "brief": "Sets the preferred width to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setPreferredWidth"
+    },
+    "void setSizePolicy(QSizePolicy::Policy hPolicy, QSizePolicy::Policy vPolicy, QSizePolicy::ControlType controlType)": {
+      "brief": "This function is equivalent to calling setSizePolicy([QSizePolicy](xref:qt:QSizePolicy)(*hPolicy*, *vPolicy*, *controlType*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setSizePolicy-1"
+    },
+    "void setSizePolicy(const QSizePolicy &policy)": {
+      "brief": "Sets the size policy to *policy*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#setSizePolicy"
+    },
+    "void updateGeometry()": {
+      "brief": "This virtual function discards any cached size hint information.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslayoutitem.html#updateGeometry"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

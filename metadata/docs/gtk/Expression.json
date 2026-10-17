@@ -1,0 +1,67 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Provides a way to describe references to values.",
+    "file": "gtk/gtkexpression.c",
+    "line": 28,
+    "md": "Provides a way to describe references to values.\n\nAn important aspect of expressions is that the value can be obtained\nfrom a source that is several steps away. For example, an expression\nmay describe ‘the value of property A of `object1`, which is itself the\nvalue of a property of `object2`’. And `object1` may not even exist yet\nat the time that the expression is created. This is contrast to `GObject`\nproperty bindings, which can only create direct connections between\nthe properties of two objects that must both exist for the duration\nof the binding.\n\nAn expression needs to be \"evaluated\" to obtain the value that it currently\nrefers to. An evaluation always happens in the context of a current object\ncalled `this` (it mirrors the behavior of object-oriented languages),\nwhich may or may not influence the result of the evaluation. Use\n[`Expression.evaluate()`](xref:gtk:Gtk.Expression#method:evaluate) for evaluating an expression.\n\nVarious methods for defining expressions exist, from simple constants via\n[`ConstantExpression.new()`](xref:gtk:Gtk.ConstantExpression#constructor:new) to looking up properties in a `GObject`\n(even recursively) via [`PropertyExpression.new()`](xref:gtk:Gtk.PropertyExpression#constructor:new) or providing\ncustom functions to transform and combine expressions via\n[`ClosureExpression.new()`](xref:gtk:Gtk.ClosureExpression#constructor:new).\n\nHere is an example of a complex expression:\n\n```c\n  color_expr = gtk_property_expression_new (GTK_TYPE_LIST_ITEM,\n                                            NULL, \"item\");\n  expression = gtk_property_expression_new (GTK_TYPE_COLOR,\n                                            color_expr, \"name\");\n```\n\nwhen evaluated with `this` being a `GtkListItem`, it will obtain the\n\"item\" property from the `GtkListItem`, and then obtain the \"name\" property\nfrom the resulting object (which is assumed to be of type `GTK_TYPE_COLOR`).\n\nA more concise way to describe this would be\n\n```\n  this->item->name\n```\n\nThe most likely place where you will encounter expressions is in the context\nof list models and list widgets using them. For example, `GtkDropDown` is\nevaluating a `GtkExpression` to obtain strings from the items in its model\nthat it can then use to match against the contents of its search entry.\n`GtkStringFilter` is using a `GtkExpression` for similar reasons.\n\nBy default, expressions are not paying attention to changes and evaluation is\njust a snapshot of the current state at a given time. To get informed about\nchanges, an expression needs to be \"watched\" via a [`ExpressionWatch`](xref:gtk:Gtk.ExpressionWatch),\nwhich will cause a callback to be called whenever the value of the expression may\nhave changed; [`Expression.watch()`](xref:gtk:Gtk.Expression#method:watch) starts watching an expression, and\n[`ExpressionWatch.unwatch()`](xref:gtk:Gtk.ExpressionWatch#method:unwatch) stops.\n\nWatches can be created for automatically updating the property of an object,\nsimilar to GObject's `GBinding` mechanism, by using [`Expression.bind()`](xref:gtk:Gtk.Expression#method:bind).\n\n## GtkExpression in GObject properties\n\nIn order to use a `GtkExpression` as a `GObject` property, you must use the\n`param_spec_expression` when creating a `GParamSpec` to install in the\n`GObject` class being defined; for instance:\n\n```c\nobj_props[PROP_EXPRESSION] =\n  gtk_param_spec_expression (\"expression\",\n                             \"Expression\",\n                             \"The expression used by the widget\",\n                             G_PARAM_READWRITE |\n                             G_PARAM_STATIC_STRINGS |\n                             G_PARAM_EXPLICIT_NOTIFY);\n```\n\nWhen implementing the `GObjectClass.set_property` and `GObjectClass.get_property`\nvirtual functions, you must use `value_get_expression`, to retrieve the\nstored `GtkExpression` from the `GValue` container, and `value_set_expression`,\nto store the `GtkExpression` into the `GValue`; for instance:\n\n```c\n  // in set_property()...\n  case PROP_EXPRESSION:\n    foo_widget_set_expression (foo, gtk_value_get_expression (value));\n    break;\n\n  // in get_property()...\n  case PROP_EXPRESSION:\n    gtk_value_set_expression (value, foo->expression);\n    break;\n```\n\n## GtkExpression in .ui files\n\n`GtkBuilder` has support for creating expressions. The syntax here can be used where\na `GtkExpression` object is needed like in a `<property>` tag for an expression\nproperty, or in a `<binding name=\"property\">` tag to bind a property to an expression.\n\nTo create a property expression, use the `<lookup>` element. It can have a `type`\nattribute to specify the object type, and a `name` attribute to specify the property\nto look up. The content of `<lookup>` can either be a string that specifies the name\nof the object to use, an element specifying an expression to provide an object, or\nempty to use the `this` object.\n\nExample:\n\n```xml\n  <lookup name='search'>string_filter</lookup>\n```\n\nSince the `<lookup>` element creates an expression and its element content can\nitself be an expression, this means that `<lookup>` tags can also be nested.\nThis is a common idiom when dealing with `GtkListItem`s. See\n[`BuilderListItemFactory`](xref:gtk:Gtk.BuilderListItemFactory) for an example of this technique.\n\nTo create a constant expression, use the `<constant>` element. If the type attribute\nis specified, the element content is interpreted as a value of that type, and the\ninitial attribute can be specified to get the initial value for that type. Otherwise,\nit is assumed to be an object. For instance:\n\n```xml\n  <constant>string_filter</constant>\n  <constant type='gchararray'>Hello, world</constant>\n  <constant type='gchararray' initial='true' /> <!-- NULL -->\n```\n\nString (`type='gchararray'`) constants can be marked for translation with the\n`translatable=` attribute, and will then be looked up in the\n[`Builder:translation-domain`](xref:gtk:Gtk.Builder#property:translation-domain) when the expression is constructed.\n\n```xml\n  <constant type='gchararray' translatable='yes'>I'm translatable!</constant>\n```\n\nAs with other translatable strings in [`Builder`](xref:gtk:Gtk.Builder), constants can\nalso have a context and/or translation comment:\n\n```xml\n  <constant type='gchararray'\n            translatable='yes'\n            context='example'\n            comments='A sample string'>I'm translatable!</constant>\n```\n\nTo create a closure expression, use the `<closure>` element. The `function`\nattribute specifies what function to use for the closure, and the `type`\nattribute specifies its return type. The content of the element contains the\nexpressions for the parameters. For instance:\n\n```xml\n  <closure type='gchararray' function='combine_args_somehow'>\n    <constant type='gchararray'>File size:</constant>\n    <lookup type='GFile' name='size'>myfile</lookup>\n  </closure>\n```\n\nIf an expression can fail, a `<try>` element can be used to provide fallbacks.\nThe expressions are tried from top to bottom until one of them succeeds.\nIf none of the expressions succeed, the expression fails as normal:\n\n```xml\n  <try>\n    <lookup type='GtkWindow' name='title'>\n      <lookup type='GtkLabel' name='root'></lookup>\n    </lookup>\n    <constant type='gchararray'>Hello World</constant>\n  </try>\n```\n\nTo create a property binding, use the `<binding>` element in place of where a\n`<property>` tag would ordinarily be used. The `name` and `object` attributes are\nsupported. The `name` attribute is required, and pertains to the applicable property\nname. The `object` attribute is optional. If provided, it will use the specified object\nas the `this` object when the expression is evaluated. Here is an example in which the\n`label` property of a `GtkLabel` is bound to the `string` property of another arbitrary\nobject:\n\n```xml\n  <object class='GtkLabel'>\n    <binding name='label'>\n      <lookup name='string'>some_other_object</lookup>\n    </binding>\n  </object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Expression",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "bind": {
+      "brief": "Bind `target`'s property named `property` to `self`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2498,
+      "md": "Bind `target`'s property named `property` to `self`.\n\nThe value that `self` evaluates to is set via `g_object_set()` on\n`target`. This is repeated whenever `self` changes to ensure that\nthe object's property stays synchronized with `self`.\n\nIf `self`'s evaluation fails, `target`'s `property` is not updated.\nUse a [`TryExpression`](xref:gtk:Gtk.TryExpression) to provide a fallback for this case.\n\nNote that this function takes ownership of `self`. If you want\nto keep it around, you should [`Expression.ref()`](xref:gtk:Gtk.Expression#method:ref) it beforehand."
+    },
+    "evaluate": {
+      "brief": "Evaluates the given expression and on success stores the result in `value`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2135,
+      "md": "Evaluates the given expression and on success stores the result\nin `value`.\n\nThe `GType` of `value` will be the type given by\n[`Expression.get_value_type()`](xref:gtk:Gtk.Expression#method:get_value_type).\n\nIt is possible that expressions cannot be evaluated - for example\nwhen the expression references objects that have been destroyed or\nset to `NULL`. In that case `value` will remain empty and `FALSE`\nwill be returned."
+    },
+    "get_value_type": {
+      "brief": "Gets the `GType` that this expression evaluates to.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2116,
+      "md": "Gets the `GType` that this expression evaluates to.\n\nThis type is constant and will not change over the lifetime\nof this expression."
+    },
+    "is_static": {
+      "brief": "Checks if the expression is static.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2166,
+      "md": "Checks if the expression is static.\n\nA static expression will never change its result when\n[`Expression.evaluate()`](xref:gtk:Gtk.Expression#method:evaluate) is called on it with the same arguments.\n\nThat means a call to [`Expression.watch()`](xref:gtk:Gtk.Expression#method:watch) is not necessary because\nit will never trigger a notify."
+    },
+    "ref": {
+      "brief": "Acquires a reference on the given `GtkExpression`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2080,
+      "md": "Acquires a reference on the given `GtkExpression`."
+    },
+    "unref": {
+      "brief": "Releases a reference on the given `GtkExpression`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2098,
+      "md": "Releases a reference on the given `GtkExpression`.\n\nIf the reference was the last, the resources associated to the `self` are\nfreed."
+    },
+    "watch": {
+      "brief": "Watch the given `expression` for changes.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2224,
+      "md": "Watch the given `expression` for changes.\n\nThe `notify` function will be called whenever the evaluation of `self`\nmay have changed.\n\nGTK cannot guarantee that the evaluation did indeed change when the `notify`\ngets invoked, but it guarantees the opposite: When it did in fact change,\nthe `notify` will be invoked."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -173,6 +173,7 @@ export interface QtElementDescriptors {
       title?: string;
     };
     events: {
+      close-request: () => void;
     };
     methods: {
       show(): void;

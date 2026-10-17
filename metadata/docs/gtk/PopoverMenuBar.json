@@ -1,0 +1,63 @@
+{
+  "constructors": {
+    "new_from_model": {
+      "brief": "Creates a `GtkPopoverMenuBar` from a `GMenuModel`.",
+      "file": "gtk/gtkpopovermenubar.c",
+      "line": 685,
+      "md": "Creates a `GtkPopoverMenuBar` from a `GMenuModel`."
+    }
+  },
+  "doc": {
+    "brief": "Presents a horizontal bar of items that pop up menus when clicked.",
+    "file": "gtk/gtkpopovermenubar.c",
+    "line": 21,
+    "md": "Presents a horizontal bar of items that pop up menus when clicked.\n\nThe only way to create instances of `GtkPopoverMenuBar` is\nfrom a `GMenuModel`.\n\n# CSS nodes\n\n```\nmenubar\n├── item[.active]\n┊   ╰── popover\n╰── item\n    ╰── popover\n```\n\n`GtkPopoverMenuBar` has a single CSS node with name menubar, below which\neach item has its CSS node, and below that the corresponding popover.\n\nThe item whose popover is currently open gets the .active\nstyle class.\n\n# Accessibility\n\n`GtkPopoverMenuBar` uses the [`AccessibleRole.menu_bar`](xref:gtk:Gtk.AccessibleRole#value:menu_bar) role,\nthe menu items use the [`AccessibleRole.menu_item`](xref:gtk:Gtk.AccessibleRole#value:menu_item) role and\nthe menus use the [`AccessibleRole.menu`](xref:gtk:Gtk.AccessibleRole#value:menu) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PopoverMenuBar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_child": {
+      "brief": "Adds a custom widget to a generated menubar.",
+      "file": "gtk/gtkpopovermenubar.c",
+      "line": 769,
+      "md": "Adds a custom widget to a generated menubar.\n\nFor this to work, the menu model of `bar` must have an\nitem with a `custom` attribute that matches `id`."
+    },
+    "get_menu_model": {
+      "brief": "Returns the model from which the contents of `bar` are taken.",
+      "file": "gtk/gtkpopovermenubar.c",
+      "line": 744,
+      "md": "Returns the model from which the contents of `bar` are taken."
+    },
+    "remove_child": {
+      "brief": "Removes a widget that has previously been added with gtk_popover_menu_bar_add_child().",
+      "file": "gtk/gtkpopovermenubar.c",
+      "line": 806,
+      "md": "Removes a widget that has previously been added with\ngtk_popover_menu_bar_add_child()."
+    },
+    "set_menu_model": {
+      "brief": "Sets a menu model from which `bar` should take its contents.",
+      "file": "gtk/gtkpopovermenubar.c",
+      "line": 701,
+      "md": "Sets a menu model from which `bar` should take\nits contents."
+    }
+  },
+  "properties": {
+    "menu-model": {
+      "brief": "The `GMenuModel` from which the menu bar is created.",
+      "file": "gtk/gtkpopovermenubar.c",
+      "line": 630,
+      "md": "The `GMenuModel` from which the menu bar is created.\n\nThe model should only contain submenus as toplevel elements."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

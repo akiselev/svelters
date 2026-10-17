@@ -13,10 +13,10 @@ use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use svelters_abi::{
-    Backend, BackendVtable, HostRef, MemberDesc, NameKind, SVL_BOOL, SVL_F64, SVL_I64, SVL_LIFE_OWNED, SlotDesc, Value, Waker, svl_handle,
-    svl_handle_info, svl_id,
+    Backend, BackendVtable, HostRef, MemberDesc, NameKind, SVL_BOOL, SVL_F64, SVL_GONE_PARENT, SVL_I64, SVL_LIFE_OWNED,
+    SVL_LIFE_TOPLEVEL, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
 };
 
 /// One scripted interaction step.
@@ -27,11 +27,17 @@ pub enum Step {
         signal: String,
         args: Vec<Value>,
     },
+    /// The native object behind `handle` dies for `reason` (an `SVL_GONE_*` code), taking its
+    /// descendants with it. Logs `gone #h <reason>` for each and reports them to the host.
+    Gone {
+        handle: svl_handle,
+        reason: u32,
+    },
     Checkpoint,
 }
 
-/// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args]}` and
-/// `{"checkpoint": true}` steps.
+/// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args]}`,
+/// `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
@@ -71,10 +77,16 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
             signal,
             args,
         })
+    } else if let Some(g) = obj.get("gone") {
+        let g = g.as_array().ok_or("gone: expected [handle, reason]")?;
+        let handle = g.first().and_then(|h| h.as_u64()).ok_or("gone: bad handle")?;
+        let name = g.get(1).and_then(|s| s.as_str()).ok_or("gone: bad reason")?;
+        let reason = gone_from_name(name).ok_or_else(|| format!("gone: unknown reason `{name}`"))?;
+        Ok(Step::Gone { handle, reason })
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
-        Err("unknown step (expected `event` or `checkpoint`)".into())
+        Err("unknown step (expected `event`, `gone` or `checkpoint`)".into())
     }
 }
 
@@ -216,17 +228,22 @@ pub fn parse_schema(json: &str) -> Result<Schema, String> {
 pub struct LogOptions {
     /// How long the loop idles without a `wake` after the script before it returns.
     pub settle: Duration,
-    /// Stand-in for the descriptors of a real backend: with a schema the log backend publishes
-    /// property descriptors, so the host coerces attribute strings the way it does for a native
-    /// toolkit and the log matches the Node TestHost's, which uses the same schema.
-    pub schema: Option<Arc<Schema>>,
+}
+
+static DEFAULT_SCHEMA: std::sync::OnceLock<Arc<Schema>> = std::sync::OnceLock::new();
+
+/// Makes every `LogBackend` created afterwards publish property descriptors from `schema`: a
+/// stand-in for the descriptors of a real backend, so the host coerces attribute strings the way it
+/// does for a native toolkit and the log matches the Node TestHost's, which uses the same schema.
+/// Process-wide and set once (the fixture harness does it); later calls are ignored.
+pub fn set_default_schema(schema: Schema) {
+    let _ = DEFAULT_SCHEMA.set(Arc::new(schema));
 }
 
 impl Default for LogOptions {
     fn default() -> Self {
         LogOptions {
             settle: Duration::from_millis(150),
-            schema: None,
         }
     }
 }
@@ -243,6 +260,10 @@ struct State {
     wake_pending: bool,
     quit: bool,
     checkpoints: u64,
+    /// Deadline of the pending `schedule_wake`, if any.
+    wake_deadline: Option<Instant>,
+    timer_fires: u64,
+    schedule_calls: u64,
 }
 
 struct Shared {
@@ -285,6 +306,9 @@ impl LogBackend {
                     wake_pending: false,
                     quit: false,
                     checkpoints: 0,
+                    wake_deadline: None,
+                    timer_fires: 0,
+                    schedule_calls: 0,
                 }),
                 cv: Condvar::new(),
                 wakes: AtomicU64::new(0),
@@ -306,6 +330,16 @@ impl LogBackend {
     /// Number of `wake` calls received (from any thread).
     pub fn wake_count(&self) -> u64 {
         self.shared.wakes.load(Ordering::SeqCst)
+    }
+
+    /// Number of times a `schedule_wake` deadline expired and ran a checkpoint.
+    pub fn timer_fire_count(&self) -> u64 {
+        self.shared.lock().timer_fires
+    }
+
+    /// Number of `schedule_wake` calls received.
+    pub fn schedule_call_count(&self) -> u64 {
+        self.shared.lock().schedule_calls
     }
 
     /// Number of checkpoints the fake loop has requested.
@@ -333,6 +367,35 @@ impl LogBackend {
         host.checkpoint();
     }
 
+    /// Kills `h` and its descendants (pre-order): logs `gone #x <reason>` for each (`reason` for
+    /// `h`, `parent` below it) and forgets them. Returns the list in report order.
+    fn kill(&self, h: svl_handle, reason: u32) -> Vec<(svl_handle, u32)> {
+        let mut st = self.shared.lock();
+        let mut dying = Vec::new();
+        let mut stack = vec![(h, reason)];
+        while let Some((x, why)) = stack.pop() {
+            dying.push((x, why));
+            if let Some(kids) = st.children.get(&x) {
+                stack.extend(kids.iter().rev().map(|c| (*c, SVL_GONE_PARENT)));
+            }
+        }
+        if let Some(p) = st.parent.remove(&h) {
+            if let Some(c) = st.children.get_mut(&p) {
+                c.retain(|x| *x != h);
+            }
+        }
+        for (x, why) in &dying {
+            let _ = writeln!(st.log, "gone #{x} {}", gone_name(*why));
+        }
+        for (x, _) in &dying {
+            st.live.remove(x);
+            st.parent.remove(x);
+            st.children.remove(x);
+            st.props.retain(|(ph, _), _| ph != x);
+        }
+        dying
+    }
+
     fn take_wake(&self) -> bool {
         std::mem::take(&mut self.shared.lock().wake_pending)
     }
@@ -348,7 +411,7 @@ impl Backend for LogBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
-        let schema = self.shared.opts.schema.as_ref()?;
+        let schema = DEFAULT_SCHEMA.get()?;
         if what != NameKind::Prop {
             return None;
         }
@@ -495,14 +558,21 @@ impl Backend for LogBackend {
 
     fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
         let kind = self.check_live(h)?;
+        let toplevel = self.shared.lock().names.name(kind) == "window";
         Ok(svl_handle_info {
             kind,
-            lifetime: SVL_LIFE_OWNED,
+            lifetime: if toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
             flags: 0,
         })
     }
 
-    fn schedule_wake(&self, _ms: i64) {}
+    fn schedule_wake(&self, ms: i64) {
+        let mut st = self.shared.lock();
+        st.schedule_calls += 1;
+        st.wake_deadline = (ms >= 0).then(|| Instant::now() + Duration::from_millis(ms as u64));
+        drop(st);
+        self.shared.cv.notify_all();
+    }
 
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         let steps = std::mem::take(&mut self.shared.lock().script);
@@ -515,6 +585,13 @@ impl Backend for LogBackend {
             }
             match step {
                 Step::Checkpoint => self.checkpoint(host),
+                Step::Gone { handle, reason } => {
+                    self.check_live(handle)?;
+                    for (h, why) in self.kill(handle, reason) {
+                        host.on_destroyed(h, why);
+                    }
+                    self.checkpoint(host);
+                }
                 Step::Event {
                     handle,
                     signal,
@@ -537,14 +614,30 @@ impl Backend for LogBackend {
         }
         loop {
             let mut st = self.shared.lock();
-            while !st.wake_pending && !st.quit {
+            let mut timer_fired = false;
+            while !st.wake_pending && !st.quit && !timer_fired {
+                // A pending `schedule_wake` keeps the loop alive until its deadline; otherwise
+                // the loop returns once nothing has woken it for `settle`.
+                let wait = match st.wake_deadline {
+                    Some(d) => {
+                        let now = Instant::now();
+                        if now >= d {
+                            st.wake_deadline = None;
+                            st.timer_fires += 1;
+                            timer_fired = true;
+                            continue;
+                        }
+                        d - now
+                    }
+                    None => self.shared.opts.settle,
+                };
                 let (g, res) = self
                     .shared
                     .cv
-                    .wait_timeout(st, self.shared.opts.settle)
+                    .wait_timeout(st, wait)
                     .unwrap_or_else(|e| e.into_inner());
                 st = g;
-                if res.timed_out() && !st.wake_pending {
+                if res.timed_out() && !st.wake_pending && st.wake_deadline.is_none() {
                     return Ok(());
                 }
             }

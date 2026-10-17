@@ -1,0 +1,56 @@
+{
+  "doc": {
+    "brief": "The QGraphicsAnchor class represents an anchor between two items in a [QGraphicsAnchorLayout](xref:qt:QGraphicsAnchorLayout).",
+    "index_brief": "Represents an anchor between two items in a QGraphicsAnchorLayout",
+    "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsAnchor",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QSizePolicy::Policy sizePolicy() const": {
+      "brief": "This property holds the size policy for the [QGraphicsAnchor](xref:qt:QGraphicsAnchor).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#sizePolicy-prop"
+    },
+    "qreal spacing() const": {
+      "brief": "This property holds the preferred space between items in the [QGraphicsAnchorLayout](xref:qt:QGraphicsAnchorLayout).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#spacing-prop"
+    },
+    "void setSizePolicy(QSizePolicy::Policy policy)": {
+      "brief": "This property holds the size policy for the [QGraphicsAnchor](xref:qt:QGraphicsAnchor).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#sizePolicy-prop"
+    },
+    "void setSpacing(qreal spacing)": {
+      "brief": "This property holds the preferred space between items in the [QGraphicsAnchorLayout](xref:qt:QGraphicsAnchorLayout).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#spacing-prop"
+    },
+    "void unsetSpacing()": {
+      "brief": "This property holds the preferred space between items in the [QGraphicsAnchorLayout](xref:qt:QGraphicsAnchorLayout).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#spacing-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "sizePolicy": {
+      "brief": "The size policy for the QGraphicsAnchor",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#sizePolicy-prop"
+    },
+    "spacing": {
+      "brief": "The preferred space between items in the QGraphicsAnchorLayout",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchor.html#spacing-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -14,6 +14,8 @@ pub struct RunReport {
     pub errors: Vec<JsError>,
     pub console: Vec<ConsoleLine>,
     pub wake_count: u64,
+    /// `schedule_wake` deadlines that expired and ran a checkpoint.
+    pub timer_fires: u64,
     pub checkpoint_count: u64,
 }
 
@@ -35,6 +37,7 @@ pub fn run_bundle(
         errors: host.take_errors(),
         console: host.take_console(),
         wake_count: log.wake_count(),
+        timer_fires: log.timer_fire_count(),
         checkpoint_count: log.checkpoint_count(),
     };
     drop(host);
@@ -44,6 +47,10 @@ pub fn run_bundle(
 /// The configuration fixtures run under: scripted stepping (virtual clock, see
 /// [`HostConfig::scripted`]), quiet output, and a loop that returns as soon as the script ends.
 pub fn fixture_config() -> (HostConfig, LogOptions) {
+    // The descriptors the log backend stands in for; the Node TestHost loads the same file.
+    if let Ok(schema) = parse_schema(include_str!("../../../packages/testhost/src/schema.json")) {
+        svelters_backend_log::set_default_schema(schema);
+    }
     let cfg = HostConfig {
         scripted: true,
         echo_console: false,
@@ -54,10 +61,6 @@ pub fn fixture_config() -> (HostConfig, LogOptions) {
         cfg,
         LogOptions {
             settle: Duration::ZERO,
-            // The descriptors the log backend stands in for; the Node TestHost loads the same file.
-            schema: parse_schema(include_str!("../../../packages/testhost/src/schema.json"))
-                .ok()
-                .map(std::sync::Arc::new),
         },
     )
 }

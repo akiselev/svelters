@@ -1,0 +1,167 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The base class for gesture recognition.",
+    "file": "gtk/gtkgesture.c",
+    "line": 21,
+    "md": "The base class for gesture recognition.\n\nAlthough `GtkGesture` is quite generalized to serve as a base for\nmulti-touch gestures, it is suitable to implement single-touch and\npointer-based gestures (using the special `NULL` `GdkEventSequence`\nvalue for these).\n\nThe number of touches that a `GtkGesture` need to be recognized is\ncontrolled by the [`Gesture:n-points`](xref:gtk:Gtk.Gesture#property:n-points) property, if a\ngesture is keeping track of less or more than that number of sequences,\nit won't check whether the gesture is recognized.\n\nAs soon as the gesture has the expected number of touches, it will check\nregularly if it is recognized, the criteria to consider a gesture as\n\"recognized\" is left to `GtkGesture` subclasses.\n\nA recognized gesture will then emit the following signals:\n\n- [`Gesture::begin`](xref:gtk:Gtk.Gesture#event:begin) when the gesture is recognized.\n- [`Gesture::update`](xref:gtk:Gtk.Gesture#event:update), whenever an input event is processed.\n- [`Gesture::end`](xref:gtk:Gtk.Gesture#event:end) when the gesture is no longer recognized.\n\n## Event propagation\n\nIn order to receive events, a gesture needs to set a propagation phase\nthrough [`EventController.set_propagation_phase()`](xref:gtk:Gtk.EventController#method:set_propagation_phase).\n\nIn the capture phase, events are propagated from the toplevel down\nto the target widget, and gestures that are attached to containers\nabove the widget get a chance to interact with the event before it\nreaches the target.\n\nIn the bubble phase, events are propagated up from the target widget\nto the toplevel, and gestures that are attached to containers above\nthe widget get a chance to interact with events that have not been\nhandled yet.\n\n## States of a sequence\n\nWhenever input interaction happens, a single event may trigger a cascade\nof `GtkGesture`s, both across the parents of the widget receiving the\nevent and in parallel within an individual widget. It is a responsibility\nof the widgets using those gestures to set the state of touch sequences\naccordingly in order to enable cooperation of gestures around the\n`GdkEventSequence`s triggering those.\n\nWithin a widget, gestures can be grouped through [`Gesture.group()`](xref:gtk:Gtk.Gesture#method:group).\nGrouped gestures synchronize the state of sequences, so calling\n[`Gesture.set_state()`](xref:gtk:Gtk.Gesture#method:set_state) on one will effectively propagate\nthe state throughout the group.\n\nBy default, all sequences start out in the %GTK_EVENT_SEQUENCE_NONE state,\nsequences in this state trigger the gesture event handler, but event\npropagation will continue unstopped by gestures.\n\nIf a sequence enters into the %GTK_EVENT_SEQUENCE_DENIED state, the gesture\ngroup will effectively ignore the sequence, letting events go unstopped\nthrough the gesture, but the \"slot\" will still remain occupied while\nthe touch is active.\n\nIf a sequence enters in the %GTK_EVENT_SEQUENCE_CLAIMED state, the gesture\ngroup will grab all interaction on the sequence, by:\n\n- Setting the same sequence to %GTK_EVENT_SEQUENCE_DENIED on every other\n  gesture group within the widget, and every gesture on parent widgets\n  in the propagation chain.\n- Emitting [`Gesture::cancel`](xref:gtk:Gtk.Gesture#event:cancel) on every gesture in widgets\n  underneath in the propagation chain.\n- Stopping event propagation after the gesture group handles the event.\n\nNote: if a sequence is set early to %GTK_EVENT_SEQUENCE_CLAIMED on\n%GDK_TOUCH_BEGIN/%GDK_BUTTON_PRESS (so those events are captured before\nreaching the event widget, this implies %GTK_PHASE_CAPTURE), one similar\nevent will be emulated if the sequence changes to %GTK_EVENT_SEQUENCE_DENIED.\nThis way event coherence is preserved before event propagation is unstopped\nagain.\n\nSequence states can't be changed freely.\nSee [`Gesture.set_state()`](xref:gtk:Gtk.Gesture#method:set_state) to know about the possible\nlifetimes of a `GdkEventSequence`.\n\n## Touchpad gestures\n\nOn the platforms that support it, `GtkGesture` will handle transparently\ntouchpad gesture events. The only precautions users of `GtkGesture` should\ndo to enable this support are:\n\n- If the gesture has %GTK_PHASE_NONE, ensuring events of type\n  %GDK_TOUCHPAD_SWIPE and %GDK_TOUCHPAD_PINCH are handled by the `GtkGesture`"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Gesture",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_bounding_box": {
+      "brief": "If there are touch sequences being currently handled by `gesture`, returns `TRUE` and fills in `rect` with the bounding box containing all active touches.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1332,
+      "md": "If there are touch sequences being currently handled by `gesture`,\nreturns `TRUE` and fills in `rect` with the bounding box containing\nall active touches.\n\nOtherwise, `FALSE` will be returned.\n\nNote: This function will yield unexpected results on touchpad\ngestures. Since there is no correlation between physical and\npixel distances, these will look as if constrained in an\ninfinitely small area, `rect` width and height will thus be 0\nregardless of the number of touchpoints."
+    },
+    "get_bounding_box_center": {
+      "brief": "If there are touch sequences being currently handled by `gesture`, returns `TRUE` and fills in `x` and `y` with the center of the bounding box containing all active touches.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1401,
+      "md": "If there are touch sequences being currently handled by `gesture`,\nreturns `TRUE` and fills in `x` and `y` with the center of the bounding\nbox containing all active touches.\n\nOtherwise, `FALSE` will be returned."
+    },
+    "get_device": {
+      "brief": "Returns the logical `GdkDevice` that is currently operating on `gesture`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 920,
+      "md": "Returns the logical `GdkDevice` that is currently operating\non `gesture`.\n\nThis returns `NULL` if the gesture is not being interacted."
+    },
+    "get_group": {
+      "brief": "Returns all gestures in the group of `gesture`",
+      "file": "gtk/gtkgesture.c",
+      "line": 1637,
+      "md": "Returns all gestures in the group of `gesture`"
+    },
+    "get_last_event": {
+      "brief": "Returns the last event that was processed for `sequence`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1210,
+      "md": "Returns the last event that was processed for `sequence`.\n\nNote that the returned pointer is only valid as long as the\n`sequence` is still interpreted by the `gesture`. If in doubt,\nyou should make a copy of the event."
+    },
+    "get_last_updated_sequence": {
+      "brief": "Returns the `GdkEventSequence` that was last updated on `gesture`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1190,
+      "md": "Returns the `GdkEventSequence` that was last updated on `gesture`."
+    },
+    "get_point": {
+      "brief": "If `sequence` is currently being interpreted by `gesture`, returns `TRUE` and fills in `x` and `y` with the last coordinates stored for that event sequence.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1270,
+      "md": "If `sequence` is currently being interpreted by `gesture`,\nreturns `TRUE` and fills in `x` and `y` with the last coordinates\nstored for that event sequence.\n\nThe coordinates are always relative to the widget allocation."
+    },
+    "get_sequence_state": {
+      "brief": "Returns the `sequence` state, as seen by `gesture`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 943,
+      "md": "Returns the `sequence` state, as seen by `gesture`."
+    },
+    "get_sequences": {
+      "brief": "Returns the list of `GdkEventSequences` currently being interpreted by `gesture`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1146,
+      "md": "Returns the list of `GdkEventSequences` currently being interpreted\nby `gesture`."
+    },
+    "group": {
+      "brief": "Adds `gesture` to the same group than `group_gesture`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1557,
+      "md": "Adds `gesture` to the same group than `group_gesture`.\n\nGestures are by default isolated in their own groups.\n\nBoth gestures must have been added to the same widget before\nthey can be grouped.\n\nWhen gestures are grouped, the state of `GdkEventSequences`\nis kept in sync for all of those, so calling\n[`Gesture.set_sequence_state()`](xref:gtk:Gtk.Gesture#method:set_sequence_state), on one will transfer\nthe same value to the others.\n\nGroups also perform an \"implicit grabbing\" of sequences, if a\n`GdkEventSequence` state is set to %GTK_EVENT_SEQUENCE_CLAIMED\non one group, every other gesture group attached to the same\n`GtkWidget` will switch the state for that sequence to\n%GTK_EVENT_SEQUENCE_DENIED."
+    },
+    "handles_sequence": {
+      "brief": "Returns `TRUE` if `gesture` is currently handling events corresponding to `sequence`.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1494,
+      "md": "Returns `TRUE` if `gesture` is currently handling events\ncorresponding to `sequence`."
+    },
+    "is_active": {
+      "brief": "Returns `TRUE` if the gesture is currently active.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1440,
+      "md": "Returns `TRUE` if the gesture is currently active.\n\nA gesture is active while there are touch sequences\ninteracting with it."
+    },
+    "is_grouped_with": {
+      "brief": "Returns `TRUE` if both gestures pertain to the same group.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1658,
+      "md": "Returns `TRUE` if both gestures pertain to the same group."
+    },
+    "is_recognized": {
+      "brief": "Returns `TRUE` if the gesture is currently recognized.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1459,
+      "md": "Returns `TRUE` if the gesture is currently recognized.\n\nA gesture is recognized if there are as many interacting\ntouch sequences as required by `gesture`."
+    },
+    "set_sequence_state": {
+      "brief": "Sets the state of `sequence` in `gesture`.",
+      "deprecated": "4.10.",
+      "deprecated_md": "Use [`Gesture.set_state()`](xref:gtk:Gtk.Gesture#method:set_state)",
+      "file": "gtk/gtkgesture.c",
+      "line": 971,
+      "md": "Sets the state of `sequence` in `gesture`.\n\nSequences start in state %GTK_EVENT_SEQUENCE_NONE, and whenever\nthey change state, they can never go back to that state. Likewise,\nsequences in state %GTK_EVENT_SEQUENCE_DENIED cannot turn back to\na not denied state. With these rules, the lifetime of an event\nsequence is constrained to the next four:\n\n* None\n* None → Denied\n* None → Claimed\n* None → Claimed → Denied\n\nNote: Due to event handling ordering, it may be unsafe to set the\nstate on another gesture within a [`Gesture::begin`](xref:gtk:Gtk.Gesture#event:begin) signal\nhandler, as the callback might be executed before the other gesture\nknows about the sequence. A safe way to perform this could be:\n\n```c\nstatic void\nfirst_gesture_begin_cb (GtkGesture       *first_gesture,\n                        GdkEventSequence *sequence,\n                        gpointer          user_data)\n{\n  gtk_gesture_set_sequence_state (first_gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);\n  gtk_gesture_set_sequence_state (second_gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);\n}\n\nstatic void\nsecond_gesture_begin_cb (GtkGesture       *second_gesture,\n                         GdkEventSequence *sequence,\n                         gpointer          user_data)\n{\n  if (gtk_gesture_get_sequence_state (first_gesture, sequence) == GTK_EVENT_SEQUENCE_CLAIMED)\n    gtk_gesture_set_sequence_state (second_gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);\n}\n```\n\nIf both gestures are in the same group, just set the state on\nthe gesture emitting the event, the sequence will be already\nbe initialized to the group's global state when the second\ngesture processes the event."
+    },
+    "set_state": {
+      "brief": "Sets the state of all sequences that `gesture` is currently interacting with.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1069,
+      "md": "Sets the state of all sequences that `gesture` is currently\ninteracting with.\n\nSequences start in state %GTK_EVENT_SEQUENCE_NONE, and whenever\nthey change state, they can never go back to that state. Likewise,\nsequences in state %GTK_EVENT_SEQUENCE_DENIED cannot turn back to\na not denied state. With these rules, the lifetime of an event\nsequence is constrained to the next four:\n\n* None\n* None → Denied\n* None → Claimed\n* None → Claimed → Denied\n\nNote: Due to event handling ordering, it may be unsafe to set the\nstate on another gesture within a [`Gesture::begin`](xref:gtk:Gtk.Gesture#event:begin) signal\nhandler, as the callback might be executed before the other gesture\nknows about the sequence. A safe way to perform this could be:\n\n```c\nstatic void\nfirst_gesture_begin_cb (GtkGesture       *first_gesture,\n                        GdkEventSequence *sequence,\n                        gpointer          user_data)\n{\n  gtk_gesture_set_state (first_gesture, GTK_EVENT_SEQUENCE_CLAIMED);\n  gtk_gesture_set_state (second_gesture, GTK_EVENT_SEQUENCE_DENIED);\n}\n\nstatic void\nsecond_gesture_begin_cb (GtkGesture       *second_gesture,\n                         GdkEventSequence *sequence,\n                         gpointer          user_data)\n{\n  if (gtk_gesture_get_sequence_state (first_gesture, sequence) == GTK_EVENT_SEQUENCE_CLAIMED)\n    gtk_gesture_set_state (second_gesture, GTK_EVENT_SEQUENCE_DENIED);\n}\n```\n\nIf both gestures are in the same group, just set the state on\nthe gesture emitting the event, the sequence will be already\nbe initialized to the group's global state when the second\ngesture processes the event."
+    },
+    "ungroup": {
+      "brief": "Separates `gesture` into an isolated group.",
+      "file": "gtk/gtkgesture.c",
+      "line": 1611,
+      "md": "Separates `gesture` into an isolated group."
+    }
+  },
+  "properties": {
+    "n-points": {
+      "brief": "The number of touch points that trigger recognition on this gesture.",
+      "file": "gtk/gtkgesture.c",
+      "line": 769,
+      "md": "The number of touch points that trigger\nrecognition on this gesture."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "begin": {
+      "brief": "Emitted when the gesture is recognized.",
+      "file": "gtk/gtkgesture.c",
+      "line": 781,
+      "md": "Emitted when the gesture is recognized.\n\nThis means the number of touch sequences matches\n[`Gesture:n-points`](xref:gtk:Gtk.Gesture#property:n-points).\n\nNote: These conditions may also happen when an extra touch\n(eg. a third touch on a 2-touches gesture) is lifted, in that\nsituation `sequence` won't pertain to the current set of active\ntouches, so don't rely on this being true."
+    },
+    "cancel": {
+      "brief": "Emitted whenever a sequence is cancelled.",
+      "file": "gtk/gtkgesture.c",
+      "line": 846,
+      "md": "Emitted whenever a sequence is cancelled.\n\nThis usually happens on active touches when\n[`EventController.reset()`](xref:gtk:Gtk.EventController#method:reset) is called on `gesture`\n(manually, due to grabs...), or the individual `sequence`\nwas claimed by parent widgets' controllers (see\n[`Gesture.set_sequence_state()`](xref:gtk:Gtk.Gesture#method:set_sequence_state)).\n\n`gesture` must forget everything about `sequence` as in\nresponse to this signal."
+    },
+    "end": {
+      "brief": "Emitted when `gesture` either stopped recognizing the event sequences as something to be handled, or the number of touch sequences became higher or lower than [`Gesture:n-points`](xref:gtk:Gtk.Gesture#property:n-points).",
+      "file": "gtk/gtkgesture.c",
+      "line": 805,
+      "md": "Emitted when `gesture` either stopped recognizing the event\nsequences as something to be handled, or the number of touch\nsequences became higher or lower than [`Gesture:n-points`](xref:gtk:Gtk.Gesture#property:n-points).\n\nNote: `sequence` might not pertain to the group of sequences that\nwere previously triggering recognition on `gesture` (ie. a just\npressed touch sequence that exceeds [`Gesture:n-points`](xref:gtk:Gtk.Gesture#property:n-points)).\nThis situation may be detected by checking through\n[`Gesture.handles_sequence()`](xref:gtk:Gtk.Gesture#method:handles_sequence)."
+    },
+    "sequence-state-changed": {
+      "brief": "Emitted whenever a sequence state changes.",
+      "file": "gtk/gtkgesture.c",
+      "line": 870,
+      "md": "Emitted whenever a sequence state changes.\n\nSee [`Gesture.set_sequence_state()`](xref:gtk:Gtk.Gesture#method:set_sequence_state) to know\nmore about the expectable sequence lifetimes."
+    },
+    "update": {
+      "brief": "Emitted whenever an event is handled while the gesture is recognized.",
+      "file": "gtk/gtkgesture.c",
+      "line": 829,
+      "md": "Emitted whenever an event is handled while the gesture is recognized.\n\n`sequence` is guaranteed to pertain to the set of active touches."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

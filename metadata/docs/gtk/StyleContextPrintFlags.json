@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Flags that modify the behavior of gtk_style_context_to_string().",
+    "file": "gtk/deprecated/gtkstylecontext.c",
+    "line": 947,
+    "md": "Flags that modify the behavior of gtk_style_context_to_string().\n\nNew values may be added to this enumeration."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StyleContextPrintFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "none": {
+      "brief": "Default value.",
+      "file": "gtk/deprecated/gtkstylecontext.c",
+      "line": 949,
+      "md": "Default value."
+    },
+    "recurse": {
+      "brief": "Print the entire tree of CSS nodes starting at the style context's node",
+      "file": "gtk/deprecated/gtkstylecontext.c",
+      "line": 950,
+      "md": "Print the entire tree of\n  CSS nodes starting at the style context's node"
+    },
+    "show_change": {
+      "brief": "Show information about what changes affect the styles",
+      "file": "gtk/deprecated/gtkstylecontext.c",
+      "line": 954,
+      "md": "Show information about\n  what changes affect the styles"
+    },
+    "show_style": {
+      "brief": "Show the values of the CSS properties for each node",
+      "file": "gtk/deprecated/gtkstylecontext.c",
+      "line": 952,
+      "md": "Show the values of the\n  CSS properties for each node"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

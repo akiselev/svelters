@@ -1,0 +1,121 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Scrolling types.",
+    "file": "gtk/gtkenums.h",
+    "line": 497,
+    "md": "Scrolling types."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrollType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "end": {
+      "brief": "Scroll to end.",
+      "file": "gtk/gtkenums.h",
+      "line": 514,
+      "md": "Scroll to end."
+    },
+    "jump": {
+      "brief": "Jump to new location.",
+      "file": "gtk/gtkenums.h",
+      "line": 500,
+      "md": "Jump to new location."
+    },
+    "none": {
+      "brief": "No scrolling.",
+      "file": "gtk/gtkenums.h",
+      "line": 499,
+      "md": "No scrolling."
+    },
+    "page_backward": {
+      "brief": "Page backward.",
+      "file": "gtk/gtkenums.h",
+      "line": 503,
+      "md": "Page backward."
+    },
+    "page_down": {
+      "brief": "Page down.",
+      "file": "gtk/gtkenums.h",
+      "line": 508,
+      "md": "Page down."
+    },
+    "page_forward": {
+      "brief": "Page forward.",
+      "file": "gtk/gtkenums.h",
+      "line": 504,
+      "md": "Page forward."
+    },
+    "page_left": {
+      "brief": "Page to the left.",
+      "file": "gtk/gtkenums.h",
+      "line": 511,
+      "md": "Page to the left."
+    },
+    "page_right": {
+      "brief": "Page to the right.",
+      "file": "gtk/gtkenums.h",
+      "line": 512,
+      "md": "Page to the right."
+    },
+    "page_up": {
+      "brief": "Page up.",
+      "file": "gtk/gtkenums.h",
+      "line": 507,
+      "md": "Page up."
+    },
+    "start": {
+      "brief": "Scroll to start.",
+      "file": "gtk/gtkenums.h",
+      "line": 513,
+      "md": "Scroll to start."
+    },
+    "step_backward": {
+      "brief": "Step backward.",
+      "file": "gtk/gtkenums.h",
+      "line": 501,
+      "md": "Step backward."
+    },
+    "step_down": {
+      "brief": "Step down.",
+      "file": "gtk/gtkenums.h",
+      "line": 506,
+      "md": "Step down."
+    },
+    "step_forward": {
+      "brief": "Step forward.",
+      "file": "gtk/gtkenums.h",
+      "line": 502,
+      "md": "Step forward."
+    },
+    "step_left": {
+      "brief": "Step to the left.",
+      "file": "gtk/gtkenums.h",
+      "line": 509,
+      "md": "Step to the left."
+    },
+    "step_right": {
+      "brief": "Step to the right.",
+      "file": "gtk/gtkenums.h",
+      "line": 510,
+      "md": "Step to the right."
+    },
+    "step_up": {
+      "brief": "Step up.",
+      "file": "gtk/gtkenums.h",
+      "line": 505,
+      "md": "Step up."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,57 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Specifies the granularity of font selection that is desired in a `GtkFontChooser`.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtkfontchooser.h",
+    "line": 50,
+    "md": "Specifies the granularity of font selection\nthat is desired in a `GtkFontChooser`.\n\nThis enumeration may be extended in the future; applications should\nignore unknown values."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontChooserLevel",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "family": {
+      "brief": "Allow selecting a font family",
+      "file": "gtk/deprecated/gtkfontchooser.h",
+      "line": 52,
+      "md": "Allow selecting a font family"
+    },
+    "features": {
+      "brief": "Allow selecting specific OpenType font features",
+      "file": "gtk/deprecated/gtkfontchooser.h",
+      "line": 56,
+      "md": "Allow selecting specific OpenType font features"
+    },
+    "size": {
+      "brief": "Allow selecting a specific font size",
+      "file": "gtk/deprecated/gtkfontchooser.h",
+      "line": 54,
+      "md": "Allow selecting a specific font size"
+    },
+    "style": {
+      "brief": "Allow selecting a specific font face",
+      "file": "gtk/deprecated/gtkfontchooser.h",
+      "line": 53,
+      "md": "Allow selecting a specific font face"
+    },
+    "variations": {
+      "brief": "Allow changing OpenType font variation axes",
+      "file": "gtk/deprecated/gtkfontchooser.h",
+      "line": 55,
+      "md": "Allow changing OpenType font variation axes"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

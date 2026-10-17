@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkWindowHandle`.",
+      "file": "gtk/gtkwindowhandle.c",
+      "line": 600,
+      "md": "Creates a new `GtkWindowHandle`."
+    }
+  },
+  "doc": {
+    "brief": "Implements titlebar functionality for a window.",
+    "file": "gtk/gtkwindowhandle.c",
+    "line": 40,
+    "md": "Implements titlebar functionality for a window.\n\nWhen added into a window, it can be dragged to move the window,\nand it implements the right click, double click and middle click\nbehaviors that are expected of a titlebar.\n\n# CSS nodes\n\n`GtkWindowHandle` has a single CSS node with the name `windowhandle`.\n\n# Accessibility\n\nUntil GTK 4.10, `GtkWindowHandle` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nStarting from GTK 4.12, `GtkWindowHandle` uses the [`AccessibleRole.generic`](xref:gtk:Gtk.AccessibleRole#value:generic)\nrole."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:WindowHandle",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child widget of `self`.",
+      "file": "gtk/gtkwindowhandle.c",
+      "line": 613,
+      "md": "Gets the child widget of `self`."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `self`.",
+      "file": "gtk/gtkwindowhandle.c",
+      "line": 629,
+      "md": "Sets the child widget of `self`."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkwindowhandle.c",
+      "line": 541,
+      "md": "The child widget."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

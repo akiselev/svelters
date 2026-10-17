@@ -6,3 +6,12 @@ __pycache__/
 .venv/
 /legacy/**/target/
 .claude/
+docs/site/.generated/
+docs/site/dist/
+docs/site/.astro/
+docs/site/src/content/docs/api/
+docs/site/src/content/docs/coverage.md
+docs/site/src/content/docs/index.mdx
+docs/site/public/routes.json
+docs/site/public/toolkits.json
+docs/site/public/screenshots/

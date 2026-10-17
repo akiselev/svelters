@@ -1,0 +1,64 @@
+{
+  "doc": {
+    "brief": "The QToolTip class provides tool tips (balloon help) for any widget.",
+    "index_brief": "Tool tips (balloon help) for any widget",
+    "url": "https://doc.qt.io/qt-6/qtooltip.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QToolTip",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QFont font()": {
+      "brief": "Returns the font used to render tooltips.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#font"
+    },
+    "QPalette palette()": {
+      "brief": "Returns the palette used to render tooltips.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#palette"
+    },
+    "QString text()": {
+      "brief": "Returns the tooltip text, if a tooltip is visible, or an empty string if a tooltip is not visible.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#text"
+    },
+    "bool isVisible()": {
+      "brief": "Returns `true` if a tooltip is currently shown.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#isVisible"
+    },
+    "void hideText()": {
+      "brief": "Hides the tool tip. This is the same as calling [showText](xref:qt:QToolTip)() with an empty string.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#hideText"
+    },
+    "void setFont(const QFont &font)": {
+      "brief": "Sets the *font* used to render tooltips.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#setFont"
+    },
+    "void setPalette(const QPalette &palette)": {
+      "brief": "Sets the *palette* used to render tooltips.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#setPalette"
+    },
+    "void showText(const QPoint &pos, const QString &text, QWidget *w, const QRect &rect, int msecDisplayTime)": {
+      "brief": "Shows *text* as a tool tip, with the global position *pos* as the point of interest.",
+      "url": "https://doc.qt.io/qt-6/qtooltip.html#showText"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtooltip-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

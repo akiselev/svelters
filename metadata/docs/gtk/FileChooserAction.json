@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes whether a `GtkFileChooser` is being used to open existing files or to save to a possibly new file.",
+    "file": "gtk/deprecated/gtkfilechooser.h",
+    "line": 36,
+    "md": "Describes whether a `GtkFileChooser` is being used to open existing files\nor to save to a possibly new file."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileChooserAction",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "open": {
+      "brief": "Indicates open mode.",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 38,
+      "md": "Indicates open mode.  The file chooser\n will only let the user pick an existing file."
+    },
+    "save": {
+      "brief": "Indicates save mode.",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 40,
+      "md": "Indicates save mode.  The file chooser\n will let the user pick an existing file, or type in a new\n filename."
+    },
+    "select_folder": {
+      "brief": "Indicates an Open mode for selecting folders.",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 43,
+      "md": "Indicates an Open mode for\n selecting folders.  The file chooser will let the user pick an\n existing folder."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

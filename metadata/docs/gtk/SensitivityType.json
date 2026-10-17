@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Determines how GTK handles the sensitivity of various controls, such as combo box buttons.",
+    "file": "gtk/gtkenums.h",
+    "line": 240,
+    "md": "Determines how GTK handles the sensitivity of various controls,\nsuch as combo box buttons."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SensitivityType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "auto": {
+      "brief": "The control is made insensitive if no action can be triggered",
+      "file": "gtk/gtkenums.h",
+      "line": 242,
+      "md": "The control is made insensitive if no\n  action can be triggered"
+    },
+    "off": {
+      "brief": "The control is always insensitive",
+      "file": "gtk/gtkenums.h",
+      "line": 245,
+      "md": "The control is always insensitive"
+    },
+    "on": {
+      "brief": "The control is always sensitive",
+      "file": "gtk/gtkenums.h",
+      "line": 244,
+      "md": "The control is always sensitive"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

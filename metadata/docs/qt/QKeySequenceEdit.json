@@ -1,0 +1,116 @@
+{
+  "doc": {
+    "brief": "The QKeySequenceEdit widget allows to input a [QKeySequence](xref:qt:QKeySequence).",
+    "index_brief": "Allows to input a QKeySequence",
+    "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QKeySequenceEdit",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QKeySequence keySequence() const": {
+      "brief": "This property contains the currently chosen key sequence.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#keySequence-prop"
+    },
+    "QKeySequenceEdit(QWidget *parent)": {
+      "brief": "Constructs a QKeySequenceEdit widget with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#QKeySequenceEdit"
+    },
+    "QKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent)": {
+      "brief": "Constructs a QKeySequenceEdit widget with the given *keySequence* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#QKeySequenceEdit-1"
+    },
+    "QList<QKeyCombination> finishingKeyCombinations() const": {
+      "brief": "This property holds the list of key combinations that finish editing the key sequences.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#finishingKeyCombinations-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#event"
+    },
+    "bool isClearButtonEnabled() const": {
+      "brief": "This property holds whether the key sequence edit displays a clear button when it is not empty.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#clearButtonEnabled-prop"
+    },
+    "qsizetype maximumSequenceLength() const": {
+      "brief": "This property holds the maximum sequence length.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#maximumSequenceLength-prop"
+    },
+    "void clear()": {
+      "brief": "Clears the current key sequence.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#clear"
+    },
+    "void editingFinished()": {
+      "brief": "This signal is emitted when the user finishes entering the shortcut.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#editingFinished"
+    },
+    "void focusOutEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#focusOutEvent"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#keyReleaseEvent"
+    },
+    "void keySequenceChanged(const QKeySequence &keySequence)": {
+      "brief": "This property contains the currently chosen key sequence.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#keySequence-prop"
+    },
+    "void setClearButtonEnabled(bool enable)": {
+      "brief": "This property holds whether the key sequence edit displays a clear button when it is not empty.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#clearButtonEnabled-prop"
+    },
+    "void setFinishingKeyCombinations(const QList<QKeyCombination> &finishingKeyCombinations)": {
+      "brief": "This property holds the list of key combinations that finish editing the key sequences.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#finishingKeyCombinations-prop"
+    },
+    "void setKeySequence(const QKeySequence &keySequence)": {
+      "brief": "This property contains the currently chosen key sequence.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#keySequence-prop"
+    },
+    "void setMaximumSequenceLength(qsizetype count)": {
+      "brief": "This property holds the maximum sequence length.",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#maximumSequenceLength-prop"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#timerEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "clearButtonEnabled": {
+      "brief": "Whether the key sequence edit displays a clear button when it is not empty",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#clearButtonEnabled-prop"
+    },
+    "finishingKeyCombinations": {
+      "brief": "List of key combinations that finish editing the key sequences",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#finishingKeyCombinations-prop"
+    },
+    "keySequence": {
+      "brief": "This property contains the currently chosen key sequence",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#keySequence-prop"
+    },
+    "maximumSequenceLength": {
+      "brief": "Maximum sequence length",
+      "url": "https://doc.qt.io/qt-6/qkeysequenceedit.html#maximumSequenceLength-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The strength of a constraint, expressed as a symbolic constant.",
+    "file": "gtk/gtkenums.h",
+    "line": 1141,
+    "md": "The strength of a constraint, expressed as a symbolic constant.\n\nThe strength of a [`Constraint`](xref:gtk:Constraint) can be expressed with any positive\ninteger; the values of this enumeration can be used for readability."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintStrength",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "medium": {
+      "brief": "A medium constraint",
+      "file": "gtk/gtkenums.h",
+      "line": 1145,
+      "md": "A medium constraint"
+    },
+    "required": {
+      "brief": "The constraint is required towards solving the layout",
+      "file": "gtk/gtkenums.h",
+      "line": 1143,
+      "md": "The constraint is required towards solving the layout"
+    },
+    "strong": {
+      "brief": "A strong constraint",
+      "file": "gtk/gtkenums.h",
+      "line": 1144,
+      "md": "A strong constraint"
+    },
+    "weak": {
+      "brief": "A weak constraint",
+      "file": "gtk/gtkenums.h",
+      "line": 1146,
+      "md": "A weak constraint"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

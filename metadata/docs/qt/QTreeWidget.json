@@ -1,0 +1,293 @@
+{
+  "doc": {
+    "brief": "The QTreeWidget class provides a tree view that uses a predefined tree model.",
+    "index_brief": "Tree view that uses a predefined tree model",
+    "url": "https://doc.qt.io/qt-6/qtreewidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QList<QTreeWidgetItem *> findItems(const QString &text, Qt::MatchFlags flags, int column) const": {
+      "brief": "Returns a list of items that match the given *text*, using the given *flags*, in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#findItems"
+    },
+    "QList<QTreeWidgetItem *> selectedItems() const": {
+      "brief": "Returns a list of all selected non-hidden items.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#selectedItems"
+    },
+    "QMimeData * mimeData(const QList<QTreeWidgetItem *> &items) const": {
+      "brief": "Returns an object that contains a serialized description of the specified *items*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#mimeData"
+    },
+    "QModelIndex indexFromItem(const QTreeWidgetItem *item, int column) const": {
+      "brief": "Returns the [QModelIndex](xref:qt:QModelIndex) associated with the given *item* in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#indexFromItem"
+    },
+    "QRect visualItemRect(const QTreeWidgetItem *item) const": {
+      "brief": "Returns the rectangle on the viewport occupied by the item at *item*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#visualItemRect"
+    },
+    "QStringList mimeTypes() const": {
+      "brief": "Returns a list of MIME types that can be used to describe a list of treewidget items.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#mimeTypes"
+    },
+    "QTreeWidget(QWidget *parent)": {
+      "brief": "Constructs a tree widget with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#QTreeWidget"
+    },
+    "QTreeWidgetItem * currentItem() const": {
+      "brief": "Returns the current item in the tree widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#currentItem"
+    },
+    "QTreeWidgetItem * headerItem() const": {
+      "brief": "Returns the item used for the tree widget's header.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#headerItem"
+    },
+    "QTreeWidgetItem * invisibleRootItem() const": {
+      "brief": "Returns the tree widget's invisible root item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#invisibleRootItem"
+    },
+    "QTreeWidgetItem * itemAbove(const QTreeWidgetItem *item) const": {
+      "brief": "Returns the item above the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemAbove"
+    },
+    "QTreeWidgetItem * itemAt(const QPoint &p) const": {
+      "brief": "Returns a pointer to the item at the coordinates *p*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemAt"
+    },
+    "QTreeWidgetItem * itemAt(int x, int y) const": {
+      "brief": "Returns a pointer to the item at the coordinates (*x*, *y*).",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemAt-1"
+    },
+    "QTreeWidgetItem * itemBelow(const QTreeWidgetItem *item) const": {
+      "brief": "Returns the item visually below the given *item*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemBelow"
+    },
+    "QTreeWidgetItem * itemFromIndex(const QModelIndex &index) const": {
+      "brief": "Returns a pointer to the [QTreeWidgetItem](xref:qt:QTreeWidgetItem) associated with the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemFromIndex"
+    },
+    "QTreeWidgetItem * takeTopLevelItem(int index)": {
+      "brief": "Removes the top-level item at the given *index* in the tree and returns it, otherwise returns `nullptr`;",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#takeTopLevelItem"
+    },
+    "QTreeWidgetItem * topLevelItem(int index) const": {
+      "brief": "Returns the top level item at the given *index*, or `nullptr` if the item does not exist.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#topLevelItem"
+    },
+    "QWidget * itemWidget(QTreeWidgetItem *item, int column) const": {
+      "brief": "Returns the widget displayed in the cell specified by *item* and the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemWidget"
+    },
+    "Qt::DropActions supportedDragActions() const": {
+      "brief": "This property holds the drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#supportedDragActions-prop"
+    },
+    "Qt::DropActions supportedDropActions() const": {
+      "brief": "Returns the drop actions supported by this view.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#supportedDropActions"
+    },
+    "bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action)": {
+      "brief": "Handles the *data* supplied by a drag and drop operation that ended with the given *action* in the *index* in the given *parent* item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#dropMimeData"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::event](xref:qt:QAbstractItemView)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#event"
+    },
+    "bool isPersistentEditorOpen(QTreeWidgetItem *item, int column) const": {
+      "brief": "Returns whether a persistent editor is open for item *item* in column *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#isPersistentEditorOpen"
+    },
+    "int columnCount() const": {
+      "brief": "This property holds the number of columns displayed in the tree widget",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#columnCount-prop"
+    },
+    "int currentColumn() const": {
+      "brief": "Returns the current column in the tree widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#currentColumn"
+    },
+    "int indexOfTopLevelItem(QTreeWidgetItem *item) const": {
+      "brief": "Returns the index of the given top-level *item*, or -1 if the item cannot be found.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#indexOfTopLevelItem"
+    },
+    "int sortColumn() const": {
+      "brief": "Returns the column used to sort the contents of the widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#sortColumn"
+    },
+    "int topLevelItemCount() const": {
+      "brief": "This property holds the number of top-level items",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#topLevelItemCount-prop"
+    },
+    "void addTopLevelItem(QTreeWidgetItem *item)": {
+      "brief": "Appends the *item* as a top-level item in the widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#addTopLevelItem"
+    },
+    "void addTopLevelItems(const QList<QTreeWidgetItem *> &items)": {
+      "brief": "Appends the list of *items* as a top-level items in the widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#addTopLevelItems"
+    },
+    "void clear()": {
+      "brief": "Clears the tree widget by removing all of its items and selections.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#clear"
+    },
+    "void closePersistentEditor(QTreeWidgetItem *item, int column)": {
+      "brief": "Closes the persistent editor for the *item* in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#closePersistentEditor"
+    },
+    "void collapseItem(const QTreeWidgetItem *item)": {
+      "brief": "Closes the *item*. This causes the tree containing the item's children to be collapsed.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#collapseItem"
+    },
+    "void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)": {
+      "brief": "This signal is emitted when the current item changes.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#currentItemChanged"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::dropEvent](xref:qt:QAbstractItemView)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#dropEvent"
+    },
+    "void editItem(QTreeWidgetItem *item, int column)": {
+      "brief": "Starts editing the *item* in the given *column* if it is editable.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#editItem"
+    },
+    "void expandItem(const QTreeWidgetItem *item)": {
+      "brief": "Expands the *item*. This causes the tree containing the item's children to be expanded.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#expandItem"
+    },
+    "void insertTopLevelItem(int index, QTreeWidgetItem *item)": {
+      "brief": "Inserts the *item* at *index* in the top level in the view.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#insertTopLevelItem"
+    },
+    "void insertTopLevelItems(int index, const QList<QTreeWidgetItem *> &items)": {
+      "brief": "Inserts the list of *items* at *index* in the top level in the view.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#insertTopLevelItems"
+    },
+    "void itemActivated(QTreeWidgetItem *item, int column)": {
+      "brief": "This signal is emitted when the user activates an item by single- or double-clicking (depending on the platform, i.e. on the [QStyle::SH_ItemView_ActivateItemOnSingleClick](xref:qt:QStyle) style...",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemActivated"
+    },
+    "void itemChanged(QTreeWidgetItem *item, int column)": {
+      "brief": "This signal is emitted when the contents of the *column* in the specified *item* changes.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemChanged"
+    },
+    "void itemClicked(QTreeWidgetItem *item, int column)": {
+      "brief": "This signal is emitted when the user clicks inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemClicked"
+    },
+    "void itemCollapsed(QTreeWidgetItem *item)": {
+      "brief": "This signal is emitted when the specified *item* is collapsed so that none of its children are displayed.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemCollapsed"
+    },
+    "void itemDoubleClicked(QTreeWidgetItem *item, int column)": {
+      "brief": "This signal is emitted when the user double clicks inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemDoubleClicked"
+    },
+    "void itemEntered(QTreeWidgetItem *item, int column)": {
+      "brief": "This signal is emitted when the mouse cursor enters an *item* over the specified *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemEntered"
+    },
+    "void itemExpanded(QTreeWidgetItem *item)": {
+      "brief": "This signal is emitted when the specified *item* is expanded so that all of its children are displayed.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemExpanded"
+    },
+    "void itemPressed(QTreeWidgetItem *item, int column)": {
+      "brief": "This signal is emitted when the user presses a mouse button inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemPressed"
+    },
+    "void itemSelectionChanged()": {
+      "brief": "This signal is emitted when the selection changes in the tree widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#itemSelectionChanged"
+    },
+    "void openPersistentEditor(QTreeWidgetItem *item, int column)": {
+      "brief": "Opens a persistent editor for the *item* in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#openPersistentEditor"
+    },
+    "void removeItemWidget(QTreeWidgetItem *item, int column)": {
+      "brief": "Removes the widget set in the given *item* in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#removeItemWidget"
+    },
+    "void scrollToItem(const QTreeWidgetItem *item, QAbstractItemView::ScrollHint hint)": {
+      "brief": "Ensures that the *item* is visible, scrolling the view if necessary using the specified *hint*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#scrollToItem"
+    },
+    "void setColumnCount(int columns)": {
+      "brief": "This property holds the number of columns displayed in the tree widget",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#columnCount-prop"
+    },
+    "void setCurrentItem(QTreeWidgetItem *item)": {
+      "brief": "Sets the current *item* in the tree widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setCurrentItem"
+    },
+    "void setCurrentItem(QTreeWidgetItem *item, int column)": {
+      "brief": "Sets the current *item* in the tree widget and the current column to *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setCurrentItem-1"
+    },
+    "void setCurrentItem(QTreeWidgetItem *item, int column, QItemSelectionModel::SelectionFlags command)": {
+      "brief": "Sets the current *item* in the tree widget and the current column to *column*, using the given *command*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setCurrentItem-2"
+    },
+    "void setHeaderItem(QTreeWidgetItem *item)": {
+      "brief": "Sets the header *item* for the tree widget.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setHeaderItem"
+    },
+    "void setHeaderLabel(const QString &label)": {
+      "brief": "Same as [setHeaderLabels](xref:qt:QTreeWidget)([QStringList](xref:qt:QStringList)(*label*)).",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setHeaderLabel"
+    },
+    "void setHeaderLabels(const QStringList &labels)": {
+      "brief": "Adds a column in the header for each item in the *labels* list, and sets the label for each column.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setHeaderLabels"
+    },
+    "void setItemWidget(QTreeWidgetItem *item, int column, QWidget *widget)": {
+      "brief": "Sets the given *widget* to be displayed in the cell specified by the given *item* and *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setItemWidget"
+    },
+    "void setSelectionModel(QItemSelectionModel *selectionModel) override": {
+      "brief": "Reimplements: [QTreeView::setSelectionModel](xref:qt:QTreeView)(QItemSelectionModel *selectionModel).",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#setSelectionModel"
+    },
+    "void setSupportedDragActions(Qt::DropActions actions)": {
+      "brief": "This property holds the drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#supportedDragActions-prop"
+    },
+    "void sortItems(int column, Qt::SortOrder order)": {
+      "brief": "Sorts the items in the widget in the specified *order* by the values in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#sortItems"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "columnCount": {
+      "brief": "The number of columns displayed in the tree widget",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#columnCount-prop"
+    },
+    "supportedDragActions": {
+      "brief": "The drag actions supported by this view",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#supportedDragActions-prop"
+    },
+    "topLevelItemCount": {
+      "brief": "The number of top-level items",
+      "url": "https://doc.qt.io/qt-6/qtreewidget.html#topLevelItemCount-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtreewidget-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

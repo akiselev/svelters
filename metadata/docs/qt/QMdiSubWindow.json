@@ -1,0 +1,192 @@
+{
+  "doc": {
+    "brief": "The QMdiSubWindow class provides a subwindow class for [QMdiArea](xref:qt:QMdiArea).",
+    "index_brief": "Subwindow class for QMdiArea",
+    "url": "https://doc.qt.io/qt-6/qmdisubwindow.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QMdiSubWindow",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QMdiArea * mdiArea() const": {
+      "brief": "Returns the area containing this sub-window, or `nullptr` if there is none.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#mdiArea"
+    },
+    "QMdiSubWindow(QWidget *parent, Qt::WindowFlags flags)": {
+      "brief": "Constructs a new QMdiSubWindow widget.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#QMdiSubWindow"
+    },
+    "QMenu * systemMenu() const": {
+      "brief": "Returns a pointer to the current system menu, or zero if no system menu is set.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#systemMenu"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#sizeHint"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns the current internal widget.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#widget"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#event"
+    },
+    "bool eventFilter(QObject *object, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#eventFilter"
+    },
+    "bool isShaded() const": {
+      "brief": "Returns `true` if this window is shaded; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#isShaded"
+    },
+    "bool testOption(QMdiSubWindow::SubWindowOption option) const": {
+      "brief": "Returns `true` if *option* is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#testOption"
+    },
+    "int keyboardPageStep() const": {
+      "brief": "sets how far a widget should move or resize when using the keyboard page keys.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyboardPageStep-prop"
+    },
+    "int keyboardSingleStep() const": {
+      "brief": "sets how far a widget should move or resize when using the keyboard arrow keys.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyboardSingleStep-prop"
+    },
+    "void aboutToActivate()": {
+      "brief": "[QMdiSubWindow](xref:qt:QMdiSubWindow) emits this signal immediately before it is activated.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#aboutToActivate"
+    },
+    "void changeEvent(QEvent *changeEvent) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#changeEvent"
+    },
+    "void childEvent(QChildEvent *childEvent) override": {
+      "brief": "Reimplements: [QObject::childEvent](xref:qt:QObject)(QChildEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#childEvent"
+    },
+    "void closeEvent(QCloseEvent *closeEvent) override": {
+      "brief": "Reimplements: [QWidget::closeEvent](xref:qt:QWidget)(QCloseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#closeEvent"
+    },
+    "void contextMenuEvent(QContextMenuEvent *contextMenuEvent) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#contextMenuEvent"
+    },
+    "void focusInEvent(QFocusEvent *focusInEvent) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *focusOutEvent) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#focusOutEvent"
+    },
+    "void hideEvent(QHideEvent *hideEvent) override": {
+      "brief": "Reimplements: [QWidget::hideEvent](xref:qt:QWidget)(QHideEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#hideEvent"
+    },
+    "void keyPressEvent(QKeyEvent *keyEvent) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyPressEvent"
+    },
+    "void leaveEvent(QEvent *leaveEvent) override": {
+      "brief": "Reimplements: [QWidget::leaveEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#leaveEvent"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *mouseEvent) override": {
+      "brief": "Reimplements: [QWidget::mouseDoubleClickEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *mouseEvent) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *mouseEvent) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *mouseEvent) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#mouseReleaseEvent"
+    },
+    "void moveEvent(QMoveEvent *moveEvent) override": {
+      "brief": "Reimplements: [QWidget::moveEvent](xref:qt:QWidget)(QMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#moveEvent"
+    },
+    "void paintEvent(QPaintEvent *paintEvent) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *resizeEvent) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#resizeEvent"
+    },
+    "void setKeyboardPageStep(int step)": {
+      "brief": "sets how far a widget should move or resize when using the keyboard page keys.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyboardPageStep-prop"
+    },
+    "void setKeyboardSingleStep(int step)": {
+      "brief": "sets how far a widget should move or resize when using the keyboard arrow keys.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyboardSingleStep-prop"
+    },
+    "void setOption(QMdiSubWindow::SubWindowOption option, bool on)": {
+      "brief": "If *on* is true, *option* is enabled on the subwindow; otherwise it is disabled.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#setOption"
+    },
+    "void setSystemMenu(QMenu *systemMenu)": {
+      "brief": "Sets *systemMenu* as the current system menu for this subwindow.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#setSystemMenu"
+    },
+    "void setWidget(QWidget *widget)": {
+      "brief": "Sets *widget* as the internal widget of this subwindow.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#setWidget"
+    },
+    "void showEvent(QShowEvent *showEvent) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#showEvent"
+    },
+    "void showShaded()": {
+      "brief": "Calling this function makes the subwindow enter the shaded mode.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#showShaded"
+    },
+    "void showSystemMenu()": {
+      "brief": "Shows the system menu below the system menu icon in the title bar.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#showSystemMenu"
+    },
+    "void timerEvent(QTimerEvent *timerEvent) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#timerEvent"
+    },
+    "void windowStateChanged(Qt::WindowStates oldState, Qt::WindowStates newState)": {
+      "brief": "[QMdiSubWindow](xref:qt:QMdiSubWindow) emits this signal after the window state changes. *oldState* is the window state before it changed, and *newState* is the new, current state.",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#windowStateChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "keyboardPageStep": {
+      "brief": "Sets how far a widget should move or resize when using the keyboard page keys",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyboardPageStep-prop"
+    },
+    "keyboardSingleStep": {
+      "brief": "Sets how far a widget should move or resize when using the keyboard arrow keys",
+      "url": "https://doc.qt.io/qt-6/qmdisubwindow.html#keyboardSingleStep-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

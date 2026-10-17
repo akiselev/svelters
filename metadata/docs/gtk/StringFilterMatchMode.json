@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Specifies how search strings are matched inside text.",
+    "file": "gtk/gtkstringfilter.h",
+    "line": 31,
+    "md": "Specifies how search strings are matched inside text."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StringFilterMatchMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "exact": {
+      "brief": "The search string and text must match exactly",
+      "file": "gtk/gtkstringfilter.h",
+      "line": 33,
+      "md": "The search string and\n  text must match exactly"
+    },
+    "prefix": {
+      "brief": "The text must begin with the search string",
+      "file": "gtk/gtkstringfilter.h",
+      "line": 37,
+      "md": "The text must begin\n  with the search string"
+    },
+    "substring": {
+      "brief": "The search string must be contained as a substring inside the text",
+      "file": "gtk/gtkstringfilter.h",
+      "line": 35,
+      "md": "The search string\n  must be contained as a substring inside the text"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

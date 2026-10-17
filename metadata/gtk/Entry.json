@@ -9,6 +9,45 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "changed"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "changed",
+          "notify::text"
+        ]
+      },
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "text",
+      "origin": "manual",
+      "property": "text",
+      "provenance": "docs/notes/signals-and-slots-semantics.md 1.6 (gtk_sync_probe.py: set_text re-emits notify::text on identical text); renderer compares before set, the backend suppresses",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],

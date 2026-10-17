@@ -1,0 +1,56 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Error codes that identify various errors that can occur while using the GTK printing support.",
+    "file": "gtk/print/gtkprintoperation.h",
+    "line": 202,
+    "md": "Error codes that identify various errors that can occur while\nusing the GTK printing support."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "general": {
+      "brief": "An unspecified error occurred.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 204,
+      "md": "An unspecified error occurred."
+    },
+    "internal_error": {
+      "brief": "An internal error occurred.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 205,
+      "md": "An internal error occurred."
+    },
+    "invalid_file": {
+      "brief": "An error occurred while loading a page setup or paper size from a key file.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 207,
+      "md": "An error occurred while loading a page setup\n  or paper size from a key file."
+    },
+    "nomem": {
+      "brief": "A memory allocation failed.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 206,
+      "md": "A memory allocation failed."
+    }
+  },
+  "methods": {
+    "quark": {
+      "brief": "Registers an error quark for `GtkPrintOperation` if necessary.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 165,
+      "md": "Registers an error quark for `GtkPrintOperation` if necessary."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -21,6 +21,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
   const methodNames = new Map();
   const methodIdOf = new Map();
   const widgets = new Map(); // handle -> { kind, parent, children[], props: Map }
+  const dead = new Set(); // handles that died (destroyed or gone): teardown-shaped ops on them are no-ops
   let next = 1;
 
   const w = (h) => {
@@ -85,6 +86,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       lines.push(`insert #${parent} #${child} before=${before == null ? 'end' : '#' + before} slot=${slot ?? 'default'}`);
     },
     remove(parent, child) {
+      if (dead.has(parent) || dead.has(child)) return;
       const p = w(parent);
       const c = w(child);
       if (c.parent !== parent) throw new Error(`remove: #${child} is not a child of #${parent}`);
@@ -93,6 +95,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       lines.push(`remove #${parent} #${child}`);
     },
     destroy(h) {
+      if (dead.has(h)) return;
       const x = w(h);
       // destroy only drops the handle; a child destroyed before its parent is dropped from the model
       if (x.parent != null) {
@@ -100,9 +103,11 @@ export function createTestHost({ schema = defaultSchema } = {}) {
         if (p) p.children.splice(p.children.indexOf(h), 1);
       }
       widgets.delete(h);
+      dead.add(h);
       lines.push(`destroy #${h}`);
     },
     setProp(h, nameRef, value) {
+      if (dead.has(h)) return;
       const name = nameOf(propNames, w(h).kid, nameRef);
       w(h).props.set(name, value);
       lines.push(`set #${h} ${name} ${json(value)}`);
@@ -116,12 +121,39 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       return null;
     },
     listen(h, signal, on) {
+      if (!on && dead.has(h)) return;
       w(h);
       lines.push(`listen #${h} ${signal} ${on ? 'on' : 'off'}`);
     },
   };
 
-  return { host, lines, text: () => lines.map((l) => l + '\n').join(''), widgets };
+  /**
+   * Simulates the native death of `h`: logs `gone #h <reason>` for it and then for every
+   * descendant (pre-order, reason `parent`), and returns that list of [handle, reason].
+   */
+  function killNative(h, reason) {
+    const root = w(h);
+    if (root.parent != null) {
+      const p = widgets.get(root.parent);
+      if (p) p.children.splice(p.children.indexOf(h), 1);
+    }
+    const out = [];
+    const walk = (x, why) => {
+      out.push([x, why]);
+      for (const c of widgets.get(x).children) walk(c, 'parent');
+    };
+    walk(h, reason);
+    for (const [x, why] of out) {
+      lines.push(`gone #${x} ${why}`);
+    }
+    for (const [x] of out) {
+      widgets.delete(x);
+      dead.add(x);
+    }
+    return out;
+  }
+
+  return { host, lines, text: () => lines.map((l) => l + '\n').join(''), widgets, killNative };
 }
 
 /** Virtual-time timers: deterministic, ordered by (due time, creation order). */
@@ -177,6 +209,9 @@ const MAX_TIMER_FIRINGS = 10_000;
  * Step semantics (the contract P2 must reproduce):
  *   { event: [h, signal, args] }  append `event #h signal args` to the log, then call
  *                                 globalThis.__svelters_dispatch(h, signal, args) synchronously.
+ *   { gone: [h, reason] }         the native object behind h died: log `gone #h reason` for h and each
+ *                                 descendant (pre-order, reason `parent`), then call
+ *                                 globalThis.__svelters_gone(handle, reason) for each, synchronously.
  *   { checkpoint: true }          loop { drain all promise/microtask jobs; if timers are pending,
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
@@ -215,6 +250,9 @@ export async function runBundle({ bundlePath, script }) {
         const [h, signal, args] = step.event;
         th.lines.push(`event #${h} ${signal} ${JSON.stringify(args)}`);
         ctx.__svelters_dispatch(h, signal, args);
+      } else if (step.gone) {
+        const [h, reason] = step.gone;
+        for (const [x, why] of th.killNative(h, reason)) ctx.__svelters_gone?.(x, why);
       } else if (step.checkpoint) {
         let fired = 0;
         for (;;) {

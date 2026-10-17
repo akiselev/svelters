@@ -1,0 +1,143 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Create a new `GtkEntryBuffer` object.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 427,
+      "md": "Create a new `GtkEntryBuffer` object.\n\nOptionally, specify initial text to set in the buffer."
+    }
+  },
+  "doc": {
+    "brief": "Holds the text that is displayed in a single-line text entry widget.",
+    "file": "gtk/gtkentrybuffer.c",
+    "line": 29,
+    "md": "Holds the text that is displayed in a single-line text entry widget.\n\nA single `GtkEntryBuffer` object can be shared by multiple widgets\nwhich will then share the same text content, but not the cursor\nposition, visibility attributes, icon etc.\n\n`GtkEntryBuffer` may be derived from. Such a derived class might allow\ntext to be stored in an alternate location, such as non-pageable memory,\nuseful in the case of important passwords. Or a derived class could\nintegrate with an application’s concept of undo/redo."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EntryBuffer",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "delete_text": {
+      "brief": "Deletes a sequence of characters from the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 657,
+      "md": "Deletes a sequence of characters from the buffer.\n\n`n_chars` characters are deleted starting at `position`.\nIf `n_chars` is negative, then all characters until the\nend of the text are deleted.\n\nIf `position` or `n_chars` are out of bounds, then they\nare coerced to sane values.\n\nNote that the positions are specified in characters,\nnot bytes."
+    },
+    "emit_deleted_text": {
+      "brief": "Used when subclassing `GtkEntryBuffer`.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 720,
+      "md": "Used when subclassing `GtkEntryBuffer`."
+    },
+    "emit_inserted_text": {
+      "brief": "Used when subclassing `GtkEntryBuffer`.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 701,
+      "md": "Used when subclassing `GtkEntryBuffer`."
+    },
+    "get_bytes": {
+      "brief": "Retrieves the length in bytes of the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 469,
+      "md": "Retrieves the length in bytes of the buffer.\n\nSee [`EntryBuffer.get_length()`](xref:gtk:Gtk.EntryBuffer#method:get_length)."
+    },
+    "get_length": {
+      "brief": "Retrieves the length in characters of the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 448,
+      "md": "Retrieves the length in characters of the buffer."
+    },
+    "get_max_length": {
+      "brief": "Retrieves the maximum allowed length of the text in `buffer`.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 580,
+      "md": "Retrieves the maximum allowed length of the text in `buffer`."
+    },
+    "get_text": {
+      "brief": "Retrieves the contents of the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 494,
+      "md": "Retrieves the contents of the buffer.\n\nThe memory pointer returned by this call will not change\nunless this object emits a signal, or is finalized."
+    },
+    "insert_text": {
+      "brief": "Inserts `n_chars` characters of `chars` into the contents of the buffer, at position `position`.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 599,
+      "md": "Inserts `n_chars` characters of `chars` into the contents of the\nbuffer, at position `position`.\n\nIf `n_chars` is negative, then characters from chars will be inserted\nuntil a null-terminator is found. If `position` or `n_chars` are out of\nbounds, or the maximum buffer text length is exceeded, then they are\ncoerced to sane values.\n\nNote that the position and length are in characters, not in bytes."
+    },
+    "set_max_length": {
+      "brief": "Sets the maximum allowed length of the contents of the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 548,
+      "md": "Sets the maximum allowed length of the contents of the buffer.\n\nIf the current contents are longer than the given length, then\nthey will be truncated to fit."
+    },
+    "set_text": {
+      "brief": "Sets the text in the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 520,
+      "md": "Sets the text in the buffer.\n\nThis is roughly equivalent to calling\n[`EntryBuffer.delete_text()`](xref:gtk:Gtk.EntryBuffer#method:delete_text) and\n[`EntryBuffer.insert_text()`](xref:gtk:Gtk.EntryBuffer#method:insert_text).\n\nNote that `n_chars` is in characters, not in bytes."
+    }
+  },
+  "properties": {
+    "length": {
+      "brief": "The length (in characters) of the text in buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 353,
+      "md": "The length (in characters) of the text in buffer."
+    },
+    "max-length": {
+      "brief": "The maximum length (in characters) of the text in the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 363,
+      "md": "The maximum length (in characters) of the text in the buffer."
+    },
+    "text": {
+      "brief": "The contents of the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 343,
+      "md": "The contents of the buffer."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "deleted-text": {
+      "brief": "The text is altered in the default handler for this signal.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 398,
+      "md": "The text is altered in the default handler for this signal.\n\nIf you want access to the text after the text has been modified,\nuse %G_CONNECT_AFTER."
+    },
+    "inserted-text": {
+      "brief": "This signal is emitted after text is inserted into the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 375,
+      "md": "This signal is emitted after text is inserted into the buffer."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "delete_text": {
+      "brief": "Deletes a sequence of characters from the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 657,
+      "md": "Deletes a sequence of characters from the buffer.\n\n`n_chars` characters are deleted starting at `position`.\nIf `n_chars` is negative, then all characters until the\nend of the text are deleted.\n\nIf `position` or `n_chars` are out of bounds, then they\nare coerced to sane values.\n\nNote that the positions are specified in characters,\nnot bytes."
+    },
+    "get_length": {
+      "brief": "Retrieves the length in characters of the buffer.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 448,
+      "md": "Retrieves the length in characters of the buffer."
+    },
+    "insert_text": {
+      "brief": "Inserts `n_chars` characters of `chars` into the contents of the buffer, at position `position`.",
+      "file": "gtk/gtkentrybuffer.c",
+      "line": 599,
+      "md": "Inserts `n_chars` characters of `chars` into the contents of the\nbuffer, at position `position`.\n\nIf `n_chars` is negative, then characters from chars will be inserted\nuntil a null-terminator is found. If `position` or `n_chars` are out of\nbounds, or the maximum buffer text length is exceeded, then they are\ncoerced to sane values.\n\nNote that the position and length are in characters, not in bytes."
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkBookmarkList` with the given `attributes`.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 493,
+      "md": "Creates a new `GtkBookmarkList` with the given `attributes`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that wraps `GBookmarkFile`.",
+    "file": "gtk/gtkbookmarklist.c",
+    "line": 27,
+    "md": "A list model that wraps `GBookmarkFile`.\n\nIt presents a `GListModel` and fills it asynchronously with the\n`GFileInfo`s returned from that function.\n\nThe `GFileInfo`s in the list have some attributes in the recent\nnamespace added: `recent::private` (boolean) and `recent:applications`\n(stringv)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BookmarkList",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_attributes": {
+      "brief": "Gets the attributes queried on the children.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 543,
+      "md": "Gets the attributes queried on the children."
+    },
+    "get_filename": {
+      "brief": "Returns the filename of the bookmark file that this list is loading.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 476,
+      "md": "Returns the filename of the bookmark file that\nthis list is loading."
+    },
+    "get_io_priority": {
+      "brief": "Gets the IO priority to use while loading file.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 582,
+      "md": "Gets the IO priority to use while loading file."
+    },
+    "is_loading": {
+      "brief": "Returns `TRUE` if the files are currently being loaded.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 598,
+      "md": "Returns `TRUE` if the files are currently being loaded.\n\nFiles will be added to `self` from time to time while loading is\ngoing on. The order in which are added is undefined and may change\nin between runs."
+    },
+    "set_attributes": {
+      "brief": "Sets the `attributes` to be enumerated and starts the enumeration.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 512,
+      "md": "Sets the `attributes` to be enumerated and starts the enumeration.\n\nIf `attributes` is `NULL`, no attributes will be queried, but a list\nof `GFileInfo`s will still be created."
+    },
+    "set_io_priority": {
+      "brief": "Sets the IO priority to use while loading files.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 559,
+      "md": "Sets the IO priority to use while loading files.\n\nThe default IO priority is %G_PRIORITY_DEFAULT."
+    }
+  },
+  "properties": {
+    "attributes": {
+      "brief": "The attributes to query.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 229,
+      "md": "The attributes to query."
+    },
+    "filename": {
+      "brief": "The bookmark file to load.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 220,
+      "md": "The bookmark file to load."
+    },
+    "io-priority": {
+      "brief": "Priority used when loading.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 239,
+      "md": "Priority used when loading."
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 249,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "loading": {
+      "brief": "`TRUE` if files are being loaded.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 261,
+      "md": "`TRUE` if files are being loaded."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkbookmarklist.c",
+      "line": 271,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

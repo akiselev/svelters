@@ -1,0 +1,24 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Creates widgets for the items taken from a `GListModel`.",
+    "file": "gtk/gtklistitemfactory.c",
+    "line": 26,
+    "md": "Creates widgets for the items taken from a `GListModel`.\n\nThis is one of the core concepts of handling list widgets such\nas [`ListView`](xref:gtk:Gtk.ListView) or [`GridView`](xref:gtk:Gtk.GridView).\n\nThe `GtkListItemFactory` is tasked with creating widgets for items\ntaken from the model when the views need them and updating them as\nthe items displayed by the view change.\n\nA view is usually only able to display anything after both a factory\nand a model have been set on the view. So it is important that you do\nnot skip this step when setting up your first view.\n\nBecause views do not display the whole list at once but only a few\nitems, they only need to maintain a few widgets at a time. They will\ninstruct the `GtkListItemFactory` to create these widgets and bind them\nto the items that are currently displayed.\n\nAs the list model changes or the user scrolls to the list, the items will\nchange and the view will instruct the factory to bind the widgets to those\nnew items.\n\nThe actual widgets used for displaying those widgets is provided by you.\n\nWhen the factory needs widgets created, it will create a `GtkListItem`\nand hand it to your code to set up a widget for. This list item will provide\nvarious properties with information about what item to display and provide\nyou with some opportunities to configure its behavior. See the\n[`ListItem`](xref:gtk:Gtk.ListItem) documentation for further details.\n\nVarious implementations of `GtkListItemFactory` exist to allow you different\nways to provide those widgets. The most common implementations are\n[`BuilderListItemFactory`](xref:gtk:Gtk.BuilderListItemFactory) which takes a `GtkBuilder` .ui file\nand then creates widgets and manages everything automatically from the\ninformation in that file and [`SignalListItemFactory`](xref:gtk:Gtk.SignalListItemFactory) which allows\nyou to connect to signals with your own code and retain full control over\nhow the widgets are setup and managed.\n\nA `GtkListItemFactory` is supposed to be final - that means its behavior should\nnot change and the first widget created from it should behave the same way as\nthe last widget created from it.\nIf you intend to do changes to the behavior, it is recommended that you create\na new `GtkListItemFactory` which will allow the views to recreate its widgets.\n\nOnce you have chosen your factory and created it, you need to set it on the view\nwidget you want to use it with, such as via [`ListView.set_factory()`](xref:gtk:Gtk.ListView#method:set_factory).\nReusing factories across different views is allowed, but very uncommon."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListItemFactory",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,172 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new expander using `label` as the text of the label.",
+      "file": "gtk/gtkexpander.c",
+      "line": 826,
+      "md": "Creates a new expander using `label` as the text of the label."
+    },
+    "new_with_mnemonic": {
+      "brief": "Creates a new expander using `label` as the text of the label.",
+      "file": "gtk/gtkexpander.c",
+      "line": 840,
+      "md": "Creates a new expander using `label` as the text of the label.\n\nIf characters in `label` are preceded by an underscore, they are\nunderlined. If you need a literal underscore character in a label,\nuse “__” (two underscores). The first underlined character represents\na keyboard accelerator called a mnemonic.\n\nPressing Alt and that key activates the button."
+    }
+  },
+  "doc": {
+    "brief": "Allows the user to reveal or conceal a child widget.",
+    "file": "gtk/gtkexpander.c",
+    "line": 22,
+    "md": "Allows the user to reveal or conceal a child widget.\n\nThis is similar to the triangles used in a `GtkTreeView`.\n\nNormally you use an expander as you would use a frame; you create\nthe child widget and use [`Expander.set_child()`](xref:gtk:Gtk.Expander#method:set_child) to add it\nto the expander. When the expander is toggled, it will take care of\nshowing and hiding the child automatically.\n\n# Special Usage\n\nThere are situations in which you may prefer to show and hide the\nexpanded widget yourself, such as when you want to actually create\nthe widget at expansion time. In this case, create a `GtkExpander`\nbut do not add a child to it. The expander widget has an\n[`Expander:expanded`](xref:gtk:Gtk.Expander#property:expanded) property which can be used to\nmonitor its expansion state. You should watch this property with\na signal connection as follows:\n\n```c\nstatic void\nexpander_callback (GObject    *object,\n                   GParamSpec *param_spec,\n                   gpointer    user_data)\n{\n  GtkExpander *expander;\n\n  expander = GTK_EXPANDER (object);\n\n  if (gtk_expander_get_expanded (expander))\n    {\n      // Show or create widgets\n    }\n  else\n    {\n      // Hide or destroy widgets\n    }\n}\n\nstatic void\ncreate_expander (void)\n{\n  GtkWidget *expander = gtk_expander_new_with_mnemonic (\"_More Options\");\n  g_signal_connect (expander, \"notify::expanded\",\n                    G_CALLBACK (expander_callback), NULL);\n\n  // ...\n}\n```\n\n# GtkExpander as GtkBuildable\n\nAn example of a UI definition fragment with GtkExpander:\n\n```xml\n<object class=\"GtkExpander\">\n  <property name=\"label-widget\">\n    <object class=\"GtkLabel\" id=\"expander-label\"/>\n  </property>\n  <property name=\"child\">\n    <object class=\"GtkEntry\" id=\"expander-content\"/>\n  </property>\n</object>\n```\n\n# CSS nodes\n\n```\nexpander-widget\n╰── box\n    ├── title\n    │   ├── expander\n    │   ╰── <label widget>\n    ╰── <child>\n```\n\n`GtkExpander` has a main node `expander-widget`, and subnode `box` containing\nthe title and child widget. The box subnode `title` contains node `expander`,\ni.e. the expand/collapse arrow; then the label widget if any. The arrow of an\nexpander that is showing its child gets the `:checked` pseudoclass set on it.\n\n# Accessibility\n\n`GtkExpander` uses the [`AccessibleRole.button`](xref:gtk:Gtk.AccessibleRole#value:button) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Expander",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child widget of `expander`.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1245,
+      "md": "Gets the child widget of `expander`."
+    },
+    "get_expanded": {
+      "brief": "Queries a `GtkExpander` and returns its current state.",
+      "file": "gtk/gtkexpander.c",
+      "line": 927,
+      "md": "Queries a `GtkExpander` and returns its current state.\n\nReturns `TRUE` if the child widget is revealed."
+    },
+    "get_label": {
+      "brief": "Fetches the text from a label widget.",
+      "file": "gtk/gtkexpander.c",
+      "line": 978,
+      "md": "Fetches the text from a label widget.\n\nThis is including any embedded underlines indicating mnemonics and\nPango markup, as set by [`Expander.set_label()`](xref:gtk:Gtk.Expander#method:set_label). If the label\ntext has not been set the return value will be `NULL`. This will be the\ncase if you create an empty button with gtk_button_new() to use as a\ncontainer."
+    },
+    "get_label_widget": {
+      "brief": "Retrieves the label widget for the frame.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1133,
+      "md": "Retrieves the label widget for the frame."
+    },
+    "get_resize_toplevel": {
+      "brief": "Returns whether the expander will resize the toplevel widget containing the expander upon resizing and collapsing.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1170,
+      "md": "Returns whether the expander will resize the toplevel widget\ncontaining the expander upon resizing and collapsing."
+    },
+    "get_use_markup": {
+      "brief": "Returns whether the label’s text is interpreted as Pango markup.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1073,
+      "md": "Returns whether the label’s text is interpreted as Pango markup."
+    },
+    "get_use_underline": {
+      "brief": "Returns whether an underline in the text indicates a mnemonic.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1030,
+      "md": "Returns whether an underline in the text indicates a mnemonic."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `expander`.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1187,
+      "md": "Sets the child widget of `expander`."
+    },
+    "set_expanded": {
+      "brief": "Sets the state of the expander.",
+      "file": "gtk/gtkexpander.c",
+      "line": 865,
+      "md": "Sets the state of the expander.\n\nSet to `TRUE`, if you want the child widget to be revealed,\nand `FALSE` if you want the child widget to be hidden."
+    },
+    "set_label": {
+      "brief": "Sets the text of the label of the expander to `label`.",
+      "file": "gtk/gtkexpander.c",
+      "line": 945,
+      "md": "Sets the text of the label of the expander to `label`.\n\nThis will also clear any previously set labels."
+    },
+    "set_label_widget": {
+      "brief": "Set the label widget for the expander.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1089,
+      "md": "Set the label widget for the expander.\n\nThis is the widget that will appear embedded alongside\nthe expander arrow."
+    },
+    "set_resize_toplevel": {
+      "brief": "Sets whether the expander will resize the toplevel widget containing the expander upon resizing and collapsing.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1149,
+      "md": "Sets whether the expander will resize the toplevel widget\ncontaining the expander upon resizing and collapsing."
+    },
+    "set_use_markup": {
+      "brief": "Sets whether the text of the label contains Pango markup.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1047,
+      "md": "Sets whether the text of the label contains Pango markup."
+    },
+    "set_use_underline": {
+      "brief": "If true, an underline in the text indicates a mnemonic.",
+      "file": "gtk/gtkexpander.c",
+      "line": 1004,
+      "md": "If true, an underline in the text indicates a mnemonic."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkexpander.c",
+      "line": 377,
+      "md": "The child widget."
+    },
+    "expanded": {
+      "brief": "Whether the expander has been opened to reveal the child.",
+      "file": "gtk/gtkexpander.c",
+      "line": 310,
+      "md": "Whether the expander has been opened to reveal the child."
+    },
+    "label": {
+      "brief": "The text of the expanders label.",
+      "file": "gtk/gtkexpander.c",
+      "line": 321,
+      "md": "The text of the expanders label."
+    },
+    "label-widget": {
+      "brief": "A widget to display instead of the usual expander label.",
+      "file": "gtk/gtkexpander.c",
+      "line": 354,
+      "md": "A widget to display instead of the usual expander label."
+    },
+    "resize-toplevel": {
+      "brief": "When this property is `TRUE`, the expander will resize the toplevel widget containing the expander upon expanding and collapsing.",
+      "file": "gtk/gtkexpander.c",
+      "line": 365,
+      "md": "When this property is `TRUE`, the expander will resize the toplevel\nwidget containing the expander upon expanding and collapsing."
+    },
+    "use-markup": {
+      "brief": "Whether the text in the label is Pango markup.",
+      "file": "gtk/gtkexpander.c",
+      "line": 343,
+      "md": "Whether the text in the label is Pango markup."
+    },
+    "use-underline": {
+      "brief": "Whether an underline in the text indicates a mnemonic.",
+      "file": "gtk/gtkexpander.c",
+      "line": 332,
+      "md": "Whether an underline in the text indicates a mnemonic."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Activates the `GtkExpander`.",
+      "file": "gtk/gtkexpander.c",
+      "line": 388,
+      "md": "Activates the `GtkExpander`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

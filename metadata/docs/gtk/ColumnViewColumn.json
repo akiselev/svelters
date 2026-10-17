@@ -1,0 +1,210 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkColumnViewColumn` that uses the given `factory` for mapping items to widgets.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 369,
+      "md": "Creates a new `GtkColumnViewColumn` that uses the given `factory` for\nmapping items to widgets.\n\nYou most likely want to call [`ColumnView.append_column()`](xref:gtk:Gtk.ColumnView#method:append_column) next.\n\nThe function takes ownership of the argument, so you can write code like:\n\n```c\ncolumn = gtk_column_view_column_new (_(\"Name\"),\n  gtk_builder_list_item_factory_new_from_resource (\"/name.ui\"));\n```"
+    }
+  },
+  "doc": {
+    "brief": "Represents the columns in a `GtkColumnView`.",
+    "file": "gtk/gtkcolumnviewcolumn.c",
+    "line": 36,
+    "md": "Represents the columns in a `GtkColumnView`.\n\nThe main ingredient for a `GtkColumnViewColumn` is the `GtkListItemFactory`\nthat tells the columnview how to create cells for this column from items in\nthe model.\n\nColumns have a title, and can optionally have a header menu set\nwith [`ColumnViewColumn.set_header_menu()`](xref:gtk:Gtk.ColumnViewColumn#method:set_header_menu).\n\nA sorter can be associated with a column using\n[`ColumnViewColumn.set_sorter()`](xref:gtk:Gtk.ColumnViewColumn#method:set_sorter), to let users influence sorting\nby clicking on the column header."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_column_view": {
+      "brief": "Gets the column view that's currently displaying this column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 595,
+      "md": "Gets the column view that's currently displaying this column.\n\nIf `self` has not been added to a column view yet, `NULL` is returned."
+    },
+    "get_expand": {
+      "brief": "Returns whether this column should expand.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 940,
+      "md": "Returns whether this column should expand."
+    },
+    "get_factory": {
+      "brief": "Gets the factory that's currently used to populate list items for this column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 649,
+      "md": "Gets the factory that's currently used to populate list items\nfor this column."
+    },
+    "get_fixed_width": {
+      "brief": "Gets the fixed width of the column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 1022,
+      "md": "Gets the fixed width of the column."
+    },
+    "get_header_menu": {
+      "brief": "Gets the menu model that is used to create the context menu for the column header.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 896,
+      "md": "Gets the menu model that is used to create the context menu\nfor the column header."
+    },
+    "get_id": {
+      "brief": "Returns the ID set with [`ColumnViewColumn.set_id()`](xref:gtk:Gtk.ColumnViewColumn#method:set_id).",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 1092,
+      "md": "Returns the ID set with [`ColumnViewColumn.set_id()`](xref:gtk:Gtk.ColumnViewColumn#method:set_id).",
+      "since": "4.10"
+    },
+    "get_resizable": {
+      "brief": "Returns whether this column is resizable.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 977,
+      "md": "Returns whether this column is resizable."
+    },
+    "get_sorter": {
+      "brief": "Returns the sorter that is associated with the column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 804,
+      "md": "Returns the sorter that is associated with the column."
+    },
+    "get_title": {
+      "brief": "Returns the title set with [`ColumnViewColumn.set_title()`](xref:gtk:Gtk.ColumnViewColumn#method:set_title).",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 745,
+      "md": "Returns the title set with [`ColumnViewColumn.set_title()`](xref:gtk:Gtk.ColumnViewColumn#method:set_title)."
+    },
+    "get_visible": {
+      "brief": "Returns whether this column is visible.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 856,
+      "md": "Returns whether this column is visible."
+    },
+    "set_expand": {
+      "brief": "Sets the column to take available extra space.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 913,
+      "md": "Sets the column to take available extra space.\n\nThe extra space is shared equally amongst all columns that\nhave are set to expand."
+    },
+    "set_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for populating list items for this column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 689,
+      "md": "Sets the `GtkListItemFactory` to use for populating list items\nfor this column."
+    },
+    "set_fixed_width": {
+      "brief": "Sets the fixed width of the column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 993,
+      "md": "Sets the fixed width of the column.\n\nIf `fixed_width` is -1, the fixed width of the column is unset.\n\nSetting a fixed width overrides the automatically calculated\nwidth. Interactive resizing also sets the “fixed-width” property."
+    },
+    "set_header_menu": {
+      "brief": "Sets the menu model that is used to create the context menu for the column header.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 872,
+      "md": "Sets the menu model that is used to create the context menu\nfor the column header."
+    },
+    "set_id": {
+      "brief": "Sets the id of this column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 1063,
+      "md": "Sets the id of this column.\n\nGTK makes no use of this, but applications can use it when\nstoring column view configuration.\n\nIt is up to callers to ensure uniqueness of IDs.",
+      "since": "4.10"
+    },
+    "set_resizable": {
+      "brief": "Sets whether this column should be resizable by dragging.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 956,
+      "md": "Sets whether this column should be resizable by dragging."
+    },
+    "set_sorter": {
+      "brief": "Associates a sorter with the column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 770,
+      "md": "Associates a sorter with the column.\n\nIf `sorter` is unset, the column will not let users change\nthe sorting by clicking on its header.\n\nThis sorter can be made active by clicking on the column\nheader, or by calling [`ColumnView.sort_by_column()`](xref:gtk:Gtk.ColumnView#method:sort_by_column).\n\nSee [`ColumnView.get_sorter()`](xref:gtk:Gtk.ColumnView#method:get_sorter) for the necessary steps\nfor setting up customizable sorting for [`ColumnView`](xref:gtk:Gtk.ColumnView)."
+    },
+    "set_title": {
+      "brief": "Sets the title of this column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 716,
+      "md": "Sets the title of this column.\n\nThe title is displayed in the header of a `GtkColumnView`\nfor this column and is therefore user-facing text that should\nbe translated."
+    },
+    "set_visible": {
+      "brief": "Sets whether this column should be visible in views.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 827,
+      "md": "Sets whether this column should be visible in views."
+    }
+  },
+  "properties": {
+    "column-view": {
+      "brief": "The `GtkColumnView` this column is a part of.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 244,
+      "md": "The `GtkColumnView` this column is a part of."
+    },
+    "expand": {
+      "brief": "Column gets share of extra width allocated to the view.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 316,
+      "md": "Column gets share of extra width allocated to the view."
+    },
+    "factory": {
+      "brief": "Factory for populating list items.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 254,
+      "md": "Factory for populating list items.\n\nThe factory must be for configuring [`ColumnViewCell`](xref:gtk:Gtk.ColumnViewCell) objects."
+    },
+    "fixed-width": {
+      "brief": "If not -1, this is the width that the column is allocated, regardless of the size of its content.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 326,
+      "md": "If not -1, this is the width that the column is allocated,\nregardless of the size of its content."
+    },
+    "header-menu": {
+      "brief": "Menu model used to create the context menu for the column header.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 296,
+      "md": "Menu model used to create the context menu for the column header."
+    },
+    "id": {
+      "brief": "An ID for the column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 337,
+      "md": "An ID for the column.\n\nGTK is not currently using the ID for anything, but\nit can be used by applications when saving column view\nconfigurations.\n\nIt is up to applications to ensure uniqueness of IDs.",
+      "since": "4.10"
+    },
+    "resizable": {
+      "brief": "Whether this column is resizable.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 306,
+      "md": "Whether this column is resizable."
+    },
+    "sorter": {
+      "brief": "Sorter for sorting items according to this column.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 276,
+      "md": "Sorter for sorting items according to this column."
+    },
+    "title": {
+      "brief": "Title displayed in the header.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 266,
+      "md": "Title displayed in the header."
+    },
+    "visible": {
+      "brief": "Whether this column is visible.",
+      "file": "gtk/gtkcolumnviewcolumn.c",
+      "line": 286,
+      "md": "Whether this column is visible."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

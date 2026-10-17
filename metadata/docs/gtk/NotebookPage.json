@@ -1,0 +1,92 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An auxiliary object used by `GtkNotebook`.",
+    "file": "gtk/gtknotebook.c",
+    "line": 185,
+    "md": "An auxiliary object used by `GtkNotebook`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NotebookPage",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Returns the notebook child to which `page` belongs.",
+      "file": "gtk/gtknotebook.c",
+      "line": 7237,
+      "md": "Returns the notebook child to which `page` belongs."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child for this page.",
+      "file": "gtk/gtknotebook.c",
+      "line": 605,
+      "md": "The child for this page."
+    },
+    "detachable": {
+      "brief": "Whether the tab is detachable.",
+      "file": "gtk/gtknotebook.c",
+      "line": 704,
+      "md": "Whether the tab is detachable."
+    },
+    "menu": {
+      "brief": "The label widget displayed in the child's menu entry.",
+      "file": "gtk/gtknotebook.c",
+      "line": 627,
+      "md": "The label widget displayed in the child's menu entry."
+    },
+    "menu-label": {
+      "brief": "The text of the menu widget.",
+      "file": "gtk/gtknotebook.c",
+      "line": 649,
+      "md": "The text of the menu widget."
+    },
+    "position": {
+      "brief": "The index of the child in the parent.",
+      "file": "gtk/gtknotebook.c",
+      "line": 660,
+      "md": "The index of the child in the parent."
+    },
+    "reorderable": {
+      "brief": "Whether the tab is reorderable by user action.",
+      "file": "gtk/gtknotebook.c",
+      "line": 693,
+      "md": "Whether the tab is reorderable by user action."
+    },
+    "tab": {
+      "brief": "The tab widget for this page.",
+      "file": "gtk/gtknotebook.c",
+      "line": 616,
+      "md": "The tab widget for this page."
+    },
+    "tab-expand": {
+      "brief": "Whether to expand the child's tab.",
+      "file": "gtk/gtknotebook.c",
+      "line": 671,
+      "md": "Whether to expand the child's tab."
+    },
+    "tab-fill": {
+      "brief": "Whether the child's tab should fill the allocated area.",
+      "file": "gtk/gtknotebook.c",
+      "line": 682,
+      "md": "Whether the child's tab should fill the allocated area."
+    },
+    "tab-label": {
+      "brief": "The text of the tab widget.",
+      "file": "gtk/gtknotebook.c",
+      "line": 638,
+      "md": "The text of the tab widget."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

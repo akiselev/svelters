@@ -69,6 +69,9 @@ impl Run {
         assert_eq!(r["failures"], serde_json::json!([]), "driver failures");
         assert_eq!(r["errors"], serde_json::json!([]), "host errors (stale handles show up here)");
         assert_eq!(r["run_returned"], true);
+        // Timers run on the toolkit: the host has no timer thread (the `ps -T` check).
+        let threads = r["threads"].as_array().expect("threads");
+        assert!(!threads.is_empty() && threads.iter().all(|t| !t.as_str().unwrap_or("").starts_with("svelters-timer")), "{threads:?}");
         let err = self.stderr();
         for bad in ["stale", "CRITICAL", "foreign handle"] {
             assert!(!err.contains(bad), "stderr mentions '{bad}':\n{err}");
@@ -92,6 +95,9 @@ fn run_script(backend: &str, fixture: &str, script: &Path, extra: &[&str]) -> Ru
     let _ = std::fs::remove_file(&report_path);
     let png = dir.join(format!("{name}.png"));
     let out = Command::new(env!("CARGO_BIN_EXE_counter"))
+        // GDK's Vulkan path under Xvfb (lavapipe) can assert in gdk_vulkan_context_surface_detach
+        // when a window closes mid-present; cairo avoids the GPU path. An explicit GSK_RENDERER wins.
+        .env("GSK_RENDERER", std::env::var("GSK_RENDERER").unwrap_or_else(|_| "cairo".into()))
         .args(["--backend", backend, "--fixture", fixture, "--timeout", "30"])
         .arg("--script")
         .arg(script)
@@ -265,4 +271,97 @@ fn run_returns_after_native_close_gtk() {
 #[test]
 fn run_returns_after_native_close_qt() {
     closes("qt");
+}
+
+// ---- native-close: a child window closed natively, then the app toggles it ----
+
+fn native_close(backend: &str) {
+    // The fixture script closes the child window (#5) natively, toggles twice and ends with a new
+    // child window. Stale-handle complaints would show up as host errors or in stderr.
+    let r = run_fixture(backend, "native-close");
+    r.assert_clean();
+    assert_eq!(r.labels(), ["child open"]);
+
+    // Closed and toggled once: the app's state says closed, and nothing was sent for the dead window.
+    let script = write_script(
+        "native-close-once.json",
+        r#"[{"checkpoint":true},{"gone":[5,"closed"]},{"checkpoint":true},{"event":[4,"clicked",[]]},{"checkpoint":true}]"#,
+    );
+    let r = run_script(backend, "native-close", &script, &[]);
+    r.assert_clean();
+    assert_eq!(r.labels(), ["child closed"]);
+}
+
+#[test]
+fn native_close_gtk() {
+    native_close("gtk");
+}
+
+#[test]
+fn native_close_qt() {
+    native_close("qt");
+}
+
+// ---- bind:this: native access through the bound node ----
+
+fn entries(r: &Run) -> Vec<String> {
+    r.nodes().into_iter().filter(|(_, c, _)| c == "GtkEntry" || c == "QLineEdit").map(|(_, _, t)| t).collect()
+}
+
+fn bind_this(backend: &str) {
+    // The script types "hello" into the native entry, then Read calls `entry.getProp('text')` and
+    // `win.call('present')` through the bound nodes; Hide destroys the second entry and Probe
+    // touches its stale node.
+    let r = run_fixture(backend, "bind-this");
+    r.assert_clean();
+    assert_eq!(r.labels(), ["hello", "reads: 1", "edited: yes", "stale: StaleHandleError: destroyed"]);
+    assert_eq!(entries(&r), ["hello"], "the hidden entry is gone natively");
+}
+
+#[test]
+fn bind_this_gtk() {
+    bind_this("gtk");
+}
+
+#[test]
+fn bind_this_qt() {
+    bind_this("qt");
+}
+
+// ---- bind:text: echo suppression, verified natively ----
+
+fn changes(r: &Run) -> u32 {
+    let labels = r.labels();
+    labels.iter().find_map(|l| l.strip_prefix("changes: ")).expect("changes label").parse().unwrap()
+}
+
+fn bind_value(backend: &str) {
+    // Typing "Zed" natively is several native `changed` signals (the driver clears the entry and
+    // types per character), so the count is compared between two runs instead of hard-coded:
+    //   typed:   type "Zed"
+    //   full:    type "Zed", then the app writes "Bob" and "BOB" into the state
+    // The app's own writes must reach the entry without a `changed` coming back, so both runs
+    // count the same signals.
+    let script = write_script("bind-value-typed.json", r#"[{"checkpoint":true},{"event":[3,"changed",["Zed"]]},{"checkpoint":true}]"#);
+    let typed = run_script(backend, "bind-value", &script, &[]);
+    typed.assert_clean();
+    assert_eq!(typed.labels()[0], "Hello Zed", "native to state");
+    assert_eq!(entries(&typed), ["Zed"], "nothing is written back over a native edit");
+    assert!(changes(&typed) >= 1, "native edits reach JS");
+
+    let full = run_fixture(backend, "bind-value");
+    full.assert_clean();
+    assert_eq!(full.labels()[0], "Hello BOB");
+    assert_eq!(entries(&full), ["BOB"], "state to native");
+    assert_eq!(changes(&full), changes(&typed), "the app's own writes must not come back as native changes");
+}
+
+#[test]
+fn bind_value_gtk() {
+    bind_value("gtk");
+}
+
+#[test]
+fn bind_value_qt() {
+    bind_value("qt");
 }

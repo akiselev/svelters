@@ -1,0 +1,10 @@
+# GUI integration tests start real GTK/Qt windows under Xvfb. GTK's GL renderer runs in software
+# there, and several at once can stall or lose the (virtual) Vulkan device, so they share a small
+# group. One retry covers that environmental flake; a real failure still fails twice.
+[test-groups]
+gui = { max-threads = 2 }
+
+[[profile.default.overrides]]
+filter = 'package(counter) | package(svelters-gtk) | package(counter-qt)'
+test-group = 'gui'
+retries = 1

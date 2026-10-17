@@ -1,0 +1,244 @@
+{
+  "doc": {
+    "brief": "The QLayout class is the base class of geometry managers.",
+    "index_brief": "The base class of geometry managers",
+    "url": "https://doc.qt.io/qt-6/qlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QLayout * layout() override": {
+      "brief": "Reimplements: [QLayoutItem::layout](xref:qt:QLayoutItem)().",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#layout"
+    },
+    "QLayout(QWidget *parent)": {
+      "brief": "Constructs a new top-level QLayout, with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#QLayout"
+    },
+    "QLayout::SizeConstraint horizontalSizeConstraint() const": {
+      "brief": "This property holds the horizontal size constraint.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#horizontalSizeConstraint-prop"
+    },
+    "QLayout::SizeConstraint sizeConstraint() const": {
+      "brief": "This property holds the resize mode of the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#sizeConstraint-prop"
+    },
+    "QLayout::SizeConstraint verticalSizeConstraint() const": {
+      "brief": "This property holds the vertical size constraint.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#verticalSizeConstraint-prop"
+    },
+    "QLayoutItem * itemAt(int index) const = 0": {
+      "brief": "Must be implemented in subclasses to return the layout item at *index*.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#itemAt"
+    },
+    "QLayoutItem * replaceWidget(QWidget *from, QWidget *to, Qt::FindChildOptions options)": {
+      "brief": "Searches for widget *from* and replaces it with widget *to* if found.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#replaceWidget"
+    },
+    "QLayoutItem * takeAt(int index) = 0": {
+      "brief": "Must be implemented in subclasses to remove the layout item at *index* from the layout, and return the item.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#takeAt"
+    },
+    "QMargins contentsMargins() const": {
+      "brief": "Returns the margins used around the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#contentsMargins"
+    },
+    "QRect alignmentRect(const QRect &r) const": {
+      "brief": "Returns the rectangle that should be covered when the geometry of this layout is set to *r*, provided that this layout supports [setAlignment](xref:qt:QLayout)().",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#alignmentRect"
+    },
+    "QRect contentsRect() const": {
+      "brief": "Returns the layout's [geometry](xref:qt:QLayout)() rectangle, but taking into account the contents margins.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#contentsRect"
+    },
+    "QRect geometry() const override": {
+      "brief": "Reimplements: [QLayoutItem::geometry](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#geometry"
+    },
+    "QSize closestAcceptableSize(const QWidget *widget, const QSize &size)": {
+      "brief": "Returns a size that satisfies all size constraints on *widget*, including [heightForWidth](xref:qt:QLayoutItem)() and that is as close as possible to *size*.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#closestAcceptableSize"
+    },
+    "QSize maximumSize() const override": {
+      "brief": "Reimplements: [QLayoutItem::maximumSize](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#maximumSize"
+    },
+    "QSize minimumSize() const override": {
+      "brief": "Reimplements: [QLayoutItem::minimumSize](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#minimumSize"
+    },
+    "QSizePolicy::ControlTypes controlTypes() const override": {
+      "brief": "Reimplements: [QLayoutItem::controlTypes](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#controlTypes"
+    },
+    "QWidget * menuBar() const": {
+      "brief": "Returns the menu bar set for this layout, or `nullptr` if no menu bar is set.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#menuBar"
+    },
+    "QWidget * parentWidget() const": {
+      "brief": "Returns the parent widget of this layout, or `nullptr` if this layout is not installed on any widget.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#parentWidget"
+    },
+    "Qt::Orientations expandingDirections() const override": {
+      "brief": "Reimplements: [QLayoutItem::expandingDirections](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#expandingDirections"
+    },
+    "bool activate()": {
+      "brief": "Redoes the layout for [parentWidget](xref:qt:QLayout)() if necessary.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#activate"
+    },
+    "bool isEmpty() const override": {
+      "brief": "Reimplements: [QLayoutItem::isEmpty](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#isEmpty"
+    },
+    "bool isEnabled() const": {
+      "brief": "Returns `true` if the layout is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#isEnabled"
+    },
+    "bool setAlignment(QLayout *l, Qt::Alignment alignment)": {
+      "brief": "Sets the alignment for the layout *l* to *alignment* and returns `true` if *l* is found in this layout (not including child layouts); otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setAlignment-1"
+    },
+    "bool setAlignment(QWidget *w, Qt::Alignment alignment)": {
+      "brief": "Sets the alignment for widget *w* to *alignment* and returns true if *w* is found in this layout (not including child layouts); otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setAlignment"
+    },
+    "int count() const = 0": {
+      "brief": "Must be implemented in subclasses to return the number of items in the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#count"
+    },
+    "int indexOf(const QLayoutItem *layoutItem) const": {
+      "brief": "Searches for layout item *layoutItem* in this layout (not including child layouts).",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#indexOf"
+    },
+    "int indexOf(const QWidget *widget) const": {
+      "brief": "Searches for widget *widget* in this layout (not including child layouts).",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#indexOf-1"
+    },
+    "int spacing() const": {
+      "brief": "This property holds the spacing between widgets inside the layout",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#spacing-prop"
+    },
+    "void addChildLayout(QLayout *childLayout)": {
+      "brief": "This function is called from `addLayout()` or `insertLayout()` functions in subclasses to add layout *childLayout* as a sub-layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#addChildLayout"
+    },
+    "void addChildWidget(QWidget *w)": {
+      "brief": "This function is called from `addWidget()` functions in subclasses to add *w* as a managed widget of a layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#addChildWidget"
+    },
+    "void addItem(QLayoutItem *item) = 0": {
+      "brief": "Implemented in subclasses to add an *item*.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#addItem"
+    },
+    "void addWidget(QWidget *w)": {
+      "brief": "Adds widget *w* to this layout in a manner specific to the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#addWidget"
+    },
+    "void childEvent(QChildEvent *e) override": {
+      "brief": "Reimplements: [QObject::childEvent](xref:qt:QObject)(QChildEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#childEvent"
+    },
+    "void getContentsMargins(int *left, int *top, int *right, int *bottom) const": {
+      "brief": "For each of *left*, *top*, *right* and *bottom* that is not `nullptr`, stores the size of the margin named in the location the pointer refers to.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#getContentsMargins"
+    },
+    "void invalidate() override": {
+      "brief": "Reimplements: [QLayoutItem::invalidate](xref:qt:QLayoutItem)().",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#invalidate"
+    },
+    "void removeItem(QLayoutItem *item)": {
+      "brief": "Removes the layout item *item* from the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#removeItem"
+    },
+    "void removeWidget(QWidget *widget)": {
+      "brief": "Removes the widget *widget* from the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#removeWidget"
+    },
+    "void setContentsMargins(const QMargins &margins)": {
+      "brief": "Sets the *margins* to use around the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setContentsMargins"
+    },
+    "void setContentsMargins(int left, int top, int right, int bottom)": {
+      "brief": "Sets the *left*, *top*, *right*, and *bottom* margins to use around the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setContentsMargins-1"
+    },
+    "void setEnabled(bool enable)": {
+      "brief": "Enables this layout if *enable* is true, otherwise disables it.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setEnabled"
+    },
+    "void setGeometry(const QRect &r) override": {
+      "brief": "Reimplements: [QLayoutItem::setGeometry](xref:qt:QLayoutItem)(const QRect &r).",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setGeometry"
+    },
+    "void setHorizontalSizeConstraint(QLayout::SizeConstraint constraint)": {
+      "brief": "This property holds the horizontal size constraint.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#horizontalSizeConstraint-prop"
+    },
+    "void setMenuBar(QWidget *widget)": {
+      "brief": "Tells the geometry manager to place the menu bar *widget* at the top of [parentWidget](xref:qt:QLayout)(), outside [QWidget::contentsMargins](xref:qt:QWidget)().",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setMenuBar"
+    },
+    "void setSizeConstraint(QLayout::SizeConstraint constraint)": {
+      "brief": "This property holds the resize mode of the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#sizeConstraint-prop"
+    },
+    "void setSizeConstraints(QLayout::SizeConstraint horizontal, QLayout::SizeConstraint vertical)": {
+      "brief": "Sets both the *horizontal* and *vertical* size constraints.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#setSizeConstraints"
+    },
+    "void setSpacing(int)": {
+      "brief": "This property holds the spacing between widgets inside the layout",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#spacing-prop"
+    },
+    "void setVerticalSizeConstraint(QLayout::SizeConstraint constraint)": {
+      "brief": "This property holds the vertical size constraint.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#verticalSizeConstraint-prop"
+    },
+    "void unsetContentsMargins()": {
+      "brief": "Unsets any user-defined margins around the layout.",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#unsetContentsMargins"
+    },
+    "void update()": {
+      "brief": "Updates the layout for [parentWidget](xref:qt:QLayout)().",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#update"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "contentsMargins": {
+      "brief": "The margins used around the layout",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#contentsMargins-prop"
+    },
+    "horizontalSizeConstraint": {
+      "brief": "Horizontal size constraint",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#horizontalSizeConstraint-prop"
+    },
+    "sizeConstraint": {
+      "brief": "The resize mode of the layout. Setting the size constraint for the dialog. Setting a vertical or horizontal size constraint will override this",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#sizeConstraint-prop"
+    },
+    "spacing": {
+      "brief": "The spacing between widgets inside the layout",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#spacing-prop"
+    },
+    "verticalSizeConstraint": {
+      "brief": "Vertical size constraint",
+      "url": "https://doc.qt.io/qt-6/qlayout.html#verticalSizeConstraint-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

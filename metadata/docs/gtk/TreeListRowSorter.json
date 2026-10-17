@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Create a special-purpose sorter that applies the sorting of `sorter` to the levels of a `GtkTreeListModel`.",
+      "file": "gtk/gtktreelistrowsorter.c",
+      "line": 556,
+      "md": "Create a special-purpose sorter that applies the sorting\nof `sorter` to the levels of a `GtkTreeListModel`.\n\nNote that this sorter relies on [`TreeListModel:passthrough`](xref:gtk:Gtk.TreeListModel#property:passthrough)\nbeing `FALSE` as it can only sort [`TreeListRow`](xref:gtk:Gtk.TreeListRow)s."
+    }
+  },
+  "doc": {
+    "brief": "Applies a gives sorter to the levels in a tree.",
+    "file": "gtk/gtktreelistrowsorter.c",
+    "line": 29,
+    "md": "Applies a gives sorter to the levels in a tree.\n\nHere is an example for setting up a column view with a tree model and\na `GtkTreeListSorter`:\n\n```c\ncolumn_sorter = gtk_column_view_get_sorter (view);\nsorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));\nsort_model = gtk_sort_list_model_new (tree_model, sorter);\nselection = gtk_single_selection_new (sort_model);\ngtk_column_view_set_model (view, G_LIST_MODEL (selection));\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeListRowSorter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_sorter": {
+      "brief": "Returns the sorter used by `self`.",
+      "file": "gtk/gtktreelistrowsorter.c",
+      "line": 617,
+      "md": "Returns the sorter used by `self`."
+    },
+    "set_sorter": {
+      "brief": "Sets the sorter to use for items with the same parent.",
+      "file": "gtk/gtktreelistrowsorter.c",
+      "line": 584,
+      "md": "Sets the sorter to use for items with the same parent.\n\nThis sorter will be passed the [`TreeListRow:item`](xref:gtk:Gtk.TreeListRow#property:item) of\nthe tree list rows passed to `self`."
+    }
+  },
+  "properties": {
+    "sorter": {
+      "brief": "The underlying sorter",
+      "file": "gtk/gtktreelistrowsorter.c",
+      "line": 535,
+      "md": "The underlying sorter"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

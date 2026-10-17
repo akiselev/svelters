@@ -1,0 +1,153 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkScaleButton`.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 602,
+      "md": "Creates a `GtkScaleButton`.\n\nThe new scale button has a range between `min` and `max`,\nwith a stepping of `step`."
+    }
+  },
+  "doc": {
+    "brief": "Provides a button which pops up a scale widget.",
+    "file": "gtk/gtkscalebutton.c",
+    "line": 63,
+    "md": "Provides a button which pops up a scale widget.\n\nThis kind of widget is commonly used for volume controls in multimedia\napplications, and GTK provides a [`VolumeButton`](xref:gtk:Gtk.VolumeButton) subclass that\nis tailored for this use case.\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`ScaleButton::popup`](xref:gtk:Gtk.ScaleButton#event:popup)\n\n# CSS nodes\n\n```\nscalebutton.scale\n╰── button.toggle\n    ╰── <icon>\n```\n\n`GtkScaleButton` has a single CSS node with name scalebutton and `.scale`\nstyle class, and contains a `button` node with a `.toggle` style class."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ScaleButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_active": {
+      "brief": "Queries a `GtkScaleButton` and returns its current state.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 825,
+      "md": "Queries a `GtkScaleButton` and returns its current state.\n\nReturns `TRUE` if the scale button is pressed in and `FALSE`\nif it is raised.",
+      "since": "4.10"
+    },
+    "get_adjustment": {
+      "brief": "Gets the `GtkAdjustment` associated with the `GtkScaleButton`’s scale.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 705,
+      "md": "Gets the `GtkAdjustment` associated with the `GtkScaleButton`’s scale.\n\nSee [`Range.get_adjustment()`](xref:gtk:Gtk.Range#method:get_adjustment) for details."
+    },
+    "get_has_frame": {
+      "brief": "Returns whether the button has a frame.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 848,
+      "md": "Returns whether the button has a frame.",
+      "since": "4.14"
+    },
+    "get_minus_button": {
+      "brief": "Retrieves the minus button of the `GtkScaleButton`.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 788,
+      "md": "Retrieves the minus button of the `GtkScaleButton`."
+    },
+    "get_plus_button": {
+      "brief": "Retrieves the plus button of the `GtkScaleButton.`",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 769,
+      "md": "Retrieves the plus button of the `GtkScaleButton.`"
+    },
+    "get_popup": {
+      "brief": "Retrieves the popup of the `GtkScaleButton`.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 807,
+      "md": "Retrieves the popup of the `GtkScaleButton`."
+    },
+    "get_value": {
+      "brief": "Gets the current value of the scale button.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 638,
+      "md": "Gets the current value of the scale button."
+    },
+    "set_adjustment": {
+      "brief": "Sets the `GtkAdjustment` to be used as a model for the `GtkScaleButton`’s scale.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 725,
+      "md": "Sets the `GtkAdjustment` to be used as a model\nfor the `GtkScaleButton`’s scale.\n\nSee [`Range.set_adjustment()`](xref:gtk:Gtk.Range#method:set_adjustment) for details."
+    },
+    "set_has_frame": {
+      "brief": "Sets the style of the button.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 868,
+      "md": "Sets the style of the button.",
+      "since": "4.14"
+    },
+    "set_icons": {
+      "brief": "Sets the icons to be used by the scale button.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 681,
+      "md": "Sets the icons to be used by the scale button."
+    },
+    "set_value": {
+      "brief": "Sets the current value of the scale.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 656,
+      "md": "Sets the current value of the scale.\n\nIf the value is outside the minimum or maximum range values,\nit will be clamped to fit inside them.\n\nThe scale button emits the [`ScaleButton::value-changed`](xref:gtk:Gtk.ScaleButton#event:value-changed)\nsignal if the value changes."
+    }
+  },
+  "properties": {
+    "active": {
+      "brief": "If the scale button should be pressed in.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 273,
+      "md": "If the scale button should be pressed in.",
+      "since": "4.10"
+    },
+    "adjustment": {
+      "brief": "The `GtkAdjustment` that is used as the model.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 236,
+      "md": "The `GtkAdjustment` that is used as the model."
+    },
+    "has-frame": {
+      "brief": "If the scale button has a frame.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 286,
+      "md": "If the scale button has a frame.",
+      "since": "4.14"
+    },
+    "icons": {
+      "brief": "The names of the icons to be used by the scale button.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 247,
+      "md": "The names of the icons to be used by the scale button.\n\nThe first item in the array will be used in the button\nwhen the current value is the lowest value, the second\nitem for the highest value. All the subsequent icons will\nbe used for all the other values, spread evenly over the\nrange of values.\n\nIf there's only one icon name in the `icons` array, it will\nbe used for all the values. If only two icon names are in\nthe `icons` array, the first one will be used for the bottom\n50% of the scale, and the second one for the top 50%.\n\nIt is recommended to use at least 3 icons so that the\n`GtkScaleButton` reflects the current value of the scale\nbetter for the users."
+    },
+    "value": {
+      "brief": "The value of the scale.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 223,
+      "md": "The value of the scale."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "popdown": {
+      "brief": "Emitted to dismiss the popup.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 335,
+      "md": "Emitted to dismiss the popup.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Escape</kbd>."
+    },
+    "popup": {
+      "brief": "Emitted to popup the scale widget.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 315,
+      "md": "Emitted to popup the scale widget.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are <kbd>Space</kbd>,\n<kbd>Enter</kbd> and <kbd>Return</kbd>."
+    },
+    "value-changed": {
+      "brief": "Emitted when the value field has changed.",
+      "file": "gtk/gtkscalebutton.c",
+      "line": 299,
+      "md": "Emitted when the value field has changed."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

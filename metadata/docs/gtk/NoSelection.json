@@ -1,0 +1,65 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new selection to handle `model`.",
+      "file": "gtk/gtknoselection.c",
+      "line": 293,
+      "md": "Creates a new selection to handle `model`."
+    }
+  },
+  "doc": {
+    "brief": "A selection model that does not allow selecting anything.",
+    "file": "gtk/gtknoselection.c",
+    "line": 28,
+    "md": "A selection model that does not allow selecting anything.\n\nThis model is meant to be used as a simple wrapper around a `GListModel`\nwhen a `GtkSelectionModel` is required.\n\n`GtkNoSelection` passes through sections from the underlying model."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NoSelection",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_model": {
+      "brief": "Gets the model that `self` is wrapping.",
+      "file": "gtk/gtknoselection.c",
+      "line": 318,
+      "md": "Gets the model that `self` is wrapping."
+    },
+    "set_model": {
+      "brief": "Sets the model that `self` should wrap.",
+      "file": "gtk/gtknoselection.c",
+      "line": 334,
+      "md": "Sets the model that `self` should wrap.\n\nIf `model` is `NULL`, this model will be empty."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtknoselection.c",
+      "line": 251,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being managed.",
+      "file": "gtk/gtknoselection.c",
+      "line": 263,
+      "md": "The model being managed."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtknoselection.c",
+      "line": 273,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}
