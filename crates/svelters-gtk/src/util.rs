@@ -10,6 +10,7 @@ pub fn prev_sibling(parent: &gtk::Widget, before: Option<&gtk::Widget>) -> Optio
 }
 
 /// Position of the direct child of `parent` that is `w` or contains it.
+#[allow(dead_code)] // used by generated slot code once a slot takes an index
 pub fn direct_child_index(parent: &gtk::Widget, w: &gtk::Widget) -> Option<u32> {
     let mut cur = w.clone();
     while cur.parent().as_ref() != Some(parent) {
@@ -25,6 +26,7 @@ pub fn direct_child_index(parent: &gtk::Widget, w: &gtk::Widget) -> Option<u32> 
 }
 
 /// Normalises the index types gtk4-rs returns (`i32` with -1, `u32`, `Option<u32>`).
+#[allow(dead_code)]
 pub trait Idx {
     fn idx(self) -> Option<u32>;
 }
@@ -45,6 +47,7 @@ impl Idx for Option<u32> {
 }
 
 /// `-1` (append) for `None`, as GTK's `gint position` parameters expect.
+#[allow(dead_code)]
 pub fn idx_i32(i: Option<u32>) -> i32 {
     i.map_or(-1, |x| x as i32)
 }
