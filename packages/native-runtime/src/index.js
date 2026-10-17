@@ -413,7 +413,10 @@ export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   if (!node || !alive(node)) return;
   if (deferred) {
     const ev = new NativeEvent(eventFor(signal), signal, node, args, true);
-    for (const fn of handlersOf(node, signal, flags)) fn.call(node, ev, ...args);
+    for (const fn of handlersOf(node, signal, flags)) {
+      fn.call(node, ev, ...args);
+      if (ev.immediateStopped) break;
+    }
     return;
   }
   if (flags === 0) for (const fn of node.passive.get(signal) ?? []) fn.apply(node, args);
@@ -1012,6 +1015,16 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
         exports = Component(root, props);
       });
     });
+  } catch (e) {
+    // a failed first render: tear down what it already created (natives inserted under the
+    // root or target, handlers, effects) before the error leaves mount
+    scope = prev;
+    try {
+      destroy?.();
+    } finally {
+      dispose(s, root);
+    }
+    throw e;
   } finally {
     scope = prev;
   }

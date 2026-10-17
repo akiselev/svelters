@@ -384,6 +384,48 @@ test('unmount destroys effects, then natives (toplevels are destroyed, not remov
   globalThis.__svelters_dispatch(1, 'clicked', []); // unknown handle: ignored
 });
 
+test('a first render that throws destroys what it created and rethrows (Codex P1, PR #3)', () => {
+  const t = harness();
+  assert.throws(
+    () =>
+      mountInWindow((c) => {
+        const b = $n.element('button');
+        $n.on(b, 'clicked', () => {});
+        $n.append(c, b);
+        throw new Error('boom');
+      }),
+    /boom/,
+  );
+  const ops = t.take();
+  assert.ok(ops.includes('destroy #1'), `window destroyed: ${ops.join(' | ')}`);
+  assert.ok(ops.includes('destroy #2'), `button destroyed: ${ops.join(' | ')}`);
+  assert.ok(ops.indexOf('destroy #2') < ops.indexOf('destroy #1'), 'children before parents');
+  globalThis.__svelters_dispatch(2, 'clicked', []); // forgotten: ignored
+  assert.deepEqual(t.take(), []);
+});
+
+test('a deferred sync signal stops at stopImmediatePropagation, as dispatch_sync does (Codex P2, PR #3)', () => {
+  harness();
+  const seen = [];
+  let h;
+  mountInWindow((c) => {
+    const b = $n.element('button');
+    h = b.h;
+    $n.on(b, 'clicked', (ev) => {
+      seen.push('first');
+      ev.stopImmediatePropagation();
+    });
+    $n.on(b, 'clicked', () => seen.push('second'));
+    $n.append(c, b);
+  });
+  $.flush();
+  globalThis.__svelters_dispatch(h, 'clicked', [], true);
+  assert.deepEqual(seen, ['first']);
+  seen.length = 0;
+  assert.equal(globalThis.__svelters_dispatch_sync(h, 'clicked', []), true, 'stopping consumes');
+  assert.deepEqual(seen, ['first']);
+});
+
 test('lis', () => {
   assert.deepEqual([...$n.lis([4, 3, 2, 1])].length, 1);
   assert.deepEqual([...$n.lis([0, -1, 1, 5, 2, 3])].sort(), [0, 2, 4, 5]);
