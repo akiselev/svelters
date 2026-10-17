@@ -91,6 +91,22 @@ pub fn strv() -> Type {
     <Vec<String> as StaticType>::static_type()
 }
 
+/// Whether the value behind a `BOXED` handle is usable where GType `vt` is expected. Objects are
+/// held as `glib::Value`s of the generic object type, so the runtime class is what counts.
+fn boxed_is_a(b: &glib::Value, vt: Type) -> bool {
+    if b.type_().is_a(vt) {
+        return true;
+    }
+    b.get::<Option<glib::Object>>().ok().flatten().is_some_and(|o| o.type_().is_a(vt))
+}
+
+fn boxed_type_name(b: &glib::Value) -> String {
+    match b.get::<Option<glib::Object>>().ok().flatten() {
+        Some(o) => o.type_().name().to_string(),
+        None => b.type_().name().to_string(),
+    }
+}
+
 pub fn is_iface(t: Type) -> bool {
     t.is_a(Type::INTERFACE)
 }
@@ -346,8 +362,8 @@ pub unsafe fn to_value(vt: Type, v: &svl_value, env: &dyn Env) -> Result<glib::V
                 }
                 SVL_BOXED => {
                     let b = env.boxed(v.u.h).ok_or("stale boxed handle")?;
-                    if !b.type_().is_a(vt) {
-                        return Err(format!("{} is not a {}", b.type_().name(), vt.name()));
+                    if !boxed_is_a(&b, vt) {
+                        return Err(format!("{} is not a {}", boxed_type_name(&b), vt.name()));
                     }
                     b
                 }
@@ -368,8 +384,8 @@ pub unsafe fn to_value(vt: Type, v: &svl_value, env: &dyn Env) -> Result<glib::V
                     SVL_NULL => glib::Value::from_type(vt),
                     SVL_BOXED => {
                         let b = env.boxed(v.u.h).ok_or("stale boxed handle")?;
-                        if !b.type_().is_a(vt) {
-                            return Err(format!("{} is not a {}", b.type_().name(), vt.name()));
+                        if !boxed_is_a(&b, vt) {
+                            return Err(format!("{} is not a {}", boxed_type_name(&b), vt.name()));
                         }
                         b
                     }
