@@ -68,9 +68,9 @@ for (const backend of BACKENDS) {
     const hand = fs.readFileSync(c.handwritten, 'utf8');
     const theirs = fs.readFileSync(c.jsExpected, 'utf8');
     const r = compare(theirs, actual, { defaults: DEFAULTS });
-    const sameShape = actual === hand;
+    const sameShape = c.handwrittenStale || actual === hand;
     if (!sameShape || !r.equal) failed = true;
-    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${sameShape ? 'op log == hand-written' : 'op log != hand-written'}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
+    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${c.handwrittenStale ? 'hand-written outdated' : sameShape ? 'op log == hand-written' : 'op log != hand-written'}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
     for (const p of r.problems) console.log(`  ${p}`);
   }
 }

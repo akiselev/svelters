@@ -20,7 +20,13 @@ for (const backend of BACKENDS) {
       await build(nativeConfig(dir, { entry: 'main.js', outDir: 'dist', plugins: [svelteNative({ backend })] }));
       console.log(`built ${backend}/${c.name}`);
     } catch (e) {
-      fs.writeFileSync(path.join(dir, 'diagnostics.txt'), String(e.message) + '\n');
+      // keep only the diagnostics (no stack, repo-relative paths) so expectations are stable
+      const repo = path.resolve(here, '../../..') + '/';
+      const lines = String(e.message)
+        .split('\n')
+        .filter((l) => l.trim() && !/^\s+at /.test(l) && !l.startsWith('Build failed'))
+        .map((l) => l.split(repo).join('').replace(/^RolldownError: /, ''));
+      fs.writeFileSync(path.join(dir, 'diagnostics.txt'), lines.join('\n') + '\n');
       console.log(`rejected ${backend}/${c.name}: ${String(e.message).split('\n')[0]}`);
     }
   }

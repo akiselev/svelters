@@ -1,0 +1,27 @@
+create window #1
+set #1 title "Styled"
+create box #2
+set #2 spacing 8
+set #2 orientation "horizontal"
+create button #3
+set #3 heightRequest 36
+set #3 cssClasses ["suggested-action"]
+set #3 label "Save"
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+set #4 heightRequest 24
+set #4 label "Toggle"
+insert #2 #4 before=end slot=default
+create button #5
+set #5 heightRequest 24
+set #5 label "Plain"
+insert #2 #5 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #4 clicked []
+set #4 heightRequest 36
+set #4 cssClasses ["suggested-action"]
+event #4 clicked []
+set #4 heightRequest 24
+set #4 cssClasses []

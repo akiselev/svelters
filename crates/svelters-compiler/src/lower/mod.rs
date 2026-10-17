@@ -21,9 +21,18 @@ use serde_json::Value as Json;
 use std::collections::HashSet;
 
 pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a StyleSheet>, diags: &mut Diagnostics) -> Component<'a> {
-    let mut l = Lower { sem, diags, next_id: 0, styles, reported: HashSet::new(), single_slots: Default::default(), in_block: false };
+    let mut l = Lower { sem, diags, next_id: 0, styles, reported: HashSet::new(), single_slots: Default::default(), in_block: false, matched: HashSet::new() };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
+    if let Some(sheet) = styles {
+        for rule in &sheet.rules {
+            for sel in &rule.selectors {
+                if !l.matched.contains(&sel.span) && sel.parts.iter().all(|(_, c)| c.states.is_empty()) {
+                    l.diags.warning("style_unused_selector", sel.span, "this selector matches no element of the component (its declarations are not checked)");
+                }
+            }
+        }
+    }
     Component { root: root_fragment, elements: l.next_id }
 }
 
@@ -52,6 +61,8 @@ struct Lower<'a, 's, 'd> {
     single_slots: std::collections::HashMap<(usize, String), u32>,
     /// Inside an {#if}/{#each} branch: alternatives may share a single-child slot.
     in_block: bool,
+    /// Selector spans that matched at least one element (for `style_unused_selector`).
+    matched: HashSet<(u32, u32)>,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -408,6 +419,7 @@ impl<'a> Lower<'a, '_, '_> {
             for sel in &rule.selectors {
                 order += 1;
                 let Some(cond) = match_selector(sel, chain) else { continue };
+                self.matched.insert(sel.span);
                 for d in &rule.declarations {
                     let dspan = (d.span.0, d.span.1);
                     match self.sem.style_declaration(er, &d.name, &d.value) {

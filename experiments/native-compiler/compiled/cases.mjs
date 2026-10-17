@@ -19,6 +19,9 @@ export function cases() {
       handwritten: path.join(here, '../handwritten', name, 'expected.oplog'),
       // Rejected at compile time by the backend spec (the JS pipeline fails at runtime instead).
       rejectOn: name === 'if-toggle' ? { qt: 'unknown_element' } : {},
+      // The hand-written equivalent predates master's bind:this version of this fixture: only
+      // the JS-pipeline state comparison applies.
+      handwrittenStale: name === 'native-close',
     });
   }
   const own = path.join(here, '../fixtures');
