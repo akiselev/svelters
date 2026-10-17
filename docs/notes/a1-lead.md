@@ -43,3 +43,25 @@ Branch `worktree-agent-af26bb86d3e5158d3` (the A1 integration branch). Spec:
 - S1 (ABI v3) conflicted with the A1 generator changes in `gen_cpp.py`; resolved by re-applying the
   A1 changes on master's typed generator (`Tests` rewritten against `p["cat"]`).
 - X2 conflicted only in `backend.cpp.in` (`Entry` fields) and a renderer test import.
+
+## Phase 2 (workers) and lessons
+
+- 21 Sonnet workers: wave 1 (8: gtk-base, gtk-buttons, gtk-text, gtk-display, gtk-containers-a,
+  qt-base, qt-containers-a, qt-dialogs), wave 2 (8: gtk-ranges, gtk-containers-b, gtk-bars+dialogs,
+  qt-buttons, qt-text, qt-ranges, qt-selection, qt-bars), then qt-display, qt-containers-b,
+  gtk-leftovers, gtk-followups, qt-followups.
+- Merging: generated files (verify.rs, tables.rs, facts.json, ledgers, coverage, typings) always
+  conflict between parallel branches; take either side and regenerate (ingest, gen_backend,
+  gen_bindings, gen_cpp) and refresh the ledger. Union-merge `gallery.rs`; for TODO status lines keep
+  the non-`todo` side. Ledger entries are one per line so they rarely conflict textually.
+- Brief lessons:
+  - Workers reported generator limits precisely when told "stop on that slot and describe the
+    generator problem"; most of the lead's generator fixes (G10, G13-G18) came from those reports.
+  - Gallery echo counters: tell workers to arm the counter just before the app's own write
+    (`armed = true; value = ...` in a `setTimeout`) and never filter by value; one worker filtered
+    `if (i !== page)`, which hides echoes.
+  - Triggers must change the value on every `$i` (0, 1, 2): several no-echo/delivered_once failures
+    came from triggers that were no-ops on the second call.
+  - Enum props travel as kebab-case names; Svelte attribute names cannot contain `:` (use a spread
+    `{...{'onnotify::x': fn}}` or a function binding).
+  - Build rules changed mid-milestone (cargo-slot queue); messages to running workers covered it.

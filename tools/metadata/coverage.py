@@ -165,8 +165,10 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
     if tk == "gtk":
-        o.append("GTK exposes every property whose type the backend converts and every signal by reflection; "
-                 "the annotated and verified columns say which facts have generated tests.\n")
+        o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
+                 "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
+                 "methods column counts annotated methods, which have generated tests; the annotated and verified "
+                 "columns say which facts are tested.\n")
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")

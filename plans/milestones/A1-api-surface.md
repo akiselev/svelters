@@ -1,6 +1,6 @@
 # A1: API surface annotations and widget galleries
 
-Status: QUEUED. Starts when F1 (fork bindings) merges, because F1 adds binding metadata to the same override files.
+Status: DONE 2026-10-17 on branch `worktree-agent-af26bb86d3e5158d3` (completion record at the end). Open framework gaps are in `metadata/A1-GAPS.md`.
 
 Goal: as much of the GTK4 and QtWidgets API surface as possible works from Svelte, with every annotated fact backed by a passing generated test. One widget gallery app per toolkit is both the showcase and the end-to-end check.
 
@@ -86,3 +86,56 @@ The lead reviews each batch's diff, merges it into the A1 branch after its gates
 - Both galleries run and every page has a screenshot test.
 - All gates are green.
 - A completion record here includes the coverage numbers.
+
+## Completion record (2026-10-17)
+
+Branch `worktree-agent-af26bb86d3e5158d3`. All 22 batches of `metadata/A1-TODO.md` are done (20 family
+batches plus two follow-up batches); no batch is blocked as a whole. Facts that still need a framework
+feature are listed per batch and in `metadata/A1-GAPS.md`.
+
+Gates at the final merge: `cargo nextest run --workspace` 607/607 (through `tools/dev/cargo-slot`),
+`pnpm test` (includes `ledger.py check` and `coverage.py --check`) and `pnpm docs:test` green.
+
+### Coverage (`metadata/coverage/{gtk,qt}.md`)
+
+| Measure | GTK | Qt |
+| --- | --- | --- |
+| Concrete widget kinds exposed as elements | 66/102 (36 marked `unexposed` with a reason) | 52/77 (the rest `unexposed` or internal) |
+| Kinds with annotations | 77 | 55 |
+| Properties exposed | 577/650 (reflection) | 263/522 (annotated) |
+| Signals exposed | 221/221 (reflection) | 72/219 (annotated) |
+| Methods | all introspectable via GI (X1); 52 annotated and tested | 89 annotated and tested |
+| Child slots annotated (own) | 34 | 18 |
+| Two-way bindings | 14 | 20 |
+| Manual facts verified (ledger) | 420/420 (431 tests) | 528/528 (1571 tests) |
+| Kinds on a gallery page | 66 | 47 |
+
+### Galleries
+
+`fixtures/gallery-gtk` (10 pages) and `fixtures/gallery-qt` (11 pages), run by the `counter` binary;
+one screenshot test per page in `examples/counter/tests/gallery.rs` (21 tests: clean run, native
+classes present, every `echo <binding>: N` label at 0, screenshot in `target/gallery/<toolkit>-<page>.png`).
+
+### Tooling delivered
+
+Per-toolkit override schemas and strict merge; inheritance (GTK bases/interfaces, Qt `inherit:`
+blocks); per-kind lifetime blocks; Qt typed defaults/ranges; generated tests for every manual fact
+(the generators refuse untestable facts) with a fact manifest; the verified ledger
+(`metadata/verified/`, checked in `pnpm test`); the coverage report; galleries; docs frontends
+reading the ledger. Generator extensions made during A1: GTK typed slots, wrapper/index args,
+round-trip and enum tests for non-Gtk enums, dynamic GI method annotations; Qt per-handle echo
+flag (replacing QSignalBlocker), prop `setup`, nested and append-only slots, removal by id,
+release-old on replace, no-echo tests for non-scalar props, getter-typed ingest. Details:
+`docs/notes/a1-lead.md`.
+
+### Workers
+
+21 Sonnet workers in three waves (4, then up to 8 at once as approved, then follow-ups), each in its
+own worktree; every branch was reviewed and merged by the lead after its gates passed.
+
+### Open (framework, not A1)
+
+G7 non-widget children (QAction, GMenuModel), G8 GTK callbacks (draw/sort/filter), G9 toplevel kinds
+other than `window` in the renderer (dialogs), G11 non-Gtk object kinds, G12 verification of facts on
+borrowed non-widget objects (GtkTextBuffer, GtkAdjustment), QMainWindow toolbar/dock areas, G5 typed
+sync results and Qt event families. Per-batch dropped facts with reasons are in the TODO status lines.
