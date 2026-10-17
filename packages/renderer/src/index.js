@@ -39,7 +39,11 @@ class WNode {
     this.tag = tag ?? null;
     this.value = value ?? null; // text / comment data
     this.parent = null;
-    this.children = [];
+    // children are a doubly linked list so that insert/remove/sibling lookups are O(1)
+    this.first = null;
+    this.last = null;
+    this.prev = null;
+    this.next = null;
     if (kind === 'element') {
       this.attrs = {}; // raw attribute values, for getAttribute/hasAttribute
       this.props = new Map(); // host props, insertion-ordered
@@ -66,7 +70,7 @@ const proxySlot = (n) => (typeof n.attrs.name === 'string' ? n.attrs.name : null
 
 /** Native element descendants of `p` in document order, looking through sv-slot proxies. */
 function flat(p, slot, out) {
-  for (const c of p.children) {
+  for (let c = p.first; c; c = c.next) {
     if (c.kind !== 'element') continue;
     if (isProxy(c)) flat(c, proxySlot(c) ?? slot, out);
     else out.push({ el: c, slot: slot ?? c.slot });
@@ -105,7 +109,7 @@ function markDetached(el) {
 }
 
 function destroyTree(el) {
-  for (const c of el.children) if (c.kind === 'element') destroyTree(c);
+  for (let c = el.first; c; c = c.next) if (c.kind === 'element') destroyTree(c);
   if (el.h != null) {
     byHandle.delete(el.h);
     host().destroy(el.h);
@@ -126,7 +130,7 @@ function sweep() {
 
 function labelText(el) {
   let s = '';
-  for (const c of el.children) if (c.kind === 'text') s += c.value;
+  for (let c = el.first; c; c = c.next) if (c.kind === 'text') s += c.value;
   return s;
 }
 
@@ -156,13 +160,35 @@ function realize(el) {
   }
 }
 
+/** First native element in or under `s` (looking through sv-slot proxies), or null. */
+function firstFlat(s) {
+  if (s.kind !== 'element') return null;
+  if (!isProxy(s)) return s;
+  for (let c = s.first; c; c = c.next) {
+    const e = firstFlat(c);
+    if (e) return e;
+  }
+  return null;
+}
+
+/** The native element that follows `n` in `flat(parent)` order, or null. */
+function nextFlat(n, parent) {
+  let cur = n;
+  for (;;) {
+    for (let s = cur.next; s; s = s.next) {
+      const e = firstFlat(s);
+      if (e) return e;
+    }
+    cur = cur.parent;
+    if (!cur || cur === parent || !isProxy(cur)) return null;
+  }
+}
+
 function nativeInsert(parent, el, slot) {
   let before = null;
-  const list = flat(parent, null, []);
-  const i = list.findIndex((e) => e.el === el);
-  for (let j = i + 1; j < list.length; j++) {
-    if (list[j].slot === slot && list[j].el.np === parent) {
-      before = list[j].el.h;
+  for (let c = nextFlat(el, parent); c; c = nextFlat(c, parent)) {
+    if (c.np === parent && placement(c).slot === slot) {
+      before = c.h;
       break;
     }
   }
@@ -196,7 +222,11 @@ function detach(n) {
   if (!p) return;
   const targets = isProxy(n) ? flat(n, null, []).map((e) => e.el) : n.kind === 'element' ? [n] : [];
   const places = targets.map(placement);
-  p.children.splice(p.children.indexOf(n), 1);
+  if (n.prev) n.prev.next = n.next;
+  else p.first = n.next;
+  if (n.next) n.next.prev = n.prev;
+  else p.last = n.prev;
+  n.prev = n.next = null;
   n.parent = null;
   targets.forEach((t, i) => {
     const pl = places[i];
@@ -256,32 +286,39 @@ const renderer = createRenderer({
   },
   setText(node, text) {
     if (node.kind === 'element') {
-      for (const c of [...node.children]) detach(c);
+      for (let c = node.first, nx; c; c = nx) {
+        nx = c.next;
+        detach(c);
+      }
       if (text) renderer.insert(node, renderer.createTextNode(text), null);
     } else {
       node.value = String(text);
       if (node.parent) updateLabel(node.parent);
     }
   },
-  getFirstChild: (el) => el.children[0] ?? null,
-  getLastChild: (el) => el.children[el.children.length - 1] ?? null,
-  getNextSibling(node) {
-    const p = node.parent;
-    return p ? (p.children[p.children.indexOf(node) + 1] ?? null) : null;
-  },
+  getFirstChild: (el) => el.first,
+  getLastChild: (el) => el.last,
+  getNextSibling: (node) => node.next,
   getParent: (node) => node.parent,
   insert(parent, node, anchor) {
     let nodes = [node];
     if (node.kind === 'fragment') {
-      nodes = [...node.children];
-      for (const c of nodes) c.parent = null;
-      node.children = [];
+      nodes = [];
+      for (let c = node.first; c; c = c.next) nodes.push(c);
+      for (const c of nodes) c.parent = c.prev = c.next = null;
+      node.first = node.last = null;
     }
     for (const n of nodes) {
       detach(n);
-      const i = anchor ? parent.children.indexOf(anchor) : parent.children.length;
-      if (anchor && i < 0) throw new Error('insert: anchor is not a child of parent');
-      parent.children.splice(i, 0, n);
+      if (anchor && anchor.parent !== parent) throw new Error('insert: anchor is not a child of parent');
+      const before = anchor ?? null;
+      const after = before ? before.prev : parent.last;
+      n.prev = after;
+      n.next = before;
+      if (after) after.next = n;
+      else parent.first = n;
+      if (before) before.prev = n;
+      else parent.last = n;
       n.parent = parent;
       childAttached(parent, n);
     }
