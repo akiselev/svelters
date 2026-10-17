@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Not a widget: a QObject grouping buttons by id; needs button-reference arguments that the slot model does not cover yet."

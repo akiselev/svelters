@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work."

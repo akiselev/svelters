@@ -118,6 +118,13 @@ export interface QtElementDescriptors {
     props: {
       readonly count?: number;
       currentData?: number;
+      editable?: boolean;
+      currentIndex?: number;
+      currentText?: string;
+      maxVisibleItems?: number;
+      placeholderText?: string;
+      insertPolicy?: "insert-after-current" | "insert-alphabetically" | "insert-at-bottom" | "insert-at-current" | "insert-at-top" | "insert-before-current" | "no-insert";
+      duplicatesEnabled?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -130,10 +137,16 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      changed: (index: number) => void;
+      "text-changed": (text: string) => void;
+      activated: (index: number) => void;
     };
     methods: {
       addItem(text: string, userData: Variant): void;
       itemData(index: number, role: number): Variant;
+      insertItem(index: number, text: string, userData: Variant): void;
+      removeItem(index: number): void;
+      clear(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -374,6 +387,33 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  fontcombobox: {
+    props: {
+      currentFont?: Boxed<"QFont"> | string;
+      writingSystem?: "any" | "arabic" | "armenian" | "bengali" | "cyrillic" | "devanagari" | "georgian" | "greek" | "gujarati" | "gurmukhi" | "hebrew" | "japanese" | "kannada" | "khmer" | "korean" | "lao" | "latin" | "malayalam" | "myanmar" | "nko" | "ogham" | "oriya" | "other" | "runic" | "simplified-chinese" | "sinhala" | "symbol" | "syriac" | "tamil" | "telugu" | "thaana" | "thai" | "tibetan" | "traditional-chinese" | "vietnamese" | "writing-systems-count";
+      fontFilters?: Array<"all-fonts" | "monospaced-fonts" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   fontdialog: {
     props: {
       currentFont?: Boxed<"QFont"> | string;
@@ -538,6 +578,44 @@ export interface QtElementDescriptors {
     methods: {
       setBuddy(buddy: number): void;
       buddy(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  listwidget: {
+    props: {
+      readonly count?: number;
+      currentRow?: number;
+      sortingEnabled?: boolean;
+      selectionMode?: "contiguous-selection" | "extended-selection" | "multi-selection" | "no-selection" | "single-selection";
+      alternatingRowColors?: boolean;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "row-changed": (currentRow: number) => void;
+      "selection-changed": () => void;
+    };
+    methods: {
+      addItem(label: string): void;
+      insertItem(row: number, label: string): void;
+      clear(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
