@@ -69,3 +69,20 @@ which owns its main thread.
   graveyard, and pumps 50 ms. Then `Xaml::shutdown` closes the `Application` (IClosable), then the
   `WindowsXamlManager`, then runs `ShutdownQueue`, in the islands samples' order. counter-win calls
   it after `run()`; `Drop` uses the same path.
+
+### Run 2 (195a8c94): https://github.com/akiselev/svelters/actions/runs/39080138596 (green)
+
+- `--lib` 12/12, `generated` 60/60, counter-win selftest `ok: true` with exit 0, and
+  `counter_win_selftest` ok. The shutdown trace runs through Application.Close,
+  WindowsXamlManager.Close and ShutdownQueue without errors.
+- Windows wall time for runs 1 and 2: about 2.5 + 3.3 minutes.
+
+## Open
+
+- `generated` leaks its backend on purpose and exits without `shutdown()`. That exits cleanly
+  today because the harness destroys every window. A `testing::shutdown()` call at the end of the
+  generated `main` would be tidier, but it needs a `gen_backend.py` change.
+- Keyboard input through `ContentPreTranslateMessage` is untested (the selftest sets props and
+  uses UI Automation `Invoke`).
+- `Application.Close` succeeded, so WinAppSDK 2.5 `Application` implements `IClosable`. It is
+  reached via a cast, not through the bindings filter.
