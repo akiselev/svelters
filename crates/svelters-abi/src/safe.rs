@@ -20,6 +20,31 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::ptr;
 use std::sync::Arc;
 
+/// The JS-facing name of an `SVL_GONE_*` reason (also used in the op log).
+pub fn gone_name(reason: u32) -> &'static str {
+    match reason {
+        SVL_GONE_CLOSED => "closed",
+        SVL_GONE_PARENT => "parent",
+        SVL_GONE_OWNER => "owner",
+        SVL_GONE_REPLACED => "replaced",
+        SVL_GONE_SHUTDOWN => "shutdown",
+        _ => "unknown",
+    }
+}
+
+/// Inverse of [`gone_name`].
+pub fn gone_from_name(name: &str) -> Option<u32> {
+    Some(match name {
+        "unknown" => SVL_GONE_UNKNOWN,
+        "closed" => SVL_GONE_CLOSED,
+        "parent" => SVL_GONE_PARENT,
+        "owner" => SVL_GONE_OWNER,
+        "replaced" => SVL_GONE_REPLACED,
+        "shutdown" => SVL_GONE_SHUTDOWN,
+        _ => return None,
+    })
+}
+
 /// Name scopes for [`Backend::resolve`].
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum NameKind {

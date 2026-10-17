@@ -14,6 +14,8 @@ pub struct RunReport {
     pub errors: Vec<JsError>,
     pub console: Vec<ConsoleLine>,
     pub wake_count: u64,
+    /// `schedule_wake` deadlines that expired and ran a checkpoint.
+    pub timer_fires: u64,
     pub checkpoint_count: u64,
 }
 
@@ -35,6 +37,7 @@ pub fn run_bundle(
         errors: host.take_errors(),
         console: host.take_console(),
         wake_count: log.wake_count(),
+        timer_fires: log.timer_fire_count(),
         checkpoint_count: log.checkpoint_count(),
     };
     drop(host);

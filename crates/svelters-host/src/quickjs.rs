@@ -176,6 +176,16 @@ impl JsEngine for QjsEngine {
         })
     }
 
+    fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_gone")?;
+            let Some(f) = f.as_function() else {
+                return Ok(());
+            };
+            f.call::<_, Value>((handle as f64, reason)).map(|_| ())
+        })
+    }
+
     fn fire_timer(&mut self, id: u32) -> Result<(), JsError> {
         self.call_guarded(|ctx| {
             let internal: Object = ctx.globals().get("__svelters_internal")?;

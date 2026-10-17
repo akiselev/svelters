@@ -123,6 +123,12 @@ fn bundle_path(fixture: &str) -> PathBuf {
     dir.join("dist/app.js")
 }
 
+/// Names of this process's threads (Linux), to show the host starts none of its own.
+fn thread_names() -> Vec<String> {
+    let Ok(rd) = std::fs::read_dir("/proc/self/task") else { return Vec::new() };
+    rd.filter_map(|e| std::fs::read_to_string(e.ok()?.path().join("comm")).ok()).map(|s| s.trim().to_string()).collect()
+}
+
 /// `VmHWM` / `VmRSS` in KiB from /proc/self/status.
 fn memory_kb() -> (u64, u64) {
     let status = std::fs::read_to_string("/proc/self/status").unwrap_or_default();
@@ -145,9 +151,6 @@ struct Setup<'a> {
     before_load: &'a dyn Fn(Rc<Cell<Option<Duration>>>),
     /// Runs after the bundle loaded and the window exists (GTK hooks its frame clock here).
     after_load: &'a dyn Fn(Rc<Cell<Option<Duration>>>),
-    /// Keeps the toolkit loop running while the app has no window (watch mode, failed first
-    /// load). Dropping the returned guard lets the loop end normally again.
-    keep_alive: &'a dyn Fn() -> Box<dyn std::any::Any>,
 }
 
 fn run(setup: Setup) -> Result<Json, String> {
@@ -161,24 +164,24 @@ fn run(setup: Setup) -> Result<Json, String> {
     if !bundle.is_file() {
         return Err(format!("{} not found (build the fixtures: pnpm install && pnpm -r build)", bundle.display()));
     }
-    let mut hold: Option<Box<dyn std::any::Any>> = None;
     if let Err(e) = host.load_bundle(&bundle) {
         let e = format!("load {}: {e}", bundle.display());
         if !args.watch {
             return Err(e);
         }
+        // The backend's loop keeps running with no window; the host only quits once a toplevel
+        // existed and the last one is gone.
         eprintln!("[counter] {e}\n[counter] waiting for the next change");
-        hold = Some((setup.keep_alive)());
     }
     let loaded = setup.start.elapsed();
     (setup.after_load)(first_frame.clone());
 
-    let hold = Rc::new(RefCell::new(hold));
     let reloads: Rc<RefCell<Vec<Json>>> = Rc::default();
     let reload_dump: Rc<RefCell<Option<Json>>> = Rc::default();
+    let native_toplevels: Rc<Cell<Option<usize>>> = Rc::default();
     if args.watch {
         let weak = Rc::downgrade(&host);
-        let (hold, reloads, reload_dump, tk, backend) = (hold.clone(), reloads.clone(), reload_dump.clone(), setup.toolkit.clone(), setup.backend);
+        let (reloads, reload_dump, tk, backend, native_toplevels) = (reloads.clone(), reload_dump.clone(), setup.toolkit.clone(), setup.backend, native_toplevels.clone());
         let (exit_after, ok_count) = (args.reload_exit, Cell::new(0u32));
         host.on_reload(move |r| {
             reloads.borrow_mut().push(json!({
@@ -189,17 +192,17 @@ fn run(setup: Setup) -> Result<Json, String> {
             if !r.ok {
                 return;
             }
-            hold.borrow_mut().take();
             ok_count.set(ok_count.get() + 1);
             if exit_after == Some(ok_count.get()) {
                 // Give the toolkit a moment to map and lay out the new window, then record it.
-                let (weak, tk2, reload_dump) = (weak.clone(), tk.clone(), reload_dump.clone());
+                let (weak, tk2, reload_dump, native_toplevels) = (weak.clone(), tk.clone(), reload_dump.clone(), native_toplevels.clone());
                 tk.schedule(
                     300,
                     Box::new(move || {
                         let tops = weak.upgrade().map(|h| h.toplevels()).unwrap_or_default();
                         let dump: Vec<Json> = tops.iter().map(|t| tk2.dump(*t)).collect();
                         *reload_dump.borrow_mut() = Some(Json::Array(dump));
+                        native_toplevels.set(Some(tk2.native_toplevels()));
                         backend.quit();
                     }),
                 );
@@ -263,6 +266,8 @@ fn run(setup: Setup) -> Result<Json, String> {
         "console": console,
         "dump": dump,
         "reloads": reloads.borrow().clone(),
+        "native_toplevels": native_toplevels.get(),
+        "threads": thread_names(),
         "steps": steps,
         "checkpoints": host.checkpoint_count(),
         "load_ms": loaded.as_secs_f64() * 1e3,
@@ -291,14 +296,6 @@ fn run_gtk(args: &Args, start: Instant) -> Result<Json, String> {
         toolkit: tk,
         before_load: &|_| {},
         after_load: &move |done| tk2.on_first_frame(driver::ROOT, start, done),
-        keep_alive: &|| {
-            // The default `GApplication` is the one the GTK backend created. A hold keeps its loop
-            // running with no window; the guard releases it on drop.
-            match gtk::gio::Application::default() {
-                Some(app) => Box::new(gtk::gio::prelude::ApplicationExtManual::hold(&app)),
-                None => Box::new(()),
-            }
-        },
     })
 }
 
@@ -329,7 +326,6 @@ fn run_qt(args: &Args, start: Instant) -> Result<Json, String> {
         },
         after_load: &|_| {},
         // Qt's loop keeps running with no window until `quit`.
-        keep_alive: &|| Box::new(()),
     })
 }
 

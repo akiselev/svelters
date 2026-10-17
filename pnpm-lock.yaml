@@ -91,6 +91,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(esbuild@0.28.2)
 
+  fixtures/native-close:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(esbuild@0.28.2)
+
   fixtures/timers:
     dependencies:
       svelte:

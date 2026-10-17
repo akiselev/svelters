@@ -1,0 +1,32 @@
+create window #1
+set #1 title "Main"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 8
+create label #3
+set #3 label "child open"
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+set #4 label "Toggle child"
+insert #2 #4 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+create window #5
+set #5 title "Child"
+create label #6
+set #6 label "Child body"
+insert #5 #6 before=end slot=default
+call #5 present []
+gone #5 closed
+gone #6 parent
+event #4 clicked []
+set #3 label "child closed"
+event #4 clicked []
+create window #7
+set #7 title "Child"
+create label #8
+set #8 label "Child body"
+insert #7 #8 before=end slot=default
+call #7 present []
+set #3 label "child open"

@@ -69,6 +69,9 @@ impl Run {
         assert_eq!(r["failures"], serde_json::json!([]), "driver failures");
         assert_eq!(r["errors"], serde_json::json!([]), "host errors (stale handles show up here)");
         assert_eq!(r["run_returned"], true);
+        // Timers run on the toolkit: the host has no timer thread (the `ps -T` check).
+        let threads = r["threads"].as_array().expect("threads");
+        assert!(!threads.is_empty() && threads.iter().all(|t| !t.as_str().unwrap_or("").starts_with("svelters-timer")), "{threads:?}");
         let err = self.stderr();
         for bad in ["stale", "CRITICAL", "foreign handle"] {
             assert!(!err.contains(bad), "stderr mentions '{bad}':\n{err}");
@@ -265,4 +268,33 @@ fn run_returns_after_native_close_gtk() {
 #[test]
 fn run_returns_after_native_close_qt() {
     closes("qt");
+}
+
+// ---- native-close: a child window closed natively, then the app toggles it ----
+
+fn native_close(backend: &str) {
+    // The fixture script closes the child window (#5) natively, toggles twice and ends with a new
+    // child window. Stale-handle complaints would show up as host errors or in stderr.
+    let r = run_fixture(backend, "native-close");
+    r.assert_clean();
+    assert_eq!(r.labels(), ["child open"]);
+
+    // Closed and toggled once: the app's state says closed, and nothing was sent for the dead window.
+    let script = write_script(
+        "native-close-once.json",
+        r#"[{"checkpoint":true},{"gone":[5,"closed"]},{"checkpoint":true},{"event":[4,"clicked",[]]},{"checkpoint":true}]"#,
+    );
+    let r = run_script(backend, "native-close", &script, &[]);
+    r.assert_clean();
+    assert_eq!(r.labels(), ["child closed"]);
+}
+
+#[test]
+fn native_close_gtk() {
+    native_close("gtk");
+}
+
+#[test]
+fn native_close_qt() {
+    native_close("qt");
 }

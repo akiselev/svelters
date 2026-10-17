@@ -36,8 +36,9 @@ struct Ev {
 struct Rec {
   std::vector<Ev> events;
   std::vector<svl_handle> destroyed;
+  std::vector<uint32_t> reasons;  // parallel to `destroyed`
   int checkpoints = 0;
-  void clear() { events.clear(); destroyed.clear(); checkpoints = 0; }
+  void clear() { events.clear(); destroyed.clear(); reasons.clear(); checkpoints = 0; }
 } rec;
 
 void h_post(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n) {
@@ -48,7 +49,10 @@ void h_post(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n) {
 }
 void h_checkpoint(void *) { rec.checkpoints++; }
 int h_call_sync(void *, svl_handle, svl_id, const svl_value *, size_t, svl_value *) { return -1; }
-void h_destroyed(void *, svl_handle h, uint32_t) { rec.destroyed.push_back(h); }
+void h_destroyed(void *, svl_handle h, uint32_t reason) {
+  rec.destroyed.push_back(h);
+  rec.reasons.push_back(reason);
+}
 const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed};
 
 const svl_backend *B = nullptr;
@@ -158,6 +162,66 @@ bool t_runtime_parent_destroy_notifies_children(std::string &why) {
   return true;
 }
 
+bool t_runtime_handle_info_and_idempotent_destroy(std::string &why) {
+  CHECK(K("window") && K("label"));
+  svl_handle w = mk("window");
+  svl_handle l = mk("label");
+  svl_handle_info info{};
+  CHECK(B->handle_info(B->self, w, &info) == 0);
+  CHECK(info.kind == K("window"));
+  CHECK(info.lifetime == SVL_LIFE_TOPLEVEL);
+  CHECK(B->handle_info(B->self, l, &info) == 0);
+  CHECK(info.kind == K("label"));
+  CHECK(info.lifetime == SVL_LIFE_OWNED);
+  B->destroy(B->self, l);
+  B->destroy(B->self, l);          // idempotent
+  B->destroy(B->self, 424242);     // never issued: harmless
+  CHECK(B->handle_info(B->self, l, &info) < 0);
+  CHECK(std::strlen(B->last_error(B->self)) > 0);
+  CHECK(!was_destroyed(l));        // the app's own destroy is silent
+  B->destroy(B->self, w);
+  flush();
+  return true;
+}
+
+bool t_runtime_uncontrolled_close_cascades(std::string &why) {
+  svl_handle w = mk("window");
+  svl_handle l = mk("label");
+  CHECK(B->insert(B->self, w, l, 0, 0) == 0);
+  auto *widget = qobject_cast<QWidget *>(O(w));
+  CHECK(widget);
+  CHECK(widget->close());
+  // The window is reported first (closed), then what was inserted below it (parent).
+  CHECK(rec.destroyed.size() == 2);
+  CHECK(rec.destroyed[0] == w && rec.reasons[0] == SVL_GONE_CLOSED);
+  CHECK(rec.destroyed[1] == l && rec.reasons[1] == SVL_GONE_PARENT);
+  svl_handle_info info{};
+  CHECK(B->handle_info(B->self, w, &info) < 0);
+  CHECK(B->handle_info(B->self, l, &info) < 0);
+  B->destroy(B->self, w);  // stale: ignored
+  flush();
+  CHECK(rec.destroyed.size() == 2);  // at most once
+  return true;
+}
+
+bool t_runtime_controlled_close_is_vetoed(std::string &why) {
+  svl_handle w = mk("window");
+  svl_id sig = G("window", "close-request");
+  CHECK(sig != 0);
+  CHECK(B->listen(B->self, w, sig, true) == 0);
+  auto *widget = qobject_cast<QWidget *>(O(w));
+  CHECK(widget);
+  CHECK(!widget->close());  // vetoed
+  CHECK(rec.events.size() == 1 && rec.events[0].h == w && rec.events[0].sig == sig);
+  CHECK(rec.destroyed.empty());
+  svl_handle_info info{};
+  CHECK(B->handle_info(B->self, w, &info) == 0);  // still alive
+  CHECK(B->listen(B->self, w, sig, false) == 0);
+  CHECK(widget->close());  // no listener: closed for good
+  CHECK(rec.destroyed.size() == 1 && rec.destroyed[0] == w && rec.reasons[0] == SVL_GONE_CLOSED);
+  return true;
+}
+
 bool t_runtime_wake_queues_checkpoint(std::string &why) {
   rec.clear();
   std::thread t([] { B->wake(B->self); });
@@ -188,6 +252,9 @@ const TestCase kTests[] = {
     {"runtime/host_destroy_is_silent", t_runtime_host_destroy_is_silent},
     {"runtime/native_destroy_notifies_host", t_runtime_native_destroy_notifies_host},
     {"runtime/parent_destroy_notifies_children", t_runtime_parent_destroy_notifies_children},
+    {"runtime/handle_info_and_idempotent_destroy", t_runtime_handle_info_and_idempotent_destroy},
+    {"runtime/uncontrolled_close_cascades", t_runtime_uncontrolled_close_cascades},
+    {"runtime/controlled_close_is_vetoed", t_runtime_controlled_close_is_vetoed},
     {"runtime/wake_queues_checkpoint", t_runtime_wake_queues_checkpoint},
     {"runtime/wrong_value_type_is_error", t_runtime_wrong_value_type_is_error},
 //@@TEST_TABLE@@

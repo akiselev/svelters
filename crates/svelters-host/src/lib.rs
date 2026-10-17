@@ -12,7 +12,8 @@
 //! `engine` is the boundary trait, `quickjs` is the rquickjs implementation.
 //!
 //! Threading: a `Host` is pinned to the thread that created it (the toolkit's main thread).
-//! The only cross-thread call is the timer thread invoking the backend's thread-safe `wake`.
+//! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
+//! backend's one-shot `schedule_wake` for the earliest deadline.
 
 mod core;
 mod engine;
@@ -25,7 +26,7 @@ pub use crate::core::{ConsoleLine, HostConfig, Timing};
 pub use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
 pub use crate::reload::ReloadReport;
 
-use crate::core::{Core, Sched};
+use crate::core::Core;
 use crate::reload::{MakeEngine, Reloader};
 use std::cell::RefCell;
 use std::marker::PhantomData;
@@ -33,7 +34,6 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use std::thread::JoinHandle;
 use svelters_abi::{AbiError, BackendRef, HostCallbacks, HostVtable, Value, svl_handle, svl_id};
 
 type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
@@ -67,8 +67,12 @@ impl HostCallbacks for Callbacks {
         Err("call_sync is not supported yet (M4)".into())
     }
 
-    fn on_destroyed(&self, h: svl_handle, _reason: u32) {
-        self.core.forget_handle(h);
+    fn on_destroyed(&self, h: svl_handle, reason: u32) {
+        self.core.native_gone(h, reason);
+        // Delivering the death is a checkpoint's job; a live backend needs one scheduled.
+        if !self.core.cfg.scripted {
+            self.core.backend().wake();
+        }
     }
 }
 
@@ -78,7 +82,6 @@ pub struct Host<'a> {
     engine: SharedEngine,
     vt: HostVtable,
     reloader: Rc<Reloader>,
-    timer_thread: Option<JoinHandle<()>>,
     _backend: PhantomData<BackendRef<'a>>,
 }
 
@@ -95,11 +98,9 @@ impl<'a> Host<'a> {
         cfg: HostConfig,
         make: MakeEngine,
     ) -> Result<Host<'a>, JsError> {
-        // SAFETY: `'a` ties the host to the backend borrow, and `Drop` joins the only other user
-        // of the erased reference (the timer thread) before `'a` can end.
+        // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
         let backend_static = unsafe { backend.erase_lifetime() };
-        let sched = Sched::new();
-        let core = Rc::new(Core::new(backend_static, cfg, sched.clone()));
+        let core = Rc::new(Core::new(backend_static, cfg));
         let engine: SharedEngine = Rc::new(RefCell::new(make(&core)?));
         let reloader = Reloader::new(make);
         let vt = HostVtable::new(Callbacks {
@@ -108,18 +109,11 @@ impl<'a> Host<'a> {
             reloader: reloader.clone(),
         });
 
-        let wake = backend.wake_handle();
-        let timer_thread = std::thread::Builder::new()
-            .name("svelters-timers".into())
-            .spawn(move || sched.run(wake))
-            .map_err(|e| JsError::new(ErrorKind::Host, format!("spawn timer thread: {e}")))?;
-
         Ok(Host {
             core,
             engine,
             vt,
             reloader,
-            timer_thread: Some(timer_thread),
             _backend: PhantomData,
         })
     }
@@ -206,9 +200,7 @@ impl<'a> Host<'a> {
 impl Drop for Host<'_> {
     fn drop(&mut self) {
         self.reloader.stop_watch();
-        self.core.sched.shutdown();
-        if let Some(t) = self.timer_thread.take() {
-            let _ = t.join();
-        }
+        // A pending backend wakeup would call back into a vtable that is about to be freed.
+        self.core.disarm();
     }
 }

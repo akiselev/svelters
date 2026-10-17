@@ -72,6 +72,8 @@ fn watch_reload(backend: &str) {
     assert!(out.status.success(), "exit {:?}; stderr:\n{stderr}\nreport: {r}", out.status);
     assert_eq!(r["errors"], serde_json::json!([]));
     assert_eq!(r["reloads"][0]["ok"], true, "{r}");
+    // The old window is really gone from the toolkit, not only from the host's table (leak check).
+    assert_eq!(r["native_toplevels"], 1, "native toplevels left after reload: {r}");
     // `dump` is one widget tree per toplevel: only the new window is left.
     let trees = r["dump"].as_array().expect("dump");
     assert_eq!(trees.len(), 1, "old window must be gone: {r}");

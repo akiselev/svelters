@@ -76,7 +76,7 @@ pub enum V {
 #[derive(Default)]
 struct Recorder {
     events: RefCell<Vec<(u64, u32, Vec<V>)>>,
-    destroyed: RefCell<Vec<u64>>,
+    destroyed: RefCell<Vec<(u64, u32)>>,
     checkpoints: std::cell::Cell<u32>,
 }
 
@@ -105,9 +105,9 @@ unsafe extern "C" fn h_checkpoint(p: *mut c_void) {
 unsafe extern "C" fn h_call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> std::ffi::c_int {
     -1
 }
-unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, _reason: u32) {
+unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
-    r.destroyed.borrow_mut().push(h);
+    r.destroyed.borrow_mut().push((h, reason));
 }
 
 /// Drives a `GtkBackend` through its C vtable with names instead of IDs, recording host callbacks.
@@ -258,7 +258,21 @@ impl Harness {
         self.rec.events.borrow_mut().drain(..).map(|(h, s, a)| (h, SIGNALS[s as usize - 1].name.to_string(), a)).collect()
     }
     pub fn take_destroyed(&self) -> Vec<u64> {
+        self.rec.destroyed.borrow_mut().drain(..).map(|(h, _)| h).collect()
+    }
+    /// Native deaths reported since the last call, with their `SVL_GONE_*` reason.
+    pub fn take_gone(&self) -> Vec<(u64, u32)> {
         self.rec.destroyed.borrow_mut().drain(..).collect()
+    }
+    pub fn handle_info(&self, h: u64) -> Result<svl_handle_info, String> {
+        let vt = self.vt();
+        let mut out = svl_handle_info::default();
+        self.check(unsafe { (vt.handle_info)(vt.self_, h, &mut out) })?;
+        Ok(out)
+    }
+    pub fn schedule_wake(&self, ms: i64) {
+        let vt = self.vt();
+        unsafe { (vt.schedule_wake)(vt.self_, ms) };
     }
 
     pub fn obj(&self, h: u64) -> glib::Object {
