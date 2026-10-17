@@ -4,6 +4,8 @@ elements:
     props:
       - { js: time, native: time, provenance: "QTimeEdit::time (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: displayFormat, native: displayFormat, sample: "HH:mm", provenance: "QTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumTime, native: minimumTime, provenance: "QTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumTime, native: maximumTime, provenance: "QTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
     signals:
       - js: time-changed
         native: timeChanged

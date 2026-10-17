@@ -5,6 +5,8 @@ elements:
       - { js: date, native: date, provenance: "QDateEdit::date (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: displayFormat, native: displayFormat, sample: "yyyy-MM-dd", provenance: "QDateEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: calendarPopup, native: calendarPopup, provenance: "QDateEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumDate, native: minimumDate, provenance: "QDateEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumDate, native: maximumDate, provenance: "QDateEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
     signals:
       - js: date-changed
         native: dateChanged
