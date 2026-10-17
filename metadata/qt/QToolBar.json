@@ -111,7 +111,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -292,7 +292,7 @@
         "native": "Qt::ToolBarAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::ToolBarArea>"
       },
       "signature": "Qt::ToolBarAreas allowedAreas() const",
       "since": null,
@@ -418,7 +418,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -531,7 +531,7 @@
             "native": "Qt::ToolBarArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolBarArea>"
           }
         }
       ],
@@ -643,7 +643,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -709,7 +709,7 @@
             "native": "Qt::ToolBarAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::ToolBarArea>"
           }
         }
       ],
@@ -783,7 +783,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -857,7 +857,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -894,7 +894,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],
@@ -954,7 +954,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       },
       "signature": "Qt::ToolButtonStyle toolButtonStyle() const",
       "since": null,
@@ -1105,7 +1105,7 @@
         "native": "Qt::ToolBarAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::ToolBarArea>"
       }
     },
     {
@@ -1236,7 +1236,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -1328,7 +1328,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     },
     {
@@ -1374,7 +1374,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       }
     }
   ],
@@ -1438,7 +1438,7 @@
             "native": "Qt::ToolBarAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::ToolBarArea>"
           }
         }
       ],
@@ -1473,7 +1473,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1543,7 +1543,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -1578,7 +1578,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],

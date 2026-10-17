@@ -29,26 +29,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionFocusRect::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionFocusRect::Type",
           "name": "Type",
           "value": "SO_FocusRect"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionFocusRect::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionFocusRect::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionFocusRect",

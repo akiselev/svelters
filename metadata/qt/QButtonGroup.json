@@ -156,7 +156,7 @@
         "native": "QList<QAbstractButton *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QAbstractButton>>"
       },
       "signature": "QList<QAbstractButton *> buttons() const",
       "since": null,

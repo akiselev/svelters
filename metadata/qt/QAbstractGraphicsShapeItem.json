@@ -69,7 +69,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush brush() const",
       "since": null,
@@ -132,7 +132,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath opaqueArea() const override",
       "since": null,
@@ -158,7 +158,7 @@
         "native": "QPen",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPen>"
       },
       "signature": "QPen pen() const",
       "since": null,
@@ -187,7 +187,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -224,7 +224,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         }
       ],

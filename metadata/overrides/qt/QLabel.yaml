@@ -3,3 +3,10 @@ elements:
     construct: { class: QLabel }
     props:
       - { js: label, native: text, provenance: "QLabel::text Q_PROPERTY (qdoc); P prop" }
+      - { js: alignment, native: alignment, provenance: "QLabel::alignment (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: textFormat, native: textFormat, provenance: "QLabel::textFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: pixmap, native: pixmap, provenance: "QLabel::pixmap (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: indent, native: indent, provenance: "QLabel::indent (qdoc); typed by the S1 value model (ABI v3)" }
+    methods:
+      - { js: setBuddy, native: setBuddy, params: ["object<QWidget>"], provenance: "QLabel::setBuddy (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: buddy, native: buddy, provenance: "QLabel::buddy (qdoc); typed by the S1 value model (ABI v3)" }

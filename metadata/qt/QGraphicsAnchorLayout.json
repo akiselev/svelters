@@ -83,7 +83,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         },
         {
@@ -103,7 +103,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         }
       ],
@@ -160,7 +160,7 @@
             "native": "Qt::Orientations",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::Orientation>"
           }
         }
       ],
@@ -207,7 +207,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         },
         {
@@ -227,7 +227,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -274,7 +274,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         },
         {
@@ -294,7 +294,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         }
       ],
@@ -483,7 +483,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -631,7 +631,7 @@
             "native": "Qt::SizeHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SizeHint>"
           }
         },
         {
@@ -641,7 +641,7 @@
             "native": "const QSizeF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -649,7 +649,7 @@
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
       "since": null,

@@ -477,7 +477,7 @@
             "native": "QAbstractSpinBox::StepType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSpinBox::StepType>"
           }
         }
       ],
@@ -611,7 +611,7 @@
         "native": "QAbstractSpinBox::StepType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSpinBox::StepType>"
       },
       "signature": "QAbstractSpinBox::StepType stepType() const",
       "since": null,
@@ -721,7 +721,7 @@
         "native": "QValidator::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QValidator::State>"
       },
       "signature": "QValidator::State validate(QString &text, int &pos) const override",
       "since": null,
@@ -1098,7 +1098,7 @@
         "native": "StepType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<StepType>"
+        "ref": "enum<QAbstractSpinBox::StepType>"
       }
     },
     {

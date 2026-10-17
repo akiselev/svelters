@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -53,135 +53,171 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QWizard::WizardButton",
       "members": [
         {
+          "cpp": "QWizard::BackButton",
           "name": "BackButton",
           "value": "0"
         },
         {
+          "cpp": "QWizard::NextButton",
           "name": "NextButton",
           "value": "1"
         },
         {
+          "cpp": "QWizard::CommitButton",
           "name": "CommitButton",
           "value": "2"
         },
         {
+          "cpp": "QWizard::FinishButton",
           "name": "FinishButton",
           "value": "3"
         },
         {
+          "cpp": "QWizard::CancelButton",
           "name": "CancelButton",
           "value": "4"
         },
         {
+          "cpp": "QWizard::HelpButton",
           "name": "HelpButton",
           "value": "5"
         },
         {
+          "cpp": "QWizard::CustomButton1",
           "name": "CustomButton1",
           "value": "6"
         },
         {
+          "cpp": "QWizard::CustomButton2",
           "name": "CustomButton2",
           "value": "7"
         },
         {
+          "cpp": "QWizard::CustomButton3",
           "name": "CustomButton3",
           "value": "8"
         },
         {
+          "cpp": "QWizard::Stretch",
           "name": "Stretch",
           "value": "9"
         },
         {
+          "cpp": "QWizard::NoButton",
           "name": "NoButton",
           "value": "-1"
         },
         {
+          "cpp": "QWizard::NStandardButtons",
           "name": "NStandardButtons",
           "value": "6"
         },
         {
+          "cpp": "QWizard::NButtons",
           "name": "NButtons",
           "value": "9"
         }
       ],
       "metaobject": null,
       "name": "WizardButton",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QWizard::WizardOptions",
+      "fullname": "QWizard::WizardOption",
       "members": [
         {
+          "cpp": "QWizard::IndependentPages",
           "name": "IndependentPages",
           "value": "0x00000001"
         },
         {
+          "cpp": "QWizard::IgnoreSubTitles",
           "name": "IgnoreSubTitles",
           "value": "0x00000002"
         },
         {
+          "cpp": "QWizard::ExtendedWatermarkPixmap",
           "name": "ExtendedWatermarkPixmap",
           "value": "0x00000004"
         },
         {
+          "cpp": "QWizard::NoDefaultButton",
           "name": "NoDefaultButton",
           "value": "0x00000008"
         },
         {
+          "cpp": "QWizard::NoBackButtonOnStartPage",
           "name": "NoBackButtonOnStartPage",
           "value": "0x00000010"
         },
         {
+          "cpp": "QWizard::NoBackButtonOnLastPage",
           "name": "NoBackButtonOnLastPage",
           "value": "0x00000020"
         },
         {
+          "cpp": "QWizard::DisabledBackButtonOnLastPage",
           "name": "DisabledBackButtonOnLastPage",
           "value": "0x00000040"
         },
         {
+          "cpp": "QWizard::HaveNextButtonOnLastPage",
           "name": "HaveNextButtonOnLastPage",
           "value": "0x00000080"
         },
         {
+          "cpp": "QWizard::HaveFinishButtonOnEarlyPages",
           "name": "HaveFinishButtonOnEarlyPages",
           "value": "0x00000100"
         },
         {
+          "cpp": "QWizard::NoCancelButton",
           "name": "NoCancelButton",
           "value": "0x00000200"
         },
         {
+          "cpp": "QWizard::CancelButtonOnLeft",
           "name": "CancelButtonOnLeft",
           "value": "0x00000400"
         },
         {
+          "cpp": "QWizard::HaveHelpButton",
           "name": "HaveHelpButton",
           "value": "0x00000800"
         },
         {
+          "cpp": "QWizard::HelpButtonOnRight",
           "name": "HelpButtonOnRight",
           "value": "0x00001000"
         },
         {
+          "cpp": "QWizard::HaveCustomButton1",
           "name": "HaveCustomButton1",
           "value": "0x00002000"
         },
         {
+          "cpp": "QWizard::HaveCustomButton2",
           "name": "HaveCustomButton2",
           "value": "0x00004000"
         },
         {
+          "cpp": "QWizard::HaveCustomButton3",
           "name": "HaveCustomButton3",
           "value": "0x00008000"
         },
         {
+          "cpp": "QWizard::NoCancelButtonOnLastPage",
           "name": "NoCancelButtonOnLastPage",
           "value": "0x00010000"
         },
         {
+          "cpp": "QWizard::StretchBanner",
           "name": "StretchBanner",
           "value": "0x00020000"
         }
@@ -211,54 +247,70 @@
         "scoped": false
       },
       "name": "WizardOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QWizard::WizardPixmap",
       "members": [
         {
+          "cpp": "QWizard::WatermarkPixmap",
           "name": "WatermarkPixmap",
           "value": "0"
         },
         {
+          "cpp": "QWizard::LogoPixmap",
           "name": "LogoPixmap",
           "value": "1"
         },
         {
+          "cpp": "QWizard::BannerPixmap",
           "name": "BannerPixmap",
           "value": "2"
         },
         {
+          "cpp": "QWizard::BackgroundPixmap",
           "name": "BackgroundPixmap",
           "value": "3"
         },
         {
+          "cpp": "QWizard::NPixmaps",
           "name": "NPixmaps",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "WizardPixmap",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QWizard::WizardStyle",
       "members": [
         {
+          "cpp": "QWizard::ClassicStyle",
           "name": "ClassicStyle",
           "value": "0"
         },
         {
+          "cpp": "QWizard::ModernStyle",
           "name": "ModernStyle",
           "value": "1"
         },
         {
+          "cpp": "QWizard::MacStyle",
           "name": "MacStyle",
           "value": "2"
         },
         {
+          "cpp": "QWizard::AeroStyle",
           "name": "AeroStyle",
           "value": "3"
         },
         {
+          "cpp": "QWizard::NStyles",
           "name": "NStyles",
           "value": "4"
         }
@@ -275,7 +327,8 @@
         "scoped": false
       },
       "name": "WizardStyle",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QWizard",
@@ -382,7 +435,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         }
       ],
@@ -419,7 +472,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         }
       ],
@@ -730,7 +783,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         },
         {
@@ -836,7 +889,7 @@
         "native": "QWizard::WizardOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QWizard::WizardOption>"
       },
       "signature": "QWizard::WizardOptions options() const",
       "since": null,
@@ -899,7 +952,7 @@
         "native": "QList<int>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<i32>"
       },
       "signature": "QList<int> pageIds() const",
       "since": null,
@@ -965,7 +1018,7 @@
             "native": "QWizard::WizardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardPixmap>"
           }
         }
       ],
@@ -973,7 +1026,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap(QWizard::WizardPixmap which) const",
       "since": null,
@@ -1102,7 +1155,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         },
         {
@@ -1149,7 +1202,7 @@
             "native": "const QList<QWizard::WizardButton> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<enum<QWizard::WizardButton>>"
           }
         }
       ],
@@ -1186,7 +1239,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         },
         {
@@ -1268,9 +1321,9 @@
           "name": "className",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -1278,9 +1331,9 @@
           "name": "property",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -1288,9 +1341,9 @@
           "name": "changedSignal",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -1374,7 +1427,7 @@
             "native": "QWizard::WizardOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardOption>"
           }
         },
         {
@@ -1421,7 +1474,7 @@
             "native": "QWizard::WizardOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QWizard::WizardOption>"
           }
         }
       ],
@@ -1505,7 +1558,7 @@
             "native": "QWizard::WizardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardPixmap>"
           }
         },
         {
@@ -1515,7 +1568,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -1626,7 +1679,7 @@
             "native": "Qt::TextFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextFormat>"
           }
         }
       ],
@@ -1663,7 +1716,7 @@
             "native": "Qt::TextFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextFormat>"
           }
         }
       ],
@@ -1737,7 +1790,7 @@
             "native": "QWizard::WizardStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardStyle>"
           }
         }
       ],
@@ -1797,7 +1850,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1849,7 +1902,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       },
       "signature": "Qt::TextFormat subTitleFormat() const",
       "since": null,
@@ -1878,7 +1931,7 @@
             "native": "QWizard::WizardOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardOption>"
           }
         }
       ],
@@ -1912,7 +1965,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       },
       "signature": "Qt::TextFormat titleFormat() const",
       "since": null,
@@ -1964,7 +2017,7 @@
         "native": "QList<int>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<i32>"
       },
       "signature": "QList<int> visitedIds() const",
       "since": null,
@@ -1990,7 +2043,7 @@
         "native": "QWizard::WizardStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QWizard::WizardStyle>"
       },
       "signature": "QWizard::WizardStyle wizardStyle() const",
       "since": null,
@@ -2117,7 +2170,7 @@
         "native": "WizardOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QWizard::WizardOption>"
       }
     },
     {
@@ -2203,7 +2256,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       }
     },
     {
@@ -2246,7 +2299,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       }
     },
     {
@@ -2289,7 +2342,7 @@
         "native": "WizardStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<WizardStyle>"
+        "ref": "enum<QWizard::WizardStyle>"
       }
     }
   ],

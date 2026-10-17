@@ -42,16 +42,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QFormLayout::FieldGrowthPolicy",
       "members": [
         {
+          "cpp": "QFormLayout::FieldsStayAtSizeHint",
           "name": "FieldsStayAtSizeHint",
           "value": "0"
         },
         {
+          "cpp": "QFormLayout::ExpandingFieldsGrow",
           "name": "ExpandingFieldsGrow",
           "value": "1"
         },
         {
+          "cpp": "QFormLayout::AllNonFixedFieldsGrow",
           "name": "AllNonFixedFieldsGrow",
           "value": "2"
         }
@@ -66,19 +71,25 @@
         "scoped": false
       },
       "name": "FieldGrowthPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFormLayout::ItemRole",
       "members": [
         {
+          "cpp": "QFormLayout::LabelRole",
           "name": "LabelRole",
           "value": "0"
         },
         {
+          "cpp": "QFormLayout::FieldRole",
           "name": "FieldRole",
           "value": "1"
         },
         {
+          "cpp": "QFormLayout::SpanningRole",
           "name": "SpanningRole",
           "value": "2"
         }
@@ -93,19 +104,25 @@
         "scoped": false
       },
       "name": "ItemRole",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFormLayout::RowWrapPolicy",
       "members": [
         {
+          "cpp": "QFormLayout::DontWrapRows",
           "name": "DontWrapRows",
           "value": "0"
         },
         {
+          "cpp": "QFormLayout::WrapLongRows",
           "name": "WrapLongRows",
           "value": "1"
         },
         {
+          "cpp": "QFormLayout::WrapAllRows",
           "name": "WrapAllRows",
           "value": "2"
         }
@@ -120,7 +137,8 @@
         "scoped": false
       },
       "name": "RowWrapPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QFormLayout",
@@ -481,7 +499,7 @@
         "native": "Qt::Orientations",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::Orientation>"
       },
       "signature": "Qt::Orientations expandingDirections() const override",
       "since": null,
@@ -507,7 +525,7 @@
         "native": "QFormLayout::FieldGrowthPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFormLayout::FieldGrowthPolicy>"
       },
       "signature": "QFormLayout::FieldGrowthPolicy fieldGrowthPolicy() const",
       "since": null,
@@ -533,7 +551,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment formAlignment() const",
       "since": null,
@@ -1328,7 +1346,7 @@
             "native": "QFormLayout::ItemRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFormLayout::ItemRole>"
           }
         }
       ],
@@ -1362,7 +1380,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment labelAlignment() const",
       "since": null,
@@ -1462,7 +1480,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const override",
       "since": null,
@@ -1625,7 +1643,7 @@
         "native": "QFormLayout::RowWrapPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFormLayout::RowWrapPolicy>"
       },
       "signature": "QFormLayout::RowWrapPolicy rowWrapPolicy() const",
       "since": null,
@@ -1654,7 +1672,7 @@
             "native": "QFormLayout::FieldGrowthPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFormLayout::FieldGrowthPolicy>"
           }
         }
       ],
@@ -1691,7 +1709,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1728,7 +1746,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -1812,7 +1830,7 @@
             "native": "QFormLayout::ItemRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFormLayout::ItemRole>"
           }
         },
         {
@@ -1859,7 +1877,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1906,7 +1924,7 @@
             "native": "QFormLayout::ItemRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFormLayout::ItemRole>"
           }
         },
         {
@@ -2094,7 +2112,7 @@
             "native": "QFormLayout::RowWrapPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFormLayout::RowWrapPolicy>"
           }
         }
       ],
@@ -2215,7 +2233,7 @@
             "native": "QFormLayout::ItemRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFormLayout::ItemRole>"
           }
         },
         {
@@ -2259,7 +2277,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2686,7 +2704,7 @@
         "native": "FieldGrowthPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<FieldGrowthPolicy>"
+        "ref": "enum<QFormLayout::FieldGrowthPolicy>"
       }
     },
     {
@@ -2729,7 +2747,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -2815,7 +2833,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -2858,7 +2876,7 @@
         "native": "RowWrapPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<RowWrapPolicy>"
+        "ref": "enum<QFormLayout::RowWrapPolicy>"
       }
     },
     {

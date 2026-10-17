@@ -127,7 +127,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -194,7 +194,7 @@
             "native": "QStyle::ControlElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ControlElement>"
           }
         },
         {
@@ -271,7 +271,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -291,7 +291,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -338,7 +338,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -358,7 +358,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         },
         {
@@ -388,7 +388,7 @@
             "native": "QPalette::ColorRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPalette::ColorRole>"
           }
         }
       ],
@@ -425,7 +425,7 @@
             "native": "QStyle::PrimitiveElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::PrimitiveElement>"
           }
         },
         {
@@ -529,7 +529,7 @@
             "native": "QIcon::Mode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QIcon::Mode>"
           }
         },
         {
@@ -539,7 +539,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         },
         {
@@ -557,7 +557,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *opt) const override",
       "since": null,
@@ -586,7 +586,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -606,7 +606,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -624,7 +624,7 @@
         "native": "QStyle::SubControl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QStyle::SubControl>"
       },
       "signature": "QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, const QPoint &pos, const QWidget *widget) const override",
       "since": null,
@@ -653,7 +653,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -673,7 +673,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -681,7 +681,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect itemPixmapRect(const QRect &r, int flags, const QPixmap &pixmap) const override",
       "since": null,
@@ -720,7 +720,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -758,7 +758,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect itemTextRect(const QFontMetrics &fm, const QRect &r, int flags, bool enabled, const QString &text) const override",
       "since": null,
@@ -787,7 +787,7 @@
             "native": "QSizePolicy::ControlType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::ControlType>"
           }
         },
         {
@@ -797,7 +797,7 @@
             "native": "QSizePolicy::ControlType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::ControlType>"
           }
         },
         {
@@ -807,7 +807,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -864,7 +864,7 @@
             "native": "QStyle::PixelMetric",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::PixelMetric>"
           }
         },
         {
@@ -958,7 +958,7 @@
             "native": "QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         }
       ],
@@ -1069,7 +1069,7 @@
             "native": "QStyle::ContentsType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ContentsType>"
           }
         },
         {
@@ -1089,7 +1089,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         },
         {
@@ -1107,7 +1107,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &size, const QWidget *widget) const override",
       "since": null,
@@ -1136,7 +1136,7 @@
             "native": "QStyle::StandardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::StandardPixmap>"
           }
         },
         {
@@ -1164,7 +1164,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon standardIcon(QStyle::StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const override",
       "since": null,
@@ -1190,7 +1190,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "QPalette standardPalette() const override",
       "since": null,
@@ -1219,7 +1219,7 @@
             "native": "QStyle::StandardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::StandardPixmap>"
           }
         },
         {
@@ -1247,7 +1247,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap standardPixmap(QStyle::StandardPixmap standardPixmap, const QStyleOption *opt, const QWidget *widget) const override",
       "since": null,
@@ -1276,7 +1276,7 @@
             "native": "QStyle::StyleHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::StyleHint>"
           }
         },
         {
@@ -1343,7 +1343,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -1363,7 +1363,7 @@
             "native": "QStyle::SubControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::SubControl>"
           }
         },
         {
@@ -1381,7 +1381,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect subControlRect(QStyle::ComplexControl cc, const QStyleOptionComplex *option, QStyle::SubControl sc, const QWidget *widget) const override",
       "since": null,
@@ -1410,7 +1410,7 @@
             "native": "QStyle::SubElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::SubElement>"
           }
         },
         {
@@ -1438,7 +1438,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const override",
       "since": null,

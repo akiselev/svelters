@@ -12,10 +12,13 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | P4 Qt lane | DONE | dd6c28c | 192 classes ingested; 8 elements annotated; 41 generated tests pass; leaf-crate rebuild verified |
 | F1 fork bindings | DONE | 32fe00a | element bind:this (call/getProp/StaleHandleError) + renderer bind hook in fork 27b7dfb70 (pushed to akiselev/svelte master + svelters/renderer); entry.text two-way on GTK+Qt with native echo check |
 | D1 docs generator | DONE | 77addd6 | per-toolkit docs IR frontends → Starlight site (881 pages, link-checked); docs ingestion pass; GFDL-safe Qt `brief` policy; `pnpm docs:build` / `docs:test` |
-| S1 serdes main types | IN PROGRESS | | ABI v3 value model + converters; merges after P5 |
+| S1 serdes main types | DONE | 8071bb2 | ABI v3 value model (tags, descriptors, records, boxed, ERROR, CALLBACK, async, variants, dates) on GTK+Qt; 114/114 nextest; remainder → S2 |
+| S2 ABI v3 remainder | IN PROGRESS | | out/in-out params, Qt callbacks + async, Qt UTF-16, GVariant typing, GValue props; from docs/notes/s1-handoff.md |
 | M2a ABI v2 | DONE | 417093a | schedule_wake native timers (no host thread), lifetime classes/handle_info/dead-handle ring, cascading on_destroyed reasons, onRequestClose + host-decided quit; 74/74 nextest |
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
 | A1 API surface + galleries | IN PROGRESS | | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |
+| X1 object returns + GTK GI calls | IN PROGRESS | | borrowed handles with stable identity; GTK dynamic method invocation via GIRepository/libffi; picks gaps from metadata/A1-GAPS.md |
+| X2 sync handlers + frame clock | IN PROGRESS | | call_sync, signal results via event-object flags, request_frame (GdkFrameClock / Qt); picks gaps from metadata/A1-GAPS.md |
 | P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
 | M2 dev loop | QUEUED | | |
 | M3 metadata + codegen | QUEUED | | |

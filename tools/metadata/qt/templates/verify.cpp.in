@@ -41,10 +41,10 @@ struct Rec {
   void clear() { events.clear(); destroyed.clear(); reasons.clear(); checkpoints = 0; }
 } rec;
 
-// Signal args and property values as strings, so tests compare any type the same way.
+// Signal args and property values as strings, so tests compare any scalar type the same way.
 std::string valstr(const svl_value &v) {
   switch (v.tag) {
-    case SVL_STR: return std::string(v.u.s.ptr, v.u.s.len);
+    case SVL_STR: return std::string(static_cast<const char *>(v.u.s.ptr), v.u.s.len);
     case SVL_BOOL: return v.u.b ? "true" : "false";
     case SVL_I64: return std::to_string(v.u.i);
     case SVL_F64: { char b[64]; std::snprintf(b, sizeof b, "%g", v.u.f); return b; }
@@ -113,10 +113,22 @@ svl_value vi64(int64_t i) {
   return v;
 }
 bool was_destroyed(svl_handle h) { return std::find(rec.destroyed.begin(), rec.destroyed.end(), h) != rec.destroyed.end(); }
+svl_value venum(svl_id type, int64_t value) {
+  svl_value v{};
+  v.tag = SVL_ENUM;
+  v.type = type;
+  v.u.i = value;
+  return v;
+}
+int64_t enum_member_value(const svl_type_desc *td, const char *name) {
+  for (uint32_t i = 0; i < td->n_members; ++i)
+    if (std::strcmp(td->members[i].name, name) == 0) return td->members[i].value;
+  return INT64_MIN;
+}
 std::string getstr(svl_handle h, svl_id p) {
   svl_value out{};
   if (B->get_prop(B->self, h, p, &out) != 0 || out.tag != SVL_STR) return "<err>";
-  return std::string(out.u.s.ptr, out.u.s.len);
+  return std::string(static_cast<const char *>(out.u.s.ptr), out.u.s.len);
 }
 
 struct TestCase {

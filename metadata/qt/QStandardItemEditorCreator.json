@@ -95,7 +95,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray valuePropertyName() const override",
       "since": null,

@@ -55,7 +55,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -77,28 +77,36 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QSlider::TickPosition",
       "members": [
         {
+          "cpp": "QSlider::NoTicks",
           "name": "NoTicks",
           "value": "0"
         },
         {
+          "cpp": "QSlider::TicksAbove",
           "name": "TicksAbove",
           "value": "1"
         },
         {
+          "cpp": "QSlider::TicksLeft",
           "name": "TicksLeft",
           "value": "TicksAbove"
         },
         {
+          "cpp": "QSlider::TicksBelow",
           "name": "TicksBelow",
           "value": "2"
         },
         {
+          "cpp": "QSlider::TicksRight",
           "name": "TicksRight",
           "value": "TicksBelow"
         },
         {
+          "cpp": "QSlider::TicksBothSides",
           "name": "TicksBothSides",
           "value": "3"
         }
@@ -116,7 +124,8 @@
         "scoped": false
       },
       "name": "TickPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QSlider",
@@ -226,7 +235,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -440,7 +449,7 @@
             "native": "QSlider::TickPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSlider::TickPosition>"
           }
         }
       ],
@@ -474,7 +483,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -526,7 +535,7 @@
         "native": "QSlider::TickPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSlider::TickPosition>"
       },
       "signature": "QSlider::TickPosition tickPosition() const",
       "since": null,
@@ -625,7 +634,7 @@
         "native": "TickPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<TickPosition>"
+        "ref": "enum<QSlider::TickPosition>"
       }
     }
   ],

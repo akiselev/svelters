@@ -77,20 +77,26 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QLCDNumber::Mode",
       "members": [
         {
+          "cpp": "QLCDNumber::Hex",
           "name": "Hex",
           "value": "0"
         },
         {
+          "cpp": "QLCDNumber::Dec",
           "name": "Dec",
           "value": "1"
         },
         {
+          "cpp": "QLCDNumber::Oct",
           "name": "Oct",
           "value": "2"
         },
         {
+          "cpp": "QLCDNumber::Bin",
           "name": "Bin",
           "value": "3"
         }
@@ -106,19 +112,25 @@
         "scoped": false
       },
       "name": "Mode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QLCDNumber::SegmentStyle",
       "members": [
         {
+          "cpp": "QLCDNumber::Outline",
           "name": "Outline",
           "value": "0"
         },
         {
+          "cpp": "QLCDNumber::Filled",
           "name": "Filled",
           "value": "1"
         },
         {
+          "cpp": "QLCDNumber::Flat",
           "name": "Flat",
           "value": "2"
         }
@@ -133,7 +145,8 @@
         "scoped": false
       },
       "name": "SegmentStyle",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QLCDNumber",
@@ -443,7 +456,7 @@
         "native": "QLCDNumber::Mode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLCDNumber::Mode>"
       },
       "signature": "QLCDNumber::Mode mode() const",
       "since": null,
@@ -506,7 +519,7 @@
         "native": "QLCDNumber::SegmentStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLCDNumber::SegmentStyle>"
       },
       "signature": "QLCDNumber::SegmentStyle segmentStyle() const",
       "since": null,
@@ -650,7 +663,7 @@
             "native": "QLCDNumber::Mode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLCDNumber::Mode>"
           }
         }
       ],
@@ -713,7 +726,7 @@
             "native": "QLCDNumber::SegmentStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLCDNumber::SegmentStyle>"
           }
         }
       ],
@@ -784,7 +797,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -978,7 +991,7 @@
         "native": "Mode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Mode>"
+        "ref": "enum<QLCDNumber::Mode>"
       }
     },
     {
@@ -1021,7 +1034,7 @@
         "native": "SegmentStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SegmentStyle>"
+        "ref": "enum<QLCDNumber::SegmentStyle>"
       }
     },
     {

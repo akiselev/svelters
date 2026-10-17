@@ -29,57 +29,74 @@
   ],
   "enums": [
     {
+      "flags_alias": "QStyleOptionButton::ButtonFeatures",
+      "fullname": "QStyleOptionButton::ButtonFeature",
       "members": [
         {
+          "cpp": "QStyleOptionButton::None",
           "name": "None",
           "value": "0x00"
         },
         {
+          "cpp": "QStyleOptionButton::Flat",
           "name": "Flat",
           "value": "0x01"
         },
         {
+          "cpp": "QStyleOptionButton::HasMenu",
           "name": "HasMenu",
           "value": "0x02"
         },
         {
+          "cpp": "QStyleOptionButton::DefaultButton",
           "name": "DefaultButton",
           "value": "0x04"
         },
         {
+          "cpp": "QStyleOptionButton::AutoDefaultButton",
           "name": "AutoDefaultButton",
           "value": "0x08"
         },
         {
+          "cpp": "QStyleOptionButton::CommandLinkButton",
           "name": "CommandLinkButton",
           "value": "0x10"
         }
       ],
       "metaobject": null,
       "name": "ButtonFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionButton::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionButton::Type",
           "name": "Type",
           "value": "SO_Button"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionButton::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionButton::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionButton",

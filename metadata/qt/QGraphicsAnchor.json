@@ -50,7 +50,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         }
       ],
@@ -121,7 +121,7 @@
         "native": "QSizePolicy::Policy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::Policy>"
       },
       "signature": "QSizePolicy::Policy sizePolicy() const",
       "since": null,
@@ -228,7 +228,7 @@
         "native": "QSizePolicy::Policy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::Policy>"
       }
     },
     {

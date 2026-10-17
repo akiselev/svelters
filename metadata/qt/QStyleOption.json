@@ -48,137 +48,174 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOption::OptionType",
       "members": [
         {
+          "cpp": "QStyleOption::SO_Default",
           "name": "SO_Default",
           "value": "0"
         },
         {
+          "cpp": "QStyleOption::SO_FocusRect",
           "name": "SO_FocusRect",
           "value": "1"
         },
         {
+          "cpp": "QStyleOption::SO_Button",
           "name": "SO_Button",
           "value": "2"
         },
         {
+          "cpp": "QStyleOption::SO_Tab",
           "name": "SO_Tab",
           "value": "3"
         },
         {
+          "cpp": "QStyleOption::SO_MenuItem",
           "name": "SO_MenuItem",
           "value": "4"
         },
         {
+          "cpp": "QStyleOption::SO_Frame",
           "name": "SO_Frame",
           "value": "5"
         },
         {
+          "cpp": "QStyleOption::SO_ProgressBar",
           "name": "SO_ProgressBar",
           "value": "6"
         },
         {
+          "cpp": "QStyleOption::SO_ToolBox",
           "name": "SO_ToolBox",
           "value": "7"
         },
         {
+          "cpp": "QStyleOption::SO_Header",
           "name": "SO_Header",
           "value": "8"
         },
         {
+          "cpp": "QStyleOption::SO_DockWidget",
           "name": "SO_DockWidget",
           "value": "9"
         },
         {
+          "cpp": "QStyleOption::SO_ViewItem",
           "name": "SO_ViewItem",
           "value": "10"
         },
         {
+          "cpp": "QStyleOption::SO_TabWidgetFrame",
           "name": "SO_TabWidgetFrame",
           "value": "11"
         },
         {
+          "cpp": "QStyleOption::SO_TabBarBase",
           "name": "SO_TabBarBase",
           "value": "12"
         },
         {
+          "cpp": "QStyleOption::SO_RubberBand",
           "name": "SO_RubberBand",
           "value": "13"
         },
         {
+          "cpp": "QStyleOption::SO_ToolBar",
           "name": "SO_ToolBar",
           "value": "14"
         },
         {
+          "cpp": "QStyleOption::SO_GraphicsItem",
           "name": "SO_GraphicsItem",
           "value": "15"
         },
         {
+          "cpp": "QStyleOption::SO_Complex",
           "name": "SO_Complex",
           "value": "0xf0000"
         },
         {
+          "cpp": "QStyleOption::SO_Slider",
           "name": "SO_Slider",
           "value": "0xf0001"
         },
         {
+          "cpp": "QStyleOption::SO_SpinBox",
           "name": "SO_SpinBox",
           "value": "0xf0002"
         },
         {
+          "cpp": "QStyleOption::SO_ToolButton",
           "name": "SO_ToolButton",
           "value": "0xf0003"
         },
         {
+          "cpp": "QStyleOption::SO_ComboBox",
           "name": "SO_ComboBox",
           "value": "0xf0004"
         },
         {
+          "cpp": "QStyleOption::SO_TitleBar",
           "name": "SO_TitleBar",
           "value": "0xf0005"
         },
         {
+          "cpp": "QStyleOption::SO_GroupBox",
           "name": "SO_GroupBox",
           "value": "0xf0006"
         },
         {
+          "cpp": "QStyleOption::SO_SizeGrip",
           "name": "SO_SizeGrip",
           "value": "0xf0007"
         },
         {
+          "cpp": "QStyleOption::SO_CustomBase",
           "name": "SO_CustomBase",
           "value": "0xf00"
         },
         {
+          "cpp": "QStyleOption::SO_ComplexCustomBase",
           "name": "SO_ComplexCustomBase",
           "value": "0xf000000"
         }
       ],
       "metaobject": null,
       "name": "OptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOption::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOption::Type",
           "name": "Type",
           "value": "SO_Default"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOption::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOption::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOption",

@@ -1,0 +1,6 @@
+elements:
+  - tag: datetimeedit
+    construct: { class: QDateTimeEdit }
+    props:
+      - { js: dateTime, native: dateTime, provenance: "QDateTimeEdit::dateTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: displayFormat, native: displayFormat, provenance: "QDateTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }

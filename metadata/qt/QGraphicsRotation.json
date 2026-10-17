@@ -228,7 +228,7 @@
             "native": "Qt::Axis",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Axis>"
           }
         }
       ],

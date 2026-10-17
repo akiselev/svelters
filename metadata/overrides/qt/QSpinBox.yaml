@@ -1,0 +1,9 @@
+elements:
+  - tag: spinbox
+    construct: { class: QSpinBox }
+    props:
+      - { js: value, native: value, provenance: "QSpinBox::value (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum, native: minimum, provenance: "QSpinBox::minimum (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum, native: maximum, provenance: "QSpinBox::maximum (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: singleStep, native: singleStep, provenance: "QSpinBox::singleStep (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: prefix, native: prefix, provenance: "QSpinBox::prefix (qdoc); typed by the S1 value model (ABI v3)" }

@@ -224,7 +224,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray valuePropertyName(int userType) const",
       "since": null,

@@ -76,12 +76,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QLineEdit::ActionPosition",
       "members": [
         {
+          "cpp": "QLineEdit::LeadingPosition",
           "name": "LeadingPosition",
           "value": "0"
         },
         {
+          "cpp": "QLineEdit::TrailingPosition",
           "name": "TrailingPosition",
           "value": "1"
         }
@@ -95,23 +99,30 @@
         "scoped": false
       },
       "name": "ActionPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QLineEdit::EchoMode",
       "members": [
         {
+          "cpp": "QLineEdit::Normal",
           "name": "Normal",
           "value": "0"
         },
         {
+          "cpp": "QLineEdit::NoEcho",
           "name": "NoEcho",
           "value": "1"
         },
         {
+          "cpp": "QLineEdit::Password",
           "name": "Password",
           "value": "2"
         },
         {
+          "cpp": "QLineEdit::PasswordEchoOnEdit",
           "name": "PasswordEchoOnEdit",
           "value": "3"
         }
@@ -127,7 +138,8 @@
         "scoped": false
       },
       "name": "EchoMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QLineEdit",
@@ -166,7 +178,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -176,7 +188,7 @@
             "native": "QLineEdit::ActionPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLineEdit::ActionPosition>"
           }
         }
       ],
@@ -223,7 +235,7 @@
             "native": "QLineEdit::ActionPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLineEdit::ActionPosition>"
           }
         }
       ],
@@ -257,7 +269,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -581,7 +593,7 @@
         "native": "Qt::CursorMoveStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CursorMoveStyle>"
       },
       "signature": "Qt::CursorMoveStyle cursorMoveStyle() const",
       "since": null,
@@ -636,7 +648,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -670,7 +682,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect cursorRect() const",
       "since": null,
@@ -1048,7 +1060,7 @@
         "native": "QLineEdit::EchoMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLineEdit::EchoMode>"
       },
       "signature": "QLineEdit::EchoMode echoMode() const",
       "since": null,
@@ -1440,7 +1452,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -1741,7 +1753,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -2163,7 +2175,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -2274,7 +2286,7 @@
             "native": "Qt::CursorMoveStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CursorMoveStyle>"
           }
         }
       ],
@@ -2385,7 +2397,7 @@
             "native": "QLineEdit::EchoMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLineEdit::EchoMode>"
           }
         }
       ],
@@ -2728,7 +2740,7 @@
             "native": "const QMargins &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Insets>"
           }
         }
       ],
@@ -2866,7 +2878,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2918,7 +2930,7 @@
         "native": "QMargins",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Insets>"
       },
       "signature": "QMargins textMargins() const",
       "since": null,
@@ -3123,7 +3135,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -3209,7 +3221,7 @@
         "native": "Qt::CursorMoveStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CursorMoveStyle>"
       }
     },
     {
@@ -3381,7 +3393,7 @@
         "native": "EchoMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<EchoMode>"
+        "ref": "enum<QLineEdit::EchoMode>"
       }
     },
     {

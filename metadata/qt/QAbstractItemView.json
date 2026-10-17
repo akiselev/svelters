@@ -44,71 +44,91 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::CursorAction",
       "members": [
         {
+          "cpp": "QAbstractItemView::MoveUp",
           "name": "MoveUp",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::MoveDown",
           "name": "MoveDown",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::MoveLeft",
           "name": "MoveLeft",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::MoveRight",
           "name": "MoveRight",
           "value": "3"
         },
         {
+          "cpp": "QAbstractItemView::MoveHome",
           "name": "MoveHome",
           "value": "4"
         },
         {
+          "cpp": "QAbstractItemView::MoveEnd",
           "name": "MoveEnd",
           "value": "5"
         },
         {
+          "cpp": "QAbstractItemView::MovePageUp",
           "name": "MovePageUp",
           "value": "6"
         },
         {
+          "cpp": "QAbstractItemView::MovePageDown",
           "name": "MovePageDown",
           "value": "7"
         },
         {
+          "cpp": "QAbstractItemView::MoveNext",
           "name": "MoveNext",
           "value": "8"
         },
         {
+          "cpp": "QAbstractItemView::MovePrevious",
           "name": "MovePrevious",
           "value": "9"
         }
       ],
       "metaobject": null,
       "name": "CursorAction",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::DragDropMode",
       "members": [
         {
+          "cpp": "QAbstractItemView::NoDragDrop",
           "name": "NoDragDrop",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::DragOnly",
           "name": "DragOnly",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::DropOnly",
           "name": "DropOnly",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::DragDrop",
           "name": "DragDrop",
           "value": "3"
         },
         {
+          "cpp": "QAbstractItemView::InternalMove",
           "name": "InternalMove",
           "value": "4"
         }
@@ -125,81 +145,105 @@
         "scoped": false
       },
       "name": "DragDropMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::DropIndicatorPosition",
       "members": [
         {
+          "cpp": "QAbstractItemView::OnItem",
           "name": "OnItem",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::AboveItem",
           "name": "AboveItem",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::BelowItem",
           "name": "BelowItem",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::OnViewport",
           "name": "OnViewport",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "DropIndicatorPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QAbstractItemView::EditTriggers",
+      "fullname": "QAbstractItemView::EditTrigger",
       "members": [
         {
+          "cpp": "QAbstractItemView::NoEditTriggers",
           "name": "NoEditTriggers",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::CurrentChanged",
           "name": "CurrentChanged",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::DoubleClicked",
           "name": "DoubleClicked",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::SelectedClicked",
           "name": "SelectedClicked",
           "value": "4"
         },
         {
+          "cpp": "QAbstractItemView::EditKeyPressed",
           "name": "EditKeyPressed",
           "value": "8"
         },
         {
+          "cpp": "QAbstractItemView::AnyKeyPressed",
           "name": "AnyKeyPressed",
           "value": "16"
         },
         {
+          "cpp": "QAbstractItemView::AllEditTriggers",
           "name": "AllEditTriggers",
           "value": "31"
         }
       ],
       "metaobject": null,
       "name": "EditTrigger",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::ScrollHint",
       "members": [
         {
+          "cpp": "QAbstractItemView::EnsureVisible",
           "name": "EnsureVisible",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::PositionAtTop",
           "name": "PositionAtTop",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::PositionAtBottom",
           "name": "PositionAtBottom",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::PositionAtCenter",
           "name": "PositionAtCenter",
           "value": "3"
         }
@@ -215,15 +259,20 @@
         "scoped": false
       },
       "name": "ScrollHint",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::ScrollMode",
       "members": [
         {
+          "cpp": "QAbstractItemView::ScrollPerItem",
           "name": "ScrollPerItem",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::ScrollPerPixel",
           "name": "ScrollPerPixel",
           "value": "1"
         }
@@ -237,19 +286,25 @@
         "scoped": false
       },
       "name": "ScrollMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::SelectionBehavior",
       "members": [
         {
+          "cpp": "QAbstractItemView::SelectItems",
           "name": "SelectItems",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::SelectRows",
           "name": "SelectRows",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::SelectColumns",
           "name": "SelectColumns",
           "value": "2"
         }
@@ -264,27 +319,35 @@
         "scoped": false
       },
       "name": "SelectionBehavior",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::SelectionMode",
       "members": [
         {
+          "cpp": "QAbstractItemView::NoSelection",
           "name": "NoSelection",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::SingleSelection",
           "name": "SingleSelection",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::MultiSelection",
           "name": "MultiSelection",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::ExtendedSelection",
           "name": "ExtendedSelection",
           "value": "3"
         },
         {
+          "cpp": "QAbstractItemView::ContiguousSelection",
           "name": "ContiguousSelection",
           "value": "4"
         }
@@ -301,42 +364,53 @@
         "scoped": false
       },
       "name": "SelectionMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemView::State",
       "members": [
         {
+          "cpp": "QAbstractItemView::NoState",
           "name": "NoState",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemView::DraggingState",
           "name": "DraggingState",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemView::DragSelectingState",
           "name": "DragSelectingState",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemView::EditingState",
           "name": "EditingState",
           "value": "3"
         },
         {
+          "cpp": "QAbstractItemView::ExpandingState",
           "name": "ExpandingState",
           "value": "4"
         },
         {
+          "cpp": "QAbstractItemView::CollapsingState",
           "name": "CollapsingState",
           "value": "5"
         },
         {
+          "cpp": "QAbstractItemView::AnimatingState",
           "name": "AnimatingState",
           "value": "6"
         }
       ],
       "metaobject": null,
       "name": "State",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemView",
@@ -460,7 +534,7 @@
             "native": "QAbstractItemDelegate::EndEditHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemDelegate::EndEditHint>"
           }
         }
       ],
@@ -664,7 +738,7 @@
             "native": "const QList<int> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<i32>"
           }
         }
       ],
@@ -698,7 +772,7 @@
         "native": "Qt::DropAction",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DropAction>"
       },
       "signature": "Qt::DropAction defaultDropAction() const",
       "since": null,
@@ -724,7 +798,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint dirtyRegionOffset() const",
       "since": null,
@@ -750,7 +824,7 @@
         "native": "QAbstractItemView::DragDropMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::DragDropMode>"
       },
       "signature": "QAbstractItemView::DragDropMode dragDropMode() const",
       "since": null,
@@ -976,7 +1050,7 @@
         "native": "QAbstractItemView::DropIndicatorPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::DropIndicatorPosition>"
       },
       "signature": "QAbstractItemView::DropIndicatorPosition dropIndicatorPosition() const",
       "since": null,
@@ -1015,7 +1089,7 @@
             "native": "QAbstractItemView::EditTrigger",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::EditTrigger>"
           }
         },
         {
@@ -1096,7 +1170,7 @@
         "native": "QAbstractItemView::EditTriggers",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QAbstractItemView::EditTrigger>"
       },
       "signature": "QAbstractItemView::EditTriggers editTriggers() const",
       "since": null,
@@ -1432,7 +1506,7 @@
         "native": "QAbstractItemView::ScrollMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::ScrollMode>"
       },
       "signature": "QAbstractItemView::ScrollMode horizontalScrollMode() const",
       "since": null,
@@ -1458,7 +1532,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -1487,7 +1561,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1635,7 +1709,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -1991,7 +2065,7 @@
         "native": "Qt::MatchFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MatchFlag>"
       },
       "signature": "Qt::MatchFlags keyboardSearchFlags() const",
       "since": null,
@@ -2194,7 +2268,7 @@
             "native": "QAbstractItemView::CursorAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::CursorAction>"
           }
         },
         {
@@ -2204,7 +2278,7 @@
             "native": "Qt::KeyboardModifiers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::KeyboardModifier>"
           }
         }
       ],
@@ -2616,7 +2690,7 @@
             "native": "QAbstractItemView::ScrollHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollHint>"
           }
         }
       ],
@@ -2754,7 +2828,7 @@
         "native": "QAbstractItemView::SelectionBehavior",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::SelectionBehavior>"
       },
       "signature": "QAbstractItemView::SelectionBehavior selectionBehavior() const",
       "since": null,
@@ -2848,7 +2922,7 @@
         "native": "QItemSelectionModel::SelectionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QItemSelectionModel::SelectionFlag>"
       },
       "signature": "QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const",
       "since": null,
@@ -2874,7 +2948,7 @@
         "native": "QAbstractItemView::SelectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::SelectionMode>"
       },
       "signature": "QAbstractItemView::SelectionMode selectionMode() const",
       "since": null,
@@ -3077,7 +3151,7 @@
             "native": "Qt::DropAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DropAction>"
           }
         }
       ],
@@ -3114,7 +3188,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         }
       ],
@@ -3151,7 +3225,7 @@
             "native": "QAbstractItemView::DragDropMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::DragDropMode>"
           }
         }
       ],
@@ -3299,7 +3373,7 @@
             "native": "QAbstractItemView::EditTriggers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QAbstractItemView::EditTrigger>"
           }
         }
       ],
@@ -3336,7 +3410,7 @@
             "native": "QAbstractItemView::ScrollMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollMode>"
           }
         }
       ],
@@ -3373,7 +3447,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -3588,7 +3662,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -3699,7 +3773,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3709,7 +3783,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -3746,7 +3820,7 @@
             "native": "QAbstractItemView::SelectionBehavior",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::SelectionBehavior>"
           }
         }
       ],
@@ -3783,7 +3857,7 @@
             "native": "QAbstractItemView::SelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::SelectionMode>"
           }
         }
       ],
@@ -3857,7 +3931,7 @@
             "native": "QAbstractItemView::State",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::State>"
           }
         }
       ],
@@ -3931,7 +4005,7 @@
             "native": "Qt::TextElideMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextElideMode>"
           }
         }
       ],
@@ -4005,7 +4079,7 @@
             "native": "QAbstractItemView::ScrollMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollMode>"
           }
         }
       ],
@@ -4113,7 +4187,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHintForIndex(const QModelIndex &index) const",
       "since": null,
@@ -4179,7 +4253,7 @@
             "native": "Qt::DropActions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DropAction>"
           }
         }
       ],
@@ -4213,7 +4287,7 @@
         "native": "QAbstractItemView::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::State>"
       },
       "signature": "QAbstractItemView::State state() const",
       "since": null,
@@ -4265,7 +4339,7 @@
         "native": "Qt::TextElideMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextElideMode>"
       },
       "signature": "Qt::TextElideMode textElideMode() const",
       "since": null,
@@ -4443,7 +4517,7 @@
         "native": "QAbstractItemView::ScrollMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractItemView::ScrollMode>"
       },
       "signature": "QAbstractItemView::ScrollMode verticalScrollMode() const",
       "since": null,
@@ -4506,7 +4580,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize viewportSizeHint() const override",
       "since": null,
@@ -4543,7 +4617,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect visualRect(const QModelIndex &index) const = 0",
       "since": null,
@@ -4580,7 +4654,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion visualRegionForSelection(const QItemSelection &selection) const = 0",
       "since": null,
@@ -4826,7 +4900,7 @@
         "native": "Qt::DropAction",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DropAction>"
       }
     },
     {
@@ -4868,7 +4942,7 @@
         "native": "DragDropMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<DragDropMode>"
+        "ref": "enum<QAbstractItemView::DragDropMode>"
       }
     },
     {
@@ -4994,7 +5068,7 @@
         "native": "EditTriggers",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QAbstractItemView::EditTrigger>"
       }
     },
     {
@@ -5036,7 +5110,7 @@
         "native": "ScrollMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ScrollMode>"
+        "ref": "enum<QAbstractItemView::ScrollMode>"
       }
     },
     {
@@ -5081,7 +5155,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -5123,7 +5197,7 @@
         "native": "Qt::MatchFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MatchFlag>"
       }
     },
     {
@@ -5165,7 +5239,7 @@
         "native": "SelectionBehavior",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SelectionBehavior>"
+        "ref": "enum<QAbstractItemView::SelectionBehavior>"
       }
     },
     {
@@ -5207,7 +5281,7 @@
         "native": "SelectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SelectionMode>"
+        "ref": "enum<QAbstractItemView::SelectionMode>"
       }
     },
     {
@@ -5333,7 +5407,7 @@
         "native": "Qt::TextElideMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextElideMode>"
       }
     },
     {
@@ -5417,7 +5491,7 @@
         "native": "ScrollMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ScrollMode>"
+        "ref": "enum<QAbstractItemView::ScrollMode>"
       }
     }
   ],
@@ -5586,7 +5660,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],

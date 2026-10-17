@@ -40,12 +40,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QDataWidgetMapper::SubmitPolicy",
       "members": [
         {
+          "cpp": "QDataWidgetMapper::AutoSubmit",
           "name": "AutoSubmit",
           "value": "0"
         },
         {
+          "cpp": "QDataWidgetMapper::ManualSubmit",
           "name": "ManualSubmit",
           "value": "1"
         }
@@ -59,7 +63,8 @@
         "scoped": false
       },
       "name": "SubmitPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDataWidgetMapper",
@@ -165,7 +170,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -288,7 +293,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray mappedPropertyName(QWidget *widget) const",
       "since": null,
@@ -414,7 +419,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -680,7 +685,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -754,7 +759,7 @@
             "native": "QDataWidgetMapper::SubmitPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDataWidgetMapper::SubmitPolicy>"
           }
         }
       ],
@@ -814,7 +819,7 @@
         "native": "QDataWidgetMapper::SubmitPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDataWidgetMapper::SubmitPolicy>"
       },
       "signature": "QDataWidgetMapper::SubmitPolicy submitPolicy() const",
       "since": null,
@@ -1061,7 +1066,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     },
     {
@@ -1104,7 +1109,7 @@
         "native": "SubmitPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SubmitPolicy>"
+        "ref": "enum<QDataWidgetMapper::SubmitPolicy>"
       }
     }
   ],

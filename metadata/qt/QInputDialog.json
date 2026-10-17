@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -53,42 +53,54 @@
   ],
   "enums": [
     {
+      "flags_alias": "QInputDialog::InputDialogOptions",
+      "fullname": "QInputDialog::InputDialogOption",
       "members": [
         {
+          "cpp": "QInputDialog::NoButtons",
           "name": "NoButtons",
           "value": "0x00000001"
         },
         {
+          "cpp": "QInputDialog::UseListViewForComboBoxItems",
           "name": "UseListViewForComboBoxItems",
           "value": "0x00000002"
         },
         {
+          "cpp": "QInputDialog::UsePlainTextEditForTextInput",
           "name": "UsePlainTextEditForTextInput",
           "value": "0x00000004"
         }
       ],
       "metaobject": null,
       "name": "InputDialogOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QInputDialog::InputMode",
       "members": [
         {
+          "cpp": "QInputDialog::TextInput",
           "name": "TextInput",
           "value": "0"
         },
         {
+          "cpp": "QInputDialog::IntInput",
           "name": "IntInput",
           "value": "1"
         },
         {
+          "cpp": "QInputDialog::DoubleInput",
           "name": "DoubleInput",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "InputMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QInputDialog",
@@ -155,7 +167,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList comboBoxItems() const",
       "since": null,
@@ -431,7 +443,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         },
         {
@@ -558,7 +570,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -625,7 +637,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         },
         {
@@ -665,7 +677,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         },
         {
@@ -675,7 +687,7 @@
             "native": "Qt::InputMethodHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::InputMethodHint>"
           }
         }
       ],
@@ -762,7 +774,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         },
         {
@@ -772,7 +784,7 @@
             "native": "Qt::InputMethodHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::InputMethodHint>"
           }
         }
       ],
@@ -839,7 +851,7 @@
             "native": "QLineEdit::EchoMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLineEdit::EchoMode>"
           }
         },
         {
@@ -869,7 +881,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         },
         {
@@ -879,7 +891,7 @@
             "native": "Qt::InputMethodHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::InputMethodHint>"
           }
         }
       ],
@@ -913,7 +925,7 @@
         "native": "QInputDialog::InputMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QInputDialog::InputMode>"
       },
       "signature": "QInputDialog::InputMode inputMode() const",
       "since": null,
@@ -1095,7 +1107,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -1158,9 +1170,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -1194,7 +1206,7 @@
         "native": "QInputDialog::InputDialogOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QInputDialog::InputDialogOption>"
       },
       "signature": "QInputDialog::InputDialogOptions options() const",
       "since": null,
@@ -1297,7 +1309,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -1566,7 +1578,7 @@
             "native": "QInputDialog::InputMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QInputDialog::InputMode>"
           }
         }
       ],
@@ -1872,7 +1884,7 @@
             "native": "QInputDialog::InputDialogOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QInputDialog::InputDialogOption>"
           }
         },
         {
@@ -1919,7 +1931,7 @@
             "native": "QInputDialog::InputDialogOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QInputDialog::InputDialogOption>"
           }
         }
       ],
@@ -1956,7 +1968,7 @@
             "native": "QLineEdit::EchoMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLineEdit::EchoMode>"
           }
         }
       ],
@@ -2064,7 +2076,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2093,7 +2105,7 @@
             "native": "QInputDialog::InputDialogOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QInputDialog::InputDialogOption>"
           }
         }
       ],
@@ -2127,7 +2139,7 @@
         "native": "QLineEdit::EchoMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLineEdit::EchoMode>"
       },
       "signature": "QLineEdit::EchoMode textEchoMode() const",
       "since": null,
@@ -2277,7 +2289,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       }
     },
     {
@@ -2427,7 +2439,7 @@
         "native": "InputMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<InputMode>"
+        "ref": "enum<QInputDialog::InputMode>"
       }
     },
     {
@@ -2602,7 +2614,7 @@
         "native": "InputDialogOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QInputDialog::InputDialogOption>"
       }
     },
     {
@@ -2627,7 +2639,7 @@
         "native": "QLineEdit::EchoMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLineEdit::EchoMode>"
       }
     },
     {

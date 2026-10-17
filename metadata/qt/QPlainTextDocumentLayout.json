@@ -84,7 +84,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF blockBoundingRect(const QTextBlock &block) const override",
       "since": null,
@@ -193,7 +193,7 @@
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSizeF documentSize() const override",
       "since": null,
@@ -314,7 +314,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF frameBoundingRect(QTextFrame *) const override",
       "since": null,
@@ -343,7 +343,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -353,7 +353,7 @@
             "native": "Qt::HitTestAccuracy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::HitTestAccuracy>"
           }
         }
       ],

@@ -30,26 +30,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionGroupBox::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionGroupBox::Type",
           "name": "Type",
           "value": "SO_GroupBox"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionGroupBox::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionGroupBox::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionGroupBox",

@@ -77,7 +77,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         }
       ],
@@ -307,7 +307,7 @@
             "native": "QWizard::WizardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardPixmap>"
           }
         }
       ],
@@ -315,7 +315,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap(QWizard::WizardPixmap which) const",
       "since": null,
@@ -362,9 +362,9 @@
           "name": "property",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -372,9 +372,9 @@
           "name": "changedSignal",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -411,7 +411,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         },
         {
@@ -579,7 +579,7 @@
             "native": "QWizard::WizardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardPixmap>"
           }
         },
         {
@@ -589,7 +589,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],

@@ -41,16 +41,21 @@
   ],
   "enums": [
     {
+      "flags_alias": "QGraphicsBlurEffect::BlurHints",
+      "fullname": "QGraphicsBlurEffect::BlurHint",
       "members": [
         {
+          "cpp": "QGraphicsBlurEffect::PerformanceHint",
           "name": "PerformanceHint",
           "value": "0x00"
         },
         {
+          "cpp": "QGraphicsBlurEffect::QualityHint",
           "name": "QualityHint",
           "value": "0x01"
         },
         {
+          "cpp": "QGraphicsBlurEffect::AnimationHint",
           "name": "AnimationHint",
           "value": "0x02"
         }
@@ -65,7 +70,8 @@
         "scoped": false
       },
       "name": "BlurHint",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsBlurEffect",
@@ -101,7 +107,7 @@
         "native": "QGraphicsBlurEffect::BlurHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsBlurEffect::BlurHint>"
       },
       "signature": "QGraphicsBlurEffect::BlurHints blurHints() const",
       "since": null,
@@ -156,7 +162,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -164,7 +170,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRectFor(const QRectF &rect) const override",
       "since": null,
@@ -230,7 +236,7 @@
             "native": "QGraphicsBlurEffect::BlurHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsBlurEffect::BlurHint>"
           }
         }
       ],
@@ -334,7 +340,7 @@
         "native": "BlurHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsBlurEffect::BlurHint>"
       }
     },
     {
@@ -409,7 +415,7 @@
             "native": "QGraphicsBlurEffect::BlurHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsBlurEffect::BlurHint>"
           }
         }
       ],

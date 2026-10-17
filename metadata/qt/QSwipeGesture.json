@@ -16,24 +16,31 @@
   "constructors": [],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QSwipeGesture::SwipeDirection",
       "members": [
         {
+          "cpp": "QSwipeGesture::NoDirection",
           "name": "NoDirection",
           "value": "0"
         },
         {
+          "cpp": "QSwipeGesture::Left",
           "name": "Left",
           "value": "1"
         },
         {
+          "cpp": "QSwipeGesture::Right",
           "name": "Right",
           "value": "2"
         },
         {
+          "cpp": "QSwipeGesture::Up",
           "name": "Up",
           "value": "3"
         },
         {
+          "cpp": "QSwipeGesture::Down",
           "name": "Down",
           "value": "4"
         }
@@ -50,7 +57,8 @@
         "scoped": false
       },
       "name": "SwipeDirection",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QSwipeGesture",
@@ -86,7 +94,7 @@
         "native": "QSwipeGesture::SwipeDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSwipeGesture::SwipeDirection>"
       },
       "signature": "QSwipeGesture::SwipeDirection horizontalDirection() const",
       "since": null,
@@ -175,7 +183,7 @@
         "native": "QSwipeGesture::SwipeDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSwipeGesture::SwipeDirection>"
       },
       "signature": "QSwipeGesture::SwipeDirection verticalDirection() const",
       "since": null,
@@ -231,7 +239,7 @@
         "native": "SwipeDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SwipeDirection>"
+        "ref": "enum<QSwipeGesture::SwipeDirection>"
       }
     },
     {
@@ -317,7 +325,7 @@
         "native": "SwipeDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SwipeDirection>"
+        "ref": "enum<QSwipeGesture::SwipeDirection>"
       }
     }
   ],

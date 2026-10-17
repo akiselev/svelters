@@ -110,7 +110,7 @@
         "native": "QList<QWidget *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QWidget>>"
       },
       "signature": "QList<QWidget *> createdWidgets() const",
       "since": null,

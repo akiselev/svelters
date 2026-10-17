@@ -40,7 +40,7 @@
             "native": "QAccessible::Role",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAccessible::Role>"
           }
         }
       ],
@@ -74,7 +74,7 @@
             "native": "QAccessible::Role",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAccessible::Role>"
           }
         },
         {
@@ -125,7 +125,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList actionNames() const override",
       "since": null,
@@ -188,7 +188,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor backgroundColor() const override",
       "since": null,
@@ -340,7 +340,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor foregroundColor() const override",
       "since": null,
@@ -406,7 +406,7 @@
             "native": "QAccessible::InterfaceType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAccessible::InterfaceType>"
           }
         }
       ],
@@ -477,7 +477,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList keyBindingsForAction(const QString &actionName) const override",
       "since": null,
@@ -555,7 +555,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect rect() const override",
       "since": null,
@@ -584,7 +584,7 @@
             "native": "QAccessible::Relation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QAccessible::RelationFlag>"
           }
         }
       ],
@@ -618,7 +618,7 @@
         "native": "QAccessible::Role",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAccessible::Role>"
       },
       "signature": "QAccessible::Role role() const override",
       "since": null,
@@ -673,7 +673,7 @@
             "native": "QAccessible::Text",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAccessible::Text>"
           }
         }
       ],

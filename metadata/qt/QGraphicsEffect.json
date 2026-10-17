@@ -40,46 +40,59 @@
   ],
   "enums": [
     {
+      "flags_alias": "QGraphicsEffect::ChangeFlags",
+      "fullname": "QGraphicsEffect::ChangeFlag",
       "members": [
         {
+          "cpp": "QGraphicsEffect::SourceAttached",
           "name": "SourceAttached",
           "value": "0x1"
         },
         {
+          "cpp": "QGraphicsEffect::SourceDetached",
           "name": "SourceDetached",
           "value": "0x2"
         },
         {
+          "cpp": "QGraphicsEffect::SourceBoundingRectChanged",
           "name": "SourceBoundingRectChanged",
           "value": "0x4"
         },
         {
+          "cpp": "QGraphicsEffect::SourceInvalidated",
           "name": "SourceInvalidated",
           "value": "0x8"
         }
       ],
       "metaobject": null,
       "name": "ChangeFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsEffect::PixmapPadMode",
       "members": [
         {
+          "cpp": "QGraphicsEffect::NoPad",
           "name": "NoPad",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsEffect::PadToTransparentBorder",
           "name": "PadToTransparentBorder",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsEffect::PadToEffectiveBoundingRect",
           "name": "PadToEffectiveBoundingRect",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "PixmapPadMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsEffect",
@@ -112,7 +125,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const",
       "since": null,
@@ -141,7 +154,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -149,7 +162,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRectFor(const QRectF &rect) const",
       "since": null,
@@ -315,7 +328,7 @@
             "native": "Qt::CoordinateSystem",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CoordinateSystem>"
           }
         }
       ],
@@ -323,7 +336,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF sourceBoundingRect(Qt::CoordinateSystem system) const",
       "since": null,
@@ -352,7 +365,7 @@
             "native": "QGraphicsEffect::ChangeFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsEffect::ChangeFlag>"
           }
         }
       ],
@@ -415,7 +428,7 @@
             "native": "Qt::CoordinateSystem",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CoordinateSystem>"
           }
         },
         {
@@ -435,7 +448,7 @@
             "native": "QGraphicsEffect::PixmapPadMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsEffect::PixmapPadMode>"
           }
         }
       ],
@@ -443,7 +456,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap sourcePixmap(Qt::CoordinateSystem system, QPoint *offset, QGraphicsEffect::PixmapPadMode mode) const",
       "since": null,

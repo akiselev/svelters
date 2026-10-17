@@ -31,7 +31,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         },
         {
@@ -65,7 +65,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         },
         {
@@ -123,7 +123,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         },
         {
@@ -145,48 +145,61 @@
   ],
   "enums": [
     {
+      "flags_alias": "QDateTimeEdit::Sections",
+      "fullname": "QDateTimeEdit::Section",
       "members": [
         {
+          "cpp": "QDateTimeEdit::NoSection",
           "name": "NoSection",
           "value": "0x0000"
         },
         {
+          "cpp": "QDateTimeEdit::AmPmSection",
           "name": "AmPmSection",
           "value": "0x0001"
         },
         {
+          "cpp": "QDateTimeEdit::MSecSection",
           "name": "MSecSection",
           "value": "0x0002"
         },
         {
+          "cpp": "QDateTimeEdit::SecondSection",
           "name": "SecondSection",
           "value": "0x0004"
         },
         {
+          "cpp": "QDateTimeEdit::MinuteSection",
           "name": "MinuteSection",
           "value": "0x0008"
         },
         {
+          "cpp": "QDateTimeEdit::HourSection",
           "name": "HourSection",
           "value": "0x0010"
         },
         {
+          "cpp": "QDateTimeEdit::DaySection",
           "name": "DaySection",
           "value": "0x0100"
         },
         {
+          "cpp": "QDateTimeEdit::MonthSection",
           "name": "MonthSection",
           "value": "0x0200"
         },
         {
+          "cpp": "QDateTimeEdit::YearSection",
           "name": "YearSection",
           "value": "0x0400"
         },
         {
+          "cpp": "QDateTimeEdit::TimeSections_Mask",
           "name": "TimeSections_Mask",
           "value": "AmPmSection|MSecSection|SecondSection|MinuteSection|HourSection"
         },
         {
+          "cpp": "QDateTimeEdit::DateSections_Mask",
           "name": "DateSections_Mask",
           "value": "DaySection|MonthSection|YearSection"
         }
@@ -209,7 +222,8 @@
         "scoped": false
       },
       "name": "Section",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit",
@@ -505,7 +519,7 @@
         "native": "QDateTimeEdit::Section",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDateTimeEdit::Section>"
       },
       "signature": "QDateTimeEdit::Section currentSection() const",
       "since": null,
@@ -557,7 +571,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate date() const",
       "since": null,
@@ -583,7 +597,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime dateTime() const",
       "since": null,
@@ -620,7 +634,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime dateTimeFromText(const QString &text) const",
       "since": null,
@@ -672,7 +686,7 @@
         "native": "QDateTimeEdit::Sections",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDateTimeEdit::Section>"
       },
       "signature": "QDateTimeEdit::Sections displayedSections() const",
       "since": null,
@@ -920,7 +934,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate maximumDate() const",
       "since": null,
@@ -946,7 +960,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime maximumDateTime() const",
       "since": null,
@@ -972,7 +986,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       },
       "signature": "QTime maximumTime() const",
       "since": null,
@@ -998,7 +1012,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate minimumDate() const",
       "since": null,
@@ -1024,7 +1038,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime minimumDateTime() const",
       "since": null,
@@ -1050,7 +1064,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       },
       "signature": "QTime minimumTime() const",
       "since": null,
@@ -1161,7 +1175,7 @@
         "native": "QDateTimeEdit::Section",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDateTimeEdit::Section>"
       },
       "signature": "QDateTimeEdit::Section sectionAt(int index) const",
       "since": null,
@@ -1216,7 +1230,7 @@
             "native": "QDateTimeEdit::Section",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDateTimeEdit::Section>"
           }
         }
       ],
@@ -1364,7 +1378,7 @@
             "native": "QDateTimeEdit::Section",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDateTimeEdit::Section>"
           }
         }
       ],
@@ -1438,7 +1452,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1475,7 +1489,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         },
         {
@@ -1485,7 +1499,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1522,7 +1536,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1559,7 +1573,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         },
         {
@@ -1569,7 +1583,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1643,7 +1657,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1680,7 +1694,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1717,7 +1731,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1754,7 +1768,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1791,7 +1805,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1828,7 +1842,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1865,7 +1879,7 @@
             "native": "QDateTimeEdit::Section",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDateTimeEdit::Section>"
           }
         }
       ],
@@ -1902,7 +1916,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1939,7 +1953,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         },
         {
@@ -1949,7 +1963,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1986,7 +2000,7 @@
             "native": "Qt::TimeSpec",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TimeSpec>"
           }
         }
       ],
@@ -2057,7 +2071,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2120,7 +2134,7 @@
         "native": "QAbstractSpinBox::StepEnabled",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QAbstractSpinBox::StepEnabledFlag>"
       },
       "signature": "QAbstractSpinBox::StepEnabled stepEnabled() const override",
       "since": null,
@@ -2149,7 +2163,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -2183,7 +2197,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       },
       "signature": "QTime time() const",
       "since": null,
@@ -2209,7 +2223,7 @@
         "native": "Qt::TimeSpec",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TimeSpec>"
       },
       "signature": "Qt::TimeSpec timeSpec() const",
       "since": null,
@@ -2282,7 +2296,7 @@
         "native": "QValidator::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QValidator::State>"
       },
       "signature": "QValidator::State validate(QString &text, int &pos) const override",
       "since": null,
@@ -2427,7 +2441,7 @@
         "native": "Section",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Section>"
+        "ref": "enum<QDateTimeEdit::Section>"
       }
     },
     {
@@ -2515,7 +2529,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2560,7 +2574,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       }
     },
     {
@@ -2646,7 +2660,7 @@
         "native": "Sections",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDateTimeEdit::Section>"
       }
     },
     {
@@ -2688,7 +2702,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2730,7 +2744,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       }
     },
     {
@@ -2772,7 +2786,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       }
     },
     {
@@ -2814,7 +2828,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2856,7 +2870,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       }
     },
     {
@@ -2898,7 +2912,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       }
     },
     {
@@ -2986,7 +3000,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       }
     },
     {
@@ -3029,7 +3043,7 @@
         "native": "Qt::TimeSpec",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TimeSpec>"
       }
     },
     {
@@ -3100,7 +3114,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -3135,7 +3149,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -3170,7 +3184,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],

@@ -30,26 +30,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionSizeGrip::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionSizeGrip::Type",
           "name": "Type",
           "value": "SO_SizeGrip"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionSizeGrip::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionSizeGrip::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionSizeGrip",

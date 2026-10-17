@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -52,28 +52,36 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QRhiWidget::Api",
       "members": [
         {
+          "cpp": "QRhiWidget::Api::Null",
           "name": "Null",
           "value": "0"
         },
         {
+          "cpp": "QRhiWidget::Api::OpenGL",
           "name": "OpenGL",
           "value": "1"
         },
         {
+          "cpp": "QRhiWidget::Api::Metal",
           "name": "Metal",
           "value": "2"
         },
         {
+          "cpp": "QRhiWidget::Api::Vulkan",
           "name": "Vulkan",
           "value": "3"
         },
         {
+          "cpp": "QRhiWidget::Api::Direct3D11",
           "name": "Direct3D11",
           "value": "4"
         },
         {
+          "cpp": "QRhiWidget::Api::Direct3D12",
           "name": "Direct3D12",
           "value": "5"
         }
@@ -91,23 +99,30 @@
         "scoped": true
       },
       "name": "Api",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": true
     },
     {
+      "flags_alias": null,
+      "fullname": "QRhiWidget::TextureFormat",
       "members": [
         {
+          "cpp": "QRhiWidget::TextureFormat::RGBA8",
           "name": "RGBA8",
           "value": "0"
         },
         {
+          "cpp": "QRhiWidget::TextureFormat::RGBA16F",
           "name": "RGBA16F",
           "value": "1"
         },
         {
+          "cpp": "QRhiWidget::TextureFormat::RGBA32F",
           "name": "RGBA32F",
           "value": "2"
         },
         {
+          "cpp": "QRhiWidget::TextureFormat::RGB10A2",
           "name": "RGB10A2",
           "value": "3"
         }
@@ -123,7 +138,8 @@
         "scoped": true
       },
       "name": "TextureFormat",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": true
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QRhiWidget",
@@ -159,7 +175,7 @@
         "native": "QRhiWidget::Api",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QRhiWidget::Api>"
       },
       "signature": "QRhiWidget::Api api() const",
       "since": null,
@@ -185,7 +201,7 @@
         "native": "QRhiWidget::TextureFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QRhiWidget::TextureFormat>"
       },
       "signature": "QRhiWidget::TextureFormat colorBufferFormat() const",
       "since": null,
@@ -300,7 +316,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize fixedColorBufferSize() const",
       "since": null,
@@ -326,7 +342,7 @@
         "native": "QImage",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QImage>"
       },
       "signature": "QImage grabFramebuffer() const",
       "since": null,
@@ -711,7 +727,7 @@
             "native": "QRhiWidget::Api",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QRhiWidget::Api>"
           }
         }
       ],
@@ -785,7 +801,7 @@
             "native": "QRhiWidget::TextureFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QRhiWidget::TextureFormat>"
           }
         }
       ],
@@ -859,7 +875,7 @@
             "native": "QSize",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1072,7 +1088,7 @@
         "native": "TextureFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<TextureFormat>"
+        "ref": "enum<QRhiWidget::TextureFormat>"
       }
     },
     {
@@ -1117,7 +1133,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -1238,7 +1254,7 @@
             "native": "QRhiWidget::TextureFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QRhiWidget::TextureFormat>"
           }
         }
       ],
@@ -1273,7 +1289,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],

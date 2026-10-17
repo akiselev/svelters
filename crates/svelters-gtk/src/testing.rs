@@ -71,31 +71,24 @@ pub enum V {
     F64(f64),
     Str(String),
     Handle(u64),
+    /// Flags (names) or any list.
+    List(Vec<V>),
+    /// Record fields by portable name.
+    Record(Vec<(String, V)>),
+    /// Opaque boxed handle.
+    Boxed(u64),
 }
 
 #[derive(Default)]
 struct Recorder {
-    events: RefCell<Vec<(u64, u32, Vec<V>)>>,
+    events: RefCell<Vec<(u64, u32, Vec<Value>)>>,
     destroyed: RefCell<Vec<(u64, u32)>>,
     checkpoints: std::cell::Cell<u32>,
 }
 
-unsafe fn to_v(v: &svl_value) -> V {
-    unsafe {
-        match v.tag {
-            SVL_BOOL => V::Bool(v.u.b),
-            SVL_I64 => V::I64(v.u.i),
-            SVL_F64 => V::F64(v.u.f),
-            SVL_STR => V::Str(crate::convert::as_str(v).unwrap_or("").to_string()),
-            SVL_HANDLE => V::Handle(v.u.h),
-            _ => V::Null,
-        }
-    }
-}
-
 unsafe extern "C" fn h_post(p: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize) {
     let r = unsafe { &*(p as *const Recorder) };
-    let args = (0..n).map(|i| unsafe { to_v(&*args.add(i)) }).collect();
+    let args = unsafe { Value::vec_from_raw(args, n) };
     r.events.borrow_mut().push((h, sig, args));
 }
 unsafe extern "C" fn h_checkpoint(p: *mut c_void) {
@@ -109,8 +102,16 @@ unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
     r.destroyed.borrow_mut().push((h, reason));
 }
+unsafe extern "C" fn h_invoke(_: *mut c_void, _: u64, _: *const svl_value, _: usize, _: *mut svl_value) -> std::ffi::c_int {
+    -1
+}
+unsafe extern "C" fn h_release(_: *mut c_void, _: u64) {}
 
 /// Drives a `GtkBackend` through its C vtable with names instead of IDs, recording host callbacks.
+///
+/// Values go through the raw ABI exactly as the host would send them. The harness stands in for
+/// the host's name resolution only in the `set_str`/`get` conveniences: a string for an enum or
+/// flags property is looked up in the type descriptor, and enum results are named again.
 pub struct Harness {
     pub backend: GtkBackend,
     rec: Box<Recorder>,
@@ -128,6 +129,8 @@ impl Harness {
             checkpoint: h_checkpoint,
             call_sync: h_call_sync,
             on_destroyed: h_destroyed,
+            invoke_callback: h_invoke,
+            release_callback: h_release,
         });
         unsafe { backend.attach_host(&*host) };
         Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()) }
@@ -135,6 +138,11 @@ impl Harness {
 
     fn vt(&self) -> &svl_backend {
         unsafe { &*self.backend.as_raw() }
+    }
+
+    /// The safe view of the vtable (descriptors, typed calls).
+    pub fn backend_ref(&self) -> BackendRef<'_> {
+        unsafe { BackendRef::from_raw(self.backend.as_raw()) }.expect("abi version")
     }
 
     fn err(&self) -> String {
@@ -204,44 +212,115 @@ impl Harness {
         unsafe { (vt.destroy)(vt.self_, h) };
     }
 
-    fn set(&self, h: u64, prop: &str, v: svl_value) -> Result<(), String> {
+    /// Sets a property from an owned ABI value.
+    pub fn set_value(&self, h: u64, prop: &str, v: &Value) -> Result<(), String> {
         let id = self.resolve(SVL_PROP, self.kind_of(h), prop);
         if id == 0 {
             return Err(format!("unknown property {prop}"));
         }
         let vt = self.vt();
-        self.check(unsafe { (vt.set_prop)(vt.self_, h, id, &v) })
+        v.with_raw(|raw| self.check(unsafe { (vt.set_prop)(vt.self_, h, id, raw) }))
     }
+
+    /// The descriptor of a property as the host would see it.
+    pub fn prop_desc(&self, h: u64, prop: &str) -> Option<MemberDesc> {
+        let k = self.kind_of(h);
+        let id = self.resolve(SVL_PROP, k, prop);
+        self.backend_ref().describe(NameKind::Prop, k, id)
+    }
+
+    pub fn type_desc(&self, ty: u32) -> Option<TypeDesc> {
+        self.backend_ref().describe_type(ty)
+    }
+
+    /// An enum or flags value by member name(s), as the host would encode it.
+    pub fn named(&self, h: u64, prop: &str, names: &[&str]) -> Result<Value, String> {
+        let d = self.prop_desc(h, prop).ok_or("no descriptor")?;
+        let slot = d.params.first().ok_or("read-only")?;
+        let t = self.type_desc(slot.ty).ok_or("no type descriptor")?;
+        let mut bits = 0i64;
+        for n in names {
+            bits |= t.members.iter().find(|m| m.name == *n).ok_or_else(|| format!("no member {n}"))?.value;
+        }
+        Ok(match slot.tag {
+            SVL_ENUM => Value::Enum { ty: slot.ty, value: bits },
+            SVL_FLAGS => Value::Flags { ty: slot.ty, mask: bits as u64 },
+            t => return Err(format!("not an enum or flags property (tag {t})")),
+        })
+    }
+
     pub fn set_str(&self, h: u64, prop: &str, s: &str) -> Result<(), String> {
-        self.set(h, prop, svl_value { tag: SVL_STR, u: svl_value_u { s: svl_str { ptr: s.as_ptr() as *const _, len: s.len() } } })
+        if let Some(d) = self.prop_desc(h, prop) {
+            if matches!(d.params.first().map(|p| p.tag), Some(SVL_ENUM | SVL_FLAGS)) {
+                let names: Vec<&str> = s.split_whitespace().collect();
+                let v = self.named(h, prop, &names)?;
+                return self.set_value(h, prop, &v);
+            }
+        }
+        self.set_value(h, prop, &Value::Str(s.into()))
     }
     pub fn set_i64(&self, h: u64, prop: &str, i: i64) -> Result<(), String> {
-        self.set(h, prop, svl_value { tag: SVL_I64, u: svl_value_u { i } })
+        self.set_value(h, prop, &Value::I64(i))
     }
     pub fn set_f64(&self, h: u64, prop: &str, f: f64) -> Result<(), String> {
-        self.set(h, prop, svl_value { tag: SVL_F64, u: svl_value_u { f } })
+        self.set_value(h, prop, &Value::F64(f))
     }
     pub fn set_bool(&self, h: u64, prop: &str, b: bool) -> Result<(), String> {
-        self.set(h, prop, svl_value { tag: SVL_BOOL, u: svl_value_u { b } })
+        self.set_value(h, prop, &Value::Bool(b))
     }
     pub fn set_handle(&self, h: u64, prop: &str, o: u64) -> Result<(), String> {
-        self.set(h, prop, svl_value { tag: SVL_HANDLE, u: svl_value_u { h: o } })
+        self.set_value(h, prop, &Value::Handle(o))
     }
-    pub fn get(&self, h: u64, prop: &str) -> V {
+
+    /// Reads a property as an owned ABI value.
+    pub fn get_value(&self, h: u64, prop: &str) -> Value {
         let id = self.resolve(SVL_PROP, self.kind_of(h), prop);
         assert_ne!(id, 0, "unknown property {prop}");
         let vt = self.vt();
-        let mut out = svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } };
+        let mut out = svl_value::null();
         self.check(unsafe { (vt.get_prop)(vt.self_, h, id, &mut out) }).unwrap();
-        unsafe { to_v(&out) }
+        unsafe { Value::from_raw(&out) }
     }
+
+    /// Reads a property and names enum and flags members and record fields via the descriptors.
+    pub fn get(&self, h: u64, prop: &str) -> V {
+        self.name_value(&self.get_value(h, prop))
+    }
+
+    pub fn name_value(&self, v: &Value) -> V {
+        match v {
+            Value::Null => V::Null,
+            Value::Bool(b) => V::Bool(*b),
+            Value::I64(i) => V::I64(*i),
+            Value::U64(u) => V::I64(*u as i64),
+            Value::F64(f) => V::F64(*f),
+            Value::Str(s) => V::Str(s.clone()),
+            Value::Handle(h) => V::Handle(*h),
+            Value::List(items) => V::List(items.iter().map(|x| self.name_value(x)).collect()),
+            Value::Enum { ty, value } => {
+                let t = self.type_desc(*ty).expect("enum descriptor");
+                V::Str(t.members.iter().find(|m| m.value == *value).map(|m| m.name.clone()).unwrap_or_else(|| value.to_string()))
+            }
+            Value::Flags { ty, mask } => {
+                let t = self.type_desc(*ty).expect("flags descriptor");
+                V::List(t.members.iter().filter(|m| m.value != 0 && *mask & m.value as u64 == m.value as u64).map(|m| V::Str(m.name.clone())).collect())
+            }
+            Value::Record { ty, fields } => {
+                let t = self.type_desc(*ty).expect("record descriptor");
+                V::Record(t.fields.iter().zip(fields).map(|(f, x)| (f.name.clone().unwrap_or_default(), self.name_value(x))).collect())
+            }
+            Value::Boxed { handle, .. } => V::Boxed(*handle),
+            other => panic!("unexpected value {other:?}"),
+        }
+    }
+
     pub fn call(&self, h: u64, method: &str) -> Result<(), String> {
         let id = self.resolve(SVL_METHOD, self.kind_of(h), method);
         if id == 0 {
             return Err(format!("unknown method {method}"));
         }
         let vt = self.vt();
-        let mut out = svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } };
+        let mut out = svl_value::null();
         self.check(unsafe { (vt.call)(vt.self_, h, id, std::ptr::null(), 0, &mut out) })
     }
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
@@ -258,7 +337,8 @@ impl Harness {
         self.take_events_with_args().into_iter().map(|(h, s, _)| (h, s)).collect()
     }
     pub fn take_events_with_args(&self) -> Vec<(u64, String, Vec<V>)> {
-        self.rec.events.borrow_mut().drain(..).map(|(h, s, a)| (h, SIGNALS[s as usize - 1].name.to_string(), a)).collect()
+        let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
+        evs.into_iter().map(|(h, s, a)| (h, SIGNALS[s as usize - 1].name.to_string(), a.iter().map(|x| self.name_value(x)).collect())).collect()
     }
     pub fn take_destroyed(&self) -> Vec<u64> {
         self.rec.destroyed.borrow_mut().drain(..).map(|(h, _)| h).collect()

@@ -30,26 +30,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionComboBox::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionComboBox::Type",
           "name": "Type",
           "value": "SO_ComboBox"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionComboBox::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionComboBox::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionComboBox",

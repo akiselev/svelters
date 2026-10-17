@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -52,16 +52,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QFrame::Shadow",
       "members": [
         {
+          "cpp": "QFrame::Plain",
           "name": "Plain",
           "value": "0x0010"
         },
         {
+          "cpp": "QFrame::Raised",
           "name": "Raised",
           "value": "0x0020"
         },
         {
+          "cpp": "QFrame::Sunken",
           "name": "Sunken",
           "value": "0x0030"
         }
@@ -76,35 +81,45 @@
         "scoped": false
       },
       "name": "Shadow",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFrame::Shape",
       "members": [
         {
+          "cpp": "QFrame::NoFrame",
           "name": "NoFrame",
           "value": "0"
         },
         {
+          "cpp": "QFrame::Box",
           "name": "Box",
           "value": "0x0001"
         },
         {
+          "cpp": "QFrame::Panel",
           "name": "Panel",
           "value": "0x0002"
         },
         {
+          "cpp": "QFrame::WinPanel",
           "name": "WinPanel",
           "value": "0x0003"
         },
         {
+          "cpp": "QFrame::HLine",
           "name": "HLine",
           "value": "0x0004"
         },
         {
+          "cpp": "QFrame::VLine",
           "name": "VLine",
           "value": "0x0005"
         },
         {
+          "cpp": "QFrame::StyledPanel",
           "name": "StyledPanel",
           "value": "0x0006"
         }
@@ -123,22 +138,28 @@
         "scoped": false
       },
       "name": "Shape",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFrame::StyleMask",
       "members": [
         {
+          "cpp": "QFrame::Shadow_Mask",
           "name": "Shadow_Mask",
           "value": "0x00f0"
         },
         {
+          "cpp": "QFrame::Shape_Mask",
           "name": "Shape_Mask",
           "value": "0x000f"
         }
       ],
       "metaobject": null,
       "name": "StyleMask",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QFrame",
@@ -248,7 +269,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect frameRect() const",
       "since": null,
@@ -274,7 +295,7 @@
         "native": "QFrame::Shadow",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFrame::Shadow>"
       },
       "signature": "QFrame::Shadow frameShadow() const",
       "since": null,
@@ -300,7 +321,7 @@
         "native": "QFrame::Shape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFrame::Shape>"
       },
       "signature": "QFrame::Shape frameShape() const",
       "since": null,
@@ -507,7 +528,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -544,7 +565,7 @@
             "native": "QFrame::Shadow",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFrame::Shadow>"
           }
         }
       ],
@@ -581,7 +602,7 @@
             "native": "QFrame::Shape",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFrame::Shape>"
           }
         }
       ],
@@ -726,7 +747,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -781,7 +802,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -824,7 +845,7 @@
         "native": "Shadow",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Shadow>"
+        "ref": "enum<QFrame::Shadow>"
       }
     },
     {
@@ -867,7 +888,7 @@
         "native": "Shape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Shape>"
+        "ref": "enum<QFrame::Shape>"
       }
     },
     {

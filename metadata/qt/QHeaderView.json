@@ -33,7 +33,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -55,24 +55,31 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QHeaderView::ResizeMode",
       "members": [
         {
+          "cpp": "QHeaderView::Interactive",
           "name": "Interactive",
           "value": "0"
         },
         {
+          "cpp": "QHeaderView::Stretch",
           "name": "Stretch",
           "value": "1"
         },
         {
+          "cpp": "QHeaderView::Fixed",
           "name": "Fixed",
           "value": "2"
         },
         {
+          "cpp": "QHeaderView::ResizeToContents",
           "name": "ResizeToContents",
           "value": "3"
         },
         {
+          "cpp": "QHeaderView::Custom",
           "name": "Custom",
           "value": "Fixed"
         }
@@ -89,7 +96,8 @@
         "scoped": false
       },
       "name": "ResizeMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QHeaderView",
@@ -224,7 +232,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment defaultAlignment() const",
       "since": null,
@@ -316,7 +324,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -750,7 +758,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1141,7 +1149,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -1217,7 +1225,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1415,7 +1423,7 @@
             "native": "QHeaderView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QHeaderView::ResizeMode>"
           }
         }
       ],
@@ -1452,7 +1460,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -1486,7 +1494,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray saveState() const",
       "since": null,
@@ -1560,7 +1568,7 @@
         "native": "QHeaderView::ResizeMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QHeaderView::ResizeMode>"
       },
       "signature": "QHeaderView::ResizeMode sectionResizeMode(int logicalIndex) const",
       "since": null,
@@ -1634,7 +1642,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sectionSizeFromContents(int logicalIndex) const",
       "since": null,
@@ -1992,7 +2000,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -2435,7 +2443,7 @@
             "native": "QHeaderView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QHeaderView::ResizeMode>"
           }
         }
       ],
@@ -2482,7 +2490,7 @@
             "native": "QHeaderView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QHeaderView::ResizeMode>"
           }
         }
       ],
@@ -2593,7 +2601,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -2603,7 +2611,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -2650,7 +2658,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],
@@ -2869,7 +2877,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2895,7 +2903,7 @@
         "native": "Qt::SortOrder",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::SortOrder>"
       },
       "signature": "Qt::SortOrder sortIndicatorOrder() const",
       "since": null,
@@ -3254,7 +3262,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -4070,7 +4078,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],

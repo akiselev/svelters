@@ -5,6 +5,8 @@
 // Mapping rules and the dispatch return shape: docs/notes/p1-js-lane.md. Plain ES2022, no globals.
 import { createRenderer } from 'svelte/renderer';
 import { BINDINGS } from './bindings.generated.js';
+import { coerceAttribute } from './coerce.js';
+import { kindRef, methodRef, propRef } from './hostops.js';
 
 export { BINDINGS };
 
@@ -20,21 +22,7 @@ const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
 /** Attributes that stay JS-side and never become host props. */
 const JS_ONLY_ATTRS = new Set(['class', 'style', 'id']);
 
-/** Props whose value is coerced to an integer before reaching the host. */
-const INT_PROPS = new Set(['spacing']);
-
 const PROXY_TAG = 'sv-slot';
-
-function coerce(name, value) {
-  if (INT_PROPS.has(name)) {
-    const n = typeof value === 'string' ? Number(value) : value;
-    if (!Number.isInteger(n)) throw new TypeError(`prop ${name} expects an integer, got ${JSON.stringify(value)}`);
-    return n;
-  }
-  if (value !== null && typeof value === 'object') throw new TypeError(`prop ${name}: objects are not valid host prop values`);
-  if (typeof value === 'function') throw new TypeError(`prop ${name}: functions are not valid host prop values`);
-  return value;
-}
 
 /**
  * Thrown by the native-access methods of a node (`call`, `getProp`) when it has no live native
@@ -180,7 +168,7 @@ function updateLabel(el) {
   const s = labelText(el);
   if (s !== el.lastLabel) {
     el.lastLabel = s;
-    host().setProp(el.h, 'label', s);
+    host().setProp(el.h, propRef(host(), el.tag, 'label'), s);
   }
 }
 
@@ -190,10 +178,10 @@ function realize(el) {
   if (el.h != null) return;
   const hs = host();
   el.dead = null;
-  el.h = hs.create(el.tag);
+  el.h = hs.create(kindRef(hs, el.tag));
   el.dead = null;
   byHandle.set(el.h, el);
-  for (const [k, v] of el.props) hs.setProp(el.h, k, v);
+  for (const [k, v] of el.props) hs.setProp(el.h, propRef(hs, el.tag, k), v);
   for (const sig of el.signals) hs.listen(el.h, sig, true);
   updateLabel(el);
   for (const { el: c, slot } of flat(el, null, [])) {
@@ -245,7 +233,7 @@ function attachNative(el) {
   if (parent === root) {
     if (el.tag !== 'window') throw new Error(`only <window> may be mounted at top level, got <${el.tag}>`);
     realize(el);
-    host().call(el.h, 'present', []);
+    host().call(el.h, methodRef(host(), el.tag, 'present'), []);
   } else if (parent.kind === 'element' && parent.h != null) {
     realize(el);
     nativeInsert(parent, el, slot);
@@ -287,7 +275,7 @@ function detach(n) {
 function setNativeProp(el, name, value) {
   if (el.props.has(name) && el.props.get(name) === value) return;
   el.props.set(name, value);
-  if (el.h != null) host().setProp(el.h, name, value);
+  if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), value);
 }
 
 // listener bookkeeping per native signal: listen on 0 -> 1, off on 1 -> 0
@@ -369,14 +357,14 @@ const renderer = createRenderer({
   setAttribute(el, key, value) {
     el.attrs[key] = value;
     if (key === 'slot' || key === 'data-slot') el.slot = String(value);
-    else if (!JS_ONLY_ATTRS.has(key) && !isProxy(el)) setNativeProp(el, key, coerce(key, value));
+    else if (!JS_ONLY_ATTRS.has(key) && !isProxy(el)) setNativeProp(el, key, coerceAttribute(host(), el.tag, key, value));
   },
   removeAttribute(el, name) {
     delete el.attrs[name];
     if (name === 'slot' || name === 'data-slot') el.slot = null;
     else if (el.props.has(name)) {
       el.props.delete(name);
-      if (el.h != null) host().setProp(el.h, name, null);
+      if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), null);
     }
   },
   setText(node, text) {

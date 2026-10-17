@@ -267,7 +267,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "colordialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QColorDialog",
@@ -279,10 +279,10 @@
   "native": "QColorDialog",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -292,8 +292,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -333,22 +333,22 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 14,
-  "element": null,
+  "element": "combobox",
   "gallery": null,
   "inherited": 0,
   "kind": "QComboBox",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    82
   ],
   "native": "QComboBox",
   "ownership": false,
   "props": [
-   0,
+   2,
    16
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -358,8 +358,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -399,7 +399,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "dateedit",
   "gallery": null,
   "inherited": 0,
   "kind": "QDateEdit",
@@ -424,15 +424,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 7,
-  "element": null,
+  "element": "datetimeedit",
   "gallery": null,
   "inherited": 0,
   "kind": "QDateTimeEdit",
@@ -444,10 +444,10 @@
   "native": "QDateTimeEdit",
   "ownership": false,
   "props": [
-   0,
+   2,
    17
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -457,8 +457,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -597,7 +597,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 9,
-  "element": null,
+  "element": "doublespinbox",
   "gallery": null,
   "inherited": 0,
   "kind": "QDoubleSpinBox",
@@ -609,10 +609,10 @@
   "native": "QDoubleSpinBox",
   "ownership": false,
   "props": [
-   0,
+   2,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -622,8 +622,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -1126,21 +1126,21 @@
   "bindings": 0,
   "defaults": 11,
   "element": "label",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "QLabel",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    48
   ],
   "native": "QLabel",
   "ownership": false,
   "props": [
-   1,
+   5,
    12
   ],
-  "props_annotated": 1,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
@@ -1150,8 +1150,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   7,
+   7
   ]
  },
  {
@@ -1192,7 +1192,7 @@
   "bindings": 1,
   "defaults": 19,
   "element": "entry",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "QLineEdit",
   "lifetime": "owned",
@@ -1203,10 +1203,10 @@
   "native": "QLineEdit",
   "ownership": false,
   "props": [
-   2,
+   5,
    19
   ],
-  "props_annotated": 2,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    1,
@@ -1216,8 +1216,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   7,
+   7
   ]
  },
  {
@@ -1588,7 +1588,7 @@
   "bindings": 0,
   "defaults": 3,
   "element": "button",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "QPushButton",
   "lifetime": "owned",
@@ -1612,8 +1612,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   7,
+   7
   ]
  },
  {
@@ -1720,7 +1720,7 @@
   "bindings": 0,
   "defaults": 2,
   "element": "scrolledwindow",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "QScrollArea",
   "lifetime": "owned",
@@ -1851,7 +1851,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 9,
-  "element": null,
+  "element": "spinbox",
   "gallery": null,
   "inherited": 0,
   "kind": "QSpinBox",
@@ -1863,10 +1863,10 @@
   "native": "QSpinBox",
   "ownership": false,
   "props": [
-   0,
+   5,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
@@ -1876,8 +1876,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2280,7 +2280,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "timeedit",
   "gallery": null,
   "inherited": 0,
   "kind": "QTimeEdit",
@@ -2305,8 +2305,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -2545,21 +2545,21 @@
   "bindings": 0,
   "defaults": 39,
   "element": "box",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "QWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    258
   ],
   "native": "QWidget",
   "ownership": true,
   "props": [
-   0,
+   9,
    61
   ],
-  "props_annotated": 0,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
    0,
@@ -2569,8 +2569,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   16,
+   16
   ]
  },
  {

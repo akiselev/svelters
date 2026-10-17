@@ -86,7 +86,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         },
         {
@@ -108,16 +108,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QCompleter::CompletionMode",
       "members": [
         {
+          "cpp": "QCompleter::PopupCompletion",
           "name": "PopupCompletion",
           "value": "0"
         },
         {
+          "cpp": "QCompleter::UnfilteredPopupCompletion",
           "name": "UnfilteredPopupCompletion",
           "value": "1"
         },
         {
+          "cpp": "QCompleter::InlineCompletion",
           "name": "InlineCompletion",
           "value": "2"
         }
@@ -132,19 +137,25 @@
         "scoped": false
       },
       "name": "CompletionMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QCompleter::ModelSorting",
       "members": [
         {
+          "cpp": "QCompleter::UnsortedModel",
           "name": "UnsortedModel",
           "value": "0"
         },
         {
+          "cpp": "QCompleter::CaseSensitivelySortedModel",
           "name": "CaseSensitivelySortedModel",
           "value": "1"
         },
         {
+          "cpp": "QCompleter::CaseInsensitivelySortedModel",
           "name": "CaseInsensitivelySortedModel",
           "value": "2"
         }
@@ -159,7 +170,8 @@
         "scoped": false
       },
       "name": "ModelSorting",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter",
@@ -195,7 +207,7 @@
         "native": "Qt::CaseSensitivity",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CaseSensitivity>"
       },
       "signature": "Qt::CaseSensitivity caseSensitivity() const",
       "since": null,
@@ -224,7 +236,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -310,7 +322,7 @@
         "native": "QCompleter::CompletionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCompleter::CompletionMode>"
       },
       "signature": "QCompleter::CompletionMode completionMode() const",
       "since": null,
@@ -576,7 +588,7 @@
         "native": "Qt::MatchFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MatchFlag>"
       },
       "signature": "Qt::MatchFlags filterMode() const",
       "since": null,
@@ -654,7 +666,7 @@
         "native": "QCompleter::ModelSorting",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCompleter::ModelSorting>"
       },
       "signature": "QCompleter::ModelSorting modelSorting() const",
       "since": null,
@@ -746,7 +758,7 @@
             "native": "Qt::CaseSensitivity",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CaseSensitivity>"
           }
         }
       ],
@@ -820,7 +832,7 @@
             "native": "QCompleter::CompletionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCompleter::CompletionMode>"
           }
         }
       ],
@@ -968,7 +980,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -1079,7 +1091,7 @@
             "native": "QCompleter::ModelSorting",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCompleter::ModelSorting>"
           }
         }
       ],
@@ -1235,7 +1247,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList splitPath(const QString &path) const",
       "since": null,
@@ -1368,7 +1380,7 @@
         "native": "Qt::CaseSensitivity",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CaseSensitivity>"
       }
     },
     {
@@ -1454,7 +1466,7 @@
         "native": "CompletionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<CompletionMode>"
+        "ref": "enum<QCompleter::CompletionMode>"
       }
     },
     {
@@ -1583,7 +1595,7 @@
         "native": "Qt::MatchFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MatchFlag>"
       }
     },
     {
@@ -1669,7 +1681,7 @@
         "native": "ModelSorting",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ModelSorting>"
+        "ref": "enum<QCompleter::ModelSorting>"
       }
     },
     {

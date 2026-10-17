@@ -113,7 +113,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         },
         {
@@ -123,7 +123,7 @@
             "native": "Qt::GestureFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::GestureFlag>"
           }
         }
       ],
@@ -160,7 +160,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -426,7 +426,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -558,7 +558,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {

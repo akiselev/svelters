@@ -78,12 +78,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QPlainTextEdit::LineWrapMode",
       "members": [
         {
+          "cpp": "QPlainTextEdit::NoWrap",
           "name": "NoWrap",
           "value": "0"
         },
         {
+          "cpp": "QPlainTextEdit::WidgetWidth",
           "name": "WidgetWidth",
           "value": "1"
         }
@@ -97,7 +101,8 @@
         "scoped": false
       },
       "name": "LineWrapMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextEdit",
@@ -136,7 +141,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -281,7 +286,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF blockBoundingGeometry(const QTextBlock &block) const",
       "since": null,
@@ -318,7 +323,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF blockBoundingRect(const QTextBlock &block) const",
       "since": null,
@@ -548,7 +553,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF contentOffset() const",
       "since": null,
@@ -692,7 +697,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -726,7 +731,7 @@
         "native": "QTextCharFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCharFormat>"
       },
       "signature": "QTextCharFormat currentCharFormat() const",
       "since": null,
@@ -755,7 +760,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -763,7 +768,7 @@
         "native": "QTextCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCursor>"
       },
       "signature": "QTextCursor cursorForPosition(const QPoint &pos) const",
       "since": null,
@@ -789,7 +794,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect cursorRect() const",
       "since": null,
@@ -818,7 +823,7 @@
             "native": "const QTextCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCursor>"
           }
         }
       ],
@@ -826,7 +831,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect cursorRect(const QTextCursor &cursor) const",
       "since": null,
@@ -1169,7 +1174,7 @@
             "native": "QTextDocument::FindFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTextDocument::FindFlag>"
           }
         }
       ],
@@ -1216,7 +1221,7 @@
             "native": "QTextDocument::FindFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTextDocument::FindFlag>"
           }
         }
       ],
@@ -1453,7 +1458,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -1687,7 +1692,7 @@
         "native": "QPlainTextEdit::LineWrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QPlainTextEdit::LineWrapMode>"
       },
       "signature": "QPlainTextEdit::LineWrapMode lineWrapMode() const",
       "since": null,
@@ -1726,7 +1731,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1789,7 +1794,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -1974,7 +1979,7 @@
             "native": "QTextCursor::MoveOperation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextCursor::MoveOperation>"
           }
         },
         {
@@ -1984,7 +1989,7 @@
             "native": "QTextCursor::MoveMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextCursor::MoveMode>"
           }
         }
       ],
@@ -2383,7 +2388,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -2568,7 +2573,7 @@
             "native": "QPlainTextEdit::LineWrapMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPlainTextEdit::LineWrapMode>"
           }
         }
       ],
@@ -2864,7 +2869,7 @@
             "native": "const QTextCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCursor>"
           }
         }
       ],
@@ -2901,7 +2906,7 @@
             "native": "Qt::TextInteractionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::TextInteractionFlag>"
           }
         }
       ],
@@ -2975,7 +2980,7 @@
             "native": "QTextOption::WrapMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextOption::WrapMode>"
           }
         }
       ],
@@ -3098,7 +3103,7 @@
         "native": "QTextCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCursor>"
       },
       "signature": "QTextCursor textCursor() const",
       "since": null,
@@ -3124,7 +3129,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       },
       "signature": "Qt::TextInteractionFlags textInteractionFlags() const",
       "since": null,
@@ -3239,7 +3244,7 @@
         "native": "QTextOption::WrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextOption::WrapMode>"
       },
       "signature": "QTextOption::WrapMode wordWrapMode() const",
       "since": null,
@@ -3617,7 +3622,7 @@
         "native": "LineWrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<LineWrapMode>"
+        "ref": "enum<QPlainTextEdit::LineWrapMode>"
       }
     },
     {
@@ -3964,7 +3969,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       }
     },
     {
@@ -4032,7 +4037,7 @@
         "native": "QTextOption::WrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextOption::WrapMode>"
       }
     }
   ],
@@ -4308,7 +4313,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {

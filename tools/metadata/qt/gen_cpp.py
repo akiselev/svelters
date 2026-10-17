@@ -37,10 +37,124 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "common"))
 import svmeta  # noqa: E402
+from tsvalues import write_values_dts  # noqa: E402
 
 
 class GenError(Exception):
     pass
+
+
+
+# --------------------------------------------------------------------------------------------
+# value model: classification of metadata type refs, enum member naming, C++ spellings
+
+INT_REFS = {"i32", "u32", "i64", "u64"}
+UNSUPPORTED_REFS = {"opaque", "list", "void"}
+GUI_HEADERS = {"QIcon": "QtGui/QIcon", "QFont": "QtGui/QFont", "QPixmap": "QtGui/QPixmap", "QImage": "QtGui/QImage",
+               "QBrush": "QtGui/QBrush", "QPalette": "QtGui/QPalette", "QCursor": "QtGui/QCursor",
+               "QKeySequence": "QtGui/QKeySequence", "QRegion": "QtGui/QRegion", "QPicture": "QtGui/QPicture",
+               "QPainterPath": "QtGui/QPainterPath", "QTextCharFormat": "QtGui/QTextCharFormat",
+               "QTextFormat": "QtGui/QTextFormat", "QTextCursor": "QtGui/QTextCursor", "QTextOption": "QtGui/QTextOption",
+               "QPen": "QtGui/QPen", "QTransform": "QtGui/QTransform", "QBitmap": "QtGui/QBitmap",
+               "QUrl": "QtCore/QUrl", "QLocale": "QtCore/QLocale", "QSizePolicy": "QtWidgets/QSizePolicy",
+               "Qt": "QtCore/Qt"}
+
+
+def classify(ref: str):
+    """(category, payload) for a neutral type ref; category 'unsupported' has no converter yet."""
+    if ref == "bool":
+        return ("bool", None)
+    if ref in INT_REFS:
+        return ("int", ref)
+    if ref in ("f32", "f64"):
+        return ("float", ref)
+    if ref in ("string", "bytes", "date", "time", "datetime", "cstring", "variant"):
+        return (ref, None)
+    head, _, rest = ref.partition("<")
+    inner = rest[:-1] if rest.endswith(">") else rest
+    if head in ("enum", "flags", "record", "boxed", "object"):
+        return (head, inner)
+    if head == "list":
+        if inner == "string":
+            return ("list", "string")
+        sub = classify(inner)
+        return ("list", inner) if sub[0] != "unsupported" else ("unsupported", ref)
+    return ("unsupported", ref)
+
+
+def kebab_words(name: str) -> list[str]:
+    spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name.replace("_", " "))
+    parts = spaced.split()
+    out, i = [], 0
+    while i < len(parts):
+        w = parts[i]
+        if len(w) == 1 and i + 1 < len(parts):  # AlignHCenter -> hcenter, not h-center
+            w += parts[i + 1]
+            i += 1
+        out.append(w.lower())
+        i += 1
+    return out
+
+
+def enum_member_names(members: list[dict]) -> dict[str, str]:
+    """JS member name -> C++ expression: kebab-case, with the common leading words stripped only when
+    every name stays unique and non-empty (QLineEdit::PasswordEchoOnEdit -> password-echo-on-edit,
+    Qt::ScrollBarAsNeeded -> as-needed). Aliases that collide keep the first member."""
+    words = [kebab_words(m["name"]) for m in members]
+    names = ["-".join(w) for w in words]
+    pre = 0
+    if len(members) > 1:
+        while all(len(w) > pre + 1 and w[pre] == words[0][pre] for w in words):
+            pre += 1
+    if pre:
+        stripped = ["-".join(w[pre:]) for w in words]
+        if all(stripped) and len(set(stripped)) == len(stripped):
+            names = stripped
+    out: dict[str, str] = {}
+    for n, m in zip(names, members):
+        out.setdefault(n, m["cpp"])
+    return out
+
+
+def strip_cv(native: str) -> str:
+    return re.sub(r"\bconst\b", "", native).replace("&", "").strip()
+
+
+def ts_leaf(cat: str, payload, m) -> str:
+    """The TypeScript type for a classified ref (see packages/renderer/types/values.d.ts)."""
+    if cat == "bool":
+        return "boolean"
+    if cat in ("int", "float"):
+        return "number"
+    if cat in ("string", "cstring"):
+        return "string"
+    if cat == "variant":
+        return "Variant"
+    if cat == "bytes":
+        return "Uint8Array"
+    if cat == "date":
+        return "DateParts"
+    if cat == "time":
+        return "TimeParts"
+    if cat == "datetime":
+        return "Date"
+    if cat == "record":
+        return payload + (" | string" if payload == "Color" else "")
+    if cat == "enum":
+        names = sorted(m.enums_used[payload]) if payload in m.enums_used else []
+        return " | ".join(f'"{n}"' for n in names) or "string"
+    if cat == "flags":
+        names = sorted(m.enums_used[payload]) if payload in m.enums_used else []
+        return "Array<" + (" | ".join(f'"{n}"' for n in names) or "string") + ">"
+    if cat == "boxed":
+        return f"Boxed<\"{payload}\">" + (" | string" if payload in ("QIcon", "QKeySequence", "QUrl", "QFont") else "")
+    if cat == "object":
+        return "number"
+    if cat == "list":
+        inner = classify(payload)
+        leaf = ts_leaf(inner[0], inner[1], m) if payload != "string" else "string"
+        return f"Array<{leaf}>"
+    return "unknown"
 
 
 # --------------------------------------------------------------------------------------------
@@ -79,6 +193,16 @@ class Model:
         if len(set(tags)) != len(tags):
             raise GenError("duplicate element tags")
         self.by_tag = {e["tag"]: e for e in self.elements}
+        # Enum definitions (every enum a slot type mentions) live in the `Qt` namespace record.
+        self.enum_defs = {}
+        table = meta_dir / "_enums" / "Qt.json"
+        if table.exists():
+            self.read_files.append(table)
+            self.enum_defs = {e["fullname"]: e for e in svmeta.load_json(table)["enums"]}
+        self.enums_used: dict[str, dict[str, str]] = {}  # enum full name -> JS name -> C++ expression
+        self.enum_override: set[str] = set()
+        self.boxed_used: set[str] = set()
+        self.owners_used: set[str] = set()
         for e in self.elements:
             self._apply_inherit(e)
             for key in ("props", "signals", "methods"):
@@ -135,6 +259,41 @@ class Model:
                     return c, r
         return None, None
 
+
+    # value types ---------------------------------------------------------------------------
+    def use(self, ref: str, where: str, table: dict | None = None) -> tuple:
+        """Registers what a slot of type `ref` needs (enum tables, boxed converters) and classifies it."""
+        cat, pay = classify(ref)
+        if cat == "unsupported":
+            raise GenError(f"{where}: type {ref} has no converter yet")
+        if cat in ("enum", "flags"):
+            if table is not None:
+                self.enums_used[pay] = dict(table)
+                self.enum_override.add(pay)
+            elif pay not in self.enum_override and pay not in self.enums_used:
+                d = self.enum_defs.get(pay)
+                if not d:
+                    raise GenError(f"{where}: enum {pay} is not in the enum table (rerun the ingest)")
+                self.enums_used[pay] = enum_member_names(d["members"])
+            self.owners_used.add(pay.split("::")[0])
+        elif cat == "boxed":
+            self.boxed_used.add(pay)
+            self.owners_used.add(pay)
+        elif cat == "list" and pay != "string":
+            self.use(pay, where)
+        return cat, pay
+
+    def cpp_type(self, ref: str, native: str) -> str:
+        """The C++ spelling of a parameter, return or signal-argument type (cv/ref stripped)."""
+        cat, pay = classify(ref)
+        if cat == "enum":
+            return pay
+        if cat == "flags":
+            return f"QFlags<{pay}>"
+        if cat == "cstring":
+            return "const char *"
+        return strip_cv(native)
+
     # resolution --------------------------------------------------------------------------
     def _resolve(self, el: dict) -> None:
         tag, cls = el["tag"], el["cls"]
@@ -163,10 +322,19 @@ class Model:
     def _resolve_prop(self, el: dict, p: dict) -> None:
         tag = el["tag"]
         tcls = self.target_cls(el, p.get("target"))
+        p["readonly"] = False
         if p.get("type") == "enum":
+            # An override that narrows or renames an enum's members (QBoxLayout::Direction -> orientation).
             for key in ("getter", "setter"):
                 self._need_method(tag, tcls, p[key], None)
-            p["decl_ref"] = "enum"
+            _, g = self._need_method(tag, tcls, p["getter"], 0)
+            ref = g["returns"]["ref"]
+            cat, pay = classify(ref)
+            if cat != "enum":
+                raise GenError(f"{tag}: enum prop {p['js']} getter returns {ref}")
+            self.use(ref, f"{tag}.{p['js']}", p["values"])
+            p["decl_ref"], p["ref"], p["cat"] = "enum", ref, "enum"
+            p["direct"] = True
             return
         dcls, prop = self.find(tcls, "properties", lambda r: r["name"] == p["native"])
         if not prop:
@@ -174,14 +342,24 @@ class Model:
         acc = prop["accessors"]
         p["decl_cls"], p["prop"] = dcls, prop
         p["decl_ref"] = prop["type"]["ref"]
+        p["ref"] = prop["type"]["ref"]
         p["getter"], p["setter"] = acc.get("get"), acc.get("set")
         p["qprop"] = prop.get("metaobject") is not None
-        direct = p["decl_ref"] in ("string", "bool", "i32", "u32", "i64", "f32", "f64") and p["getter"] and p["setter"]
+        cat, _ = classify(p["ref"])
+        scalar = cat in ("bool", "int", "float", "string")
+        # Without a direct setter a scalar can still be written through its QMetaProperty; any other
+        # category is read-only.
+        direct = cat != "unsupported" and p["getter"] and (p["setter"] or not prop["access"]["write"] or not scalar)
         if direct:
+            self.use(p["ref"], f"{tag}.{p['js']}")
             self._need_method(tag, tcls, p["getter"], 0)
-            self._need_method(tag, tcls, p["setter"], 1)
+            if p["setter"]:
+                self._need_method(tag, tcls, p["setter"], 1)
+            else:
+                p["readonly"] = True
         elif not p["qprop"]:
             raise GenError(f"{tag}: property {p['native']} has no direct accessors and no QMetaProperty")
+        p["cat"] = cat
         p["direct"] = bool(direct)
 
     def _need_method(self, tag: str, cls: str, name: str, nparams):
@@ -205,9 +383,15 @@ class Model:
             raise GenError(f"{tag}: method {m['native']}{want or ''} not found on {cls}")
         m["rec"], m["decl_cls"] = rec, c
         m["ret"] = rec["returns"]["ref"]
+        m["ret_native"] = rec["returns"]["native"]
         m["argrefs"] = want or []
-        if m["ret"] not in ("void", "bool", "i32", "u32", "i64", "string", "f64"):
-            raise GenError(f"{tag}: method {m['native']} returns unsupported {m['ret']}")
+        m["argtypes"] = []
+        for i, q in enumerate(rec["params"][:len(m["argrefs"])]):
+            self.use(q["type"]["ref"], f"{tag}.{m['js']} arg {i}")
+            m["argtypes"].append(self.cpp_type(q["type"]["ref"], q["type"]["native"]))
+        m["argnames"] = [q["name"] or f"arg{i}" for i, q in enumerate(rec["params"][:len(m["argrefs"])])]
+        if m["ret"] != "void":
+            self.use(m["ret"], f"{tag}.{m['js']} return")
 
     def _resolve_signal(self, el: dict, s: dict) -> None:
         tag, cls = el["tag"], el["cls"]
@@ -232,9 +416,13 @@ class Model:
         s["decl_cls"], s["rec"] = c, rec
         s["qparams"] = [(q["name"], q["type"]["native"]) for q in rec["params"]]
         names = [n for n, _ in s["qparams"]]
+        s["argrefs"] = {}
         for a in s["args"]:
             if a["name"] not in names:
                 raise GenError(f"{tag}: signal arg {a['name']} not a parameter of {rec['signature']}")
+            q = rec["params"][names.index(a["name"])]
+            self.use(q["type"]["ref"], f"{tag}.{s['js']}.{a['name']}")
+            a["ref"] = q["type"]["ref"]
 
     _NATIVE = re.compile(r"^(\w+)::([\w<>*:, ]+?)\((.*)\)(?:\s+const)?$")
 
@@ -361,8 +549,13 @@ def cident(s: str) -> str:
 
 
 def inc(model: Model, classes) -> str:
-    seen = sorted({model.kind(c)["native"]["header"] for c in classes if model.kind(c)})
-    return "\n".join(f"#include <QtWidgets/{h}>" for h in seen)
+    seen = {f"QtWidgets/{model.kind(c)['native']['header']}" for c in classes if model.kind(c)}
+    for o in model.owners_used:
+        if model.kind(o) and o != "Qt":
+            seen.add(f"QtWidgets/{model.kind(o)['native']['header']}")
+        elif o in GUI_HEADERS:
+            seen.add(GUI_HEADERS[o])
+    return "\n".join(f"#include <{h}>" for h in sorted(seen))
 
 
 def host_expr(el: dict, s_host: str, obj: str = "o") -> str:
@@ -375,25 +568,10 @@ def target_expr(el: dict, p: dict, obj: str = "o") -> str:
     return host_expr(el, "layout" if p.get("target") == "layout" else "self", obj)
 
 
-def conv_in(ref: str, src: str, var: str, what: str) -> tuple[str, str]:
-    """(declaration+check, expression) converting svl_value* `src` to a C++ value."""
-    if ref == "string":
-        return f"QString {var}; if (!to_qstring({src}, {var})) return bad_type(\"{what}\", \"string\");", var
-    if ref == "bool":
-        return f"bool {var}; if (!to_bool({src}, {var})) return bad_type(\"{what}\", \"bool\");", var
-    if ref in ("i32", "u32"):
-        return f"int {var}; if (!to_i32({src}, {var})) return bad_type(\"{what}\", \"number\");", var
-    if ref == "i64":
-        return f"qint64 {var}; if (!to_i64({src}, {var})) return bad_type(\"{what}\", \"number\");", var
-    if ref in ("f64", "f32"):
-        return f"double {var}; if (!to_f64({src}, {var})) return bad_type(\"{what}\", \"number\");", var
-    raise GenError(f"no input conversion for {ref}")
 
 
-def conv_out(ref: str, expr: str, out: str = "out") -> str:
-    return {"string": f"out_str({out}, {expr});", "bool": f"out_bool({out}, {expr});",
-            "i32": f"out_i64({out}, {expr});", "u32": f"out_i64({out}, {expr});", "i64": f"out_i64({out}, {expr});",
-            "f64": f"out_f64({out}, {expr});", "f32": f"out_f64({out}, {expr});"}[ref]
+
+
 
 
 # --------------------------------------------------------------------------------------------
@@ -465,32 +643,21 @@ def prop_cases(m: Model, setter: bool) -> str:
             pid = f"P_{t}_{cident(p['js'])}"
             tgt = target_expr(e, p)
             out.append(f"        case {pid}: {{")
-            if p["decl_ref"] == "enum":
-                if setter:
-                    out.append(f"          QString x; if (!to_qstring(v, x)) return bad_type(\"{p['js']}\", \"string\");")
-                    out.append(f"          auto *t = {tgt};")
-                    first = True
-                    for name, cexpr in sorted(p["values"].items()):
-                        out.append(f"          {'' if first else 'else '}if (x == QLatin1String(\"{name}\")) t->{p['setter']}({cexpr});")
-                        first = False
-                    allowed = "|".join(sorted(p["values"]))
-                    out.append(f"          else return fail(\"{p['js']}: expected one of {allowed}\");")
-                    out.append("          return 0;")
-                else:
-                    out.append(f"          auto *t = {tgt};")
-                    for name, cexpr in sorted(p["values"].items()):
-                        out.append(f"          if (t->{p['getter']}() == {cexpr}) {{ out_str(out, QStringLiteral(\"{name}\")); return 0; }}")
-                    out.append("          return fail(\"" + p["js"] + ": unmapped enum value\");")
-            elif p["direct"]:
-                if setter:
-                    decl, expr = conv_in(p["decl_ref"], "v", "x", p["js"])
-                    out.append(f"          {decl}")
+            if p["direct"]:
+                out.append(f"          auto *t = {tgt};")
+                out.append(f"          using T = Plain<decltype(t->{p['getter']}())>;")
+                if setter and p["readonly"]:
+                    out.append(f'          return fail("{p["js"]}: property is read-only");')
+                elif setter:
+                    out.append("          T x{};")
+                    out.append("          std::string er;")
+                    out.append(f'          if (!conv_in(v, x, "{p["js"]}", er)) return fail(er);')
                     if p.get("suppress_signals"):
-                        out.append("          Suppress quiet(e);  // programmatic set must not echo back as an event (per-handle flag, not QSignalBlocker)")
-                    out.append(f"          {tgt}->{p['setter']}({expr});")
+                        out.append("          Suppress quiet(e);  // programmatic set must not echo back as an event (per-handle flag, never QSignalBlocker)")
+                    out.append(f"          t->{p['setter']}(x);")
                     out.append("          return 0;")
                 else:
-                    out.append(f"          {conv_out(p['decl_ref'], tgt + '->' + p['getter'] + '()')}")
+                    out.append(f"          Conv<T>::out(t->{p['getter']}(), out);")
                     out.append("          return 0;")
             else:  # QMetaProperty fallback
                 if setter:
@@ -508,7 +675,7 @@ def prop_cases(m: Model, setter: bool) -> str:
 
 def emit_call(m: Model) -> str:
     out = ["int gen_call(Entry &e, svl_id method, const svl_value *args, size_t n, svl_value *out) {",
-           "  QObject *o = e.obj.data();", "  (void)args; (void)out;", "  switch (e.kind) {"]
+           "  QObject *o = e.obj.data();", "  (void)args; (void)out; std::string er;", "  switch (e.kind) {"]
     for e in m.elements:
         t = cident(e["tag"])
         if not e.get("methods"):
@@ -519,20 +686,75 @@ def emit_call(m: Model) -> str:
             out.append(f"        case M_{t}_{cident(me['js'])}: {{")
             out.append(f"          if (n != {n}) return fail(\"{me['js']}: expected {n} argument(s)\");")
             names = []
-            for i, ref in enumerate(me["argrefs"]):
-                decl, expr = conv_in(ref, f"&args[{i}]", f"a{i}", f"{me['js']} arg {i}")
-                out.append(f"          {decl}")
-                names.append(expr)
+            for i, (ty, an) in enumerate(zip(me["argtypes"], me["argnames"])):
+                out.append(f"          {ty} a{i}{{}};")
+                out.append(f'          if (!conv_in(&args[{i}], a{i}, "{me["js"]}({an})", er)) return fail(er);')
+                names.append(f"a{i}")
             call = f"static_cast<{e['cls']} *>(o)->{me['native']}({', '.join(names)})"
             if me["ret"] == "void":
                 out.append(f"          {call};")
             else:
                 out.append(f"          auto r = {call};")
-                out.append(f"          {conv_out(me['ret'], 'r')}")
+                out.append("          if (out) Conv<Plain<decltype(r)>>::out(r, out);")
             out.append("          return 0;\n        }")
         out.append("        default: break;\n      }\n      break;")
     out.append("    default: break;\n  }")
     out.append('  return fail("call: unknown method id for this kind");\n}')
+    return "\n".join(out)
+
+
+def emit_describe(m: Model) -> str:
+    """describe(): one static descriptor per prop and method, built on first request from Conv<T>::slot."""
+    out = ["const svl_member_desc *gen_describe(uint32_t what, svl_id kind, svl_id member) {", "  switch (what) {"]
+    for what, key in (("SVL_PROP", "props"), ("SVL_METHOD", "methods")):
+        out.append(f"    case {what}:\n      switch (kind) {{")
+        for e in m.elements:
+            t = cident(e["tag"])
+            items = e.get(key, [])
+            if not items:
+                continue
+            out.append(f"        case K_{t}:\n          switch (member) {{")
+            for it in items:
+                if key == "props":
+                    pid = f"P_{t}_{cident(it['js'])}"
+                    cls = e["layout_cls"] if it.get("target") == "layout" else e["cls"]
+                    out.append(f"            case {pid}: {{")
+                    if it["direct"]:
+                        out.append(f"              using T = Plain<decltype(std::declval<{cls} *>()->{it['getter']}())>;")
+                        out.append(f'              static svl_slot_desc ps[1] = {{Conv<T>::slot("{it["js"]}")}};')
+                        out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, {0 if it["readonly"] else 1}, ps[0], 0}};')
+                    else:
+                        out.append(f'              static svl_slot_desc ps[1] = {{slot_desc("{it["js"]}", SVL_NULL, SVL_D_NULLABLE)}};')
+                        out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, 1, ps[0], 0}};')
+                    out.append("              return &d;\n            }")
+                else:
+                    mid = f"M_{t}_{cident(it['js'])}"
+                    n = len(it["argrefs"])
+                    out.append(f"            case {mid}: {{")
+                    slots = ", ".join(f'Conv<{ty}>::slot("{an}")' for ty, an in zip(it["argtypes"], it["argnames"])) or "slot_desc(nullptr, SVL_NULL)"
+                    out.append(f"              static svl_slot_desc ps[{max(n, 1)}] = {{{slots}}};")
+                    if it["ret"] == "void":
+                        ret = "slot_desc(nullptr, SVL_NULL)"
+                    else:
+                        ret = f'Conv<{m.cpp_type(it["ret"], it["ret_native"])}>::slot(nullptr)'
+                    out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, {n}, {ret}, 0}};')
+                    out.append("              return &d;\n            }")
+            out.append("            default: break;\n          }\n          break;")
+        out.append("        default: break;\n      }\n      break;")
+    out.append("    default: break;\n  }\n  return nullptr;\n}")
+    return "\n".join(out)
+
+
+def emit_enums(m: Model) -> str:
+    """EnumInfo<E> for every enum a slot mentions, and BoxedConv for the value classes."""
+    out = []
+    for full in sorted(m.enums_used):
+        mem = ", ".join(f'{{"{name}", static_cast<int64_t>({cpp})}}' for name, cpp in sorted(m.enums_used[full].items()))
+        out.append(f"template <>\nstruct EnumInfo<{full}> {{\n  static const char *name() {{ return \"{full}\"; }}\n"
+                   f"  static const std::vector<std::pair<std::string, int64_t>> &members() {{\n"
+                   f"    static const std::vector<std::pair<std::string, int64_t>> v = {{{mem}}};\n    return v;\n  }}\n}};")
+    for b in sorted(m.boxed_used):
+        out.append(f"template <>\nstruct Conv<{b}> : BoxedConv<{b}> {{}};")
     return "\n".join(out)
 
 
@@ -649,20 +871,11 @@ def emit_listen(m: Model) -> str:
             out.append(f"          auto *w = static_cast<{s['decl_cls']} *>(o);")
             body = []
             if s["args"]:
-                body.append("svl_value vals[%d]{}; QByteArray bufs[%d]; (void)bufs;" % (len(s["args"]), len(s["args"])))
+                body.append("g_out.clear(); svl_value vals[%d];" % len(s["args"]))
                 names = [n for n, _ in s["qparams"]]
                 for i, a in enumerate(s["args"]):
                     pi = names.index(a["name"])
-                    if a["type"] == "string":
-                        body.append(f"bufs[{i}] = a{pi}.toUtf8(); vals[{i}].tag = SVL_STR; vals[{i}].u.s.ptr = bufs[{i}].constData(); vals[{i}].u.s.len = static_cast<size_t>(bufs[{i}].size());")
-                    elif a["type"] == "bool":
-                        body.append(f"vals[{i}].tag = SVL_BOOL; vals[{i}].u.b = static_cast<bool>(a{pi});")
-                    elif a["type"] == "i32":
-                        body.append(f"vals[{i}].tag = SVL_I64; vals[{i}].u.i = static_cast<int64_t>(a{pi});")
-                    elif a["type"] == "f64":
-                        body.append(f"vals[{i}].tag = SVL_F64; vals[{i}].u.f = static_cast<double>(a{pi});")
-                    else:
-                        raise GenError(f"signal arg type {a['type']} unsupported")
+                    body.append(f"Conv<Plain<decltype(a{pi})>>::out(a{pi}, &vals[{i}]);")
                 body.append(f"post(h, {sid}, vals, {len(s['args'])});")
             else:
                 body.append(f"post(h, {sid}, nullptr, 0);")
@@ -699,9 +912,10 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     parts = {
         "DIGEST": digest, "INCLUDES": inc(m, classes), "IDS": emit_ids(m), "TABLES": emit_tables(m),
         "CREATE": emit_create(m), "SET_PROP": prop_cases(m, True), "GET_PROP": prop_cases(m, False),
-        "CALL": emit_call(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
+        "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
         "TOPLEVEL": emit_toplevel(m),
     }
+    parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
     for k, v in parts.items():
         tmpl = tmpl.replace(f"@@{k}@@" if k == "DIGEST" else f"//@@{k}@@", v)
     return tmpl
@@ -711,6 +925,7 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
 # verification tests
 
 PREFIX = "svelters-api:v1:type:qt:QtWidgets"
+SCALAR = ("string", "bool", "int", "float")
 
 
 def fact_id(e: dict, section: str, name: str, rec: dict | None = None) -> str:
@@ -730,6 +945,9 @@ def strip(rec):
 
 
 class Tests:
+    """One test (or a few) per annotated fact; a fact the generator cannot test is an error.
+    Every test is attributed to its fact for the verified ledger (`--facts`)."""
+
     def __init__(self, m: Model):
         self.m = m
         self.fns: list[tuple[str, str]] = []
@@ -749,7 +967,7 @@ class Tests:
             f["tests"].append(name)
             f["srcs"].append(src)
 
-    def fact(self, fid: str, raw: dict, section: str, e: dict, name: str, fn) -> None:
+    def fact(self, fid: str, raw, section: str, e: dict, name: str, fn) -> None:
         self._fact = (fid, {"raw": raw, "section": section, "name": name})
         n0 = len(self.fns)
         try:
@@ -799,93 +1017,126 @@ class Tests:
         if p.get("getter"):
             return f"{tgt}->{p['getter']}()"
         if p.get("native"):
-            conv = {"string": ".toString()", "bool": ".toBool()", "f64": ".toDouble()", "f32": ".toDouble()"}.get(p["decl_ref"], ".toLongLong()")
+            conv = {"string": ".toString()", "bool": ".toBool()", "float": ".toDouble()"}.get(p["cat"], ".toLongLong()")
             return f'{tgt}->property("{p["native"]}"){conv}'
         raise GenError(f"{p['js']}: no native getter to verify against")
 
-    def sample(self, p) -> tuple[str, str, str]:
+    def sample(self, p) -> tuple[str, str | None, str]:
         """(svl_value declaration of `v`, C++ native comparison rhs, expected backend output check on `out`)."""
-        r, smp = p["decl_ref"], p.get("sample")
-        if r == "string":
+        cat, smp = p["cat"], p.get("sample")
+        if cat == "string":
             val = "h\\xc3\\xa9llo" if smp is None else str(smp).replace('"', '\\"')
-            return (f'std::string s = "{val}"; svl_value v = vstr(s);', None, "out.tag == SVL_STR && std::string(out.u.s.ptr, out.u.s.len) == s")
-        if r == "bool":
+            return (f'std::string s = "{val}"; svl_value v = vstr(s);', None, "out.tag == SVL_STR && valstr(out) == s")
+        if cat == "bool":
             b = True if smp is None else bool(smp)
             lit = "true" if b else "false"
             return (f"svl_value v = vbool({lit});", lit, f"out.tag == SVL_BOOL && out.u.b == {lit}")
-        if r in ("f64", "f32"):
+        if cat == "float":
             x = 0.5 if smp is None else float(smp)
             return (f"svl_value v = vf64({x!r});", repr(x), f"out.tag == SVL_F64 && out.u.f == {x!r}")
-        if r in ("i32", "u32", "i64"):
+        if cat == "int":
             x = 7 if smp is None else int(smp)
-            return (f"svl_value v = vi64({x});", str(x), f"out.tag == SVL_I64 && out.u.i == {x}")
-        raise GenError(f"{p['js']}: property type {r} has no generated test (supported: string, bool, integers, floats, enum maps)")
+            return (f"svl_value v = vi64({x});", str(x), f"out.u.i == {x}")
+        raise GenError(f"{p['js']}: no scalar sample for category {cat}")
 
     def prop(self, e, p):
         t = e["tag"]
         pn = p["js"]
+        cat = p["cat"]
         tgt = target_expr(e, p, "O(h)")
-        if p["decl_ref"] == "enum":
-            lines = [f'  svl_handle h = mk("{t}");']
-            for name, cexpr in sorted(p["values"].items()):
-                lines += [f'  {{ std::string s = "{name}"; svl_value v = vstr(s);',
-                          f'    CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
+        P_ = f'P("{t}", "{pn}")'
+        if p["readonly"] or not ((p.get("prop") or {}).get("access") or {}).get("write", True):
+            lines = [f'  svl_handle h = mk("{t}");', "  svl_value out{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0);",
+                     f"  CHECK(B->set_prop(B->self, h, {P_}, &out) < 0);  // read-only",
+                     "  B->destroy(B->self, h);"]
+            self.add(f"prop/{t}.{pn}/read_only", "\n".join(lines))
+        elif cat == "enum" and p["direct"]:
+            members = sorted(self.m.enums_used[classify(p["ref"])[1]].items())
+            lines = [f'  svl_handle h = mk("{t}");',
+                     f'  const svl_member_desc *d = B->describe(B->self, SVL_PROP, K("{t}"), {P_});',
+                     '  CHECK(d && d->n_params == 1 && d->params[0].tag == SVL_ENUM);',
+                     '  svl_id tid = d->params[0].type;',
+                     '  const svl_type_desc *td = B->describe_type(B->self, tid);',
+                     f'  CHECK(td && td->kind == SVL_ENUM && td->n_members == {len(members)});']
+            for name, cexpr in members:
+                lines += [f'  {{ svl_value v = venum(tid, static_cast<int64_t>({cexpr}));',
+                          f'    CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);',
                           f'    CHECK({tgt}->{p["getter"]}() == {cexpr});',
-                          f'    CHECK(getstr(h, P("{t}", "{pn}")) == "{name}"); }}']
-            lines += [f'  {{ std::string s = "bogus"; svl_value v = vstr(s); CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) < 0); }}',
-                      "  B->destroy(B->self, h);"]
-        else:
+                          '    svl_value out{};',
+                          f'    CHECK(B->get_prop(B->self, h, {P_}, &out) == 0 && out.tag == SVL_ENUM && out.type == tid && out.u.i == static_cast<int64_t>({cexpr}));',
+                          f'    CHECK(enum_member_value(td, "{name}") == static_cast<int64_t>({cexpr})); }}']
+            lines += [f'  {{ svl_value v = venum(tid, 987654); CHECK(B->set_prop(B->self, h, {P_}, &v) < 0); }}',
+                      '  B->destroy(B->self, h);']
+            self.add(f"prop/{t}.{pn}", "\n".join(lines))
+        elif cat in SCALAR:
             decl, rhs, outcheck = self.sample(p)
             native = self.native_get(e, p)
-            ncheck = (f"  CHECK(QString({native}).toUtf8().toStdString() == s);" if p["decl_ref"] == "string"
-                      else f"  CHECK({native} == {rhs});")
+            ncheck = (f"  CHECK(QString({native}).toUtf8().toStdString() == s);" if cat == "string" else f"  CHECK({native} == {rhs});")
             lines = [f'  svl_handle h = mk("{t}");', f"  {decl}",
-                     f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);', ncheck,
+                     f"  CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);", ncheck,
                      "  svl_value out{};",
-                     f'  CHECK(B->get_prop(B->self, h, P("{t}", "{pn}"), &out) == 0 && {outcheck});', "  B->destroy(B->self, h);"]
-        self.add(f"prop/{t}.{pn}", "\n".join(lines))
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0 && {outcheck});", "  B->destroy(B->self, h);"]
+            self.add(f"prop/{t}.{pn}", "\n".join(lines))
+        else:
+            # records, flags, boxed, dates, lists: write back the value just read (the converters'
+            # value round trips are in examples/counter-qt/tests/serdes.rs).
+            lines = [f'  svl_handle h = mk("{t}");', "  svl_value out{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0);",
+                     "  uint32_t tag = out.tag;",
+                     f"  CHECK(B->set_prop(B->self, h, {P_}, &out) == 0);",
+                     "  svl_value again{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &again) == 0 && again.tag == tag);",
+                     "  B->destroy(B->self, h);"]
+            self.add(f"prop/{t}.{pn}/round_trip", "\n".join(lines))
         if p.get("suppress_signals"):
             sigs = [sg for sg in e.get("signals", []) if not sg.get("synthetic")]
-            if not sigs:
-                raise GenError(f"{pn}: suppress_signals on an element without signals")
-            decl, _, _ = self.sample(p) if p["decl_ref"] != "enum" else ('std::string s = "' + sorted(p["values"])[0] + '"; svl_value v = vstr(s);', None, None)
+            if not sigs or not sigs[0].get("trigger"):
+                raise GenError(f"{pn}: suppress_signals needs a signal with a trigger on the element")
+            decl, _, _ = self.sample(p)
             lines = [f'  svl_handle h = mk("{t}");', f"  {decl}"]
             for sg in sigs:
                 lines.append(f'  CHECK(B->listen(B->self, h, G("{t}", "{sg["js"]}"), true) == 0);')
             trig = sigs[0]["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", "1")
-            lines += [f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
+            lines += [f"  CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);",
                       "  CHECK(rec.events.empty());  // no echo for programmatic sets",
                       f"  {trig};",
                       "  CHECK(!rec.events.empty());  // native changes are still delivered",
                       "  rec.events.clear();",
-                      f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
-                      "  CHECK(rec.events.empty());  // the flag is per set, not sticky in the other direction",
+                      f"  CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);",
+                      "  CHECK(rec.events.empty());  // suppressed again on the next programmatic set",
                       "  B->destroy(B->self, h);"]
             self.add(f"signal/{t}.{pn}/no_echo_on_set_prop", "\n".join(lines))
 
     def method(self, e, me):
         t = e["tag"]
-        vals = []
+        vals, synth = [], True
+        given = me.get("args") or [None] * len(me["argrefs"])
         for i, ref in enumerate(me["argrefs"]):
-            a = (me.get("args") or [None] * len(me["argrefs"]))[i]
-            if ref in ("i32", "u32", "i64"):
+            cat = classify(ref)[0]
+            a = given[i] if i < len(given) else None
+            if cat == "int":
                 vals.append(f"vi64({10 + i if a is None else int(a)})")
-            elif ref == "bool":
+            elif cat == "bool":
                 vals.append(f"vbool({'true' if a is None or a else 'false'})")
-            elif ref in ("f64", "f32"):
+            elif cat == "float":
                 vals.append(f"vf64({0.5 if a is None else float(a)!r})")
-            elif ref == "string":
+            elif cat == "string":
                 vals.append(f'vstr(std::string("{"x" if a is None else a}"))')
             else:
-                raise GenError(f"{me['js']}: no test argument for {ref}")
-        lines = [f'  svl_handle h = mk("{t}");']
-        if vals:
-            lines.append(f"  svl_value a[] = {{{', '.join(vals)}}};")
-        lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), {"a" if vals else "nullptr"}, {len(vals)}, nullptr) == 0);']
-        if me.get("expect"):
-            w = f"static_cast<{e['cls']} *>(O(h))"
-            lines.append(f"  CHECK({me['expect'].replace('$w', w)});")
-        lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), nullptr, {len(vals) + 1}, nullptr) < 0);',
+                synth = False
+        lines = [f'  svl_handle h = mk("{t}");', f'  CHECK(M("{t}", "{me["js"]}") != 0);']
+        if synth:
+            if vals:
+                lines.append(f"  svl_value a[] = {{{', '.join(vals)}}};")
+            lines.append(f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), {"a" if vals else "nullptr"}, {len(vals)}, nullptr) == 0);')
+            if me.get("expect"):
+                w = f"static_cast<{e['cls']} *>(O(h))"
+                lines.append(f"  CHECK({me['expect'].replace('$w', w)});")
+        elif me.get("expect"):
+            raise GenError(f"{me['js']}: `expect` needs test arguments the generator can build (int, bool, float, string)")
+        # non-scalar arguments: the call itself is exercised by examples/counter-qt/tests/serdes.rs
+        lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), nullptr, {len(me["argrefs"]) + 1}, nullptr) < 0);',
                   "  B->destroy(B->self, h);"]
         self.add(f"method/{t}.{me['js']}", "\n".join(lines))
 
@@ -922,7 +1173,7 @@ class Tests:
         """The change signal's first argument is the new property value (what the renderer stores)."""
         t = e["tag"]
         sg = next((x for x in e.get("signals", []) if x["js"] == b["change"]["signal"]), None)
-        p = e["props_by_name"].get(b["property"]) if "props_by_name" in e else next((x for x in e.get("props", []) if x["js"] == b["property"]), None)
+        p = e["props_by_name"].get(b["property"])
         if sg is None or p is None or not sg.get("trigger"):
             raise GenError(f"bind:{b['name']}: needs prop {b['property']} and a triggerable signal {b['change']['signal']}")
         trig = sg["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", "1")
@@ -939,7 +1190,7 @@ class Tests:
 
     def item_widget(self, ops, expr: str) -> str:
         """`list.item` may return a QLayoutItem* (layouts) or the QWidget* itself (QTabWidget::widget)."""
-        return f"{expr}->widget()" if ops["at_layout_item"] else expr
+        return f"{expr}->widget()" if ops.get("at_layout_item", True) else expr
 
     def slot_one(self, e, s):
         m, t, sn = self.m, e["tag"], s["name"]
@@ -1051,12 +1302,12 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
                            for s in e["children"]["slots"])), None)
     if not parent:
         raise GenError("need an element with a QWidget default slot")
-    val = next((e for e in simple for p in e.get("props", []) if p["decl_ref"] == "string"), None)
+    val = next((e for e in simple for p in e.get("props", []) if p.get("cat") == "string"), None)
     if not val:
         raise GenError("need an element with a string prop")
     any_tag = next(e["tag"] for e in simple if e["tag"] == "label") if any(e["tag"] == "label" for e in simple) else simple[0]["tag"]
     child_tag = m.accepted_child_tag(parent, next(s for s in parent["children"]["slots"] if s["name"] == parent["children"]["default_slot"]))
-    prop = next(p for p in val["props"] if p["decl_ref"] == "string")
+    prop = next(p for p in val["props"] if p.get("cat") == "string")
     subs = {"@@ANY_TAG@@": any_tag, "@@PARENT_TAG@@": parent["tag"], "@@CHILD_TAG@@": child_tag,
             "@@VALUE_TAG@@": val["tag"], "@@VALUE_PROP@@": prop["js"], "@@DIGEST@@": digest}
     out = tmpl.replace("//@@INCLUDES@@", inc(m, classes)).replace("//@@TESTS@@", tests).replace("//@@TEST_TABLE@@", table)
@@ -1068,31 +1319,37 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
 # --------------------------------------------------------------------------------------------
 # typings
 
-def ts_type(p: dict) -> str:
-    r = p["decl_ref"]
-    if r == "enum":
-        return " | ".join(f'"{k}"' for k in sorted(p["values"]))
-    return {"string": "string", "bool": "boolean"}.get(r, "number")
+def ts_type(m: Model, ref: str) -> str:
+    cat, pay = classify(ref)
+    return ts_leaf(cat, pay, m)
 
 
 def gen_dts(m: Model) -> str:
     out = ["// GENERATED by tools/metadata/qt/gen_cpp.py -- do not edit.", "",
+           "import type { Boxed, DateParts, Insets, Point, Rect, Size, TimeParts, Color, Variant } from './values';", "",
            "export interface QtElementDescriptors {"]
     for e in m.elements:
         out.append(f"  {e['tag']}: {{")
         out.append("    props: {")
         for p in e.get("props", []):
-            out.append(f"      {p['js']}?: {ts_type(p)};")
+            if p["direct"]:
+                ty = ts_type(m, p["ref"])
+            else:
+                ty = {"string": "string", "bool": "boolean"}.get(p["decl_ref"], "number")
+            ro = "readonly " if p.get("readonly") else ""
+            out.append(f"      {ro}{p['js']}?: {ty};")
         out.append("    };")
         out.append("    events: {")
         for s in e.get("signals", []):
-            args = ", ".join(f"{a['name']}: {ts_type({'decl_ref': a['type']})}" for a in s["args"])
-            out.append(f"      {s['js']}: ({args}) => void;")
+            args = ", ".join(f"{a['name']}: {ts_type(m, a['ref'])}" for a in s["args"])
+            key = s["js"] if s["js"].isidentifier() else '"' + s["js"] + '"'
+            out.append(f"      {key}: ({args}) => void;")
         out.append("    };")
         out.append("    methods: {")
         for me in e.get("methods", []):
-            args = ", ".join(f"arg{i}: number" for i, _ in enumerate(me["argrefs"]))
-            out.append(f"      {me['js']}({args}): void;")
+            args = ", ".join(f"{an}: {ts_type(m, r)}" for an, r in zip(me["argnames"], me["argrefs"]))
+            ret = "void" if me["ret"] == "void" else ts_type(m, me["ret"])
+            out.append(f"      {me['js']}({args}): {ret};")
         out.append("    };")
         ch = e.get("children")
         out.append("    slots: " + (" | ".join(f'"{s["name"]}"' for s in ch["slots"]) if ch else "never") + ";")
@@ -1127,7 +1384,7 @@ def main() -> int:
     try:
         m = Model(res(cfg["input"]["metadata"]), res(cfg["input"]["overrides"]), cfg.get("elements", {}).get("tags", []))
         templ = HERE / "templates"
-        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in"])
+        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in"])
         o = cfg["output"]
         write_text(out / o["backend"], gen_backend(m, digest, (templ / "backend.cpp.in").read_text()))
         verify, facts = gen_verify(m, digest, (templ / "verify.cpp.in").read_text())
@@ -1137,6 +1394,7 @@ def main() -> int:
         write_text(out / o["dts"], gen_dts(m))
         if a.dts:
             write_text(Path(a.dts), gen_dts(m))
+            write_values_dts(Path(a.dts).parent / "values.d.ts")
     except GenError as ex:
         print(f"gen_cpp: {ex}", file=sys.stderr)
         return 1

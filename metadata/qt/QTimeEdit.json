@@ -32,7 +32,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         },
         {
@@ -124,7 +124,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],

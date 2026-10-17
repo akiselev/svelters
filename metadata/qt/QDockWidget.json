@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -84,7 +84,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -96,39 +96,49 @@
   ],
   "enums": [
     {
+      "flags_alias": "QDockWidget::DockWidgetFeatures",
+      "fullname": "QDockWidget::DockWidgetFeature",
       "members": [
         {
+          "cpp": "QDockWidget::DockWidgetClosable",
           "name": "DockWidgetClosable",
           "value": "0x01"
         },
         {
+          "cpp": "QDockWidget::DockWidgetMovable",
           "name": "DockWidgetMovable",
           "value": "0x02"
         },
         {
+          "cpp": "QDockWidget::DockWidgetFloatable",
           "name": "DockWidgetFloatable",
           "value": "0x04"
         },
         {
+          "cpp": "QDockWidget::DockWidgetVerticalTitleBar",
           "name": "DockWidgetVerticalTitleBar",
           "value": "0x08"
         },
         {
+          "cpp": "QDockWidget::DockWidgetFeatureMask",
           "name": "DockWidgetFeatureMask",
           "value": "0x0f"
         },
         {
+          "cpp": "QDockWidget::NoDockWidgetFeatures",
           "name": "NoDockWidgetFeatures",
           "value": "0x00"
         },
         {
+          "cpp": "QDockWidget::Reserved",
           "name": "Reserved",
           "value": "0xff"
         }
       ],
       "metaobject": null,
       "name": "DockWidgetFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDockWidget",
@@ -164,7 +174,7 @@
         "native": "Qt::DockWidgetAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DockWidgetArea>"
       },
       "signature": "Qt::DockWidgetAreas allowedAreas() const",
       "since": null,
@@ -264,7 +274,7 @@
         "native": "Qt::DockWidgetArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DockWidgetArea>"
       },
       "signature": "Qt::DockWidgetArea dockLocation() const",
       "since": null,
@@ -327,7 +337,7 @@
         "native": "QDockWidget::DockWidgetFeatures",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDockWidget::DockWidgetFeature>"
       },
       "signature": "QDockWidget::DockWidgetFeatures features() const",
       "since": null,
@@ -393,7 +403,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -493,7 +503,7 @@
             "native": "Qt::DockWidgetAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -530,7 +540,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -567,7 +577,7 @@
             "native": "QDockWidget::DockWidgetFeatures",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDockWidget::DockWidgetFeature>"
           }
         }
       ],
@@ -840,7 +850,7 @@
         "native": "Qt::DockWidgetAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DockWidgetArea>"
       }
     },
     {
@@ -886,7 +896,7 @@
         "native": "Qt::DockWidgetArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DockWidgetArea>"
       }
     },
     {
@@ -932,7 +942,7 @@
         "native": "DockWidgetFeatures",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDockWidget::DockWidgetFeature>"
       }
     },
     {
@@ -1050,7 +1060,7 @@
             "native": "Qt::DockWidgetAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -1085,7 +1095,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -1120,7 +1130,7 @@
             "native": "QDockWidget::DockWidgetFeatures",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDockWidget::DockWidgetFeature>"
           }
         }
       ],

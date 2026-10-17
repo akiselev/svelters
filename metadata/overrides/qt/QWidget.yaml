@@ -18,6 +18,21 @@ elements:
           vertical: QBoxLayout::TopToBottom
         provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
       - { js: spacing, target: layout, native: spacing, provenance: "QLayout::spacing Q_PROPERTY (qdoc); P prop" }
+      # Typed props (value model, ABI v3): records, enums, strings and flags share one converter set.
+      - { js: geometry, native: geometry, provenance: "QWidget::geometry (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumSize, native: minimumSize, provenance: "QWidget::minimumSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumSize, native: maximumSize, provenance: "QWidget::maximumSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: sizeIncrement, native: sizeIncrement, provenance: "QWidget::sizeIncrement (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: pos, native: pos, provenance: "QWidget::pos (qdoc); typed by the S1 value model (ABI v3)" }          # read-only: no setter
+      - { js: size, native: size, provenance: "QWidget::size (qdoc); typed by the S1 value model (ABI v3)" }        # read-only: use resizeTo()
+      - { js: contentsMargins, target: layout, native: contentsMargins, provenance: "QWidget::contentsMargins (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: focusPolicy, native: focusPolicy, provenance: "QWidget::focusPolicy (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: toolTip, native: toolTip, provenance: "QWidget::toolTip (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: enabled, native: enabled, provenance: "QWidget::enabled (qdoc); typed by the S1 value model (ABI v3)" }
+    methods:
+      - { js: saveGeometry, native: saveGeometry, provenance: "QWidget::saveGeometry (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: restoreGeometry, native: restoreGeometry, params: [bytes], provenance: "QWidget::restoreGeometry (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: resizeTo, native: resize, params: ["record<Size>"], provenance: "QWidget::resize (qdoc); typed by the S1 value model (ABI v3)" }
     children:
       policy: layout_managed
       default_slot: children

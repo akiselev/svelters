@@ -4,6 +4,9 @@ elements:
     props:
       - { js: text, native: text, suppress_signals: true, provenance: "QLineEdit::text Q_PROPERTY (qdoc); P prop; setText emits textChanged (qt_sync_probe.py)" }
       - { js: placeholder, native: placeholderText, provenance: "QLineEdit::placeholderText Q_PROPERTY (qdoc); P prop" }
+      - { js: echoMode, native: echoMode, provenance: "QLineEdit::echoMode (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: alignment, native: alignment, provenance: "QLineEdit::alignment (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maxLength, native: maxLength, provenance: "QLineEdit::maxLength (qdoc); typed by the S1 value model (ABI v3)" }
     bindings:
       # Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6).
       - name: text

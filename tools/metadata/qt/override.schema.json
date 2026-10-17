@@ -81,7 +81,7 @@
       "properties": {
         "js": {"type": "string"},
         "native": {"type": "string"},
-        "params": {"type": "array", "items": {"enum": ["i32", "u32", "i64", "f64", "bool", "string"]}},
+        "params": {"type": "array", "items": {"type": "string"}, "description": "Neutral type refs of the overload (i32, f64, bool, string, record<Size>, object<QWidget>, ...)."},
         "args": {"type": "array", "description": "Arguments the generated test passes (default 10, 11, ...)."},
         "expect": {"type": "string", "description": "C++ bool expression checked after the call; `$w` is the widget, cast to the element class."},
         "provenance": {"$ref": "#/$defs/provenance"}
@@ -95,7 +95,7 @@
         "collapses": {"type": "array", "items": {"type": "string"}},
         "connect": {"type": "string"},
         "args": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["name", "type"],
-                                             "properties": {"name": {"type": "string"}, "type": {"enum": ["string", "bool", "i32", "f64"]}}}},
+                                             "properties": {"name": {"type": "string"}, "type": {"type": "string"}}}},
         "trigger": {"type": "string", "description": "C++ statement that makes Qt emit the signal; `$w` is the widget, `$i` the iteration (0, 1, 2)."},
         "expect_args": {"type": "array", "items": {"type": "string"}},
         "synthetic": {"enum": ["close_request"]},

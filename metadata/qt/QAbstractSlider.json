@@ -42,66 +42,84 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSlider::SliderAction",
       "members": [
         {
+          "cpp": "QAbstractSlider::SliderNoAction",
           "name": "SliderNoAction",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSlider::SliderSingleStepAdd",
           "name": "SliderSingleStepAdd",
           "value": "1"
         },
         {
+          "cpp": "QAbstractSlider::SliderSingleStepSub",
           "name": "SliderSingleStepSub",
           "value": "2"
         },
         {
+          "cpp": "QAbstractSlider::SliderPageStepAdd",
           "name": "SliderPageStepAdd",
           "value": "3"
         },
         {
+          "cpp": "QAbstractSlider::SliderPageStepSub",
           "name": "SliderPageStepSub",
           "value": "4"
         },
         {
+          "cpp": "QAbstractSlider::SliderToMinimum",
           "name": "SliderToMinimum",
           "value": "5"
         },
         {
+          "cpp": "QAbstractSlider::SliderToMaximum",
           "name": "SliderToMaximum",
           "value": "6"
         },
         {
+          "cpp": "QAbstractSlider::SliderMove",
           "name": "SliderMove",
           "value": "7"
         }
       ],
       "metaobject": null,
       "name": "SliderAction",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSlider::SliderChange",
       "members": [
         {
+          "cpp": "QAbstractSlider::SliderRangeChange",
           "name": "SliderRangeChange",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSlider::SliderOrientationChange",
           "name": "SliderOrientationChange",
           "value": "1"
         },
         {
+          "cpp": "QAbstractSlider::SliderStepsChange",
           "name": "SliderStepsChange",
           "value": "2"
         },
         {
+          "cpp": "QAbstractSlider::SliderValueChange",
           "name": "SliderValueChange",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "SliderChange",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSlider",
@@ -404,7 +422,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -456,7 +474,7 @@
         "native": "QAbstractSlider::SliderAction",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSlider::SliderAction>"
       },
       "signature": "QAbstractSlider::SliderAction repeatAction() const",
       "since": null,
@@ -633,7 +651,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -754,7 +772,7 @@
             "native": "QAbstractSlider::SliderAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSlider::SliderAction>"
           }
         },
         {
@@ -1022,7 +1040,7 @@
             "native": "QAbstractSlider::SliderChange",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSlider::SliderChange>"
           }
         }
       ],
@@ -1122,7 +1140,7 @@
             "native": "QAbstractSlider::SliderAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSlider::SliderAction>"
           }
         }
       ],
@@ -1420,7 +1438,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     },
     {

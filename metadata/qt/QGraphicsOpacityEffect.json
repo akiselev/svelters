@@ -136,7 +136,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush opacityMask() const",
       "since": null,
@@ -202,7 +202,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -314,7 +314,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       }
     }
   ],
@@ -378,7 +378,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],

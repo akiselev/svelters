@@ -203,7 +203,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -250,7 +250,7 @@
             "native": "QStyle::ControlElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ControlElement>"
           }
         },
         {
@@ -297,7 +297,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -317,7 +317,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -354,7 +354,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -374,7 +374,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         },
         {
@@ -404,7 +404,7 @@
             "native": "QPalette::ColorRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPalette::ColorRole>"
           }
         }
       ],
@@ -441,7 +441,7 @@
             "native": "QStyle::PrimitiveElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::PrimitiveElement>"
           }
         },
         {
