@@ -8,16 +8,16 @@ create box #2
 set #2 spacing 8
 set #2 orientation "horizontal"
 create button #3
-set #3 heightRequest 36
+set #3 height-request 36
 set #3 label "Save"
 insert #2 #3 before=end slot=default
 create button #4
 listen #4 clicked on
-set #4 heightRequest 24
+set #4 height-request 24
 set #4 label "Toggle"
 insert #2 #4 before=end slot=default
 create button #5
-set #5 heightRequest 30
+set #5 height-request 30
 set #5 label "Plain"
 insert #2 #5 before=end slot=default
 insert #1 #2 before=end slot=default
@@ -29,8 +29,8 @@ style #4 classes "sv-k-button svelte-38269b8677"
 style #5 classes "sv-k-button svelte-38269b8677"
 style #5 inline "font-weight: bold;"
 event #4 clicked []
-set #4 heightRequest 36
+set #4 height-request 36
 style #4 classes "sv-k-button svelte-38269b8677 primary"
 event #4 clicked []
-set #4 heightRequest 24
+set #4 height-request 24
 style #4 classes "sv-k-button svelte-38269b8677"

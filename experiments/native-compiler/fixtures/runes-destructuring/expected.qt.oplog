@@ -1,24 +1,24 @@
-create window #1
-set #1 title "Destructuring"
-create box #2
-set #2 orientation "vertical"
+create main-window #1
+set #1 window-title "Destructuring"
+create box-layout #2
+set #2 direction "top-to-bottom"
 set #2 spacing 4
 create label #3
-set #3 label "LR size=1 area=1 perimeter=4 tags=none"
+set #3 text "LR size=1 area=1 perimeter=4 tags=none"
 insert #2 #3 before=end slot=default
-create button #4
+create push-button #4
 listen #4 clicked on
-set #4 label "Swap"
+set #4 text "Swap"
 insert #2 #4 before=end slot=default
-create button #5
+create push-button #5
 listen #5 clicked on
-set #5 label "Grow"
+set #5 text "Grow"
 insert #2 #5 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #4 clicked []
-set #3 label "RL size=1 area=1 perimeter=4 tags=none"
+set #3 text "RL size=1 area=1 perimeter=4 tags=none"
 event #5 clicked []
-set #3 label "RL size=2 area=4 perimeter=8 tags=none"
+set #3 text "RL size=2 area=4 perimeter=8 tags=none"
 event #4 clicked []
-set #3 label "LR size=2 area=4 perimeter=8 tags=none"
+set #3 text "LR size=2 area=4 perimeter=8 tags=none"

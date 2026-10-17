@@ -1,46 +1,46 @@
-create window #1
-set #1 title "Components"
-create box #2
-set #2 orientation "vertical"
+create main-window #1
+set #1 window-title "Components"
+create box-layout #2
+set #2 direction "top-to-bottom"
 set #2 spacing 4
 create label #3
-set #3 label "1 left"
+set #3 text "1 left"
 insert #2 #3 before=end slot=default
-create box #4
-set #4 orientation "horizontal"
+create box-layout #4
+set #4 direction "left-to-right"
 set #4 spacing 4
 create label #5
-set #5 label "· Milk"
+set #5 text "· Milk"
 insert #4 #5 before=end slot=default
-create button #6
+create push-button #6
 listen #6 clicked on
-set #6 label "Toggle"
+set #6 text "Toggle"
 insert #4 #6 before=end slot=default
-create button #7
+create push-button #7
 listen #7 clicked on
-set #7 label "Remove"
+set #7 text "Remove"
 insert #4 #7 before=end slot=default
 insert #2 #4 before=end slot=default
-create box #8
-set #8 orientation "horizontal"
+create box-layout #8
+set #8 direction "left-to-right"
 set #8 spacing 4
 create label #9
-set #9 label "✓ Eggs"
+set #9 text "✓ Eggs"
 insert #8 #9 before=end slot=default
-create button #10
+create push-button #10
 listen #10 clicked on
-set #10 label "Toggle"
+set #10 text "Toggle"
 insert #8 #10 before=end slot=default
-create button #11
+create push-button #11
 listen #11 clicked on
-set #11 label "Remove"
+set #11 text "Remove"
 insert #8 #11 before=end slot=default
 insert #2 #8 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #6 clicked []
-set #3 label "0 left"
-set #5 label "✓ Milk"
+set #3 text "0 left"
+set #5 text "✓ Milk"
 event #11 clicked []
 remove #2 #8
 destroy #9
@@ -48,5 +48,5 @@ destroy #10
 destroy #11
 destroy #8
 event #6 clicked []
-set #3 label "1 left"
-set #5 label "· Milk"
+set #3 text "1 left"
+set #5 text "· Milk"

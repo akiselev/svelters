@@ -1,8 +1,8 @@
-[plugin svelters-native-compiler] experiments/native-compiler/fixtures/lists-diagnostics/App.svelte:11:4
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/lists-diagnostics/qt/App.svelte:12:4
 list_children: <List> renders only its `row` snippet; put the row content in `{#snippet row(item, index)}` (use {#each} for ordinary children of a container)
-  App.svelte:11:19: list_prop_invalid: <List> `layout` must be one of `list`, `grid`, got `table`
-  App.svelte:11:34: list_prop_invalid: <List> `selection` must be one of `none`, `single`, got `multiple`
-  App.svelte:11:55: list_bind_invalid: <List> has no bindable `x`: only `bind:selected` (the selected position) and `bind:this` (for `scrollTo`)
-  App.svelte:12:17: list_row_params: the `row` snippet of a virtualized list takes at most `(item, index)`
-  App.svelte:13:10: list_row_toplevel: <window> is a toplevel on qt; a row of a virtualized list is content inside the list (a <box> per row)
-  App.svelte:17:6: list_row_missing: <List> needs a `row` snippet: `{#snippet row(item, index)}...{/snippet}` inside the tag
+  App.svelte:12:19: list_prop_invalid: <List> `layout` must be one of `list`, `grid`, got `table`
+  App.svelte:12:34: list_prop_invalid: <List> `selection` must be one of `none`, `single`, got `multiple`
+  App.svelte:12:55: list_bind_invalid: <List> has no bindable `x`: only `bind:selected` (the selected position) and `bind:this` (for `scrollTo`)
+  App.svelte:13:17: list_row_params: the `row` snippet of a virtualized list takes at most `(item, index)`
+  App.svelte:14:10: list_row_toplevel: <main-window> is a toplevel on qt; a row of a virtualized list is content inside the list (a <box-layout> per row)
+  App.svelte:18:6: list_row_missing: <List> needs a `row` snippet: `{#snippet row(item, index)}...{/snippet}` inside the tag

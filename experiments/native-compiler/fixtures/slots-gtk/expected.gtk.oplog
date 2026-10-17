@@ -1,6 +1,6 @@
 create window #1
 set #1 title "Slots"
-create headerbar #2
+create header-bar #2
 create button #3
 listen #3 clicked on
 set #3 label "Save"
