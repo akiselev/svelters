@@ -115,6 +115,12 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_draw",
@@ -124,6 +130,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Editable:method:select_region",
+        "from": "svelters-api:v1:type:gtk:Gtk:Editable",
+        "name": "select_region",
         "origin": "manual"
       }
     ],

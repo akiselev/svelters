@@ -1928,11 +1928,25 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_widget_grab_focus (Gtk 4 docs); returns FALSE for an unrealized, non-focusable label; called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "grabFocus",
       "name": "grab_focus",
       "native": "gtk_widget_grab_focus",
       "origin": "gir",

@@ -46,3 +46,11 @@ signals:
     sync_required: false
     trigger: {native: set_text, values: [hello, hello2]}
     provenance: "GtkEditable::delete-text, run-last (Gtk 4 docs); delivery only"
+methods:
+  - name: select_region
+    js_name: selectRegion
+    dispatch: dynamic
+    args: [1, 3]
+    setup: 'h.set_str(o, "text", "hello").unwrap();'
+    expect: 'h.get(o, "cursor-position") == V::I64(1) && h.get(o, "selection-bound") == V::I64(3)'
+    provenance: "gtk_editable_select_region (Gtk 4 docs); called through GIRepository (X1)"

@@ -188,6 +188,20 @@ fn prop_actionable_action_name() {
     });
 }
 
+/// method Actionable.set_detailed_action_name (dynamic GI call): gtk_actionable_set_detailed_action_name (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_actionable_set_detailed_action_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "setDetailedActionName", &[V::Str("win.close".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "action-name") == V::Str("win.close".into()), "postcondition: h.get(o, 'action-name') == V::Str('win.close'.into())");
+    });
+}
+
 /// property Box.spacing (JS spacing): GtkBox:spacing (Gtk 4 docs); P prop
 #[test]
 fn prop_box_spacing() {
@@ -488,6 +502,20 @@ fn prop_editable_xalign() {
         assert_eq!(id, h.resolve_prop("entry", "xalign"));
         h.set_f64(o, "xalign", 0.5).unwrap();
         assert_eq!(h.get(o, "xalign"), V::F64(0.5));
+    });
+}
+
+/// method Editable.select_region (dynamic GI call): gtk_editable_select_region (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_editable_select_region() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        h.set_str(o, "text", "hello").unwrap();
+        let r = h.call_args(o, "selectRegion", &[V::I64(1), V::I64(3)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "cursor-position") == V::I64(1) && h.get(o, "selection-bound") == V::I64(3), "postcondition: h.get(o, 'cursor-position') == V::I64(1) && h.get(o, 'selection-bound') == V::I64(3)");
     });
 }
 
@@ -909,6 +937,20 @@ fn prop_widget_width_request() {
         assert_eq!(id, h.resolve_prop("label", "width-request"));
         h.set_i64(o, "widthRequest", 7).unwrap();
         assert_eq!(h.get(o, "widthRequest"), V::I64(7));
+    });
+}
+
+/// method Widget.grab_focus (dynamic GI call): gtk_widget_grab_focus (Gtk 4 docs); returns FALSE for an unrealized, non-focusable label; called through GIRepository (X1)
+#[test]
+fn method_widget_grab_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "grabFocus", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
     });
 }
 

@@ -59,3 +59,9 @@ methods:
     dispatch: zero_arg
     expect: "w.is_visible()"
     provenance: "gtk_widget_queue_resize (Gtk 4 docs); no observable state change, postcondition only checks the widget is intact"
+  - name: grab_focus
+    js_name: grabFocus
+    dispatch: dynamic
+    args: []
+    expect: "r == V::Bool(false)"
+    provenance: "gtk_widget_grab_focus (Gtk 4 docs); returns FALSE for an unrealized, non-focusable label; called through GIRepository (X1)"
