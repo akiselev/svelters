@@ -487,6 +487,7 @@ export interface GtkDragSourceProps extends GtkGestureSingleProps {
 export interface GtkDrawingAreaProps extends GtkWidgetProps {
   contentHeight?: number;
   contentWidth?: number;
+  ops?: string;
   onresize?: SvlHandler;
 }
 export interface GtkDropControllerMotionProps extends GtkEventControllerProps {

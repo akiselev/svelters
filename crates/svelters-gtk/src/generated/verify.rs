@@ -2582,6 +2582,37 @@ fn prop_colordialogbutton_rgba() {
     });
 }
 
+/// signal DrawingArea.resize: GtkDrawingArea::resize(width, height), run-last, void: the new content size (Gtk 4 docs); JS records a display list for it
+#[test]
+fn signal_drawingarea_resize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("drawingarea");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("resize", &[&(10 + i as i32), &20i32]);
+        };
+        assert_ne!(h.resolve_signal("drawingarea", "resize"), 0);
+        assert_eq!(h.resolve_signal("drawingarea", "resize"), h.resolve_signal("drawingarea", "resize"));
+        h.listen(e, "resize", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "resize".to_string())), "delivered: {ev:?}");
+        h.listen(e, "resize", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "resize", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "resize", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// property DrawingArea.content-height (JS contentHeight): GtkDrawingArea:content-height (Gtk 4 docs)
 #[test]
 fn prop_drawingarea_content_height() {
@@ -2609,6 +2640,21 @@ fn prop_drawingarea_content_width() {
         assert_eq!(id, h.resolve_prop("drawingarea", "content-width"));
         h.set_i64(o, "contentWidth", 7).unwrap();
         assert_eq!(h.get(o, "contentWidth"), V::I64(7));
+    });
+}
+
+/// property DrawingArea.ops (JS ops): X8 recording canvas: the display list (JSON array of [op, ...args]) replayed by the draw func (crates/svelters-gtk/src/backend/canvas.rs); pixels are checked by tests/canvas.rs
+#[test]
+fn prop_drawingarea_ops() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawingarea");
+        
+        let id = h.resolve_prop("drawingarea", "ops");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("drawingarea", "ops"));
+        h.set_str(o, "ops", "[[\"fillStyle\",\"#ff0000\"],[\"fillRect\",0,0,4,4]]").unwrap();
+        assert_eq!(h.get(o, "ops"), V::Str("[[\"fillStyle\",\"#ff0000\"],[\"fillRect\",0,0,4,4]]".into()));
     });
 }
 

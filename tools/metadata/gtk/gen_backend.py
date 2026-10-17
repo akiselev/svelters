@@ -404,8 +404,12 @@ def gen_slots(m: Model) -> str:
         v = p.get("virtual")
         if not v or is_via(p):
             continue
-        assert v["op"] == "managed_title_label", v
+        assert v["op"] in ("managed_title_label", "canvas_ops"), v
         prop = v["property"]
+        if v["op"] == "canvas_ops":
+            vset.append(f"        {i + 1} => crate::backend::canvas::set_ops(obj, text),\n")
+            vget.append(f"        {i + 1} => Ok(crate::backend::canvas::get_ops(obj)),\n")
+            continue
         vset.append(f"""        {i + 1} => {{
             let text = text.unwrap_or("");
             let cur = obj.property::<Option<gtk::Widget>>({rs(prop)});
@@ -977,6 +981,8 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
         if wrap_v:
             extra = (f"        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>({rs(v['via'])}).unwrap();\n"
                      f"        assert_eq!({wrap_v}(tgt.property({rs(v['property'])})), {expect}, \"the object behind `{v['via']}` holds the value\");\n")
+    elif (p.get("virtual") or {}).get("op") == "canvas_ops":
+        extra = ""
     elif p.get("virtual"):
         extra = (f"        let w = h.obj(o).property::<Option<gtk::Widget>>({rs(p['virtual']['property'])}).unwrap();\n"
                  f"        assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), \"p3-sample\");\n")

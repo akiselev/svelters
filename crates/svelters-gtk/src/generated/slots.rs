@@ -721,7 +721,8 @@ fn attr_get_attr_23_clip(parent: &gtk::Widget, child: &gtk::Widget) -> Result<At
 /// Set a virtual property (no native GObject property backs it).
 pub fn virtual_set(prop: u32, obj: &glib::Object, text: Option<&str>) -> Result<(), String> {
     match prop {
-        526 => {
+        313 => crate::backend::canvas::set_ops(obj, text),
+        527 => {
             let text = text.unwrap_or("");
             let cur = obj.property::<Option<gtk::Widget>>("title-widget");
             match cur.and_then(|w| w.downcast::<gtk::Label>().ok()).filter(|l| l.has_css_class(MANAGED_CLASS)) {
@@ -742,7 +743,8 @@ pub fn virtual_set(prop: u32, obj: &glib::Object, text: Option<&str>) -> Result<
 /// Read a virtual property.
 pub fn virtual_get(prop: u32, obj: &glib::Object) -> Result<Option<String>, String> {
     match prop {
-        526 => Ok(obj
+        313 => Ok(crate::backend::canvas::get_ops(obj)),
+        527 => Ok(obj
             .property::<Option<gtk::Widget>>("title-widget")
             .and_then(|w| w.downcast::<gtk::Label>().ok())
             .filter(|l| l.has_css_class(MANAGED_CLASS))

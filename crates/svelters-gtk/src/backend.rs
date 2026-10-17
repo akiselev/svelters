@@ -28,6 +28,7 @@ use std::sync::atomic::{AtomicPtr, Ordering};
 use std::sync::Arc;
 use svelters_abi::*;
 
+pub mod canvas;
 mod extras;
 mod menus;
 pub(crate) use menus::signal_name as menus_signal_name;
@@ -338,6 +339,9 @@ impl Inner {
             return Err(format!("{} is not instantiable", k.gtype));
         }
         let obj = glib::Object::with_type(t);
+        if let Some(da) = obj.downcast_ref::<gtk::DrawingArea>() {
+            canvas::install(da);
+        }
         if let Some(ps) = obj.find_property("application") {
             if ps.flags().contains(glib::ParamFlags::WRITABLE) && ps.value_type() == gtk::Application::static_type() {
                 obj.set_property_from_value("application", &self.app.to_value());

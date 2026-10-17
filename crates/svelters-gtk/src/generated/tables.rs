@@ -379,7 +379,7 @@ pub static KINDS: [KindInfo; 298] = [
     KindInfo { name: "WindowHandle", tag: "windowhandle", gtype: "GtkWindowHandle", parent: 293, ifaces: &[3, 29, 75], is_abstract: false, is_interface: false, default_slot: "child" },
 ];
 
-pub static PROPS: [PropInfo; 1315] = [
+pub static PROPS: [PropInfo; 1316] = [
     PropInfo { kind: 1, name: "accessible", js_name: "accessible", ty: ValueTy::Object, gtype: "GtkAccessible", flags: 11, echo: &[], via: "", target: "" },
     PropInfo { kind: 1, name: "accessible-role", js_name: "accessibleRole", ty: ValueTy::Enum, gtype: "GtkAccessibleRole", flags: 7, echo: &[], via: "", target: "" },
     PropInfo { kind: 1, name: "display", js_name: "display", ty: ValueTy::Object, gtype: "GdkDisplay", flags: 19, echo: &[], via: "", target: "" },
@@ -692,6 +692,7 @@ pub static PROPS: [PropInfo; 1315] = [
     PropInfo { kind: 83, name: "content", js_name: "content", ty: ValueTy::Object, gtype: "GdkContentProvider", flags: 19, echo: &[], via: "", target: "" },
     PropInfo { kind: 84, name: "content-height", js_name: "contentHeight", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &[], via: "", target: "" },
     PropInfo { kind: 84, name: "content-width", js_name: "contentWidth", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &[], via: "", target: "" },
+    PropInfo { kind: 84, name: "ops", js_name: "ops", ty: ValueTy::Str, gtype: "gchararray", flags: 35, echo: &[], via: "", target: "" },
     PropInfo { kind: 85, name: "contains-pointer", js_name: "containsPointer", ty: ValueTy::Bool, gtype: "gboolean", flags: 1, echo: &[], via: "", target: "" },
     PropInfo { kind: 85, name: "drop", js_name: "drop", ty: ValueTy::Object, gtype: "GdkDrop", flags: 1, echo: &[], via: "", target: "" },
     PropInfo { kind: 85, name: "is-pointer", js_name: "isPointer", ty: ValueTy::Bool, gtype: "gboolean", flags: 1, echo: &[], via: "", target: "" },

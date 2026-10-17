@@ -455,11 +455,79 @@
         "nullable": false,
         "ref": "i32"
       }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "X8 recording canvas: the display list (JSON array of [op, ...args]) replayed by the draw func (crates/svelters-gtk/src/backend/canvas.rs); pixels are checked by tests/canvas.rs"
+      },
+      "default": null,
+      "invocation": "virtual",
+      "js_name": "ops",
+      "name": "ops",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": "[[\"fillStyle\",\"#ff0000\"],[\"fillRect\",0,0,4,4]]",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "virtual": {
+        "op": "canvas_ops",
+        "origin": "manual",
+        "property": "ops"
+      }
     }
   ],
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkDrawingArea::resize(width, height), run-last, void: the new content size (Gtk 4 docs); JS records a display list for it"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -492,7 +560,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<()>(\"resize\", &[&(10 + i as i32), &20i32]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {

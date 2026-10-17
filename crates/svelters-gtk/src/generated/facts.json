@@ -1173,6 +1173,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:signal:resize",
+   "fingerprint": "ca3ae553c46af6b0",
+   "kind": "DrawingArea",
+   "name": "resize",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_drawingarea_resize"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-height",
    "fingerprint": "466dfd47e48fe8c8",
    "kind": "DrawingArea",
@@ -1190,6 +1200,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_drawingarea_content_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops",
+   "fingerprint": "025152acba241209",
+   "kind": "DrawingArea",
+   "name": "ops",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_drawingarea_ops"
    ]
   },
   {
