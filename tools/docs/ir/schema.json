@@ -64,7 +64,7 @@
         "status": { "enum": ["working", "prototype", "planned", "research"] },
         "doc_license": { "$ref": "#/$defs/license" },
         "upstream_docs": { "type": "string", "description": "Base URL of the upstream documentation." },
-        "text_policy": { "enum": ["full", "brief_only", "link_only"], "description": "Text policy actually applied to this IR." },
+        "text_policy": { "enum": ["full", "brief", "links"], "description": "Text policy actually applied to this IR." },
         "sources": {
           "type": "array",
           "items": { "type": "object", "required": ["name"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "sha256": { "type": "string" } } }
@@ -163,6 +163,7 @@
       "properties": {
         "js_event": { "type": "string" },
         "handler_prop": { "type": "string", "description": "Svelte attribute that attaches a handler, e.g. onclicked." },
+        "handler_aliases": { "type": "array", "items": { "type": "string" }, "description": "DOM-style alias attributes, e.g. onclick." },
         "params": { "type": "array", "items": { "$ref": "#/$defs/param" } },
         "returns": { "$ref": "#/$defs/typeref" },
         "handler_result": { "enum": ["none", "bool_stop", "value"] },
@@ -184,7 +185,7 @@
         "static": { "type": "boolean" },
         "virtual": { "type": "boolean" },
         "access": { "type": "string" },
-        "kind": { "enum": ["method", "constructor", "slot", "invokable"] },
+        "kind": { "enum": ["method", "constructor", "slot", "invokable", "vfunc", "function"] },
         "unsupported_reason": { "type": ["string", "null"] },
         "name": {}, "origin": {}, "origins": {}, "annotated": {}, "availability": {}, "doc": {}, "extensions": {}, "native_id": {}
       }
@@ -237,7 +238,7 @@
     },
     "entity": {
       "type": "object",
-      "required": ["id", "kind", "name", "native_name", "status", "members"],
+      "required": ["id", "kind", "name", "native_name", "status"],
       "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/$defs/id" },
