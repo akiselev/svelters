@@ -579,6 +579,9 @@ extern "C" int svl_qt_close(svl_handle h) {
   return w && w->close() ? 0 : -1;
 }
 
+// Number of top-level widgets that still exist (pending deleteLater included until the loop runs).
+extern "C" int svl_qt_toplevel_count(void) { return QApplication::topLevelWidgets().size(); }
+
 // Run `cb(ud)` on the Qt loop thread after `ms` milliseconds. Creates the QApplication if needed.
 extern "C" void svl_qt_run_later(void (*cb)(void *), void *ud, int ms) {
   ensure_app();

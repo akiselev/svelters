@@ -14,6 +14,7 @@ unsafe extern "C" {
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_close(h: u64) -> i32;
+    fn svl_qt_toplevel_count() -> i32;
     fn svl_qt_run_later(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void, ms: i32);
     fn svl_qt_on_first_paint(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void);
     fn svl_qt_set_timing(on: i32);
@@ -64,6 +65,11 @@ pub mod hooks {
             0 => Ok(()),
             _ => Err(format!("handle {h} is not a line edit")),
         }
+    }
+
+    /// Top-level widgets alive in the application (hidden ones included).
+    pub fn toplevel_count() -> usize {
+        unsafe { svl_qt_toplevel_count() }.max(0) as usize
     }
 
     /// Closes the top-level widget behind `h` like the window's close button.

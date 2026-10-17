@@ -120,6 +120,10 @@ impl Toolkit for GtkToolkit {
         Ok(())
     }
 
+    fn native_toplevels(&self) -> usize {
+        gtk::Window::list_toplevels().len()
+    }
+
     fn schedule(&self, ms: u32, f: Box<dyn FnOnce()>) {
         glib::timeout_add_local_once(Duration::from_millis(ms as u64), f);
     }

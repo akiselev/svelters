@@ -40,6 +40,10 @@ impl Toolkit for QtToolkit {
         hooks::close(h)
     }
 
+    fn native_toplevels(&self) -> usize {
+        hooks::toplevel_count()
+    }
+
     fn schedule(&self, ms: u32, f: Box<dyn FnOnce()>) {
         hooks::run_later(ms as i32, f);
     }
