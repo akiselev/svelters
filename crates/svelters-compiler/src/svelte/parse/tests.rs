@@ -391,11 +391,13 @@ fn svelte_options_errors() {
 // TypeScript
 
 #[test]
-fn typescript_is_rejected() {
-    let (code, _, s, _) = err("<p></p><script lang=\"ts\">let x: number = 1;</script>");
-    assert_eq!((code, s), ("svelters_typescript_unsupported", 7));
-    assert_eq!(err("<script context=\"module\" lang='ts'></script>").0, "svelters_typescript_unsupported");
-    assert_eq!(err("<script foo=\"a>b\" lang=ts></script>").0, "svelters_typescript_unsupported");
+fn typescript_is_detected() {
+    let ts = |src: &str| parse(src, &opts()).map(|r| r.ts);
+    assert_eq!(ts("<p></p><script lang=\"ts\">let x: number = 1;</script>"), Ok(true));
+    assert_eq!(ts("<script context=\"module\" lang='ts'></script>"), Ok(true));
+    assert_eq!(ts("<script foo=\"a>b\" lang=ts>let y = <T>(a: T) => a;</script>"), Ok(true));
+    // a JS component rejects the same syntax
+    assert_eq!(err("<script>let x: number = 1;</script>").0, "js_parse_error");
     // a script tag inside an HTML comment does not count; neither does another language
     assert!(parse("<!-- <script lang=\"ts\"> --><p></p>", &opts()).is_ok());
     assert!(parse("<p lang=\"ts\"></p>", &opts()).is_ok());

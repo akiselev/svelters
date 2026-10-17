@@ -64,7 +64,8 @@ pub(crate) fn analyze(body: &ClassBody, cx: &Ctx<'_, '_>, scope: ScopeId) -> Cla
         let key = match el {
             ClassElement::MethodDefinition(m) => &m.key,
             ClassElement::PropertyDefinition(p) => &p.key,
-            ClassElement::StaticBlock(_) => continue,
+            // type-only members (stripped from the output)
+            ClassElement::StaticBlock(_) | ClassElement::TSIndexSignature(_) => continue,
         };
         if let PropertyKey::Private(PrivateIdentifierNode::PrivateIdentifier(p)) = key {
             private_ids.push(p.name.clone());
@@ -92,8 +93,10 @@ pub(crate) fn analyze(body: &ClassBody, cx: &Ctx<'_, '_>, scope: ScopeId) -> Cla
             _ => {}
         }
     }
-    if let Some(c) = constructor {
-        let FunctionNode::FunctionExpression(f) = &c.value;
+    // an overload signature (`TSDeclareMethod`) has no body
+    if let Some(c) = constructor
+        && let FunctionNode::FunctionExpression(f) = &c.value
+    {
         let BlockStatementNode::BlockStatement(fb) = &f.body;
         for stmt in &fb.body {
             let Statement::ExpressionStatement(s) = stmt else { continue };

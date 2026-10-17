@@ -15,11 +15,10 @@ Port of `packages/svelte/src/compiler/phases/1-parse` of Svelte 5.57.2 @ f3de3f2
    ends at the first `</style` (upstream only looks for it between rules, so `</style` inside a
    CSS string/comment does not end the block there); `content.comment` (the HTML comment before
    the block) is not kept.
-2. **TypeScript is rejected.** acorn-typescript is not ported. When upstream's
-   `regex_lang_attribute` detects `<script lang="ts">`, `parse` fails with the new code
-   `svelters_typescript_unsupported` (position: the `<script` tag). Consequently
-   `remove_typescript_nodes`, the TS branches of `read_type_annotation`, the `TSAsExpression`
-   unwrapping in `{#each}` and snippet generics are dead/omitted.
+2. **TypeScript** (`lang="ts"`) is parsed with the acorn-typescript port (`acorn::typescript`,
+   see its section below) exactly where upstream uses `TSParser`; there is no deviation in
+   `svelte::parse` itself. (Before agent TS, `lang="ts"` was rejected with the non-upstream code
+   `svelters_typescript_unsupported`; that code no longer exists.)
 3. **`ParseOptions.native`** turns off the rules that interpret tag names as HTML. With
    `native == false` behaviour equals upstream. With `native == true`:
    - no void elements: `<input>`, `<br>`, `<img>`... (and `<!doctype>`) need closing like any
@@ -53,7 +52,9 @@ Port of `packages/svelte/src/compiler/phases/1-parse` of Svelte 5.57.2 @ f3de3f2
    `leadingComments` upstream puts on a `<script>`'s Program for the preceding HTML comment
    (used by `svelte-ignore`). `Root.comments` (the `onComment` list) is complete.
 8. **`typeAnnotation`** objects that JS-mode `read_type_annotation` can produce (it always runs
-   when a `:` follows a pattern) are not stored; their effect on the parser position is.
+   when a `:` follows a pattern) are not stored; their effect on the parser position is. In a
+   `lang="ts"` component they are stored (`TsPatternExtra::type_annotation`) when the
+   `_ as <type>` trick yields a `TSAsExpression`, which is always the case for input it accepts.
 9. **`customElement`** in `<svelte:options>` is fully validated but only its span is stored
    (`SvelteOptions.custom_element`). For an invalid `tag` property upstream reports
    `svelte_options_invalid_tagname` without a position (the node is a `[name, value]` tuple);
@@ -65,6 +66,53 @@ Port of `packages/svelte/src/compiler/phases/1-parse` of Svelte 5.57.2 @ f3de3f2
     `svelte-ignore` filtering (upstream's ignore stack is empty while parsing anyway).
 12. `CompileError.message` omits upstream's trailing `\nhttps://svelte.dev/e/<code>` line
     (`CompileError::docs_url` rebuilds it).
+
+## acorn-typescript (`acorn/typescript/`, agent TS)
+
+Port of @sveltejs/acorn-typescript 1.0.13 (`node_modules/@sveltejs/acorn-typescript/index.js`),
+the plugin Svelte's `TSParser` uses (default options: no JSX, no `dts`), as overrides of the acorn
+port switched on by `AcornOptions::typescript` (plain JS never takes a TypeScript path). Checked by
+the oracle's TypeScript cases (`options.typescript`, see tools/oracle/README.md).
+
+1. **Speculative parsing** (`tryParse`, `tsTryParse`, `tsLookAhead`): the plugin's
+   `ParseEffects` undo log becomes a `Checkpoint` (a copy of the token state, context stack,
+   scopes, labels, private names, undefined exports, plugin state and the comment count) that is
+   restored on rollback; comments reported by a rolled-back branch are dropped and re-reported by
+   `selectTryParseResult`, as the plugin's event buffer does.
+2. **Typed nodes**: properties the plugin adds to ESTree nodes live in their `ts` field
+   (`estree::ts`); `toAssignable` results that upstream discards (it converts in place) are kept
+   as `TSPatternWrapper` patterns (`[(x as T)] = v`), which serialize identically.
+3. **Unrepresentable error paths**: when a `<T>` type assertion fails the plugin returns a
+   `TSTypeParameterDeclaration` as an *expression*; here the type parameters are parsed and the
+   following token is reported as unexpected. Likewise `(a,,b) => T` in a type and decorators
+   followed by `;` in a class body (TypeErrors in the plugin) are "Unexpected token".
+   `TSTypeCastExpression` passed to `toAssignable` outside a parameter list is converted to the
+   annotated pattern (the plugin returns the bare expression).
+4. **Decorator member expressions** (`@a.b`) get `optional: false` (the plugin builds them without
+   `optional`); the only acorn-typescript corpus mismatch. Decorators are rejected by
+   `remove_typescript_nodes` anyway. Decorators on object-literal members are not stored.
+5. **Error positions the plugin passes as `loc.column`** (modifier order errors,
+   `UnexpectedParameterModifier`) use the UTF-16 column as a byte offset, which is the same
+   number for ASCII lines. `extra.trailingComma` of type parameter lists is a byte offset.
+
+## remove_typescript_nodes (`svelte/parse/remove_typescript_nodes.rs`, `svelte/ts.rs`, agent TS)
+
+Upstream runs it in `compile()`; here `svelte::ts::strip` runs it from `compile.rs` before scope
+analysis and also records the source ranges of the removed TypeScript, because the compiler emits
+the user's script and template text through span edits instead of reprinting the AST (the
+rewriter adds the ranges as empty overwrites: `ScopeRewriter::strip_typescript`).
+
+1. Removed statements are `EmptyStatement`s with their original span (upstream `b.empty` has no
+   position); removed class members (abstract methods, `declare` fields) are dropped from the
+   class body instead of becoming `EmptyStatement`s.
+2. Nodes upstream leaves for esrap to print as TypeScript are removed too: method overloads
+   (`TSDeclareMethod` values), class index signatures and `TSTypeCastExpression` (`(x: T)` that
+   is not a parameter list); `import x = require()`, `export =` and `export as namespace` are
+   `typescript_invalid_feature` errors (feature names "`import =` declarations", "`export =`
+   assignments", "`export as namespace` declarations").
+3. A nested `namespace A.B {}` is checked like a flat one (upstream throws a TypeError).
+4. `import(source, options)` parsed by the TypeScript parser (`arguments: [options]`) gets its
+   `options` back so later phases see one shape.
 
 ## acorn regexp validator (`acorn/regexp.rs`, agent B)
 

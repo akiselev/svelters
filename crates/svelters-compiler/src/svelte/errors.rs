@@ -394,13 +394,13 @@ pub fn void_element_invalid_content(node: impl Into<NodeLike>) -> CompileError {
     e(node, "void_element_invalid_content", "Void elements cannot have children or closing tags".into())
 }
 
-// SVELTERS: not an upstream error. acorn-typescript is not ported, so `lang="ts"` components are
-// rejected up front (docs/notes/native-compiler/deviations.md).
-pub fn svelters_typescript_unsupported(node: impl Into<NodeLike>) -> CompileError {
+/// TypeScript language features like %feature% are not natively supported, and their use is generally discouraged. Outside of `<script>` tags, these features are not supported. For use within `<script>` tags, you will need to use a preprocessor to convert it to JavaScript before it gets passed to the Svelte compiler. If you are using `vitePreprocess`, make sure to specifically enable preprocessing script tags (`vitePreprocess({ script: true })`)
+/// (raised by `remove_typescript_nodes`, i.e. at compile time, not by `parse`)
+pub fn typescript_invalid_feature(node: impl Into<NodeLike>, feature: &str) -> CompileError {
     e(
         node,
-        "svelters_typescript_unsupported",
-        "TypeScript (`lang=\"ts\"`) is not supported by the svelters compiler yet. Remove `lang=\"ts\"` or preprocess the component to JavaScript first".into(),
+        "typescript_invalid_feature",
+        format!("TypeScript language features like {feature} are not natively supported, and their use is generally discouraged. Outside of `<script>` tags, these features are not supported. For use within `<script>` tags, you will need to use a preprocessor to convert it to JavaScript before it gets passed to the Svelte compiler. If you are using `vitePreprocess`, make sure to specifically enable preprocessing script tags (`vitePreprocess({{ script: true }})`)"),
     )
 }
 

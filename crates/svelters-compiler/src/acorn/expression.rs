@@ -240,7 +240,11 @@ impl<'a> Parser<'a> {
         ref_destructuring_errors: Option<&mut DestructuringErrors>,
     ) -> PResult<Expression> {
         self.enter_depth()?;
-        let r = self.parse_maybe_assign_inner(for_init, ref_destructuring_errors);
+        let r = if self.ts.is_some() {
+            self.parse_maybe_assign_ts(for_init, ref_destructuring_errors, false)
+        } else {
+            self.parse_maybe_assign_inner(for_init, ref_destructuring_errors)
+        };
         self.depth -= 1;
         r
     }
@@ -352,6 +356,9 @@ impl<'a> Parser<'a> {
         for_init: ForInit,
         mut ref_destructuring_errors: Option<&mut DestructuringErrors>,
     ) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_maybe_conditional_ts(for_init, ref_destructuring_errors);
+        }
         let start_pos = self.start;
         let expr = self.parse_expr_ops(for_init, ref_destructuring_errors.as_deref_mut())?;
         if self.check_expression_errors(ref_destructuring_errors.as_deref(), false)? {
@@ -413,6 +420,12 @@ impl<'a> Parser<'a> {
         for_init: ForInit,
     ) -> PResult<Operand> {
         loop {
+            // acorn-typescript's `parseExprOp` override: `x as T`, `x satisfies T`
+            if self.ts.is_some() && matches!(left, Operand::Expr(_)) && self.ts_at_as_expression(min_prec) {
+                let Operand::Expr(e) = left else { unreachable!() };
+                left = Operand::Expr(self.ts_parse_as_expression(e, left_start_pos)?);
+                continue;
+            }
             let Some(mut prec) = self.type_.binop() else { return Ok(left) };
             if !(!for_init.truthy() || self.type_ != T::In) {
                 return Ok(left);
@@ -496,7 +509,12 @@ impl<'a> Parser<'a> {
         for_init: ForInit,
     ) -> PResult<Operand> {
         self.enter_depth()?;
-        let r = self.parse_maybe_unary_inner(ref_destructuring_errors, saw_unary, inc_dec, for_init);
+        // acorn-typescript's `parseMaybeUnary` override: `<T>x`
+        let r = if self.ts.is_some() && self.ts_match_left_relational() {
+            self.ts_parse_type_assertion().map(Operand::Expr)
+        } else {
+            self.parse_maybe_unary_inner(ref_destructuring_errors, saw_unary, inc_dec, for_init)
+        };
         self.depth -= 1;
         r
     }
@@ -715,6 +733,9 @@ impl<'a> Parser<'a> {
         optional_chained: bool,
         for_init: ForInit,
     ) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_subscript_ts(base, start_pos, no_calls, maybe_async_arrow, optional_chained, for_init);
+        }
         let optional_supported = self.options.ecma_version >= 11;
         let optional = optional_supported && self.eat(T::QuestionDot)?;
         if no_calls && optional {
@@ -778,6 +799,7 @@ impl<'a> Parser<'a> {
                 self.await_ident_pos = old_await_ident_pos;
             }
             Ok(Expression::CallExpression(CallExpression {
+                ts: None,
                 start: start_pos,
                 end: self.last_tok_end,
                 callee: Box::new(base),
@@ -791,6 +813,7 @@ impl<'a> Parser<'a> {
             }
             let quasi = self.parse_template(true)?;
             Ok(Expression::TaggedTemplateExpression(TaggedTemplateExpression {
+                ts: None,
                 start: start_pos,
                 end: self.last_tok_end,
                 tag: Box::new(base),
@@ -818,6 +841,9 @@ impl<'a> Parser<'a> {
             self.read_regexp()?;
         }
 
+        if self.type_ == T::At && self.ts.is_some() {
+            return self.parse_expr_atom_decorators();
+        }
         let can_be_arrow = self.potential_arrow_at == self.start as i64;
         match self.type_ {
             T::Super => {
@@ -847,7 +873,22 @@ impl<'a> Parser<'a> {
                 Ok(Expression::ThisExpression(ThisExpression { start, end: self.last_tok_end }))
             }
 
-            T::Name => {
+            // (the TypeScript keyword tokens only exist when parsing TypeScript:
+            // acorn-typescript's `tokenIsIdentifier` case)
+            T::Name
+            | T::TsAssert
+            | T::TsAsserts
+            | T::TsGlobal
+            | T::TsKeyof
+            | T::TsReadonly
+            | T::TsUnique
+            | T::TsAbstract
+            | T::TsDeclare
+            | T::TsEnum
+            | T::TsModule
+            | T::TsNamespace
+            | T::TsInterface
+            | T::TsType => {
                 let start_pos = self.start;
                 let contains_esc = self.contains_esc;
                 let id = self.parse_ident(false)?;
@@ -935,7 +976,7 @@ impl<'a> Parser<'a> {
                 let start = self.start;
                 self.next()?;
                 let elements = self.parse_expr_list(T::BracketR, true, true, ref_destructuring_errors)?;
-                Ok(Expression::ArrayExpression(ArrayExpression { start, end: self.last_tok_end, elements }))
+                Ok(Expression::ArrayExpression(ArrayExpression { start, end: self.last_tok_end, elements, ts: None }))
             }
 
             T::BraceL => {
@@ -987,7 +1028,7 @@ impl<'a> Parser<'a> {
         if self.type_ == T::ParenL && !for_new {
             self.parse_dynamic_import(start)
         } else if self.type_ == T::Dot {
-            let meta = Identifier { start, end: self.last_tok_end, name: "import".into() };
+            let meta = Identifier { start, end: self.last_tok_end, name: "import".into(), ts: None };
             self.parse_import_meta(start, meta)
         } else {
             self.unexpected(None)
@@ -995,6 +1036,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_dynamic_import(&mut self, start: u32) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_dynamic_import_ts(start);
+        }
         self.next()?; // skip `(`
 
         // Parse node.source.
@@ -1027,6 +1071,7 @@ impl<'a> Parser<'a> {
         }
 
         Ok(Expression::ImportExpression(ImportExpression {
+            ts: None,
             start,
             end: self.last_tok_end,
             source: Box::new(source),
@@ -1096,6 +1141,9 @@ impl<'a> Parser<'a> {
         can_be_arrow: bool,
         for_init: ForInit,
     ) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_paren_and_distinguish_expression_ts(can_be_arrow, for_init);
+        }
         let start_pos = self.start;
         let val;
         let allow_trailing_comma = self.options.ecma_version >= 8;
@@ -1207,13 +1255,16 @@ impl<'a> Parser<'a> {
     // argument list.
 
     pub fn parse_new(&mut self) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_new_ts();
+        }
         if self.contains_esc {
             return self.raise_recoverable(self.start, "Escape sequence in keyword new");
         }
         let start = self.start;
         self.next()?;
         if self.options.ecma_version >= 6 && self.type_ == T::Dot {
-            let meta = Identifier { start, end: self.last_tok_end, name: "new".into() };
+            let meta = Identifier { start, end: self.last_tok_end, name: "new".into(), ts: None };
             self.next()?;
             let contains_esc = self.contains_esc;
             let property = self.parse_ident(true)?;
@@ -1240,7 +1291,7 @@ impl<'a> Parser<'a> {
         } else {
             Vec::new()
         };
-        Ok(Expression::NewExpression(NewExpression { start, end: self.last_tok_end, callee: Box::new(callee), arguments }))
+        Ok(Expression::NewExpression(NewExpression { start, end: self.last_tok_end, callee: Box::new(callee), arguments, ts: None }))
     }
 
     // Parse template expression.
@@ -1314,7 +1365,7 @@ impl<'a> Parser<'a> {
                 _ => unreachable!(),
             })
             .collect();
-        Ok(ObjectExpression { start, end, properties })
+        Ok(ObjectExpression { start, end, properties, ts: None })
     }
 
     pub fn parse_obj_pattern(&mut self) -> PResult<Pattern> {
@@ -1327,7 +1378,7 @@ impl<'a> Parser<'a> {
                 _ => unreachable!(),
             })
             .collect();
-        Ok(Pattern::ObjectPattern(ObjectPattern { start, end, properties }))
+        Ok(Pattern::ObjectPattern(ObjectPattern { start, end, properties, ts: None }))
     }
 
     pub fn parse_obj(
@@ -1371,9 +1422,10 @@ impl<'a> Parser<'a> {
             if is_pattern {
                 let argument = self.parse_ident(false)?;
                 if self.type_ == T::Comma {
-                    return self.raise_recoverable(self.start, "Comma is not permitted after the rest element");
+                    self.raise_rest_comma(self.start)?;
                 }
                 return Ok(PropResult::Rest(RestElement {
+                    ts: None,
                     start,
                     end: self.last_tok_end,
                     argument: Box::new(Pattern::Identifier(argument)),
@@ -1391,7 +1443,7 @@ impl<'a> Parser<'a> {
                 }
             }
             // Finish
-            return Ok(PropResult::Spread(SpreadElement { start, end: self.last_tok_end, argument }));
+            return Ok(PropResult::Spread(SpreadElement { start, end: self.last_tok_end, argument, ts: None }));
         }
         if self.options.ecma_version >= 6 {
             if is_pattern || ref_destructuring_errors.is_some() {
@@ -1431,6 +1483,9 @@ impl<'a> Parser<'a> {
 
     /// `parseGetterSetter`: returns the new key, computed flag, value and kind.
     pub fn parse_getter_setter(&mut self, kind_name: &str) -> PResult<(bool, PropertyKey, Function, PropertyKind)> {
+        if self.ts.is_some() {
+            return self.parse_getter_setter_ts(kind_name);
+        }
         let kind = if kind_name == "get" { PropertyKind::Get } else { PropertyKind::Set };
         let (computed, key) = self.parse_property_name()?;
         let value = self.parse_method(false, false, false)?;
@@ -1463,6 +1518,9 @@ impl<'a> Parser<'a> {
         ref_destructuring_errors: Option<&mut DestructuringErrors>,
         contains_esc: bool,
     ) -> PResult<PropResult> {
+        if self.ts.is_some() && self.ts_match_left_relational() {
+            return self.parse_property_value_ts(start, computed, key, is_pattern, is_generator, is_async);
+        }
         if (is_generator || is_async) && self.type_ == T::Colon {
             return self.unexpected(None);
         }
@@ -1581,6 +1639,12 @@ impl<'a> Parser<'a> {
     // Parse object or class method.
 
     pub fn parse_method(&mut self, is_generator: bool, is_async: bool, allow_direct_super: bool) -> PResult<Function> {
+        if self.ts.is_some() {
+            return match self.parse_method_ts(is_generator, is_async, allow_direct_super, false, None)? {
+                FunctionNode::FunctionExpression(f) => Ok(f),
+                FunctionNode::TSDeclareMethod(d) => self.unexpected(Some(d.end)),
+            };
+        }
         let start = self.start;
         let old_yield_pos = self.yield_pos;
         let old_await_pos = self.await_pos;
@@ -1599,7 +1663,7 @@ impl<'a> Parser<'a> {
 
         self.expect(T::ParenL)?;
         let params: Vec<Pattern> =
-            self.parse_binding_list(T::ParenR, false, self.options.ecma_version >= 8)?.into_iter().flatten().collect();
+            self.parse_binding_list(T::ParenR, false, self.options.ecma_version >= 8, None)?.into_iter().flatten().collect();
         self.check_yield_await_in_default_params()?;
         let body = self.parse_function_body(start, &params, None, false, true, ForInit::No)?.into_block();
 
@@ -1607,6 +1671,7 @@ impl<'a> Parser<'a> {
         self.await_pos = old_await_pos;
         self.await_ident_pos = old_await_ident_pos;
         Ok(Function {
+            ts: None,
             start,
             end: self.last_tok_end,
             id: None,
@@ -1627,6 +1692,9 @@ impl<'a> Parser<'a> {
         is_async: bool,
         for_init: ForInit,
     ) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_arrow_expression_ts(start, params, is_async, for_init, TsFunctionExtra::default());
+        }
         let old_yield_pos = self.yield_pos;
         let old_await_pos = self.await_pos;
         let old_await_ident_pos = self.await_ident_pos;
@@ -1649,6 +1717,7 @@ impl<'a> Parser<'a> {
             FnBody::Block(b) => (false, ArrowBody::Block(BlockStatementNode::BlockStatement(b))),
         };
         Ok(Expression::ArrowFunctionExpression(ArrowFunctionExpression {
+            ts: None,
             start,
             end: self.last_tok_end,
             id: None,
@@ -1751,6 +1820,9 @@ impl<'a> Parser<'a> {
         allow_empty: bool,
         mut ref_destructuring_errors: Option<&mut DestructuringErrors>,
     ) -> PResult<Vec<Option<ArrayElement>>> {
+        if self.ts.is_some() {
+            return self.parse_expr_list_ts(close, allow_trailing_comma, allow_empty, ref_destructuring_errors);
+        }
         let mut elts = Vec::new();
         let mut first = true;
         while !self.eat(close)? {
@@ -1817,7 +1889,7 @@ impl<'a> Parser<'a> {
     pub fn parse_ident(&mut self, liberal: bool) -> PResult<Identifier> {
         let (start, name) = self.parse_ident_node()?;
         self.next_ex(liberal)?;
-        let node = Identifier { start, end: self.last_tok_end, name };
+        let node = Identifier { start, end: self.last_tok_end, name, ts: None };
         if !liberal {
             self.check_unreserved(node.start, node.end, &node.name)?;
             if node.name == "await" && self.await_ident_pos == 0 {
@@ -1828,6 +1900,11 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_ident_node(&mut self) -> PResult<(u32, String)> {
+        if self.ts.is_some() {
+            if let Some(r) = self.parse_ident_node_ts() {
+                return Ok(r);
+            }
+        }
         let start = self.start;
         let name;
         if self.type_ == T::Name {
@@ -1885,6 +1962,9 @@ impl<'a> Parser<'a> {
     // Parses yield expression inside generator.
 
     pub fn parse_yield(&mut self, for_init: ForInit) -> PResult<Expression> {
+        if self.ts.is_some() {
+            return self.parse_yield_ts(for_init);
+        }
         if self.yield_pos == 0 {
             self.yield_pos = self.start;
         }

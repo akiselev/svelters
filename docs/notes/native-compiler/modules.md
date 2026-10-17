@@ -11,6 +11,8 @@ out: build cost). Dependencies stay minimal (`serde`, `serde_json`, `sourcemap`)
 | `estree` | ESTree as acorn emits it | coordinator | typed nodes, `Spanned`, serde = acorn JSON |
 | `acorn` | `acorn/src/*.js` except regexp | agent A | `parse`, `parse_expression_at`, `parse_statement_at`, `is_identifier_start/char` |
 | `acorn::regexp` | `acorn/src/regexp.js`, `unicode-property-data.js` | agent B | `validate_flags`, `validate_pattern` |
+| `acorn::typescript`, `estree::ts` | `@sveltejs/acorn-typescript` 1.0.13 `index.js` | agent TS | `AcornOptions::typescript` / `Options::typescript` (Svelte's `TSParser`); TS nodes + the `ts` field of ESTree nodes |
+| `svelte::ts`, `svelte::parse::remove_typescript_nodes` | `phases/1-parse/remove_typescript_nodes.js` | agent TS | `strip(&mut Root, src) -> Result<TsStrip, CompileError>`; `TsStrip::apply(&mut Edits, span)` |
 | `svelte::ast` | `types/template.d.ts` (AST namespace) | coordinator | typed template nodes, serde = Svelte modern JSON |
 | `svelte::parse`, `svelte::errors` | `phases/1-parse/**` (not `read/style.js`), parse errors of `errors.js` | agent D | `parse(src, &ParseOptions) -> Result<Root, CompileError>` |
 | `svelte::scope` | `phases/scope.js` | agent E | scope tree + bindings over `Root` |

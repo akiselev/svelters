@@ -13,7 +13,13 @@ use svelters_compiler::estree::{self, SourceType};
 /// acorn options the port models. Keys that only add `loc`/`range`/tokens or are callbacks that
 /// never change the AST are accepted and ignored; anything else makes the case `skipped`.
 fn map_options(o: &Value) -> Result<Options, String> {
-    let mut opts = Options { ecma_version: 5, source_type: SourceType::Script, preserve_parens: false, allow_undefined_exports: false };
+    let mut opts = Options {
+        ecma_version: 5,
+        source_type: SourceType::Script,
+        preserve_parens: false,
+        allow_undefined_exports: false,
+        typescript: false,
+    };
     for (k, v) in o.as_object().into_iter().flatten() {
         match k.as_str() {
             // acorn getOptions(): "latest" -> 1e8, years -> versions
@@ -35,6 +41,9 @@ fn map_options(o: &Value) -> Result<Options, String> {
                 }
             }
             "preserveParens" => opts.preserve_parens = v.as_bool() == Some(true),
+            // not an acorn option: the case was parsed by `acorn.Parser.extend(tsPlugin())`
+            // (@sveltejs/acorn-typescript), as Svelte does for `lang="ts"`
+            "typescript" => opts.typescript = v.as_bool() == Some(true),
             "locations" | "ranges" | "sourceFile" | "onComment" | "onToken" | "onInsertedSemicolon" | "onTrailingComma" => {}
             // test-driver flags (acorn-loose / commonjs runs), not acorn options: acorn ignores them
             "loose" | "commonjs" => {}
@@ -224,7 +233,7 @@ fn estree_contract_smoke() {
             Statement::ExpressionStatement(ExpressionStatement {
                 start: 0,
                 end: 3,
-                expression: Expression::Identifier(Identifier { start: 0, end: 2, name: "é".into() }),
+                expression: Expression::Identifier(Identifier { start: 0, end: 2, name: "é".into(), ts: None }),
                 directive: None,
             }),
             Statement::ExpressionStatement(ExpressionStatement {

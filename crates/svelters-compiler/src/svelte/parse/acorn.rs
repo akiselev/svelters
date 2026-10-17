@@ -1,7 +1,8 @@
 //! Port of `phases/1-parse/acorn.js` (Svelte 5.57.2 @ f3de3f2): the wrapper around acorn.
 //!
+//! `TSParser` (`acorn.Parser.extend(tsPlugin())`) is `crate::acorn` with `typescript` set.
+//!
 //! SVELTERS deviations (docs/notes/native-compiler/deviations.md):
-//! - no TypeScript parser (`lang="ts"` is rejected before parsing);
 //! - `add_comments` (attaching `leadingComments`/`trailingComments` to ESTree nodes) is not
 //!   ported: `crate::estree` has no such fields. `onComment` (the `root.comments` list) is.
 //! - `startLocation`/`locations` are not needed (no `loc` in our ESTree).
@@ -11,34 +12,34 @@ use crate::estree::*;
 use crate::svelte::errors as e;
 use crate::svelte::parse::PResult;
 
-fn options(preserve_parens: bool, allow_undefined_exports: bool) -> Options {
-    Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens, allow_undefined_exports }
+fn options(preserve_parens: bool, allow_undefined_exports: bool, typescript: bool) -> Options {
+    Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens, allow_undefined_exports, typescript }
 }
 
 /// `parse(source, comments, typescript, is_script)`
-pub fn parse(source: &str, comments: &mut Vec<Comment>, _typescript: bool, is_script: bool) -> PResult<Program> {
+pub fn parse(source: &str, comments: &mut Vec<Comment>, typescript: bool, is_script: bool) -> PResult<Program> {
     let mut raw = Vec::new();
     // If we're dealing with a <script> then it might contain an export
     // for something that doesn't exist directly inside but is inside the
     // component instead, so we need to ensure that Acorn doesn't throw
     // an error in these cases (`allow_undefined_exports`)
-    let result = acorn_impl::parse(source, &options(false, is_script), &mut raw);
+    let result = acorn_impl::parse(source, &options(false, is_script, typescript), &mut raw);
     on_comments(source, comments, raw);
     result.map_err(|err| handle_parse_error(&err))
 }
 
-/// `parse_expression_at(parser, source, index)`
-pub fn parse_expression_at(source: &str, comments: &mut Vec<Comment>, index: usize) -> PResult<Expression> {
+/// `parse_expression_at(parser, source, index)`; `ts`: `parser.ts`.
+pub fn parse_expression_at(source: &str, comments: &mut Vec<Comment>, index: usize, ts: bool) -> PResult<Expression> {
     let mut raw = Vec::new();
-    let result = acorn_impl::parse_expression_at(source, index as u32, &options(true, false), &mut raw);
+    let result = acorn_impl::parse_expression_at(source, index as u32, &options(true, false, ts), &mut raw);
     on_comments(source, comments, raw);
     result.map_err(|err| handle_parse_error(&err))
 }
 
-/// `parse_statement_at(parser, source, index)`
-pub fn parse_statement_at(source: &str, comments: &mut Vec<Comment>, index: usize) -> PResult<Statement> {
+/// `parse_statement_at(parser, source, index)`; `ts`: `parser.ts`.
+pub fn parse_statement_at(source: &str, comments: &mut Vec<Comment>, index: usize, ts: bool) -> PResult<Statement> {
     let mut raw = Vec::new();
-    let result = acorn_impl::parse_statement_at(source, index as u32, &options(false, false), &mut raw);
+    let result = acorn_impl::parse_statement_at(source, index as u32, &options(false, false, ts), &mut raw);
     on_comments(source, comments, raw);
     result.map_err(|err| {
         // A statement that runs to the end of the source (e.g. an unterminated declaration tag)
@@ -236,8 +237,19 @@ fn rp_expr(node: &mut Expression) {
             if let Some(o) = &mut n.options {
                 rp_expr(o);
             }
+            if let Some(args) = n.ts.as_mut().and_then(|t| t.arguments.as_mut()) {
+                for a in args {
+                    rp_expr(a);
+                }
+            }
         }
         Expression::ParenthesizedExpression(_) => unreachable!(),
+        // TypeScript wrappers (type nodes hold no expressions that can be parenthesized)
+        Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => rp_expr(&mut n.expression),
+        Expression::TSTypeAssertion(n) => rp_expr(&mut n.expression),
+        Expression::TSNonNullExpression(n) => rp_expr(&mut n.expression),
+        Expression::TSInstantiationExpression(n) => rp_expr(&mut n.expression),
+        Expression::TSTypeCastExpression(n) => rp_expr(&mut n.expression),
     }
 }
 
@@ -313,6 +325,11 @@ fn rp_pattern(p: &mut Pattern) {
         }
         Pattern::MemberExpression(m) => rp_member(m),
         Pattern::ParenthesizedExpression(_) => {}
+        Pattern::TSParameterProperty(n) => rp_pattern(&mut n.parameter),
+        Pattern::TSAsExpression(n)
+        | Pattern::TSSatisfiesExpression(n)
+        | Pattern::TSTypeAssertion(n)
+        | Pattern::TSNonNullExpression(n) => rp_pattern(&mut n.expression),
     }
 }
 
@@ -332,8 +349,14 @@ fn rp_class(c: &mut Class) {
         match el {
             ClassElement::MethodDefinition(m) => {
                 rp_key(&mut m.key);
-                let FunctionNode::FunctionExpression(f) = &mut m.value;
-                rp_function(f);
+                match &mut m.value {
+                    FunctionNode::FunctionExpression(f) => rp_function(f),
+                    FunctionNode::TSDeclareMethod(f) => {
+                        for p in &mut f.params {
+                            rp_pattern(p);
+                        }
+                    }
+                }
             }
             ClassElement::PropertyDefinition(p) => {
                 rp_key(&mut p.key);
@@ -342,6 +365,7 @@ fn rp_class(c: &mut Class) {
                 }
             }
             ClassElement::StaticBlock(s) => rp_stmts(&mut s.body),
+            ClassElement::TSIndexSignature(_) => {}
         }
     }
 }
@@ -454,6 +478,32 @@ fn rp_stmt(s: &mut Statement) {
             ExportDefaultKind::Declaration(d) => rp_stmt(d),
             ExportDefaultKind::Expression(e) => rp_expr(e),
         },
+        Statement::TSEnumDeclaration(n) => {
+            for m in &mut n.members {
+                if let Some(i) = &mut m.initializer {
+                    rp_expr(i);
+                }
+            }
+        }
+        Statement::TSModuleDeclaration(n) => rp_module(n),
+        Statement::TSDeclareFunction(n) => {
+            for p in &mut n.params {
+                rp_pattern(p);
+            }
+        }
+        Statement::TSExportAssignment(n) => rp_expr(&mut n.expression),
+        Statement::TSInterfaceDeclaration(_)
+        | Statement::TSTypeAliasDeclaration(_)
+        | Statement::TSImportEqualsDeclaration(_)
+        | Statement::TSNamespaceExportDeclaration(_) => {}
+    }
+}
+
+fn rp_module(n: &mut TSModuleDeclaration) {
+    match &mut n.body {
+        Some(TSModuleBody::TSModuleBlock(b)) => rp_stmts(&mut b.body),
+        Some(TSModuleBody::TSModuleDeclaration(d)) => rp_module(d),
+        None => {}
     }
 }
 

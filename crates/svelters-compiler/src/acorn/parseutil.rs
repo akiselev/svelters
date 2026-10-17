@@ -95,6 +95,16 @@ impl<'a> Parser<'a> {
     // Consumes contextual keyword if possible.
 
     pub fn eat_contextual(&mut self, name: &str) -> PResult<bool> {
+        if self.ts.is_some() {
+            if let Some(t) = super::tokentype::ts_keyword_type(name) {
+                // acorn-typescript: `ts_isContextual(tokTypes[name])`
+                if self.type_ == t && !self.contains_esc {
+                    self.next()?;
+                    return Ok(true);
+                }
+                return Ok(false);
+            }
+        }
         if !self.is_contextual(name) {
             return Ok(false);
         }
@@ -201,6 +211,17 @@ impl<'a> Parser<'a> {
     }
 
     pub fn is_simple_assign_target(&self, expr: &Expression) -> bool {
+        // acorn-typescript: TS wrappers are transparent.
+        if self.ts.is_some() {
+            match expr {
+                Expression::TSNonNullExpression(n) => return self.is_simple_assign_target(&n.expression),
+                Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => {
+                    return self.is_simple_assign_target(&n.expression)
+                }
+                Expression::TSTypeAssertion(n) => return self.is_simple_assign_target(&n.expression),
+                _ => {}
+            }
+        }
         match expr {
             Expression::ParenthesizedExpression(p) => self.is_simple_assign_target(&p.expression),
             Expression::Identifier(_) | Expression::MemberExpression(_) => true,

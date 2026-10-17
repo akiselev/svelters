@@ -213,9 +213,18 @@ pub struct ScopeRewriter<'a> {
     module: Edits,
     exports: Vec<(String, String)>,
     has_stores: bool,
+    /// TypeScript to remove from the emitted text (`svelte::ts`; empty for JavaScript).
+    ts_strip: crate::svelte::ts::TsStrip,
 }
 
 impl<'a> ScopeRewriter<'a> {
+    /// Removes the TypeScript found by `svelte::ts::strip` from everything this rewriter emits.
+    pub fn strip_typescript(&mut self, strip: crate::svelte::ts::TsStrip) {
+        strip.apply(&mut self.script, None);
+        strip.apply(&mut self.module, None);
+        self.ts_strip = strip;
+    }
+
     pub fn new(src: &'a str, root: &'a Root, an: &'a ComponentScopeAnalysis<'a>, diags: Diagnostics) -> ScopeRewriter<'a> {
         ScopeRewriter::with_options(src, root, an, diags, false, "Component.svelte")
     }
@@ -263,7 +272,7 @@ impl<'a> ScopeRewriter<'a> {
             }
         }
 
-        let mut rw = ScopeRewriter { cx, root, script: Edits::new(), module: Edits::new(), exports, has_stores: false };
+        let mut rw = ScopeRewriter { cx, root, script: Edits::new(), module: Edits::new(), exports, has_stores: false, ts_strip: Default::default() };
         let has = rw.store_subs().next().is_some();
         rw.has_stores = has;
 
@@ -348,6 +357,7 @@ fn export_name(n: &ModuleExportName) -> String {
 
 impl Rewriter for ScopeRewriter<'_> {
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits) {
+        self.ts_strip.apply(edits, Some(e.span()));
         let mut v = Rw::new(&self.cx, edits, mode, true);
         Walker::walk(expr_ref(e), &self.cx.instance_scope.expect("component"), &mut v);
     }
@@ -455,11 +465,13 @@ impl Rewriter for ScopeRewriter<'_> {
 
     fn script(&self, w: &mut Writer, hoist: bool) {
         if hoist {
-            for script in [&self.root.module, &self.root.instance].into_iter().flatten() {
+            for (script, edits) in [(&self.root.module, &self.module), (&self.root.instance, &self.script)] {
+                let Some(script) = script else { continue };
                 for stmt in &script.content.body {
                     if let Statement::ImportDeclaration(_) = stmt {
                         let s = stmt.span();
-                        w.copy(self.cx.src, s.start, s.end);
+                        // edits on imports are TypeScript removals (`import { type A, B }`)
+                        edits.emit(w, self.cx.src, s.start, s.end);
                         w.write("\n");
                     }
                 }

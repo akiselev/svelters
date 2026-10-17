@@ -97,6 +97,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn read_token(&mut self, code: u32) -> PResult<()> {
+        if self.ts.is_some() && self.read_token_ts(code) {
+            return Ok(());
+        }
         // Identifier or keyword. '\uXXXX' sequences are allowed in
         // identifiers, so '\' also dispatches to that.
         if is_identifier_start(code, self.options.ecma_version >= 6) || code == 92
@@ -116,6 +119,10 @@ impl<'a> Parser<'a> {
             None => return self.raise(self.pos - 2, "Unterminated comment"),
         };
         self.pos = end + 2;
+        // SVELTERS: acorn-typescript's override does not report comments while looking ahead.
+        if self.is_ts_lookahead() {
+            return Ok(());
+        }
         self.comments.push(Comment {
             kind: CommentKind::Block,
             value: self.input[start as usize + 2..end as usize].to_string(),
@@ -136,6 +143,10 @@ impl<'a> Parser<'a> {
             self.pos += self.char_len_at(self.pos);
         }
         let value_start = (start + start_skip).min(self.pos);
+        // SVELTERS: acorn-typescript's override does not report comments while looking ahead.
+        if self.is_ts_lookahead() {
+            return;
+        }
         self.comments.push(Comment {
             kind: CommentKind::Line,
             value: self.input[value_start as usize..self.pos as usize].to_string(),
@@ -209,7 +220,10 @@ impl<'a> Parser<'a> {
         self.type_ = type_;
         self.value = val;
 
-        self.update_context(prev_type);
+        // SVELTERS: acorn-typescript's override skips the context update while looking ahead.
+        if !self.is_ts_lookahead() {
+            self.update_context(prev_type);
+        }
     }
 
     // ### Token reading
@@ -320,7 +334,7 @@ impl<'a> Parser<'a> {
         self.finish_op(T::PlusMin, 1)
     }
 
-    fn read_token_lt_gt(&mut self, code: u32) -> PResult<()> {
+    pub(crate) fn read_token_lt_gt(&mut self, code: u32) -> PResult<()> {
         // '<>'
         let next = self.code_at(self.pos + 1);
         let mut size = 1;
@@ -404,6 +418,11 @@ impl<'a> Parser<'a> {
     }
 
     pub fn get_token_from_code(&mut self, code: u32) -> PResult<()> {
+        if self.ts.is_some() {
+            if let Some(r) = self.get_token_from_code_ts(code) {
+                return r;
+            }
+        }
         match code {
             // The interpretation of a dot depends on whether it is followed
             // by a digit or another two dots.
@@ -1002,6 +1021,11 @@ impl<'a> Parser<'a> {
         let mut type_ = T::Name;
         if self.is_keyword_word(&word) {
             type_ = keyword_type(&word).unwrap();
+        } else if self.ts.is_some() {
+            // SVELTERS: acorn-typescript's `readWord` gives TypeScript keywords their own types.
+            if let Some(t) = super::tokentype::ts_keyword_type(&word) {
+                type_ = t;
+            }
         }
         self.finish_token(type_, TokVal::Str(word));
         Ok(())

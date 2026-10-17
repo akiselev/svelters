@@ -15,6 +15,7 @@
 
 pub mod acorn;
 pub mod read;
+pub mod remove_typescript_nodes;
 pub mod shared;
 pub mod state;
 pub mod utils;
@@ -322,12 +323,6 @@ impl Parser {
         let match_lang = regex_lang_attribute(template);
         parser.ts = match_lang.as_ref().is_some_and(|(_, lang)| lang == "ts");
 
-        // SVELTERS: acorn-typescript is not ported (deviations.md).
-        if parser.ts {
-            let (pos, _) = match_lang.unwrap();
-            return Err(e::svelters_typescript_unsupported(pos));
-        }
-
         parser.nodes.push(TemplateNode::Root);
         let root_fragment = parser.create_fragment(false);
         parser.stack.push(0);
@@ -500,7 +495,7 @@ impl Parser {
             }
         }
 
-        Ok(Identifier { start: start as u32, end: end as u32, name })
+        Ok(Identifier { start: start as u32, end: end as u32, name, ts: None })
     }
 
     pub fn read_until(&mut self, delimiter: &str) -> PResult<String> {

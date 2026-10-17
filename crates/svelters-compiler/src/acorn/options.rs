@@ -44,6 +44,9 @@ pub struct AcornOptions {
     /// Svelte's `<script>` hack (not an acorn option): `undefinedExports` is cleared after
     /// every `parseStatement`.
     pub allow_undefined_exports: bool,
+    /// SVELTERS: parse with the @sveltejs/acorn-typescript plugin (`Parser.extend(tsPlugin())`,
+    /// default plugin options) instead of plain acorn. See `acorn/typescript/`.
+    pub typescript: bool,
 }
 
 impl Default for AcornOptions {
@@ -61,6 +64,7 @@ impl Default for AcornOptions {
             check_private_fields: true,
             preserve_parens: false,
             allow_undefined_exports: false,
+            typescript: false,
         }
     }
 }
@@ -80,6 +84,7 @@ pub struct NormalizedOptions {
     pub check_private_fields: bool,
     pub preserve_parens: bool,
     pub allow_undefined_exports: bool,
+    pub typescript: bool,
 }
 
 // Interpret and default an options object
@@ -107,5 +112,6 @@ pub fn get_options(opts: &AcornOptions) -> Result<NormalizedOptions, String> {
         check_private_fields: opts.check_private_fields,
         preserve_parens: opts.preserve_parens,
         allow_undefined_exports: opts.allow_undefined_exports,
+        typescript: opts.typescript,
     })
 }

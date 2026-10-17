@@ -1,6 +1,6 @@
 //! Port of `phases/1-parse/read/context.js` (Svelte 5.57.2 @ f3de3f2).
 
-use crate::estree::{Expression, Pattern, Spanned};
+use crate::estree::{Expression, Pattern, Spanned, TSTypeAnnotation, TsPatternExtra};
 use crate::svelte::errors as e;
 use crate::svelte::parse::acorn::{parse_expression_at, remove_parens};
 use crate::svelte::parse::utils::bracket::{DEFAULT_BRACKETS, match_bracket};
@@ -14,10 +14,12 @@ pub fn read_pattern(parser: &mut Parser) -> PResult<Pattern> {
     let id = parser.read_identifier()?;
 
     if !id.name.is_empty() {
-        // SVELTERS: the `typeAnnotation` (TSTypeAnnotation) is not stored on the pattern;
-        // only its effect on the parser position is kept (TypeScript is not supported).
-        let _annotation = read_type_annotation(parser)?;
+        let annotation = read_type_annotation(parser)?;
 
+        let mut id = id;
+        if let Some((_, Some(ta))) = annotation {
+            id.ts = Some(Box::new(TsPatternExtra { type_annotation: Some(ta), ..TsPatternExtra::default() }));
+        }
         return Ok(Pattern::Identifier(id));
     }
 
@@ -32,7 +34,7 @@ pub fn read_pattern(parser: &mut Parser) -> PResult<Pattern> {
 
     // acorn never reads before `start`, so the template itself can serve as the prefix
     let source = format!("{} = 1", &parser.template[..i]);
-    let expression = remove_parens(parse_expression_at(&source, &mut parser.root.comments, start)?);
+    let expression = remove_parens(parse_expression_at(&source, &mut parser.root.comments, start, parser.ts)?);
 
     let Expression::AssignmentExpression(assignment) = expression else {
         // upstream reads `.left` of whatever acorn returned; `{...} = 1` / `[...] = 1` is always
@@ -41,11 +43,27 @@ pub fn read_pattern(parser: &mut Parser) -> PResult<Pattern> {
     };
     let mut expression = assignment.left;
 
-    if let Some((_, end)) = read_type_annotation(parser)? {
-        set_pattern_end(&mut expression, end as u32);
+    if let Some((end, ta)) = read_type_annotation(parser)? {
+        if let Some(ta) = ta {
+            set_pattern_ts(&mut expression, ta);
+        }
+        set_pattern_end(&mut expression, end);
     }
 
     Ok(expression)
+}
+
+/// `expression.typeAnnotation = ...` on a destructuring pattern.
+fn set_pattern_ts(p: &mut Pattern, ta: TSTypeAnnotation) {
+    let ts = match p {
+        Pattern::Identifier(n) => &mut n.ts,
+        Pattern::ObjectPattern(n) => &mut n.ts,
+        Pattern::ArrayPattern(n) => &mut n.ts,
+        Pattern::RestElement(n) => &mut n.ts,
+        Pattern::AssignmentPattern(n) => &mut n.ts,
+        _ => return,
+    };
+    ts.get_or_insert_with(Box::default).type_annotation = Some(ta);
 }
 
 fn set_pattern_end(p: &mut Pattern, end: u32) {
@@ -57,6 +75,11 @@ fn set_pattern_end(p: &mut Pattern, end: u32) {
         Pattern::AssignmentPattern(n) => n.end = end,
         Pattern::MemberExpression(n) => n.end = end,
         Pattern::ParenthesizedExpression(n) => n.end = end,
+        Pattern::TSParameterProperty(n) => n.end = end,
+        Pattern::TSAsExpression(n)
+        | Pattern::TSSatisfiesExpression(n)
+        | Pattern::TSTypeAssertion(n)
+        | Pattern::TSNonNullExpression(n) => n.end = end,
     }
 }
 
@@ -80,8 +103,10 @@ fn replace_optional_colons(s: &str) -> String {
     out
 }
 
-/// Returns the `TSTypeAnnotation`'s (start, end), if there is one.
-fn read_type_annotation(parser: &mut Parser) -> PResult<Option<(usize, usize)>> {
+/// The `TSTypeAnnotation`, if there is one: its end, and the node. SVELTERS: the node's
+/// `typeAnnotation` is the parsed `TSAsExpression`'s; without TypeScript (or when the trick
+/// yields no `as` expression) the node is not stored, only its effect on the parser position.
+fn read_type_annotation(parser: &mut Parser) -> PResult<Option<(u32, Option<TSTypeAnnotation>)>> {
     let start = parser.index;
     parser.allow_whitespace();
 
@@ -102,7 +127,7 @@ fn read_type_annotation(parser: &mut Parser) -> PResult<Option<(usize, usize)>> 
     // parameters as part of a sequence expression instead, and will then error on optional
     // parameters (`?:`). Therefore replace that sequence with something that will not error.
     let template = format!("{}{}{}", &parser.template[..a], insert, replace_optional_colons(&parser.template[parser.index..]));
-    let mut expression = remove_parens(parse_expression_at(&template, &mut parser.root.comments, a)?);
+    let mut expression = remove_parens(parse_expression_at(&template, &mut parser.root.comments, a, parser.ts)?);
 
     // `foo: bar = baz` gets mangled — fix it
     if let Expression::AssignmentExpression(assignment) = &expression {
@@ -110,7 +135,7 @@ fn read_type_annotation(parser: &mut Parser) -> PResult<Option<(usize, usize)>> 
         while template.as_bytes()[b] != b'=' {
             b -= 1;
         }
-        expression = remove_parens(parse_expression_at(&template[..b], &mut parser.root.comments, a)?);
+        expression = remove_parens(parse_expression_at(&template[..b], &mut parser.root.comments, a, parser.ts)?);
     }
 
     // `array as item: string, index` becomes `string, index`, which is mistaken as a sequence expression - fix that
@@ -119,5 +144,7 @@ fn read_type_annotation(parser: &mut Parser) -> PResult<Option<(usize, usize)>> 
     }
 
     parser.index = expression.span().end as usize;
-    Ok(Some((start, parser.index)))
+    let end = parser.index as u32;
+    let Expression::TSAsExpression(as_expression) = expression else { return Ok(Some((end, None))) };
+    Ok(Some((end, Some(TSTypeAnnotation { start: start as u32, end, type_annotation: as_expression.type_annotation }))))
 }

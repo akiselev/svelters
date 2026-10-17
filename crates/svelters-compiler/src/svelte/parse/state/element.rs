@@ -764,6 +764,7 @@ fn read_attribute(parser: &mut Parser) -> PResult<Option<AttributeLike>> {
         // Directive name is expression, e.g. <p class:isRed />
         if (type_ == "BindDirective" || type_ == "ClassDirective") && expression.is_none() {
             expression = Some(Expression::Identifier(crate::estree::Identifier {
+                ts: None,
                 start: (start + colon_index + 1) as u32,
                 end: end as u32,
                 name: directive_name.clone(),

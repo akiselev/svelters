@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use super::scopeflags::*;
 use super::state::{PResult, Parser};
 
+#[derive(Clone)]
 pub struct Scope {
     pub flags: u32,
     // A list of var-declared names in the current lexical scope
@@ -17,11 +18,14 @@ pub struct Scope {
     pub lexical_first: Option<String>,
     // A list of lexically-declared FunctionDeclaration names in the current lexical scope
     pub functions: HashSet<String>,
+    /// SVELTERS: acorn-typescript's scope additions (`types`, `enums`, `constEnums`, `classes`,
+    /// `exportOnlyBindings`); always empty for plain JS.
+    pub ts: Option<Box<super::typescript::TsScope>>,
 }
 
 impl Scope {
     fn new(flags: u32) -> Scope {
-        Scope { flags, var: HashSet::new(), lexical: HashSet::new(), lexical_first: None, functions: HashSet::new() }
+        Scope { flags, var: HashSet::new(), lexical: HashSet::new(), lexical_first: None, functions: HashSet::new(), ts: None }
     }
 
     fn push_lexical(&mut self, name: &str) {
@@ -36,10 +40,26 @@ impl Scope {
 
 impl<'a> Parser<'a> {
     pub fn enter_scope(&mut self, flags: u32) {
+        if self.ts.is_some() {
+            return self.enter_scope_ts(flags);
+        }
+        self.scope_stack.push(Scope::new(flags))
+    }
+
+    /// acorn's own `enterScope` (`super.enterScope` of the TypeScript parser).
+    pub fn enter_scope_base(&mut self, flags: u32) {
         self.scope_stack.push(Scope::new(flags))
     }
 
     pub fn exit_scope(&mut self) {
+        if self.ts.is_some() {
+            return self.exit_scope_ts();
+        }
+        self.scope_stack.pop();
+    }
+
+    /// acorn's own `exitScope` (`super.exitScope` of the TypeScript parser).
+    pub fn exit_scope_base(&mut self) {
         self.scope_stack.pop();
     }
 
@@ -51,6 +71,14 @@ impl<'a> Parser<'a> {
     }
 
     pub fn declare_name(&mut self, name: &str, binding_type: u32, pos: u32) -> PResult<()> {
+        if self.ts.is_some() {
+            return self.declare_name_ts(name, binding_type, pos);
+        }
+        self.declare_name_base(name, binding_type, pos)
+    }
+
+    /// acorn's own `declareName` (`super.declareName` of the TypeScript parser).
+    pub fn declare_name_base(&mut self, name: &str, binding_type: u32, pos: u32) -> PResult<()> {
         let mut redeclared = false;
         if binding_type == BIND_LEXICAL {
             let in_module = self.in_module;
@@ -103,6 +131,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn check_local_export(&mut self, name: &str, start: u32) {
+        if self.ts.is_some() && self.check_local_export_ts(name) {
+            return;
+        }
         // scope.functions must be empty as Module code is always strict.
         let top = &self.scope_stack[0];
         if !top.lexical.contains(name) && !top.var.contains(name) {

@@ -26,6 +26,7 @@ mod statement;
 mod tokencontext;
 mod tokenize;
 mod tokentype;
+pub mod typescript;
 mod util;
 mod whitespace;
 
@@ -44,11 +45,19 @@ pub struct Options {
     /// Svelte's `<script>` hack: exports of names not declared in the script are allowed
     /// (acorn's `undefinedExports` is cleared after every statement).
     pub allow_undefined_exports: bool,
+    /// Parse TypeScript (@sveltejs/acorn-typescript), as Svelte does for `lang="ts"`.
+    pub typescript: bool,
 }
 
 impl Default for Options {
     fn default() -> Self {
-        Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens: false, allow_undefined_exports: false }
+        Options {
+            ecma_version: 16,
+            source_type: SourceType::Module,
+            preserve_parens: false,
+            allow_undefined_exports: false,
+            typescript: false,
+        }
     }
 }
 
@@ -62,6 +71,7 @@ impl From<&Options> for AcornOptions {
             },
             preserve_parens: o.preserve_parens,
             allow_undefined_exports: o.allow_undefined_exports,
+            typescript: o.typescript,
             ..AcornOptions::default()
         }
     }

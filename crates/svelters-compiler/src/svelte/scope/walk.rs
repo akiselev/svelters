@@ -546,8 +546,18 @@ pub fn expr_ref(e: &Expression) -> NodeRef<'_> {
         Expression::ImportExpression(n) => NodeRef::ImportExpression(n),
         Expression::MetaProperty(n) => NodeRef::MetaProperty(n),
         Expression::ParenthesizedExpression(n) => NodeRef::ParenthesizedExpression(n),
+        // SVELTERS: TypeScript nodes are removed (`remove_typescript_nodes`) before analysis;
+        // a walk over an unstripped tree sees through the wrappers.
+        Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => expr_ref(&n.expression),
+        Expression::TSTypeAssertion(n) => expr_ref(&n.expression),
+        Expression::TSNonNullExpression(n) => expr_ref(&n.expression),
+        Expression::TSInstantiationExpression(n) => expr_ref(&n.expression),
+        Expression::TSTypeCastExpression(n) => expr_ref(&n.expression),
     }
 }
+
+/// Stands in for TypeScript-only statements (see [`stmt_ref`]).
+static TS_EMPTY_STATEMENT: EmptyStatement = EmptyStatement { start: 0, end: 0 };
 
 pub fn stmt_ref(s: &Statement) -> NodeRef<'_> {
     match s {
@@ -577,6 +587,15 @@ pub fn stmt_ref(s: &Statement) -> NodeRef<'_> {
         Statement::ExportNamedDeclaration(n) => NodeRef::ExportNamedDeclaration(n),
         Statement::ExportDefaultDeclaration(n) => NodeRef::ExportDefaultDeclaration(n),
         Statement::ExportAllDeclaration(n) => NodeRef::ExportAllDeclaration(n),
+        // SVELTERS: TypeScript-only declarations declare no runtime bindings the walk visits.
+        Statement::TSInterfaceDeclaration(_)
+        | Statement::TSTypeAliasDeclaration(_)
+        | Statement::TSEnumDeclaration(_)
+        | Statement::TSModuleDeclaration(_)
+        | Statement::TSDeclareFunction(_)
+        | Statement::TSImportEqualsDeclaration(_)
+        | Statement::TSExportAssignment(_)
+        | Statement::TSNamespaceExportDeclaration(_) => NodeRef::EmptyStatement(&TS_EMPTY_STATEMENT),
     }
 }
 
@@ -589,6 +608,12 @@ pub fn pattern_ref(p: &Pattern) -> NodeRef<'_> {
         Pattern::AssignmentPattern(n) => NodeRef::AssignmentPattern(n),
         Pattern::MemberExpression(n) => NodeRef::MemberExpression(n),
         Pattern::ParenthesizedExpression(n) => NodeRef::ParenthesizedExpression(n),
+        // SVELTERS: see `expr_ref`.
+        Pattern::TSParameterProperty(n) => pattern_ref(&n.parameter),
+        Pattern::TSAsExpression(n)
+        | Pattern::TSSatisfiesExpression(n)
+        | Pattern::TSTypeAssertion(n)
+        | Pattern::TSNonNullExpression(n) => pattern_ref(&n.expression),
     }
 }
 
@@ -793,13 +818,15 @@ fn push_children<'a>(node: NodeRef<'a>, c: &mut Children<'a>) {
                     ClassElement::MethodDefinition(m) => c.n(N::MethodDefinition(m)),
                     ClassElement::PropertyDefinition(p) => c.n(N::PropertyDefinition(p)),
                     ClassElement::StaticBlock(s) => c.n(N::StaticBlock(s)),
+                    ClassElement::TSIndexSignature(_) => {}
                 }
             }
         }
         N::MethodDefinition(n) => {
             c.key(&n.key);
-            let FunctionNode::FunctionExpression(f) = &n.value;
-            c.n(N::FunctionExpression(f));
+            if let FunctionNode::FunctionExpression(f) = &n.value {
+                c.n(N::FunctionExpression(f));
+            }
         }
         N::PropertyDefinition(n) => {
             c.key(&n.key);

@@ -22,6 +22,7 @@ fn sp() -> (u32, u32) {
 fn id(name: &str) -> Identifier {
     let (start, end) = sp();
     Identifier {
+        ts: None,
         start,
         end,
         name: name.into(),
@@ -64,6 +65,7 @@ fn str_node(s: &str) -> LiteralNode {
 fn call(callee: Expression, args: Vec<Expression>) -> Expression {
     let (start, end) = sp();
     Expression::CallExpression(CallExpression {
+        ts: None,
         start,
         end,
         callee: Box::new(callee),
@@ -143,6 +145,7 @@ fn template(quasis: &[&str], expressions: Vec<Expression>) -> Expression {
 fn array_pattern(names: &[&str]) -> Pattern {
     let (start, end) = sp();
     Pattern::ArrayPattern(ArrayPattern {
+        ts: None,
         start,
         end,
         elements: names.iter().map(|n| Some(p_id(n))).collect(),
@@ -151,6 +154,7 @@ fn array_pattern(names: &[&str]) -> Pattern {
 fn array(elements: Vec<Expression>) -> Expression {
     let (start, end) = sp();
     Expression::ArrayExpression(ArrayExpression {
+        ts: None,
         start,
         end,
         elements: elements
@@ -181,16 +185,18 @@ fn obj_pattern(props: Vec<(&str, Pattern)>, rest: Option<&str>) -> Pattern {
     if let Some(r) = rest {
         let (start, end) = sp();
         properties.push(ObjectPatternMember::RestElement(RestElement {
+            ts: None,
             start,
             end,
             argument: Box::new(p_id(r)),
         }));
     }
-    Pattern::ObjectPattern(ObjectPattern { start, end, properties })
+    Pattern::ObjectPattern(ObjectPattern { start, end, properties, ts: None })
 }
 fn default_pattern(name: &str, value: Expression) -> Pattern {
     let (start, end) = sp();
     Pattern::AssignmentPattern(AssignmentPattern {
+        ts: None,
         start,
         end,
         left: Box::new(p_id(name)),
@@ -201,10 +207,12 @@ fn var_decl(kind: VariableKind, target: Pattern, init: Option<Expression>) -> Va
     let (start, end) = sp();
     let (ds, de) = sp();
     VariableDeclaration {
+        ts: None,
         start,
         end,
         kind,
         declarations: vec![VariableDeclarator {
+            ts: None,
             start: ds,
             end: de,
             id: target,
@@ -248,6 +256,7 @@ fn ret(e: Expression) -> Statement {
 fn function(name: Option<&str>, params: Vec<Pattern>, body: Vec<Statement>) -> Function {
     let (start, end) = sp();
     Function {
+        ts: None,
         start,
         end,
         id: name.map(id),
@@ -264,6 +273,7 @@ fn func_decl(name: &str, params: Vec<Pattern>, body: Vec<Statement>) -> Statemen
 fn arrow(params: Vec<Pattern>, body: Expression) -> Expression {
     let (start, end) = sp();
     Expression::ArrowFunctionExpression(ArrowFunctionExpression {
+        ts: None,
         start,
         end,
         id: None,
@@ -302,6 +312,7 @@ fn labeled(label: &str, body: Statement) -> Statement {
 fn import(specs: &[(&str, &str)], source: &str) -> Statement {
     let (start, end) = sp();
     Statement::ImportDeclaration(ImportDeclaration {
+        ts: None,
         start,
         end,
         specifiers: specs
@@ -316,6 +327,7 @@ fn import(specs: &[(&str, &str)], source: &str) -> Statement {
                     })
                 } else {
                     ImportSpecifierKind::ImportSpecifier(ImportSpecifier {
+                        ts: None,
                         start,
                         end,
                         imported: ModuleExportName::Identifier(id(imported)),

@@ -104,6 +104,8 @@ impl Rw<'_, '_, '_> {
             }
             Pattern::RestElement(r) => self.extract(paths, inserts, &r.argument, expression, has_default_value, scope, derived),
             Pattern::ParenthesizedExpression(_) => {}
+            // TypeScript wrappers around a destructuring target (`(x as T) = ...`)
+            other => self.cx.error("unsupported_feature", other.span(), "a TypeScript-wrapped destructuring target is not supported by the native compiler yet"),
         }
     }
 

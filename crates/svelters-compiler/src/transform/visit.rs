@@ -1037,6 +1037,8 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 ClassElement::MethodDefinition(m) => NodeRef::MethodDefinition(m),
                 ClassElement::PropertyDefinition(p) => NodeRef::PropertyDefinition(p),
                 ClassElement::StaticBlock(s) => NodeRef::StaticBlock(s),
+                // type-only member, stripped from the output
+                ClassElement::TSIndexSignature(_) => continue,
             };
             let ClassElement::PropertyDefinition(p) = el else {
                 w.visit(self, node, el_ref, &scope);

@@ -81,8 +81,16 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: backend.clone(), timings };
 
     let t = Instant::now();
-    let root = match parse(src, &ParseOptions { loose: false, native: true }) {
+    let mut root = match parse(src, &ParseOptions { loose: false, native: true }) {
         Ok(r) => r,
+        Err(e) => {
+            from_compile_error(&mut diags, &e);
+            return done(None, None, diags, timings);
+        }
+    };
+    // `lang="ts"`: Svelte's `remove_typescript_nodes`, plus the source ranges to strip
+    let ts_strip = match crate::svelte::ts::strip(&mut root, src) {
+        Ok(s) => s,
         Err(e) => {
             from_compile_error(&mut diags, &e);
             return done(None, None, diags, timings);
@@ -106,7 +114,8 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     timings.lower_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
-    let rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
+    let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
+    rw.strip_typescript(ts_strip);
     let (code, map) = generate(src, &ir, &rw, &component_name(&opts.filename), &opts.filename);
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;
