@@ -570,6 +570,8 @@ pub struct TypeDesc {
     pub name: String,
     /// `SVL_ENUM | SVL_FLAGS | SVL_RECORD | SVL_BOXED | SVL_CALLBACK | SVL_LIST`
     pub kind: u16,
+    /// CALLBACK types: the `SVL_CB_*` lifetime scope; 0 otherwise.
+    pub scope: u16,
     pub members: Vec<EnumMember>,
     pub fields: Vec<SlotDesc>,
     pub ret: SlotDesc,
@@ -646,7 +648,7 @@ impl TypeDesc {
         let desc = svl_type_desc {
             name,
             kind: self.kind,
-            reserved: 0,
+            scope: self.scope,
             members: members.as_ptr(),
             n_members: members.len() as u32,
             fields: fields.as_ptr(),
@@ -685,6 +687,7 @@ impl TypeDesc {
             TypeDesc {
                 name: cstr_opt(d.name).unwrap_or_default(),
                 kind: d.kind,
+                scope: d.scope,
                 members,
                 fields,
                 ret: SlotDesc::from_c(&d.ret),
@@ -1014,6 +1017,11 @@ impl<'a> HostRef<'a> {
         unsafe { &*self.raw }
     }
 
+    /// The raw pointer, for backends that keep the host callbacks beyond `run`.
+    pub fn as_raw(&self) -> *const svl_host {
+        self.raw
+    }
+
     /// Queues an event for delivery at the next checkpoint.
     pub fn post_event(&self, h: svl_handle, signal: svl_id, args: &[Value]) {
         let host = self.h();
@@ -1054,7 +1062,12 @@ impl<'a> HostRef<'a> {
             (host.invoke_callback)(host.self_, callback, raw.as_ptr(), raw.len(), &mut out)
         };
         if rc < 0 {
-            return Err(AbiError::plain(rc, "invoke_callback failed"));
+            // The host explains a failure with an SVL_ERROR out value (a dead id, a JS exception).
+            let message = match unsafe { Value::from_raw(&out) } {
+                Value::Error(e) => e.message,
+                _ => "invoke_callback failed".to_string(),
+            };
+            return Err(AbiError::plain(rc, message));
         }
         Ok(unsafe { Value::from_raw(&out) })
     }
@@ -1505,7 +1518,12 @@ unsafe extern "C" fn h_invoke_callback(
             write_out(&s.out, out, v);
             0
         }
-        _ => -1,
+        Ok(Err(message)) => {
+            let e = NativeError { domain: "svelters".into(), code: Value::Null, message };
+            write_out(&s.out, out, Value::Error(Box::new(e)));
+            -1
+        }
+        Err(_) => -1,
     }
 }
 

@@ -372,6 +372,21 @@ fn dates_and_times() {
     assert_eq!(unsafe { raw.u.f }, ms);
 }
 
+fn errors_cross_the_boundary_as_values() {
+    let w = mk("box");
+    // A C++ exception never unwinds into the host: it becomes an ERROR out value (domain "c++").
+    counter_qt::hooks::test_throw_next();
+    let err = be().call(w.h, w.mid("saveGeometry"), &[]).unwrap_err();
+    assert!(err.message.contains("test exception"), "{err:?}");
+    let n = err.native.expect("native error");
+    assert_eq!((n.domain.as_str(), n.message.as_str(), &n.code), ("c++", "test exception", &Value::Null));
+    // The backend keeps working afterwards.
+    assert!(matches!(w.call("saveGeometry", &[]).unwrap(), Value::Bytes(_)));
+    // Conversion failures are plain errors (rc < 0 + last_error), not native errors.
+    let err = be().set_prop(w.h, w.pid("enabled"), &Value::Str("x".into())).unwrap_err();
+    assert!(err.native.is_none() && err.message.contains("expected boolean"), "{err:?}");
+}
+
 fn descriptors() {
     let w = mk("box");
     // Every typed prop has a descriptor; the unknown ones do not.
@@ -408,6 +423,7 @@ fn main() {
         ("boxed_values", boxed_values),
         ("bytes", bytes),
         ("dates_and_times", dates_and_times),
+        ("errors_cross_the_boundary_as_values", errors_cross_the_boundary_as_values),
         ("descriptors", descriptors),
     ]);
 }

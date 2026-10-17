@@ -11,6 +11,7 @@ unsafe extern "C" {
     fn svl_qt_backend() -> *const svl_backend;
     fn svl_qt_set_host(host: *const svl_host);
     fn svl_qt_dump(h: u64) -> *const std::ffi::c_char;
+    fn svl_qt_test_throw_next();
     fn svl_qt_native_prop(h: u64, name: *const std::ffi::c_char, on_layout: i32) -> *const std::ffi::c_char;
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
@@ -45,6 +46,11 @@ pub mod hooks {
     pub fn dump(h: u64) -> String {
         // SAFETY: the returned pointer is a NUL-terminated buffer valid until the next call; it is copied here.
         unsafe { std::ffi::CStr::from_ptr(svl_qt_dump(h)) }.to_string_lossy().into_owned()
+    }
+
+    /// Makes the next `call` through the backend throw a C++ exception.
+    pub fn test_throw_next() {
+        unsafe { svl_qt_test_throw_next() }
     }
 
     /// A Q_PROPERTY of the object behind `h` (or of its layout) as `QDebug` text, for tests that check

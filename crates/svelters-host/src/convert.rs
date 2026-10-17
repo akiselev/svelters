@@ -64,6 +64,8 @@ pub(crate) trait JsReader {
     fn index(&self, arr: &Self::V, i: usize) -> Result<Self::V, String>;
     /// Epoch milliseconds when `v` is a `Date`.
     fn date_ms(&self, v: &Self::V) -> Option<f64>;
+    /// Stores the function behind `v` for the callback `id` (the engine keeps it alive).
+    fn store_function(&self, v: &Self::V, id: u64) -> Result<(), String>;
     /// True for an ArrayBuffer or a typed array / DataView over one.
     fn is_bytes(&self, v: &Self::V) -> bool;
     /// Borrowed bytes of an ArrayBuffer / typed array, valid while the guard lives.
@@ -186,14 +188,26 @@ impl From<String> for ConvError {
     }
 }
 
+/// Registers callbacks the converter meets in an argument list.
+pub(crate) trait CallbackSink {
+    /// Reserves an id for a function that `owner`'s call hands to the backend.
+    fn register(&self, owner: svl_handle, sig: svl_id, scope: u16) -> Result<u64, String>;
+}
+
 /// Keeps everything a raw `svl_value` tree points at alive until the backend call returns.
 #[derive(Default)]
 pub(crate) struct Arena {
     lists: Vec<Box<[svl_value]>>,
     guards: Vec<Guard>,
+    /// Callbacks registered while encoding: `(id, scope)`.
+    cbs: Vec<(u64, u16)>,
 }
 
 impl Arena {
+    pub(crate) fn take_callbacks(&mut self) -> Vec<(u64, u16)> {
+        std::mem::take(&mut self.cbs)
+    }
+
     pub(crate) fn new() -> Arena {
         Arena::default()
     }
@@ -212,6 +226,10 @@ pub(crate) struct Cx<'c> {
     pub types: &'c dyn TypeSource,
     /// Backend accepts UTF-16 strings.
     pub utf16: bool,
+    /// Where function arguments are registered; `None` refuses them.
+    pub callbacks: Option<&'c dyn CallbackSink>,
+    /// The handle whose op carries the callbacks (their lifetime is tied to it).
+    pub owner: svl_handle,
 }
 
 /// Abbreviated JS value description for error messages: `"8px" (string)`, `3.5`, `null`.
@@ -372,9 +390,30 @@ fn encode_at<R: JsReader>(
             None => Err(expected(r, v, &format!("a live {}", slot_type_name(slot, cx)))),
         },
         SVL_MAP => encode_map(r, v, kind, cx, ar, depth),
-        SVL_CALLBACK => Err(ConvError::type_("callback arguments are not supported yet")),
+        SVL_CALLBACK => encode_callback(r, v, kind, slot, cx, ar),
         t => Err(ConvError::type_(format!("descriptor has unsupported tag {t}"))),
     }
+}
+
+fn encode_callback<R: JsReader>(
+    r: &R,
+    v: &R::V,
+    kind: JsKind,
+    slot: &SlotDesc,
+    cx: &Cx,
+    ar: &mut Arena,
+) -> Result<svl_value, ConvError> {
+    if kind != JsKind::Function {
+        return Err(expected(r, v, "function"));
+    }
+    let sink = cx
+        .callbacks
+        .ok_or_else(|| ConvError::type_("a function is not valid here (no callback support in this context)"))?;
+    let ti = type_of(slot, cx)?;
+    let id = sink.register(cx.owner, slot.ty, ti.desc.scope)?;
+    ar.cbs.push((id, ti.desc.scope));
+    r.store_function(v, id)?;
+    Ok(svl_value::typed(SVL_CALLBACK, slot.ty, svl_value_u { u: id }))
 }
 
 fn encode_bool<R: JsReader>(r: &R, v: &R::V, kind: JsKind) -> Result<svl_value, ConvError> {

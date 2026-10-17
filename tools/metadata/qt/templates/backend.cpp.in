@@ -18,6 +18,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QVariant>
 #include <exception>
+#include <stdexcept>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPixmap>
 #include <QtWidgets/QAbstractButton>
@@ -96,6 +97,7 @@ struct Core {
 };
 
 Core g;
+bool g_test_throw = false;
 
 // Optional measurement of the time spent inside backend calls (toolkit side of a host op).
 struct Timing {
@@ -289,8 +291,10 @@ int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
   try {
     return gen_get_prop(*e, prop, out);
   } catch (const std::exception &x) {
+    out_error(out, "c++", x.what());
     return fail(std::string("get_prop: C++ exception: ") + x.what());
   } catch (...) {
+    out_error(out, "c++", "unknown C++ exception");
     return fail("get_prop: unknown C++ exception");
   }
 }
@@ -302,10 +306,16 @@ int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n,
   g_out.clear();
   out_null(out);
   try {
+    if (g_test_throw) {  // test hook: make the next call throw, to exercise the boundary
+      g_test_throw = false;
+      throw std::runtime_error("test exception");
+    }
     return gen_call(*e, method, args, n, out);
   } catch (const std::exception &x) {
+    out_error(out, "c++", x.what());
     return fail(std::string("call: C++ exception: ") + x.what());
   } catch (...) {
+    out_error(out, "c++", "unknown C++ exception");
     return fail("call: unknown C++ exception");
   }
 }
@@ -446,6 +456,9 @@ void dump_widget(QWidget *w, int depth, std::string &out) {
 std::string dump_buf;
 
 }  // namespace
+
+// Makes the next `call` throw a C++ exception (tests the exception-to-ERROR boundary).
+extern "C" void svl_qt_test_throw_next(void) { g_test_throw = true; }
 
 // Reads a Q_PROPERTY of the object behind `h` (or of its layout) as text, for tests that check what the
 // toolkit really holds. Valid until the next call. Empty when the object or property does not exist.

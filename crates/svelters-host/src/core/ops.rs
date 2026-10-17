@@ -37,15 +37,6 @@ impl From<String> for OpError {
     }
 }
 
-impl From<AbiError> for OpError {
-    fn from(e: AbiError) -> OpError {
-        OpError {
-            kind: OpKind::Error,
-            msg: e.message,
-            native: e.native,
-        }
-    }
-}
 
 /// A member named by string (resolved and cached here) or by a pre-resolved id.
 #[derive(Clone, Copy)]
@@ -129,6 +120,27 @@ impl Core {
         m
     }
 
+    /// A backend failure. A native error's code is named here when the backend describes the error
+    /// enum (a `GIOErrorEnum` value becomes `"not-found"`), so the JS side needs no type tables.
+    fn backend_err(&self, e: AbiError) -> OpError {
+        let native = e.native.map(|mut n| {
+            n.code = match &n.code {
+                Value::Enum { ty, value } => match self.type_info(*ty).and_then(|t| t.by_value.get(value).map(|i| t.desc.members[*i].name.clone())) {
+                    Some(name) => Value::Str(name),
+                    None => Value::I64(*value),
+                },
+                Value::I64(_) | Value::Str(_) => n.code.clone(),
+                _ => Value::Null,
+            };
+            n
+        });
+        OpError {
+            kind: OpKind::Error,
+            msg: e.message,
+            native,
+        }
+    }
+
     fn conv_err(&self, prefix: &str, e: ConvError) -> OpError {
         OpError {
             kind: match e.kind {
@@ -187,17 +199,21 @@ impl Core {
 
     pub(crate) fn op_create(&self, kind: &str) -> Result<svl_handle, OpError> {
         self.timed(|| {
+            self.tree_ops_allowed()?;
             let kid = self.op_kind_id(kind)?;
             self.create_kind(kid)
         })
     }
 
     pub(crate) fn op_create_id(&self, kid: svl_id) -> Result<svl_handle, OpError> {
-        self.timed(|| self.create_kind(kid))
+        self.timed(|| {
+            self.tree_ops_allowed()?;
+            self.create_kind(kid)
+        })
     }
 
     fn create_kind(&self, kid: svl_id) -> Result<svl_handle, OpError> {
-        let h = self.backend.create(kid).map_err(OpError::from)?;
+        let h = self.backend.create(kid).map_err(|e| self.backend_err(e))?;
         self.st.borrow_mut().handles.insert(h, kid);
         Ok(h)
     }
@@ -210,6 +226,7 @@ impl Core {
         slot: Option<Name<'_>>,
     ) -> Result<(), OpError> {
         self.timed(|| {
+            self.tree_ops_allowed()?;
             let pk = self.kind_of(parent)?;
             self.kind_of(child)?;
             if let Some(b) = before {
@@ -221,22 +238,25 @@ impl Core {
             };
             self.backend
                 .insert(parent, child, before, slot)
-                .map_err(OpError::from)
+                .map_err(|e| self.backend_err(e))
         })
     }
 
     pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
+            self.tree_ops_allowed()?;
             self.kind_of(parent)?;
             self.kind_of(child)?;
-            self.backend.remove(parent, child).map_err(OpError::from)
+            self.backend.remove(parent, child).map_err(|e| self.backend_err(e))
         })
     }
 
     pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
+            self.tree_ops_allowed()?;
             self.kind_of(h)?;
             self.st.borrow_mut().handles.remove(&h);
+            self.cb_release_owner(h);
             self.backend.destroy(h);
             Ok(())
         })
@@ -271,14 +291,27 @@ impl Core {
                 None => &any,
             };
             let mut ar = Arena::new();
+            let registry = CallbackRegistry(self);
             let cx = Cx {
                 types: self,
                 utf16: self.utf16(),
+                callbacks: Some(&registry),
+                owner: h,
             };
-            let raw = convert::encode(r, v, slot, &cx, &mut ar).map_err(|e| self.conv_err(&prefix(), e))?;
+            let raw = match convert::encode(r, v, slot, &cx, &mut ar) {
+                Ok(raw) => raw,
+                Err(e) => {
+                    self.finish_callbacks(&mut ar, false);
+                    return Err(self.conv_err(&prefix(), e));
+                }
+            };
             // Conversion can run user JS that destroys the target: check again before dispatch.
-            self.kind_of(h)?;
-            let res = self.backend.set_prop_raw(h, p, &raw).map_err(OpError::from);
+            if let Err(e) = self.kind_of(h) {
+                self.finish_callbacks(&mut ar, false);
+                return Err(e.into());
+            }
+            let res = self.backend.set_prop_raw(h, p, &raw).map_err(|e| self.backend_err(e));
+            self.finish_callbacks(&mut ar, res.is_ok());
             drop(ar);
             res
         })
@@ -288,7 +321,7 @@ impl Core {
         self.timed(|| {
             let k = self.kind_of(h)?;
             let p = self.resolve_name(NameKind::Prop, k, prop)?;
-            let raw = self.backend.get_prop_raw(h, p).map_err(OpError::from)?;
+            let raw = self.backend.get_prop_raw(h, p).map_err(|e| self.backend_err(e))?;
             let v = unsafe { Value::from_raw(&raw) };
             self.decode_result(w, &v)
         })
@@ -315,9 +348,12 @@ impl Core {
             };
             let given = JsReader::len(e, args)?;
             let mut ar = Arena::new();
+            let registry = CallbackRegistry(self);
             let cx = Cx {
                 types: self,
                 utf16: self.utf16(),
+                callbacks: Some(&registry),
+                owner: h,
             };
             let mut raw: Vec<svl_value> = Vec::with_capacity(given);
             match &desc {
@@ -350,7 +386,13 @@ impl Core {
                             raw.push(svl_value::null());
                             continue;
                         };
-                        raw.push(convert::encode(e, &v, slot, &cx, &mut ar).map_err(|c| self.conv_err(&prefix, c))?);
+                        match convert::encode(e, &v, slot, &cx, &mut ar) {
+                            Ok(x) => raw.push(x),
+                            Err(c) => {
+                                self.finish_callbacks(&mut ar, false);
+                                return Err(self.conv_err(&prefix, c));
+                            }
+                        }
                     }
                 }
                 None => {
@@ -358,16 +400,36 @@ impl Core {
                     for i in 0..given {
                         let v = JsReader::index(e, args, i)?;
                         let prefix = format!("<{}>.{mname}(arg {i})", self.kind_name(k));
-                        raw.push(convert::encode(e, &v, &any, &cx, &mut ar).map_err(|c| self.conv_err(&prefix, c))?);
+                        match convert::encode(e, &v, &any, &cx, &mut ar) {
+                            Ok(x) => raw.push(x),
+                            Err(c) => {
+                                self.finish_callbacks(&mut ar, false);
+                                return Err(self.conv_err(&prefix, c));
+                            }
+                        }
                     }
                 }
             }
-            self.kind_of(h)?;
-            let out = self.backend.call_raw(h, m, &raw).map_err(OpError::from);
+            if let Err(err) = self.kind_of(h) {
+                self.finish_callbacks(&mut ar, false);
+                return Err(err.into());
+            }
+            let out = self.backend.call_raw(h, m, &raw).map_err(|e| self.backend_err(e));
+            self.finish_callbacks(&mut ar, out.is_ok());
             drop(ar);
             let v = unsafe { Value::from_raw(&out?) };
             self.decode_result(e, &v)
         })
+    }
+
+    /// After the backend call: `call`-scope callbacks end with it; all of them end when it failed
+    /// (the backend did not keep them).
+    fn finish_callbacks(&self, ar: &mut Arena, ok: bool) {
+        for (id, scope) in ar.take_callbacks() {
+            if !ok || scope == SVL_CB_CALL {
+                self.cb_release(id);
+            }
+        }
     }
 
     fn decode_result<W: JsWriter>(&self, w: &W, v: &Value) -> Result<W::V, OpError> {
@@ -394,7 +456,7 @@ impl Core {
                     .ok_or_else(|| "listen by id requires the signal to have been resolved by name first".to_string())?;
                 self.st.borrow_mut().signal_names.insert((k, s), name);
             }
-            self.backend.listen(h, s, on).map_err(OpError::from)
+            self.backend.listen(h, s, on).map_err(|e| self.backend_err(e))
         })
     }
 
@@ -428,6 +490,7 @@ impl Core {
         for h in queue {
             self.release_boxed(h);
         }
+        self.cb_process_frees();
     }
 
     pub(crate) fn live_boxed(&self) -> usize {

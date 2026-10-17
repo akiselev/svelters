@@ -37,16 +37,19 @@ impl Drop for CStr16 {
 pub(crate) struct QjsConv<'js> {
     pub ctx: Ctx<'js>,
     pub core: Rc<Core>,
+    /// Where function arguments are stored (`None` where callbacks make no sense, e.g. decoding).
+    cbs: Option<Rc<super::QjsCallbacks>>,
     /// An exception thrown by user JS while a value was read (a getter, a Proxy trap). The op
     /// rethrows it as is instead of wrapping its message.
     pending: std::cell::RefCell<Option<Value<'js>>>,
 }
 
 impl<'js> QjsConv<'js> {
-    pub(crate) fn new(ctx: Ctx<'js>, core: Rc<Core>) -> QjsConv<'js> {
+    pub(crate) fn new(ctx: Ctx<'js>, core: Rc<Core>, cbs: Option<Rc<super::QjsCallbacks>>) -> QjsConv<'js> {
         QjsConv {
             ctx,
             core,
+            cbs,
             pending: Default::default(),
         }
     }
@@ -185,6 +188,13 @@ impl<'js> JsReader for QjsConv<'js> {
             .ok_or("not an array")?
             .get::<Value>(i)
             .map_err(|e| self.err(e))
+    }
+
+    fn store_function(&self, v: &Value<'js>, id: u64) -> R<()> {
+        let f = v.as_function().ok_or("not a function")?;
+        let cbs = self.cbs.as_ref().ok_or("callbacks are not available here")?;
+        cbs.funcs.borrow_mut().insert(id, rquickjs::Persistent::save(&self.ctx, f.clone()));
+        Ok(())
     }
 
     fn date_ms(&self, v: &Value<'js>) -> Option<f64> {

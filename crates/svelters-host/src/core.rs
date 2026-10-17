@@ -24,9 +24,11 @@ use std::sync::atomic::AtomicBool;
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use crate::convert::TypeInfo;
-use svelters_abi::{BackendRef, MemberDesc, Value, WakeHandle, svl_handle, svl_id};
+use svelters_abi::{BackendRef, MemberDesc, SVL_CB_ASYNC, SVL_CB_CALL, SVL_CB_FOREVER, SVL_CB_NOTIFIED, Value, WakeHandle, svl_handle, svl_id};
 
+mod callbacks;
 mod ops;
+pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};
 pub(crate) use ops::{Name, OpError, OpKind};
 
 #[derive(Clone, Debug)]
@@ -253,6 +255,7 @@ struct CoreState {
     /// Live boxed-value handles, and ones the JS side dropped (released at the next checkpoint).
     boxed: HashSet<svl_handle>,
     release_queue: Vec<svl_handle>,
+    callbacks: CbTable,
     /// (kind id, signal id) → name, filled by `listen`
     signal_names: HashMap<(svl_id, svl_id), String>,
     events: VecDeque<Event>,
@@ -273,6 +276,9 @@ pub(crate) struct Core {
     vnow: Cell<Duration>,
     timing: Cell<Timing>,
     checkpoints: Cell<u64>,
+    cb_engine: RefCell<Option<Rc<dyn CallbackEngine>>>,
+    /// Depth of native-callback invocations in progress (see `callbacks.rs`).
+    cb_depth: Cell<u32>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -307,6 +313,8 @@ impl Core {
             vnow: Cell::new(Duration::ZERO),
             timing: Cell::new(Timing::default()),
             checkpoints: Cell::new(0),
+            cb_engine: RefCell::new(None),
+            cb_depth: Cell::new(0),
         }
     }
 
@@ -443,6 +451,8 @@ impl Core {
     /// The backend reports that a native object went away.
     pub(crate) fn forget_handle(&self, h: svl_handle) {
         self.st.borrow_mut().handles.remove(&h);
+        // Only marks the callbacks dead; their JS functions are dropped at the next checkpoint.
+        self.cb_release_owner(h);
     }
 
     // ---- timers ----

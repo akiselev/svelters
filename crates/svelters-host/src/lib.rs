@@ -58,6 +58,14 @@ impl HostCallbacks for Callbacks {
         Err("call_sync is not supported yet (M4)".into())
     }
 
+    fn invoke_callback(&self, callback: u64, args: &[Value]) -> Result<Value, String> {
+        self.core.invoke_callback(callback, args)
+    }
+
+    fn release_callback(&self, callback: u64) {
+        self.core.release_callback_from_native(callback);
+    }
+
     fn on_destroyed(&self, h: svl_handle, _reason: u32) {
         self.core.forget_handle(h);
     }
@@ -132,6 +140,11 @@ impl<'a> Host<'a> {
     pub fn collect_garbage(&self) {
         let Some(_guard) = self.core.enter() else { return };
         self.engine.borrow_mut().collect_garbage();
+    }
+
+    /// Number of callbacks that are still registered.
+    pub fn live_callbacks(&self) -> usize {
+        self.core.live_callbacks()
     }
 
     /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).

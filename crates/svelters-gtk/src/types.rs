@@ -153,17 +153,17 @@ pub fn type_desc(table: &mut TypeTable, t: Type) -> TypeDesc {
         let members = glib::EnumClass::with_type(t)
             .map(|c| c.values().iter().map(|v| EnumMember { name: v.nick().to_string(), value: v.value() as i64 }).collect())
             .unwrap_or_default();
-        return TypeDesc { name: t.name().to_string(), kind: SVL_ENUM, members, fields: vec![], ret: none };
+        return TypeDesc { name: t.name().to_string(), kind: SVL_ENUM, scope: 0, members, fields: vec![], ret: none };
     }
     if t.is_a(Type::FLAGS) {
         let members = glib::FlagsClass::with_type(t)
             .map(|c| c.values().iter().map(|v| EnumMember { name: v.nick().to_string(), value: v.value() as i64 }).collect())
             .unwrap_or_default();
-        return TypeDesc { name: t.name().to_string(), kind: SVL_FLAGS, members, fields: vec![], ret: none };
+        return TypeDesc { name: t.name().to_string(), kind: SVL_FLAGS, scope: 0, members, fields: vec![], ret: none };
     }
     if t == strv() {
         let elem = SlotDesc::new(SVL_STR);
-        return TypeDesc { name: "string[]".into(), kind: SVL_LIST, members: vec![], fields: vec![elem], ret: none };
+        return TypeDesc { name: "string[]".into(), kind: SVL_LIST, scope: 0, members: vec![], fields: vec![elem], ret: none };
     }
     if let Some(rec) = Rec::of(t) {
         let fields = rec
@@ -182,7 +182,7 @@ pub fn type_desc(table: &mut TypeTable, t: Type) -> TypeDesc {
             })
             .collect();
         let _ = table;
-        return TypeDesc { name: rec.type_name().to_string(), kind: SVL_RECORD, members: vec![], fields, ret: none };
+        return TypeDesc { name: rec.type_name().to_string(), kind: SVL_RECORD, scope: 0, members: vec![], fields, ret: none };
     }
-    TypeDesc { name: t.name().to_string(), kind: SVL_BOXED, members: vec![], fields: vec![], ret: none }
+    TypeDesc { name: t.name().to_string(), kind: SVL_BOXED, scope: 0, members: vec![], fields: vec![], ret: none }
 }

@@ -17,6 +17,15 @@ const FLAGS_T: u32 = SVL_T_FIRST_BACKEND + 2;
 const RECT_T: u32 = SVL_T_FIRST_BACKEND + 3;
 const ICON_T: u32 = SVL_T_FIRST_BACKEND + 4;
 const LIST_T: u32 = SVL_T_FIRST_BACKEND + 5;
+const ERR_T: u32 = SVL_T_FIRST_BACKEND + 6;
+const CB_CALL_T: u32 = SVL_T_FIRST_BACKEND + 7;
+const CB_NOTIFIED_T: u32 = SVL_T_FIRST_BACKEND + 8;
+const CB_ASYNC_T: u32 = SVL_T_FIRST_BACKEND + 9;
+const CB_FOREVER_T: u32 = SVL_T_FIRST_BACKEND + 10;
+
+const METHODS: &[&str] = &[
+    "setBoth", "bounds", "fail", "raw", "gerror", "visit", "subscribe", "fire", "unsubscribe", "once", "forever", "fireOld", "fireOnce",
+];
 
 #[derive(Default)]
 struct State {
@@ -26,6 +35,7 @@ struct State {
     destroyed: Vec<(svl_handle, u64)>,
     checkpoints: u64,
     next_boxed: u64,
+    next_handle: u64,
     calls: Vec<(String, Vec<Value>)>,
 }
 
@@ -34,6 +44,21 @@ struct Typed {
     utf16: bool,
     post: Rc<RefCell<Vec<(svl_id, Vec<Value>)>>>,
     quit: Cell<bool>,
+    /// The host callbacks, kept from `run` so that `call` can invoke callbacks synchronously.
+    host: Cell<*const svl_host>,
+    subscribed: Cell<u64>,
+    old: Cell<u64>,
+    once: Cell<u64>,
+}
+
+impl Typed {
+    fn host(&self) -> HostRef<'static> {
+        // SAFETY: set in `run`, which outlives every call made from the events it delivers.
+        unsafe { HostRef::from_raw(self.host.get()) }
+    }
+    fn invoke(&self, id: u64, args: &[Value]) -> StrResult<Value> {
+        self.host().invoke_callback(id, args).map_err(|e| e.message)
+    }
 }
 
 const PROP_NAMES: &[&str] = &[
@@ -65,13 +90,18 @@ impl Backend for Typed {
         match what {
             NameKind::Kind => (name == "thing") as u32,
             NameKind::Prop if kind == 1 => PROP_NAMES.iter().position(|n| *n == name).map_or(0, |i| i as u32 + 1),
-            NameKind::Method if kind == 1 => ["setBoth", "bounds", "fail", "raw"].iter().position(|n| *n == name).map_or(0, |i| i as u32 + 1),
+            NameKind::Method if kind == 1 => METHODS.iter().position(|n| *n == name).map_or(0, |i| i as u32 + 1),
             NameKind::Signal if kind == 1 => (name == "changed") as u32,
             _ => 0,
         }
     }
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
-        (kind == 1).then_some(1).ok_or_else(|| "bad kind".to_string())
+        if kind != 1 {
+            return Err("bad kind".to_string());
+        }
+        let mut st = self.st.borrow_mut();
+        st.next_handle += 1;
+        Ok(st.next_handle)
     }
     fn insert(&self, _: svl_handle, _: svl_handle, _: Option<svl_handle>, _: svl_id) -> StrResult<()> {
         Ok(())
@@ -106,12 +136,46 @@ impl Backend for Typed {
         Ok(st.props.get(&prop).cloned().unwrap_or(Value::Null))
     }
     fn call(&self, _: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
-        let name = ["setBoth", "bounds", "fail", "raw"][method as usize - 1];
+        let name = METHODS[method as usize - 1];
         self.st.borrow_mut().calls.push((name.to_string(), args.to_vec()));
+        let cb_id = |i: usize| match args.get(i) {
+            Some(Value::Callback { id, .. }) => Ok(*id),
+            other => Err(format!("expected a callback, got {other:?}")),
+        };
         match method {
+            6 => {
+                let id = cb_id(0)?;
+                let mut out = Vec::new();
+                for n in [1, 2] {
+                    out.push(self.invoke(id, &[Value::I64(n)])?);
+                }
+                Ok(Value::List(out))
+            }
+            7 => {
+                self.old.set(self.subscribed.get());
+                self.subscribed.set(cb_id(0)?);
+                Ok(Value::Null)
+            }
+            8 => self.invoke(self.subscribed.get(), &[Value::I64(7)]),
+            9 => {
+                self.host().release_callback(self.subscribed.get());
+                Ok(Value::Null)
+            }
+            10 => {
+                self.once.set(cb_id(0)?);
+                Ok(Value::Null)
+            }
+            11 => Ok(Value::Null),
+            12 => self.invoke(self.old.get(), &[Value::I64(1)]),
+            13 => self.invoke(self.once.get(), &[Value::I64(1)]),
             1 => Ok(Value::Bool(true)),
             2 => Ok(Value::Record { ty: RECT_T, fields: vec![Value::F64(1.0), Value::F64(2.0), Value::F64(3.0), Value::F64(4.0)] }),
             3 => Err("boom".into()),
+            5 => Ok(Value::Error(Box::new(NativeError {
+                domain: "g-io-error-quark".into(),
+                code: Value::Enum { ty: ERR_T, value: 1 },
+                message: "No such file or directory".into(),
+            }))),
             _ => Ok(Value::List(args.to_vec())),
         }
     }
@@ -119,6 +183,7 @@ impl Backend for Typed {
         Ok(())
     }
     fn run(&self, host: &HostRef<'_>) -> StrResult<()> {
+        self.host.set(host.as_raw());
         for (sig, args) in self.post.borrow_mut().drain(..) {
             host.post_event(1, sig, &args);
         }
@@ -162,6 +227,20 @@ impl Backend for Typed {
                     flags: 0,
                 }),
                 2 => Some(MemberDesc { name: "bounds".into(), params: vec![], ret: SlotDesc::new(SVL_RECORD).typed(RECT_T), flags: 0 }),
+                6 | 7 | 10 | 11 => {
+                    let ty = match member {
+                        6 => CB_CALL_T,
+                        7 => CB_NOTIFIED_T,
+                        10 => CB_ASYNC_T,
+                        _ => CB_FOREVER_T,
+                    };
+                    Some(MemberDesc {
+                        name: METHODS[member as usize - 1].into(),
+                        params: vec![SlotDesc::new(SVL_CALLBACK).typed(ty).named("fn")],
+                        ret: SlotDesc::new(SVL_NULL),
+                        flags: 0,
+                    })
+                }
                 _ => None,
             },
             _ => None,
@@ -171,30 +250,50 @@ impl Backend for Typed {
         let none = SlotDesc::new(SVL_NULL);
         let member = |n: &str, v: i64| EnumMember { name: n.into(), value: v };
         Some(match ty {
-            ENUM_T => TypeDesc { name: "Orientation".into(), kind: SVL_ENUM, members: vec![member("horizontal", 0), member("vertical", 1)], fields: vec![], ret: none },
+            ENUM_T => TypeDesc { name: "Orientation".into(), kind: SVL_ENUM, scope: 0, members: vec![member("horizontal", 0), member("vertical", 1)], fields: vec![], ret: none },
             FLAGS_T => TypeDesc {
                 name: "Align".into(),
-                kind: SVL_FLAGS,
+                kind: SVL_FLAGS, scope: 0,
                 members: vec![member("left", 1), member("right", 2), member("top", 4), member("vcenter", 8)],
                 fields: vec![],
                 ret: none,
             },
             RECT_T => TypeDesc {
                 name: "Rect".into(),
-                kind: SVL_RECORD,
+                kind: SVL_RECORD, scope: 0,
                 members: vec![],
                 fields: ["x", "y", "width", "height"].iter().map(|n| SlotDesc::new(SVL_F64).named(n)).collect(),
                 ret: none,
             },
             SVL_T_COLOR => TypeDesc {
                 name: "Color".into(),
-                kind: SVL_RECORD,
+                kind: SVL_RECORD, scope: 0,
                 members: vec![],
                 fields: ["red", "green", "blue", "alpha"].iter().map(|n| SlotDesc::new(SVL_F64).named(n).range(0.0, 1.0)).collect(),
                 ret: none,
             },
-            ICON_T => TypeDesc { name: "Icon".into(), kind: SVL_BOXED, members: vec![], fields: vec![], ret: none },
-            LIST_T => TypeDesc { name: "string[]".into(), kind: SVL_LIST, members: vec![], fields: vec![SlotDesc::new(SVL_STR)], ret: none },
+            ICON_T => TypeDesc { name: "Icon".into(), kind: SVL_BOXED, scope: 0, members: vec![], fields: vec![], ret: none },
+            CB_CALL_T | CB_NOTIFIED_T | CB_ASYNC_T | CB_FOREVER_T => TypeDesc {
+                name: "Callback".into(),
+                kind: SVL_CALLBACK,
+                scope: match ty {
+                    CB_CALL_T => SVL_CB_CALL,
+                    CB_NOTIFIED_T => SVL_CB_NOTIFIED,
+                    CB_ASYNC_T => SVL_CB_ASYNC,
+                    _ => SVL_CB_FOREVER,
+                },
+                members: vec![],
+                fields: vec![SlotDesc::new(SVL_I64).named("n")],
+                ret: if ty == CB_CALL_T { SlotDesc::new(SVL_I64) } else { SlotDesc::new(SVL_NULL) },
+            },
+            ERR_T => TypeDesc {
+                name: "Gio.IOErrorEnum".into(),
+                kind: SVL_ENUM, scope: 0,
+                members: vec![member("failed", 0), member("not-found", 1)],
+                fields: vec![],
+                ret: none,
+            },
+            LIST_T => TypeDesc { name: "string[]".into(), kind: SVL_LIST, scope: 0, members: vec![], fields: vec![SlotDesc::new(SVL_STR)], ret: none },
             _ => return None,
         })
     }
@@ -209,7 +308,7 @@ struct Rig {
 fn rig(utf16: bool) -> Rig {
     let st = Rc::new(RefCell::new(State::default()));
     let post = Rc::new(RefCell::new(Vec::new()));
-    let vt = BackendVtable::new(Typed { st: st.clone(), utf16, post: post.clone(), quit: Cell::new(false) });
+    let vt = BackendVtable::new(Typed { st: st.clone(), utf16, post: post.clone(), quit: Cell::new(false), host: Cell::new(std::ptr::null()), subscribed: Cell::new(0), old: Cell::new(0), once: Cell::new(0) });
     Rig { st, post, vt }
 }
 
@@ -264,6 +363,20 @@ fn validation_errors_name_the_element_member_and_value() {
         "Error boom",
     ];
     assert_eq!(lines(&out), want);
+}
+
+#[test]
+fn native_errors_become_native_error_objects() {
+    let r = rig(false);
+    let (out, errs) = run(&r, "serdes_native_error.js");
+    assert!(errs.is_empty(), "{errs:?}");
+    assert_eq!(
+        lines(&out),
+        [
+            "NativeError|g-io-error-quark|not-found|No such file or directory|true|true",
+            "Error|boom|false",
+        ]
+    );
 }
 
 #[test]
@@ -367,6 +480,46 @@ fn engine_provides_the_primitives_boxed_values_rely_on() {
     // never finalized. The prelude therefore registers boxed wrappers without a token.
     assert_eq!(out.len(), 2, "{out:?}");
     assert_eq!(out[1], "finalized held-2");
+}
+
+/// Runs `js` inside an event dispatched from the backend's loop, where the host callbacks exist.
+fn run_in_loop(r: &Rig, js: &str) -> (Vec<String>, Vec<String>, usize) {
+    r.post.borrow_mut().push((1, vec![]));
+    let host = Host::new(r.vt.backend_ref(), quiet()).unwrap();
+    host.load_bundle(bundle(js)).unwrap();
+    host.run().unwrap();
+    host.drain_jobs();
+    host.checkpoint();
+    let live = host.live_callbacks();
+    let errs = host.take_errors().into_iter().map(|e| e.message).collect();
+    (host.take_console().into_iter().map(|l| l.text).collect(), errs, live)
+}
+
+#[test]
+fn callbacks_follow_their_scope_and_owner() {
+    let r = rig(false);
+    let (out, errs, live) = run_in_loop(&r, "serdes_callbacks.js");
+    assert_eq!(
+        lines(&out),
+        [
+            "visit [10,20]",
+            "fire ok 7",
+            "native-release then fire: callback was released or its owner is gone",
+            "re-register, old id: callback was released or its owner is gone",
+            "once ok",
+            "once twice: callback was released or its owner is gone",
+            "forever: TypeError <thing>.forever(fn): callbacks with scope 'forever' are refused: they could never be released",
+            "owner gone: callback was released or its owner is gone",
+            "throwing: callback threw: boom from js",
+            "reentrant: callback threw: tree operations (create, insert, remove, destroy) are not allowed inside a native callback",
+            "bad arg: TypeError <thing>.visit(fn): expected function, got 5",
+            "done",
+        ],
+        "{out:?} {errs:?}"
+    );
+    // The throwing callbacks were reported, not swallowed.
+    assert!(errs.iter().any(|e| e.contains("boom from js")), "{errs:?}");
+    assert_eq!(live, 3, "the three notified callbacks nobody released stay registered; call, async and owner-bound ones are gone");
 }
 
 #[test]

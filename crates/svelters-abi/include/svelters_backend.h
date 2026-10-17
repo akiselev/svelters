@@ -140,7 +140,7 @@ typedef struct svl_enum_member {
 typedef struct svl_type_desc {
   const char *name;  /* "Gtk.Orientation", "Rect", "Pango.AttrList" */
   uint16_t kind;     /* SVL_ENUM | SVL_FLAGS | SVL_RECORD | SVL_BOXED | SVL_CALLBACK | SVL_LIST */
-  uint16_t reserved;
+  uint16_t scope;    /* CALLBACK: SVL_CB_* lifetime scope of the callback (0 for other kinds) */
   const svl_enum_member *members;
   uint32_t n_members; /* ENUM/FLAGS */
   const svl_slot_desc *fields;
@@ -157,6 +157,14 @@ typedef enum svl_name_kind {
   SVL_METHOD = 3,
   SVL_SLOT = 4
 } svl_name_kind;
+
+/* Lifetime scope of a CALLBACK argument, from the callable's GIR annotation. */
+enum {
+  SVL_CB_CALL = 1,     /* valid for the call only: the host releases it when the call returns */
+  SVL_CB_ASYNC = 2,    /* released after its first invocation (async completion) */
+  SVL_CB_NOTIFIED = 3, /* released when the backend calls host->release_callback (GDestroyNotify, owner gone) */
+  SVL_CB_FOREVER = 4   /* never released: refused by the host */
+};
 
 enum { SVL_CAP_UTF16_IN = 1, SVL_CAP_UTF16_OUT = 2, SVL_CAP_BYTES_RETAIN = 4 };
 
@@ -195,7 +203,8 @@ typedef struct svl_host {
   int (*call_sync)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n, svl_value *out);
   void (*on_destroyed)(void *self, svl_handle h, uint32_t reason /* svl_gone */);
   /* v3: run the JS function behind a CALLBACK value. A call after release_callback (or after the owner
-   * died) is a clean error (-1), never a crash. Returns the callback's result in `out`. */
+   * died) is a clean error (-1), never a crash. Returns the callback's result in `out`; on failure `out`
+   * holds an SVL_ERROR value (domain "svelters") that says why. */
   int (*invoke_callback)(void *self, uint64_t callback, const svl_value *args, size_t n, svl_value *out);
   /* v3: the native side dropped a callback (GDestroyNotify, scope end, async done). Idempotent. */
   void (*release_callback)(void *self, uint64_t callback);

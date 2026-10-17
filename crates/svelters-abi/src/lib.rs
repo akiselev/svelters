@@ -61,6 +61,11 @@ pub const SVL_M_ASYNC: u32 = 2;
 pub const SVL_M_SYNC_SAFE: u32 = 4;
 pub const SVL_M_BLOCKING: u32 = 8;
 
+pub const SVL_CB_CALL: u16 = 1;
+pub const SVL_CB_ASYNC: u16 = 2;
+pub const SVL_CB_NOTIFIED: u16 = 3;
+pub const SVL_CB_FOREVER: u16 = 4;
+
 pub const SVL_CAP_UTF16_IN: u32 = 1;
 pub const SVL_CAP_UTF16_OUT: u32 = 2;
 pub const SVL_CAP_BYTES_RETAIN: u32 = 4;
@@ -183,7 +188,7 @@ pub struct svl_enum_member {
 pub struct svl_type_desc {
     pub name: *const c_char,
     pub kind: u16,
-    pub reserved: u16,
+    pub scope: u16,
     pub members: *const svl_enum_member,
     pub n_members: u32,
     pub fields: *const svl_slot_desc,

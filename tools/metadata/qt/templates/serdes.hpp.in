@@ -81,7 +81,7 @@ svl_id new_type(svl_id fixed, const std::string &name, uint16_t kind,
   }
   e->desc.name = e->name.c_str();
   e->desc.kind = kind;
-  e->desc.reserved = 0;
+  e->desc.scope = 0;
   e->desc.members = e->members.data();
   e->desc.n_members = static_cast<uint32_t>(e->members.size());
   e->desc.fields = e->fields.data();
@@ -698,6 +698,27 @@ inline bool conv_in(const svl_value *v, T &x, const char *what, std::string &err
   if (Conv<T>::in(v, x, e)) return true;
   err = std::string(what) + ": " + e;
   return false;
+}
+
+// A failure as an SVL_ERROR out value: [domain, code, message]. Qt has no error domains of its own:
+// C++ exceptions caught at the ABI boundary use domain "c++" and a null code.
+inline void out_error(svl_value *out, const char *domain, const std::string &message) {
+  if (!out) return;
+  g_out.strs.emplace_back(domain);
+  const std::string &d = g_out.strs.back();
+  g_out.strs.emplace_back(message);
+  const std::string &m = g_out.strs.back();
+  g_out.lists.emplace_back(3, mkv(SVL_NULL));
+  auto &vec = g_out.lists.back();
+  vec[0] = mkv(SVL_STR);
+  vec[0].u.s.ptr = d.data();
+  vec[0].u.s.len = d.size();
+  vec[2] = mkv(SVL_STR);
+  vec[2].u.s.ptr = m.data();
+  vec[2].u.s.len = m.size();
+  *out = mkv(SVL_ERROR);
+  out->u.l.ptr = vec.data();
+  out->u.l.len = vec.size();
 }
 
 inline void out_null(svl_value *out) {
