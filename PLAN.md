@@ -57,7 +57,7 @@ Widget metadata and codegen run alongside these layers: upstream sources plus an
 | P3 | GTK lane: Python GIR/PyGObject ingestion → metadata → generated GTK4 backend tables + verification tests | ABI draft, schema v0 |
 | P4 | Qt lane: Python qdoc/metaobject/typesystem ingestion → metadata → generated C++ backend, built by a leaf-crate `build.rs` | ABI draft, schema v0 |
 | P5 | Integration: P1 bundle runs in P2 host on P3 and P4 backends; Xvfb screenshot tests | P1b, P2–P4 |
-| M2 | Native timers (`schedule_wake`, ABI v2) replace the host timer thread. Dev loop: Vite watch → reload bundle in the running host without Cargo; source-mapped errors | P5 |
+| M2 | ABI v2 (`plans/architecture/backend-abi.md#abi-v2`): native timers via `schedule_wake` replace the host timer thread; lifetime classes, `handle_info`, `on_destroyed` reasons, cascading native death, host-decided quit. Dev loop: Vite watch → reload bundle in the running host without Cargo; source-mapped errors | P5 |
 | M3 | Codegen at scale: port the Python generators to Rust (in-process from `build.rs`), annotate beyond the P kinds through the agent loop, GTK dynamic GI method invocation, full `.d.ts` | P5 |
 | M4 | Native semantics: named child slots/replaceable sub-widgets, sync handlers and return values, two-way binding, ownership/lifetime | M3, signals/slots research |
 | M5 | Virtualized lists/model-view (GListModel, QAbstractItemModel) | M4 |

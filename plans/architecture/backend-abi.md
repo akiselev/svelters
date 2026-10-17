@@ -201,3 +201,38 @@ void (*schedule_wake)(void *self, int64_t ms);
 - `requestAnimationFrame` gets the same treatment later: a backend `request_frame` that is driven by the frame clock.
 - `wake` stays for thread-safe "run a checkpoint soon" requests from host threads.
 - The log backend implements `schedule_wake` against its virtual clock, so scripted fixtures stay deterministic.
+
+## ABI v2 (approved 2026-10-17, lands at the start of M2)
+
+ABI v2 bundles two approved changes: toolkit-native timers (above) and the lifetime model from `docs/notes/ownership-and-lifetimes.md`. `SVL_ABI_VERSION` becomes 2.
+
+```c
+/* timers */
+void (*schedule_wake)(void *self, int64_t ms);                         /* backend, new */
+
+/* lifetime */
+typedef enum svl_lifetime { SVL_LIFE_OWNED = 1, SVL_LIFE_TOPLEVEL = 2, SVL_LIFE_BORROWED = 3, SVL_LIFE_VALUE = 4 } svl_lifetime;
+typedef enum svl_gone { SVL_GONE_UNKNOWN = 0, SVL_GONE_CLOSED = 1, SVL_GONE_PARENT = 2, SVL_GONE_OWNER = 3,
+                        SVL_GONE_REPLACED = 4, SVL_GONE_SHUTDOWN = 5 } svl_gone;
+typedef struct svl_handle_info { svl_id kind; uint32_t lifetime; uint32_t flags; } svl_handle_info;
+int  (*handle_info)(void *self, svl_handle h, svl_handle_info *out);   /* backend, new */
+void (*on_destroyed)(void *self, svl_handle h, uint32_t reason);       /* host, changed: adds reason */
+```
+
+Rules:
+
+- **Handles are never reused.** They stay below 2^53, so JS numbers are exact. The host keeps a bounded "dead handles" ring so errors can say why a handle died.
+- **`destroy` is idempotent.** The handle is stale as soon as it returns, and the effect depends on the lifetime class: owned → delete the native object; toplevel → close and destroy; borrowed → just forget it; value → unref.
+- **`on_destroyed` fires at most once per handle,** after the backend has dropped the handle. When a node dies natively (a window closing, a parent being deleted, the owner deleting a borrowed child), the death cascades to every descendant handle. The host only records deaths inside `on_destroyed` and tells JS later through the event queue. It never re-enters JS from that callback.
+- **Borrowed handles are minted** when a getter or call returns a native object we didn't create.
+- **Native code never holds a JS value.** Events are (handle, signal, args), and JS-implemented native objects (models, factories) hold an integer ID into a host table.
+- **Window close** follows React Native's `onRequestClose`. If JS listens for the close signal, the backend vetoes the native close and posts the event. Otherwise the window is destroyed natively and reported as `SVL_GONE_CLOSED`. The host, not the toolkit, decides when the app quits (Qt: `setQuitOnLastWindowClosed(false)`).
+- **Backends never delete synchronously** inside signal emission: Qt uses `deleteLater`, GTK an idle-deferred unref.
+
+Later ABI additions, not part of v2:
+
+- `set_child_attr` (M4);
+- `listen` flags for phase, once, after and sync (pending the feature survey);
+- `request_frame`;
+- the foreign-runtime hooks;
+- the value-model changes from the serdes research.
