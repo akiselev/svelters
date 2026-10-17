@@ -50,6 +50,7 @@ pub type FragId = usize;
 
 /// An entry of a fragment: a finished leaf node, or a node that owns fragments (in `nodes`).
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum Item {
     Leaf(FragmentNode),
     Node(NodeId),
