@@ -39,7 +39,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -51,23 +51,29 @@
   ],
   "enums": [
     {
+      "flags_alias": "QWidget::RenderFlags",
+      "fullname": "QWidget::RenderFlag",
       "members": [
         {
+          "cpp": "QWidget::DrawWindowBackground",
           "name": "DrawWindowBackground",
           "value": "0x1"
         },
         {
+          "cpp": "QWidget::DrawChildren",
           "name": "DrawChildren",
           "value": "0x2"
         },
         {
+          "cpp": "QWidget::IgnoreMask",
           "name": "IgnoreMask",
           "value": "0x4"
         }
       ],
       "metaobject": null,
       "name": "RenderFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QWidget",
@@ -234,7 +240,7 @@
         "native": "QList<QAction *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QAction>>"
       },
       "signature": "QList<QAction *> actions() const",
       "since": null,
@@ -289,7 +295,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -336,7 +342,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -393,7 +399,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -413,7 +419,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -450,7 +456,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -470,7 +476,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -517,7 +523,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -537,7 +543,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -555,9 +561,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -567,7 +573,7 @@
             "native": "Qt::ConnectionType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ConnectionType>"
           }
         }
       ],
@@ -604,7 +610,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -632,9 +638,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -644,7 +650,7 @@
             "native": "Qt::ConnectionType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ConnectionType>"
           }
         }
       ],
@@ -775,7 +781,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -822,7 +828,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -879,7 +885,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -897,9 +903,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -909,7 +915,7 @@
             "native": "Qt::ConnectionType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ConnectionType>"
           }
         }
       ],
@@ -964,9 +970,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -976,7 +982,7 @@
             "native": "Qt::ConnectionType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ConnectionType>"
           }
         }
       ],
@@ -1050,7 +1056,7 @@
             "native": "const QList<QAction *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QAction>>"
           }
         }
       ],
@@ -1136,7 +1142,7 @@
         "native": "QPalette::ColorRole",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QPalette::ColorRole>"
       },
       "signature": "QPalette::ColorRole backgroundRole() const",
       "since": null,
@@ -1188,7 +1194,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize baseSize() const",
       "since": null,
@@ -1254,7 +1260,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1291,7 +1297,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1372,7 +1378,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect childrenRect() const",
       "since": null,
@@ -1398,7 +1404,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion childrenRegion() const",
       "since": null,
@@ -1539,7 +1545,7 @@
         "native": "QMargins",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Insets>"
       },
       "signature": "QMargins contentsMargins() const",
       "since": null,
@@ -1565,7 +1571,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect contentsRect() const",
       "since": null,
@@ -1628,7 +1634,7 @@
         "native": "Qt::ContextMenuPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ContextMenuPolicy>"
       },
       "signature": "Qt::ContextMenuPolicy contextMenuPolicy() const",
       "since": null,
@@ -1734,7 +1740,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -1768,7 +1774,7 @@
         "native": "QCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QCursor>"
       },
       "signature": "QCursor cursor() const",
       "since": null,
@@ -2289,7 +2295,7 @@
         "native": "Qt::FocusPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::FocusPolicy>"
       },
       "signature": "Qt::FocusPolicy focusPolicy() const",
       "since": null,
@@ -2393,7 +2399,7 @@
         "native": "const QFont &",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "const QFont & font() const",
       "since": null,
@@ -2471,7 +2477,7 @@
         "native": "QPalette::ColorRole",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QPalette::ColorRole>"
       },
       "signature": "QPalette::ColorRole foregroundRole() const",
       "since": null,
@@ -2497,7 +2503,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect frameGeometry() const",
       "since": null,
@@ -2523,7 +2529,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize frameSize() const",
       "since": null,
@@ -2549,7 +2555,7 @@
         "native": "const QRect &",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "const QRect & geometry() const",
       "since": null,
@@ -2578,7 +2584,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -2586,7 +2592,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap grab(const QRect &rectangle)",
       "since": null,
@@ -2615,7 +2621,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         },
         {
@@ -2625,7 +2631,7 @@
             "native": "Qt::GestureFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::GestureFlag>"
           }
         }
       ],
@@ -2714,7 +2720,7 @@
             "native": "const QCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QCursor>"
           }
         }
       ],
@@ -2751,7 +2757,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -2761,7 +2767,7 @@
             "native": "Qt::ShortcutContext",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ShortcutContext>"
           }
         }
       ],
@@ -3177,7 +3183,7 @@
         "native": "Qt::InputMethodHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::InputMethodHint>"
       },
       "signature": "Qt::InputMethodHints inputMethodHints() const",
       "since": null,
@@ -3206,7 +3212,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -3300,7 +3306,7 @@
             "native": "const QList<QAction *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QAction>>"
           }
         }
       ],
@@ -3857,7 +3863,7 @@
         "native": "Qt::LayoutDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::LayoutDirection>"
       },
       "signature": "Qt::LayoutDirection layoutDirection() const",
       "since": null,
@@ -3920,7 +3926,7 @@
         "native": "QLocale",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QLocale>"
       },
       "signature": "QLocale locale() const",
       "since": null,
@@ -3985,7 +3991,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -3993,7 +3999,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapFrom(const QWidget *parent, const QPoint &pos) const",
       "since": null,
@@ -4032,7 +4038,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4040,7 +4046,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFrom(const QWidget *parent, const QPointF &pos) const",
       "since": "6.0",
@@ -4069,7 +4075,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4077,7 +4083,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapFromGlobal(const QPoint &pos) const",
       "since": null,
@@ -4106,7 +4112,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4114,7 +4120,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromGlobal(const QPointF &pos) const",
       "since": "6.0",
@@ -4143,7 +4149,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4151,7 +4157,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapFromParent(const QPoint &pos) const",
       "since": null,
@@ -4180,7 +4186,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4188,7 +4194,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromParent(const QPointF &pos) const",
       "since": "6.0",
@@ -4227,7 +4233,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4235,7 +4241,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapTo(const QWidget *parent, const QPoint &pos) const",
       "since": null,
@@ -4274,7 +4280,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4282,7 +4288,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapTo(const QWidget *parent, const QPointF &pos) const",
       "since": "6.0",
@@ -4311,7 +4317,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4319,7 +4325,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapToGlobal(const QPoint &pos) const",
       "since": null,
@@ -4348,7 +4354,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4356,7 +4362,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToGlobal(const QPointF &pos) const",
       "since": "6.0",
@@ -4385,7 +4391,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4393,7 +4399,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint mapToParent(const QPoint &pos) const",
       "since": null,
@@ -4422,7 +4428,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4430,7 +4436,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToParent(const QPointF &pos) const",
       "since": "6.0",
@@ -4456,7 +4462,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion mask() const",
       "since": null,
@@ -4508,7 +4514,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize maximumSize() const",
       "since": null,
@@ -4563,7 +4569,7 @@
             "native": "QPaintDevice::PaintDeviceMetric",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPaintDevice::PaintDeviceMetric>"
           }
         }
       ],
@@ -4623,7 +4629,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const",
       "since": null,
@@ -4649,7 +4655,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const",
       "since": null,
@@ -4878,7 +4884,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4999,7 +5005,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         },
         {
@@ -5105,7 +5111,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect normalGeometry() const",
       "since": null,
@@ -5134,7 +5140,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -5231,7 +5237,7 @@
         "native": "const QPalette &",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "const QPalette & palette() const",
       "since": null,
@@ -5283,7 +5289,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint pos() const",
       "since": null,
@@ -5361,7 +5367,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect rect() const",
       "since": null,
@@ -5526,7 +5532,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -5536,7 +5542,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         },
         {
@@ -5546,7 +5552,7 @@
             "native": "QWidget::RenderFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QWidget::RenderFlag>"
           }
         }
       ],
@@ -5593,7 +5599,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -5603,7 +5609,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         },
         {
@@ -5613,7 +5619,7 @@
             "native": "QWidget::RenderFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QWidget::RenderFlag>"
           }
         }
       ],
@@ -5676,7 +5682,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -5713,7 +5719,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         }
       ],
@@ -5817,7 +5823,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -5938,7 +5944,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -5972,7 +5978,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray saveGeometry() const",
       "since": null,
@@ -6094,7 +6100,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -6279,7 +6285,7 @@
             "native": "Qt::WidgetAttribute",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WidgetAttribute>"
           }
         },
         {
@@ -6363,7 +6369,7 @@
             "native": "QPalette::ColorRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPalette::ColorRole>"
           }
         }
       ],
@@ -6400,7 +6406,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -6484,7 +6490,7 @@
             "native": "const QMargins &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Insets>"
           }
         }
       ],
@@ -6588,7 +6594,7 @@
             "native": "Qt::ContextMenuPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ContextMenuPolicy>"
           }
         }
       ],
@@ -6625,7 +6631,7 @@
             "native": "const QCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QCursor>"
           }
         }
       ],
@@ -6810,7 +6816,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -6957,7 +6963,7 @@
             "native": "Qt::FocusReason",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusReason>"
           }
         }
       ],
@@ -6994,7 +7000,7 @@
             "native": "Qt::FocusPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusPolicy>"
           }
         }
       ],
@@ -7068,7 +7074,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -7105,7 +7111,7 @@
             "native": "QPalette::ColorRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPalette::ColorRole>"
           }
         }
       ],
@@ -7142,7 +7148,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -7320,7 +7326,7 @@
             "native": "Qt::InputMethodHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::InputMethodHint>"
           }
         }
       ],
@@ -7394,7 +7400,7 @@
             "native": "Qt::LayoutDirection",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::LayoutDirection>"
           }
         }
       ],
@@ -7431,7 +7437,7 @@
             "native": "const QLocale &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QLocale>"
           }
         }
       ],
@@ -7468,7 +7474,7 @@
             "native": "const QBitmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBitmap>"
           }
         }
       ],
@@ -7505,7 +7511,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         }
       ],
@@ -7579,7 +7585,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -7737,7 +7743,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -7895,7 +7901,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         }
       ],
@@ -7979,7 +7985,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -8147,7 +8153,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -8231,7 +8237,7 @@
             "native": "QSizePolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QSizePolicy>"
           }
         }
       ],
@@ -8268,7 +8274,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         },
         {
@@ -8278,7 +8284,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         }
       ],
@@ -8769,7 +8775,7 @@
             "native": "Qt::WindowType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WindowType>"
           }
         },
         {
@@ -8816,7 +8822,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -8853,7 +8859,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -8927,7 +8933,7 @@
             "native": "Qt::WindowModality",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WindowModality>"
           }
         }
       ],
@@ -9075,7 +9081,7 @@
             "native": "Qt::WindowStates",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowState>"
           }
         }
       ],
@@ -9350,7 +9356,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize size() const",
       "since": null,
@@ -9376,7 +9382,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const",
       "since": null,
@@ -9402,7 +9408,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeIncrement() const",
       "since": null,
@@ -9428,7 +9434,7 @@
         "native": "QSizePolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QSizePolicy>"
       },
       "signature": "QSizePolicy sizePolicy() const",
       "since": null,
@@ -9609,7 +9615,7 @@
             "native": "Qt::WidgetAttribute",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WidgetAttribute>"
           }
         }
       ],
@@ -9750,7 +9756,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -9891,7 +9897,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -9928,7 +9934,7 @@
             "native": "const QRegion &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QRegion>"
           }
         }
       ],
@@ -10058,7 +10064,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -10118,7 +10124,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion visibleRegion() const",
       "since": null,
@@ -10311,7 +10317,7 @@
         "native": "Qt::WindowFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::WindowType>"
       },
       "signature": "Qt::WindowFlags windowFlags() const",
       "since": null,
@@ -10363,7 +10369,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon windowIcon() const",
       "since": null,
@@ -10415,7 +10421,7 @@
         "native": "Qt::WindowModality",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::WindowModality>"
       },
       "signature": "Qt::WindowModality windowModality() const",
       "since": null,
@@ -10493,7 +10499,7 @@
         "native": "Qt::WindowStates",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::WindowState>"
       },
       "signature": "Qt::WindowStates windowState() const",
       "since": null,
@@ -10545,7 +10551,7 @@
         "native": "Qt::WindowType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::WindowType>"
       },
       "signature": "Qt::WindowType windowType() const",
       "since": null,
@@ -11025,7 +11031,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -11065,7 +11071,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -11105,7 +11111,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       }
     },
     {
@@ -11145,7 +11151,7 @@
         "native": "Qt::ContextMenuPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ContextMenuPolicy>"
       }
     },
     {
@@ -11185,7 +11191,7 @@
         "native": "QCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QCursor>"
       }
     },
     {
@@ -11305,7 +11311,7 @@
         "native": "Qt::FocusPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::FocusPolicy>"
       }
     },
     {
@@ -11345,7 +11351,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       }
     },
     {
@@ -11385,7 +11391,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -11425,7 +11431,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -11505,7 +11511,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -11585,7 +11591,7 @@
         "native": "Qt::InputMethodHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::InputMethodHint>"
       }
     },
     {
@@ -11665,7 +11671,7 @@
         "native": "Qt::LayoutDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::LayoutDirection>"
       }
     },
     {
@@ -11705,7 +11711,7 @@
         "native": "QLocale",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QLocale>"
       }
     },
     {
@@ -11825,7 +11831,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -11985,7 +11991,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -12025,7 +12031,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -12185,7 +12191,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -12225,7 +12231,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       }
     },
     {
@@ -12265,7 +12271,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -12305,7 +12311,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -12345,7 +12351,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -12385,7 +12391,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -12425,7 +12431,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -12465,7 +12471,7 @@
         "native": "QSizePolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QSizePolicy>"
       }
     },
     {
@@ -12888,7 +12894,7 @@
         "native": "Qt::WindowFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::WindowType>"
       }
     },
     {
@@ -12931,7 +12937,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       }
     },
     {
@@ -13014,7 +13020,7 @@
         "native": "Qt::WindowModality",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::WindowModality>"
       }
     },
     {
@@ -13246,7 +13252,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -13281,7 +13287,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],

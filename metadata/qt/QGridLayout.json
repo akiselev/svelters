@@ -154,7 +154,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -221,7 +221,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -308,7 +308,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -395,7 +395,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -462,7 +462,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -517,7 +517,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect cellRect(int row, int column) const",
       "since": null,
@@ -669,7 +669,7 @@
         "native": "Qt::Orientations",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::Orientation>"
       },
       "signature": "Qt::Orientations expandingDirections() const override",
       "since": null,
@@ -971,7 +971,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize maximumSize() const override",
       "since": null,
@@ -1034,7 +1034,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const override",
       "since": null,
@@ -1060,7 +1060,7 @@
         "native": "Qt::Corner",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Corner>"
       },
       "signature": "Qt::Corner originCorner() const",
       "since": null,
@@ -1283,7 +1283,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -1357,7 +1357,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -1559,7 +1559,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,

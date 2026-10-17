@@ -66,3 +66,7 @@ Open (not closed here): listen phases (above); `close`/other imperative methods 
 - `GtkWindow::close-request` is RUN_LAST: emitting it by hand with no stopping handler runs the class closure and destroys the window, so a fixture replay cannot reproduce a "null" close result without killing the window. Toolkit replays skip `sync` fixtures for that reason.
 - The worktree tool refuses some compound shell commands; edits were scripted from files.
 - `GSK_RENDERER=cairo` is needed for GTK tests that close windows under Xvfb (the Vulkan path asserts); the counter integration tests already set it.
+
+## Merge with ABI v3 (S1, 62e1ee1)
+
+Merged master after v3. Conflicts were all tail-member adjacency: `frame` follows `release_callback` in `svl_host`, `request_frame` follows `cancel` in `svl_backend`. `dispatch_sync` decodes its args through the v3 `convert::decode` like `dispatch`; its result is a primitive (null/bool/number/string) read directly, since a handler result is not a typed value. The Qt filters zero-initialise `svl_value` (v3 added `flags`/`type`).

@@ -55,7 +55,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -139,7 +139,7 @@
             "native": "QPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -432,7 +432,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -461,7 +461,7 @@
             "native": "QAbstractSlider::SliderChange",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSlider::SliderChange>"
           }
         }
       ],

@@ -67,7 +67,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -149,7 +149,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect actionGeometry(QAction *act) const",
       "since": null,
@@ -241,7 +241,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -414,7 +414,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -900,7 +900,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -1161,7 +1161,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -1306,7 +1306,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,

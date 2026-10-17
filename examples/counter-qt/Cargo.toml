@@ -25,5 +25,9 @@ name = "counter"
 harness = false
 
 [[test]]
+name = "serdes"
+harness = false
+
+[[test]]
 name = "host_sync"
 harness = false

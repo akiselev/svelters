@@ -3,7 +3,8 @@
 
 use gtk::prelude::*;
 use svelters_abi::{SVL_GONE_CLOSED, SVL_GONE_PARENT};
-use svelters_gtk::testing::{on_gtk, pump, Harness, SyncReply, V};
+use svelters_abi::Value;
+use svelters_gtk::testing::{on_gtk, pump, Harness, SyncReply};
 
 fn key_pressed(h: &Harness, ctrl: u64, keyval: u32) -> bool {
     h.obj(ctrl).emit_by_name::<bool>("key-pressed", &[&keyval, &38u32, &gtk::gdk::ModifierType::empty()])
@@ -21,7 +22,7 @@ fn close_request_decides_per_event_through_call_sync() {
         h.listen(win, "close-request", true).unwrap();
 
         // The handler vetoes: the window stays and nothing is posted asynchronously.
-        h.set_sync_reply(SyncReply::Value(V::Bool(true)));
+        h.set_sync_reply(SyncReply::Value(Value::Bool(true)));
         h.widget(win).downcast::<gtk::Window>().unwrap().close();
         pump(100);
         assert_eq!(h.take_sync_calls(), vec![(win, "close-request".to_string(), vec![])]);
@@ -30,7 +31,7 @@ fn close_request_decides_per_event_through_call_sync() {
         assert!(h.handle_info(win).is_ok(), "vetoed: the window is still there");
 
         // No decision (null): the toolkit default, the window closes natively and the cascade runs.
-        h.set_sync_reply(SyncReply::Value(V::Null));
+        h.set_sync_reply(SyncReply::Value(Value::Null));
         h.widget(win).downcast::<gtk::Window>().unwrap().close();
         pump(100);
         assert_eq!(h.take_gone(), vec![(win, SVL_GONE_CLOSED), (label, SVL_GONE_PARENT)]);
@@ -78,16 +79,16 @@ fn key_controller_result_stops_default_handling() {
         assert!(h.obj(ctrl).downcast_ref::<gtk::EventController>().unwrap().widget().is_some(), "attached to the entry");
 
         // handled -> true: GTK stops propagation and the entry's own handling does not run
-        h.set_sync_reply(SyncReply::Value(V::Bool(true)));
+        h.set_sync_reply(SyncReply::Value(Value::Bool(true)));
         assert!(key_pressed(&h, ctrl, 97));
         let calls = h.take_sync_calls();
         assert_eq!(calls.len(), 1);
         assert_eq!((calls[0].0, calls[0].1.as_str()), (ctrl, "key-pressed"));
-        assert_eq!(calls[0].2[..2], [V::I64(97), V::I64(38)]);
+        assert_eq!(calls[0].2[..2], [Value::I64(97), Value::I64(38)]);
         // no decision, explicit false, a failed call and a busy host all let GTK carry on
-        h.set_sync_reply(SyncReply::Value(V::Null));
+        h.set_sync_reply(SyncReply::Value(Value::Null));
         assert!(!key_pressed(&h, ctrl, 98));
-        h.set_sync_reply(SyncReply::Value(V::Bool(false)));
+        h.set_sync_reply(SyncReply::Value(Value::Bool(false)));
         assert!(!key_pressed(&h, ctrl, 98));
         h.set_sync_reply(SyncReply::Failed);
         assert!(!key_pressed(&h, ctrl, 98));

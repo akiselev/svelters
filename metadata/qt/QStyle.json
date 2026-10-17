@@ -29,44 +29,56 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyle::ComplexControl",
       "members": [
         {
+          "cpp": "QStyle::CC_SpinBox",
           "name": "CC_SpinBox",
           "value": "0"
         },
         {
+          "cpp": "QStyle::CC_ComboBox",
           "name": "CC_ComboBox",
           "value": "1"
         },
         {
+          "cpp": "QStyle::CC_ScrollBar",
           "name": "CC_ScrollBar",
           "value": "2"
         },
         {
+          "cpp": "QStyle::CC_Slider",
           "name": "CC_Slider",
           "value": "3"
         },
         {
+          "cpp": "QStyle::CC_ToolButton",
           "name": "CC_ToolButton",
           "value": "4"
         },
         {
+          "cpp": "QStyle::CC_TitleBar",
           "name": "CC_TitleBar",
           "value": "5"
         },
         {
+          "cpp": "QStyle::CC_Dial",
           "name": "CC_Dial",
           "value": "6"
         },
         {
+          "cpp": "QStyle::CC_GroupBox",
           "name": "CC_GroupBox",
           "value": "7"
         },
         {
+          "cpp": "QStyle::CC_MdiControls",
           "name": "CC_MdiControls",
           "value": "8"
         },
         {
+          "cpp": "QStyle::CC_CustomBase",
           "name": "CC_CustomBase",
           "value": "0xf0000000"
         }
@@ -88,103 +100,130 @@
         "scoped": false
       },
       "name": "ComplexControl",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::ContentsType",
       "members": [
         {
+          "cpp": "QStyle::CT_PushButton",
           "name": "CT_PushButton",
           "value": "0"
         },
         {
+          "cpp": "QStyle::CT_CheckBox",
           "name": "CT_CheckBox",
           "value": "1"
         },
         {
+          "cpp": "QStyle::CT_RadioButton",
           "name": "CT_RadioButton",
           "value": "2"
         },
         {
+          "cpp": "QStyle::CT_ToolButton",
           "name": "CT_ToolButton",
           "value": "3"
         },
         {
+          "cpp": "QStyle::CT_ComboBox",
           "name": "CT_ComboBox",
           "value": "4"
         },
         {
+          "cpp": "QStyle::CT_Splitter",
           "name": "CT_Splitter",
           "value": "5"
         },
         {
+          "cpp": "QStyle::CT_ProgressBar",
           "name": "CT_ProgressBar",
           "value": "6"
         },
         {
+          "cpp": "QStyle::CT_MenuItem",
           "name": "CT_MenuItem",
           "value": "7"
         },
         {
+          "cpp": "QStyle::CT_MenuBarItem",
           "name": "CT_MenuBarItem",
           "value": "8"
         },
         {
+          "cpp": "QStyle::CT_MenuBar",
           "name": "CT_MenuBar",
           "value": "9"
         },
         {
+          "cpp": "QStyle::CT_Menu",
           "name": "CT_Menu",
           "value": "10"
         },
         {
+          "cpp": "QStyle::CT_TabBarTab",
           "name": "CT_TabBarTab",
           "value": "11"
         },
         {
+          "cpp": "QStyle::CT_Slider",
           "name": "CT_Slider",
           "value": "12"
         },
         {
+          "cpp": "QStyle::CT_ScrollBar",
           "name": "CT_ScrollBar",
           "value": "13"
         },
         {
+          "cpp": "QStyle::CT_LineEdit",
           "name": "CT_LineEdit",
           "value": "14"
         },
         {
+          "cpp": "QStyle::CT_SpinBox",
           "name": "CT_SpinBox",
           "value": "15"
         },
         {
+          "cpp": "QStyle::CT_SizeGrip",
           "name": "CT_SizeGrip",
           "value": "16"
         },
         {
+          "cpp": "QStyle::CT_TabWidget",
           "name": "CT_TabWidget",
           "value": "17"
         },
         {
+          "cpp": "QStyle::CT_DialogButtons",
           "name": "CT_DialogButtons",
           "value": "18"
         },
         {
+          "cpp": "QStyle::CT_HeaderSection",
           "name": "CT_HeaderSection",
           "value": "19"
         },
         {
+          "cpp": "QStyle::CT_GroupBox",
           "name": "CT_GroupBox",
           "value": "20"
         },
         {
+          "cpp": "QStyle::CT_MdiControls",
           "name": "CT_MdiControls",
           "value": "21"
         },
         {
+          "cpp": "QStyle::CT_ItemViewItem",
           "name": "CT_ItemViewItem",
           "value": "22"
         },
         {
+          "cpp": "QStyle::CT_CustomBase",
           "name": "CT_CustomBase",
           "value": "0xf0000000"
         }
@@ -220,199 +259,250 @@
         "scoped": false
       },
       "name": "ContentsType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::ControlElement",
       "members": [
         {
+          "cpp": "QStyle::CE_PushButton",
           "name": "CE_PushButton",
           "value": "0"
         },
         {
+          "cpp": "QStyle::CE_PushButtonBevel",
           "name": "CE_PushButtonBevel",
           "value": "1"
         },
         {
+          "cpp": "QStyle::CE_PushButtonLabel",
           "name": "CE_PushButtonLabel",
           "value": "2"
         },
         {
+          "cpp": "QStyle::CE_CheckBox",
           "name": "CE_CheckBox",
           "value": "3"
         },
         {
+          "cpp": "QStyle::CE_CheckBoxLabel",
           "name": "CE_CheckBoxLabel",
           "value": "4"
         },
         {
+          "cpp": "QStyle::CE_RadioButton",
           "name": "CE_RadioButton",
           "value": "5"
         },
         {
+          "cpp": "QStyle::CE_RadioButtonLabel",
           "name": "CE_RadioButtonLabel",
           "value": "6"
         },
         {
+          "cpp": "QStyle::CE_TabBarTab",
           "name": "CE_TabBarTab",
           "value": "7"
         },
         {
+          "cpp": "QStyle::CE_TabBarTabShape",
           "name": "CE_TabBarTabShape",
           "value": "8"
         },
         {
+          "cpp": "QStyle::CE_TabBarTabLabel",
           "name": "CE_TabBarTabLabel",
           "value": "9"
         },
         {
+          "cpp": "QStyle::CE_ProgressBar",
           "name": "CE_ProgressBar",
           "value": "10"
         },
         {
+          "cpp": "QStyle::CE_ProgressBarGroove",
           "name": "CE_ProgressBarGroove",
           "value": "11"
         },
         {
+          "cpp": "QStyle::CE_ProgressBarContents",
           "name": "CE_ProgressBarContents",
           "value": "12"
         },
         {
+          "cpp": "QStyle::CE_ProgressBarLabel",
           "name": "CE_ProgressBarLabel",
           "value": "13"
         },
         {
+          "cpp": "QStyle::CE_MenuItem",
           "name": "CE_MenuItem",
           "value": "14"
         },
         {
+          "cpp": "QStyle::CE_MenuScroller",
           "name": "CE_MenuScroller",
           "value": "15"
         },
         {
+          "cpp": "QStyle::CE_MenuVMargin",
           "name": "CE_MenuVMargin",
           "value": "16"
         },
         {
+          "cpp": "QStyle::CE_MenuHMargin",
           "name": "CE_MenuHMargin",
           "value": "17"
         },
         {
+          "cpp": "QStyle::CE_MenuTearoff",
           "name": "CE_MenuTearoff",
           "value": "18"
         },
         {
+          "cpp": "QStyle::CE_MenuEmptyArea",
           "name": "CE_MenuEmptyArea",
           "value": "19"
         },
         {
+          "cpp": "QStyle::CE_MenuBarItem",
           "name": "CE_MenuBarItem",
           "value": "20"
         },
         {
+          "cpp": "QStyle::CE_MenuBarEmptyArea",
           "name": "CE_MenuBarEmptyArea",
           "value": "21"
         },
         {
+          "cpp": "QStyle::CE_ToolButtonLabel",
           "name": "CE_ToolButtonLabel",
           "value": "22"
         },
         {
+          "cpp": "QStyle::CE_Header",
           "name": "CE_Header",
           "value": "23"
         },
         {
+          "cpp": "QStyle::CE_HeaderSection",
           "name": "CE_HeaderSection",
           "value": "24"
         },
         {
+          "cpp": "QStyle::CE_HeaderLabel",
           "name": "CE_HeaderLabel",
           "value": "25"
         },
         {
+          "cpp": "QStyle::CE_ToolBoxTab",
           "name": "CE_ToolBoxTab",
           "value": "26"
         },
         {
+          "cpp": "QStyle::CE_SizeGrip",
           "name": "CE_SizeGrip",
           "value": "27"
         },
         {
+          "cpp": "QStyle::CE_Splitter",
           "name": "CE_Splitter",
           "value": "28"
         },
         {
+          "cpp": "QStyle::CE_RubberBand",
           "name": "CE_RubberBand",
           "value": "29"
         },
         {
+          "cpp": "QStyle::CE_DockWidgetTitle",
           "name": "CE_DockWidgetTitle",
           "value": "30"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarAddLine",
           "name": "CE_ScrollBarAddLine",
           "value": "31"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarSubLine",
           "name": "CE_ScrollBarSubLine",
           "value": "32"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarAddPage",
           "name": "CE_ScrollBarAddPage",
           "value": "33"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarSubPage",
           "name": "CE_ScrollBarSubPage",
           "value": "34"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarSlider",
           "name": "CE_ScrollBarSlider",
           "value": "35"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarFirst",
           "name": "CE_ScrollBarFirst",
           "value": "36"
         },
         {
+          "cpp": "QStyle::CE_ScrollBarLast",
           "name": "CE_ScrollBarLast",
           "value": "37"
         },
         {
+          "cpp": "QStyle::CE_FocusFrame",
           "name": "CE_FocusFrame",
           "value": "38"
         },
         {
+          "cpp": "QStyle::CE_ComboBoxLabel",
           "name": "CE_ComboBoxLabel",
           "value": "39"
         },
         {
+          "cpp": "QStyle::CE_ToolBar",
           "name": "CE_ToolBar",
           "value": "40"
         },
         {
+          "cpp": "QStyle::CE_ToolBoxTabShape",
           "name": "CE_ToolBoxTabShape",
           "value": "41"
         },
         {
+          "cpp": "QStyle::CE_ToolBoxTabLabel",
           "name": "CE_ToolBoxTabLabel",
           "value": "42"
         },
         {
+          "cpp": "QStyle::CE_HeaderEmptyArea",
           "name": "CE_HeaderEmptyArea",
           "value": "43"
         },
         {
+          "cpp": "QStyle::CE_ColumnViewGrip",
           "name": "CE_ColumnViewGrip",
           "value": "44"
         },
         {
+          "cpp": "QStyle::CE_ItemViewItem",
           "name": "CE_ItemViewItem",
           "value": "45"
         },
         {
+          "cpp": "QStyle::CE_ShapedFrame",
           "name": "CE_ShapedFrame",
           "value": "46"
         },
         {
+          "cpp": "QStyle::CE_CustomBase",
           "name": "CE_CustomBase",
           "value": "0xf0000000"
         }
@@ -472,391 +562,490 @@
         "scoped": false
       },
       "name": "ControlElement",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::PixelMetric",
       "members": [
         {
+          "cpp": "QStyle::PM_ButtonMargin",
           "name": "PM_ButtonMargin",
           "value": "0"
         },
         {
+          "cpp": "QStyle::PM_ButtonDefaultIndicator",
           "name": "PM_ButtonDefaultIndicator",
           "value": "1"
         },
         {
+          "cpp": "QStyle::PM_MenuButtonIndicator",
           "name": "PM_MenuButtonIndicator",
           "value": "2"
         },
         {
+          "cpp": "QStyle::PM_ButtonShiftHorizontal",
           "name": "PM_ButtonShiftHorizontal",
           "value": "3"
         },
         {
+          "cpp": "QStyle::PM_ButtonShiftVertical",
           "name": "PM_ButtonShiftVertical",
           "value": "4"
         },
         {
+          "cpp": "QStyle::PM_DefaultFrameWidth",
           "name": "PM_DefaultFrameWidth",
           "value": "5"
         },
         {
+          "cpp": "QStyle::PM_SpinBoxFrameWidth",
           "name": "PM_SpinBoxFrameWidth",
           "value": "6"
         },
         {
+          "cpp": "QStyle::PM_ComboBoxFrameWidth",
           "name": "PM_ComboBoxFrameWidth",
           "value": "7"
         },
         {
+          "cpp": "QStyle::PM_MaximumDragDistance",
           "name": "PM_MaximumDragDistance",
           "value": "8"
         },
         {
+          "cpp": "QStyle::PM_ScrollBarExtent",
           "name": "PM_ScrollBarExtent",
           "value": "9"
         },
         {
+          "cpp": "QStyle::PM_ScrollBarSliderMin",
           "name": "PM_ScrollBarSliderMin",
           "value": "10"
         },
         {
+          "cpp": "QStyle::PM_SliderThickness",
           "name": "PM_SliderThickness",
           "value": "11"
         },
         {
+          "cpp": "QStyle::PM_SliderControlThickness",
           "name": "PM_SliderControlThickness",
           "value": "12"
         },
         {
+          "cpp": "QStyle::PM_SliderLength",
           "name": "PM_SliderLength",
           "value": "13"
         },
         {
+          "cpp": "QStyle::PM_SliderTickmarkOffset",
           "name": "PM_SliderTickmarkOffset",
           "value": "14"
         },
         {
+          "cpp": "QStyle::PM_SliderSpaceAvailable",
           "name": "PM_SliderSpaceAvailable",
           "value": "15"
         },
         {
+          "cpp": "QStyle::PM_DockWidgetSeparatorExtent",
           "name": "PM_DockWidgetSeparatorExtent",
           "value": "16"
         },
         {
+          "cpp": "QStyle::PM_DockWidgetHandleExtent",
           "name": "PM_DockWidgetHandleExtent",
           "value": "17"
         },
         {
+          "cpp": "QStyle::PM_DockWidgetFrameWidth",
           "name": "PM_DockWidgetFrameWidth",
           "value": "18"
         },
         {
+          "cpp": "QStyle::PM_TabBarTabOverlap",
           "name": "PM_TabBarTabOverlap",
           "value": "19"
         },
         {
+          "cpp": "QStyle::PM_TabBarTabHSpace",
           "name": "PM_TabBarTabHSpace",
           "value": "20"
         },
         {
+          "cpp": "QStyle::PM_TabBarTabVSpace",
           "name": "PM_TabBarTabVSpace",
           "value": "21"
         },
         {
+          "cpp": "QStyle::PM_TabBarBaseHeight",
           "name": "PM_TabBarBaseHeight",
           "value": "22"
         },
         {
+          "cpp": "QStyle::PM_TabBarBaseOverlap",
           "name": "PM_TabBarBaseOverlap",
           "value": "23"
         },
         {
+          "cpp": "QStyle::PM_ProgressBarChunkWidth",
           "name": "PM_ProgressBarChunkWidth",
           "value": "24"
         },
         {
+          "cpp": "QStyle::PM_SplitterWidth",
           "name": "PM_SplitterWidth",
           "value": "25"
         },
         {
+          "cpp": "QStyle::PM_TitleBarHeight",
           "name": "PM_TitleBarHeight",
           "value": "26"
         },
         {
+          "cpp": "QStyle::PM_MenuScrollerHeight",
           "name": "PM_MenuScrollerHeight",
           "value": "27"
         },
         {
+          "cpp": "QStyle::PM_MenuHMargin",
           "name": "PM_MenuHMargin",
           "value": "28"
         },
         {
+          "cpp": "QStyle::PM_MenuVMargin",
           "name": "PM_MenuVMargin",
           "value": "29"
         },
         {
+          "cpp": "QStyle::PM_MenuPanelWidth",
           "name": "PM_MenuPanelWidth",
           "value": "30"
         },
         {
+          "cpp": "QStyle::PM_MenuTearoffHeight",
           "name": "PM_MenuTearoffHeight",
           "value": "31"
         },
         {
+          "cpp": "QStyle::PM_MenuDesktopFrameWidth",
           "name": "PM_MenuDesktopFrameWidth",
           "value": "32"
         },
         {
+          "cpp": "QStyle::PM_MenuBarPanelWidth",
           "name": "PM_MenuBarPanelWidth",
           "value": "33"
         },
         {
+          "cpp": "QStyle::PM_MenuBarItemSpacing",
           "name": "PM_MenuBarItemSpacing",
           "value": "34"
         },
         {
+          "cpp": "QStyle::PM_MenuBarVMargin",
           "name": "PM_MenuBarVMargin",
           "value": "35"
         },
         {
+          "cpp": "QStyle::PM_MenuBarHMargin",
           "name": "PM_MenuBarHMargin",
           "value": "36"
         },
         {
+          "cpp": "QStyle::PM_IndicatorWidth",
           "name": "PM_IndicatorWidth",
           "value": "37"
         },
         {
+          "cpp": "QStyle::PM_IndicatorHeight",
           "name": "PM_IndicatorHeight",
           "value": "38"
         },
         {
+          "cpp": "QStyle::PM_ExclusiveIndicatorWidth",
           "name": "PM_ExclusiveIndicatorWidth",
           "value": "39"
         },
         {
+          "cpp": "QStyle::PM_ExclusiveIndicatorHeight",
           "name": "PM_ExclusiveIndicatorHeight",
           "value": "40"
         },
         {
+          "cpp": "QStyle::PM_DialogButtonsSeparator",
           "name": "PM_DialogButtonsSeparator",
           "value": "41"
         },
         {
+          "cpp": "QStyle::PM_DialogButtonsButtonWidth",
           "name": "PM_DialogButtonsButtonWidth",
           "value": "42"
         },
         {
+          "cpp": "QStyle::PM_DialogButtonsButtonHeight",
           "name": "PM_DialogButtonsButtonHeight",
           "value": "43"
         },
         {
+          "cpp": "QStyle::PM_MdiSubWindowFrameWidth",
           "name": "PM_MdiSubWindowFrameWidth",
           "value": "44"
         },
         {
+          "cpp": "QStyle::PM_MdiSubWindowMinimizedWidth",
           "name": "PM_MdiSubWindowMinimizedWidth",
           "value": "45"
         },
         {
+          "cpp": "QStyle::PM_HeaderMargin",
           "name": "PM_HeaderMargin",
           "value": "46"
         },
         {
+          "cpp": "QStyle::PM_HeaderMarkSize",
           "name": "PM_HeaderMarkSize",
           "value": "47"
         },
         {
+          "cpp": "QStyle::PM_HeaderGripMargin",
           "name": "PM_HeaderGripMargin",
           "value": "48"
         },
         {
+          "cpp": "QStyle::PM_TabBarTabShiftHorizontal",
           "name": "PM_TabBarTabShiftHorizontal",
           "value": "49"
         },
         {
+          "cpp": "QStyle::PM_TabBarTabShiftVertical",
           "name": "PM_TabBarTabShiftVertical",
           "value": "50"
         },
         {
+          "cpp": "QStyle::PM_TabBarScrollButtonWidth",
           "name": "PM_TabBarScrollButtonWidth",
           "value": "51"
         },
         {
+          "cpp": "QStyle::PM_ToolBarFrameWidth",
           "name": "PM_ToolBarFrameWidth",
           "value": "52"
         },
         {
+          "cpp": "QStyle::PM_ToolBarHandleExtent",
           "name": "PM_ToolBarHandleExtent",
           "value": "53"
         },
         {
+          "cpp": "QStyle::PM_ToolBarItemSpacing",
           "name": "PM_ToolBarItemSpacing",
           "value": "54"
         },
         {
+          "cpp": "QStyle::PM_ToolBarItemMargin",
           "name": "PM_ToolBarItemMargin",
           "value": "55"
         },
         {
+          "cpp": "QStyle::PM_ToolBarSeparatorExtent",
           "name": "PM_ToolBarSeparatorExtent",
           "value": "56"
         },
         {
+          "cpp": "QStyle::PM_ToolBarExtensionExtent",
           "name": "PM_ToolBarExtensionExtent",
           "value": "57"
         },
         {
+          "cpp": "QStyle::PM_SpinBoxSliderHeight",
           "name": "PM_SpinBoxSliderHeight",
           "value": "58"
         },
         {
+          "cpp": "QStyle::PM_ToolBarIconSize",
           "name": "PM_ToolBarIconSize",
           "value": "59"
         },
         {
+          "cpp": "QStyle::PM_ListViewIconSize",
           "name": "PM_ListViewIconSize",
           "value": "60"
         },
         {
+          "cpp": "QStyle::PM_IconViewIconSize",
           "name": "PM_IconViewIconSize",
           "value": "61"
         },
         {
+          "cpp": "QStyle::PM_SmallIconSize",
           "name": "PM_SmallIconSize",
           "value": "62"
         },
         {
+          "cpp": "QStyle::PM_LargeIconSize",
           "name": "PM_LargeIconSize",
           "value": "63"
         },
         {
+          "cpp": "QStyle::PM_FocusFrameVMargin",
           "name": "PM_FocusFrameVMargin",
           "value": "64"
         },
         {
+          "cpp": "QStyle::PM_FocusFrameHMargin",
           "name": "PM_FocusFrameHMargin",
           "value": "65"
         },
         {
+          "cpp": "QStyle::PM_ToolTipLabelFrameWidth",
           "name": "PM_ToolTipLabelFrameWidth",
           "value": "66"
         },
         {
+          "cpp": "QStyle::PM_CheckBoxLabelSpacing",
           "name": "PM_CheckBoxLabelSpacing",
           "value": "67"
         },
         {
+          "cpp": "QStyle::PM_TabBarIconSize",
           "name": "PM_TabBarIconSize",
           "value": "68"
         },
         {
+          "cpp": "QStyle::PM_SizeGripSize",
           "name": "PM_SizeGripSize",
           "value": "69"
         },
         {
+          "cpp": "QStyle::PM_DockWidgetTitleMargin",
           "name": "PM_DockWidgetTitleMargin",
           "value": "70"
         },
         {
+          "cpp": "QStyle::PM_MessageBoxIconSize",
           "name": "PM_MessageBoxIconSize",
           "value": "71"
         },
         {
+          "cpp": "QStyle::PM_ButtonIconSize",
           "name": "PM_ButtonIconSize",
           "value": "72"
         },
         {
+          "cpp": "QStyle::PM_DockWidgetTitleBarButtonMargin",
           "name": "PM_DockWidgetTitleBarButtonMargin",
           "value": "73"
         },
         {
+          "cpp": "QStyle::PM_RadioButtonLabelSpacing",
           "name": "PM_RadioButtonLabelSpacing",
           "value": "74"
         },
         {
+          "cpp": "QStyle::PM_LayoutLeftMargin",
           "name": "PM_LayoutLeftMargin",
           "value": "75"
         },
         {
+          "cpp": "QStyle::PM_LayoutTopMargin",
           "name": "PM_LayoutTopMargin",
           "value": "76"
         },
         {
+          "cpp": "QStyle::PM_LayoutRightMargin",
           "name": "PM_LayoutRightMargin",
           "value": "77"
         },
         {
+          "cpp": "QStyle::PM_LayoutBottomMargin",
           "name": "PM_LayoutBottomMargin",
           "value": "78"
         },
         {
+          "cpp": "QStyle::PM_LayoutHorizontalSpacing",
           "name": "PM_LayoutHorizontalSpacing",
           "value": "79"
         },
         {
+          "cpp": "QStyle::PM_LayoutVerticalSpacing",
           "name": "PM_LayoutVerticalSpacing",
           "value": "80"
         },
         {
+          "cpp": "QStyle::PM_TabBar_ScrollButtonOverlap",
           "name": "PM_TabBar_ScrollButtonOverlap",
           "value": "81"
         },
         {
+          "cpp": "QStyle::PM_TextCursorWidth",
           "name": "PM_TextCursorWidth",
           "value": "82"
         },
         {
+          "cpp": "QStyle::PM_TabCloseIndicatorWidth",
           "name": "PM_TabCloseIndicatorWidth",
           "value": "83"
         },
         {
+          "cpp": "QStyle::PM_TabCloseIndicatorHeight",
           "name": "PM_TabCloseIndicatorHeight",
           "value": "84"
         },
         {
+          "cpp": "QStyle::PM_ScrollView_ScrollBarSpacing",
           "name": "PM_ScrollView_ScrollBarSpacing",
           "value": "85"
         },
         {
+          "cpp": "QStyle::PM_ScrollView_ScrollBarOverlap",
           "name": "PM_ScrollView_ScrollBarOverlap",
           "value": "86"
         },
         {
+          "cpp": "QStyle::PM_SubMenuOverlap",
           "name": "PM_SubMenuOverlap",
           "value": "87"
         },
         {
+          "cpp": "QStyle::PM_TreeViewIndentation",
           "name": "PM_TreeViewIndentation",
           "value": "88"
         },
         {
+          "cpp": "QStyle::PM_HeaderDefaultSectionSizeHorizontal",
           "name": "PM_HeaderDefaultSectionSizeHorizontal",
           "value": "89"
         },
         {
+          "cpp": "QStyle::PM_HeaderDefaultSectionSizeVertical",
           "name": "PM_HeaderDefaultSectionSizeVertical",
           "value": "90"
         },
         {
+          "cpp": "QStyle::PM_TitleBarButtonIconSize",
           "name": "PM_TitleBarButtonIconSize",
           "value": "91"
         },
         {
+          "cpp": "QStyle::PM_TitleBarButtonSize",
           "name": "PM_TitleBarButtonSize",
           "value": "92"
         },
         {
+          "cpp": "QStyle::PM_LineEditIconSize",
           "name": "PM_LineEditIconSize",
           "value": "93"
         },
         {
+          "cpp": "QStyle::PM_LineEditIconMargin",
           "name": "PM_LineEditIconMargin",
           "value": "94"
         },
         {
+          "cpp": "QStyle::PM_CustomBase",
           "name": "PM_CustomBase",
           "value": "0xf0000000"
         }
@@ -964,215 +1153,270 @@
         "scoped": false
       },
       "name": "PixelMetric",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::PrimitiveElement",
       "members": [
         {
+          "cpp": "QStyle::PE_Frame",
           "name": "PE_Frame",
           "value": "0"
         },
         {
+          "cpp": "QStyle::PE_FrameDefaultButton",
           "name": "PE_FrameDefaultButton",
           "value": "1"
         },
         {
+          "cpp": "QStyle::PE_FrameDockWidget",
           "name": "PE_FrameDockWidget",
           "value": "2"
         },
         {
+          "cpp": "QStyle::PE_FrameFocusRect",
           "name": "PE_FrameFocusRect",
           "value": "3"
         },
         {
+          "cpp": "QStyle::PE_FrameGroupBox",
           "name": "PE_FrameGroupBox",
           "value": "4"
         },
         {
+          "cpp": "QStyle::PE_FrameLineEdit",
           "name": "PE_FrameLineEdit",
           "value": "5"
         },
         {
+          "cpp": "QStyle::PE_FrameMenu",
           "name": "PE_FrameMenu",
           "value": "6"
         },
         {
+          "cpp": "QStyle::PE_FrameStatusBarItem",
           "name": "PE_FrameStatusBarItem",
           "value": "7"
         },
         {
+          "cpp": "QStyle::PE_FrameTabWidget",
           "name": "PE_FrameTabWidget",
           "value": "8"
         },
         {
+          "cpp": "QStyle::PE_FrameWindow",
           "name": "PE_FrameWindow",
           "value": "9"
         },
         {
+          "cpp": "QStyle::PE_FrameButtonBevel",
           "name": "PE_FrameButtonBevel",
           "value": "10"
         },
         {
+          "cpp": "QStyle::PE_FrameButtonTool",
           "name": "PE_FrameButtonTool",
           "value": "11"
         },
         {
+          "cpp": "QStyle::PE_FrameTabBarBase",
           "name": "PE_FrameTabBarBase",
           "value": "12"
         },
         {
+          "cpp": "QStyle::PE_PanelButtonCommand",
           "name": "PE_PanelButtonCommand",
           "value": "13"
         },
         {
+          "cpp": "QStyle::PE_PanelButtonBevel",
           "name": "PE_PanelButtonBevel",
           "value": "14"
         },
         {
+          "cpp": "QStyle::PE_PanelButtonTool",
           "name": "PE_PanelButtonTool",
           "value": "15"
         },
         {
+          "cpp": "QStyle::PE_PanelMenuBar",
           "name": "PE_PanelMenuBar",
           "value": "16"
         },
         {
+          "cpp": "QStyle::PE_PanelToolBar",
           "name": "PE_PanelToolBar",
           "value": "17"
         },
         {
+          "cpp": "QStyle::PE_PanelLineEdit",
           "name": "PE_PanelLineEdit",
           "value": "18"
         },
         {
+          "cpp": "QStyle::PE_IndicatorArrowDown",
           "name": "PE_IndicatorArrowDown",
           "value": "19"
         },
         {
+          "cpp": "QStyle::PE_IndicatorArrowLeft",
           "name": "PE_IndicatorArrowLeft",
           "value": "20"
         },
         {
+          "cpp": "QStyle::PE_IndicatorArrowRight",
           "name": "PE_IndicatorArrowRight",
           "value": "21"
         },
         {
+          "cpp": "QStyle::PE_IndicatorArrowUp",
           "name": "PE_IndicatorArrowUp",
           "value": "22"
         },
         {
+          "cpp": "QStyle::PE_IndicatorBranch",
           "name": "PE_IndicatorBranch",
           "value": "23"
         },
         {
+          "cpp": "QStyle::PE_IndicatorButtonDropDown",
           "name": "PE_IndicatorButtonDropDown",
           "value": "24"
         },
         {
+          "cpp": "QStyle::PE_IndicatorItemViewItemCheck",
           "name": "PE_IndicatorItemViewItemCheck",
           "value": "25"
         },
         {
+          "cpp": "QStyle::PE_IndicatorCheckBox",
           "name": "PE_IndicatorCheckBox",
           "value": "26"
         },
         {
+          "cpp": "QStyle::PE_IndicatorDockWidgetResizeHandle",
           "name": "PE_IndicatorDockWidgetResizeHandle",
           "value": "27"
         },
         {
+          "cpp": "QStyle::PE_IndicatorHeaderArrow",
           "name": "PE_IndicatorHeaderArrow",
           "value": "28"
         },
         {
+          "cpp": "QStyle::PE_IndicatorMenuCheckMark",
           "name": "PE_IndicatorMenuCheckMark",
           "value": "29"
         },
         {
+          "cpp": "QStyle::PE_IndicatorProgressChunk",
           "name": "PE_IndicatorProgressChunk",
           "value": "30"
         },
         {
+          "cpp": "QStyle::PE_IndicatorRadioButton",
           "name": "PE_IndicatorRadioButton",
           "value": "31"
         },
         {
+          "cpp": "QStyle::PE_IndicatorSpinDown",
           "name": "PE_IndicatorSpinDown",
           "value": "32"
         },
         {
+          "cpp": "QStyle::PE_IndicatorSpinMinus",
           "name": "PE_IndicatorSpinMinus",
           "value": "33"
         },
         {
+          "cpp": "QStyle::PE_IndicatorSpinPlus",
           "name": "PE_IndicatorSpinPlus",
           "value": "34"
         },
         {
+          "cpp": "QStyle::PE_IndicatorSpinUp",
           "name": "PE_IndicatorSpinUp",
           "value": "35"
         },
         {
+          "cpp": "QStyle::PE_IndicatorToolBarHandle",
           "name": "PE_IndicatorToolBarHandle",
           "value": "36"
         },
         {
+          "cpp": "QStyle::PE_IndicatorToolBarSeparator",
           "name": "PE_IndicatorToolBarSeparator",
           "value": "37"
         },
         {
+          "cpp": "QStyle::PE_PanelTipLabel",
           "name": "PE_PanelTipLabel",
           "value": "38"
         },
         {
+          "cpp": "QStyle::PE_IndicatorTabTear",
           "name": "PE_IndicatorTabTear",
           "value": "39"
         },
         {
+          "cpp": "QStyle::PE_IndicatorTabTearLeft",
           "name": "PE_IndicatorTabTearLeft",
           "value": "PE_IndicatorTabTear"
         },
         {
+          "cpp": "QStyle::PE_PanelScrollAreaCorner",
           "name": "PE_PanelScrollAreaCorner",
           "value": "40"
         },
         {
+          "cpp": "QStyle::PE_Widget",
           "name": "PE_Widget",
           "value": "41"
         },
         {
+          "cpp": "QStyle::PE_IndicatorColumnViewArrow",
           "name": "PE_IndicatorColumnViewArrow",
           "value": "42"
         },
         {
+          "cpp": "QStyle::PE_IndicatorItemViewItemDrop",
           "name": "PE_IndicatorItemViewItemDrop",
           "value": "43"
         },
         {
+          "cpp": "QStyle::PE_PanelItemViewItem",
           "name": "PE_PanelItemViewItem",
           "value": "44"
         },
         {
+          "cpp": "QStyle::PE_PanelItemViewRow",
           "name": "PE_PanelItemViewRow",
           "value": "45"
         },
         {
+          "cpp": "QStyle::PE_PanelStatusBar",
           "name": "PE_PanelStatusBar",
           "value": "46"
         },
         {
+          "cpp": "QStyle::PE_IndicatorTabClose",
           "name": "PE_IndicatorTabClose",
           "value": "47"
         },
         {
+          "cpp": "QStyle::PE_PanelMenu",
           "name": "PE_PanelMenu",
           "value": "48"
         },
         {
+          "cpp": "QStyle::PE_IndicatorTabTearRight",
           "name": "PE_IndicatorTabTearRight",
           "value": "49"
         },
         {
+          "cpp": "QStyle::PE_CustomBase",
           "name": "PE_CustomBase",
           "value": "0xf000000"
         }
@@ -1236,15 +1480,20 @@
         "scoped": false
       },
       "name": "PrimitiveElement",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::RequestSoftwareInputPanel",
       "members": [
         {
+          "cpp": "QStyle::RSIP_OnMouseClickAndAlreadyFocused",
           "name": "RSIP_OnMouseClickAndAlreadyFocused",
           "value": "0"
         },
         {
+          "cpp": "QStyle::RSIP_OnMouseClick",
           "name": "RSIP_OnMouseClick",
           "value": "1"
         }
@@ -1258,331 +1507,415 @@
         "scoped": false
       },
       "name": "RequestSoftwareInputPanel",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::StandardPixmap",
       "members": [
         {
+          "cpp": "QStyle::SP_TitleBarMenuButton",
           "name": "SP_TitleBarMenuButton",
           "value": "0"
         },
         {
+          "cpp": "QStyle::SP_TitleBarMinButton",
           "name": "SP_TitleBarMinButton",
           "value": "1"
         },
         {
+          "cpp": "QStyle::SP_TitleBarMaxButton",
           "name": "SP_TitleBarMaxButton",
           "value": "2"
         },
         {
+          "cpp": "QStyle::SP_TitleBarCloseButton",
           "name": "SP_TitleBarCloseButton",
           "value": "3"
         },
         {
+          "cpp": "QStyle::SP_TitleBarNormalButton",
           "name": "SP_TitleBarNormalButton",
           "value": "4"
         },
         {
+          "cpp": "QStyle::SP_TitleBarShadeButton",
           "name": "SP_TitleBarShadeButton",
           "value": "5"
         },
         {
+          "cpp": "QStyle::SP_TitleBarUnshadeButton",
           "name": "SP_TitleBarUnshadeButton",
           "value": "6"
         },
         {
+          "cpp": "QStyle::SP_TitleBarContextHelpButton",
           "name": "SP_TitleBarContextHelpButton",
           "value": "7"
         },
         {
+          "cpp": "QStyle::SP_DockWidgetCloseButton",
           "name": "SP_DockWidgetCloseButton",
           "value": "8"
         },
         {
+          "cpp": "QStyle::SP_MessageBoxInformation",
           "name": "SP_MessageBoxInformation",
           "value": "9"
         },
         {
+          "cpp": "QStyle::SP_MessageBoxWarning",
           "name": "SP_MessageBoxWarning",
           "value": "10"
         },
         {
+          "cpp": "QStyle::SP_MessageBoxCritical",
           "name": "SP_MessageBoxCritical",
           "value": "11"
         },
         {
+          "cpp": "QStyle::SP_MessageBoxQuestion",
           "name": "SP_MessageBoxQuestion",
           "value": "12"
         },
         {
+          "cpp": "QStyle::SP_DesktopIcon",
           "name": "SP_DesktopIcon",
           "value": "13"
         },
         {
+          "cpp": "QStyle::SP_TrashIcon",
           "name": "SP_TrashIcon",
           "value": "14"
         },
         {
+          "cpp": "QStyle::SP_ComputerIcon",
           "name": "SP_ComputerIcon",
           "value": "15"
         },
         {
+          "cpp": "QStyle::SP_DriveFDIcon",
           "name": "SP_DriveFDIcon",
           "value": "16"
         },
         {
+          "cpp": "QStyle::SP_DriveHDIcon",
           "name": "SP_DriveHDIcon",
           "value": "17"
         },
         {
+          "cpp": "QStyle::SP_DriveCDIcon",
           "name": "SP_DriveCDIcon",
           "value": "18"
         },
         {
+          "cpp": "QStyle::SP_DriveDVDIcon",
           "name": "SP_DriveDVDIcon",
           "value": "19"
         },
         {
+          "cpp": "QStyle::SP_DriveNetIcon",
           "name": "SP_DriveNetIcon",
           "value": "20"
         },
         {
+          "cpp": "QStyle::SP_DirOpenIcon",
           "name": "SP_DirOpenIcon",
           "value": "21"
         },
         {
+          "cpp": "QStyle::SP_DirClosedIcon",
           "name": "SP_DirClosedIcon",
           "value": "22"
         },
         {
+          "cpp": "QStyle::SP_DirLinkIcon",
           "name": "SP_DirLinkIcon",
           "value": "23"
         },
         {
+          "cpp": "QStyle::SP_DirLinkOpenIcon",
           "name": "SP_DirLinkOpenIcon",
           "value": "24"
         },
         {
+          "cpp": "QStyle::SP_FileIcon",
           "name": "SP_FileIcon",
           "value": "25"
         },
         {
+          "cpp": "QStyle::SP_FileLinkIcon",
           "name": "SP_FileLinkIcon",
           "value": "26"
         },
         {
+          "cpp": "QStyle::SP_ToolBarHorizontalExtensionButton",
           "name": "SP_ToolBarHorizontalExtensionButton",
           "value": "27"
         },
         {
+          "cpp": "QStyle::SP_ToolBarVerticalExtensionButton",
           "name": "SP_ToolBarVerticalExtensionButton",
           "value": "28"
         },
         {
+          "cpp": "QStyle::SP_FileDialogStart",
           "name": "SP_FileDialogStart",
           "value": "29"
         },
         {
+          "cpp": "QStyle::SP_FileDialogEnd",
           "name": "SP_FileDialogEnd",
           "value": "30"
         },
         {
+          "cpp": "QStyle::SP_FileDialogToParent",
           "name": "SP_FileDialogToParent",
           "value": "31"
         },
         {
+          "cpp": "QStyle::SP_FileDialogNewFolder",
           "name": "SP_FileDialogNewFolder",
           "value": "32"
         },
         {
+          "cpp": "QStyle::SP_FileDialogDetailedView",
           "name": "SP_FileDialogDetailedView",
           "value": "33"
         },
         {
+          "cpp": "QStyle::SP_FileDialogInfoView",
           "name": "SP_FileDialogInfoView",
           "value": "34"
         },
         {
+          "cpp": "QStyle::SP_FileDialogContentsView",
           "name": "SP_FileDialogContentsView",
           "value": "35"
         },
         {
+          "cpp": "QStyle::SP_FileDialogListView",
           "name": "SP_FileDialogListView",
           "value": "36"
         },
         {
+          "cpp": "QStyle::SP_FileDialogBack",
           "name": "SP_FileDialogBack",
           "value": "37"
         },
         {
+          "cpp": "QStyle::SP_DirIcon",
           "name": "SP_DirIcon",
           "value": "38"
         },
         {
+          "cpp": "QStyle::SP_DialogOkButton",
           "name": "SP_DialogOkButton",
           "value": "39"
         },
         {
+          "cpp": "QStyle::SP_DialogCancelButton",
           "name": "SP_DialogCancelButton",
           "value": "40"
         },
         {
+          "cpp": "QStyle::SP_DialogHelpButton",
           "name": "SP_DialogHelpButton",
           "value": "41"
         },
         {
+          "cpp": "QStyle::SP_DialogOpenButton",
           "name": "SP_DialogOpenButton",
           "value": "42"
         },
         {
+          "cpp": "QStyle::SP_DialogSaveButton",
           "name": "SP_DialogSaveButton",
           "value": "43"
         },
         {
+          "cpp": "QStyle::SP_DialogCloseButton",
           "name": "SP_DialogCloseButton",
           "value": "44"
         },
         {
+          "cpp": "QStyle::SP_DialogApplyButton",
           "name": "SP_DialogApplyButton",
           "value": "45"
         },
         {
+          "cpp": "QStyle::SP_DialogResetButton",
           "name": "SP_DialogResetButton",
           "value": "46"
         },
         {
+          "cpp": "QStyle::SP_DialogDiscardButton",
           "name": "SP_DialogDiscardButton",
           "value": "47"
         },
         {
+          "cpp": "QStyle::SP_DialogYesButton",
           "name": "SP_DialogYesButton",
           "value": "48"
         },
         {
+          "cpp": "QStyle::SP_DialogNoButton",
           "name": "SP_DialogNoButton",
           "value": "49"
         },
         {
+          "cpp": "QStyle::SP_ArrowUp",
           "name": "SP_ArrowUp",
           "value": "50"
         },
         {
+          "cpp": "QStyle::SP_ArrowDown",
           "name": "SP_ArrowDown",
           "value": "51"
         },
         {
+          "cpp": "QStyle::SP_ArrowLeft",
           "name": "SP_ArrowLeft",
           "value": "52"
         },
         {
+          "cpp": "QStyle::SP_ArrowRight",
           "name": "SP_ArrowRight",
           "value": "53"
         },
         {
+          "cpp": "QStyle::SP_ArrowBack",
           "name": "SP_ArrowBack",
           "value": "54"
         },
         {
+          "cpp": "QStyle::SP_ArrowForward",
           "name": "SP_ArrowForward",
           "value": "55"
         },
         {
+          "cpp": "QStyle::SP_DirHomeIcon",
           "name": "SP_DirHomeIcon",
           "value": "56"
         },
         {
+          "cpp": "QStyle::SP_CommandLink",
           "name": "SP_CommandLink",
           "value": "57"
         },
         {
+          "cpp": "QStyle::SP_VistaShield",
           "name": "SP_VistaShield",
           "value": "58"
         },
         {
+          "cpp": "QStyle::SP_BrowserReload",
           "name": "SP_BrowserReload",
           "value": "59"
         },
         {
+          "cpp": "QStyle::SP_BrowserStop",
           "name": "SP_BrowserStop",
           "value": "60"
         },
         {
+          "cpp": "QStyle::SP_MediaPlay",
           "name": "SP_MediaPlay",
           "value": "61"
         },
         {
+          "cpp": "QStyle::SP_MediaStop",
           "name": "SP_MediaStop",
           "value": "62"
         },
         {
+          "cpp": "QStyle::SP_MediaPause",
           "name": "SP_MediaPause",
           "value": "63"
         },
         {
+          "cpp": "QStyle::SP_MediaSkipForward",
           "name": "SP_MediaSkipForward",
           "value": "64"
         },
         {
+          "cpp": "QStyle::SP_MediaSkipBackward",
           "name": "SP_MediaSkipBackward",
           "value": "65"
         },
         {
+          "cpp": "QStyle::SP_MediaSeekForward",
           "name": "SP_MediaSeekForward",
           "value": "66"
         },
         {
+          "cpp": "QStyle::SP_MediaSeekBackward",
           "name": "SP_MediaSeekBackward",
           "value": "67"
         },
         {
+          "cpp": "QStyle::SP_MediaVolume",
           "name": "SP_MediaVolume",
           "value": "68"
         },
         {
+          "cpp": "QStyle::SP_MediaVolumeMuted",
           "name": "SP_MediaVolumeMuted",
           "value": "69"
         },
         {
+          "cpp": "QStyle::SP_LineEditClearButton",
           "name": "SP_LineEditClearButton",
           "value": "70"
         },
         {
+          "cpp": "QStyle::SP_DialogYesToAllButton",
           "name": "SP_DialogYesToAllButton",
           "value": "71"
         },
         {
+          "cpp": "QStyle::SP_DialogNoToAllButton",
           "name": "SP_DialogNoToAllButton",
           "value": "72"
         },
         {
+          "cpp": "QStyle::SP_DialogSaveAllButton",
           "name": "SP_DialogSaveAllButton",
           "value": "73"
         },
         {
+          "cpp": "QStyle::SP_DialogAbortButton",
           "name": "SP_DialogAbortButton",
           "value": "74"
         },
         {
+          "cpp": "QStyle::SP_DialogRetryButton",
           "name": "SP_DialogRetryButton",
           "value": "75"
         },
         {
+          "cpp": "QStyle::SP_DialogIgnoreButton",
           "name": "SP_DialogIgnoreButton",
           "value": "76"
         },
         {
+          "cpp": "QStyle::SP_RestoreDefaultsButton",
           "name": "SP_RestoreDefaultsButton",
           "value": "77"
         },
         {
+          "cpp": "QStyle::SP_TabCloseButton",
           "name": "SP_TabCloseButton",
           "value": "78"
         },
         {
+          "cpp": "QStyle::NStandardPixmap",
           "name": "NStandardPixmap",
           "value": "79"
         },
         {
+          "cpp": "QStyle::SP_CustomBase",
           "name": "SP_CustomBase",
           "value": "0xf0000000"
         }
@@ -1675,123 +2008,155 @@
         "scoped": false
       },
       "name": "StandardPixmap",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QStyle::State",
+      "fullname": "QStyle::StateFlag",
       "members": [
         {
+          "cpp": "QStyle::State_None",
           "name": "State_None",
           "value": "0x00000000"
         },
         {
+          "cpp": "QStyle::State_Enabled",
           "name": "State_Enabled",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::State_Raised",
           "name": "State_Raised",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::State_Sunken",
           "name": "State_Sunken",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::State_Off",
           "name": "State_Off",
           "value": "0x00000008"
         },
         {
+          "cpp": "QStyle::State_NoChange",
           "name": "State_NoChange",
           "value": "0x00000010"
         },
         {
+          "cpp": "QStyle::State_On",
           "name": "State_On",
           "value": "0x00000020"
         },
         {
+          "cpp": "QStyle::State_DownArrow",
           "name": "State_DownArrow",
           "value": "0x00000040"
         },
         {
+          "cpp": "QStyle::State_Horizontal",
           "name": "State_Horizontal",
           "value": "0x00000080"
         },
         {
+          "cpp": "QStyle::State_HasFocus",
           "name": "State_HasFocus",
           "value": "0x00000100"
         },
         {
+          "cpp": "QStyle::State_Top",
           "name": "State_Top",
           "value": "0x00000200"
         },
         {
+          "cpp": "QStyle::State_Bottom",
           "name": "State_Bottom",
           "value": "0x00000400"
         },
         {
+          "cpp": "QStyle::State_FocusAtBorder",
           "name": "State_FocusAtBorder",
           "value": "0x00000800"
         },
         {
+          "cpp": "QStyle::State_AutoRaise",
           "name": "State_AutoRaise",
           "value": "0x00001000"
         },
         {
+          "cpp": "QStyle::State_MouseOver",
           "name": "State_MouseOver",
           "value": "0x00002000"
         },
         {
+          "cpp": "QStyle::State_UpArrow",
           "name": "State_UpArrow",
           "value": "0x00004000"
         },
         {
+          "cpp": "QStyle::State_Selected",
           "name": "State_Selected",
           "value": "0x00008000"
         },
         {
+          "cpp": "QStyle::State_Active",
           "name": "State_Active",
           "value": "0x00010000"
         },
         {
+          "cpp": "QStyle::State_Window",
           "name": "State_Window",
           "value": "0x00020000"
         },
         {
+          "cpp": "QStyle::State_Open",
           "name": "State_Open",
           "value": "0x00040000"
         },
         {
+          "cpp": "QStyle::State_Children",
           "name": "State_Children",
           "value": "0x00080000"
         },
         {
+          "cpp": "QStyle::State_Item",
           "name": "State_Item",
           "value": "0x00100000"
         },
         {
+          "cpp": "QStyle::State_Sibling",
           "name": "State_Sibling",
           "value": "0x00200000"
         },
         {
+          "cpp": "QStyle::State_Editing",
           "name": "State_Editing",
           "value": "0x00400000"
         },
         {
+          "cpp": "QStyle::State_KeyboardFocusChange",
           "name": "State_KeyboardFocusChange",
           "value": "0x00800000"
         },
         {
+          "cpp": "QStyle::State_HasEditFocus",
           "name": "State_HasEditFocus",
           "value": "0x01000000"
         },
         {
+          "cpp": "QStyle::State_ReadOnly",
           "name": "State_ReadOnly",
           "value": "0x02000000"
         },
         {
+          "cpp": "QStyle::State_Small",
           "name": "State_Small",
           "value": "0x04000000"
         },
         {
+          "cpp": "QStyle::State_Mini",
           "name": "State_Mini",
           "value": "0x08000000"
         }
@@ -1831,499 +2196,625 @@
         "scoped": false
       },
       "name": "StateFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::StyleHint",
       "members": [
         {
+          "cpp": "QStyle::SH_EtchDisabledText",
           "name": "SH_EtchDisabledText",
           "value": "0"
         },
         {
+          "cpp": "QStyle::SH_DitherDisabledText",
           "name": "SH_DitherDisabledText",
           "value": "1"
         },
         {
+          "cpp": "QStyle::SH_ScrollBar_MiddleClickAbsolutePosition",
           "name": "SH_ScrollBar_MiddleClickAbsolutePosition",
           "value": "2"
         },
         {
+          "cpp": "QStyle::SH_ScrollBar_ScrollWhenPointerLeavesControl",
           "name": "SH_ScrollBar_ScrollWhenPointerLeavesControl",
           "value": "3"
         },
         {
+          "cpp": "QStyle::SH_TabBar_SelectMouseType",
           "name": "SH_TabBar_SelectMouseType",
           "value": "4"
         },
         {
+          "cpp": "QStyle::SH_TabBar_Alignment",
           "name": "SH_TabBar_Alignment",
           "value": "5"
         },
         {
+          "cpp": "QStyle::SH_Header_ArrowAlignment",
           "name": "SH_Header_ArrowAlignment",
           "value": "6"
         },
         {
+          "cpp": "QStyle::SH_Slider_SnapToValue",
           "name": "SH_Slider_SnapToValue",
           "value": "7"
         },
         {
+          "cpp": "QStyle::SH_Slider_SloppyKeyEvents",
           "name": "SH_Slider_SloppyKeyEvents",
           "value": "8"
         },
         {
+          "cpp": "QStyle::SH_ProgressDialog_CenterCancelButton",
           "name": "SH_ProgressDialog_CenterCancelButton",
           "value": "9"
         },
         {
+          "cpp": "QStyle::SH_ProgressDialog_TextLabelAlignment",
           "name": "SH_ProgressDialog_TextLabelAlignment",
           "value": "10"
         },
         {
+          "cpp": "QStyle::SH_PrintDialog_RightAlignButtons",
           "name": "SH_PrintDialog_RightAlignButtons",
           "value": "11"
         },
         {
+          "cpp": "QStyle::SH_MainWindow_SpaceBelowMenuBar",
           "name": "SH_MainWindow_SpaceBelowMenuBar",
           "value": "12"
         },
         {
+          "cpp": "QStyle::SH_FontDialog_SelectAssociatedText",
           "name": "SH_FontDialog_SelectAssociatedText",
           "value": "13"
         },
         {
+          "cpp": "QStyle::SH_Menu_AllowActiveAndDisabled",
           "name": "SH_Menu_AllowActiveAndDisabled",
           "value": "14"
         },
         {
+          "cpp": "QStyle::SH_Menu_SpaceActivatesItem",
           "name": "SH_Menu_SpaceActivatesItem",
           "value": "15"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuPopupDelay",
           "name": "SH_Menu_SubMenuPopupDelay",
           "value": "16"
         },
         {
+          "cpp": "QStyle::SH_ScrollView_FrameOnlyAroundContents",
           "name": "SH_ScrollView_FrameOnlyAroundContents",
           "value": "17"
         },
         {
+          "cpp": "QStyle::SH_MenuBar_AltKeyNavigation",
           "name": "SH_MenuBar_AltKeyNavigation",
           "value": "18"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_ListMouseTracking",
           "name": "SH_ComboBox_ListMouseTracking",
           "value": "19"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_ListMouseTracking_Current",
           "name": "SH_ComboBox_ListMouseTracking_Current",
           "value": "SH_ComboBox_ListMouseTracking"
         },
         {
+          "cpp": "QStyle::SH_Menu_MouseTracking",
           "name": "SH_Menu_MouseTracking",
           "value": "20"
         },
         {
+          "cpp": "QStyle::SH_MenuBar_MouseTracking",
           "name": "SH_MenuBar_MouseTracking",
           "value": "21"
         },
         {
+          "cpp": "QStyle::SH_ItemView_ChangeHighlightOnFocus",
           "name": "SH_ItemView_ChangeHighlightOnFocus",
           "value": "22"
         },
         {
+          "cpp": "QStyle::SH_Widget_ShareActivation",
           "name": "SH_Widget_ShareActivation",
           "value": "23"
         },
         {
+          "cpp": "QStyle::SH_Workspace_FillSpaceOnMaximize",
           "name": "SH_Workspace_FillSpaceOnMaximize",
           "value": "24"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_Popup",
           "name": "SH_ComboBox_Popup",
           "value": "25"
         },
         {
+          "cpp": "QStyle::SH_TitleBar_NoBorder",
           "name": "SH_TitleBar_NoBorder",
           "value": "26"
         },
         {
+          "cpp": "QStyle::SH_Slider_StopMouseOverSlider",
           "name": "SH_Slider_StopMouseOverSlider",
           "value": "27"
         },
         {
+          "cpp": "QStyle::SH_BlinkCursorWhenTextSelected",
           "name": "SH_BlinkCursorWhenTextSelected",
           "value": "28"
         },
         {
+          "cpp": "QStyle::SH_RichText_FullWidthSelection",
           "name": "SH_RichText_FullWidthSelection",
           "value": "29"
         },
         {
+          "cpp": "QStyle::SH_Menu_Scrollable",
           "name": "SH_Menu_Scrollable",
           "value": "30"
         },
         {
+          "cpp": "QStyle::SH_GroupBox_TextLabelVerticalAlignment",
           "name": "SH_GroupBox_TextLabelVerticalAlignment",
           "value": "31"
         },
         {
+          "cpp": "QStyle::SH_GroupBox_TextLabelColor",
           "name": "SH_GroupBox_TextLabelColor",
           "value": "32"
         },
         {
+          "cpp": "QStyle::SH_Menu_SloppySubMenus",
           "name": "SH_Menu_SloppySubMenus",
           "value": "33"
         },
         {
+          "cpp": "QStyle::SH_Table_GridLineColor",
           "name": "SH_Table_GridLineColor",
           "value": "34"
         },
         {
+          "cpp": "QStyle::SH_LineEdit_PasswordCharacter",
           "name": "SH_LineEdit_PasswordCharacter",
           "value": "35"
         },
         {
+          "cpp": "QStyle::SH_DialogButtons_DefaultButton",
           "name": "SH_DialogButtons_DefaultButton",
           "value": "36"
         },
         {
+          "cpp": "QStyle::SH_ToolBox_SelectedPageTitleBold",
           "name": "SH_ToolBox_SelectedPageTitleBold",
           "value": "37"
         },
         {
+          "cpp": "QStyle::SH_TabBar_PreferNoArrows",
           "name": "SH_TabBar_PreferNoArrows",
           "value": "38"
         },
         {
+          "cpp": "QStyle::SH_ScrollBar_LeftClickAbsolutePosition",
           "name": "SH_ScrollBar_LeftClickAbsolutePosition",
           "value": "39"
         },
         {
+          "cpp": "QStyle::SH_ListViewExpand_SelectMouseType",
           "name": "SH_ListViewExpand_SelectMouseType",
           "value": "40"
         },
         {
+          "cpp": "QStyle::SH_UnderlineShortcut",
           "name": "SH_UnderlineShortcut",
           "value": "41"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_AnimateButton",
           "name": "SH_SpinBox_AnimateButton",
           "value": "42"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_KeyPressAutoRepeatRate",
           "name": "SH_SpinBox_KeyPressAutoRepeatRate",
           "value": "43"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_ClickAutoRepeatRate",
           "name": "SH_SpinBox_ClickAutoRepeatRate",
           "value": "44"
         },
         {
+          "cpp": "QStyle::SH_Menu_FillScreenWithScroll",
           "name": "SH_Menu_FillScreenWithScroll",
           "value": "45"
         },
         {
+          "cpp": "QStyle::SH_ToolTipLabel_Opacity",
           "name": "SH_ToolTipLabel_Opacity",
           "value": "46"
         },
         {
+          "cpp": "QStyle::SH_DrawMenuBarSeparator",
           "name": "SH_DrawMenuBarSeparator",
           "value": "47"
         },
         {
+          "cpp": "QStyle::SH_TitleBar_ModifyNotification",
           "name": "SH_TitleBar_ModifyNotification",
           "value": "48"
         },
         {
+          "cpp": "QStyle::SH_Button_FocusPolicy",
           "name": "SH_Button_FocusPolicy",
           "value": "49"
         },
         {
+          "cpp": "QStyle::SH_MessageBox_UseBorderForButtonSpacing",
           "name": "SH_MessageBox_UseBorderForButtonSpacing",
           "value": "50"
         },
         {
+          "cpp": "QStyle::SH_TitleBar_AutoRaise",
           "name": "SH_TitleBar_AutoRaise",
           "value": "51"
         },
         {
+          "cpp": "QStyle::SH_ToolButton_PopupDelay",
           "name": "SH_ToolButton_PopupDelay",
           "value": "52"
         },
         {
+          "cpp": "QStyle::SH_FocusFrame_Mask",
           "name": "SH_FocusFrame_Mask",
           "value": "53"
         },
         {
+          "cpp": "QStyle::SH_RubberBand_Mask",
           "name": "SH_RubberBand_Mask",
           "value": "54"
         },
         {
+          "cpp": "QStyle::SH_WindowFrame_Mask",
           "name": "SH_WindowFrame_Mask",
           "value": "55"
         },
         {
+          "cpp": "QStyle::SH_SpinControls_DisableOnBounds",
           "name": "SH_SpinControls_DisableOnBounds",
           "value": "56"
         },
         {
+          "cpp": "QStyle::SH_Dial_BackgroundRole",
           "name": "SH_Dial_BackgroundRole",
           "value": "57"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_LayoutDirection",
           "name": "SH_ComboBox_LayoutDirection",
           "value": "58"
         },
         {
+          "cpp": "QStyle::SH_ItemView_EllipsisLocation",
           "name": "SH_ItemView_EllipsisLocation",
           "value": "59"
         },
         {
+          "cpp": "QStyle::SH_ItemView_ShowDecorationSelected",
           "name": "SH_ItemView_ShowDecorationSelected",
           "value": "60"
         },
         {
+          "cpp": "QStyle::SH_ItemView_ActivateItemOnSingleClick",
           "name": "SH_ItemView_ActivateItemOnSingleClick",
           "value": "61"
         },
         {
+          "cpp": "QStyle::SH_ScrollBar_ContextMenu",
           "name": "SH_ScrollBar_ContextMenu",
           "value": "62"
         },
         {
+          "cpp": "QStyle::SH_ScrollBar_RollBetweenButtons",
           "name": "SH_ScrollBar_RollBetweenButtons",
           "value": "63"
         },
         {
+          "cpp": "QStyle::SH_Slider_AbsoluteSetButtons",
           "name": "SH_Slider_AbsoluteSetButtons",
           "value": "64"
         },
         {
+          "cpp": "QStyle::SH_Slider_PageSetButtons",
           "name": "SH_Slider_PageSetButtons",
           "value": "65"
         },
         {
+          "cpp": "QStyle::SH_Menu_KeyboardSearch",
           "name": "SH_Menu_KeyboardSearch",
           "value": "66"
         },
         {
+          "cpp": "QStyle::SH_TabBar_ElideMode",
           "name": "SH_TabBar_ElideMode",
           "value": "67"
         },
         {
+          "cpp": "QStyle::SH_DialogButtonLayout",
           "name": "SH_DialogButtonLayout",
           "value": "68"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_PopupFrameStyle",
           "name": "SH_ComboBox_PopupFrameStyle",
           "value": "69"
         },
         {
+          "cpp": "QStyle::SH_MessageBox_TextInteractionFlags",
           "name": "SH_MessageBox_TextInteractionFlags",
           "value": "70"
         },
         {
+          "cpp": "QStyle::SH_DialogButtonBox_ButtonsHaveIcons",
           "name": "SH_DialogButtonBox_ButtonsHaveIcons",
           "value": "71"
         },
         {
+          "cpp": "QStyle::SH_MessageBox_CenterButtons",
           "name": "SH_MessageBox_CenterButtons",
           "value": "72"
         },
         {
+          "cpp": "QStyle::SH_Menu_SelectionWrap",
           "name": "SH_Menu_SelectionWrap",
           "value": "73"
         },
         {
+          "cpp": "QStyle::SH_ItemView_MovementWithoutUpdatingSelection",
           "name": "SH_ItemView_MovementWithoutUpdatingSelection",
           "value": "74"
         },
         {
+          "cpp": "QStyle::SH_ToolTip_Mask",
           "name": "SH_ToolTip_Mask",
           "value": "75"
         },
         {
+          "cpp": "QStyle::SH_FocusFrame_AboveWidget",
           "name": "SH_FocusFrame_AboveWidget",
           "value": "76"
         },
         {
+          "cpp": "QStyle::SH_TextControl_FocusIndicatorTextCharFormat",
           "name": "SH_TextControl_FocusIndicatorTextCharFormat",
           "value": "77"
         },
         {
+          "cpp": "QStyle::SH_WizardStyle",
           "name": "SH_WizardStyle",
           "value": "78"
         },
         {
+          "cpp": "QStyle::SH_ItemView_ArrowKeysNavigateIntoChildren",
           "name": "SH_ItemView_ArrowKeysNavigateIntoChildren",
           "value": "79"
         },
         {
+          "cpp": "QStyle::SH_Menu_Mask",
           "name": "SH_Menu_Mask",
           "value": "80"
         },
         {
+          "cpp": "QStyle::SH_Menu_FlashTriggeredItem",
           "name": "SH_Menu_FlashTriggeredItem",
           "value": "81"
         },
         {
+          "cpp": "QStyle::SH_Menu_FadeOutOnHide",
           "name": "SH_Menu_FadeOutOnHide",
           "value": "82"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_ClickAutoRepeatThreshold",
           "name": "SH_SpinBox_ClickAutoRepeatThreshold",
           "value": "83"
         },
         {
+          "cpp": "QStyle::SH_ItemView_PaintAlternatingRowColorsForEmptyArea",
           "name": "SH_ItemView_PaintAlternatingRowColorsForEmptyArea",
           "value": "84"
         },
         {
+          "cpp": "QStyle::SH_FormLayoutWrapPolicy",
           "name": "SH_FormLayoutWrapPolicy",
           "value": "85"
         },
         {
+          "cpp": "QStyle::SH_TabWidget_DefaultTabPosition",
           "name": "SH_TabWidget_DefaultTabPosition",
           "value": "86"
         },
         {
+          "cpp": "QStyle::SH_ToolBar_Movable",
           "name": "SH_ToolBar_Movable",
           "value": "87"
         },
         {
+          "cpp": "QStyle::SH_FormLayoutFieldGrowthPolicy",
           "name": "SH_FormLayoutFieldGrowthPolicy",
           "value": "88"
         },
         {
+          "cpp": "QStyle::SH_FormLayoutFormAlignment",
           "name": "SH_FormLayoutFormAlignment",
           "value": "89"
         },
         {
+          "cpp": "QStyle::SH_FormLayoutLabelAlignment",
           "name": "SH_FormLayoutLabelAlignment",
           "value": "90"
         },
         {
+          "cpp": "QStyle::SH_ItemView_DrawDelegateFrame",
           "name": "SH_ItemView_DrawDelegateFrame",
           "value": "91"
         },
         {
+          "cpp": "QStyle::SH_TabBar_CloseButtonPosition",
           "name": "SH_TabBar_CloseButtonPosition",
           "value": "92"
         },
         {
+          "cpp": "QStyle::SH_DockWidget_ButtonsHaveFrame",
           "name": "SH_DockWidget_ButtonsHaveFrame",
           "value": "93"
         },
         {
+          "cpp": "QStyle::SH_ToolButtonStyle",
           "name": "SH_ToolButtonStyle",
           "value": "94"
         },
         {
+          "cpp": "QStyle::SH_RequestSoftwareInputPanel",
           "name": "SH_RequestSoftwareInputPanel",
           "value": "95"
         },
         {
+          "cpp": "QStyle::SH_ScrollBar_Transient",
           "name": "SH_ScrollBar_Transient",
           "value": "96"
         },
         {
+          "cpp": "QStyle::SH_Menu_SupportsSections",
           "name": "SH_Menu_SupportsSections",
           "value": "97"
         },
         {
+          "cpp": "QStyle::SH_ToolTip_WakeUpDelay",
           "name": "SH_ToolTip_WakeUpDelay",
           "value": "98"
         },
         {
+          "cpp": "QStyle::SH_ToolTip_FallAsleepDelay",
           "name": "SH_ToolTip_FallAsleepDelay",
           "value": "99"
         },
         {
+          "cpp": "QStyle::SH_Widget_Animate",
           "name": "SH_Widget_Animate",
           "value": "100"
         },
         {
+          "cpp": "QStyle::SH_Splitter_OpaqueResize",
           "name": "SH_Splitter_OpaqueResize",
           "value": "101"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_UseNativePopup",
           "name": "SH_ComboBox_UseNativePopup",
           "value": "102"
         },
         {
+          "cpp": "QStyle::SH_LineEdit_PasswordMaskDelay",
           "name": "SH_LineEdit_PasswordMaskDelay",
           "value": "103"
         },
         {
+          "cpp": "QStyle::SH_TabBar_ChangeCurrentDelay",
           "name": "SH_TabBar_ChangeCurrentDelay",
           "value": "104"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuUniDirection",
           "name": "SH_Menu_SubMenuUniDirection",
           "value": "105"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuUniDirectionFailCount",
           "name": "SH_Menu_SubMenuUniDirectionFailCount",
           "value": "106"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuSloppySelectOtherActions",
           "name": "SH_Menu_SubMenuSloppySelectOtherActions",
           "value": "107"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuSloppyCloseTimeout",
           "name": "SH_Menu_SubMenuSloppyCloseTimeout",
           "value": "108"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuResetWhenReenteringParent",
           "name": "SH_Menu_SubMenuResetWhenReenteringParent",
           "value": "109"
         },
         {
+          "cpp": "QStyle::SH_Menu_SubMenuDontStartSloppyOnLeave",
           "name": "SH_Menu_SubMenuDontStartSloppyOnLeave",
           "value": "110"
         },
         {
+          "cpp": "QStyle::SH_ItemView_ScrollMode",
           "name": "SH_ItemView_ScrollMode",
           "value": "111"
         },
         {
+          "cpp": "QStyle::SH_TitleBar_ShowToolTipsOnButtons",
           "name": "SH_TitleBar_ShowToolTipsOnButtons",
           "value": "112"
         },
         {
+          "cpp": "QStyle::SH_Widget_Animation_Duration",
           "name": "SH_Widget_Animation_Duration",
           "value": "113"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_AllowWheelScrolling",
           "name": "SH_ComboBox_AllowWheelScrolling",
           "value": "114"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_ButtonsInsideFrame",
           "name": "SH_SpinBox_ButtonsInsideFrame",
           "value": "115"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_StepModifier",
           "name": "SH_SpinBox_StepModifier",
           "value": "116"
         },
         {
+          "cpp": "QStyle::SH_TabBar_AllowWheelScrolling",
           "name": "SH_TabBar_AllowWheelScrolling",
           "value": "117"
         },
         {
+          "cpp": "QStyle::SH_Table_AlwaysDrawLeftTopGridLines",
           "name": "SH_Table_AlwaysDrawLeftTopGridLines",
           "value": "118"
         },
         {
+          "cpp": "QStyle::SH_SpinBox_SelectOnStep",
           "name": "SH_SpinBox_SelectOnStep",
           "value": "119"
         },
         {
+          "cpp": "QStyle::SH_ComboBox_ListMouseTracking_Active",
           "name": "SH_ComboBox_ListMouseTracking_Active",
           "value": "120"
         },
         {
+          "cpp": "QStyle::SH_CustomBase",
           "name": "SH_CustomBase",
           "value": "0xf0000000"
         }
@@ -2458,179 +2949,225 @@
         "scoped": false
       },
       "name": "StyleHint",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QStyle::SubControls",
+      "fullname": "QStyle::SubControl",
       "members": [
         {
+          "cpp": "QStyle::SC_None",
           "name": "SC_None",
           "value": "0x00000000"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarAddLine",
           "name": "SC_ScrollBarAddLine",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarSubLine",
           "name": "SC_ScrollBarSubLine",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarAddPage",
           "name": "SC_ScrollBarAddPage",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarSubPage",
           "name": "SC_ScrollBarSubPage",
           "value": "0x00000008"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarFirst",
           "name": "SC_ScrollBarFirst",
           "value": "0x00000010"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarLast",
           "name": "SC_ScrollBarLast",
           "value": "0x00000020"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarSlider",
           "name": "SC_ScrollBarSlider",
           "value": "0x00000040"
         },
         {
+          "cpp": "QStyle::SC_ScrollBarGroove",
           "name": "SC_ScrollBarGroove",
           "value": "0x00000080"
         },
         {
+          "cpp": "QStyle::SC_SpinBoxUp",
           "name": "SC_SpinBoxUp",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_SpinBoxDown",
           "name": "SC_SpinBoxDown",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_SpinBoxFrame",
           "name": "SC_SpinBoxFrame",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_SpinBoxEditField",
           "name": "SC_SpinBoxEditField",
           "value": "0x00000008"
         },
         {
+          "cpp": "QStyle::SC_ComboBoxFrame",
           "name": "SC_ComboBoxFrame",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_ComboBoxEditField",
           "name": "SC_ComboBoxEditField",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_ComboBoxArrow",
           "name": "SC_ComboBoxArrow",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_ComboBoxListBoxPopup",
           "name": "SC_ComboBoxListBoxPopup",
           "value": "0x00000008"
         },
         {
+          "cpp": "QStyle::SC_SliderGroove",
           "name": "SC_SliderGroove",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_SliderHandle",
           "name": "SC_SliderHandle",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_SliderTickmarks",
           "name": "SC_SliderTickmarks",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_ToolButton",
           "name": "SC_ToolButton",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_ToolButtonMenu",
           "name": "SC_ToolButtonMenu",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_TitleBarSysMenu",
           "name": "SC_TitleBarSysMenu",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_TitleBarMinButton",
           "name": "SC_TitleBarMinButton",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_TitleBarMaxButton",
           "name": "SC_TitleBarMaxButton",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_TitleBarCloseButton",
           "name": "SC_TitleBarCloseButton",
           "value": "0x00000008"
         },
         {
+          "cpp": "QStyle::SC_TitleBarNormalButton",
           "name": "SC_TitleBarNormalButton",
           "value": "0x00000010"
         },
         {
+          "cpp": "QStyle::SC_TitleBarShadeButton",
           "name": "SC_TitleBarShadeButton",
           "value": "0x00000020"
         },
         {
+          "cpp": "QStyle::SC_TitleBarUnshadeButton",
           "name": "SC_TitleBarUnshadeButton",
           "value": "0x00000040"
         },
         {
+          "cpp": "QStyle::SC_TitleBarContextHelpButton",
           "name": "SC_TitleBarContextHelpButton",
           "value": "0x00000080"
         },
         {
+          "cpp": "QStyle::SC_TitleBarLabel",
           "name": "SC_TitleBarLabel",
           "value": "0x00000100"
         },
         {
+          "cpp": "QStyle::SC_DialGroove",
           "name": "SC_DialGroove",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_DialHandle",
           "name": "SC_DialHandle",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_DialTickmarks",
           "name": "SC_DialTickmarks",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_GroupBoxCheckBox",
           "name": "SC_GroupBoxCheckBox",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_GroupBoxLabel",
           "name": "SC_GroupBoxLabel",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_GroupBoxContents",
           "name": "SC_GroupBoxContents",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_GroupBoxFrame",
           "name": "SC_GroupBoxFrame",
           "value": "0x00000008"
         },
         {
+          "cpp": "QStyle::SC_MdiMinButton",
           "name": "SC_MdiMinButton",
           "value": "0x00000001"
         },
         {
+          "cpp": "QStyle::SC_MdiNormalButton",
           "name": "SC_MdiNormalButton",
           "value": "0x00000002"
         },
         {
+          "cpp": "QStyle::SC_MdiCloseButton",
           "name": "SC_MdiCloseButton",
           "value": "0x00000004"
         },
         {
+          "cpp": "QStyle::SC_CustomBase",
           "name": "SC_CustomBase",
           "value": "0xf0000000"
         },
         {
+          "cpp": "QStyle::SC_All",
           "name": "SC_All",
           "value": "0xffffffff"
         }
@@ -2685,243 +3222,305 @@
         "scoped": false
       },
       "name": "SubControl",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyle::SubElement",
       "members": [
         {
+          "cpp": "QStyle::SE_PushButtonContents",
           "name": "SE_PushButtonContents",
           "value": "0"
         },
         {
+          "cpp": "QStyle::SE_PushButtonFocusRect",
           "name": "SE_PushButtonFocusRect",
           "value": "1"
         },
         {
+          "cpp": "QStyle::SE_CheckBoxIndicator",
           "name": "SE_CheckBoxIndicator",
           "value": "2"
         },
         {
+          "cpp": "QStyle::SE_CheckBoxContents",
           "name": "SE_CheckBoxContents",
           "value": "3"
         },
         {
+          "cpp": "QStyle::SE_CheckBoxFocusRect",
           "name": "SE_CheckBoxFocusRect",
           "value": "4"
         },
         {
+          "cpp": "QStyle::SE_CheckBoxClickRect",
           "name": "SE_CheckBoxClickRect",
           "value": "5"
         },
         {
+          "cpp": "QStyle::SE_RadioButtonIndicator",
           "name": "SE_RadioButtonIndicator",
           "value": "6"
         },
         {
+          "cpp": "QStyle::SE_RadioButtonContents",
           "name": "SE_RadioButtonContents",
           "value": "7"
         },
         {
+          "cpp": "QStyle::SE_RadioButtonFocusRect",
           "name": "SE_RadioButtonFocusRect",
           "value": "8"
         },
         {
+          "cpp": "QStyle::SE_RadioButtonClickRect",
           "name": "SE_RadioButtonClickRect",
           "value": "9"
         },
         {
+          "cpp": "QStyle::SE_ComboBoxFocusRect",
           "name": "SE_ComboBoxFocusRect",
           "value": "10"
         },
         {
+          "cpp": "QStyle::SE_SliderFocusRect",
           "name": "SE_SliderFocusRect",
           "value": "11"
         },
         {
+          "cpp": "QStyle::SE_ProgressBarGroove",
           "name": "SE_ProgressBarGroove",
           "value": "12"
         },
         {
+          "cpp": "QStyle::SE_ProgressBarContents",
           "name": "SE_ProgressBarContents",
           "value": "13"
         },
         {
+          "cpp": "QStyle::SE_ProgressBarLabel",
           "name": "SE_ProgressBarLabel",
           "value": "14"
         },
         {
+          "cpp": "QStyle::SE_ToolBoxTabContents",
           "name": "SE_ToolBoxTabContents",
           "value": "15"
         },
         {
+          "cpp": "QStyle::SE_HeaderLabel",
           "name": "SE_HeaderLabel",
           "value": "16"
         },
         {
+          "cpp": "QStyle::SE_HeaderArrow",
           "name": "SE_HeaderArrow",
           "value": "17"
         },
         {
+          "cpp": "QStyle::SE_TabWidgetTabBar",
           "name": "SE_TabWidgetTabBar",
           "value": "18"
         },
         {
+          "cpp": "QStyle::SE_TabWidgetTabPane",
           "name": "SE_TabWidgetTabPane",
           "value": "19"
         },
         {
+          "cpp": "QStyle::SE_TabWidgetTabContents",
           "name": "SE_TabWidgetTabContents",
           "value": "20"
         },
         {
+          "cpp": "QStyle::SE_TabWidgetLeftCorner",
           "name": "SE_TabWidgetLeftCorner",
           "value": "21"
         },
         {
+          "cpp": "QStyle::SE_TabWidgetRightCorner",
           "name": "SE_TabWidgetRightCorner",
           "value": "22"
         },
         {
+          "cpp": "QStyle::SE_ItemViewItemCheckIndicator",
           "name": "SE_ItemViewItemCheckIndicator",
           "value": "23"
         },
         {
+          "cpp": "QStyle::SE_TabBarTearIndicator",
           "name": "SE_TabBarTearIndicator",
           "value": "24"
         },
         {
+          "cpp": "QStyle::SE_TabBarTearIndicatorLeft",
           "name": "SE_TabBarTearIndicatorLeft",
           "value": "SE_TabBarTearIndicator"
         },
         {
+          "cpp": "QStyle::SE_TreeViewDisclosureItem",
           "name": "SE_TreeViewDisclosureItem",
           "value": "25"
         },
         {
+          "cpp": "QStyle::SE_LineEditContents",
           "name": "SE_LineEditContents",
           "value": "26"
         },
         {
+          "cpp": "QStyle::SE_FrameContents",
           "name": "SE_FrameContents",
           "value": "27"
         },
         {
+          "cpp": "QStyle::SE_DockWidgetCloseButton",
           "name": "SE_DockWidgetCloseButton",
           "value": "28"
         },
         {
+          "cpp": "QStyle::SE_DockWidgetFloatButton",
           "name": "SE_DockWidgetFloatButton",
           "value": "29"
         },
         {
+          "cpp": "QStyle::SE_DockWidgetTitleBarText",
           "name": "SE_DockWidgetTitleBarText",
           "value": "30"
         },
         {
+          "cpp": "QStyle::SE_DockWidgetIcon",
           "name": "SE_DockWidgetIcon",
           "value": "31"
         },
         {
+          "cpp": "QStyle::SE_CheckBoxLayoutItem",
           "name": "SE_CheckBoxLayoutItem",
           "value": "32"
         },
         {
+          "cpp": "QStyle::SE_ComboBoxLayoutItem",
           "name": "SE_ComboBoxLayoutItem",
           "value": "33"
         },
         {
+          "cpp": "QStyle::SE_DateTimeEditLayoutItem",
           "name": "SE_DateTimeEditLayoutItem",
           "value": "34"
         },
         {
+          "cpp": "QStyle::SE_LabelLayoutItem",
           "name": "SE_LabelLayoutItem",
           "value": "35"
         },
         {
+          "cpp": "QStyle::SE_ProgressBarLayoutItem",
           "name": "SE_ProgressBarLayoutItem",
           "value": "36"
         },
         {
+          "cpp": "QStyle::SE_PushButtonLayoutItem",
           "name": "SE_PushButtonLayoutItem",
           "value": "37"
         },
         {
+          "cpp": "QStyle::SE_RadioButtonLayoutItem",
           "name": "SE_RadioButtonLayoutItem",
           "value": "38"
         },
         {
+          "cpp": "QStyle::SE_SliderLayoutItem",
           "name": "SE_SliderLayoutItem",
           "value": "39"
         },
         {
+          "cpp": "QStyle::SE_SpinBoxLayoutItem",
           "name": "SE_SpinBoxLayoutItem",
           "value": "40"
         },
         {
+          "cpp": "QStyle::SE_ToolButtonLayoutItem",
           "name": "SE_ToolButtonLayoutItem",
           "value": "41"
         },
         {
+          "cpp": "QStyle::SE_FrameLayoutItem",
           "name": "SE_FrameLayoutItem",
           "value": "42"
         },
         {
+          "cpp": "QStyle::SE_GroupBoxLayoutItem",
           "name": "SE_GroupBoxLayoutItem",
           "value": "43"
         },
         {
+          "cpp": "QStyle::SE_TabWidgetLayoutItem",
           "name": "SE_TabWidgetLayoutItem",
           "value": "44"
         },
         {
+          "cpp": "QStyle::SE_ItemViewItemDecoration",
           "name": "SE_ItemViewItemDecoration",
           "value": "45"
         },
         {
+          "cpp": "QStyle::SE_ItemViewItemText",
           "name": "SE_ItemViewItemText",
           "value": "46"
         },
         {
+          "cpp": "QStyle::SE_ItemViewItemFocusRect",
           "name": "SE_ItemViewItemFocusRect",
           "value": "47"
         },
         {
+          "cpp": "QStyle::SE_TabBarTabLeftButton",
           "name": "SE_TabBarTabLeftButton",
           "value": "48"
         },
         {
+          "cpp": "QStyle::SE_TabBarTabRightButton",
           "name": "SE_TabBarTabRightButton",
           "value": "49"
         },
         {
+          "cpp": "QStyle::SE_TabBarTabText",
           "name": "SE_TabBarTabText",
           "value": "50"
         },
         {
+          "cpp": "QStyle::SE_ShapedFrameContents",
           "name": "SE_ShapedFrameContents",
           "value": "51"
         },
         {
+          "cpp": "QStyle::SE_ToolBarHandle",
           "name": "SE_ToolBarHandle",
           "value": "52"
         },
         {
+          "cpp": "QStyle::SE_TabBarScrollLeftButton",
           "name": "SE_TabBarScrollLeftButton",
           "value": "53"
         },
         {
+          "cpp": "QStyle::SE_TabBarScrollRightButton",
           "name": "SE_TabBarScrollRightButton",
           "value": "54"
         },
         {
+          "cpp": "QStyle::SE_TabBarTearIndicatorRight",
           "name": "SE_TabBarTearIndicatorRight",
           "value": "55"
         },
         {
+          "cpp": "QStyle::SE_PushButtonBevel",
           "name": "SE_PushButtonBevel",
           "value": "56"
         },
         {
+          "cpp": "QStyle::SE_CustomBase",
           "name": "SE_CustomBase",
           "value": "0xf0000000"
         }
@@ -2992,7 +3591,8 @@
         "scoped": false
       },
       "name": "SubElement",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyle",
@@ -3021,7 +3621,7 @@
             "native": "Qt::LayoutDirection",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::LayoutDirection>"
           }
         },
         {
@@ -3031,7 +3631,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         },
         {
@@ -3041,7 +3641,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         },
         {
@@ -3051,7 +3651,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3059,7 +3659,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect alignedRect(Qt::LayoutDirection direction, Qt::Alignment alignment, const QSize &size, const QRect &rectangle)",
       "since": null,
@@ -3088,7 +3688,7 @@
             "native": "QSizePolicy::ControlTypes",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QSizePolicy::ControlType>"
           }
         },
         {
@@ -3098,7 +3698,7 @@
             "native": "QSizePolicy::ControlTypes",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QSizePolicy::ControlType>"
           }
         },
         {
@@ -3108,7 +3708,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -3165,7 +3765,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -3232,7 +3832,7 @@
             "native": "QStyle::ControlElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ControlElement>"
           }
         },
         {
@@ -3309,7 +3909,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3329,7 +3929,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -3376,7 +3976,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3396,7 +3996,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         },
         {
@@ -3426,7 +4026,7 @@
             "native": "QPalette::ColorRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QPalette::ColorRole>"
           }
         }
       ],
@@ -3463,7 +4063,7 @@
             "native": "QStyle::PrimitiveElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::PrimitiveElement>"
           }
         },
         {
@@ -3530,7 +4130,7 @@
             "native": "QIcon::Mode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QIcon::Mode>"
           }
         },
         {
@@ -3540,7 +4140,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         },
         {
@@ -3558,7 +4158,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *option) const = 0",
       "since": null,
@@ -3587,7 +4187,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -3607,7 +4207,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -3625,7 +4225,7 @@
         "native": "QStyle::SubControl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QStyle::SubControl>"
       },
       "signature": "QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, const QPoint &position, const QWidget *widget) const = 0",
       "since": null,
@@ -3654,7 +4254,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3674,7 +4274,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -3682,7 +4282,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect itemPixmapRect(const QRect &rectangle, int alignment, const QPixmap &pixmap) const",
       "since": null,
@@ -3721,7 +4321,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3759,7 +4359,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect itemTextRect(const QFontMetrics &metrics, const QRect &rectangle, int alignment, bool enabled, const QString &text) const",
       "since": null,
@@ -3788,7 +4388,7 @@
             "native": "QSizePolicy::ControlType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::ControlType>"
           }
         },
         {
@@ -3798,7 +4398,7 @@
             "native": "QSizePolicy::ControlType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::ControlType>"
           }
         },
         {
@@ -3808,7 +4408,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -3891,7 +4491,7 @@
             "native": "QStyle::PixelMetric",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::PixelMetric>"
           }
         },
         {
@@ -3985,7 +4585,7 @@
             "native": "QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         }
       ],
@@ -4085,7 +4685,7 @@
             "native": "QStyle::ContentsType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ContentsType>"
           }
         },
         {
@@ -4105,7 +4705,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         },
         {
@@ -4123,7 +4723,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const = 0",
       "since": null,
@@ -4306,7 +4906,7 @@
             "native": "QStyle::StandardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::StandardPixmap>"
           }
         },
         {
@@ -4334,7 +4934,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon standardIcon(QStyle::StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const = 0",
       "since": null,
@@ -4360,7 +4960,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "QPalette standardPalette() const",
       "since": null,
@@ -4389,7 +4989,7 @@
             "native": "QStyle::StandardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::StandardPixmap>"
           }
         },
         {
@@ -4417,7 +5017,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap standardPixmap(QStyle::StandardPixmap standardPixmap, const QStyleOption *option, const QWidget *widget) const = 0",
       "since": null,
@@ -4446,7 +5046,7 @@
             "native": "QStyle::StyleHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::StyleHint>"
           }
         },
         {
@@ -4513,7 +5113,7 @@
             "native": "QStyle::ComplexControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::ComplexControl>"
           }
         },
         {
@@ -4533,7 +5133,7 @@
             "native": "QStyle::SubControl",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::SubControl>"
           }
         },
         {
@@ -4551,7 +5151,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect subControlRect(QStyle::ComplexControl control, const QStyleOptionComplex *option, QStyle::SubControl subControl, const QWidget *widget) const = 0",
       "since": null,
@@ -4580,7 +5180,7 @@
             "native": "QStyle::SubElement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStyle::SubElement>"
           }
         },
         {
@@ -4608,7 +5208,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const = 0",
       "since": null,
@@ -4711,7 +5311,7 @@
             "native": "Qt::LayoutDirection",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::LayoutDirection>"
           }
         },
         {
@@ -4721,7 +5321,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -4729,7 +5329,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)",
       "since": null,
@@ -4758,7 +5358,7 @@
             "native": "Qt::LayoutDirection",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::LayoutDirection>"
           }
         },
         {
@@ -4768,7 +5368,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -4778,7 +5378,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4786,7 +5386,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint visualPos(Qt::LayoutDirection direction, const QRect &boundingRectangle, const QPoint &logicalPosition)",
       "since": null,
@@ -4815,7 +5415,7 @@
             "native": "Qt::LayoutDirection",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::LayoutDirection>"
           }
         },
         {
@@ -4825,7 +5425,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -4835,7 +5435,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -4843,7 +5443,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect visualRect(Qt::LayoutDirection direction, const QRect &boundingRectangle, const QRect &logicalRectangle)",
       "since": null,

@@ -99,5 +99,126 @@
     if (!t.repeat) timers.delete(id);
     t.cb(...t.args);
   };
-  Object.defineProperty(global, '__svelters_internal', { value: { fire, frame: runFrame }, enumerable: false });
+  // ---- AbortController / AbortSignal (QuickJS has neither) ----
+
+  if (typeof global.AbortController === 'undefined') {
+    class AbortSignal {
+      constructor() {
+        this.aborted = false;
+        this.reason = undefined;
+        this._listeners = [];
+      }
+      addEventListener(type, fn, opts) {
+        if (type === 'abort') this._listeners.push({ fn, once: !!(opts && opts.once) });
+      }
+      removeEventListener(type, fn) {
+        if (type === 'abort') this._listeners = this._listeners.filter((l) => l.fn !== fn);
+      }
+      throwIfAborted() {
+        if (this.aborted) throw this.reason;
+      }
+    }
+    class AbortController {
+      constructor() {
+        this.signal = new AbortSignal();
+      }
+      abort(reason) {
+        const s = this.signal;
+        if (s.aborted) return;
+        s.aborted = true;
+        if (reason === undefined) {
+          reason = new Error('This operation was aborted');
+          reason.name = 'AbortError';
+        }
+        s.reason = reason;
+        const ls = s._listeners;
+        s._listeners = ls.filter((l) => !l.once);
+        for (const l of ls) l.fn.call(s, { type: 'abort', target: s });
+      }
+    }
+    Object.defineProperty(global, 'AbortController', { value: AbortController, writable: true, configurable: true });
+    Object.defineProperty(global, 'AbortSignal', { value: AbortSignal, writable: true, configurable: true });
+  }
+
+  // ---- native error and boxed-value wrappers (ABI v3 value model) ----
+
+  class NativeError extends Error {
+    constructor(domain, code, message) {
+      super(message);
+      this.name = 'NativeError';
+      this.domain = domain;
+      this.code = code;
+    }
+  }
+  Object.defineProperty(global, 'NativeError', { value: NativeError, writable: true, configurable: true });
+
+  // A wrapper owns one backend handle. `dispose()` releases it at once and is idempotent. If the
+  // wrapper is collected without being disposed, the registry callback (a job, not the GC
+  // finalizer itself) only queues the handle; the host releases the queue at its next checkpoint.
+  const registry =
+    typeof FinalizationRegistry === 'function' ? new FinalizationRegistry((h) => native.queueRelease(h)) : null;
+  class NativeBoxed {
+    #h;
+    #t;
+    #name;
+    constructor(h, t, name) {
+      this.#h = h;
+      this.#t = t;
+      this.#name = name;
+      // No unregister token: QuickJS holds a token strongly, which would keep the wrapper alive.
+      // A handle released by dispose() is simply ignored when its finalization callback fires.
+      if (registry) registry.register(this, h);
+    }
+    get disposed() {
+      return this.#h === 0;
+    }
+    get typeName() {
+      return this.#name;
+    }
+    get __svlBoxed() {
+      return this.#h === 0 ? null : [this.#h, this.#t];
+    }
+    dispose() {
+      if (this.#h === 0) return;
+      const h = this.#h;
+      this.#h = 0;
+      native.releaseBoxed(h);
+    }
+  }
+  if (typeof Symbol.dispose === 'symbol') {
+    Object.defineProperty(NativeBoxed.prototype, Symbol.dispose, {
+      value() {
+        this.dispose();
+      },
+      configurable: true,
+      writable: true,
+    });
+  }
+  const makeBoxed = (h, t, name) => new NativeBoxed(h, t, name);
+  const makeNativeError = (domain, code, message) => new NativeError(domain, code, message);
+  // An async native method returns a Promise; the backend completes it through a one-shot callback.
+  const makeCompletion = () => {
+    let resolve;
+    let reject;
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    // Settle one microtask later: a backend that fails to start, or an already aborted signal,
+    // completes inside the call, before the caller could attach `.catch`, and the rejection tracker
+    // would report it as unhandled.
+    const settle = (v) => (v instanceof NativeError ? reject(v) : resolve(v));
+    return [promise, (v) => void Promise.resolve().then(() => settle(v))];
+  };
+  const watchAbort = (signal, id) => {
+    signal.addEventListener('abort', () => native.cancelAsync(id), { once: true });
+  };
+  const isView = (v) => ArrayBuffer.isView(v);
+  const dateMs = (v) => (v instanceof Date ? v.getTime() : null);
+  const makeDate = (ms) => new Date(ms);
+
+  Object.defineProperty(global, '__svelters_internal', {
+    value: { fire, frame: runFrame, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort },
+    enumerable: false,
+  });
 })

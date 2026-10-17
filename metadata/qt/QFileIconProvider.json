@@ -54,7 +54,7 @@
             "native": "QAbstractFileIconProvider::IconType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractFileIconProvider::IconType>"
           }
         }
       ],
@@ -62,7 +62,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon icon(QAbstractFileIconProvider::IconType type) const override",
       "since": null,
@@ -99,7 +99,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon icon(const QFileInfo &info) const override",
       "since": null,

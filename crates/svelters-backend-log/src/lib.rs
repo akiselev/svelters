@@ -15,8 +15,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use svelters_abi::{
-    Backend, BackendVtable, HostRef, NameKind, SVL_LIFE_OWNED, SVL_LIFE_TOPLEVEL, Value, Waker,
-    SVL_GONE_PARENT, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
+    Backend, BackendVtable, HostRef, MemberDesc, NameKind, SVL_BOOL, SVL_F64, SVL_GONE_PARENT, SVL_I64, SVL_LIFE_OWNED,
+    SVL_LIFE_TOPLEVEL, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
 };
 
 /// One scripted interaction step.
@@ -149,7 +149,7 @@ fn write_json(v: &Value, out: &mut String) {
         Value::I64(i) => {
             let _ = write!(out, "{i}");
         }
-        Value::F64(f) => js_number(*f, out),
+        Value::F64(f) | Value::DateTime(f) => js_number(*f, out),
         Value::Handle(h) => {
             let _ = write!(out, "{h}");
         }
@@ -163,6 +163,41 @@ fn write_json(v: &Value, out: &mut String) {
                 write_json(x, out);
             }
             out.push(']');
+        }
+        // Typed values carry no names without descriptors; the log prints their raw payloads.
+        Value::U64(u) => {
+            let _ = write!(out, "{u}");
+        }
+        Value::Enum { value, .. } => {
+            let _ = write!(out, "{value}");
+        }
+        Value::Flags { mask, .. } => {
+            let _ = write!(out, "{mask}");
+        }
+        Value::Record { fields, .. } => write_json(&Value::List(fields.clone()), out),
+        Value::Bytes(b) => write_json(&Value::List(b.iter().map(|x| Value::I64(*x as i64)).collect()), out),
+        Value::Boxed { handle, .. } => {
+            let _ = write!(out, "{handle}");
+        }
+        Value::Callback { id, .. } => {
+            let _ = write!(out, "\"<callback {id}>\"");
+        }
+        Value::Map(entries) => {
+            out.push('{');
+            for (i, (k, x)) in entries.iter().enumerate() {
+                if i > 0 {
+                    out.push(',');
+                }
+                out.push_str(&serde_json::to_string(k).expect("string serializes"));
+                out.push(':');
+                write_json(x, out);
+            }
+            out.push('}');
+        }
+        Value::Error(e) => {
+            out.push_str("{\"error\":");
+            out.push_str(&serde_json::to_string(&e.message).expect("string serializes"));
+            out.push('}');
         }
     }
 }
@@ -195,11 +230,30 @@ impl Names {
     }
 }
 
+/// Element tag -> prop -> coarse type (`integer`, `number`, `boolean`), as in
+/// `packages/testhost/src/schema.json`.
+pub type Schema = HashMap<String, HashMap<String, String>>;
+
+/// Parses the JSON form of a [`Schema`].
+pub fn parse_schema(json: &str) -> Result<Schema, String> {
+    serde_json::from_str(json).map_err(|e| format!("schema: {e}"))
+}
+
 /// Fake-loop tuning.
 #[derive(Clone, Debug)]
 pub struct LogOptions {
     /// How long the loop idles without a `wake` after the script before it returns.
     pub settle: Duration,
+}
+
+static DEFAULT_SCHEMA: std::sync::OnceLock<Arc<Schema>> = std::sync::OnceLock::new();
+
+/// Makes every `LogBackend` created afterwards publish property descriptors from `schema`: a
+/// stand-in for the descriptors of a real backend, so the host coerces attribute strings the way it
+/// does for a native toolkit and the log matches the Node TestHost's, which uses the same schema.
+/// Process-wide and set once (the fixture harness does it); later calls are ignored.
+pub fn set_default_schema(schema: Schema) {
+    let _ = DEFAULT_SCHEMA.set(Arc::new(schema));
 }
 
 impl Default for LogOptions {
@@ -401,6 +455,29 @@ impl LogBackend {
 impl Backend for LogBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
         self.shared.lock().names.intern(what as u32, kind, name)
+    }
+
+    fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        let schema = DEFAULT_SCHEMA.get()?;
+        if what != NameKind::Prop {
+            return None;
+        }
+        let st = self.shared.lock();
+        let (_, _, name) = st.names.rev.get((member as usize).checked_sub(1)?)?;
+        let ty = schema.get(st.names.name(kind))?.get(name)?;
+        let slot = match ty.as_str() {
+            "integer" => SlotDesc::new(SVL_I64),
+            "number" => SlotDesc::new(SVL_F64),
+            "boolean" => SlotDesc::new(SVL_BOOL),
+            _ => return None,
+        };
+        let slot = slot.named(name);
+        Some(MemberDesc {
+            name: name.clone(),
+            params: vec![slot.clone()],
+            ret: slot,
+            flags: 0,
+        })
     }
 
     fn create(&self, kind: svl_id) -> Result<svl_handle, String> {

@@ -72,7 +72,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList keys()",
       "since": null,

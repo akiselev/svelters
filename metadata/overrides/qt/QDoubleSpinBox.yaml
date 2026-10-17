@@ -1,0 +1,6 @@
+elements:
+  - tag: doublespinbox
+    construct: { class: QDoubleSpinBox }
+    props:
+      - { js: value, native: value }
+      - { js: decimals, native: decimals }

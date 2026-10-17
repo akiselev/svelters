@@ -256,7 +256,7 @@ Rules:
 
 ### ABI v2.1 additive (X2: sync handlers and the frame clock)
 
-Two tail members and one semantics definition. `SVL_ABI_VERSION` stays 2; members are appended at the end of `svl_backend` and `svl_host`, so lane S1's v3 bump merges by keeping them. All backends are in-tree and rebuilt together.
+Two tail members and one semantics definition, additive on top of v3. `SVL_ABI_VERSION` is whatever the value model set (3); `request_frame` is the last member of `svl_backend` (after the v3 `cancel`) and `frame` the last of `svl_host` (after `release_callback`). In the Rust `Backend` trait `request_frame` has a no-op default. All backends are in-tree and rebuilt together.
 
 ```c
 /* backend, appended after last_error */

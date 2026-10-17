@@ -101,6 +101,10 @@ pub trait JsEngine {
     /// Runs at most `max` queued jobs (promise reactions, microtasks).
     fn run_jobs(&mut self, max: usize) -> JobStatus;
 
+    /// Runs a full garbage collection (finalization callbacks are queued as jobs). A test and
+    /// shutdown hook; the engine collects on its own otherwise.
+    fn collect_garbage(&mut self) {}
+
     /// Errors the engine collected outside a call it returned from: job exceptions and unhandled
     /// rejections. Drains the list.
     fn take_errors(&mut self) -> Vec<JsError>;

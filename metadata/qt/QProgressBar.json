@@ -42,12 +42,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QProgressBar::Direction",
       "members": [
         {
+          "cpp": "QProgressBar::TopToBottom",
           "name": "TopToBottom",
           "value": "0"
         },
         {
+          "cpp": "QProgressBar::BottomToTop",
           "name": "BottomToTop",
           "value": "1"
         }
@@ -61,7 +65,8 @@
         "scoped": false
       },
       "name": "Direction",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QProgressBar",
@@ -87,7 +92,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -317,7 +322,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -343,7 +348,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -461,7 +466,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -646,7 +651,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -730,7 +735,7 @@
             "native": "QProgressBar::Direction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QProgressBar::Direction>"
           }
         }
       ],
@@ -838,7 +843,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -890,7 +895,7 @@
         "native": "QProgressBar::Direction",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QProgressBar::Direction>"
       },
       "signature": "QProgressBar::Direction textDirection() const",
       "since": null,
@@ -969,7 +974,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -1169,7 +1174,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     },
     {
@@ -1249,7 +1254,7 @@
         "native": "Direction",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Direction>"
+        "ref": "enum<QProgressBar::Direction>"
       }
     },
     {

@@ -3,8 +3,23 @@
 import vm from 'node:vm';
 import fs from 'node:fs';
 
-export function createTestHost() {
+const defaultSchema = JSON.parse(fs.readFileSync(new URL('./schema.json', import.meta.url), 'utf8'));
+
+/**
+ * `schema` maps element tags to `{ prop: coarse type }` (`integer`, `number`, `boolean`, `string`,
+ * `enum`, `flags`, `record`, ...). It stands in for the descriptors a real backend publishes, so the
+ * renderer coerces attribute strings the same way on this host as on the native one. The default is
+ * generated from the GTK metadata (`tools/metadata/gtk/gen_backend.py`).
+ */
+export function createTestHost({ schema = defaultSchema } = {}) {
   const lines = [];
+  // Ids exist only to exercise the renderer's id path; the log always prints names.
+  const kindNames = [null];
+  const kindIds = new Map();
+  const propNames = new Map(); // `${kid}:${id}` -> name
+  const propIdOf = new Map(); // `${kid}:${name}` -> id
+  const methodNames = new Map();
+  const methodIdOf = new Map();
   const widgets = new Map(); // handle -> { kind, parent, children[], props: Map }
   const dead = new Set(); // handles that died (destroyed or gone): teardown-shaped ops on them are no-ops
   let next = 1;
@@ -19,10 +34,41 @@ export function createTestHost() {
     return JSON.stringify(v);
   };
 
+  const nameOf = (names, kid, ref) => (typeof ref === 'number' ? names.get(`${kid}:${ref}`) : ref);
+
   const host = {
-    create(kind) {
+    kindId(tag) {
+      if (!kindIds.has(tag)) {
+        kindNames.push(tag);
+        kindIds.set(tag, kindNames.length - 1);
+      }
+      return kindIds.get(tag);
+    },
+    propId(kid, name) {
+      const key = `${kid}:${name}`;
+      if (!propIdOf.has(key)) {
+        const id = propIdOf.size + 1;
+        propIdOf.set(key, id);
+        propNames.set(`${kid}:${id}`, name);
+      }
+      return propIdOf.get(key);
+    },
+    methodId(kid, name) {
+      const key = `${kid}:${name}`;
+      if (!methodIdOf.has(key)) {
+        const id = methodIdOf.size + 1;
+        methodIdOf.set(key, id);
+        methodNames.set(`${kid}:${id}`, name);
+      }
+      return methodIdOf.get(key);
+    },
+    propType(kid, pid) {
+      return schema[kindNames[kid]]?.[nameOf(propNames, kid, pid)] ?? null;
+    },
+    create(kindRef) {
+      const kind = typeof kindRef === 'number' ? kindNames[kindRef] : kindRef;
       const h = next++;
-      widgets.set(h, { kind, parent: null, children: [], props: new Map() });
+      widgets.set(h, { kind, kid: typeof kindRef === 'number' ? kindRef : null, parent: null, children: [], props: new Map() });
       lines.push(`create ${kind} #${h}`);
       return h;
     },
@@ -60,16 +106,17 @@ export function createTestHost() {
       dead.add(h);
       lines.push(`destroy #${h}`);
     },
-    setProp(h, name, value) {
+    setProp(h, nameRef, value) {
       if (dead.has(h)) return;
+      const name = nameOf(propNames, w(h).kid, nameRef);
       w(h).props.set(name, value);
       lines.push(`set #${h} ${name} ${json(value)}`);
     },
-    getProp(h, name) {
-      return w(h).props.get(name) ?? null;
+    getProp(h, nameRef) {
+      return w(h).props.get(nameOf(propNames, w(h).kid, nameRef)) ?? null;
     },
-    call(h, method, args) {
-      w(h);
+    call(h, methodRef, args) {
+      const method = nameOf(methodNames, w(h).kid, methodRef);
       lines.push(`call #${h} ${method} ${json(args)}`);
       return null;
     },
