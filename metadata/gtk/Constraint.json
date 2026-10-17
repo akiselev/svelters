@@ -1,0 +1,714 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_constraint_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "target",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+        },
+        {
+          "name": "target_attribute",
+          "native": "GtkConstraintAttribute",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+        },
+        {
+          "name": "relation",
+          "native": "GtkConstraintRelation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintRelation>"
+        },
+        {
+          "name": "source",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+        },
+        {
+          "name": "source_attribute",
+          "native": "GtkConstraintAttribute",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+        },
+        {
+          "name": "multiplier",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "constant",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "strength",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:ctor:new_constant",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new_constant",
+      "native": "gtk_constraint_new_constant",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "target",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+        },
+        {
+          "name": "target_attribute",
+          "native": "GtkConstraintAttribute",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+        },
+        {
+          "name": "relation",
+          "native": "GtkConstraintRelation",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintRelation>"
+        },
+        {
+          "name": "constant",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "strength",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ConstraintAttribute",
+    "svelters-api:v1:type:gtk:Gtk:ConstraintRelation"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Constraint",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_constant",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_constant",
+      "native": "gtk_constraint_get_constant",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_multiplier",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_multiplier",
+      "native": "gtk_constraint_get_multiplier",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_relation",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_relation",
+      "native": "gtk_constraint_get_relation",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkConstraintRelation",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintRelation>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_source",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_source",
+      "native": "gtk_constraint_get_source",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkConstraintTarget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_source_attribute",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_source_attribute",
+      "native": "gtk_constraint_get_source_attribute",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkConstraintAttribute",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_strength",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_strength",
+      "native": "gtk_constraint_get_strength",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_target",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_target",
+      "native": "gtk_constraint_get_target",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkConstraintTarget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:get_target_attribute",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_target_attribute",
+      "native": "gtk_constraint_get_target_attribute",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkConstraintAttribute",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:is_attached",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_attached",
+      "native": "gtk_constraint_is_attached",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:is_constant",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_constant",
+      "native": "gtk_constraint_is_constant",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:method:is_required",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_required",
+      "native": "gtk_constraint_is_required",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkConstraint",
+    "get_type": "gtk_constraint_get_type",
+    "gtype": "GtkConstraint",
+    "name": "GtkConstraint"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_constant",
+        "set": null
+      },
+      "default": 0.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:constant",
+      "invocation": "reflected",
+      "js_name": "constant",
+      "name": "constant",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::constant"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": -1.7976931348623157e+308
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_multiplier",
+        "set": null
+      },
+      "default": 1.0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:multiplier",
+      "invocation": "reflected",
+      "js_name": "multiplier",
+      "name": "multiplier",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::multiplier"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.7976931348623157e+308,
+        "min": -1.7976931348623157e+308
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_relation",
+        "set": null
+      },
+      "default": "eq",
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:relation",
+      "invocation": "reflected",
+      "js_name": "relation",
+      "name": "relation",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::relation"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkConstraintRelation",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "GtkConstraintRelation",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintRelation>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_source",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:source",
+      "invocation": "reflected",
+      "js_name": "source",
+      "name": "source",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::source"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkConstraintTarget",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "GtkConstraintTarget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_source_attribute",
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:source-attribute",
+      "invocation": "reflected",
+      "js_name": "sourceAttribute",
+      "name": "source-attribute",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::source-attribute"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkConstraintAttribute",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "GtkConstraintAttribute",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_strength",
+        "set": null
+      },
+      "default": 1001001000,
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:strength",
+      "invocation": "reflected",
+      "js_name": "strength",
+      "name": "strength",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::strength"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1001001000,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_target",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:target",
+      "invocation": "reflected",
+      "js_name": "target",
+      "name": "target",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::target"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkConstraintTarget",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "GtkConstraintTarget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ConstraintTarget>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": true,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_constraint_get_target_attribute",
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:target-attribute",
+      "invocation": "reflected",
+      "js_name": "targetAttribute",
+      "name": "target-attribute",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::target-attribute"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT_ONLY"
+        ],
+        "gtype": "GtkConstraintAttribute",
+        "origin": "runtime",
+        "owner": "GtkConstraint"
+      },
+      "type": {
+        "gtype": "GtkConstraintAttribute",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ConstraintAttribute>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

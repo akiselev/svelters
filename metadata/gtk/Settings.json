@@ -1,0 +1,2289 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:FontRendering",
+    "svelters-api:v1:type:gtk:Gtk:InterfaceColorScheme",
+    "svelters-api:v1:type:gtk:Gtk:InterfaceContrast",
+    "svelters-api:v1:type:gtk:Gtk:ReducedMotion"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Settings",
+  "interfaces": [
+    "Gtk.StyleProvider"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:method:reset_property",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reset_property",
+      "native": "gtk_settings_reset_property",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkSettings",
+    "get_type": "gtk_settings_get_type",
+    "gtype": "GtkSettings",
+    "name": "GtkSettings"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-alternative-button-order",
+      "invocation": "reflected",
+      "js_name": "gtkAlternativeButtonOrder",
+      "name": "gtk-alternative-button-order",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-alternative-button-order"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-alternative-sort-arrows",
+      "invocation": "reflected",
+      "js_name": "gtkAlternativeSortArrows",
+      "name": "gtk-alternative-sort-arrows",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-alternative-sort-arrows"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-application-prefer-dark-theme",
+      "invocation": "reflected",
+      "js_name": "gtkApplicationPreferDarkTheme",
+      "name": "gtk-application-prefer-dark-theme",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-application-prefer-dark-theme"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0.04,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-aspect-ratio",
+      "invocation": "reflected",
+      "js_name": "gtkCursorAspectRatio",
+      "name": "gtk-cursor-aspect-ratio",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-cursor-aspect-ratio"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1.0,
+        "min": 0.0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gdouble",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-blink",
+      "invocation": "reflected",
+      "js_name": "gtkCursorBlink",
+      "name": "gtk-cursor-blink",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-cursor-blink"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 1200,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-blink-time",
+      "invocation": "reflected",
+      "js_name": "gtkCursorBlinkTime",
+      "name": "gtk-cursor-blink-time",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-cursor-blink-time"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 100
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 10,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-blink-timeout",
+      "invocation": "reflected",
+      "js_name": "gtkCursorBlinkTimeout",
+      "name": "gtk-cursor-blink-timeout",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-cursor-blink-timeout"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-theme-name",
+      "invocation": "reflected",
+      "js_name": "gtkCursorThemeName",
+      "name": "gtk-cursor-theme-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-cursor-theme-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-theme-size",
+      "invocation": "reflected",
+      "js_name": "gtkCursorThemeSize",
+      "name": "gtk-cursor-theme-size",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-cursor-theme-size"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 128,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "menu:minimize,maximize,close",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-decoration-layout",
+      "invocation": "reflected",
+      "js_name": "gtkDecorationLayout",
+      "name": "gtk-decoration-layout",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-decoration-layout"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-dialogs-use-header",
+      "invocation": "reflected",
+      "js_name": "gtkDialogsUseHeader",
+      "name": "gtk-dialogs-use-header",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-dialogs-use-header"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 8,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-dnd-drag-threshold",
+      "invocation": "reflected",
+      "js_name": "gtkDndDragThreshold",
+      "name": "gtk-dnd-drag-threshold",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-dnd-drag-threshold"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 5,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-double-click-distance",
+      "invocation": "reflected",
+      "js_name": "gtkDoubleClickDistance",
+      "name": "gtk-double-click-distance",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-double-click-distance"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 400,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-double-click-time",
+      "invocation": "reflected",
+      "js_name": "gtkDoubleClickTime",
+      "name": "gtk-double-click-time",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-double-click-time"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-accels",
+      "invocation": "reflected",
+      "js_name": "gtkEnableAccels",
+      "name": "gtk-enable-accels",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-enable-accels"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-animations",
+      "invocation": "reflected",
+      "js_name": "gtkEnableAnimations",
+      "name": "gtk-enable-animations",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-enable-animations"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-event-sounds",
+      "invocation": "reflected",
+      "js_name": "gtkEnableEventSounds",
+      "name": "gtk-enable-event-sounds",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-enable-event-sounds"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-input-feedback-sounds",
+      "invocation": "reflected",
+      "js_name": "gtkEnableInputFeedbackSounds",
+      "name": "gtk-enable-input-feedback-sounds",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-enable-input-feedback-sounds"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-primary-paste",
+      "invocation": "reflected",
+      "js_name": "gtkEnablePrimaryPaste",
+      "name": "gtk-enable-primary-paste",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-enable-primary-paste"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-entry-password-hint-timeout",
+      "invocation": "reflected",
+      "js_name": "gtkEntryPasswordHintTimeout",
+      "name": "gtk-entry-password-hint-timeout",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-entry-password-hint-timeout"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-entry-select-on-focus",
+      "invocation": "reflected",
+      "js_name": "gtkEntrySelectOnFocus",
+      "name": "gtk-entry-select-on-focus",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-entry-select-on-focus"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-error-bell",
+      "invocation": "reflected",
+      "js_name": "gtkErrorBell",
+      "name": "gtk-error-bell",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-error-bell"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Sans 10",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-font-name",
+      "invocation": "reflected",
+      "js_name": "gtkFontName",
+      "name": "gtk-font-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-font-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "automatic",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-font-rendering",
+      "invocation": "reflected",
+      "js_name": "gtkFontRendering",
+      "name": "gtk-font-rendering",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-font-rendering"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkFontRendering",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "since": "4.16",
+      "type": {
+        "gtype": "GtkFontRendering",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:FontRendering>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-fontconfig-timestamp",
+      "invocation": "reflected",
+      "js_name": "gtkFontconfigTimestamp",
+      "name": "gtk-fontconfig-timestamp",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-fontconfig-timestamp"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-hint-font-metrics",
+      "invocation": "reflected",
+      "js_name": "gtkHintFontMetrics",
+      "name": "gtk-hint-font-metrics",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-hint-font-metrics"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "since": "4.6",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Adwaita",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-icon-theme-name",
+      "invocation": "reflected",
+      "js_name": "gtkIconThemeName",
+      "name": "gtk-icon-theme-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-icon-theme-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-im-module",
+      "invocation": "reflected",
+      "js_name": "gtkImModule",
+      "name": "gtk-im-module",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-im-module"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "unsupported",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-interface-color-scheme",
+      "invocation": "reflected",
+      "js_name": "gtkInterfaceColorScheme",
+      "name": "gtk-interface-color-scheme",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-interface-color-scheme"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkInterfaceColorScheme",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "since": "4.20",
+      "type": {
+        "gtype": "GtkInterfaceColorScheme",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InterfaceColorScheme>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "unsupported",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-interface-contrast",
+      "invocation": "reflected",
+      "js_name": "gtkInterfaceContrast",
+      "name": "gtk-interface-contrast",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-interface-contrast"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkInterfaceContrast",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "since": "4.20",
+      "type": {
+        "gtype": "GtkInterfaceContrast",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InterfaceContrast>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "no-preference",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-interface-reduced-motion",
+      "invocation": "reflected",
+      "js_name": "gtkInterfaceReducedMotion",
+      "name": "gtk-interface-reduced-motion",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-interface-reduced-motion"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GtkReducedMotion",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "since": "4.22",
+      "type": {
+        "gtype": "GtkReducedMotion",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ReducedMotion>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-keynav-use-caret",
+      "invocation": "reflected",
+      "js_name": "gtkKeynavUseCaret",
+      "name": "gtk-keynav-use-caret",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-keynav-use-caret"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-label-select-on-focus",
+      "invocation": "reflected",
+      "js_name": "gtkLabelSelectOnFocus",
+      "name": "gtk-label-select-on-focus",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-label-select-on-focus"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 500,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-long-press-time",
+      "invocation": "reflected",
+      "js_name": "gtkLongPressTime",
+      "name": "gtk-long-press-time",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-long-press-time"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-overlay-scrolling",
+      "invocation": "reflected",
+      "js_name": "gtkOverlayScrolling",
+      "name": "gtk-overlay-scrolling",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-overlay-scrolling"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-primary-button-warps-slider",
+      "invocation": "reflected",
+      "js_name": "gtkPrimaryButtonWarpsSlider",
+      "name": "gtk-primary-button-warps-slider",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-primary-button-warps-slider"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "cups,file",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-print-backends",
+      "invocation": "reflected",
+      "js_name": "gtkPrintBackends",
+      "name": "gtk-print-backends",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-print-backends"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "evince --unlink-tempfile --preview --print-settings %s %f",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-print-preview-command",
+      "invocation": "reflected",
+      "js_name": "gtkPrintPreviewCommand",
+      "name": "gtk-print-preview-command",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-print-preview-command"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-recent-files-enabled",
+      "invocation": "reflected",
+      "js_name": "gtkRecentFilesEnabled",
+      "name": "gtk-recent-files-enabled",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-recent-files-enabled"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 30,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-recent-files-max-age",
+      "invocation": "reflected",
+      "js_name": "gtkRecentFilesMaxAge",
+      "name": "gtk-recent-files-max-age",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-recent-files-max-age"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-shell-shows-app-menu",
+      "invocation": "reflected",
+      "js_name": "gtkShellShowsAppMenu",
+      "name": "gtk-shell-shows-app-menu",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-shell-shows-app-menu"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": true,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-shell-shows-desktop",
+      "invocation": "reflected",
+      "js_name": "gtkShellShowsDesktop",
+      "name": "gtk-shell-shows-desktop",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-shell-shows-desktop"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-shell-shows-menubar",
+      "invocation": "reflected",
+      "js_name": "gtkShellShowsMenubar",
+      "name": "gtk-shell-shows-menubar",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-shell-shows-menubar"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-show-status-shapes",
+      "invocation": "reflected",
+      "js_name": "gtkShowStatusShapes",
+      "name": "gtk-show-status-shapes",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-show-status-shapes"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "since": "4.14",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "freedesktop",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-sound-theme-name",
+      "invocation": "reflected",
+      "js_name": "gtkSoundThemeName",
+      "name": "gtk-sound-theme-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-sound-theme-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-split-cursor",
+      "invocation": "reflected",
+      "js_name": "gtkSplitCursor",
+      "name": "gtk-split-cursor",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-split-cursor"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Default",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-theme-name",
+      "invocation": "reflected",
+      "js_name": "gtkThemeName",
+      "name": "gtk-theme-name",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-theme-name"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "toggle-maximize",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-titlebar-double-click",
+      "invocation": "reflected",
+      "js_name": "gtkTitlebarDoubleClick",
+      "name": "gtk-titlebar-double-click",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-titlebar-double-click"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-titlebar-middle-click",
+      "invocation": "reflected",
+      "js_name": "gtkTitlebarMiddleClick",
+      "name": "gtk-titlebar-middle-click",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-titlebar-middle-click"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "menu",
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-titlebar-right-click",
+      "invocation": "reflected",
+      "js_name": "gtkTitlebarRightClick",
+      "name": "gtk-titlebar-right-click",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-titlebar-right-click"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-antialias",
+      "invocation": "reflected",
+      "js_name": "gtkXftAntialias",
+      "name": "gtk-xft-antialias",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-xft-antialias"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-dpi",
+      "invocation": "reflected",
+      "js_name": "gtkXftDpi",
+      "name": "gtk-xft-dpi",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-xft-dpi"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1048576,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-hinting",
+      "invocation": "reflected",
+      "js_name": "gtkXftHinting",
+      "name": "gtk-xft-hinting",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-xft-hinting"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 1,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-hintstyle",
+      "invocation": "reflected",
+      "js_name": "gtkXftHintstyle",
+      "name": "gtk-xft-hintstyle",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-xft-hintstyle"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-rgba",
+      "invocation": "reflected",
+      "js_name": "gtkXftRgba",
+      "name": "gtk-xft-rgba",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::gtk-xft-rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkSettings"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

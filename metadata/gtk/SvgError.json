@@ -1,0 +1,91 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.22"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SvgError",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "invalid_syntax",
+      "native": "GTK_SVG_ERROR_INVALID_SYNTAX",
+      "nick": "invalid-syntax",
+      "value": 0
+    },
+    {
+      "name": "invalid_element",
+      "native": "GTK_SVG_ERROR_INVALID_ELEMENT",
+      "nick": "invalid-element",
+      "value": 1
+    },
+    {
+      "name": "invalid_attribute",
+      "native": "GTK_SVG_ERROR_INVALID_ATTRIBUTE",
+      "nick": "invalid-attribute",
+      "value": 2
+    },
+    {
+      "name": "missing_attribute",
+      "native": "GTK_SVG_ERROR_MISSING_ATTRIBUTE",
+      "nick": "missing-attribute",
+      "value": 3
+    },
+    {
+      "name": "invalid_reference",
+      "native": "GTK_SVG_ERROR_INVALID_REFERENCE",
+      "nick": "invalid-reference",
+      "value": 4
+    },
+    {
+      "name": "failed_update",
+      "native": "GTK_SVG_ERROR_FAILED_UPDATE",
+      "nick": "failed-update",
+      "value": 5
+    },
+    {
+      "name": "failed_rendering",
+      "native": "GTK_SVG_ERROR_FAILED_RENDERING",
+      "nick": "failed-rendering",
+      "value": 6
+    },
+    {
+      "name": "ignored_element",
+      "native": "GTK_SVG_ERROR_IGNORED_ELEMENT",
+      "nick": "ignored-element",
+      "value": 7
+    },
+    {
+      "name": "limits_exceeded",
+      "native": "GTK_SVG_ERROR_LIMITS_EXCEEDED",
+      "nick": "limits-exceeded",
+      "value": 8
+    },
+    {
+      "name": "not_implemented",
+      "native": "GTK_SVG_ERROR_NOT_IMPLEMENTED",
+      "nick": "not-implemented",
+      "value": 9
+    }
+  ],
+  "native": {
+    "c_type": "GtkSvgError",
+    "gtype": "GtkSvgError",
+    "name": "GtkSvgError"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

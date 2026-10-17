@@ -1,0 +1,67 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:FilterChange",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "different",
+      "native": "GTK_FILTER_CHANGE_DIFFERENT",
+      "nick": "different",
+      "value": 0
+    },
+    {
+      "name": "less_strict",
+      "native": "GTK_FILTER_CHANGE_LESS_STRICT",
+      "nick": "less-strict",
+      "value": 1
+    },
+    {
+      "name": "more_strict",
+      "native": "GTK_FILTER_CHANGE_MORE_STRICT",
+      "nick": "more-strict",
+      "value": 2
+    },
+    {
+      "name": "different_rewatch",
+      "native": "GTK_FILTER_CHANGE_DIFFERENT_REWATCH",
+      "nick": "different-rewatch",
+      "value": 3
+    },
+    {
+      "name": "less_strict_rewatch",
+      "native": "GTK_FILTER_CHANGE_LESS_STRICT_REWATCH",
+      "nick": "less-strict-rewatch",
+      "value": 4
+    },
+    {
+      "name": "more_strict_rewatch",
+      "native": "GTK_FILTER_CHANGE_MORE_STRICT_REWATCH",
+      "nick": "more-strict-rewatch",
+      "value": 5
+    }
+  ],
+  "native": {
+    "c_type": "GtkFilterChange",
+    "gtype": "GtkFilterChange",
+    "name": "GtkFilterChange"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,97 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:InputPurpose",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "free_form",
+      "native": "GTK_INPUT_PURPOSE_FREE_FORM",
+      "nick": "free-form",
+      "value": 0
+    },
+    {
+      "name": "alpha",
+      "native": "GTK_INPUT_PURPOSE_ALPHA",
+      "nick": "alpha",
+      "value": 1
+    },
+    {
+      "name": "digits",
+      "native": "GTK_INPUT_PURPOSE_DIGITS",
+      "nick": "digits",
+      "value": 2
+    },
+    {
+      "name": "number",
+      "native": "GTK_INPUT_PURPOSE_NUMBER",
+      "nick": "number",
+      "value": 3
+    },
+    {
+      "name": "phone",
+      "native": "GTK_INPUT_PURPOSE_PHONE",
+      "nick": "phone",
+      "value": 4
+    },
+    {
+      "name": "url",
+      "native": "GTK_INPUT_PURPOSE_URL",
+      "nick": "url",
+      "value": 5
+    },
+    {
+      "name": "email",
+      "native": "GTK_INPUT_PURPOSE_EMAIL",
+      "nick": "email",
+      "value": 6
+    },
+    {
+      "name": "name",
+      "native": "GTK_INPUT_PURPOSE_NAME",
+      "nick": "name",
+      "value": 7
+    },
+    {
+      "name": "password",
+      "native": "GTK_INPUT_PURPOSE_PASSWORD",
+      "nick": "password",
+      "value": 8
+    },
+    {
+      "name": "pin",
+      "native": "GTK_INPUT_PURPOSE_PIN",
+      "nick": "pin",
+      "value": 9
+    },
+    {
+      "name": "terminal",
+      "native": "GTK_INPUT_PURPOSE_TERMINAL",
+      "nick": "terminal",
+      "value": 10
+    }
+  ],
+  "native": {
+    "c_type": "GtkInputPurpose",
+    "gtype": "GtkInputPurpose",
+    "name": "GtkInputPurpose"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

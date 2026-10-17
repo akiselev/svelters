@@ -1,0 +1,104 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.14"
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintSetup",
+  "kind": "boxed",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSetup:method:get_page_setup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_page_setup",
+      "native": "gtk_print_setup_get_page_setup",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPageSetup*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:PageSetup>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSetup:method:get_print_settings",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_print_settings",
+      "native": "gtk_print_setup_get_print_settings",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintSettings*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:PrintSettings>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSetup:method:ref",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "ref",
+      "native": "gtk_print_setup_ref",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPrintSetup*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:PrintSetup>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintSetup:method:unref",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unref",
+      "native": "gtk_print_setup_unref",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintSetup",
+    "gtype": "GtkPrintSetup",
+    "name": "GtkPrintSetup"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

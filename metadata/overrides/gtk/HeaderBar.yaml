@@ -1,0 +1,70 @@
+properties:
+  - id: "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title"
+    name: title
+    js_name: title
+    type: {ref: string, nullable: true, native: "gchar*", gtype: gchararray}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: null
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    # GtkHeaderBar (GTK4) has no title property. The backend keeps a managed GtkLabel as the
+    # title-widget and sets its text; a widget placed through the 'title' slot replaces it.
+    virtual: {op: managed_title_label, property: title-widget}
+    provenance: "GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'"
+children:
+  policy: named_slots
+  default_slot: start
+  slots:
+    - name: start
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        # Children live in an internal box, so membership is an ancestor check; GtkHeaderBar has no list API.
+        get:    {contains: ancestor}
+        insert: {native: "GtkHeaderBar::pack_start(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkHeaderBar::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_header_bar_pack_start"}, {origin: gir, ref: "gtk_header_bar_remove"}]
+    - name: end
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {contains: ancestor}
+        insert: {native: "GtkHeaderBar::pack_end(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkHeaderBar::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_header_bar_pack_end"}, {origin: gir, ref: "gtk_header_bar_remove"}]
+    - name: title
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      # With no title-widget GTK shows a built-in label of the window title, so emptying the slot restores it.
+      default: {kind: builtin, restore: null, conflicts_with_props: [title]}
+      on_remove: restore_default
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkHeaderBar::get_title_widget() const"}
+        set:    {native: "GtkHeaderBar::set_title_widget(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkHeaderBar::set_title_widget(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_header_bar_set_title_widget"}]

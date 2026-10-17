@@ -1,0 +1,907 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_column_view_column_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "title",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_column_view",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_column_view",
+      "native": "gtk_column_view_column_get_column_view",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkColumnView*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ColumnView>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_expand",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_expand",
+      "native": "gtk_column_view_column_get_expand",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_factory",
+      "native": "gtk_column_view_column_get_factory",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListItemFactory*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_fixed_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_fixed_width",
+      "native": "gtk_column_view_column_get_fixed_width",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_header_menu",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_header_menu",
+      "native": "gtk_column_view_column_get_header_menu",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GMenuModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_id",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_id",
+      "native": "gtk_column_view_column_get_id",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_resizable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_resizable",
+      "native": "gtk_column_view_column_get_resizable",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_sorter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_sorter",
+      "native": "gtk_column_view_column_get_sorter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSorter*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_title",
+      "native": "gtk_column_view_column_get_title",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:get_visible",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_visible",
+      "native": "gtk_column_view_column_get_visible",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_expand",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_expand",
+      "native": "gtk_column_view_column_set_expand",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "expand",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_factory",
+      "native": "gtk_column_view_column_set_factory",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_fixed_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_fixed_width",
+      "native": "gtk_column_view_column_set_fixed_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "fixed_width",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_header_menu",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_header_menu",
+      "native": "gtk_column_view_column_set_header_menu",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "menu",
+          "native": "GMenuModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_id",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_id",
+      "native": "gtk_column_view_column_set_id",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "id",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_resizable",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_resizable",
+      "native": "gtk_column_view_column_set_resizable",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resizable",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_sorter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_sorter",
+      "native": "gtk_column_view_column_set_sorter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sorter",
+          "native": "GtkSorter*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_title",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_title",
+      "native": "gtk_column_view_column_set_title",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "title",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:method:set_visible",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_visible",
+      "native": "gtk_column_view_column_set_visible",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "visible",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkColumnViewColumn",
+    "get_type": "gtk_column_view_column_get_type",
+    "gtype": "GtkColumnViewColumn",
+    "name": "GtkColumnViewColumn"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_column_view",
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:column-view",
+      "invocation": "reflected",
+      "js_name": "columnView",
+      "name": "column-view",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::column-view"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkColumnView",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "GtkColumnView",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ColumnView>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_expand",
+        "set": "gtk_column_view_column_set_expand"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:expand",
+      "invocation": "reflected",
+      "js_name": "expand",
+      "name": "expand",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::expand"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_factory",
+        "set": "gtk_column_view_column_set_factory"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:factory",
+      "invocation": "reflected",
+      "js_name": "factory",
+      "name": "factory",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::factory"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListItemFactory",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "GtkListItemFactory",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_fixed_width",
+        "set": "gtk_column_view_column_set_fixed_width"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:fixed-width",
+      "invocation": "reflected",
+      "js_name": "fixedWidth",
+      "name": "fixed-width",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::fixed-width"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_header_menu",
+        "set": "gtk_column_view_column_set_header_menu"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:header-menu",
+      "invocation": "reflected",
+      "js_name": "headerMenu",
+      "name": "header-menu",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::header-menu"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GMenuModel",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "GMenuModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:MenuModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_id",
+        "set": "gtk_column_view_column_set_id"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:id",
+      "invocation": "reflected",
+      "js_name": "id",
+      "name": "id",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::id"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_resizable",
+        "set": "gtk_column_view_column_set_resizable"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:resizable",
+      "invocation": "reflected",
+      "js_name": "resizable",
+      "name": "resizable",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::resizable"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_sorter",
+        "set": "gtk_column_view_column_set_sorter"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:sorter",
+      "invocation": "reflected",
+      "js_name": "sorter",
+      "name": "sorter",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::sorter"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSorter",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "GtkSorter",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_title",
+        "set": "gtk_column_view_column_set_title"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:title",
+      "invocation": "reflected",
+      "js_name": "title",
+      "name": "title",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::title"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_column_view_column_get_visible",
+        "set": "gtk_column_view_column_set_visible"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:visible",
+      "invocation": "reflected",
+      "js_name": "visible",
+      "name": "visible",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::visible"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkColumnViewColumn"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

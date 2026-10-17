@@ -1,0 +1,49 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.6"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:NaturalWrapMode",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "inherit",
+      "native": "GTK_NATURAL_WRAP_INHERIT",
+      "nick": "inherit",
+      "value": 0
+    },
+    {
+      "name": "none",
+      "native": "GTK_NATURAL_WRAP_NONE",
+      "nick": "none",
+      "value": 1
+    },
+    {
+      "name": "word",
+      "native": "GTK_NATURAL_WRAP_WORD",
+      "nick": "word",
+      "value": 2
+    }
+  ],
+  "native": {
+    "c_type": "GtkNaturalWrapMode",
+    "gtype": "GtkNaturalWrapMode",
+    "name": "GtkNaturalWrapMode"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

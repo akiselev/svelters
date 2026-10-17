@@ -1,0 +1,99 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:Orientation"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:ListBase",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable",
+    "Gtk.Scrollable"
+  ],
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "c_type": "GtkListBase",
+    "get_type": "gtk_list_base_get_type",
+    "gtype": "GtkListBase",
+    "name": "GtkListBase"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "vertical",
+      "id": "svelters-api:v1:type:gtk:Gtk:ListBase:prop:orientation",
+      "invocation": "reflected",
+      "js_name": "orientation",
+      "name": "orientation",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::orientation"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkOrientation",
+        "origin": "runtime",
+        "owner": "GtkListBase"
+      },
+      "type": {
+        "gtype": "GtkOrientation",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:Orientation>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

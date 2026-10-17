@@ -1,0 +1,239 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:Expression",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:bind",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "bind",
+      "native": "gtk_expression_bind",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "target",
+          "native": "gpointer",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        },
+        {
+          "name": "property",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "this_",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        }
+      ],
+      "returns": {
+        "native": "GtkExpressionWatch*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:ExpressionWatch>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:evaluate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "evaluate",
+      "native": "gtk_expression_evaluate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "this_",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        },
+        {
+          "name": "value",
+          "native": "GValue*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GObject:Value>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:get_value_type",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_value_type",
+      "native": "gtk_expression_get_value_type",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:is_static",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "is_static",
+      "native": "gtk_expression_is_static",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:ref",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "ref",
+      "native": "gtk_expression_ref",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkExpression*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Expression>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:unref",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unref",
+      "native": "gtk_expression_unref",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Expression:method:watch",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "watch",
+      "native": "gtk_expression_watch",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "this_",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        },
+        {
+          "name": "notify",
+          "native": "GtkExpressionNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:Gtk:ExpressionNotify>"
+        },
+        {
+          "name": "user_data",
+          "native": "gpointer",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "pointer"
+        },
+        {
+          "name": "user_destroy",
+          "native": "GDestroyNotify",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "callback<svelters-api:v1:type:gtk:GLib:DestroyNotify>"
+        }
+      ],
+      "returns": {
+        "native": "GtkExpressionWatch*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Gtk:ExpressionWatch>"
+      },
+      "unsupported_reason": "callback_scope"
+    }
+  ],
+  "native": {
+    "c_type": "GtkExpression",
+    "get_type": "gtk_expression_get_type",
+    "gtype": "GtkExpression",
+    "name": "GtkExpression"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

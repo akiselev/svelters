@@ -1,0 +1,121 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": "4.20"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:WindowGravity",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "top_left",
+      "native": "GTK_WINDOW_GRAVITY_TOP_LEFT",
+      "nick": "top-left",
+      "value": 0
+    },
+    {
+      "name": "top",
+      "native": "GTK_WINDOW_GRAVITY_TOP",
+      "nick": "top",
+      "value": 1
+    },
+    {
+      "name": "top_right",
+      "native": "GTK_WINDOW_GRAVITY_TOP_RIGHT",
+      "nick": "top-right",
+      "value": 2
+    },
+    {
+      "name": "left",
+      "native": "GTK_WINDOW_GRAVITY_LEFT",
+      "nick": "left",
+      "value": 3
+    },
+    {
+      "name": "center",
+      "native": "GTK_WINDOW_GRAVITY_CENTER",
+      "nick": "center",
+      "value": 4
+    },
+    {
+      "name": "right",
+      "native": "GTK_WINDOW_GRAVITY_RIGHT",
+      "nick": "right",
+      "value": 5
+    },
+    {
+      "name": "bottom_left",
+      "native": "GTK_WINDOW_GRAVITY_BOTTOM_LEFT",
+      "nick": "bottom-left",
+      "value": 6
+    },
+    {
+      "name": "bottom",
+      "native": "GTK_WINDOW_GRAVITY_BOTTOM",
+      "nick": "bottom",
+      "value": 7
+    },
+    {
+      "name": "bottom_right",
+      "native": "GTK_WINDOW_GRAVITY_BOTTOM_RIGHT",
+      "nick": "bottom-right",
+      "value": 8
+    },
+    {
+      "name": "top_start",
+      "native": "GTK_WINDOW_GRAVITY_TOP_START",
+      "nick": "top-start",
+      "value": 9
+    },
+    {
+      "name": "top_end",
+      "native": "GTK_WINDOW_GRAVITY_TOP_END",
+      "nick": "top-end",
+      "value": 10
+    },
+    {
+      "name": "start",
+      "native": "GTK_WINDOW_GRAVITY_START",
+      "nick": "start",
+      "value": 11
+    },
+    {
+      "name": "end",
+      "native": "GTK_WINDOW_GRAVITY_END",
+      "nick": "end",
+      "value": 12
+    },
+    {
+      "name": "bottom_start",
+      "native": "GTK_WINDOW_GRAVITY_BOTTOM_START",
+      "nick": "bottom-start",
+      "value": 13
+    },
+    {
+      "name": "bottom_end",
+      "native": "GTK_WINDOW_GRAVITY_BOTTOM_END",
+      "nick": "bottom-end",
+      "value": 14
+    }
+  ],
+  "native": {
+    "c_type": "GtkWindowGravity",
+    "gtype": "GtkWindowGravity",
+    "name": "GtkWindowGravity"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

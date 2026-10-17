@@ -1,0 +1,412 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ScrollablePolicy"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+  "interfaces": [],
+  "kind": "interface",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_border",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_border",
+      "native": "gtk_scrollable_get_border",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "border",
+          "native": "GtkBorder*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:Border>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_hadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_hadjustment",
+      "native": "gtk_scrollable_get_hadjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_hscroll_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_hscroll_policy",
+      "native": "gtk_scrollable_get_hscroll_policy",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkScrollablePolicy",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollablePolicy>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_vadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_vadjustment",
+      "native": "gtk_scrollable_get_vadjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_vscroll_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_vscroll_policy",
+      "native": "gtk_scrollable_get_vscroll_policy",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkScrollablePolicy",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollablePolicy>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_hadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_hadjustment",
+      "native": "gtk_scrollable_set_hadjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "hadjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_hscroll_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_hscroll_policy",
+      "native": "gtk_scrollable_set_hscroll_policy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "policy",
+          "native": "GtkScrollablePolicy",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollablePolicy>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_vadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_vadjustment",
+      "native": "gtk_scrollable_set_vadjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "vadjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_vscroll_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_vscroll_policy",
+      "native": "gtk_scrollable_set_vscroll_policy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "policy",
+          "native": "GtkScrollablePolicy",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollablePolicy>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkScrollable",
+    "get_type": "gtk_scrollable_get_type",
+    "gtype": "GtkScrollable",
+    "name": "GtkScrollable"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrollable_get_hadjustment",
+        "set": "gtk_scrollable_set_hadjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hadjustment",
+      "invocation": "reflected",
+      "js_name": "hadjustment",
+      "name": "hadjustment",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::hadjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkScrollable"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrollable_get_hscroll_policy",
+        "set": "gtk_scrollable_set_hscroll_policy"
+      },
+      "default": "minimum",
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hscroll-policy",
+      "invocation": "reflected",
+      "js_name": "hscrollPolicy",
+      "name": "hscroll-policy",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::hscroll-policy"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkScrollablePolicy",
+        "origin": "runtime",
+        "owner": "GtkScrollable"
+      },
+      "type": {
+        "gtype": "GtkScrollablePolicy",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ScrollablePolicy>"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrollable_get_vadjustment",
+        "set": "gtk_scrollable_set_vadjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vadjustment",
+      "invocation": "reflected",
+      "js_name": "vadjustment",
+      "name": "vadjustment",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::vadjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkScrollable"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrollable_get_vscroll_policy",
+        "set": "gtk_scrollable_set_vscroll_policy"
+      },
+      "default": "minimum",
+      "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vscroll-policy",
+      "invocation": "reflected",
+      "js_name": "vscrollPolicy",
+      "name": "vscroll-policy",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::vscroll-policy"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkScrollablePolicy",
+        "origin": "runtime",
+        "owner": "GtkScrollable"
+      },
+      "type": {
+        "gtype": "GtkScrollablePolicy",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ScrollablePolicy>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,49 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SizeRequestMode",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "height_for_width",
+      "native": "GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH",
+      "nick": "height-for-width",
+      "value": 0
+    },
+    {
+      "name": "width_for_height",
+      "native": "GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT",
+      "nick": "width-for-height",
+      "value": 1
+    },
+    {
+      "name": "constant_size",
+      "native": "GTK_SIZE_REQUEST_CONSTANT_SIZE",
+      "nick": "constant-size",
+      "value": 2
+    }
+  ],
+  "native": {
+    "c_type": "GtkSizeRequestMode",
+    "gtype": "GtkSizeRequestMode",
+    "name": "GtkSizeRequestMode"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

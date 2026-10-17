@@ -1,0 +1,571 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_sort_list_model_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GListModel*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        },
+        {
+          "name": "sorter",
+          "native": "GtkSorter*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SortListModel",
+  "interfaces": [
+    "Gio.ListModel",
+    "Gtk.SectionModel"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:get_incremental",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_incremental",
+      "native": "gtk_sort_list_model_get_incremental",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_sort_list_model_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GListModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:get_pending",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_pending",
+      "native": "gtk_sort_list_model_get_pending",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:get_section_sorter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_section_sorter",
+      "native": "gtk_sort_list_model_get_section_sorter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSorter*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:get_sorter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_sorter",
+      "native": "gtk_sort_list_model_get_sorter",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSorter*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:set_incremental",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_incremental",
+      "native": "gtk_sort_list_model_set_incremental",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "incremental",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:set_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_model",
+      "native": "gtk_sort_list_model_set_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GListModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:set_section_sorter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_section_sorter",
+      "native": "gtk_sort_list_model_set_section_sorter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sorter",
+          "native": "GtkSorter*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:method:set_sorter",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_sorter",
+      "native": "gtk_sort_list_model_set_sorter",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "sorter",
+          "native": "GtkSorter*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkSortListModel",
+    "get_type": "gtk_sort_list_model_get_type",
+    "gtype": "GtkSortListModel",
+    "name": "GtkSortListModel"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_sort_list_model_get_incremental",
+        "set": "gtk_sort_list_model_set_incremental"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:incremental",
+      "invocation": "reflected",
+      "js_name": "incremental",
+      "name": "incremental",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::incremental"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:item-type",
+      "invocation": "reflected",
+      "js_name": "itemType",
+      "name": "item-type",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::item-type"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "GType",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "GType",
+        "native": "GType",
+        "nullable": false,
+        "ref": "u64"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_sort_list_model_get_model",
+        "set": "gtk_sort_list_model_set_model"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:model",
+      "invocation": "reflected",
+      "js_name": "model",
+      "name": "model",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GListModel",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "type": {
+        "gtype": "GListModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:n-items",
+      "invocation": "reflected",
+      "js_name": "nItems",
+      "name": "n-items",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::n-items"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "since": "4.8",
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "gtk_sort_list_model_get_pending",
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:pending",
+      "invocation": "reflected",
+      "js_name": "pending",
+      "name": "pending",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::pending"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_sort_list_model_get_section_sorter",
+        "set": "gtk_sort_list_model_set_section_sorter"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:section-sorter",
+      "invocation": "reflected",
+      "js_name": "sectionSorter",
+      "name": "section-sorter",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::section-sorter"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSorter",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "GtkSorter",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_sort_list_model_get_sorter",
+        "set": "gtk_sort_list_model_set_sorter"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:sorter",
+      "invocation": "reflected",
+      "js_name": "sorter",
+      "name": "sorter",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::sorter"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSorter",
+        "origin": "runtime",
+        "owner": "GtkSortListModel"
+      },
+      "type": {
+        "gtype": "GtkSorter",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Sorter>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

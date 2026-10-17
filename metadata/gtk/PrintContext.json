@@ -1,0 +1,307 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintContext",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:create_pango_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "create_pango_context",
+      "native": "gtk_print_context_create_pango_context",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoContext*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Pango:Context>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:create_pango_layout",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "create_pango_layout",
+      "native": "gtk_print_context_create_pango_layout",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoLayout*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "object<svelters-api:v1:type:gtk:Pango:Layout>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_cairo_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_cairo_context",
+      "native": "gtk_print_context_get_cairo_context",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "cairo_t*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:cairo:Context>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_dpi_x",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_dpi_x",
+      "native": "gtk_print_context_get_dpi_x",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_dpi_y",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_dpi_y",
+      "native": "gtk_print_context_get_dpi_y",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_hard_margins",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_hard_margins",
+      "native": "gtk_print_context_get_hard_margins",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "top",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "bottom",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "left",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        },
+        {
+          "name": "right",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_height",
+      "native": "gtk_print_context_get_height",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_page_setup",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_page_setup",
+      "native": "gtk_print_context_get_page_setup",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkPageSetup*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:PageSetup>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_pango_fontmap",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_pango_fontmap",
+      "native": "gtk_print_context_get_pango_fontmap",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontMap*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Pango:FontMap>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:get_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_width",
+      "native": "gtk_print_context_get_width",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "double",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "f64"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:PrintContext:method:set_cairo_context",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_cairo_context",
+      "native": "gtk_print_context_set_cairo_context",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "cr",
+          "native": "cairo_t*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:cairo:Context>"
+        },
+        {
+          "name": "dpi_x",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        },
+        {
+          "name": "dpi_y",
+          "native": "double",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintContext",
+    "get_type": "gtk_print_context_get_type",
+    "gtype": "GtkPrintContext",
+    "name": "GtkPrintContext"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

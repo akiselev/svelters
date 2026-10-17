@@ -1,0 +1,85 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintStatus",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "initial",
+      "native": "GTK_PRINT_STATUS_INITIAL",
+      "nick": "initial",
+      "value": 0
+    },
+    {
+      "name": "preparing",
+      "native": "GTK_PRINT_STATUS_PREPARING",
+      "nick": "preparing",
+      "value": 1
+    },
+    {
+      "name": "generating_data",
+      "native": "GTK_PRINT_STATUS_GENERATING_DATA",
+      "nick": "generating-data",
+      "value": 2
+    },
+    {
+      "name": "sending_data",
+      "native": "GTK_PRINT_STATUS_SENDING_DATA",
+      "nick": "sending-data",
+      "value": 3
+    },
+    {
+      "name": "pending",
+      "native": "GTK_PRINT_STATUS_PENDING",
+      "nick": "pending",
+      "value": 4
+    },
+    {
+      "name": "pending_issue",
+      "native": "GTK_PRINT_STATUS_PENDING_ISSUE",
+      "nick": "pending-issue",
+      "value": 5
+    },
+    {
+      "name": "printing",
+      "native": "GTK_PRINT_STATUS_PRINTING",
+      "nick": "printing",
+      "value": 6
+    },
+    {
+      "name": "finished",
+      "native": "GTK_PRINT_STATUS_FINISHED",
+      "nick": "finished",
+      "value": 7
+    },
+    {
+      "name": "finished_aborted",
+      "native": "GTK_PRINT_STATUS_FINISHED_ABORTED",
+      "nick": "finished-aborted",
+      "value": 8
+    }
+  ],
+  "native": {
+    "c_type": "GtkPrintStatus",
+    "gtype": "GtkPrintStatus",
+    "name": "GtkPrintStatus"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

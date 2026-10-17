@@ -1,0 +1,144 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.LayoutChild",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FixedLayoutChild:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:FixedLayoutChild",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FixedLayoutChild:method:get_transform",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_transform",
+      "native": "gtk_fixed_layout_child_get_transform",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GskTransform*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Gsk:Transform>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FixedLayoutChild:method:set_transform",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_transform",
+      "native": "gtk_fixed_layout_child_set_transform",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "transform",
+          "native": "GskTransform*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gsk:Transform>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkFixedLayoutChild",
+    "get_type": "gtk_fixed_layout_child_get_type",
+    "gtype": "GtkFixedLayoutChild",
+    "name": "GtkFixedLayoutChild"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_fixed_layout_child_get_transform",
+        "set": "gtk_fixed_layout_child_set_transform"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FixedLayoutChild:prop:transform",
+      "invocation": "reflected",
+      "js_name": "transform",
+      "name": "transform",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::transform"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GskTransform",
+        "origin": "runtime",
+        "owner": "GtkFixedLayoutChild"
+      },
+      "type": {
+        "gtype": "GskTransform",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gsk:Transform>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

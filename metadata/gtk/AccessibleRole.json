@@ -1,0 +1,541 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleRole",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "alert",
+      "native": "GTK_ACCESSIBLE_ROLE_ALERT",
+      "nick": "alert",
+      "value": 0
+    },
+    {
+      "name": "alert_dialog",
+      "native": "GTK_ACCESSIBLE_ROLE_ALERT_DIALOG",
+      "nick": "alert-dialog",
+      "value": 1
+    },
+    {
+      "name": "banner",
+      "native": "GTK_ACCESSIBLE_ROLE_BANNER",
+      "nick": "banner",
+      "value": 2
+    },
+    {
+      "name": "button",
+      "native": "GTK_ACCESSIBLE_ROLE_BUTTON",
+      "nick": "button",
+      "value": 3
+    },
+    {
+      "name": "caption",
+      "native": "GTK_ACCESSIBLE_ROLE_CAPTION",
+      "nick": "caption",
+      "value": 4
+    },
+    {
+      "name": "cell",
+      "native": "GTK_ACCESSIBLE_ROLE_CELL",
+      "nick": "cell",
+      "value": 5
+    },
+    {
+      "name": "checkbox",
+      "native": "GTK_ACCESSIBLE_ROLE_CHECKBOX",
+      "nick": "checkbox",
+      "value": 6
+    },
+    {
+      "name": "column_header",
+      "native": "GTK_ACCESSIBLE_ROLE_COLUMN_HEADER",
+      "nick": "column-header",
+      "value": 7
+    },
+    {
+      "name": "combo_box",
+      "native": "GTK_ACCESSIBLE_ROLE_COMBO_BOX",
+      "nick": "combo-box",
+      "value": 8
+    },
+    {
+      "name": "command",
+      "native": "GTK_ACCESSIBLE_ROLE_COMMAND",
+      "nick": "command",
+      "value": 9
+    },
+    {
+      "name": "composite",
+      "native": "GTK_ACCESSIBLE_ROLE_COMPOSITE",
+      "nick": "composite",
+      "value": 10
+    },
+    {
+      "name": "dialog",
+      "native": "GTK_ACCESSIBLE_ROLE_DIALOG",
+      "nick": "dialog",
+      "value": 11
+    },
+    {
+      "name": "document",
+      "native": "GTK_ACCESSIBLE_ROLE_DOCUMENT",
+      "nick": "document",
+      "value": 12
+    },
+    {
+      "name": "feed",
+      "native": "GTK_ACCESSIBLE_ROLE_FEED",
+      "nick": "feed",
+      "value": 13
+    },
+    {
+      "name": "form",
+      "native": "GTK_ACCESSIBLE_ROLE_FORM",
+      "nick": "form",
+      "value": 14
+    },
+    {
+      "name": "generic",
+      "native": "GTK_ACCESSIBLE_ROLE_GENERIC",
+      "nick": "generic",
+      "value": 15
+    },
+    {
+      "name": "grid",
+      "native": "GTK_ACCESSIBLE_ROLE_GRID",
+      "nick": "grid",
+      "value": 16
+    },
+    {
+      "name": "grid_cell",
+      "native": "GTK_ACCESSIBLE_ROLE_GRID_CELL",
+      "nick": "grid-cell",
+      "value": 17
+    },
+    {
+      "name": "group",
+      "native": "GTK_ACCESSIBLE_ROLE_GROUP",
+      "nick": "group",
+      "value": 18
+    },
+    {
+      "name": "heading",
+      "native": "GTK_ACCESSIBLE_ROLE_HEADING",
+      "nick": "heading",
+      "value": 19
+    },
+    {
+      "name": "img",
+      "native": "GTK_ACCESSIBLE_ROLE_IMG",
+      "nick": "img",
+      "value": 20
+    },
+    {
+      "name": "input",
+      "native": "GTK_ACCESSIBLE_ROLE_INPUT",
+      "nick": "input",
+      "value": 21
+    },
+    {
+      "name": "label",
+      "native": "GTK_ACCESSIBLE_ROLE_LABEL",
+      "nick": "label",
+      "value": 22
+    },
+    {
+      "name": "landmark",
+      "native": "GTK_ACCESSIBLE_ROLE_LANDMARK",
+      "nick": "landmark",
+      "value": 23
+    },
+    {
+      "name": "legend",
+      "native": "GTK_ACCESSIBLE_ROLE_LEGEND",
+      "nick": "legend",
+      "value": 24
+    },
+    {
+      "name": "link",
+      "native": "GTK_ACCESSIBLE_ROLE_LINK",
+      "nick": "link",
+      "value": 25
+    },
+    {
+      "name": "list",
+      "native": "GTK_ACCESSIBLE_ROLE_LIST",
+      "nick": "list",
+      "value": 26
+    },
+    {
+      "name": "list_box",
+      "native": "GTK_ACCESSIBLE_ROLE_LIST_BOX",
+      "nick": "list-box",
+      "value": 27
+    },
+    {
+      "name": "list_item",
+      "native": "GTK_ACCESSIBLE_ROLE_LIST_ITEM",
+      "nick": "list-item",
+      "value": 28
+    },
+    {
+      "name": "log",
+      "native": "GTK_ACCESSIBLE_ROLE_LOG",
+      "nick": "log",
+      "value": 29
+    },
+    {
+      "name": "main",
+      "native": "GTK_ACCESSIBLE_ROLE_MAIN",
+      "nick": "main",
+      "value": 30
+    },
+    {
+      "name": "marquee",
+      "native": "GTK_ACCESSIBLE_ROLE_MARQUEE",
+      "nick": "marquee",
+      "value": 31
+    },
+    {
+      "name": "math",
+      "native": "GTK_ACCESSIBLE_ROLE_MATH",
+      "nick": "math",
+      "value": 32
+    },
+    {
+      "name": "meter",
+      "native": "GTK_ACCESSIBLE_ROLE_METER",
+      "nick": "meter",
+      "value": 33
+    },
+    {
+      "name": "menu",
+      "native": "GTK_ACCESSIBLE_ROLE_MENU",
+      "nick": "menu",
+      "value": 34
+    },
+    {
+      "name": "menu_bar",
+      "native": "GTK_ACCESSIBLE_ROLE_MENU_BAR",
+      "nick": "menu-bar",
+      "value": 35
+    },
+    {
+      "name": "menu_item",
+      "native": "GTK_ACCESSIBLE_ROLE_MENU_ITEM",
+      "nick": "menu-item",
+      "value": 36
+    },
+    {
+      "name": "menu_item_checkbox",
+      "native": "GTK_ACCESSIBLE_ROLE_MENU_ITEM_CHECKBOX",
+      "nick": "menu-item-checkbox",
+      "value": 37
+    },
+    {
+      "name": "menu_item_radio",
+      "native": "GTK_ACCESSIBLE_ROLE_MENU_ITEM_RADIO",
+      "nick": "menu-item-radio",
+      "value": 38
+    },
+    {
+      "name": "navigation",
+      "native": "GTK_ACCESSIBLE_ROLE_NAVIGATION",
+      "nick": "navigation",
+      "value": 39
+    },
+    {
+      "name": "none",
+      "native": "GTK_ACCESSIBLE_ROLE_NONE",
+      "nick": "none",
+      "value": 40
+    },
+    {
+      "name": "note",
+      "native": "GTK_ACCESSIBLE_ROLE_NOTE",
+      "nick": "note",
+      "value": 41
+    },
+    {
+      "name": "option",
+      "native": "GTK_ACCESSIBLE_ROLE_OPTION",
+      "nick": "option",
+      "value": 42
+    },
+    {
+      "name": "presentation",
+      "native": "GTK_ACCESSIBLE_ROLE_PRESENTATION",
+      "nick": "presentation",
+      "value": 43
+    },
+    {
+      "name": "progress_bar",
+      "native": "GTK_ACCESSIBLE_ROLE_PROGRESS_BAR",
+      "nick": "progress-bar",
+      "value": 44
+    },
+    {
+      "name": "radio",
+      "native": "GTK_ACCESSIBLE_ROLE_RADIO",
+      "nick": "radio",
+      "value": 45
+    },
+    {
+      "name": "radio_group",
+      "native": "GTK_ACCESSIBLE_ROLE_RADIO_GROUP",
+      "nick": "radio-group",
+      "value": 46
+    },
+    {
+      "name": "range",
+      "native": "GTK_ACCESSIBLE_ROLE_RANGE",
+      "nick": "range",
+      "value": 47
+    },
+    {
+      "name": "region",
+      "native": "GTK_ACCESSIBLE_ROLE_REGION",
+      "nick": "region",
+      "value": 48
+    },
+    {
+      "name": "row",
+      "native": "GTK_ACCESSIBLE_ROLE_ROW",
+      "nick": "row",
+      "value": 49
+    },
+    {
+      "name": "row_group",
+      "native": "GTK_ACCESSIBLE_ROLE_ROW_GROUP",
+      "nick": "row-group",
+      "value": 50
+    },
+    {
+      "name": "row_header",
+      "native": "GTK_ACCESSIBLE_ROLE_ROW_HEADER",
+      "nick": "row-header",
+      "value": 51
+    },
+    {
+      "name": "scrollbar",
+      "native": "GTK_ACCESSIBLE_ROLE_SCROLLBAR",
+      "nick": "scrollbar",
+      "value": 52
+    },
+    {
+      "name": "search",
+      "native": "GTK_ACCESSIBLE_ROLE_SEARCH",
+      "nick": "search",
+      "value": 53
+    },
+    {
+      "name": "search_box",
+      "native": "GTK_ACCESSIBLE_ROLE_SEARCH_BOX",
+      "nick": "search-box",
+      "value": 54
+    },
+    {
+      "name": "section",
+      "native": "GTK_ACCESSIBLE_ROLE_SECTION",
+      "nick": "section",
+      "value": 55
+    },
+    {
+      "name": "section_head",
+      "native": "GTK_ACCESSIBLE_ROLE_SECTION_HEAD",
+      "nick": "section-head",
+      "value": 56
+    },
+    {
+      "name": "select",
+      "native": "GTK_ACCESSIBLE_ROLE_SELECT",
+      "nick": "select",
+      "value": 57
+    },
+    {
+      "name": "separator",
+      "native": "GTK_ACCESSIBLE_ROLE_SEPARATOR",
+      "nick": "separator",
+      "value": 58
+    },
+    {
+      "name": "slider",
+      "native": "GTK_ACCESSIBLE_ROLE_SLIDER",
+      "nick": "slider",
+      "value": 59
+    },
+    {
+      "name": "spin_button",
+      "native": "GTK_ACCESSIBLE_ROLE_SPIN_BUTTON",
+      "nick": "spin-button",
+      "value": 60
+    },
+    {
+      "name": "status",
+      "native": "GTK_ACCESSIBLE_ROLE_STATUS",
+      "nick": "status",
+      "value": 61
+    },
+    {
+      "name": "structure",
+      "native": "GTK_ACCESSIBLE_ROLE_STRUCTURE",
+      "nick": "structure",
+      "value": 62
+    },
+    {
+      "name": "switch",
+      "native": "GTK_ACCESSIBLE_ROLE_SWITCH",
+      "nick": "switch",
+      "value": 63
+    },
+    {
+      "name": "tab",
+      "native": "GTK_ACCESSIBLE_ROLE_TAB",
+      "nick": "tab",
+      "value": 64
+    },
+    {
+      "name": "table",
+      "native": "GTK_ACCESSIBLE_ROLE_TABLE",
+      "nick": "table",
+      "value": 65
+    },
+    {
+      "name": "tab_list",
+      "native": "GTK_ACCESSIBLE_ROLE_TAB_LIST",
+      "nick": "tab-list",
+      "value": 66
+    },
+    {
+      "name": "tab_panel",
+      "native": "GTK_ACCESSIBLE_ROLE_TAB_PANEL",
+      "nick": "tab-panel",
+      "value": 67
+    },
+    {
+      "name": "text_box",
+      "native": "GTK_ACCESSIBLE_ROLE_TEXT_BOX",
+      "nick": "text-box",
+      "value": 68
+    },
+    {
+      "name": "time",
+      "native": "GTK_ACCESSIBLE_ROLE_TIME",
+      "nick": "time",
+      "value": 69
+    },
+    {
+      "name": "timer",
+      "native": "GTK_ACCESSIBLE_ROLE_TIMER",
+      "nick": "timer",
+      "value": 70
+    },
+    {
+      "name": "toolbar",
+      "native": "GTK_ACCESSIBLE_ROLE_TOOLBAR",
+      "nick": "toolbar",
+      "value": 71
+    },
+    {
+      "name": "tooltip",
+      "native": "GTK_ACCESSIBLE_ROLE_TOOLTIP",
+      "nick": "tooltip",
+      "value": 72
+    },
+    {
+      "name": "tree",
+      "native": "GTK_ACCESSIBLE_ROLE_TREE",
+      "nick": "tree",
+      "value": 73
+    },
+    {
+      "name": "tree_grid",
+      "native": "GTK_ACCESSIBLE_ROLE_TREE_GRID",
+      "nick": "tree-grid",
+      "value": 74
+    },
+    {
+      "name": "tree_item",
+      "native": "GTK_ACCESSIBLE_ROLE_TREE_ITEM",
+      "nick": "tree-item",
+      "value": 75
+    },
+    {
+      "name": "widget",
+      "native": "GTK_ACCESSIBLE_ROLE_WIDGET",
+      "nick": "widget",
+      "value": 76
+    },
+    {
+      "name": "window",
+      "native": "GTK_ACCESSIBLE_ROLE_WINDOW",
+      "nick": "window",
+      "value": 77
+    },
+    {
+      "name": "toggle_button",
+      "native": "GTK_ACCESSIBLE_ROLE_TOGGLE_BUTTON",
+      "nick": "toggle-button",
+      "value": 78
+    },
+    {
+      "name": "application",
+      "native": "GTK_ACCESSIBLE_ROLE_APPLICATION",
+      "nick": "application",
+      "value": 79
+    },
+    {
+      "name": "paragraph",
+      "native": "GTK_ACCESSIBLE_ROLE_PARAGRAPH",
+      "nick": "paragraph",
+      "value": 80
+    },
+    {
+      "name": "block_quote",
+      "native": "GTK_ACCESSIBLE_ROLE_BLOCK_QUOTE",
+      "nick": "block-quote",
+      "value": 81
+    },
+    {
+      "name": "article",
+      "native": "GTK_ACCESSIBLE_ROLE_ARTICLE",
+      "nick": "article",
+      "value": 82
+    },
+    {
+      "name": "comment",
+      "native": "GTK_ACCESSIBLE_ROLE_COMMENT",
+      "nick": "comment",
+      "value": 83
+    },
+    {
+      "name": "terminal",
+      "native": "GTK_ACCESSIBLE_ROLE_TERMINAL",
+      "nick": "terminal",
+      "value": 84
+    }
+  ],
+  "native": {
+    "c_type": "GtkAccessibleRole",
+    "gtype": "GtkAccessibleRole",
+    "name": "GtkAccessibleRole"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

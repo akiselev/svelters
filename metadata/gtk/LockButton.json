@@ -1,0 +1,387 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "Gtk.Button",
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_lock_button_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "permission",
+          "native": "GPermission*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Permission>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "lockbutton"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:LockButton",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Actionable",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:method:get_permission",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_permission",
+      "native": "gtk_lock_button_get_permission",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GPermission*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gio:Permission>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:method:set_permission",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_permission",
+      "native": "gtk_lock_button_set_permission",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "permission",
+          "native": "GPermission*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:Permission>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkLockButton",
+    "get_type": "gtk_lock_button_get_type",
+    "gtype": "GtkLockButton",
+    "name": "GtkLockButton"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_lock_button_get_permission",
+        "set": "gtk_lock_button_set_permission"
+      },
+      "default": null,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:permission",
+      "invocation": "reflected",
+      "js_name": "permission",
+      "name": "permission",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::permission"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE"
+        ],
+        "gtype": "GPermission",
+        "origin": "runtime",
+        "owner": "GtkLockButton"
+      },
+      "type": {
+        "gtype": "GPermission",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gio:Permission>"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Lock",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock",
+      "invocation": "reflected",
+      "js_name": "textLock",
+      "name": "text-lock",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::text-lock"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkLockButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Unlock",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-unlock",
+      "invocation": "reflected",
+      "js_name": "textUnlock",
+      "name": "text-unlock",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::text-unlock"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkLockButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Dialog is unlocked.\nClick to prevent further changes",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-lock",
+      "invocation": "reflected",
+      "js_name": "tooltipLock",
+      "name": "tooltip-lock",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::tooltip-lock"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkLockButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "System policy prevents changes.\nContact your system administrator",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-not-authorized",
+      "invocation": "reflected",
+      "js_name": "tooltipNotAuthorized",
+      "name": "tooltip-not-authorized",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::tooltip-not-authorized"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkLockButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "Dialog is locked.\nClick to make changes",
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-unlock",
+      "invocation": "reflected",
+      "js_name": "tooltipUnlock",
+      "name": "tooltip-unlock",
+      "notify": {
+        "explicit": false,
+        "signal": "notify::tooltip-unlock"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkLockButton"
+      },
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

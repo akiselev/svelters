@@ -1,0 +1,55 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:PositionType",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "left",
+      "native": "GTK_POS_LEFT",
+      "nick": "left",
+      "value": 0
+    },
+    {
+      "name": "right",
+      "native": "GTK_POS_RIGHT",
+      "nick": "right",
+      "value": 1
+    },
+    {
+      "name": "top",
+      "native": "GTK_POS_TOP",
+      "nick": "top",
+      "value": 2
+    },
+    {
+      "name": "bottom",
+      "native": "GTK_POS_BOTTOM",
+      "nick": "bottom",
+      "value": 3
+    }
+  ],
+  "native": {
+    "c_type": "GtkPositionType",
+    "gtype": "GtkPositionType",
+    "name": "GtkPositionType"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

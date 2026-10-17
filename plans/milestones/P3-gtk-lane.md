@@ -31,3 +31,13 @@ P kinds that must be correct: `window` (ApplicationWindow, `child`), `box` (orde
 - `python tools/metadata/gtk/ingest.py && python tools/metadata/gtk/gen_backend.py` is reproducible, i.e. a no-op diff on rerun.
 - The generated verification tests pass under `xvfb-run cargo nextest run -p svelters-gtk`.
 - The counter tree appears on screen from a hand-written op sequence. JS integration is P5.
+
+## Completion record
+
+Branch `worktree-agent-ad4b41b0e3016d49b`. Environment: GTK 4.22.4, PyGObject 3.56, gtk4-rs 0.11.5, Xvfb.
+
+- **Reproducibility:** `python3 tools/metadata/gtk/ingest.py && python3 tools/metadata/gtk/gen_backend.py` rerun reports 0 files written and `git status` stays clean (443 metadata files, 5.3 MB; 298 object/interface kinds in the Rust tables: 1304 props, 349 signals, 7 slots, 1 method).
+- **Tests:** `xvfb-run -a -s "-screen 0 1024x768x24" cargo nextest run -p svelters-gtk` passes 22/22 (20 generated verification tests, `oplog_replay`, `counter`). `cargo test -p svelters-gtk` also passes (tests run on one dedicated GTK thread).
+- **Fixtures:** `tests/oplog_replay.rs` replays P1's `fixtures/*/expected.oplog` (counter, if-toggle, keyed-list, timers) through the C vtable. `event` lines are produced natively (click, typing) and checked at the stub host.
+- **Counter on screen:** `tests/counter.rs`, screenshot at `target/p3-counter.png` (via ImageMagick `import -window root`).
+- Details and open issues: `docs/notes/p3-gtk-lane.md`.

@@ -1,0 +1,771 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.ListBase",
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_grid_view_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GtkSelectionModel*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:SelectionModel>"
+        },
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "gridview"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:ListTabBehavior"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:GridView",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget",
+    "Gtk.Orientable",
+    "Gtk.Scrollable"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_enable_rubberband",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_enable_rubberband",
+      "native": "gtk_grid_view_get_enable_rubberband",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_factory",
+      "native": "gtk_grid_view_get_factory",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListItemFactory*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_max_columns",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_max_columns",
+      "native": "gtk_grid_view_get_max_columns",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_min_columns",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_min_columns",
+      "native": "gtk_grid_view_get_min_columns",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "guint",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "u32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_model",
+      "native": "gtk_grid_view_get_model",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkSelectionModel*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:SelectionModel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_single_click_activate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_single_click_activate",
+      "native": "gtk_grid_view_get_single_click_activate",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_tab_behavior",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_tab_behavior",
+      "native": "gtk_grid_view_get_tab_behavior",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkListTabBehavior",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:scroll_to",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "scroll_to",
+      "native": "gtk_grid_view_scroll_to",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "pos",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        },
+        {
+          "name": "flags",
+          "native": "GtkListScrollFlags",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:ListScrollFlags>"
+        },
+        {
+          "name": "scroll",
+          "native": "GtkScrollInfo*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:ScrollInfo>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_enable_rubberband",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_enable_rubberband",
+      "native": "gtk_grid_view_set_enable_rubberband",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "enable_rubberband",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_factory",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_factory",
+      "native": "gtk_grid_view_set_factory",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "factory",
+          "native": "GtkListItemFactory*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_max_columns",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_max_columns",
+      "native": "gtk_grid_view_set_max_columns",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "max_columns",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_min_columns",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_min_columns",
+      "native": "gtk_grid_view_set_min_columns",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "min_columns",
+          "native": "guint",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_model",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_model",
+      "native": "gtk_grid_view_set_model",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "model",
+          "native": "GtkSelectionModel*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:SelectionModel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_single_click_activate",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_single_click_activate",
+      "native": "gtk_grid_view_set_single_click_activate",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "single_click_activate",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:set_tab_behavior",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_tab_behavior",
+      "native": "gtk_grid_view_set_tab_behavior",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "tab_behavior",
+          "native": "GtkListTabBehavior",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGridView",
+    "get_type": "gtk_grid_view_get_type",
+    "gtype": "GtkGridView",
+    "name": "GtkGridView"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_enable_rubberband",
+        "set": "gtk_grid_view_set_enable_rubberband"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:enable-rubberband",
+      "invocation": "reflected",
+      "js_name": "enableRubberband",
+      "name": "enable-rubberband",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::enable-rubberband"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_factory",
+        "set": "gtk_grid_view_set_factory"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:factory",
+      "invocation": "reflected",
+      "js_name": "factory",
+      "name": "factory",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::factory"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListItemFactory",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "type": {
+        "gtype": "GtkListItemFactory",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ListItemFactory>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_max_columns",
+        "set": "gtk_grid_view_set_max_columns"
+      },
+      "default": 7,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:max-columns",
+      "invocation": "reflected",
+      "js_name": "maxColumns",
+      "name": "max-columns",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::max-columns"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_min_columns",
+        "set": "gtk_grid_view_set_min_columns"
+      },
+      "default": 1,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:min-columns",
+      "invocation": "reflected",
+      "js_name": "minColumns",
+      "name": "min-columns",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::min-columns"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 4294967295,
+        "min": 1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_model",
+        "set": "gtk_grid_view_set_model"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:model",
+      "invocation": "reflected",
+      "js_name": "model",
+      "name": "model",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::model"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkSelectionModel",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "type": {
+        "gtype": "GtkSelectionModel",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:SelectionModel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_single_click_activate",
+        "set": "gtk_grid_view_set_single_click_activate"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:single-click-activate",
+      "invocation": "reflected",
+      "js_name": "singleClickActivate",
+      "name": "single-click-activate",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::single-click-activate"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_grid_view_get_tab_behavior",
+        "set": "gtk_grid_view_set_tab_behavior"
+      },
+      "default": "all",
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:tab-behavior",
+      "invocation": "reflected",
+      "js_name": "tabBehavior",
+      "name": "tab-behavior",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::tab-behavior"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkListTabBehavior",
+        "origin": "runtime",
+        "owner": "GtkGridView"
+      },
+      "since": "4.12",
+      "type": {
+        "gtype": "GtkListTabBehavior",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GridView:signal:activate",
+      "js_event": "activate",
+      "name": "activate",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "guint",
+          "name": "position",
+          "type": "u32"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

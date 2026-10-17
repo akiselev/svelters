@@ -1,0 +1,121 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:BuilderError",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "invalid_type_function",
+      "native": "GTK_BUILDER_ERROR_INVALID_TYPE_FUNCTION",
+      "nick": "invalid-type-function",
+      "value": 0
+    },
+    {
+      "name": "unhandled_tag",
+      "native": "GTK_BUILDER_ERROR_UNHANDLED_TAG",
+      "nick": "unhandled-tag",
+      "value": 1
+    },
+    {
+      "name": "missing_attribute",
+      "native": "GTK_BUILDER_ERROR_MISSING_ATTRIBUTE",
+      "nick": "missing-attribute",
+      "value": 2
+    },
+    {
+      "name": "invalid_attribute",
+      "native": "GTK_BUILDER_ERROR_INVALID_ATTRIBUTE",
+      "nick": "invalid-attribute",
+      "value": 3
+    },
+    {
+      "name": "invalid_tag",
+      "native": "GTK_BUILDER_ERROR_INVALID_TAG",
+      "nick": "invalid-tag",
+      "value": 4
+    },
+    {
+      "name": "missing_property_value",
+      "native": "GTK_BUILDER_ERROR_MISSING_PROPERTY_VALUE",
+      "nick": "missing-property-value",
+      "value": 5
+    },
+    {
+      "name": "invalid_value",
+      "native": "GTK_BUILDER_ERROR_INVALID_VALUE",
+      "nick": "invalid-value",
+      "value": 6
+    },
+    {
+      "name": "version_mismatch",
+      "native": "GTK_BUILDER_ERROR_VERSION_MISMATCH",
+      "nick": "version-mismatch",
+      "value": 7
+    },
+    {
+      "name": "duplicate_id",
+      "native": "GTK_BUILDER_ERROR_DUPLICATE_ID",
+      "nick": "duplicate-id",
+      "value": 8
+    },
+    {
+      "name": "object_type_refused",
+      "native": "GTK_BUILDER_ERROR_OBJECT_TYPE_REFUSED",
+      "nick": "object-type-refused",
+      "value": 9
+    },
+    {
+      "name": "template_mismatch",
+      "native": "GTK_BUILDER_ERROR_TEMPLATE_MISMATCH",
+      "nick": "template-mismatch",
+      "value": 10
+    },
+    {
+      "name": "invalid_property",
+      "native": "GTK_BUILDER_ERROR_INVALID_PROPERTY",
+      "nick": "invalid-property",
+      "value": 11
+    },
+    {
+      "name": "invalid_signal",
+      "native": "GTK_BUILDER_ERROR_INVALID_SIGNAL",
+      "nick": "invalid-signal",
+      "value": 12
+    },
+    {
+      "name": "invalid_id",
+      "native": "GTK_BUILDER_ERROR_INVALID_ID",
+      "nick": "invalid-id",
+      "value": 13
+    },
+    {
+      "name": "invalid_function",
+      "native": "GTK_BUILDER_ERROR_INVALID_FUNCTION",
+      "nick": "invalid-function",
+      "value": 14
+    }
+  ],
+  "native": {
+    "c_type": "GtkBuilderError",
+    "gtype": "GtkBuilderError",
+    "name": "GtkBuilderError"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

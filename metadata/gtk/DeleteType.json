@@ -1,0 +1,79 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:DeleteType",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "chars",
+      "native": "GTK_DELETE_CHARS",
+      "nick": "chars",
+      "value": 0
+    },
+    {
+      "name": "word_ends",
+      "native": "GTK_DELETE_WORD_ENDS",
+      "nick": "word-ends",
+      "value": 1
+    },
+    {
+      "name": "words",
+      "native": "GTK_DELETE_WORDS",
+      "nick": "words",
+      "value": 2
+    },
+    {
+      "name": "display_lines",
+      "native": "GTK_DELETE_DISPLAY_LINES",
+      "nick": "display-lines",
+      "value": 3
+    },
+    {
+      "name": "display_line_ends",
+      "native": "GTK_DELETE_DISPLAY_LINE_ENDS",
+      "nick": "display-line-ends",
+      "value": 4
+    },
+    {
+      "name": "paragraph_ends",
+      "native": "GTK_DELETE_PARAGRAPH_ENDS",
+      "nick": "paragraph-ends",
+      "value": 5
+    },
+    {
+      "name": "paragraphs",
+      "native": "GTK_DELETE_PARAGRAPHS",
+      "nick": "paragraphs",
+      "value": 6
+    },
+    {
+      "name": "whitespace",
+      "native": "GTK_DELETE_WHITESPACE",
+      "nick": "whitespace",
+      "value": 7
+    }
+  ],
+  "native": {
+    "c_type": "GtkDeleteType",
+    "gtype": "GtkDeleteType",
+    "name": "GtkDeleteType"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

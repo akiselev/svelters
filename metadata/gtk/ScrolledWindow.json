@@ -1,0 +1,1606 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [
+        "set_child"
+      ],
+      "widget_props": [
+        "child"
+      ]
+    },
+    "default_slot": "child",
+    "policy": "single_child",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_scrolled_window_set_child"
+            },
+            {
+              "origin": "manual",
+              "ref": "docs: a non-scrollable child is wrapped in a GtkViewport automatically"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "name": "child",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "native": "GtkScrolledWindow::get_child() const",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkScrolledWindow::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
+          "set": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "wrapped:Viewport",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkScrolledWindow::set_child(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "none",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_scrolled_window_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "scrolledwindow"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:CornerType",
+    "svelters-api:v1:type:gtk:Gtk:PolicyType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_child",
+      "native": "gtk_scrolled_window_get_child",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_hadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_hadjustment",
+      "native": "gtk_scrolled_window_get_hadjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_has_frame",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_has_frame",
+      "native": "gtk_scrolled_window_get_has_frame",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_hscrollbar",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_hscrollbar",
+      "native": "gtk_scrolled_window_get_hscrollbar",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_kinetic_scrolling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_kinetic_scrolling",
+      "native": "gtk_scrolled_window_get_kinetic_scrolling",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_max_content_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_max_content_height",
+      "native": "gtk_scrolled_window_get_max_content_height",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_max_content_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_max_content_width",
+      "native": "gtk_scrolled_window_get_max_content_width",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_min_content_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_min_content_height",
+      "native": "gtk_scrolled_window_get_min_content_height",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_min_content_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_min_content_width",
+      "native": "gtk_scrolled_window_get_min_content_width",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "i32"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_overlay_scrolling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_overlay_scrolling",
+      "native": "gtk_scrolled_window_get_overlay_scrolling",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_placement",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_placement",
+      "native": "gtk_scrolled_window_get_placement",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkCornerType",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:CornerType>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_policy",
+      "native": "gtk_scrolled_window_get_policy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "hscrollbar_policy",
+          "native": "GtkPolicyType*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PolicyType>"
+        },
+        {
+          "name": "vscrollbar_policy",
+          "native": "GtkPolicyType*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PolicyType>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_propagate_natural_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_propagate_natural_height",
+      "native": "gtk_scrolled_window_get_propagate_natural_height",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_propagate_natural_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_propagate_natural_width",
+      "native": "gtk_scrolled_window_get_propagate_natural_width",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_vadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_vadjustment",
+      "native": "gtk_scrolled_window_get_vadjustment",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkAdjustment*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:get_vscrollbar",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_vscrollbar",
+      "native": "gtk_scrolled_window_get_vscrollbar",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkWidget*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_child",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_child",
+      "native": "gtk_scrolled_window_set_child",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "child",
+          "native": "GtkWidget*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_hadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_hadjustment",
+      "native": "gtk_scrolled_window_set_hadjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "hadjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_has_frame",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_has_frame",
+      "native": "gtk_scrolled_window_set_has_frame",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "has_frame",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_kinetic_scrolling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_kinetic_scrolling",
+      "native": "gtk_scrolled_window_set_kinetic_scrolling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "kinetic_scrolling",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_max_content_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_max_content_height",
+      "native": "gtk_scrolled_window_set_max_content_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "height",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_max_content_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_max_content_width",
+      "native": "gtk_scrolled_window_set_max_content_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "width",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_min_content_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_min_content_height",
+      "native": "gtk_scrolled_window_set_min_content_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "height",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_min_content_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_min_content_width",
+      "native": "gtk_scrolled_window_set_min_content_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "width",
+          "native": "int",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i32"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_overlay_scrolling",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_overlay_scrolling",
+      "native": "gtk_scrolled_window_set_overlay_scrolling",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "overlay_scrolling",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_placement",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_placement",
+      "native": "gtk_scrolled_window_set_placement",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "window_placement",
+          "native": "GtkCornerType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:CornerType>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_policy",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_policy",
+      "native": "gtk_scrolled_window_set_policy",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "hscrollbar_policy",
+          "native": "GtkPolicyType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PolicyType>"
+        },
+        {
+          "name": "vscrollbar_policy",
+          "native": "GtkPolicyType",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PolicyType>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_propagate_natural_height",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_propagate_natural_height",
+      "native": "gtk_scrolled_window_set_propagate_natural_height",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "propagate",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_propagate_natural_width",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_propagate_natural_width",
+      "native": "gtk_scrolled_window_set_propagate_natural_width",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "propagate",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:set_vadjustment",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_vadjustment",
+      "native": "gtk_scrolled_window_set_vadjustment",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "vadjustment",
+          "native": "GtkAdjustment*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:method:unset_placement",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "unset_placement",
+      "native": "gtk_scrolled_window_unset_placement",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkScrolledWindow",
+    "get_type": "gtk_scrolled_window_get_type",
+    "gtype": "GtkScrolledWindow",
+    "name": "GtkScrolledWindow"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_child",
+        "set": "gtk_scrolled_window_set_child"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:child",
+      "invocation": "reflected",
+      "js_name": "child",
+      "name": "child",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::child"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkWidget",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "GtkWidget",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Widget>"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_hadjustment",
+        "set": "gtk_scrolled_window_set_hadjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:hadjustment",
+      "invocation": "reflected",
+      "js_name": "hadjustment",
+      "name": "hadjustment",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::hadjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_has_frame",
+        "set": "gtk_scrolled_window_set_has_frame"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:has-frame",
+      "invocation": "reflected",
+      "js_name": "hasFrame",
+      "name": "has-frame",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::has-frame"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "automatic",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:hscrollbar-policy",
+      "invocation": "reflected",
+      "js_name": "hscrollbarPolicy",
+      "name": "hscrollbar-policy",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::hscrollbar-policy"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkPolicyType",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "GtkPolicyType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:PolicyType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_kinetic_scrolling",
+        "set": "gtk_scrolled_window_set_kinetic_scrolling"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:kinetic-scrolling",
+      "invocation": "reflected",
+      "js_name": "kineticScrolling",
+      "name": "kinetic-scrolling",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::kinetic-scrolling"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_max_content_height",
+        "set": "gtk_scrolled_window_set_max_content_height"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:max-content-height",
+      "invocation": "reflected",
+      "js_name": "maxContentHeight",
+      "name": "max-content-height",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::max-content-height"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_max_content_width",
+        "set": "gtk_scrolled_window_set_max_content_width"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:max-content-width",
+      "invocation": "reflected",
+      "js_name": "maxContentWidth",
+      "name": "max-content-width",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::max-content-width"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_min_content_height",
+        "set": "gtk_scrolled_window_set_min_content_height"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:min-content-height",
+      "invocation": "reflected",
+      "js_name": "minContentHeight",
+      "name": "min-content-height",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::min-content-height"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_min_content_width",
+        "set": "gtk_scrolled_window_set_min_content_width"
+      },
+      "default": -1,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:min-content-width",
+      "invocation": "reflected",
+      "js_name": "minContentWidth",
+      "name": "min-content-width",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::min-content-width"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": -1
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gint",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gint",
+        "native": "gint",
+        "nullable": false,
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_overlay_scrolling",
+        "set": "gtk_scrolled_window_set_overlay_scrolling"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:overlay-scrolling",
+      "invocation": "reflected",
+      "js_name": "overlayScrolling",
+      "name": "overlay-scrolling",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::overlay-scrolling"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_propagate_natural_height",
+        "set": "gtk_scrolled_window_set_propagate_natural_height"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:propagate-natural-height",
+      "invocation": "reflected",
+      "js_name": "propagateNaturalHeight",
+      "name": "propagate-natural-height",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::propagate-natural-height"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_propagate_natural_width",
+        "set": "gtk_scrolled_window_set_propagate_natural_width"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:propagate-natural-width",
+      "invocation": "reflected",
+      "js_name": "propagateNaturalWidth",
+      "name": "propagate-natural-width",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::propagate-natural-width"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_vadjustment",
+        "set": "gtk_scrolled_window_set_vadjustment"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:vadjustment",
+      "invocation": "reflected",
+      "js_name": "vadjustment",
+      "name": "vadjustment",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::vadjustment"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkAdjustment",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "GtkAdjustment",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:Adjustment>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "automatic",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:vscrollbar-policy",
+      "invocation": "reflected",
+      "js_name": "vscrollbarPolicy",
+      "name": "vscrollbar-policy",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::vscrollbar-policy"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkPolicyType",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "GtkPolicyType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:PolicyType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_scrolled_window_get_placement",
+        "set": "gtk_scrolled_window_set_placement"
+      },
+      "default": "top-left",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:window-placement",
+      "invocation": "reflected",
+      "js_name": "windowPlacement",
+      "name": "window-placement",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::window-placement"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkCornerType",
+        "origin": "runtime",
+        "owner": "GtkScrolledWindow"
+      },
+      "type": {
+        "gtype": "GtkCornerType",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:CornerType>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:signal:edge-overshot",
+      "js_event": "edge-overshot",
+      "name": "edge-overshot",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkPositionType",
+          "name": "pos",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PositionType>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:signal:edge-reached",
+      "js_event": "edge-reached",
+      "name": "edge-reached",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkPositionType",
+          "name": "pos",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:PositionType>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:signal:move-focus-out",
+      "js_event": "move-focus-out",
+      "name": "move-focus-out",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkDirectionType",
+          "name": "direction_type",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:DirectionType>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:signal:scroll-child",
+      "js_event": "scroll-child",
+      "name": "scroll-child",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkScrollType",
+          "name": "scroll",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:ScrollType>"
+        },
+        {
+          "gtype": "gboolean",
+          "name": "horizontal",
+          "type": "bool"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": "overrides/gtk/ScrolledWindow.yaml",
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

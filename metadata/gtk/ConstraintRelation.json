@@ -1,0 +1,49 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintRelation",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "le",
+      "native": "GTK_CONSTRAINT_RELATION_LE",
+      "nick": "le",
+      "value": -1
+    },
+    {
+      "name": "eq",
+      "native": "GTK_CONSTRAINT_RELATION_EQ",
+      "nick": "eq",
+      "value": 0
+    },
+    {
+      "name": "ge",
+      "native": "GTK_CONSTRAINT_RELATION_GE",
+      "nick": "ge",
+      "value": 1
+    }
+  ],
+  "native": {
+    "c_type": "GtkConstraintRelation",
+    "gtype": "GtkConstraintRelation",
+    "name": "GtkConstraintRelation"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

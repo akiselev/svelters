@@ -1,0 +1,323 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": "4.10",
+    "since": null
+  },
+  "bases": [
+    "Gtk.CellRendererText",
+    "Gtk.CellRenderer",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_cell_renderer_accel_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:CellRendererAccelMode",
+    "svelters-api:v1:type:gtk:Gdk:ModifierType"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "c_type": "GtkCellRendererAccel",
+    "get_type": "gtk_cell_renderer_accel_get_type",
+    "gtype": "GtkCellRendererAccel",
+    "name": "GtkCellRendererAccel"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-key",
+      "invocation": "reflected",
+      "js_name": "accelKey",
+      "name": "accel-key",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::accel-key"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkCellRendererAccel"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "gtk",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-mode",
+      "invocation": "reflected",
+      "js_name": "accelMode",
+      "name": "accel-mode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::accel-mode"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkCellRendererAccelMode",
+        "origin": "runtime",
+        "owner": "GtkCellRendererAccel"
+      },
+      "type": {
+        "gtype": "GtkCellRendererAccelMode",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:CellRendererAccelMode>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-mods",
+      "invocation": "reflected",
+      "js_name": "accelMods",
+      "name": "accel-mods",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::accel-mods"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkModifierType",
+        "origin": "runtime",
+        "owner": "GtkCellRendererAccel"
+      },
+      "type": {
+        "gtype": "GdkModifierType",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:keycode",
+      "invocation": "reflected",
+      "js_name": "keycode",
+      "name": "keycode",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::keycode"
+      },
+      "origin": "gir",
+      "range": {
+        "max": 2147483647,
+        "min": 0
+      },
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "guint",
+        "origin": "runtime",
+        "owner": "GtkCellRendererAccel"
+      },
+      "type": {
+        "gtype": "guint",
+        "native": "guint",
+        "nullable": false,
+        "ref": "u32"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:signal:accel-cleared",
+      "js_event": "accel-cleared",
+      "name": "accel-cleared",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "path_string",
+          "type": "string"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:signal:accel-edited",
+      "js_event": "accel-edited",
+      "name": "accel-edited",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gchararray",
+          "name": "path_string",
+          "type": "string"
+        },
+        {
+          "gtype": "guint",
+          "name": "accel_key",
+          "type": "u32"
+        },
+        {
+          "gtype": "GdkModifierType",
+          "name": "accel_mods",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:ModifierType>"
+        },
+        {
+          "gtype": "guint",
+          "name": "hardware_keycode",
+          "type": "u32"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

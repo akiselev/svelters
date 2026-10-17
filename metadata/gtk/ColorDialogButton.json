@@ -1,0 +1,290 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.10"
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_color_dialog_button_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "dialog",
+          "native": "GtkColorDialog*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ColorDialog>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "colordialogbutton"
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:method:get_dialog",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_dialog",
+      "native": "gtk_color_dialog_button_get_dialog",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkColorDialog*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:ColorDialog>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:method:get_rgba",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_rgba",
+      "native": "gtk_color_dialog_button_get_rgba",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const GdkRGBA*",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:method:set_dialog",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_dialog",
+      "native": "gtk_color_dialog_button_set_dialog",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "dialog",
+          "native": "GtkColorDialog*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:ColorDialog>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:method:set_rgba",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_rgba",
+      "native": "gtk_color_dialog_button_set_rgba",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "color",
+          "native": "const GdkRGBA*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkColorDialogButton",
+    "get_type": "gtk_color_dialog_button_get_type",
+    "gtype": "GtkColorDialogButton",
+    "name": "GtkColorDialogButton"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_color_dialog_button_get_dialog",
+        "set": "gtk_color_dialog_button_set_dialog"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:prop:dialog",
+      "invocation": "reflected",
+      "js_name": "dialog",
+      "name": "dialog",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::dialog"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkColorDialog",
+        "origin": "runtime",
+        "owner": "GtkColorDialogButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "GtkColorDialog",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:ColorDialog>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_color_dialog_button_get_rgba",
+        "set": "gtk_color_dialog_button_set_rgba"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:prop:rgba",
+      "invocation": "reflected",
+      "js_name": "rgba",
+      "name": "rgba",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::rgba"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkRGBA",
+        "origin": "runtime",
+        "owner": "GtkColorDialogButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "GdkRGBA",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:RGBA>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:signal:activate",
+      "js_event": "activate",
+      "name": "activate",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

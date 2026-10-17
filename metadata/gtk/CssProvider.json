@@ -1,0 +1,456 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_css_provider_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:InterfaceColorScheme",
+    "svelters-api:v1:type:gtk:Gtk:InterfaceContrast",
+    "svelters-api:v1:type:gtk:Gtk:ReducedMotion"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:CssProvider",
+  "interfaces": [
+    "Gtk.StyleProvider"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_from_bytes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_from_bytes",
+      "native": "gtk_css_provider_load_from_bytes",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "data",
+          "native": "GBytes*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:Bytes>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_from_data",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_from_data",
+      "native": "gtk_css_provider_load_from_data",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "data",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "length",
+          "native": "gssize",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "i64"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_from_file",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_from_file",
+      "native": "gtk_css_provider_load_from_file",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "file",
+          "native": "GFile*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gio:File>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_from_path",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_from_path",
+      "native": "gtk_css_provider_load_from_path",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "path",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_from_resource",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_from_resource",
+      "native": "gtk_css_provider_load_from_resource",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "resource_path",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_from_string",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_from_string",
+      "native": "gtk_css_provider_load_from_string",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "string",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "deprecated": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:load_named",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "load_named",
+      "native": "gtk_css_provider_load_named",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "name",
+          "native": "const char*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "string"
+        },
+        {
+          "name": "variant",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:method:to_string",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "to_string",
+      "native": "gtk_css_provider_to_string",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "char*",
+        "nullable": false,
+        "ownership": "owned",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkCssProvider",
+    "get_type": "gtk_css_provider_get_type",
+    "gtype": "GtkCssProvider",
+    "name": "GtkCssProvider"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "default",
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:prop:prefers-color-scheme",
+      "invocation": "reflected",
+      "js_name": "prefersColorScheme",
+      "name": "prefers-color-scheme",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::prefers-color-scheme"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkInterfaceColorScheme",
+        "origin": "runtime",
+        "owner": "GtkCssProvider"
+      },
+      "since": "4.20",
+      "type": {
+        "gtype": "GtkInterfaceColorScheme",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InterfaceColorScheme>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "no-preference",
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:prop:prefers-contrast",
+      "invocation": "reflected",
+      "js_name": "prefersContrast",
+      "name": "prefers-contrast",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::prefers-contrast"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkInterfaceContrast",
+        "origin": "runtime",
+        "owner": "GtkCssProvider"
+      },
+      "since": "4.20",
+      "type": {
+        "gtype": "GtkInterfaceContrast",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InterfaceContrast>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "set": null
+      },
+      "default": "no-preference",
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:prop:prefers-reduced-motion",
+      "invocation": "reflected",
+      "js_name": "prefersReducedMotion",
+      "name": "prefers-reduced-motion",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::prefers-reduced-motion"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkReducedMotion",
+        "origin": "runtime",
+        "owner": "GtkCssProvider"
+      },
+      "since": "4.22",
+      "type": {
+        "gtype": "GtkReducedMotion",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:ReducedMotion>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:signal:parsing-error",
+      "js_event": "parsing-error",
+      "name": "parsing-error",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GtkCssSection",
+          "name": "section",
+          "type": "boxed<svelters-api:v1:type:gtk:Gtk:CssSection>"
+        },
+        {
+          "gtype": "GError",
+          "name": "error",
+          "type": "boxed<svelters-api:v1:type:gtk:GLib:Error>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,307 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_event_controller_scroll_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "flags",
+          "native": "GtkEventControllerScrollFlags",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:method:get_flags",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_flags",
+      "native": "gtk_event_controller_scroll_get_flags",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkEventControllerScrollFlags",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:method:get_unit",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_unit",
+      "native": "gtk_event_controller_scroll_get_unit",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkScrollUnit",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gdk:ScrollUnit>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:method:set_flags",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_flags",
+      "native": "gtk_event_controller_scroll_set_flags",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "flags",
+          "native": "GtkEventControllerScrollFlags",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkEventControllerScroll",
+    "get_type": "gtk_event_controller_scroll_get_type",
+    "gtype": "GtkEventControllerScroll",
+    "name": "GtkEventControllerScroll"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_event_controller_scroll_get_flags",
+        "set": "gtk_event_controller_scroll_set_flags"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:prop:flags",
+      "invocation": "reflected",
+      "js_name": "flags",
+      "name": "flags",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::flags"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkEventControllerScrollFlags",
+        "origin": "runtime",
+        "owner": "GtkEventControllerScroll"
+      },
+      "type": {
+        "gtype": "GtkEventControllerScrollFlags",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:decelerate",
+      "js_event": "decelerate",
+      "name": "decelerate",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "vel_x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "vel_y",
+          "type": "f64"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll",
+      "js_event": "scroll",
+      "name": "scroll",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "dx",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "dy",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll-begin",
+      "js_event": "scroll-begin",
+      "name": "scroll-begin",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll-end",
+      "js_event": "scroll-end",
+      "name": "scroll-end",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

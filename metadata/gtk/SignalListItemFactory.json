@@ -1,0 +1,195 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.ListItemFactory",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_signal_list_item_factory_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "c_type": "GtkSignalListItemFactory",
+    "get_type": "gtk_signal_list_item_factory_get_type",
+    "gtype": "GtkSignalListItemFactory",
+    "name": "GtkSignalListItemFactory"
+  },
+  "origin": "gir",
+  "properties": [],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory:signal:bind",
+      "js_event": "bind",
+      "name": "bind",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GObject",
+          "name": "object",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory:signal:setup",
+      "js_event": "setup",
+      "name": "setup",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GObject",
+          "name": "object",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory:signal:teardown",
+      "js_event": "teardown",
+      "name": "teardown",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GObject",
+          "name": "object",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory:signal:unbind",
+      "js_event": "unbind",
+      "name": "unbind",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GObject",
+          "name": "object",
+          "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
+        }
+      ],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

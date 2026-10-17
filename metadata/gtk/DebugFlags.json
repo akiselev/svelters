@@ -1,0 +1,169 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:DebugFlags",
+  "kind": "flags",
+  "members": [
+    {
+      "name": "text",
+      "native": "GTK_DEBUG_TEXT",
+      "nick": "text",
+      "value": 1
+    },
+    {
+      "name": "tree",
+      "native": "GTK_DEBUG_TREE",
+      "nick": "tree",
+      "value": 2
+    },
+    {
+      "name": "keybindings",
+      "native": "GTK_DEBUG_KEYBINDINGS",
+      "nick": "keybindings",
+      "value": 4
+    },
+    {
+      "name": "modules",
+      "native": "GTK_DEBUG_MODULES",
+      "nick": "modules",
+      "value": 8
+    },
+    {
+      "name": "geometry",
+      "native": "GTK_DEBUG_GEOMETRY",
+      "nick": "geometry",
+      "value": 16
+    },
+    {
+      "name": "icontheme",
+      "native": "GTK_DEBUG_ICONTHEME",
+      "nick": "icontheme",
+      "value": 32
+    },
+    {
+      "name": "printing",
+      "native": "GTK_DEBUG_PRINTING",
+      "nick": "printing",
+      "value": 64
+    },
+    {
+      "name": "builder_trace",
+      "native": "GTK_DEBUG_BUILDER_TRACE",
+      "nick": "builder-trace",
+      "value": 128
+    },
+    {
+      "name": "size_request",
+      "native": "GTK_DEBUG_SIZE_REQUEST",
+      "nick": "size-request",
+      "value": 256
+    },
+    {
+      "name": "no_css_cache",
+      "native": "GTK_DEBUG_NO_CSS_CACHE",
+      "nick": "no-css-cache",
+      "value": 512
+    },
+    {
+      "name": "interactive",
+      "native": "GTK_DEBUG_INTERACTIVE",
+      "nick": "interactive",
+      "value": 1024
+    },
+    {
+      "name": "touchscreen",
+      "native": "GTK_DEBUG_TOUCHSCREEN",
+      "nick": "touchscreen",
+      "value": 2048
+    },
+    {
+      "name": "actions",
+      "native": "GTK_DEBUG_ACTIONS",
+      "nick": "actions",
+      "value": 4096
+    },
+    {
+      "name": "layout",
+      "native": "GTK_DEBUG_LAYOUT",
+      "nick": "layout",
+      "value": 8192
+    },
+    {
+      "name": "snapshot",
+      "native": "GTK_DEBUG_SNAPSHOT",
+      "nick": "snapshot",
+      "value": 16384
+    },
+    {
+      "name": "constraints",
+      "native": "GTK_DEBUG_CONSTRAINTS",
+      "nick": "constraints",
+      "value": 32768
+    },
+    {
+      "name": "builder_objects",
+      "native": "GTK_DEBUG_BUILDER_OBJECTS",
+      "nick": "builder-objects",
+      "value": 65536
+    },
+    {
+      "name": "a11y",
+      "native": "GTK_DEBUG_A11Y",
+      "nick": "a11y",
+      "value": 131072
+    },
+    {
+      "name": "iconfallback",
+      "native": "GTK_DEBUG_ICONFALLBACK",
+      "nick": "iconfallback",
+      "value": 262144
+    },
+    {
+      "name": "invert_text_dir",
+      "native": "GTK_DEBUG_INVERT_TEXT_DIR",
+      "nick": "invert-text-dir",
+      "value": 524288
+    },
+    {
+      "name": "css",
+      "native": "GTK_DEBUG_CSS",
+      "nick": "css",
+      "value": 1048576
+    },
+    {
+      "name": "builder",
+      "native": "GTK_DEBUG_BUILDER",
+      "nick": "builder",
+      "value": 2097152
+    },
+    {
+      "name": "session",
+      "native": "GTK_DEBUG_SESSION",
+      "nick": "session",
+      "value": 4194304
+    }
+  ],
+  "native": {
+    "c_type": "GtkDebugFlags",
+    "gtype": "GtkDebugFlags",
+    "name": "GtkDebugFlags"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

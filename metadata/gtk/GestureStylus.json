@@ -1,0 +1,422 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.GestureSingle",
+    "Gtk.Gesture",
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_gesture_stylus_new",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:method:get_axes",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_axes",
+      "native": "gtk_gesture_stylus_get_axes",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "axes",
+          "native": "GdkAxisUse*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "list<enum<svelters-api:v1:type:gtk:Gdk:AxisUse>>"
+        },
+        {
+          "name": "values",
+          "native": "double**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "list<f64>"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:method:get_axis",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_axis",
+      "native": "gtk_gesture_stylus_get_axis",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "axis",
+          "native": "GdkAxisUse",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gdk:AxisUse>"
+        },
+        {
+          "name": "value",
+          "native": "double*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "f64"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:method:get_backlog",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_backlog",
+      "native": "gtk_gesture_stylus_get_backlog",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "backlog",
+          "native": "GdkTimeCoord**",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "list<value<svelters-api:v1:type:gtk:Gdk:TimeCoord>>"
+        },
+        {
+          "name": "n_elems",
+          "native": "guint*",
+          "nullable": false,
+          "ownership": "owned",
+          "type": "u32"
+        }
+      ],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:method:get_device_tool",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_device_tool",
+      "native": "gtk_gesture_stylus_get_device_tool",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkDeviceTool*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gdk:DeviceTool>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:method:get_stylus_only",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_stylus_only",
+      "native": "gtk_gesture_stylus_get_stylus_only",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:method:set_stylus_only",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_stylus_only",
+      "native": "gtk_gesture_stylus_set_stylus_only",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "stylus_only",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkGestureStylus",
+    "get_type": "gtk_gesture_stylus_get_type",
+    "gtype": "GtkGestureStylus",
+    "name": "GtkGestureStylus"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": true,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_gesture_stylus_get_stylus_only",
+        "set": "gtk_gesture_stylus_set_stylus_only"
+      },
+      "default": true,
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:prop:stylus-only",
+      "invocation": "reflected",
+      "js_name": "stylusOnly",
+      "name": "stylus-only",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::stylus-only"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "CONSTRUCT",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkGestureStylus"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:signal:down",
+      "js_event": "down",
+      "name": "down",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:signal:motion",
+      "js_event": "motion",
+      "name": "motion",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:signal:proximity",
+      "js_event": "proximity",
+      "name": "proximity",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:signal:up",
+      "js_event": "up",
+      "name": "up",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

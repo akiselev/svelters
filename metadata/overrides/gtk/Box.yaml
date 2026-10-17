@@ -1,0 +1,28 @@
+properties:
+  - name: spacing
+    js_name: spacing
+    provenance: "GtkBox:spacing (Gtk 4 docs); P prop"
+children:
+  policy: ordered
+  default_slot: children
+  slots:
+    - name: children
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: before_sibling
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        # GTK extension to 2.5.2: `contains` (get for many slots without a native getter) and
+        # `iterate` (list); `prev_sibling` argument expression = previous sibling of `before`,
+        # or the last child of self when `before` is null.
+        get:    {contains: parent}
+        list:   {iterate: {first: "GtkWidget::get_first_child() const", next: "GtkWidget::get_next_sibling() const"}}
+        insert: {native: "GtkBox::insert_child_after(GtkWidget*, GtkWidget*)", args: [child, prev_sibling], effects: {child: parented}}
+        remove: {native: "GtkBox::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_box_insert_child_after"}, {origin: gir, ref: "gtk_box_remove"}]

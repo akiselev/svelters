@@ -1,0 +1,79 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:NumberUpLayout",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "lrtb",
+      "native": "GTK_NUMBER_UP_LAYOUT_LEFT_TO_RIGHT_TOP_TO_BOTTOM",
+      "nick": "lrtb",
+      "value": 0
+    },
+    {
+      "name": "lrbt",
+      "native": "GTK_NUMBER_UP_LAYOUT_LEFT_TO_RIGHT_BOTTOM_TO_TOP",
+      "nick": "lrbt",
+      "value": 1
+    },
+    {
+      "name": "rltb",
+      "native": "GTK_NUMBER_UP_LAYOUT_RIGHT_TO_LEFT_TOP_TO_BOTTOM",
+      "nick": "rltb",
+      "value": 2
+    },
+    {
+      "name": "rlbt",
+      "native": "GTK_NUMBER_UP_LAYOUT_RIGHT_TO_LEFT_BOTTOM_TO_TOP",
+      "nick": "rlbt",
+      "value": 3
+    },
+    {
+      "name": "tblr",
+      "native": "GTK_NUMBER_UP_LAYOUT_TOP_TO_BOTTOM_LEFT_TO_RIGHT",
+      "nick": "tblr",
+      "value": 4
+    },
+    {
+      "name": "tbrl",
+      "native": "GTK_NUMBER_UP_LAYOUT_TOP_TO_BOTTOM_RIGHT_TO_LEFT",
+      "nick": "tbrl",
+      "value": 5
+    },
+    {
+      "name": "btlr",
+      "native": "GTK_NUMBER_UP_LAYOUT_BOTTOM_TO_TOP_LEFT_TO_RIGHT",
+      "nick": "btlr",
+      "value": 6
+    },
+    {
+      "name": "btrl",
+      "native": "GTK_NUMBER_UP_LAYOUT_BOTTOM_TO_TOP_RIGHT_TO_LEFT",
+      "nick": "btrl",
+      "value": 7
+    }
+  ],
+  "native": {
+    "c_type": "GtkNumberUpLayout",
+    "gtype": "GtkNumberUpLayout",
+    "name": "GtkNumberUpLayout"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

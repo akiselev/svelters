@@ -1,0 +1,67 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:ButtonsType",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "none",
+      "native": "GTK_BUTTONS_NONE",
+      "nick": "none",
+      "value": 0
+    },
+    {
+      "name": "ok",
+      "native": "GTK_BUTTONS_OK",
+      "nick": "ok",
+      "value": 1
+    },
+    {
+      "name": "close",
+      "native": "GTK_BUTTONS_CLOSE",
+      "nick": "close",
+      "value": 2
+    },
+    {
+      "name": "cancel",
+      "native": "GTK_BUTTONS_CANCEL",
+      "nick": "cancel",
+      "value": 3
+    },
+    {
+      "name": "yes_no",
+      "native": "GTK_BUTTONS_YES_NO",
+      "nick": "yes-no",
+      "value": 4
+    },
+    {
+      "name": "ok_cancel",
+      "native": "GTK_BUTTONS_OK_CANCEL",
+      "nick": "ok-cancel",
+      "value": 5
+    }
+  ],
+  "native": {
+    "c_type": "GtkButtonsType",
+    "gtype": "GtkButtonsType",
+    "name": "GtkButtonsType"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

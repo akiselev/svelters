@@ -1,0 +1,175 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleRelation",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "active_descendant",
+      "native": "GTK_ACCESSIBLE_RELATION_ACTIVE_DESCENDANT",
+      "nick": "active-descendant",
+      "value": 0
+    },
+    {
+      "name": "col_count",
+      "native": "GTK_ACCESSIBLE_RELATION_COL_COUNT",
+      "nick": "col-count",
+      "value": 1
+    },
+    {
+      "name": "col_index",
+      "native": "GTK_ACCESSIBLE_RELATION_COL_INDEX",
+      "nick": "col-index",
+      "value": 2
+    },
+    {
+      "name": "col_index_text",
+      "native": "GTK_ACCESSIBLE_RELATION_COL_INDEX_TEXT",
+      "nick": "col-index-text",
+      "value": 3
+    },
+    {
+      "name": "col_span",
+      "native": "GTK_ACCESSIBLE_RELATION_COL_SPAN",
+      "nick": "col-span",
+      "value": 4
+    },
+    {
+      "name": "controls",
+      "native": "GTK_ACCESSIBLE_RELATION_CONTROLS",
+      "nick": "controls",
+      "value": 5
+    },
+    {
+      "name": "described_by",
+      "native": "GTK_ACCESSIBLE_RELATION_DESCRIBED_BY",
+      "nick": "described-by",
+      "value": 6
+    },
+    {
+      "name": "details",
+      "native": "GTK_ACCESSIBLE_RELATION_DETAILS",
+      "nick": "details",
+      "value": 7
+    },
+    {
+      "name": "error_message",
+      "native": "GTK_ACCESSIBLE_RELATION_ERROR_MESSAGE",
+      "nick": "error-message",
+      "value": 8
+    },
+    {
+      "name": "flow_to",
+      "native": "GTK_ACCESSIBLE_RELATION_FLOW_TO",
+      "nick": "flow-to",
+      "value": 9
+    },
+    {
+      "name": "labelled_by",
+      "native": "GTK_ACCESSIBLE_RELATION_LABELLED_BY",
+      "nick": "labelled-by",
+      "value": 10
+    },
+    {
+      "name": "owns",
+      "native": "GTK_ACCESSIBLE_RELATION_OWNS",
+      "nick": "owns",
+      "value": 11
+    },
+    {
+      "name": "pos_in_set",
+      "native": "GTK_ACCESSIBLE_RELATION_POS_IN_SET",
+      "nick": "pos-in-set",
+      "value": 12
+    },
+    {
+      "name": "row_count",
+      "native": "GTK_ACCESSIBLE_RELATION_ROW_COUNT",
+      "nick": "row-count",
+      "value": 13
+    },
+    {
+      "name": "row_index",
+      "native": "GTK_ACCESSIBLE_RELATION_ROW_INDEX",
+      "nick": "row-index",
+      "value": 14
+    },
+    {
+      "name": "row_index_text",
+      "native": "GTK_ACCESSIBLE_RELATION_ROW_INDEX_TEXT",
+      "nick": "row-index-text",
+      "value": 15
+    },
+    {
+      "name": "row_span",
+      "native": "GTK_ACCESSIBLE_RELATION_ROW_SPAN",
+      "nick": "row-span",
+      "value": 16
+    },
+    {
+      "name": "set_size",
+      "native": "GTK_ACCESSIBLE_RELATION_SET_SIZE",
+      "nick": "set-size",
+      "value": 17
+    },
+    {
+      "name": "label_for",
+      "native": "GTK_ACCESSIBLE_RELATION_LABEL_FOR",
+      "nick": "label-for",
+      "value": 18
+    },
+    {
+      "name": "description_for",
+      "native": "GTK_ACCESSIBLE_RELATION_DESCRIPTION_FOR",
+      "nick": "description-for",
+      "value": 19
+    },
+    {
+      "name": "controlled_by",
+      "native": "GTK_ACCESSIBLE_RELATION_CONTROLLED_BY",
+      "nick": "controlled-by",
+      "value": 20
+    },
+    {
+      "name": "details_for",
+      "native": "GTK_ACCESSIBLE_RELATION_DETAILS_FOR",
+      "nick": "details-for",
+      "value": 21
+    },
+    {
+      "name": "error_message_for",
+      "native": "GTK_ACCESSIBLE_RELATION_ERROR_MESSAGE_FOR",
+      "nick": "error-message-for",
+      "value": 22
+    },
+    {
+      "name": "flow_from",
+      "native": "GTK_ACCESSIBLE_RELATION_FLOW_FROM",
+      "nick": "flow-from",
+      "value": 23
+    }
+  ],
+  "native": {
+    "c_type": "GtkAccessibleRelation",
+    "gtype": "GtkAccessibleRelation",
+    "name": "GtkAccessibleRelation"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

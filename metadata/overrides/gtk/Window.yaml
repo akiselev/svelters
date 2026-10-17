@@ -1,0 +1,45 @@
+properties:
+  - name: title
+    js_name: title
+    provenance: "GtkWindow:title (Gtk 4 docs); P prop"
+methods:
+  - name: present
+    js_name: present
+    dispatch: zero_arg
+    provenance: "gtk_window_present docs; JS host op: call #h present []"
+children:
+  policy: named_slots
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkWindow::get_child() const"}
+        set:    {native: "GtkWindow::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkWindow::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_window_set_child"}, {origin: manual, ref: "GtkWindow docs: replacing a child unparents the old one, it is not destroyed"}]
+    - name: titlebar
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkWindow::get_titlebar() const"}
+        set:    {native: "GtkWindow::set_titlebar(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkWindow::set_titlebar(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_window_set_titlebar"}, {origin: manual, ref: "P1 fixture if-toggle places a headerbar here"}]

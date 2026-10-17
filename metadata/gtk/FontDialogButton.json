@@ -1,0 +1,714 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": "4.10"
+  },
+  "bases": [
+    "Gtk.Widget",
+    "GObject.InitiallyUnowned",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_font_dialog_button_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "dialog",
+          "native": "GtkFontDialog*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:FontDialog>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "element": {
+    "origin": "gir",
+    "tag": "fontdialogbutton"
+  },
+  "enums": [
+    "svelters-api:v1:type:gtk:Gtk:FontLevel"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton",
+  "interfaces": [
+    "Gtk.Accessible",
+    "Gtk.Buildable",
+    "Gtk.ConstraintTarget"
+  ],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_dialog",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_dialog",
+      "native": "gtk_font_dialog_button_get_dialog",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkFontDialog*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "object<svelters-api:v1:type:gtk:Gtk:FontDialog>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_font_desc",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_desc",
+      "native": "gtk_font_dialog_button_get_font_desc",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoFontDescription*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_font_features",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_font_features",
+      "native": "gtk_font_dialog_button_get_font_features",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "const char*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "string"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_language",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_language",
+      "native": "gtk_font_dialog_button_get_language",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "PangoLanguage*",
+        "nullable": true,
+        "ownership": "owned",
+        "type": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_level",
+      "native": "gtk_font_dialog_button_get_level",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GtkFontLevel",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "enum<svelters-api:v1:type:gtk:Gtk:FontLevel>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_use_font",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_font",
+      "native": "gtk_font_dialog_button_get_use_font",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:get_use_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_use_size",
+      "native": "gtk_font_dialog_button_get_use_size",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "gboolean",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "bool"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_dialog",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_dialog",
+      "native": "gtk_font_dialog_button_set_dialog",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "dialog",
+          "native": "GtkFontDialog*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gtk:FontDialog>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_font_desc",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_font_desc",
+      "native": "gtk_font_dialog_button_set_font_desc",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "font_desc",
+          "native": "const PangoFontDescription*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_font_features",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_font_features",
+      "native": "gtk_font_dialog_button_set_font_features",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "font_features",
+          "native": "const char*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_language",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_language",
+      "native": "gtk_font_dialog_button_set_language",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "language",
+          "native": "PangoLanguage*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_level",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_level",
+      "native": "gtk_font_dialog_button_set_level",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "level",
+          "native": "GtkFontLevel",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "enum<svelters-api:v1:type:gtk:Gtk:FontLevel>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_use_font",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_font",
+      "native": "gtk_font_dialog_button_set_use_font",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "use_font",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:method:set_use_size",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_use_size",
+      "native": "gtk_font_dialog_button_set_use_size",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "use_size",
+          "native": "gboolean",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkFontDialogButton",
+    "get_type": "gtk_font_dialog_button_get_type",
+    "gtype": "GtkFontDialogButton",
+    "name": "GtkFontDialogButton"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_dialog",
+        "set": "gtk_font_dialog_button_set_dialog"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:dialog",
+      "invocation": "reflected",
+      "js_name": "dialog",
+      "name": "dialog",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::dialog"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkFontDialog",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "GtkFontDialog",
+        "native": null,
+        "nullable": true,
+        "ref": "object<svelters-api:v1:type:gtk:Gtk:FontDialog>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_font_desc",
+        "set": "gtk_font_dialog_button_set_font_desc"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-desc",
+      "invocation": "reflected",
+      "js_name": "fontDesc",
+      "name": "font-desc",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::font-desc"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoFontDescription",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "PangoFontDescription",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:FontDescription>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_font_features",
+        "set": "gtk_font_dialog_button_set_font_features"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-features",
+      "invocation": "reflected",
+      "js_name": "fontFeatures",
+      "name": "font-features",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::font-features"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gchararray",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_language",
+        "set": "gtk_font_dialog_button_set_language"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:language",
+      "invocation": "reflected",
+      "js_name": "language",
+      "name": "language",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::language"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "PangoLanguage",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "since": "4.10",
+      "type": {
+        "gtype": "PangoLanguage",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Pango:Language>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_level",
+        "set": "gtk_font_dialog_button_set_level"
+      },
+      "default": "font",
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:level",
+      "invocation": "reflected",
+      "js_name": "level",
+      "name": "level",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::level"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GtkFontLevel",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "type": {
+        "gtype": "GtkFontLevel",
+        "native": null,
+        "nullable": false,
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:FontLevel>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_use_font",
+        "set": "gtk_font_dialog_button_set_use_font"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-font",
+      "invocation": "reflected",
+      "js_name": "useFont",
+      "name": "use-font",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-font"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_font_dialog_button_get_use_size",
+        "set": "gtk_font_dialog_button_set_use_size"
+      },
+      "default": false,
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-size",
+      "invocation": "reflected",
+      "js_name": "useSize",
+      "name": "use-size",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::use-size"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "gboolean",
+        "origin": "runtime",
+        "owner": "GtkFontDialogButton"
+      },
+      "type": {
+        "gtype": "gboolean",
+        "native": "gboolean",
+        "nullable": false,
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [
+        "action"
+      ],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:signal:activate",
+      "js_event": "activate",
+      "name": "activate",
+      "origin": "gir",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

@@ -1,0 +1,151 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleProperty",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "autocomplete",
+      "native": "GTK_ACCESSIBLE_PROPERTY_AUTOCOMPLETE",
+      "nick": "autocomplete",
+      "value": 0
+    },
+    {
+      "name": "description",
+      "native": "GTK_ACCESSIBLE_PROPERTY_DESCRIPTION",
+      "nick": "description",
+      "value": 1
+    },
+    {
+      "name": "has_popup",
+      "native": "GTK_ACCESSIBLE_PROPERTY_HAS_POPUP",
+      "nick": "has-popup",
+      "value": 2
+    },
+    {
+      "name": "key_shortcuts",
+      "native": "GTK_ACCESSIBLE_PROPERTY_KEY_SHORTCUTS",
+      "nick": "key-shortcuts",
+      "value": 3
+    },
+    {
+      "name": "label",
+      "native": "GTK_ACCESSIBLE_PROPERTY_LABEL",
+      "nick": "label",
+      "value": 4
+    },
+    {
+      "name": "level",
+      "native": "GTK_ACCESSIBLE_PROPERTY_LEVEL",
+      "nick": "level",
+      "value": 5
+    },
+    {
+      "name": "modal",
+      "native": "GTK_ACCESSIBLE_PROPERTY_MODAL",
+      "nick": "modal",
+      "value": 6
+    },
+    {
+      "name": "multi_line",
+      "native": "GTK_ACCESSIBLE_PROPERTY_MULTI_LINE",
+      "nick": "multi-line",
+      "value": 7
+    },
+    {
+      "name": "multi_selectable",
+      "native": "GTK_ACCESSIBLE_PROPERTY_MULTI_SELECTABLE",
+      "nick": "multi-selectable",
+      "value": 8
+    },
+    {
+      "name": "orientation",
+      "native": "GTK_ACCESSIBLE_PROPERTY_ORIENTATION",
+      "nick": "orientation",
+      "value": 9
+    },
+    {
+      "name": "placeholder",
+      "native": "GTK_ACCESSIBLE_PROPERTY_PLACEHOLDER",
+      "nick": "placeholder",
+      "value": 10
+    },
+    {
+      "name": "read_only",
+      "native": "GTK_ACCESSIBLE_PROPERTY_READ_ONLY",
+      "nick": "read-only",
+      "value": 11
+    },
+    {
+      "name": "required",
+      "native": "GTK_ACCESSIBLE_PROPERTY_REQUIRED",
+      "nick": "required",
+      "value": 12
+    },
+    {
+      "name": "role_description",
+      "native": "GTK_ACCESSIBLE_PROPERTY_ROLE_DESCRIPTION",
+      "nick": "role-description",
+      "value": 13
+    },
+    {
+      "name": "sort",
+      "native": "GTK_ACCESSIBLE_PROPERTY_SORT",
+      "nick": "sort",
+      "value": 14
+    },
+    {
+      "name": "value_max",
+      "native": "GTK_ACCESSIBLE_PROPERTY_VALUE_MAX",
+      "nick": "value-max",
+      "value": 15
+    },
+    {
+      "name": "value_min",
+      "native": "GTK_ACCESSIBLE_PROPERTY_VALUE_MIN",
+      "nick": "value-min",
+      "value": 16
+    },
+    {
+      "name": "value_now",
+      "native": "GTK_ACCESSIBLE_PROPERTY_VALUE_NOW",
+      "nick": "value-now",
+      "value": 17
+    },
+    {
+      "name": "value_text",
+      "native": "GTK_ACCESSIBLE_PROPERTY_VALUE_TEXT",
+      "nick": "value-text",
+      "value": 18
+    },
+    {
+      "name": "help_text",
+      "native": "GTK_ACCESSIBLE_PROPERTY_HELP_TEXT",
+      "nick": "help-text",
+      "value": 19
+    }
+  ],
+  "native": {
+    "c_type": "GtkAccessibleProperty",
+    "gtype": "GtkAccessibleProperty",
+    "name": "GtkAccessibleProperty"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

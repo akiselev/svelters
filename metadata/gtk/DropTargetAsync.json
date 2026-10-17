@@ -1,0 +1,468 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "bases": [
+    "Gtk.EventController",
+    "GObject.Object"
+  ],
+  "children": {
+    "candidates": {
+      "child_ops": [],
+      "widget_props": []
+    },
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:ctor:new",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "new",
+      "native": "gtk_drop_target_async_new",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "formats",
+          "native": "GdkContentFormats*",
+          "nullable": true,
+          "ownership": "owned",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:ContentFormats>"
+        },
+        {
+          "name": "actions",
+          "native": "GdkDragAction",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+        }
+      ],
+      "returns": {
+        "ownership": "floating_sink",
+        "type": "self"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:ctor:generic",
+      "invocation": {
+        "dev": "reflected"
+      },
+      "name": "generic",
+      "origin": "runtime"
+    }
+  ],
+  "enums": [
+    "svelters-api:v1:type:gtk:Gdk:DragAction"
+  ],
+  "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:method:get_actions",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_actions",
+      "native": "gtk_drop_target_async_get_actions",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkDragAction",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:method:get_formats",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "get_formats",
+      "native": "gtk_drop_target_async_get_formats",
+      "origin": "gir",
+      "params": [],
+      "returns": {
+        "native": "GdkContentFormats*",
+        "nullable": true,
+        "ownership": "borrowed",
+        "type": "boxed<svelters-api:v1:type:gtk:Gdk:ContentFormats>"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:method:reject_drop",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "reject_drop",
+      "native": "gtk_drop_target_async_reject_drop",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "drop",
+          "native": "GdkDrop*",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:method:set_actions",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_actions",
+      "native": "gtk_drop_target_async_set_actions",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "actions",
+          "native": "GdkDragAction",
+          "nullable": false,
+          "ownership": "borrowed",
+          "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    },
+    {
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:method:set_formats",
+      "invocation": {
+        "dev": "introspected",
+        "release": "generated_thunk"
+      },
+      "name": "set_formats",
+      "native": "gtk_drop_target_async_set_formats",
+      "origin": "gir",
+      "params": [
+        {
+          "name": "formats",
+          "native": "GdkContentFormats*",
+          "nullable": true,
+          "ownership": "borrowed",
+          "type": "boxed<svelters-api:v1:type:gtk:Gdk:ContentFormats>"
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "ownership": "borrowed",
+        "type": "void"
+      },
+      "unsupported_reason": null
+    }
+  ],
+  "native": {
+    "c_type": "GtkDropTargetAsync",
+    "get_type": "gtk_drop_target_async_get_type",
+    "gtype": "GtkDropTargetAsync",
+    "name": "GtkDropTargetAsync"
+  },
+  "origin": "gir",
+  "properties": [
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_target_async_get_actions",
+        "set": "gtk_drop_target_async_set_actions"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:prop:actions",
+      "invocation": "reflected",
+      "js_name": "actions",
+      "name": "actions",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::actions"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkDragAction",
+        "origin": "runtime",
+        "owner": "GtkDropTargetAsync"
+      },
+      "type": {
+        "gtype": "GdkDragAction",
+        "native": null,
+        "nullable": false,
+        "ref": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gtk_drop_target_async_get_formats",
+        "set": "gtk_drop_target_async_set_formats"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:prop:formats",
+      "invocation": "reflected",
+      "js_name": "formats",
+      "name": "formats",
+      "notify": {
+        "explicit": true,
+        "signal": "notify::formats"
+      },
+      "origin": "gir",
+      "range": null,
+      "role": "value",
+      "runtime": {
+        "flags": [
+          "READABLE",
+          "WRITABLE",
+          "EXPLICIT_NOTIFY"
+        ],
+        "gtype": "GdkContentFormats",
+        "origin": "runtime",
+        "owner": "GtkDropTargetAsync"
+      },
+      "type": {
+        "gtype": "GdkContentFormats",
+        "native": null,
+        "nullable": true,
+        "ref": "boxed<svelters-api:v1:type:gtk:Gdk:ContentFormats>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:signal:accept",
+      "js_event": "accept",
+      "name": "accept",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrop",
+          "name": "drop",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:signal:drag-enter",
+      "js_event": "drag-enter",
+      "name": "drag-enter",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrop",
+          "name": "drop",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "GdkDragAction"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:signal:drag-leave",
+      "js_event": "drag-leave",
+      "name": "drag-leave",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrop",
+          "name": "drop",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "void"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "void"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:signal:drag-motion",
+      "js_event": "drag-motion",
+      "name": "drag-motion",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrop",
+          "name": "drop",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "flags<svelters-api:v1:type:gtk:Gdk:DragAction>"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "GdkDragAction"
+      },
+      "sync_required": false
+    },
+    {
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ]
+      },
+      "flags": [],
+      "handler_result": "bool_stop",
+      "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:signal:drop",
+      "js_event": "drop",
+      "name": "drop",
+      "origin": "gir",
+      "params": [
+        {
+          "gtype": "GdkDrop",
+          "name": "drop",
+          "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "x",
+          "type": "f64"
+        },
+        {
+          "gtype": "gdouble",
+          "name": "y",
+          "type": "f64"
+        }
+      ],
+      "phase": "last",
+      "returns": {
+        "type": "bool"
+      },
+      "runtime": {
+        "origin": "runtime",
+        "return_gtype": "gboolean"
+      },
+      "sync_required": false
+    }
+  ],
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}

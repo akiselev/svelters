@@ -1,0 +1,67 @@
+{
+  "availability": {
+    "deprecated": null,
+    "since": null
+  },
+  "enums": [],
+  "id": "svelters-api:v1:type:gtk:Gtk:IconViewDropPosition",
+  "kind": "enum",
+  "members": [
+    {
+      "name": "no_drop",
+      "native": "GTK_ICON_VIEW_NO_DROP",
+      "nick": "no-drop",
+      "value": 0
+    },
+    {
+      "name": "drop_into",
+      "native": "GTK_ICON_VIEW_DROP_INTO",
+      "nick": "drop-into",
+      "value": 1
+    },
+    {
+      "name": "drop_left",
+      "native": "GTK_ICON_VIEW_DROP_LEFT",
+      "nick": "drop-left",
+      "value": 2
+    },
+    {
+      "name": "drop_right",
+      "native": "GTK_ICON_VIEW_DROP_RIGHT",
+      "nick": "drop-right",
+      "value": 3
+    },
+    {
+      "name": "drop_above",
+      "native": "GTK_ICON_VIEW_DROP_ABOVE",
+      "nick": "drop-above",
+      "value": 4
+    },
+    {
+      "name": "drop_below",
+      "native": "GTK_ICON_VIEW_DROP_BELOW",
+      "nick": "drop-below",
+      "value": 5
+    }
+  ],
+  "native": {
+    "c_type": "GtkIconViewDropPosition",
+    "gtype": "GtkIconViewDropPosition",
+    "name": "GtkIconViewDropPosition"
+  },
+  "origin": "gir",
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
+      "version": "4.22.4"
+    },
+    "overrides": null,
+    "runtime": {
+      "gtk": "4.22.4",
+      "pygobject": "3.56.2"
+    }
+  },
+  "toolkit": "gtk"
+}
