@@ -273,7 +273,7 @@
   "kind": "QColorDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   1,
    17
   ],
   "native": "QColorDialog",
@@ -292,8 +292,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   6,
+   6
   ]
  },
  {
@@ -1389,13 +1389,13 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
+  "element": "menu",
   "gallery": null,
   "inherited": 0,
   "kind": "QMenu",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    51
   ],
   "native": "QMenu",
@@ -1414,8 +1414,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -1857,7 +1857,7 @@
   "kind": "QSpinBox",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    23
   ],
   "native": "QSpinBox",
@@ -1876,8 +1876,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   5,
-   5
+   7,
+   7
   ]
  },
  {
@@ -2569,8 +2569,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   31,
-   31
+   32,
+   32
   ]
  },
  {

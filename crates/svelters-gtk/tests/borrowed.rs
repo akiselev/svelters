@@ -155,8 +155,9 @@ fn objects_that_are_not_widgets_travel_as_boxed_values() {
         // gtk_widget_create_pango_layout returns a new PangoLayout (transfer full): an opaque BOXED
         // value, released with `destroy`.
         let V::Boxed(layout) = h.call_args(entry, "create_pango_layout", &[V::Str("hello".into())]).unwrap() else { panic!("boxed") };
-        assert!(h.handle_info(layout).is_err(), "boxed values have no handle_info");
+        assert_eq!(h.handle_info(layout).unwrap().lifetime, svelters_abi::SVL_LIFE_VALUE, "a boxed value is a VALUE-class handle");
         h.destroy(layout);
+        assert!(h.handle_info(layout).is_err(), "released: stale");
         h.destroy(layout);
         assert!(h.take_gone().is_empty());
     });

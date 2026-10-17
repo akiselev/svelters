@@ -7,5 +7,11 @@
   "exports": {
     ".": "./src/index.js",
     "./install": "./src/install.js"
+  },
+  "dependencies": {
+    "@svelters/renderer": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --test test/coerce.test.mjs"
   }
 }

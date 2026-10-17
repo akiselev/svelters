@@ -32,6 +32,7 @@ export interface QtElementDescriptors {
       saveGeometry(): Uint8Array;
       restoreGeometry(geometry: Uint8Array): boolean;
       resizeTo(arg0: Size): void;
+      getContentsMargins(): { left: number; top: number; right: number; bottom: number };
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -102,7 +103,7 @@ export interface QtElementDescriptors {
       finished: (result: number) => void;
     };
     methods: {
-      open(): void;
+      open(options?: { signal?: AbortSignal }): Promise<number>;
       accept(): void;
       reject(): void;
       show(): void;
@@ -545,6 +546,31 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  menu: {
+    props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      addItem(text: string, functor: (checked: boolean) => void, shortcut: Boxed<"QKeySequence"> | string): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   menubar: {
     props: {
       enabled?: boolean;
@@ -710,6 +736,8 @@ export interface QtElementDescriptors {
       editingFinished: () => void;
     };
     methods: {
+      validate(input: string, pos: number): { ret: "acceptable" | "intermediate" | "invalid"; input: string; pos: number };
+      fixup(input: string): { input: string };
       show(): void;
       hide(): void;
       setFocus(): void;

@@ -25,7 +25,7 @@ const CB_FOREVER_T: u32 = SVL_T_FIRST_BACKEND + 10;
 
 const METHODS: &[&str] = &[
     "setBoth", "bounds", "fail", "raw", "gerror", "visit", "subscribe", "fire", "unsubscribe", "once", "forever", "fireOld", "fireOnce",
-    "slow", "complete", "completeError", "slowFail", "slowOf",
+    "slow", "complete", "completeError", "slowFail", "slowOf", "measure", "bump", "origin", "badOuts",
 ];
 
 #[derive(Default)]
@@ -137,7 +137,12 @@ impl Backend for Typed {
             st.next_boxed += 1;
             return Ok(Value::Boxed { ty: ICON_T, handle: 1000 + st.next_boxed });
         }
-        Ok(st.props.get(&prop).cloned().unwrap_or(Value::Null))
+        let v = st.props.get(&prop).cloned().unwrap_or(Value::Null);
+        // A UTF-16 backend answers strings in UTF-16 (`SVL_CAP_UTF16_OUT`), as the Qt backend does.
+        Ok(match v {
+            Value::Str(s) if self.utf16 => Value::Str16(s.encode_utf16().collect()),
+            v => v,
+        })
     }
     fn call(&self, _: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let name = METHODS[method as usize - 1];
@@ -200,6 +205,20 @@ impl Backend for Typed {
                 )
             }
             17 => Err("cannot start".into()),
+            // out params: the backend sees only the JS-supplied arguments and answers [ret, outs...]
+            19 => {
+                let Some(Value::F64(scale)) = args.first() else { return Err(format!("measure: bad args {args:?}")) };
+                if args.len() != 1 {
+                    return Err(format!("measure: out parameters must not be sent, got {args:?}"));
+                }
+                Ok(Value::List(vec![Value::Bool(true), Value::I64((*scale * 10.0) as i64), Value::I64((*scale * 20.0) as i64)]))
+            }
+            20 => match args {
+                [Value::I64(a), Value::Str(b)] => Ok(Value::List(vec![Value::Null, Value::I64(a + 1), Value::Str(format!("{b}!"))])),
+                _ => Err(format!("bump: bad args {args:?}")),
+            },
+            21 => Ok(Value::List(vec![Value::Null, Value::Record { ty: RECT_T, fields: vec![Value::F64(1.0), Value::F64(2.0), Value::F64(3.0), Value::F64(4.0)] }])),
+            22 => Ok(Value::I64(1)),
             1 => Ok(Value::Bool(true)),
             2 => Ok(Value::Record { ty: RECT_T, fields: vec![Value::F64(1.0), Value::F64(2.0), Value::F64(3.0), Value::F64(4.0)] }),
             3 => Err("boom".into()),
@@ -280,6 +299,34 @@ impl Backend for Typed {
                     params.push(SlotDesc::new(SVL_CALLBACK).typed(CB_ASYNC_T).named("done"));
                     Some(MemberDesc { name: METHODS[member as usize - 1].into(), params, ret: SlotDesc::new(SVL_NULL), flags: SVL_M_ASYNC })
                 }
+                19 => Some(MemberDesc {
+                    name: "measure".into(),
+                    params: vec![
+                        SlotDesc::new(SVL_F64).named("scale"),
+                        SlotDesc::new(SVL_I64).named("width").flags(SVL_D_OUT),
+                        SlotDesc::new(SVL_I64).named("height").flags(SVL_D_OUT),
+                    ],
+                    ret: SlotDesc::new(SVL_BOOL),
+                    flags: 0,
+                }),
+                20 => Some(MemberDesc {
+                    name: "bump".into(),
+                    params: vec![SlotDesc::new(SVL_I64).named("count").flags(SVL_D_INOUT), SlotDesc::new(SVL_STR).named("text").flags(SVL_D_INOUT)],
+                    ret: SlotDesc::new(SVL_NULL),
+                    flags: 0,
+                }),
+                21 => Some(MemberDesc {
+                    name: "origin".into(),
+                    params: vec![SlotDesc::new(SVL_RECORD).typed(RECT_T).named("area").flags(SVL_D_OUT)],
+                    ret: SlotDesc::new(SVL_NULL),
+                    flags: 0,
+                }),
+                22 => Some(MemberDesc {
+                    name: "badOuts".into(),
+                    params: vec![SlotDesc::new(SVL_I64).named("n").flags(SVL_D_OUT)],
+                    ret: SlotDesc::new(SVL_I64),
+                    flags: 0,
+                }),
                 6 | 7 | 10 | 11 => {
                     let ty = match member {
                         6 => CB_CALL_T,
@@ -445,6 +492,25 @@ fn attribute_strings_are_coerced_from_descriptors() {
     assert_eq!(st.props[&3], Value::Enum { ty: ENUM_T, value: 1 }, "enum names become native values");
     assert_eq!(st.props[&4], Value::Flags { ty: FLAGS_T, mask: 1 | 8 }, "\"left vcenter\" for flags");
     assert_eq!(st.props[&2], Value::Str("8".into()), "a string slot keeps its text");
+}
+
+#[test]
+fn typed_variants_cross_as_records() {
+    let r = rig(false);
+    let (out, errs) = run(&r, "serdes_variant.js");
+    assert!(errs.is_empty(), "{errs:?}");
+    assert_eq!(lines(&out), ["empty signature: TypeError", "class: i true"], "{out:?}");
+    let typed = |sig: &str, v: Value| Value::Record { ty: SVL_T_TYPED_VARIANT, fields: vec![Value::Str(sig.into()), v] };
+    assert_eq!(
+        r.st.borrow().props[&15],
+        typed(
+            "a{sv}",
+            Value::Map(vec![
+                ("n".into(), typed("(is)", Value::List(vec![Value::I64(1), Value::Str("x".into())]))),
+                ("list".into(), Value::List(vec![Value::I64(1), Value::I64(2)])),
+            ])
+        )
+    );
 }
 
 #[test]
@@ -614,6 +680,24 @@ fn async_methods_return_promises_settled_by_the_backend() {
     );
     assert!(errs.is_empty(), "rejections that are handled are not reported: {errs:?}");
     assert_eq!(live, 0, "every completion callback is released after its single use");
+}
+
+#[test]
+fn out_and_inout_params_come_back_as_one_object() {
+    let r = rig(false);
+    let (out, errs) = run(&r, "serdes_outs.js");
+    assert_eq!(
+        lines(&out),
+        [
+            "measure {\"ret\":true,\"width\":25,\"height\":50}",
+            "bump {\"count\":8,\"text\":\"hi!\"}",
+            "origin {\"area\":{\"x\":1,\"y\":2,\"width\":3,\"height\":4}}",
+            "arity TypeError <thing>.measure: expected 1 argument(s), got 3",
+            "bad answer Error <thing>.badOuts: backend answered I64(1); expected a list of the return value and 1 out value(s)",
+        ],
+        "{out:?} {errs:?}"
+    );
+    assert!(errs.is_empty(), "{errs:?}");
 }
 
 #[test]

@@ -53,4 +53,12 @@ See the tables in the final report for the per-toolkit type list; each is exerci
 
 ## Open
 
-(filled in as the later categories land)
+Closed by S2 (`docs/notes/s2-abi-v3-rest.md`): out / in-out params, Qt callbacks and async, Qt UTF-16 string results, exact GVariant typing and GValue props, VALUE-class handles, `packages/dom` coercion.
+
+Still open:
+
+- Events decode from owned `Value`s; a borrowed fast path may matter for hot signals (`changed` text).
+- A Qt callback API that returns a value is unproven on a real Qt class (the ingest covers QtWidgets classes only; `QTextDocument::setResourceProvider` would be the proof).
+- GTK time-only / date-only records; list models (M5).
+- Typed variants do not round-trip their signature on read.
+- The `gio-file` service should move into the generated tables once the GI invoker owns callback scopes.

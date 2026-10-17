@@ -298,8 +298,141 @@ fn variant_in(v: &svl_value) -> Result<glib::Variant, String> {
             }
             dict.end()
         }
+        SVL_RECORD if v.type_ == SVL_T_TYPED_VARIANT => {
+            let [sig, val] = items(v) else { return Err("malformed typed variant".into()) };
+            let sig = unsafe { as_str(sig) }.ok_or("the variant signature must be a string")?;
+            let ty = glib::VariantType::new(&sig).map_err(|e| format!("invalid GVariant type {sig:?}: {e}"))?;
+            typed_variant(&ty, val).map_err(|e| format!("variant({sig:?}): {e}"))?
+        }
         SVL_NULL => return Err("null cannot be nested in a GVariant".into()),
         t => return Err(format!("cannot convert tag {t} to a GVariant")),
+    })
+}
+
+/// A `GVariant` of exactly the type `ty` from a JSON-like value (`variant(signature, value)` in JS):
+/// basic types from numbers / strings / booleans, `aX` from lists, `a{kV}` from objects, `(..)` from
+/// lists, `mX` from null or a value, `v` by inference, `ay` from bytes.
+fn typed_variant(ty: &glib::VariantTy, v: &svl_value) -> Result<glib::Variant, String> {
+    use glib::prelude::ToVariant;
+    use std::convert::TryFrom;
+    if v.tag == SVL_RECORD && v.type_ == SVL_T_TYPED_VARIANT && ty.as_str() != "v" {
+        let inner = variant_in(v)?;
+        return if inner.type_() == ty { Ok(inner) } else { Err(format!("a variant of type {} is not {}", inner.type_(), ty)) };
+    }
+    let integer = || -> Result<i128, String> {
+        match v.tag {
+            SVL_I64 if v.flags & SVL_F_UNSIGNED != 0 => Ok(unsafe { v.u.u } as i128),
+            SVL_I64 => Ok(unsafe { v.u.i } as i128),
+            SVL_F64 if unsafe { v.u.f }.fract() == 0.0 => Ok(unsafe { v.u.f } as i128),
+            t => Err(format!("expected an integer for type {ty}, got tag {t}")),
+        }
+    };
+    fn fit<T: TryFrom<i128>>(n: i128, ty: &glib::VariantTy) -> Result<T, String> {
+        T::try_from(n).map_err(|_| format!("{n} does not fit type {ty}"))
+    }
+    let s = ty.as_str();
+    Ok(match s {
+        "b" if v.tag == SVL_BOOL => unsafe { v.u.b }.to_variant(),
+        "y" => fit::<u8>(integer()?, ty)?.to_variant(),
+        "n" => fit::<i16>(integer()?, ty)?.to_variant(),
+        "q" => fit::<u16>(integer()?, ty)?.to_variant(),
+        "i" => fit::<i32>(integer()?, ty)?.to_variant(),
+        "u" => fit::<u32>(integer()?, ty)?.to_variant(),
+        "x" => fit::<i64>(integer()?, ty)?.to_variant(),
+        "t" => fit::<u64>(integer()?, ty)?.to_variant(),
+        "d" => match v.tag {
+            SVL_F64 => unsafe { v.u.f }.to_variant(),
+            SVL_I64 => (integer()? as f64).to_variant(),
+            t => return Err(format!("expected a number for type d, got tag {t}")),
+        },
+        "s" if v.tag == SVL_STR => unsafe { as_str(v) }.ok_or("invalid utf-8")?.as_ref().to_variant(),
+        "o" if v.tag == SVL_STR => {
+            let text = unsafe { as_str(v) }.ok_or("invalid utf-8")?.into_owned();
+            glib::variant::ObjectPath::try_from(text).map_err(|e| e.to_string())?.to_variant()
+        }
+        "g" if v.tag == SVL_STR => {
+            let text = unsafe { as_str(v) }.ok_or("invalid utf-8")?.into_owned();
+            glib::variant::Signature::try_from(text).map_err(|e| e.to_string())?.to_variant()
+        }
+        "v" => glib::Variant::from_variant(&variant_in(v)?),
+        _ if ty.is_maybe() => match v.tag {
+            SVL_NULL => glib::Variant::from_none(ty.element()),
+            _ => glib::Variant::from_some(&typed_variant(ty.element(), v)?),
+        },
+        _ if ty.is_array() => {
+            let elem = ty.element();
+            match v.tag {
+                SVL_BYTES if elem.as_str() == "y" => {
+                    let b = unsafe { v.u.bytes };
+                    let data: &[u8] = if b.ptr.is_null() || b.len == 0 { &[] } else { unsafe { std::slice::from_raw_parts(b.ptr, b.len) } };
+                    glib::Variant::array_from_fixed_array(data)
+                }
+                SVL_MAP if elem.is_dict_entry() => {
+                    let (kt, vt) = (elem.key(), elem.value());
+                    if !matches!(kt.as_str(), "s" | "o" | "g") {
+                        return Err(format!("an object becomes a dictionary only with string keys, not {kt}"));
+                    }
+                    let mut entries = Vec::new();
+                    for kv in items(v).chunks(2) {
+                        let [k, val] = kv else { return Err("malformed map".into()) };
+                        let key = typed_variant(kt, k)?;
+                        entries.push(glib::Variant::from_dict_entry(&key, &typed_variant(vt, val).map_err(|e| format!(".{}: {e}", unsafe { as_str(k) }.unwrap_or_default()))?));
+                    }
+                    glib::Variant::array_from_iter_with_type(elem, entries)
+                }
+                SVL_LIST => {
+                    let mut out = Vec::new();
+                    for (i, e) in items(v).iter().enumerate() {
+                        out.push(typed_variant(elem, e).map_err(|m| format!("[{i}]: {m}"))?);
+                    }
+                    glib::Variant::array_from_iter_with_type(elem, out)
+                }
+                t => return Err(format!("expected a list for type {ty}, got tag {t}")),
+            }
+        }
+        _ if ty.is_tuple() => {
+            let types: Vec<&glib::VariantTy> = ty.tuple_types().collect();
+            if v.tag != SVL_LIST || items(v).len() != types.len() {
+                return Err(format!("expected a list of {} item(s) for type {ty}", types.len()));
+            }
+            let mut out = Vec::new();
+            for (i, (t, e)) in types.iter().zip(items(v)).enumerate() {
+                out.push(typed_variant(t, e).map_err(|m| format!("[{i}]: {m}"))?);
+            }
+            glib::Variant::tuple_from_iter(out)
+        }
+        _ if ty.is_dict_entry() => {
+            let [k, val] = items(v) else { return Err(format!("expected a [key, value] list for type {ty}")) };
+            glib::Variant::from_dict_entry(&typed_variant(ty.key(), k)?, &typed_variant(ty.value(), val)?)
+        }
+        _ => return Err(format!("cannot build type {ty} from tag {}", v.tag)),
+    })
+}
+
+/// The boxed type `G_TYPE_VALUE`: a property that holds an arbitrary `GValue`.
+pub fn gvalue_type() -> Type {
+    // SAFETY: g_value_get_type has no preconditions.
+    unsafe { glib::translate::from_glib(glib::gobject_ffi::g_value_get_type()) }
+}
+
+/// A `GValue` (the boxed `G_TYPE_VALUE`, e.g. `GtkDropTarget:value`) from a dynamic JS value: the type
+/// is inferred (bool, int64, double, string, bytes -> `GBytes`, a boxed handle or object handle -> itself).
+fn gvalue_in(v: &svl_value, env: &dyn Env) -> Result<glib::Value, String> {
+    Ok(match v.tag {
+        SVL_BOOL => unsafe { v.u.b }.to_value(),
+        SVL_I64 if v.flags & SVL_F_UNSIGNED != 0 => unsafe { v.u.u }.to_value(),
+        SVL_I64 => unsafe { v.u.i }.to_value(),
+        SVL_F64 => unsafe { v.u.f }.to_value(),
+        SVL_STR => unsafe { as_str(v) }.ok_or("invalid utf-8")?.into_owned().to_value(),
+        SVL_BYTES => {
+            let b = unsafe { v.u.bytes };
+            let data: &[u8] = if b.ptr.is_null() || b.len == 0 { &[] } else { unsafe { std::slice::from_raw_parts(b.ptr, b.len) } };
+            glib::Bytes::from(data).to_value()
+        }
+        SVL_BOXED => env.boxed(unsafe { v.u.h }).ok_or("stale boxed handle")?,
+        SVL_HANDLE => env.object(unsafe { v.u.h }).ok_or("stale handle")?.to_value(),
+        SVL_RECORD if v.type_ == SVL_T_TYPED_VARIANT => variant_in(v)?.to_value(),
+        t => return Err(format!("cannot convert tag {t} to a GValue")),
     })
 }
 
@@ -446,6 +579,14 @@ pub unsafe fn to_value(vt: Type, v: &svl_value, env: &dyn Env) -> Result<glib::V
                 SVL_NULL => None::<glib::Variant>.to_value(),
                 _ => Some(variant_in(v)?).to_value(),
             }
+        } else if vt == gvalue_type() {
+            let mut out = glib::Value::from_type(vt);
+            if v.tag != SVL_NULL {
+                let inner = gvalue_in(v, env)?;
+                // SAFETY: `out` holds a G_TYPE_VALUE; set_boxed copies `inner`.
+                unsafe { glib::gobject_ffi::g_value_set_boxed(out.to_glib_none_mut().0, inner.to_glib_none().0 as *const _) };
+            }
+            out
         } else if vt == glib::DateTime::static_type() {
             match v.tag {
                 SVL_NULL => glib::Value::from_type(vt),
@@ -583,6 +724,15 @@ pub fn from_value(v: &glib::Value, env: &dyn Env, buf: &mut StrBuf) -> svl_value
             Ok(Some(var)) => variant_out(&var, buf),
             _ => null_value(),
         };
+    }
+    if t == gvalue_type() {
+        // SAFETY: a G_TYPE_VALUE holds a borrowed `GValue *` (NULL when unset); from_glib_none copies it.
+        let p = unsafe { glib::gobject_ffi::g_value_get_boxed(v.to_glib_none().0) } as *const glib::gobject_ffi::GValue;
+        if p.is_null() {
+            return null_value();
+        }
+        let inner: glib::Value = unsafe { glib::translate::from_glib_none(p) };
+        return from_value(&inner, env, buf);
     }
     if t == glib::DateTime::static_type() {
         return match v.get::<Option<glib::DateTime>>() {
@@ -733,6 +883,33 @@ mod tests {
             assert_eq!(back, record(SVL_T_INSETS, vec![Value::I64(1), Value::I64(2), Value::I64(3), Value::I64(4)]));
             let too_big = record(SVL_T_INSETS, vec![Value::I64(100_000), Value::I64(0), Value::I64(0), Value::I64(0)]);
             assert!(too_big.with_raw(|raw| unsafe { to_value(gtk::Border::static_type(), raw, &NoEnv) }).is_err());
+        });
+    }
+
+    #[test]
+    fn gvalue_properties_hold_an_inferred_value() {
+        on_gtk(|| {
+            for (v, check) in [
+                (Value::Bool(true), "gboolean"),
+                (Value::I64(-5), "gint64"),
+                (Value::F64(0.5), "gdouble"),
+                (Value::Str("hi".into()), "gchararray"),
+            ] {
+                let (gv, back) = round_trip(gvalue_type(), &v);
+                assert_eq!(gv.type_(), gvalue_type());
+                assert_eq!(back, v);
+                let p = unsafe { glib::gobject_ffi::g_value_get_boxed(gv.to_glib_none().0) } as *const glib::gobject_ffi::GValue;
+                let inner: glib::Value = unsafe { glib::translate::from_glib_none(p) };
+                assert_eq!(inner.type_().name(), check);
+            }
+            // Unset reads as null; null writes an unset value.
+            let (gv, back) = round_trip(gvalue_type(), &Value::Null);
+            assert_eq!(back, Value::Null);
+            assert!(unsafe { glib::gobject_ffi::g_value_get_boxed(gv.to_glib_none().0) }.is_null());
+            // A typed variant is a GVariant inside the GValue.
+            let typed = Value::Record { ty: SVL_T_TYPED_VARIANT, fields: vec![Value::Str("u".into()), Value::I64(7)] };
+            let (_, back) = round_trip(gvalue_type(), &typed);
+            assert_eq!(back, Value::I64(7));
         });
     }
 

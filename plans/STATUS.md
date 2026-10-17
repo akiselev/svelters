@@ -14,6 +14,8 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | D1 docs generator | DONE | 77addd6 | per-toolkit docs IR frontends → Starlight site (881 pages, link-checked); docs ingestion pass; GFDL-safe Qt `brief` policy; `pnpm docs:build` / `docs:test` |
 | S1 serdes main types | DONE | 8071bb2 | ABI v3 value model (tags, descriptors, records, boxed, ERROR, CALLBACK, async, variants, dates) on GTK+Qt; 114/114 nextest; remainder → S2 |
 | S2 ABI v3 remainder | IN PROGRESS | | out/in-out params, Qt callbacks + async, Qt UTF-16, GVariant typing, GValue props; from docs/notes/s1-handoff.md |
+| X3 child attrs + listen phases | IN PROGRESS | | set_child_attr (G1) and listen_ex after/capture (G5), ABI additive |
+| X5 lists (M5) | IN PROGRESS | | JS-backed GListModel / QAbstractItemModel, pooled virtual list component, sort/filter callbacks (G6, part of G8) |
 | M2a ABI v2 | DONE | 417093a | schedule_wake native timers (no host thread), lifetime classes/handle_info/dead-handle ring, cascading on_destroyed reasons, onRequestClose + host-decided quit; 74/74 nextest |
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
 | A1 API surface + galleries | IN PROGRESS | | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |

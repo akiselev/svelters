@@ -14,11 +14,11 @@ some blocked facts are not worth exposing anyway.
 | G1 | Child attributes (`set_child_attr`) | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow |
 | G2 | GTK method calls with arguments or return values: **closed by X1 (master 865482d)** except out/in-out params, arrays and callbacks (S2) | out params, arrays | - |
 | G3 | Object-returning getters (borrowed handles): **closed by X1** (GTK: any GI getter; Qt: ~110 generated getters) | Qt methods with required args on unannotated classes, list returns | - |
-| G4 | Boxed/value types: **mostly closed by S1 (ABI v3, master 8071bb2)**; open: out params, GTK time-only/date-only records, model data | re-check per kind | gtk-display, qt-display |
+| G4 | Boxed/value types: **closed by S1 + S2** (typed values, out/in-out params, exact GVariant, GValue props, VALUE handles); open: GTK time-only/date-only records, model data | few | - |
 | G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; open: typed `value` results, listen phases, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
 | G6 | Model-backed views (GListModel, QAbstractItemModel) | 12 GTK kinds, 11 Qt kinds | gtk-lists-b, qt-lists-b (M5) |
-| G7 | Non-widget child objects (QAction, GMenuModel) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
-| G8 | Native-to-JS callbacks (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
+| G7 | Non-widget child objects (QAction, GMenuModel); S2 added `QMenu.yaml` (tag `menu`) with callbacks as a proof: extend it | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
+| G8 | Native-to-JS callbacks: **closed on Qt by S2** (`callbacks:`, async methods); open on GTK (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
 | G9 | Toplevel kinds other than `window` cannot be mounted (renderer) | every Qt dialog element's gallery presence; GTK AboutDialog, Popover-like toplevels | qt-dialogs (gallery), gtk-dialogs |
 | G10 | GTK slots whose native ops take a widget subclass: **closed by the A1 lead** (generator downcasts to `accepts`, upcasts getters; MenuButton `popover` verified) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
 | G11 | Enums outside the Gtk namespace: **enums closed by the A1 lead** (Pango/Gdk nicks kept on the property; Label `ellipsize`/`wrap-mode` verified); non-Gtk object kinds still open | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
@@ -75,6 +75,10 @@ ABI v2 defines the BORROWED lifetime class but no `get_prop`/`call` mints a borr
   `buf.setProp('text', 'x')` works, and which goes stale (`owner`) when the text view dies.
 
 ## G4: boxed/value types
+
+**Update (S2, master e5a208d):** out and in-out parameters (`out:`/`inout:` on Qt methods, GTK
+through GI), exact GVariant typing, GValue-typed GTK properties and VALUE-class handles for boxed
+values are done. Remaining: GTK time-only/date-only records and model data (G6).
 
 **Status 2026-10-17: mostly closed by lane S1** (ABI v3 value model, `docs/notes/s1-handoff.md`):
 typed values, enums as names, flags, records (Rect/Size/Point/Insets/Color), boxed with dispose,
@@ -137,6 +141,10 @@ Menus and toolbars hold actions (`QAction`, `GMenuItem`), which are not widgets 
   create a `QMenu` with a `QAction` and deliver `triggered`.
 
 ## G8: native-to-JS callbacks
+
+**Update (S2):** closed on Qt: `callbacks:` (functor/std::function params become JS functions) and
+`async:` (Promise-returning methods settled by a signal, e.g. `QDialog::open` + `finished`). GTK
+callback parameters (`gtk_drawing_area_set_draw_func`, list sort/filter funcs) remain open.
 
 Callback-typed parameters (`unsupported_reason: callback_scope` in the GTK metadata) need a JS
 function table in the host (native code never holds a JS value) and usually a sync call.
