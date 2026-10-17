@@ -255,6 +255,12 @@ impl<'a> Parser<'a> {
         top_level: bool,
         exports: Option<&mut Exports>,
     ) -> PResult<Statement> {
+        // acorn-typescript's `parseStatement` override
+        if self.ts.is_some() {
+            if let Some(s) = self.parse_statement_ts_prefix()? {
+                return Ok(s);
+            }
+        }
         let mut starttype = self.type_;
         let start = self.start;
         let mut kind: Option<VariableKind> = None;
@@ -588,6 +594,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_function_statement(&mut self, start: u32, is_async: bool, declaration_position: bool) -> PResult<Statement> {
+        if self.ts.is_some() {
+            return self.parse_function_statement_ts(start, is_async, declaration_position, false);
+        }
         self.next()?;
         let f = self.parse_function(
             start,
@@ -697,6 +706,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_catch_clause_param(&mut self) -> PResult<Pattern> {
+        if self.ts.is_some() {
+            return self.parse_catch_clause_param_ts();
+        }
         let param = self.parse_binding_atom()?;
         let simple = matches!(param, Pattern::Identifier(_));
         self.enter_scope(if simple { SCOPE_SIMPLE_CATCH } else { 0 });
@@ -740,6 +752,9 @@ impl<'a> Parser<'a> {
         kind: VariableKind,
         allow_missing_initializer: bool,
     ) -> PResult<Statement> {
+        if self.ts.is_some() {
+            return self.parse_var_statement_ts(start, kind, allow_missing_initializer, false);
+        }
         self.next()?;
         let declarations = self.parse_var(false, kind, allow_missing_initializer)?;
         self.semicolon()?;
@@ -816,6 +831,15 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_expression_statement(&mut self, start: u32, expr: Expression) -> PResult<Statement> {
+        // acorn-typescript: `type T = ...`, `declare ...`, `namespace N {}`, ...
+        if self.ts.is_some() {
+            if let Expression::Identifier(id) = &expr {
+                let id = id.clone();
+                if let Some(decl) = self.ts_parse_expression_statement(start, &id)? {
+                    return Ok(decl);
+                }
+            }
+        }
         self.semicolon()?;
         Ok(Statement::ExpressionStatement(ExpressionStatement {
             start,
@@ -920,7 +944,7 @@ impl<'a> Parser<'a> {
         let mut declarations = Vec::new();
         loop {
             let decl_start = self.start;
-            let id = self.parse_var_id(kind)?;
+            let (id, definite) = if self.ts.is_some() { self.parse_var_id_ts(kind)? } else { (self.parse_var_id(kind)?, false) };
             let init;
             if self.eat(T::Eq)? {
                 init = Some(self.parse_maybe_assign(if is_for { ForInit::Yes } else { ForInit::No }, None)?);
@@ -945,7 +969,8 @@ impl<'a> Parser<'a> {
             } else {
                 init = None;
             }
-            declarations.push(VariableDeclarator { start: decl_start, end: self.last_tok_end, id, init, ts: None });
+            let ts = if definite { Some(Box::new(TsDefiniteExtra { definite })) } else { None };
+            declarations.push(VariableDeclarator { start: decl_start, end: self.last_tok_end, id, init, ts });
             if !self.eat(T::Comma)? {
                 break;
             }
@@ -976,6 +1001,13 @@ impl<'a> Parser<'a> {
         is_async: bool,
         for_init: ForInit,
     ) -> PResult<Function> {
+        if self.ts.is_some() {
+            // statements go through `parse_function_statement` / export default
+            return match self.parse_function_ts(start, statement, _allow_expression_body, is_async, for_init, false)? {
+                super::typescript::FnOrDeclare::Function(f) => Ok(f),
+                super::typescript::FnOrDeclare::Declare(d) => self.unexpected(Some(d.end)),
+            };
+        }
         // initFunction
         let mut id: Option<Identifier> = None;
         let mut generator = false;
@@ -1048,7 +1080,7 @@ impl<'a> Parser<'a> {
     pub fn parse_function_params(&mut self) -> PResult<Vec<Pattern>> {
         self.expect(T::ParenL)?;
         let params =
-            self.parse_binding_list(T::ParenR, false, self.options.ecma_version >= 8)?.into_iter().flatten().collect();
+            self.parse_binding_list(T::ParenR, false, self.options.ecma_version >= 8, None)?.into_iter().flatten().collect();
         self.check_yield_await_in_default_params()?;
         Ok(params)
     }
@@ -1057,6 +1089,9 @@ impl<'a> Parser<'a> {
     // `isStatement` parameter).
 
     pub fn parse_class(&mut self, start: u32, is_statement: IsStatement) -> PResult<Class> {
+        if self.ts.is_some() {
+            return self.parse_class_ts(start, is_statement, false, false);
+        }
         self.next()?;
 
         // ecma-262 14.6 Class Definitions
@@ -1191,6 +1226,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn is_class_element_name_start(&self) -> bool {
+        if self.ts.is_some() && self.is_class_element_name_start_ts() {
+            return true;
+        }
         matches!(self.type_, T::Name | T::PrivateId | T::Num | T::String | T::BracketL) || self.type_.is_keyword()
     }
 
@@ -1343,7 +1381,7 @@ impl<'a> Parser<'a> {
         Ok(())
     }
 
-    fn is_private_name_conflicted(&mut self, element: &ClassElement) -> bool {
+    pub(crate) fn is_private_name_conflicted(&mut self, element: &ClassElement) -> bool {
         let (name, _) = private_key(element);
         let private_name_map: &mut HashMap<String, &'static str> =
             &mut self.private_name_stack.last_mut().unwrap().declared;
@@ -1404,6 +1442,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_export(&mut self, start: u32, exports: Option<&mut Exports>) -> PResult<Statement> {
+        if self.ts.is_some() {
+            return self.parse_export_ts(start, exports);
+        }
         self.next()?;
         // export * from '...'
         if self.eat(T::Star)? {
@@ -1486,6 +1527,11 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_export_default_declaration(&mut self) -> PResult<ExportDefaultKind> {
+        if self.ts.is_some() {
+            if let Some(d) = self.parse_export_default_declaration_ts_prefix()? {
+                return Ok(d);
+            }
+        }
         let mut is_async = false;
         if self.type_ == T::Function || {
             is_async = self.is_async_function();
@@ -1495,6 +1541,10 @@ impl<'a> Parser<'a> {
             self.next()?;
             if is_async {
                 self.next()?;
+            }
+            if self.ts.is_some() {
+                let f = self.parse_function_ts(f_start, FUNC_STATEMENT | FUNC_NULLABLE_ID, false, is_async, ForInit::No, false)?;
+                return Ok(ExportDefaultKind::Declaration(Box::new(f.into_statement())));
             }
             let f = self.parse_function(f_start, FUNC_STATEMENT | FUNC_NULLABLE_ID, false, is_async, ForInit::No)?;
             Ok(ExportDefaultKind::Declaration(Box::new(Statement::FunctionDeclaration(f))))
@@ -1510,6 +1560,10 @@ impl<'a> Parser<'a> {
     }
 
     pub fn check_export(&self, exports: Option<&mut Exports>, name: &str, pos: u32) -> PResult<()> {
+        if self.ts.is_some() {
+            self.check_export_ts(exports, name, pos);
+            return Ok(());
+        }
         let Some(exports) = exports else { return Ok(()) };
         if exports.contains(name) {
             return self.raise_recoverable(pos, format!("Duplicate export '{}'", name));
@@ -1555,6 +1609,9 @@ impl<'a> Parser<'a> {
     }
 
     pub fn should_parse_export_statement(&self) -> bool {
+        if self.ts.is_some() && self.should_parse_export_statement_ts() {
+            return true;
+        }
         let kw = self.type_.keyword();
         kw == Some("var")
             || kw == Some("const")
@@ -1599,6 +1656,9 @@ impl<'a> Parser<'a> {
     // Parses import declaration.
 
     pub fn parse_import(&mut self, start: u32) -> PResult<Statement> {
+        if self.ts.is_some() {
+            return self.parse_import_ts(start);
+        }
         self.next()?;
 
         // import '...'

@@ -12,7 +12,7 @@ use crate::svelte::errors as e;
 use crate::svelte::parse::PResult;
 
 fn options(preserve_parens: bool, allow_undefined_exports: bool) -> Options {
-    Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens, allow_undefined_exports }
+    Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens, allow_undefined_exports, typescript: false }
 }
 
 /// `parse(source, comments, typescript, is_script)`

@@ -808,13 +808,13 @@ node! {
         pub alternate: BoxExpr,
     }
 }
-node! {
+manual_node! {
     pub struct CallExpression {
         pub callee: BoxExpr,
         pub arguments: Vec<ArrayElement>,
         pub optional: bool,
-        /// acorn-typescript: `typeArguments`.
-        #[serde(flatten)]
+        /// acorn-typescript: `typeArguments` (a generic call has no `optional` key unless it is
+        /// part of an optional chain).
         pub ts: Option<Box<TsTypeArgumentsExtra>>,
     }
 }

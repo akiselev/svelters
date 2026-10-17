@@ -20,6 +20,8 @@ pub enum ParamItem {
     Expr(Expression),
     Spread(SpreadElement),
     Rest(RestElement),
+    /// SVELTERS: an already-converted parameter (acorn-typescript's generic async arrow).
+    Pat(Pattern),
 }
 
 fn pattern_to_expression(p: Pattern) -> Result<Expression, Pattern> {
@@ -36,6 +38,19 @@ impl<'a> Parser<'a> {
     // if possible.
 
     pub fn to_assignable(
+        &mut self,
+        node: Expression,
+        is_binding: bool,
+        ref_destructuring_errors: Option<&mut DestructuringErrors>,
+    ) -> PResult<Pattern> {
+        if self.ts.is_some() {
+            return self.to_assignable_ts(node, is_binding, ref_destructuring_errors, false);
+        }
+        self.to_assignable_base(node, is_binding, ref_destructuring_errors)
+    }
+
+    /// acorn's own `toAssignable` (`super.toAssignable` of the TypeScript parser).
+    pub fn to_assignable_base(
         &mut self,
         node: Expression,
         is_binding: bool,
@@ -102,7 +117,7 @@ impl<'a> Parser<'a> {
                     };
                     properties.push(member);
                 }
-                Ok(Pattern::ObjectPattern(ObjectPattern { start: o.start, end: o.end, properties, ts: None }))
+                Ok(Pattern::ObjectPattern(ObjectPattern { start: o.start, end: o.end, properties, ts: o.ts }))
             }
 
             Expression::ArrayExpression(a) => {
@@ -110,7 +125,7 @@ impl<'a> Parser<'a> {
                     self.check_pattern_errors(Some(r), true)?;
                 }
                 let elements = self.to_assignable_list(a.elements, is_binding)?;
-                Ok(Pattern::ArrayPattern(ArrayPattern { start: a.start, end: a.end, elements, ts: None }))
+                Ok(Pattern::ArrayPattern(ArrayPattern { start: a.start, end: a.end, elements, ts: a.ts }))
             }
 
             Expression::AssignmentExpression(a) => {
@@ -184,16 +199,19 @@ impl<'a> Parser<'a> {
         if let Pattern::AssignmentPattern(a) = &argument {
             return self.raise(a.start, "Rest elements cannot have a default value");
         }
-        Ok(RestElement { start: node.start, end: node.end, argument: Box::new(argument), ts: None })
+        Ok(RestElement { start: node.start, end: node.end, argument: Box::new(argument), ts: node.ts })
     }
 
     // Convert list of expression atoms to binding list.
 
     pub fn to_assignable_list(
         &mut self,
-        expr_list: Vec<Option<ArrayElement>>,
+        mut expr_list: Vec<Option<ArrayElement>>,
         is_binding: bool,
     ) -> PResult<Vec<Option<Pattern>>> {
+        if self.ts.is_some() {
+            self.ts_unwrap_type_casts_in_elements(&mut expr_list);
+        }
         let mut out = Vec::with_capacity(expr_list.len());
         for elt in expr_list {
             out.push(match elt {
@@ -211,13 +229,17 @@ impl<'a> Parser<'a> {
     }
 
     /// `toAssignableList` for arrow function parameters.
-    pub fn to_assignable_params(&mut self, expr_list: Vec<ParamItem>, is_binding: bool) -> PResult<Vec<Pattern>> {
+    pub fn to_assignable_params(&mut self, mut expr_list: Vec<ParamItem>, is_binding: bool) -> PResult<Vec<Pattern>> {
+        if self.ts.is_some() {
+            self.ts_unwrap_type_casts(&mut expr_list);
+        }
         let mut out = Vec::with_capacity(expr_list.len());
         for elt in expr_list {
             out.push(match elt {
                 ParamItem::Expr(e) => self.to_assignable(e, is_binding, None)?,
                 ParamItem::Spread(s) => Pattern::RestElement(self.to_assignable_spread(s, is_binding)?),
                 ParamItem::Rest(r) => Pattern::RestElement(r),
+                ParamItem::Pat(p) => self.to_assignable_pattern(p, is_binding)?,
             });
         }
         if let Some(last) = out.last() {
@@ -263,6 +285,11 @@ impl<'a> Parser<'a> {
     // Parses lvalue (assignable) atom.
 
     pub fn parse_binding_atom(&mut self) -> PResult<Pattern> {
+        if self.ts.is_some() {
+            if let Some(p) = self.parse_binding_atom_ts()? {
+                return Ok(p);
+            }
+        }
         self.enter_depth()?;
         let r = self.parse_binding_atom_inner();
         self.depth -= 1;
@@ -275,7 +302,7 @@ impl<'a> Parser<'a> {
                 T::BracketL => {
                     let start = self.start;
                     self.next()?;
-                    let elements = self.parse_binding_list(T::BracketR, true, true)?;
+                    let elements = self.parse_binding_list(T::BracketR, true, true, None)?;
                     return Ok(Pattern::ArrayPattern(ArrayPattern { start, end: self.last_tok_end, elements, ts: None }));
                 }
 
@@ -291,6 +318,7 @@ impl<'a> Parser<'a> {
         close: T,
         allow_empty: bool,
         allow_trailing_comma: bool,
+        allow_modifiers: Option<bool>,
     ) -> PResult<Vec<Option<Pattern>>> {
         let mut elts = Vec::new();
         let mut first = true;
@@ -305,27 +333,42 @@ impl<'a> Parser<'a> {
             } else if allow_trailing_comma && self.after_trailing_comma(close, false)? {
                 break;
             } else if self.type_ == T::Ellipsis {
-                let rest = self.parse_rest_binding()?;
-                elts.push(Some(Pattern::RestElement(rest)));
+                let mut rest = Pattern::RestElement(self.parse_rest_binding()?);
+                // `this.parseBindingListItem(rest)` (identity in acorn)
+                if self.ts.is_some() {
+                    self.parse_binding_list_item_ts(&mut rest)?;
+                }
+                elts.push(Some(rest));
                 if self.type_ == T::Comma {
-                    return self.raise_recoverable(self.start, "Comma is not permitted after the rest element");
+                    self.raise_rest_comma(self.start)?;
                 }
                 self.expect(close)?;
                 break;
             } else {
-                elts.push(Some(self.parse_assignable_list_item()?));
+                elts.push(Some(self.parse_assignable_list_item(allow_modifiers)?));
             }
         }
         Ok(elts)
     }
 
-    pub fn parse_assignable_list_item(&mut self) -> PResult<Pattern> {
+    pub fn parse_assignable_list_item(&mut self, allow_modifiers: Option<bool>) -> PResult<Pattern> {
+        if self.ts.is_some() {
+            return self.parse_assignable_list_item_ts(allow_modifiers);
+        }
         self.parse_maybe_default(self.start, None)
     }
 
     // Parses assignment pattern around given atom if possible.
 
     pub fn parse_maybe_default(&mut self, start_pos: u32, left: Option<Pattern>) -> PResult<Pattern> {
+        if self.ts.is_some() {
+            return self.parse_maybe_default_ts(start_pos, left);
+        }
+        self.parse_maybe_default_base(start_pos, left)
+    }
+
+    /// acorn's own `parseMaybeDefault` (`super.parseMaybeDefault` of the TypeScript parser).
+    pub fn parse_maybe_default_base(&mut self, start_pos: u32, left: Option<Pattern>) -> PResult<Pattern> {
         let left = match left {
             Some(l) => l,
             None => self.parse_binding_atom()?,
@@ -463,6 +506,12 @@ impl<'a> Parser<'a> {
                 self.check_lval_simple_expr(&p.expression, binding_type, check_clashes)
             }
 
+            // acorn-typescript's `checkLValSimple`: TS wrappers are transparent.
+            Pattern::TSAsExpression(w)
+            | Pattern::TSSatisfiesExpression(w)
+            | Pattern::TSTypeAssertion(w)
+            | Pattern::TSNonNullExpression(w) => self.check_lval_simple(&w.expression, binding_type, check_clashes),
+
             other => {
                 self.raise(other.span().start, if is_bind { "Binding rvalue" } else { "Assigning to rvalue" })
             }
@@ -499,6 +548,13 @@ impl<'a> Parser<'a> {
                 }
                 self.check_lval_simple_expr(&p.expression, binding_type, check_clashes)
             }
+
+            // acorn-typescript's `checkLValSimple`: TS wrappers are transparent.
+            Expression::TSNonNullExpression(n) => self.check_lval_simple_expr(&n.expression, binding_type, check_clashes),
+            Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => {
+                self.check_lval_simple_expr(&n.expression, binding_type, check_clashes)
+            }
+            Expression::TSTypeAssertion(n) => self.check_lval_simple_expr(&n.expression, binding_type, check_clashes),
 
             other => {
                 self.raise(other.span().start, if is_bind { "Binding rvalue" } else { "Assigning to rvalue" })
@@ -545,6 +601,10 @@ impl<'a> Parser<'a> {
         binding_type: u32,
         check_clashes: Option<&mut HashSet<String>>,
     ) -> PResult<()> {
+        if let Some(parameter) = self.ts_parameter_property_inner(expr) {
+            // acorn-typescript: `TSParameterProperty` checks its parameter
+            return self.check_lval_inner_pattern(parameter, binding_type, check_clashes);
+        }
         match expr {
             Pattern::AssignmentPattern(a) => self.check_lval_pattern(&a.left, binding_type, check_clashes),
 

@@ -121,6 +121,25 @@ pub enum TokenType {
     Typeof,
     Void,
     Delete,
+
+    // SVELTERS: the token types acorn-typescript adds (`generateTsKwTokenType`: TypeScript
+    // keywords are distinct `TokenType("name", { startsExpr })` objects; `generateTsTokenType`:
+    // `@`). Only the TypeScript parser produces them. The JSX token types are not needed (Svelte
+    // uses the plugin without `jsx`).
+    TsAssert,
+    TsAsserts,
+    TsGlobal,
+    TsKeyof,
+    TsReadonly,
+    TsUnique,
+    TsAbstract,
+    TsDeclare,
+    TsEnum,
+    TsModule,
+    TsNamespace,
+    TsInterface,
+    TsType,
+    At,
 }
 
 use TokenType as T;
@@ -171,6 +190,8 @@ impl TokenType {
             T::Slash => "/",
             T::Starstar => "**",
             T::Coalesce => "??",
+            T::At => "@",
+            t if t.is_ts_keyword() => "name",
             _ => self.keyword().unwrap_or(""),
         }
     }
@@ -219,6 +240,26 @@ impl TokenType {
 
     pub fn is_keyword(self) -> bool {
         self.keyword().is_some()
+    }
+
+    /// One of acorn-typescript's keyword token types (`tsKwTokenTypeValues.includes(type)`).
+    pub fn is_ts_keyword(self) -> bool {
+        matches!(
+            self,
+            T::TsAssert
+                | T::TsAsserts
+                | T::TsGlobal
+                | T::TsKeyof
+                | T::TsReadonly
+                | T::TsUnique
+                | T::TsAbstract
+                | T::TsDeclare
+                | T::TsEnum
+                | T::TsModule
+                | T::TsNamespace
+                | T::TsInterface
+                | T::TsType
+        )
     }
 
     pub fn before_expr(self) -> bool {
@@ -295,7 +336,7 @@ impl TokenType {
                 | T::Typeof
                 | T::Void
                 | T::Delete
-        )
+        ) || self.is_ts_keyword()
     }
 
     pub fn is_loop(self) -> bool {
@@ -334,6 +375,26 @@ impl TokenType {
             _ => return None,
         })
     }
+}
+
+/// acorn-typescript's `tokTypes[word]` for `keywordsRegExp` words.
+pub fn ts_keyword_type(word: &str) -> Option<TokenType> {
+    Some(match word {
+        "assert" => T::TsAssert,
+        "asserts" => T::TsAsserts,
+        "global" => T::TsGlobal,
+        "keyof" => T::TsKeyof,
+        "readonly" => T::TsReadonly,
+        "unique" => T::TsUnique,
+        "abstract" => T::TsAbstract,
+        "declare" => T::TsDeclare,
+        "enum" => T::TsEnum,
+        "module" => T::TsModule,
+        "namespace" => T::TsNamespace,
+        "interface" => T::TsInterface,
+        "type" => T::TsType,
+        _ => return None,
+    })
 }
 
 /// `keywords[name]`: map keyword names to token types.

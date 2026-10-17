@@ -54,14 +54,14 @@ pub struct Label {
 }
 
 /// An entry of `privateNameStack`.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct PrivateNameEntry {
     pub declared: HashMap<String, &'static str>,
     pub used: Vec<(String, u32)>,
 }
 
 /// `this.undefinedExports`: insertion-ordered map name -> (order, start).
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct UndefinedExports {
     pub map: HashMap<String, (u64, u32)>,
     pub seq: u64,
@@ -161,6 +161,10 @@ pub struct Parser<'a> {
 
     /// SVELTERS: recursion depth guard standing in for acorn's `catchStackOverflow`.
     pub depth: u32,
+
+    /// SVELTERS: the state acorn-typescript's `TypeScriptParser` adds; `Some` when parsing
+    /// TypeScript (`options.typescript`), which also switches on its method overrides.
+    pub ts: Option<Box<super::typescript::TsState>>,
 }
 
 impl<'a> Parser<'a> {
@@ -229,6 +233,7 @@ impl<'a> Parser<'a> {
             in_template_element: false,
             comments,
             depth: 0,
+            ts: if options.typescript { Some(Box::default()) } else { None },
             options,
         };
         p.context = p.initial_context();

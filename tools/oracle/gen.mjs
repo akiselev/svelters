@@ -24,6 +24,7 @@ const outDir = path.join(root, 'target/oracle');
 
 const ACORN_VERSION = '8.19.0';
 const SVELTE_VERSION = '5.57.2';
+const ACORN_TS_VERSION = '1.0.13';
 
 // ---------------------------------------------------------------------------------------------
 // locate the upstream packages in node_modules/.pnpm (neither is a direct root dependency)
@@ -40,6 +41,16 @@ const require = createRequire(import.meta.url);
 const acornDir = pnpmPackage(`acorn@${ACORN_VERSION}`, 'acorn');
 const acorn = require(path.join(acornDir, 'dist/acorn.js'));
 if (acorn.version !== ACORN_VERSION) throw new Error(`acorn ${acorn.version}, expected ${ACORN_VERSION}`);
+
+// @sveltejs/acorn-typescript, the plugin Svelte's parser uses for `lang="ts"`
+// (`acorn.Parser.extend(tsPlugin())`), applied to the same acorn.
+async function loadTsParser() {
+	const dir = pnpmPackage(`@sveltejs+acorn-typescript@${ACORN_TS_VERSION}`, '@sveltejs/acorn-typescript');
+	const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+	if (pkg.version !== ACORN_TS_VERSION) throw new Error(`acorn-typescript ${pkg.version}, expected ${ACORN_TS_VERSION}`);
+	const { tsPlugin } = await import(pathToFileURL(path.join(dir, 'index.js')).href);
+	return acorn.Parser.extend(tsPlugin());
+}
 
 async function loadSvelte() {
 	const dir = pnpmPackage(`svelte@file+vendor+svelte+svelte-${SVELTE_VERSION}`, 'svelte');
@@ -109,8 +120,10 @@ function recordOptions(opts) {
 
 /** Runs real acorn. `onComment`/`onToken` are replaced by our own collector (they never change
  *  the AST); `locations`/`ranges` are turned off (they only add `loc`/`range`, which are ignored). */
-function runAcorn(code, opts) {
-	const run = { ...opts, locations: false, ranges: false };
+function runAcorn(code, opts, parser = acorn) {
+	// acorn-typescript requires `locations` (the replacer drops `loc` again)
+	const run = { ...opts, locations: parser !== acorn, ranges: false };
+	delete run.typescript;
 	delete run.onToken;
 	delete run.onInsertedSemicolon;
 	delete run.onTrailingComma;
@@ -119,7 +132,7 @@ function runAcorn(code, opts) {
 	const comments = [];
 	run.onComment = (block, value, start, end) => comments.push({ type: block ? 'Block' : 'Line', value, start, end });
 	try {
-		const ast = acorn.parse(code, run);
+		const ast = parser.parse(code, run);
 		return { ast, comments };
 	} catch (e) {
 		if (!(e instanceof SyntaxError) || typeof e.pos !== 'number') {
@@ -183,6 +196,35 @@ function acornFileCases() {
 	return cases;
 }
 
+/** TypeScript (`options.typescript`): every `test/<case>/input.ts` of the acorn-typescript
+ *  repository (`$UPSTREAM/acorn-typescript`, inputs only) and every `.ts` file of the svelte
+ *  checkout, parsed by acorn + acorn-typescript like Svelte's `<script lang="ts">`. */
+async function acornTsCases() {
+	const TSParser = await loadTsParser();
+	const cases = [];
+	const testDir = path.join(upstream, 'acorn-typescript/test');
+	if (!fs.existsSync(testDir)) console.warn(`acorn-typescript tests not found in ${testDir} (skipped)`);
+	const inputs = [];
+	if (fs.existsSync(testDir)) {
+		for (const d of fs.readdirSync(testDir).sort()) {
+			const f = path.join(testDir, d, 'input.ts');
+			if (fs.existsSync(f)) inputs.push([`acorn-typescript:test/${d}/input.ts`, f]);
+		}
+	}
+	for (const f of walk(path.join(upstream, 'svelte/packages'), (p) => p.endsWith('.ts'))) {
+		inputs.push([`svelte:${path.relative(path.join(upstream, 'svelte'), f)}`, f]);
+	}
+	for (const [id, f] of inputs) {
+		const code = fs.readFileSync(f, 'utf8');
+		const opts = { ecmaVersion: 16, sourceType: 'module', typescript: true };
+		const c = { id, code, options: opts };
+		if (!wellFormed(code)) c.skip = 'source contains lone surrogates';
+		Object.assign(c, runAcorn(code, opts, TSParser));
+		cases.push(c);
+	}
+	return cases;
+}
+
 // ---------------------------------------------------------------------------------------------
 // svelte corpus
 
@@ -236,7 +278,7 @@ function summary(name, cases, { bytes, file }) {
 
 const which = process.argv[2] || 'all';
 if (which === 'acorn' || which === 'all') {
-	const cases = [...acornTestCases(), ...acornFileCases()];
+	const cases = [...acornTestCases(), ...acornFileCases(), ...(await acornTsCases())];
 	summary('acorn', cases, writeJsonl('acorn.jsonl', cases));
 }
 if (which === 'svelte' || which === 'all') {

@@ -98,6 +98,27 @@ pub struct TsDefiniteExtra {
 pub struct TsTypeArgumentsExtra {
     #[serde(rename = "typeArguments", skip_serializing_if = "Option::is_none")]
     pub type_arguments: Option<TSTypeParameterInstantiation>,
+    /// CallExpression only: acorn-typescript's generic call sets `optional` only inside an
+    /// optional chain.
+    #[serde(skip)]
+    pub omit_optional: bool,
+}
+
+impl Serialize for CallExpression {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        let mut m = s.serialize_map(None)?;
+        m.serialize_entry("start", &self.start)?;
+        m.serialize_entry("end", &self.end)?;
+        m.serialize_entry("callee", &self.callee)?;
+        m.serialize_entry("arguments", &self.arguments)?;
+        if !self.ts.as_ref().is_some_and(|t| t.omit_optional) {
+            m.serialize_entry("optional", &self.optional)?;
+        }
+        if let Some(t) = self.ts.as_ref().and_then(|t| t.type_arguments.as_ref()) {
+            m.serialize_entry("typeArguments", t)?;
+        }
+        m.end()
+    }
 }
 
 /// `importKind` (`"value"` / `"type"`); `has_attributes`: a `with`/`assert` clause was read
