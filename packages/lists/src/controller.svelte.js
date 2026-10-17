@@ -4,7 +4,7 @@
 // Protocol (backend-abi.md, "Model-view protocol (M5)"): the native `virtuallist` holds only
 // integer ids, one per item. `splice(pos, removed, ids)` changes them; the toolkit then asks for
 // row content with `setup(row)`, `bind(row, pos, id, gen)`, `unbind(row, gen)`, `teardown(row)`.
-import { flushSync, mount, unmount } from 'svelte';
+import { flushSync, mount, unmount, untrack } from 'svelte';
 import renderer, { outlet, releaseOutlet } from '@svelters/renderer';
 import { diffKeys } from './diff.js';
 import RowHost from './RowHost.svelte';
@@ -57,21 +57,25 @@ export class ListController {
     this.view = null;
   }
 
-  /** Brings the native model in line with `items` using the smallest set of splices. */
+  /**
+   * Brings the native model in line with `items` using the smallest set of splices. Meant to run
+   * inside an effect: reading the items and their keys is tracked, everything after is not (the
+   * effect must not subscribe to, or invalidate, the row cells it updates).
+   */
   update(items) {
     const list = Array.isArray(items) ? items : Array.from(items ?? []);
     const key = this.opts.key;
     const newKeys = new Array(list.length);
     for (let i = 0; i < list.length; i++) newKeys[i] = key(list[i], i);
-    this.list = list;
-    if (this.view?.handle != null) {
-      const ops = diffKeys(this.keys, newKeys);
-      if (ops.length) this.#applyOps(ops, newKeys);
+    untrack(() => {
+      this.list = list;
+      if (this.view?.handle != null) {
+        const ops = diffKeys(this.keys, newKeys);
+        if (ops.length) this.#applyOps(ops, newKeys);
+      }
       this.keys = newKeys;
-    } else {
-      this.keys = newKeys;
-    }
-    this.#refreshBound();
+      this.#refreshBound();
+    });
   }
 
   #applyOps(ops, newKeys) {
@@ -100,22 +104,14 @@ export class ListController {
     }
   }
 
-  /** Rows that stay bound pick up a new item object or a new index. */
+  /** Rows that stay bound pick up a new item object or a new index (Svelte flushes them with the update that called us). */
   #refreshBound() {
-    let dirty = false;
     for (const s of this.slots.values()) {
       if (s.pos < 0 || !s.comp) continue;
       const item = this.list[s.pos];
-      if (s.cell.item !== item) {
-        s.cell.item = item;
-        dirty = true;
-      }
-      if (s.cell.index !== s.pos) {
-        s.cell.index = s.pos;
-        dirty = true;
-      }
+      if (s.cell.item !== item) s.cell.item = item;
+      if (s.cell.index !== s.pos) s.cell.index = s.pos;
     }
-    if (dirty) flushSync();
   }
 
   // ---- native events ----
