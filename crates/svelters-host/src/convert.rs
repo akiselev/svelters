@@ -74,6 +74,15 @@ pub(crate) trait JsReader {
     fn boxed(&self, v: &Self::V) -> Result<Option<(svl_handle, svl_id)>, String>;
 }
 
+/// What async native methods need from a JS engine.
+pub(crate) trait JsPromises: JsReader {
+    /// Creates a Promise and stores, under callback `id`, the function that settles it: called with a
+    /// result it resolves, called with a `NativeError` it rejects.
+    fn new_completion(&self, id: u64) -> Result<Self::V, String>;
+    /// Calls `backend->cancel(id)` when the AbortSignal `signal` aborts.
+    fn watch_abort(&self, signal: &Self::V, id: u64) -> Result<(), String>;
+}
+
 /// What the converter needs from a JS engine to build values.
 pub(crate) trait JsWriter {
     type V;

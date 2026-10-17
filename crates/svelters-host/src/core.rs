@@ -26,6 +26,7 @@ use std::time::{Duration, Instant};
 use crate::convert::TypeInfo;
 use svelters_abi::{BackendRef, MemberDesc, SVL_CB_ASYNC, SVL_CB_CALL, SVL_CB_FOREVER, SVL_CB_NOTIFIED, Value, WakeHandle, svl_handle, svl_id};
 
+mod asyncs;
 mod callbacks;
 mod ops;
 pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};

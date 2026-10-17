@@ -256,6 +256,23 @@ impl<'js> JsReader for QjsConv<'js> {
     }
 }
 
+impl<'js> crate::convert::JsPromises for QjsConv<'js> {
+    fn new_completion(&self, id: u64) -> R<Value<'js>> {
+        let f: Function = self.internal()?.get("makeCompletion").map_err(|e| self.err(e))?;
+        let pair: Array = f.call(()).map_err(|e| self.err(e))?;
+        let promise: Value = pair.get(0).map_err(|e| self.err(e))?;
+        let done: Function = pair.get(1).map_err(|e| self.err(e))?;
+        let cbs = self.cbs.as_ref().ok_or("callbacks are not available here")?;
+        cbs.funcs.borrow_mut().insert(id, rquickjs::Persistent::save(&self.ctx, done));
+        Ok(promise)
+    }
+
+    fn watch_abort(&self, signal: &Value<'js>, id: u64) -> R<()> {
+        let f: Function = self.internal()?.get("watchAbort").map_err(|e| self.err(e))?;
+        f.call::<_, ()>((signal.clone(), id as f64)).map_err(|e| self.err(e))
+    }
+}
+
 impl<'js> JsWriter for QjsConv<'js> {
     type V = Value<'js>;
 

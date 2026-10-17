@@ -460,6 +460,16 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             "now",
             Function::new(ctx.clone(), move || base.elapsed().as_secs_f64() * 1000.0)?,
         )?;
+        // An AbortSignal fired: ask the backend to cancel the operation behind a completion callback.
+        let w = core.clone();
+        native.set(
+            "cancelAsync",
+            Function::new(ctx.clone(), move |id: f64| {
+                if let Some(c) = w.upgrade() {
+                    c.op_cancel_async(id as u64);
+                }
+            })?,
+        )?;
         // Boxed values: explicit release is immediate; the GC path only queues the handle.
         let w = core.clone();
         native.set(

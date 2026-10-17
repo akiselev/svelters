@@ -56,6 +56,10 @@ fn unpack(id: u64) -> (u16, usize) {
 }
 
 impl CbTable {
+    pub(crate) fn is_live(&self, id: u64) -> bool {
+        self.live(id).is_some()
+    }
+
     fn live(&self, id: u64) -> Option<&Slot> {
         let (g, i) = unpack(id);
         self.slots.get(i).filter(|s| s.live && s.gen_ == g)

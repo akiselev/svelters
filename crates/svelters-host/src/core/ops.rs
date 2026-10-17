@@ -6,7 +6,7 @@
 //! which may destroy the target handle. No `RefCell` is borrowed across an engine or backend call.
 
 use super::*;
-use crate::convert::{self, Arena, ConvError, Cx, ErrKind, JsReader, JsWriter, TypeSource};
+use crate::convert::{self, Arena, ConvError, Cx, ErrKind, JsPromises, JsReader, JsWriter, TypeSource};
 use svelters_abi::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -57,11 +57,11 @@ impl TypeSource for Core {
 }
 
 impl Core {
-    fn utf16(&self) -> bool {
+    pub(super) fn utf16(&self) -> bool {
         self.backend.caps() & SVL_CAP_UTF16_IN != 0
     }
 
-    fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> Result<svl_id, String> {
+    pub(super) fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> Result<svl_id, String> {
         if let Some(id) = self
             .st
             .borrow()
@@ -84,7 +84,7 @@ impl Core {
         Ok(id)
     }
 
-    fn resolve_name(&self, what: NameKind, kind: svl_id, n: Name<'_>) -> Result<svl_id, String> {
+    pub(super) fn resolve_name(&self, what: NameKind, kind: svl_id, n: Name<'_>) -> Result<svl_id, String> {
         match n {
             Name::Str(s) => self.resolve(what, kind, s),
             Name::Id(id) => Ok(id),
@@ -100,7 +100,7 @@ impl Core {
             .ok_or_else(|| format!("stale or foreign handle {h}"))
     }
 
-    fn kind_name(&self, k: svl_id) -> String {
+    pub(super) fn kind_name(&self, k: svl_id) -> String {
         self.st
             .borrow()
             .kind_names
@@ -110,7 +110,7 @@ impl Core {
     }
 
     /// The cached descriptor of a member, if the backend publishes one.
-    fn member(&self, what: NameKind, kind: svl_id, id: svl_id) -> Option<Rc<MemberDesc>> {
+    pub(super) fn member(&self, what: NameKind, kind: svl_id, id: svl_id) -> Option<Rc<MemberDesc>> {
         let key = (what as u32, kind, id);
         if let Some(m) = self.st.borrow().members.get(&key) {
             return m.clone();
@@ -122,7 +122,7 @@ impl Core {
 
     /// A backend failure. A native error's code is named here when the backend describes the error
     /// enum (a `GIOErrorEnum` value becomes `"not-found"`), so the JS side needs no type tables.
-    fn backend_err(&self, e: AbiError) -> OpError {
+    pub(super) fn backend_err(&self, e: AbiError) -> OpError {
         let native = e.native.map(|mut n| {
             n.code = match &n.code {
                 Value::Enum { ty, value } => match self.type_info(*ty).and_then(|t| t.by_value.get(value).map(|i| t.desc.members[*i].name.clone())) {
@@ -141,7 +141,7 @@ impl Core {
         }
     }
 
-    fn conv_err(&self, prefix: &str, e: ConvError) -> OpError {
+    pub(super) fn conv_err(&self, prefix: &str, e: ConvError) -> OpError {
         OpError {
             kind: match e.kind {
                 ErrKind::Type => OpKind::Type,
@@ -335,7 +335,7 @@ impl Core {
         args: &<E as JsReader>::V,
     ) -> Result<<E as JsReader>::V, OpError>
     where
-        E: JsReader + JsWriter<V = <E as JsReader>::V>,
+        E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
     {
         self.timed(|| {
             let k = self.kind_of(h)?;
@@ -346,6 +346,9 @@ impl Core {
                 (None, Name::Str(s)) => s.to_string(),
                 (None, Name::Id(i)) => format!("#{i}"),
             };
+            if let Some(d) = desc.as_ref().filter(|d| d.flags & SVL_M_ASYNC != 0) {
+                return self.op_call_async(e, h, m, k, d, &mname, args);
+            }
             let given = JsReader::len(e, args)?;
             let mut ar = Arena::new();
             let registry = CallbackRegistry(self);
@@ -424,7 +427,7 @@ impl Core {
 
     /// After the backend call: `call`-scope callbacks end with it; all of them end when it failed
     /// (the backend did not keep them).
-    fn finish_callbacks(&self, ar: &mut Arena, ok: bool) {
+    pub(super) fn finish_callbacks(&self, ar: &mut Arena, ok: bool) {
         for (id, scope) in ar.take_callbacks() {
             if !ok || scope == SVL_CB_CALL {
                 self.cb_release(id);

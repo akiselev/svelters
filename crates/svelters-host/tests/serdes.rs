@@ -25,6 +25,7 @@ const CB_FOREVER_T: u32 = SVL_T_FIRST_BACKEND + 10;
 
 const METHODS: &[&str] = &[
     "setBoth", "bounds", "fail", "raw", "gerror", "visit", "subscribe", "fire", "unsubscribe", "once", "forever", "fireOld", "fireOnce",
+    "slow", "complete", "completeError", "slowFail", "slowOf",
 ];
 
 #[derive(Default)]
@@ -49,6 +50,8 @@ struct Typed {
     subscribed: Cell<u64>,
     old: Cell<u64>,
     once: Cell<u64>,
+    /// Completion callbacks of started async operations.
+    pending: RefCell<Vec<u64>>,
 }
 
 impl Typed {
@@ -168,6 +171,34 @@ impl Backend for Typed {
             11 => Ok(Value::Null),
             12 => self.invoke(self.old.get(), &[Value::I64(1)]),
             13 => self.invoke(self.once.get(), &[Value::I64(1)]),
+            // async: remember the completion callback and return at once
+            14 => {
+                self.pending.borrow_mut().push(cb_id(args.len() - 1)?);
+                Ok(Value::Null)
+            }
+            18 => {
+                if !matches!(args.first(), Some(Value::Str(_))) {
+                    return Err("slowOf: expected the label".into());
+                }
+                self.pending.borrow_mut().push(cb_id(args.len() - 1)?);
+                Ok(Value::Null)
+            }
+            15 => {
+                let id = self.pending.borrow_mut().pop().ok_or("nothing pending")?;
+                self.invoke(id, &[args.first().cloned().unwrap_or(Value::Null)])
+            }
+            16 => {
+                let id = self.pending.borrow_mut().pop().ok_or("nothing pending")?;
+                self.invoke(
+                    id,
+                    &[Value::Error(Box::new(NativeError {
+                        domain: "g-io-error-quark".into(),
+                        code: Value::Enum { ty: ERR_T, value: 0 },
+                        message: "it failed".into(),
+                    }))],
+                )
+            }
+            17 => Err("cannot start".into()),
             1 => Ok(Value::Bool(true)),
             2 => Ok(Value::Record { ty: RECT_T, fields: vec![Value::F64(1.0), Value::F64(2.0), Value::F64(3.0), Value::F64(4.0)] }),
             3 => Err("boom".into()),
@@ -192,6 +223,19 @@ impl Backend for Typed {
     }
     fn waker(&self) -> Waker {
         Arc::new(|| {})
+    }
+    fn cancel(&self, callback: u64) -> bool {
+        let known = self.pending.borrow().contains(&callback);
+        if known {
+            self.pending.borrow_mut().retain(|c| *c != callback);
+            let e = NativeError {
+                domain: "g-io-error-quark".into(),
+                code: Value::Enum { ty: ERR_T, value: 2 },
+                message: "Operation was cancelled".into(),
+            };
+            let _ = self.invoke(callback, &[Value::Error(Box::new(e))]);
+        }
+        known
     }
     fn quit(&self) {
         self.quit.set(true);
@@ -227,6 +271,14 @@ impl Backend for Typed {
                     flags: 0,
                 }),
                 2 => Some(MemberDesc { name: "bounds".into(), params: vec![], ret: SlotDesc::new(SVL_RECORD).typed(RECT_T), flags: 0 }),
+                14 | 17 | 18 => {
+                    let mut params = vec![];
+                    if member == 18 {
+                        params.push(SlotDesc::new(SVL_STR).named("label"));
+                    }
+                    params.push(SlotDesc::new(SVL_CALLBACK).typed(CB_ASYNC_T).named("done"));
+                    Some(MemberDesc { name: METHODS[member as usize - 1].into(), params, ret: SlotDesc::new(SVL_NULL), flags: SVL_M_ASYNC })
+                }
                 6 | 7 | 10 | 11 => {
                     let ty = match member {
                         6 => CB_CALL_T,
@@ -289,7 +341,7 @@ impl Backend for Typed {
             ERR_T => TypeDesc {
                 name: "Gio.IOErrorEnum".into(),
                 kind: SVL_ENUM, scope: 0,
-                members: vec![member("failed", 0), member("not-found", 1)],
+                members: vec![member("failed", 0), member("not-found", 1), member("cancelled", 2)],
                 fields: vec![],
                 ret: none,
             },
@@ -308,7 +360,7 @@ struct Rig {
 fn rig(utf16: bool) -> Rig {
     let st = Rc::new(RefCell::new(State::default()));
     let post = Rc::new(RefCell::new(Vec::new()));
-    let vt = BackendVtable::new(Typed { st: st.clone(), utf16, post: post.clone(), quit: Cell::new(false), host: Cell::new(std::ptr::null()), subscribed: Cell::new(0), old: Cell::new(0), once: Cell::new(0) });
+    let vt = BackendVtable::new(Typed { st: st.clone(), utf16, post: post.clone(), quit: Cell::new(false), host: Cell::new(std::ptr::null()), subscribed: Cell::new(0), old: Cell::new(0), once: Cell::new(0), pending: RefCell::default() });
     Rig { st, post, vt }
 }
 
@@ -520,6 +572,30 @@ fn callbacks_follow_their_scope_and_owner() {
     // The throwing callbacks were reported, not swallowed.
     assert!(errs.iter().any(|e| e.contains("boom from js")), "{errs:?}");
     assert_eq!(live, 3, "the three notified callbacks nobody released stay registered; call, async and owner-bound ones are gone");
+}
+
+#[test]
+fn async_methods_return_promises_settled_by_the_backend() {
+    let r = rig(false);
+    let (out, errs, live) = run_in_loop(&r, "serdes_async.js");
+    assert_eq!(
+        lines(&out),
+        [
+            "late completion error: callback was released or its owner is gone",
+            "arity: TypeError <thing>.slowOf: expected 1 argument(s), got 0",
+            "sync part done",
+            "done",
+            "resolved payload",
+            "rejected NativeError g-io-error-quark failed it failed",
+            "slowOf resolved 42",
+            "start failure rejected: svelters cannot start",
+            "aborted NativeError g-io-error-quark cancelled Operation was cancelled",
+            "pre-aborted NativeError g-io-error-quark cancelled Operation was cancelled",
+        ],
+        "{out:?} {errs:?}"
+    );
+    assert!(errs.is_empty(), "rejections that are handled are not reported: {errs:?}");
+    assert_eq!(live, 0, "every completion callback is released after its single use");
 }
 
 #[test]
