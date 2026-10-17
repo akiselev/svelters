@@ -29,7 +29,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Custom renderer PR hands-on trial | custom-renderer-trial.md | done |
 | Node / Deno runtime integration | node-deno-integration.md | done |
 | QuickJS JIT (quickjs-jit, Cranelift) | quickjs-jit-cranelift.md | done: no JIT for now; V8 if perf demands |
-| Windows GUI backend (Win32 / WinUI 3) | windows-gui-backend.md | in progress |
+| Windows GUI backend (Win32 / WinUI 3) | windows-gui-backend.md | done: WinUI 3 via windows-rs; Win32 fallback |
 | Apple GUI backends (AppKit / UIKit / SwiftUI) | apple-gui-backend.md | in progress |
 | JS ↔ native serdes | js-native-serdes.md | in progress |
 | Ownership and lifetimes | ownership-and-lifetimes.md | in progress |

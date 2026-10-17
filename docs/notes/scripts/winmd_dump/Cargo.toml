@@ -1,0 +1,11 @@
+[package]
+name = "winmd_dump"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# Standalone research tool; not a workspace member.
+[workspace]
+
+[dependencies]
+windows-metadata = "0.100.0"
