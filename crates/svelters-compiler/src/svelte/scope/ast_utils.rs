@@ -57,6 +57,13 @@ pub fn unwrap_pattern<'a>(pattern: &'a Pattern, nodes: &mut Vec<PatternTarget<'a
         Pattern::AssignmentPattern(a) => unwrap_pattern(&a.left, nodes),
 
         Pattern::ParenthesizedExpression(_) => {}
+
+        // SVELTERS: TypeScript nodes are removed (`remove_typescript_nodes`) before analysis.
+        Pattern::TSParameterProperty(p) => unwrap_pattern(&p.parameter, nodes),
+        Pattern::TSAsExpression(w)
+        | Pattern::TSSatisfiesExpression(w)
+        | Pattern::TSTypeAssertion(w)
+        | Pattern::TSNonNullExpression(w) => unwrap_pattern(&w.expression, nodes),
     }
 }
 
@@ -196,5 +203,12 @@ fn _extract_paths<'a>(paths: &mut Vec<DestructuredAssignment<'a>>, param: &'a Pa
 
         // no case upstream (a top-level RestElement only occurs as a function param)
         Pattern::RestElement(_) | Pattern::ParenthesizedExpression(_) => {}
+
+        // SVELTERS: TypeScript nodes are removed (`remove_typescript_nodes`) before analysis.
+        Pattern::TSParameterProperty(p) => _extract_paths(paths, &p.parameter, has_default_value),
+        Pattern::TSAsExpression(w)
+        | Pattern::TSSatisfiesExpression(w)
+        | Pattern::TSTypeAssertion(w)
+        | Pattern::TSNonNullExpression(w) => _extract_paths(paths, &w.expression, has_default_value),
     }
 }

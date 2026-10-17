@@ -102,7 +102,7 @@ impl<'a> Parser<'a> {
                     };
                     properties.push(member);
                 }
-                Ok(Pattern::ObjectPattern(ObjectPattern { start: o.start, end: o.end, properties }))
+                Ok(Pattern::ObjectPattern(ObjectPattern { start: o.start, end: o.end, properties, ts: None }))
             }
 
             Expression::ArrayExpression(a) => {
@@ -110,7 +110,7 @@ impl<'a> Parser<'a> {
                     self.check_pattern_errors(Some(r), true)?;
                 }
                 let elements = self.to_assignable_list(a.elements, is_binding)?;
-                Ok(Pattern::ArrayPattern(ArrayPattern { start: a.start, end: a.end, elements }))
+                Ok(Pattern::ArrayPattern(ArrayPattern { start: a.start, end: a.end, elements, ts: None }))
             }
 
             Expression::AssignmentExpression(a) => {
@@ -119,6 +119,7 @@ impl<'a> Parser<'a> {
                 }
                 let left = self.to_assignable_pattern(a.left, is_binding)?;
                 Ok(Pattern::AssignmentPattern(AssignmentPattern {
+                    ts: None,
                     start: a.start,
                     end: a.end,
                     left: Box::new(left),
@@ -183,7 +184,7 @@ impl<'a> Parser<'a> {
         if let Pattern::AssignmentPattern(a) = &argument {
             return self.raise(a.start, "Rest elements cannot have a default value");
         }
-        Ok(RestElement { start: node.start, end: node.end, argument: Box::new(argument) })
+        Ok(RestElement { start: node.start, end: node.end, argument: Box::new(argument), ts: None })
     }
 
     // Convert list of expression atoms to binding list.
@@ -242,7 +243,7 @@ impl<'a> Parser<'a> {
         let start = self.start;
         self.next()?;
         let argument = self.parse_maybe_assign(super::expression::ForInit::No, ref_destructuring_errors)?;
-        Ok(SpreadElement { start, end: self.last_tok_end, argument })
+        Ok(SpreadElement { start, end: self.last_tok_end, argument, ts: None })
     }
 
     pub fn parse_rest_binding(&mut self) -> PResult<RestElement> {
@@ -256,7 +257,7 @@ impl<'a> Parser<'a> {
 
         let argument = self.parse_binding_atom()?;
 
-        Ok(RestElement { start, end: self.last_tok_end, argument: Box::new(argument) })
+        Ok(RestElement { start, end: self.last_tok_end, argument: Box::new(argument), ts: None })
     }
 
     // Parses lvalue (assignable) atom.
@@ -275,7 +276,7 @@ impl<'a> Parser<'a> {
                     let start = self.start;
                     self.next()?;
                     let elements = self.parse_binding_list(T::BracketR, true, true)?;
-                    return Ok(Pattern::ArrayPattern(ArrayPattern { start, end: self.last_tok_end, elements }));
+                    return Ok(Pattern::ArrayPattern(ArrayPattern { start, end: self.last_tok_end, elements, ts: None }));
                 }
 
                 T::BraceL => return self.parse_obj_pattern(),
@@ -334,6 +335,7 @@ impl<'a> Parser<'a> {
         }
         let right = self.parse_maybe_assign(super::expression::ForInit::No, None)?;
         Ok(Pattern::AssignmentPattern(AssignmentPattern {
+            ts: None,
             start: start_pos,
             end: self.last_tok_end,
             left: Box::new(left),

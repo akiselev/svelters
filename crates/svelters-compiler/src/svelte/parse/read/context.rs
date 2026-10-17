@@ -57,6 +57,11 @@ fn set_pattern_end(p: &mut Pattern, end: u32) {
         Pattern::AssignmentPattern(n) => n.end = end,
         Pattern::MemberExpression(n) => n.end = end,
         Pattern::ParenthesizedExpression(n) => n.end = end,
+        Pattern::TSParameterProperty(n) => n.end = end,
+        Pattern::TSAsExpression(n)
+        | Pattern::TSSatisfiesExpression(n)
+        | Pattern::TSTypeAssertion(n)
+        | Pattern::TSNonNullExpression(n) => n.end = end,
     }
 }
 

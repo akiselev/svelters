@@ -124,13 +124,15 @@ fn read_declaration(parser: &mut Parser) -> PResult<Option<VariableDeclaration>>
 
             let i = parser.index as u32;
             Statement::VariableDeclaration(VariableDeclaration {
+                ts: None,
                 start: start as u32,
                 end: end as u32,
                 kind,
                 declarations: vec![VariableDeclarator {
+                    ts: None,
                     start: i,
                     end: i,
-                    id: Pattern::Identifier(Identifier { start: i, end: i, name: String::new() }),
+                    id: Pattern::Identifier(Identifier { start: i, end: i, name: String::new(), ts: None }),
                     init: None,
                 }],
             })
@@ -291,6 +293,7 @@ fn open(parser: &mut Parser) -> PResult<()> {
                 context = Some(read_pattern(parser)?);
                 parser.eat_required("}")?;
                 expression = Expression::Identifier(Identifier {
+                    ts: None,
                     start: expression.span().start,
                     end: (prev_index - 4) as u32,
                     name: String::new(),
@@ -387,6 +390,7 @@ fn open(parser: &mut Parser) -> PResult<()> {
                 parser.eat_required("}")?;
                 let b = block!();
                 b.expression = Expression::Identifier(Identifier {
+                    ts: None,
                     start: expression_start,
                     end: (prev_index - 6) as u32,
                     name: String::new(),
@@ -399,6 +403,7 @@ fn open(parser: &mut Parser) -> PResult<()> {
                 parser.eat_required("}")?;
                 let b = block!();
                 b.expression = Expression::Identifier(Identifier {
+                    ts: None,
                     start: expression_start,
                     end: (prev_index - 7) as u32,
                     name: String::new(),
@@ -790,8 +795,9 @@ fn special(parser: &mut Parser) -> PResult<()> {
             start: start as u32,
             end: parser.index as u32,
             declaration: VariableDeclaration {
+                ts: None,
                 kind: VariableKind::Const,
-                declarations: vec![VariableDeclarator { id, init: Some(init), start: id_start, end: declarator_end as u32 }],
+                declarations: vec![VariableDeclarator { id, init: Some(init), start: id_start, end: declarator_end as u32, ts: None }],
                 start: start as u32 + 2, // start at const, not at @const
                 end: parser.index as u32 - 1,
             },

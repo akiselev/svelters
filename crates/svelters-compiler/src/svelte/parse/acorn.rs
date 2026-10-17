@@ -236,8 +236,19 @@ fn rp_expr(node: &mut Expression) {
             if let Some(o) = &mut n.options {
                 rp_expr(o);
             }
+            if let Some(args) = n.ts.as_mut().and_then(|t| t.arguments.as_mut()) {
+                for a in args {
+                    rp_expr(a);
+                }
+            }
         }
         Expression::ParenthesizedExpression(_) => unreachable!(),
+        // TypeScript wrappers (type nodes hold no expressions that can be parenthesized)
+        Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => rp_expr(&mut n.expression),
+        Expression::TSTypeAssertion(n) => rp_expr(&mut n.expression),
+        Expression::TSNonNullExpression(n) => rp_expr(&mut n.expression),
+        Expression::TSInstantiationExpression(n) => rp_expr(&mut n.expression),
+        Expression::TSTypeCastExpression(n) => rp_expr(&mut n.expression),
     }
 }
 
@@ -313,6 +324,11 @@ fn rp_pattern(p: &mut Pattern) {
         }
         Pattern::MemberExpression(m) => rp_member(m),
         Pattern::ParenthesizedExpression(_) => {}
+        Pattern::TSParameterProperty(n) => rp_pattern(&mut n.parameter),
+        Pattern::TSAsExpression(n)
+        | Pattern::TSSatisfiesExpression(n)
+        | Pattern::TSTypeAssertion(n)
+        | Pattern::TSNonNullExpression(n) => rp_pattern(&mut n.expression),
     }
 }
 
@@ -332,8 +348,14 @@ fn rp_class(c: &mut Class) {
         match el {
             ClassElement::MethodDefinition(m) => {
                 rp_key(&mut m.key);
-                let FunctionNode::FunctionExpression(f) = &mut m.value;
-                rp_function(f);
+                match &mut m.value {
+                    FunctionNode::FunctionExpression(f) => rp_function(f),
+                    FunctionNode::TSDeclareMethod(f) => {
+                        for p in &mut f.params {
+                            rp_pattern(p);
+                        }
+                    }
+                }
             }
             ClassElement::PropertyDefinition(p) => {
                 rp_key(&mut p.key);
@@ -342,6 +364,7 @@ fn rp_class(c: &mut Class) {
                 }
             }
             ClassElement::StaticBlock(s) => rp_stmts(&mut s.body),
+            ClassElement::TSIndexSignature(_) => {}
         }
     }
 }
@@ -454,6 +477,32 @@ fn rp_stmt(s: &mut Statement) {
             ExportDefaultKind::Declaration(d) => rp_stmt(d),
             ExportDefaultKind::Expression(e) => rp_expr(e),
         },
+        Statement::TSEnumDeclaration(n) => {
+            for m in &mut n.members {
+                if let Some(i) = &mut m.initializer {
+                    rp_expr(i);
+                }
+            }
+        }
+        Statement::TSModuleDeclaration(n) => rp_module(n),
+        Statement::TSDeclareFunction(n) => {
+            for p in &mut n.params {
+                rp_pattern(p);
+            }
+        }
+        Statement::TSExportAssignment(n) => rp_expr(&mut n.expression),
+        Statement::TSInterfaceDeclaration(_)
+        | Statement::TSTypeAliasDeclaration(_)
+        | Statement::TSImportEqualsDeclaration(_)
+        | Statement::TSNamespaceExportDeclaration(_) => {}
+    }
+}
+
+fn rp_module(n: &mut TSModuleDeclaration) {
+    match &mut n.body {
+        Some(TSModuleBody::TSModuleBlock(b)) => rp_stmts(&mut b.body),
+        Some(TSModuleBody::TSModuleDeclaration(d)) => rp_module(d),
+        None => {}
     }
 }
 

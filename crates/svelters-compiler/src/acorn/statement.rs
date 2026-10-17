@@ -370,6 +370,7 @@ impl<'a> Parser<'a> {
                     let declarations = self.parse_var(false, using_kind, false)?;
                     self.semicolon()?;
                     return Ok(Statement::VariableDeclaration(VariableDeclaration {
+                        ts: None,
                         start,
                         end: self.last_tok_end,
                         declarations,
@@ -489,7 +490,7 @@ impl<'a> Parser<'a> {
             };
             self.next()?;
             let declarations = self.parse_var(true, kind, false)?;
-            let init = VariableDeclaration { start: init_start, end: self.last_tok_end, declarations, kind };
+            let init = VariableDeclaration { start: init_start, end: self.last_tok_end, declarations, kind, ts: None };
             return self.parse_for_after_init(start, init, await_at);
         }
         let starts_with_let = self.is_contextual("let");
@@ -512,7 +513,7 @@ impl<'a> Parser<'a> {
                 self.next()?;
             }
             let declarations = self.parse_var(true, using_kind, false)?;
-            let init = VariableDeclaration { start: init_start, end: self.last_tok_end, declarations, kind: using_kind };
+            let init = VariableDeclaration { start: init_start, end: self.last_tok_end, declarations, kind: using_kind, ts: None };
             return self.parse_for_after_init(start, init, await_at);
         }
         let contains_esc = self.contains_esc;
@@ -742,7 +743,7 @@ impl<'a> Parser<'a> {
         self.next()?;
         let declarations = self.parse_var(false, kind, allow_missing_initializer)?;
         self.semicolon()?;
-        Ok(Statement::VariableDeclaration(VariableDeclaration { start, end: self.last_tok_end, declarations, kind }))
+        Ok(Statement::VariableDeclaration(VariableDeclaration { start, end: self.last_tok_end, declarations, kind, ts: None }))
     }
 
     pub fn parse_while_statement(&mut self, start: u32) -> PResult<Statement> {
@@ -944,7 +945,7 @@ impl<'a> Parser<'a> {
             } else {
                 init = None;
             }
-            declarations.push(VariableDeclarator { start: decl_start, end: self.last_tok_end, id, init });
+            declarations.push(VariableDeclarator { start: decl_start, end: self.last_tok_end, id, init, ts: None });
             if !self.eat(T::Comma)? {
                 break;
             }
@@ -1032,6 +1033,7 @@ impl<'a> Parser<'a> {
         self.await_pos = old_await_pos;
         self.await_ident_pos = old_await_ident_pos;
         Ok(Function {
+            ts: None,
             start,
             end: self.last_tok_end,
             id,
@@ -1096,7 +1098,7 @@ impl<'a> Parser<'a> {
         self.next()?;
         let class_body = ClassBody { start: class_body_start, end: self.last_tok_end, body };
         self.exit_class_body()?;
-        Ok(Class { start, end: self.last_tok_end, id, super_class, body: class_body })
+        Ok(Class { start, end: self.last_tok_end, id, super_class, body: class_body, ts: None })
     }
 
     pub fn parse_class_element(&mut self, constructor_allows_super: bool) -> PResult<Option<ClassElement>> {
@@ -1155,6 +1157,7 @@ impl<'a> Parser<'a> {
             // The last token is any of those. Make it the element name.
             computed = false;
             key = PropertyKey::Expression(Box::new(Expression::Identifier(Identifier {
+                ts: None,
                 start: self.last_tok_start,
                 end: self.last_tok_end,
                 name: key_name.to_string(),
@@ -1244,6 +1247,7 @@ impl<'a> Parser<'a> {
         }
 
         Ok(MethodDefinition {
+            ts: None,
             start,
             end: self.last_tok_end,
             is_static,
@@ -1278,7 +1282,7 @@ impl<'a> Parser<'a> {
         };
         self.semicolon()?;
 
-        Ok(PropertyDefinition { start, end: self.last_tok_end, is_static, computed, key, value })
+        Ok(PropertyDefinition { start, end: self.last_tok_end, is_static, computed, key, value, ts: None })
     }
 
     pub fn parse_class_static_block(&mut self, start: u32) -> PResult<StaticBlock> {
@@ -1390,6 +1394,7 @@ impl<'a> Parser<'a> {
         let attributes = if self.options.ecma_version >= 16 { self.parse_with_clause()? } else { Vec::new() };
         self.semicolon()?;
         Ok(Statement::ExportAllDeclaration(ExportAllDeclaration {
+            ts: None,
             start,
             end: self.last_tok_end,
             exported,
@@ -1409,6 +1414,7 @@ impl<'a> Parser<'a> {
             self.check_export(exports, "default", self.last_tok_start)?;
             let declaration = self.parse_export_default_declaration()?;
             return Ok(Statement::ExportDefaultDeclaration(ExportDefaultDeclaration {
+                ts: None,
                 start,
                 end: self.last_tok_end,
                 declaration,
@@ -1465,6 +1471,7 @@ impl<'a> Parser<'a> {
             self.semicolon()?;
         }
         Ok(Statement::ExportNamedDeclaration(ExportNamedDeclaration {
+            ts: None,
             start,
             end: self.last_tok_end,
             declaration,
@@ -1566,7 +1573,7 @@ impl<'a> Parser<'a> {
         let exported = if self.eat_contextual("as")? { self.parse_module_export_name()? } else { local.clone() };
         self.check_export(exports, &module_export_name_str(&exported), module_export_name_start(&exported))?;
 
-        Ok(ExportSpecifier { start, end: self.last_tok_end, local, exported })
+        Ok(ExportSpecifier { start, end: self.last_tok_end, local, exported, ts: None })
     }
 
     pub fn parse_export_specifiers(&mut self, mut exports: Option<&mut Exports>) -> PResult<Vec<ExportSpecifier>> {
@@ -1611,6 +1618,7 @@ impl<'a> Parser<'a> {
         let attributes = if self.options.ecma_version >= 16 { self.parse_with_clause()? } else { Vec::new() };
         self.semicolon()?;
         Ok(Statement::ImportDeclaration(ImportDeclaration {
+            ts: None,
             start,
             end: self.last_tok_end,
             specifiers,
@@ -1639,7 +1647,7 @@ impl<'a> Parser<'a> {
         };
         self.check_lval_identifier(&local, BIND_LEXICAL, None)?;
 
-        Ok(ImportSpecifier { start, end: self.last_tok_end, imported, local })
+        Ok(ImportSpecifier { start, end: self.last_tok_end, imported, local, ts: None })
     }
 
     pub fn parse_import_default_specifier(&mut self) -> PResult<ImportDefaultSpecifier> {
@@ -1793,7 +1801,7 @@ fn private_key(element: &ClassElement) -> (String, u32) {
     let key = match element {
         ClassElement::MethodDefinition(m) => &m.key,
         ClassElement::PropertyDefinition(p) => &p.key,
-        ClassElement::StaticBlock(_) => return (String::new(), 0),
+        ClassElement::StaticBlock(_) | ClassElement::TSIndexSignature(_) => return (String::new(), 0),
     };
     match key {
         PropertyKey::Private(PrivateIdentifierNode::PrivateIdentifier(p)) => (p.name.clone(), p.start),

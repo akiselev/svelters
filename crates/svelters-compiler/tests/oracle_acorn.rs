@@ -224,7 +224,7 @@ fn estree_contract_smoke() {
             Statement::ExpressionStatement(ExpressionStatement {
                 start: 0,
                 end: 3,
-                expression: Expression::Identifier(Identifier { start: 0, end: 2, name: "é".into() }),
+                expression: Expression::Identifier(Identifier { start: 0, end: 2, name: "é".into(), ts: None }),
                 directive: None,
             }),
             Statement::ExpressionStatement(ExpressionStatement {

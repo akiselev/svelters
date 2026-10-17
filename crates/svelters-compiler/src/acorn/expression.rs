@@ -778,6 +778,7 @@ impl<'a> Parser<'a> {
                 self.await_ident_pos = old_await_ident_pos;
             }
             Ok(Expression::CallExpression(CallExpression {
+                ts: None,
                 start: start_pos,
                 end: self.last_tok_end,
                 callee: Box::new(base),
@@ -791,6 +792,7 @@ impl<'a> Parser<'a> {
             }
             let quasi = self.parse_template(true)?;
             Ok(Expression::TaggedTemplateExpression(TaggedTemplateExpression {
+                ts: None,
                 start: start_pos,
                 end: self.last_tok_end,
                 tag: Box::new(base),
@@ -935,7 +937,7 @@ impl<'a> Parser<'a> {
                 let start = self.start;
                 self.next()?;
                 let elements = self.parse_expr_list(T::BracketR, true, true, ref_destructuring_errors)?;
-                Ok(Expression::ArrayExpression(ArrayExpression { start, end: self.last_tok_end, elements }))
+                Ok(Expression::ArrayExpression(ArrayExpression { start, end: self.last_tok_end, elements, ts: None }))
             }
 
             T::BraceL => {
@@ -987,7 +989,7 @@ impl<'a> Parser<'a> {
         if self.type_ == T::ParenL && !for_new {
             self.parse_dynamic_import(start)
         } else if self.type_ == T::Dot {
-            let meta = Identifier { start, end: self.last_tok_end, name: "import".into() };
+            let meta = Identifier { start, end: self.last_tok_end, name: "import".into(), ts: None };
             self.parse_import_meta(start, meta)
         } else {
             self.unexpected(None)
@@ -1027,6 +1029,7 @@ impl<'a> Parser<'a> {
         }
 
         Ok(Expression::ImportExpression(ImportExpression {
+            ts: None,
             start,
             end: self.last_tok_end,
             source: Box::new(source),
@@ -1213,7 +1216,7 @@ impl<'a> Parser<'a> {
         let start = self.start;
         self.next()?;
         if self.options.ecma_version >= 6 && self.type_ == T::Dot {
-            let meta = Identifier { start, end: self.last_tok_end, name: "new".into() };
+            let meta = Identifier { start, end: self.last_tok_end, name: "new".into(), ts: None };
             self.next()?;
             let contains_esc = self.contains_esc;
             let property = self.parse_ident(true)?;
@@ -1240,7 +1243,7 @@ impl<'a> Parser<'a> {
         } else {
             Vec::new()
         };
-        Ok(Expression::NewExpression(NewExpression { start, end: self.last_tok_end, callee: Box::new(callee), arguments }))
+        Ok(Expression::NewExpression(NewExpression { start, end: self.last_tok_end, callee: Box::new(callee), arguments, ts: None }))
     }
 
     // Parse template expression.
@@ -1314,7 +1317,7 @@ impl<'a> Parser<'a> {
                 _ => unreachable!(),
             })
             .collect();
-        Ok(ObjectExpression { start, end, properties })
+        Ok(ObjectExpression { start, end, properties, ts: None })
     }
 
     pub fn parse_obj_pattern(&mut self) -> PResult<Pattern> {
@@ -1327,7 +1330,7 @@ impl<'a> Parser<'a> {
                 _ => unreachable!(),
             })
             .collect();
-        Ok(Pattern::ObjectPattern(ObjectPattern { start, end, properties }))
+        Ok(Pattern::ObjectPattern(ObjectPattern { start, end, properties, ts: None }))
     }
 
     pub fn parse_obj(
@@ -1374,6 +1377,7 @@ impl<'a> Parser<'a> {
                     return self.raise_recoverable(self.start, "Comma is not permitted after the rest element");
                 }
                 return Ok(PropResult::Rest(RestElement {
+                    ts: None,
                     start,
                     end: self.last_tok_end,
                     argument: Box::new(Pattern::Identifier(argument)),
@@ -1391,7 +1395,7 @@ impl<'a> Parser<'a> {
                 }
             }
             // Finish
-            return Ok(PropResult::Spread(SpreadElement { start, end: self.last_tok_end, argument }));
+            return Ok(PropResult::Spread(SpreadElement { start, end: self.last_tok_end, argument, ts: None }));
         }
         if self.options.ecma_version >= 6 {
             if is_pattern || ref_destructuring_errors.is_some() {
@@ -1607,6 +1611,7 @@ impl<'a> Parser<'a> {
         self.await_pos = old_await_pos;
         self.await_ident_pos = old_await_ident_pos;
         Ok(Function {
+            ts: None,
             start,
             end: self.last_tok_end,
             id: None,
@@ -1649,6 +1654,7 @@ impl<'a> Parser<'a> {
             FnBody::Block(b) => (false, ArrowBody::Block(BlockStatementNode::BlockStatement(b))),
         };
         Ok(Expression::ArrowFunctionExpression(ArrowFunctionExpression {
+            ts: None,
             start,
             end: self.last_tok_end,
             id: None,
@@ -1817,7 +1823,7 @@ impl<'a> Parser<'a> {
     pub fn parse_ident(&mut self, liberal: bool) -> PResult<Identifier> {
         let (start, name) = self.parse_ident_node()?;
         self.next_ex(liberal)?;
-        let node = Identifier { start, end: self.last_tok_end, name };
+        let node = Identifier { start, end: self.last_tok_end, name, ts: None };
         if !liberal {
             self.check_unreserved(node.start, node.end, &node.name)?;
             if node.name == "await" && self.await_ident_pos == 0 {

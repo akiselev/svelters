@@ -14,7 +14,7 @@ pub fn get_loose_identifier(parser: &mut Parser, opening_token: Option<char>) ->
         let start = parser.index;
         parser.index = end;
         // We don't know what the expression is and signal this by returning an empty identifier
-        return Some(Expression::Identifier(Identifier { start: start as u32, end: end as u32, name: String::new() }));
+        return Some(Expression::Identifier(Identifier { start: start as u32, end: end as u32, name: String::new(), ts: None }));
     }
     None
 }
@@ -133,5 +133,5 @@ fn read_word(template: &str, start: usize) -> Option<usize> {
 }
 
 fn identifier(template: &str, start: usize, end: usize) -> Expression {
-    Expression::Identifier(Identifier { start: start as u32, end: end as u32, name: template[start..end].to_string() })
+    Expression::Identifier(Identifier { start: start as u32, end: end as u32, name: template[start..end].to_string(), ts: None })
 }

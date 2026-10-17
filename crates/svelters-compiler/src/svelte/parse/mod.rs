@@ -500,7 +500,7 @@ impl Parser {
             }
         }
 
-        Ok(Identifier { start: start as u32, end: end as u32, name })
+        Ok(Identifier { start: start as u32, end: end as u32, name, ts: None })
     }
 
     pub fn read_until(&mut self, delimiter: &str) -> PResult<String> {

@@ -48,6 +48,22 @@ macro_rules! node {
     };
 }
 
+/// A node whose `Serialize` is written by hand (key sets that depend on the parser mode).
+macro_rules! manual_node {
+    ($(#[$m:meta])* pub struct $name:ident { $($(#[$fm:meta])* pub $f:ident : $t:ty),* $(,)? }) => {
+        #[derive(Clone, Debug, PartialEq)]
+        $(#[$m])*
+        pub struct $name {
+            pub start: u32,
+            pub end: u32,
+            $($(#[$fm])* pub $f: $t,)*
+        }
+        impl Spanned for $name {
+            fn span(&self) -> Span { Span { start: self.start, end: self.end } }
+        }
+    };
+}
+
 macro_rules! spanned_enum {
     ($name:ident { $($v:ident),* $(,)? }) => {
         impl Spanned for $name {
@@ -126,13 +142,24 @@ pub enum Statement {
     ExportNamedDeclaration(ExportNamedDeclaration),
     ExportDefaultDeclaration(ExportDefaultDeclaration),
     ExportAllDeclaration(ExportAllDeclaration),
+    // acorn-typescript (see the TypeScript section below)
+    TSInterfaceDeclaration(TSInterfaceDeclaration),
+    TSTypeAliasDeclaration(TSTypeAliasDeclaration),
+    TSEnumDeclaration(TSEnumDeclaration),
+    TSModuleDeclaration(TSModuleDeclaration),
+    TSDeclareFunction(TSDeclareFunction),
+    TSImportEqualsDeclaration(TSImportEqualsDeclaration),
+    TSExportAssignment(TSExportAssignment),
+    TSNamespaceExportDeclaration(TSNamespaceExportDeclaration),
 }
 spanned_enum!(Statement {
     ExpressionStatement, BlockStatement, StaticBlock, EmptyStatement, DebuggerStatement, WithStatement,
     ReturnStatement, LabeledStatement, BreakStatement, ContinueStatement, IfStatement, SwitchStatement,
     ThrowStatement, TryStatement, WhileStatement, DoWhileStatement, ForStatement, ForInStatement,
     ForOfStatement, FunctionDeclaration, VariableDeclaration, ClassDeclaration, ImportDeclaration,
-    ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration,
+    ExportNamedDeclaration, ExportDefaultDeclaration, ExportAllDeclaration, TSInterfaceDeclaration,
+    TSTypeAliasDeclaration, TSEnumDeclaration, TSModuleDeclaration, TSDeclareFunction,
+    TSImportEqualsDeclaration, TSExportAssignment, TSNamespaceExportDeclaration,
 });
 
 node! {
@@ -261,11 +288,20 @@ node! {
     pub struct VariableDeclaration {
         pub declarations: Vec<VariableDeclarator>,
         pub kind: VariableKind,
+        /// acorn-typescript: `declare`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsDeclareExtra>>,
     }
 }
 node! {
     #[serde(tag = "type", rename = "VariableDeclarator")]
-    pub struct VariableDeclarator { pub id: Pattern, pub init: Option<Expression> }
+    pub struct VariableDeclarator {
+        pub id: Pattern,
+        pub init: Option<Expression>,
+        /// acorn-typescript: `definite` (`let x!: T`).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsDefiniteExtra>>,
+    }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -282,6 +318,9 @@ node! {
         pub is_async: bool,
         pub params: Vec<Pattern>,
         pub body: BlockStatementNode,
+        /// acorn-typescript: `typeParameters` / `returnType` / `declare`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsFunctionExtra>>,
     }
 }
 
@@ -302,6 +341,9 @@ node! {
         pub is_async: bool,
         pub params: Vec<Pattern>,
         pub body: ArrowBody,
+        /// acorn-typescript: `typeParameters` / `returnType`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsFunctionExtra>>,
     }
 }
 
@@ -319,6 +361,10 @@ node! {
         #[serde(rename = "superClass")]
         pub super_class: Option<BoxExpr>,
         pub body: ClassBody,
+        /// acorn-typescript: `typeParameters`, `superTypeParameters`, `implements`, `abstract`,
+        /// `declare`, `decorators`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsClassExtra>>,
     }
 }
 node! {
@@ -332,8 +378,10 @@ pub enum ClassElement {
     MethodDefinition(MethodDefinition),
     PropertyDefinition(PropertyDefinition),
     StaticBlock(StaticBlock),
+    /// acorn-typescript: `[key: string]: T` in a class body.
+    TSIndexSignature(TSIndexSignature),
 }
-spanned_enum!(ClassElement { MethodDefinition, PropertyDefinition, StaticBlock });
+spanned_enum!(ClassElement { MethodDefinition, PropertyDefinition, StaticBlock, TSIndexSignature });
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -352,6 +400,9 @@ node! {
         pub key: PropertyKey,
         pub kind: MethodKind,
         pub value: FunctionNode,
+        /// acorn-typescript member modifiers.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsClassMemberExtra>>,
     }
 }
 node! {
@@ -361,6 +412,9 @@ node! {
         pub computed: bool,
         pub key: PropertyKey,
         pub value: Option<Expression>,
+        /// acorn-typescript member modifiers and `typeAnnotation`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsClassMemberExtra>>,
     }
 }
 
@@ -369,6 +423,8 @@ node! {
 #[serde(tag = "type")]
 pub enum FunctionNode {
     FunctionExpression(Function),
+    /// acorn-typescript: a method overload without a body.
+    TSDeclareMethod(TSDeclareFunction),
 }
 
 /// Object/class keys: an expression (Identifier, Literal, or anything when computed) or a
@@ -389,11 +445,13 @@ pub enum PrivateIdentifierNode {
 // ---------------------------------------------------------------------------------------------
 // modules
 
-node! {
+manual_node! {
     pub struct ImportDeclaration {
         pub specifiers: Vec<ImportSpecifierKind>,
         pub source: LiteralNode,
         pub attributes: Vec<ImportAttribute>,
+        /// acorn-typescript: `importKind`; `attributes` is only present after `with`/`assert`.
+        pub ts: Option<Box<TsImportKindExtra>>,
     }
 }
 
@@ -406,7 +464,15 @@ pub enum ImportSpecifierKind {
 }
 spanned_enum!(ImportSpecifierKind { ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier });
 
-node! { pub struct ImportSpecifier { pub imported: ModuleExportName, pub local: Identifier } }
+node! {
+    pub struct ImportSpecifier {
+        pub imported: ModuleExportName,
+        pub local: Identifier,
+        /// acorn-typescript: `importKind`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsImportKindExtra>>,
+    }
+}
 node! { pub struct ImportDefaultSpecifier { pub local: Identifier } }
 node! { pub struct ImportNamespaceSpecifier { pub local: Identifier } }
 node! {
@@ -422,19 +488,34 @@ pub enum ModuleExportName {
     Literal(Literal),
 }
 
-node! {
+manual_node! {
     pub struct ExportNamedDeclaration {
         pub declaration: Option<Box<Statement>>,
         pub specifiers: Vec<ExportSpecifier>,
         pub source: Option<LiteralNode>,
         pub attributes: Vec<ImportAttribute>,
+        /// acorn-typescript: `exportKind`; `attributes` is only present after `with`/`assert`.
+        pub ts: Option<Box<TsExportKindExtra>>,
     }
 }
 node! {
     #[serde(tag = "type", rename = "ExportSpecifier")]
-    pub struct ExportSpecifier { pub local: ModuleExportName, pub exported: ModuleExportName }
+    pub struct ExportSpecifier {
+        pub local: ModuleExportName,
+        pub exported: ModuleExportName,
+        /// acorn-typescript: `exportKind`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsExportKindExtra>>,
+    }
 }
-node! { pub struct ExportDefaultDeclaration { pub declaration: ExportDefaultKind } }
+node! {
+    pub struct ExportDefaultDeclaration {
+        pub declaration: ExportDefaultKind,
+        /// acorn-typescript: `exportKind`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsExportKindExtra>>,
+    }
+}
 
 /// `export default function/class` (declaration form, id optional) or an expression.
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -444,11 +525,13 @@ pub enum ExportDefaultKind {
     Expression(Expression),
 }
 
-node! {
+manual_node! {
     pub struct ExportAllDeclaration {
         pub exported: Option<ModuleExportName>,
         pub source: LiteralNode,
         pub attributes: Vec<ImportAttribute>,
+        /// acorn-typescript: `exportKind`; `attributes` is only present after `with`/`assert`.
+        pub ts: Option<Box<TsExportKindExtra>>,
     }
 }
 
@@ -485,18 +568,33 @@ pub enum Expression {
     ImportExpression(ImportExpression),
     MetaProperty(MetaProperty),
     ParenthesizedExpression(ParenthesizedExpression),
+    // acorn-typescript (see the TypeScript section below)
+    TSAsExpression(TSAsExpression),
+    TSSatisfiesExpression(TSAsExpression),
+    TSTypeAssertion(TSTypeAssertion),
+    TSNonNullExpression(TSNonNullExpression),
+    TSInstantiationExpression(TSInstantiationExpression),
+    /// `(x: T)` inside parentheses that may turn out to be arrow parameters.
+    TSTypeCastExpression(TSTypeCastExpression),
 }
 spanned_enum!(Expression {
     Identifier, Literal, ThisExpression, Super, ArrayExpression, ObjectExpression, FunctionExpression,
     ArrowFunctionExpression, ClassExpression, TemplateLiteral, TaggedTemplateExpression, UnaryExpression,
     UpdateExpression, BinaryExpression, LogicalExpression, AssignmentExpression, ConditionalExpression,
     CallExpression, NewExpression, MemberExpression, ChainExpression, SequenceExpression, YieldExpression,
-    AwaitExpression, ImportExpression, MetaProperty, ParenthesizedExpression,
+    AwaitExpression, ImportExpression, MetaProperty, ParenthesizedExpression, TSAsExpression,
+    TSSatisfiesExpression, TSTypeAssertion, TSNonNullExpression, TSInstantiationExpression,
+    TSTypeCastExpression,
 });
 
 node! {
     #[serde(tag = "type", rename = "Identifier")]
-    pub struct Identifier { pub name: String }
+    pub struct Identifier {
+        pub name: String,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
 }
 node! {
     #[serde(tag = "type", rename = "PrivateIdentifier")]
@@ -558,7 +656,14 @@ pub enum LiteralNode {
 
 node! { pub struct ThisExpression {} }
 node! { pub struct Super {} }
-node! { pub struct ArrayExpression { pub elements: Vec<Option<ArrayElement>> } }
+node! {
+    pub struct ArrayExpression {
+        pub elements: Vec<Option<ArrayElement>>,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(untagged)]
@@ -573,8 +678,22 @@ pub enum SpreadElementNode {
     SpreadElement(SpreadElement),
 }
 
-node! { pub struct SpreadElement { pub argument: Expression } }
-node! { pub struct ObjectExpression { pub properties: Vec<ObjectMember> } }
+node! {
+    pub struct SpreadElement {
+        pub argument: Expression,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
+node! {
+    pub struct ObjectExpression {
+        pub properties: Vec<ObjectMember>,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(tag = "type")]
@@ -624,6 +743,9 @@ node! {
     pub struct TaggedTemplateExpression {
         pub tag: BoxExpr,
         pub quasi: TemplateLiteralNode,
+        /// acorn-typescript: `typeArguments`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsTypeArgumentsExtra>>,
     }
 }
 
@@ -691,12 +813,18 @@ node! {
         pub callee: BoxExpr,
         pub arguments: Vec<ArrayElement>,
         pub optional: bool,
+        /// acorn-typescript: `typeArguments`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsTypeArgumentsExtra>>,
     }
 }
 node! {
     pub struct NewExpression {
         pub callee: BoxExpr,
         pub arguments: Vec<ArrayElement>,
+        /// acorn-typescript: `typeArguments`.
+        #[serde(flatten)]
+        pub ts: Option<Box<TsTypeArgumentsExtra>>,
     }
 }
 node! {
@@ -716,11 +844,13 @@ node! {
     }
 }
 node! { pub struct AwaitExpression { pub argument: BoxExpr } }
-node! {
+manual_node! {
     pub struct ImportExpression {
         pub source: BoxExpr,
         /// The second argument (import attributes), or null.
         pub options: Option<BoxExpr>,
+        /// acorn-typescript's `parseDynamicImport`: no `options`; `arguments` after a comma.
+        pub ts: Option<Box<TsImportExpressionExtra>>,
     }
 }
 node! { pub struct MetaProperty { pub meta: Identifier, pub property: Identifier } }
@@ -741,13 +871,28 @@ pub enum Pattern {
     AssignmentPattern(AssignmentPattern),
     MemberExpression(Box<MemberExpression>),
     ParenthesizedExpression(ParenthesizedExpression),
+    // acorn-typescript: parameter properties, and assignment targets that keep their TypeScript
+    // wrapper (`(x as T) = v`, `x! = v`).
+    TSParameterProperty(TSParameterProperty),
+    TSAsExpression(TSPatternWrapper),
+    TSSatisfiesExpression(TSPatternWrapper),
+    TSTypeAssertion(TSPatternWrapper),
+    TSNonNullExpression(TSPatternWrapper),
 }
 spanned_enum!(Pattern {
     Identifier, ObjectPattern, ArrayPattern, RestElement, AssignmentPattern, MemberExpression,
-    ParenthesizedExpression,
+    ParenthesizedExpression, TSParameterProperty, TSAsExpression, TSSatisfiesExpression, TSTypeAssertion,
+    TSNonNullExpression,
 });
 
-node! { pub struct ObjectPattern { pub properties: Vec<ObjectPatternMember> } }
+node! {
+    pub struct ObjectPattern {
+        pub properties: Vec<ObjectPatternMember>,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(tag = "type")]
@@ -768,9 +913,31 @@ node! {
         pub kind: PropertyKind,
     }
 }
-node! { pub struct ArrayPattern { pub elements: Vec<Option<Pattern>> } }
-node! { pub struct RestElement { pub argument: Box<Pattern> } }
-node! { pub struct AssignmentPattern { pub left: Box<Pattern>, pub right: BoxExpr } }
+node! {
+    pub struct ArrayPattern {
+        pub elements: Vec<Option<Pattern>>,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
+node! {
+    pub struct RestElement {
+        pub argument: Box<Pattern>,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
+node! {
+    pub struct AssignmentPattern {
+        pub left: Box<Pattern>,
+        pub right: BoxExpr,
+        /// acorn-typescript: `typeAnnotation` / `optional` / `decorators` (None for plain JS).
+        #[serde(flatten)]
+        pub ts: Option<Box<TsPatternExtra>>,
+    }
+}
 
 // ---------------------------------------------------------------------------------------------
 // operators (serialized as their source spelling)
@@ -799,3 +966,7 @@ ops!(AssignmentOperator {
     ExpAssign = "**=", ShlAssign = "<<=", ShrAssign = ">>=", UShrAssign = ">>>=", BitOrAssign = "|=",
     BitXorAssign = "^=", BitAndAssign = "&=", OrAssign = "||=", AndAssign = "&&=", NullishAssign = "??=",
 });
+
+// TypeScript (acorn-typescript) nodes and node properties.
+mod ts;
+pub use ts::*;
