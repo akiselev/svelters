@@ -14,8 +14,8 @@
 <window title={label}>
   <box orientation="vertical" spacing="4">
     <label>{current()} (last {last}, {history.length} steps) x{doubler.value} mounted {mounted}</label>
-    <button onclick={() => increment()}>+1</button>
-    <button onclick={() => increment(5)}>+5</button>
-    <button onclick={() => doubler.bump()}>Factor</button>
+    <button onclicked={() => increment()}>+1</button>
+    <button onclicked={() => increment(5)}>+5</button>
+    <button onclicked={() => doubler.bump()}>Factor</button>
   </box>
 </window>

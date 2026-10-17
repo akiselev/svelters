@@ -30,10 +30,10 @@ create label #9
 set #9 label "-1"
 insert #3 #9 before=end slot=default
 insert #2 #3 before=end slot=default
-create virtuallist #10
+create virtual-list #10
 set #10 layout "list"
 set #10 selection "single"
-set #10 rowHeight 32
+set #10 row-height 32
 listen #10 setup on
 listen #10 bind on
 listen #10 unbind on

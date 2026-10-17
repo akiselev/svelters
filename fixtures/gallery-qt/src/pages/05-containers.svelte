@@ -1,8 +1,8 @@
 <!-- kinds: QFrame QGroupBox QScrollArea QSplitter QStackedWidget QTabWidget QToolBox -->
 <script>
-  // Containers A: frame, groupbox, scrolledwindow, splitter, stackedwidget, tabwidget, toolbox.
+  // Containers A: frame, group-box, scroll-area, splitter, stacked-widget, tab-widget, tool-box.
   // Tab and tool-box pages are `nested` slots (the pages live in an internal widget); tab labels are
-  // child attributes (`parent:tabLabel`).
+  // child attributes (`parent:tab-text`).
   let page = $state(0);
   let echoPage = $state(0);
   let toggles = $state(0);
@@ -22,41 +22,41 @@
   });
 </script>
 
-<box orientation="vertical" spacing="4">
-  <frame orientation="vertical" frameShape="box" frameShadow="sunken" lineWidth={2}>
-    <label label="frame: a QFrame with a vertical layout" />
+<box-layout direction="top-to-bottom" spacing="4">
+  <frame direction="top-to-bottom" frame-shape="box" frame-shadow="sunken" line-width={2}>
+    <label text="frame: a QFrame with a vertical layout" />
   </frame>
-  <groupbox title="groupbox" checkable={true} flat={false} bind:checked={checked}
+  <group-box title="group-box" checkable={true} flat={false} bind:checked={checked}
             ontoggled={() => { toggles++; if (armed) echoChecked++; }}>
-    <label label="inside the group box (toggled: {toggles})" />
-  </groupbox>
-  <splitter orientation="horizontal" handleWidth={6} childrenCollapsible={false}
+    <label text="inside the group box (toggled: {toggles})" />
+  </group-box>
+  <splitter orientation="horizontal" handle-width={6} children-collapsible={false}
             onsplitter-moved={() => moved++}>
-    <label label="left pane" />
-    <label label="right pane" />
+    <label text="left pane" />
+    <label text="right pane" />
   </splitter>
-  <label label="splitter moved: {moved}" />
-  <stackedwidget bind:currentIndex={page} onchanged={() => { if (armed) echoPage++; }}>
-    <label label="stack page 0" />
-    <label label="stack page 1" />
-  </stackedwidget>
-  <label label="echo currentIndex: {echoPage}" />
-  <label label="echo checked: {echoChecked}" />
-  <tabwidget tabPosition="north" tabShape="rounded" tabsClosable={true} movable={true}
-             documentMode={false} usesScrollButtons={true} bind:currentIndex={tab}
+  <label text="splitter moved: {moved}" />
+  <stacked-widget bind:current-index={page} oncurrent-changed={() => { if (armed) echoPage++; }}>
+    <label text="stack page 0" />
+    <label text="stack page 1" />
+  </stacked-widget>
+  <label text="echo current-index: {echoPage}" />
+  <label text="echo checked: {echoChecked}" />
+  <tab-widget tab-position="north" tab-shape="rounded" tabs-closable={true} movable={true}
+             document-mode={false} uses-scroll-buttons={true} bind:current-index={tab}
              ontab-close-requested={() => tabEvents++} ontab-bar-clicked={() => tabEvents++}
-             onchanged={() => { tabEvents++; if (armed) echoTab++; }}>
-    <label parent:tabLabel="First" parent:tabToolTip="the first tab" label="tab page 0" />
-    <label parent:tabLabel="Second" label="tab page 1" />
-  </tabwidget>
-  <label label="tab events: {tabEvents}" />
-  <label label="echo currentIndex (tabs): {echoTab}" />
-  <toolbox bind:currentIndex={item} onchanged={() => { tabEvents++; if (armed) echoItem++; }}>
-    <label label="tool box item 0" />
-    <label label="tool box item 1" />
-  </toolbox>
-  <label label="echo currentIndex (toolbox): {echoItem}" />
-  <scrolledwindow horizontalScrollBarPolicy="always-off" verticalScrollBarPolicy="as-needed" widgetResizable={true}>
-    <label label="scrolledwindow content" />
-  </scrolledwindow>
-</box>
+             oncurrent-changed={() => { tabEvents++; if (armed) echoTab++; }}>
+    <label parent:tab-text="First" parent:tab-tool-tip="the first tab" text="tab page 0" />
+    <label parent:tab-text="Second" text="tab page 1" />
+  </tab-widget>
+  <label text="tab events: {tabEvents}" />
+  <label text="echo current-index (tabs): {echoTab}" />
+  <tool-box bind:current-index={item} oncurrent-changed={() => { tabEvents++; if (armed) echoItem++; }}>
+    <label text="tool box item 0" />
+    <label text="tool box item 1" />
+  </tool-box>
+  <label text="echo current-index (tool-box): {echoItem}" />
+  <scroll-area horizontal-scroll-bar-policy="always-off" vertical-scroll-bar-policy="as-needed" widget-resizable={true}>
+    <label text="scroll-area content" />
+  </scroll-area>
+</box-layout>

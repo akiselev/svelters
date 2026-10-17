@@ -12,32 +12,32 @@
 
 <box orientation="vertical" spacing="8">
   <box orientation="horizontal" spacing="6">
-    <menubutton label="popover">
-      <popover autohide={true} hasArrow={true} position="bottom" cascadePopdown={true} {...{ onclosed: () => closed++ }}>
+    <menu-button label="popover">
+      <popover autohide={true} has-arrow={true} position="bottom" cascade-popdown={true} {...{ onclosed: () => closed++ }}>
         <label label="inside the popover" />
       </popover>
-    </menubutton>
+    </menu-button>
     <label label="popover closed: {closed}" />
   </box>
   <box orientation="horizontal" spacing="6">
-    <menubutton label="emoji">
-      <emojichooser {...{ "onemoji-picked": (e) => (picked = String(e)) }} />
-    </menubutton>
+    <menu-button label="emoji">
+      <emoji-chooser {...{ "onemoji-picked": (e) => (picked = String(e)) }} />
+    </menu-button>
     <label label="picked: {picked}" />
   </box>
   <box orientation="horizontal" spacing="6">
-    <button label="about" onclick={() => (aboutOpen = true)} />
+    <button label="about" onclicked={() => (aboutOpen = true)} />
     <label label="about closed: {aboutClosed}" />
-    <button label="tool window" onclick={() => (toolOpen = true)} />
+    <button label="tool window" onclicked={() => (toolOpen = true)} />
     <label label="tool window closed: {toolClosed}" />
   </box>
   {#if aboutOpen}
-    <aboutdialog
-      programName="svelters gallery"
+    <about-dialog
+      program-name="svelters gallery"
       version="0.1"
       comments="A toplevel declared in an if block"
-      licenseType="mit-x11"
-      onclose={() => {
+      license-type="mit-x11"
+      onclose-request={() => {
         aboutOpen = false;
         aboutClosed++;
       }}
@@ -46,9 +46,9 @@
   {#if toolOpen}
     <window
       title="Tool window"
-      defaultWidth={280}
-      defaultHeight={120}
-      onclose={() => {
+      default-width={280}
+      default-height={120}
+      onclose-request={() => {
         toolOpen = false;
         toolClosed++;
       }}

@@ -11,8 +11,8 @@
   <box class={['toolbar', { dense }]}>
     <button class={mode}>Save</button>
     <button class="big {mode === 'primary' ? '' : 'primary'}" class:dense>Other</button>
-    <button onclick={() => (mode = mode === 'primary' ? 'plain' : 'primary')}>Mode</button>
-    <button onclick={() => (dense = !dense)}>Dense</button>
+    <button onclicked={() => (mode = mode === 'primary' ? 'plain' : 'primary')}>Mode</button>
+    <button onclicked={() => (dense = !dense)}>Dense</button>
   </box>
 </window>
 

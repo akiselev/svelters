@@ -2,7 +2,7 @@ create window #1
 set #1 title "Menus"
 create box #2
 set #2 orientation "vertical"
-create menubar #3
+create menu-bar #3
 create menu #4
 set #4 label "File"
 create action #5
@@ -16,7 +16,7 @@ set #6 checkable ""
 set #6 checked false
 listen #6 toggled on
 insert #4 #6 before=end slot=default
-create menuseparator #7
+create menu-separator #7
 insert #4 #7 before=end slot=default
 create menu #8
 set #8 label "Recent"
@@ -51,7 +51,7 @@ listen #14 toggled on
 insert #12 #14 before=end slot=default
 insert #3 #12 before=end slot=default
 insert #2 #3 before=end slot=default
-create toolbar #15
+create tool-bar #15
 create action #16
 set #16 icon "edit-copy"
 set #16 label "Copy"
@@ -67,7 +67,7 @@ set #18 label "S:|false|true|false"
 insert #2 #18 before=end slot=default
 create button #19
 set #19 label "Context "
-create contextmenu #20
+create context-menu #20
 create action #21
 set #21 label "Paste"
 listen #21 activate on

@@ -5,5 +5,5 @@
 </script>
 
 <window title="Names {n2}">
-  <button onclick={() => n1++}>n1 = {n1}</button>
+  <button onclicked={() => n1++}>n1 = {n1}</button>
 </window>

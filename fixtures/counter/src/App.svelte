@@ -5,6 +5,6 @@
 <window title="Counter">
   <box orientation="vertical" spacing="8">
     <label>Count: {count}</label>
-    <button onclick={() => count++}>Increment</button>
+    <button onclicked={() => count++}>Increment</button>
   </box>
 </window>

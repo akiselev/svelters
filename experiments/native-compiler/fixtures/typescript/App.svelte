@@ -40,7 +40,7 @@
     {#each shown as todo (todo.id)}
       <Item label={todo.label} done={todo.done} ontoggle={() => toggle(todo.id)} />
     {/each}
-    <button onclick={() => add<string>('Bread')}>Add</button>
-    <button onclick={(e?: unknown) => (filter = filter === 'all' ? ('open' as Filter) : 'all')}>Filter</button>
+    <button onclicked={() => add<string>('Bread')}>Add</button>
+    <button onclicked={(e?: unknown) => (filter = filter === 'all' ? ('open' as Filter) : 'all')}>Filter</button>
   </box>
 </window>

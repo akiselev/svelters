@@ -2,7 +2,7 @@
 # rules: .setters { spacing; orientation; margin-top }, .grow { hexpand }; inline: valign, width-request
 set #N spacing 16
 set #N orientation "horizontal"
-set #N marginTop 4
+set #N margin-top 4
 set #N hexpand true
 set #N valign "center"
-set #N widthRequest 120
+set #N width-request 120

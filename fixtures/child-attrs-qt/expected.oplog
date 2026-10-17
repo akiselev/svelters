@@ -1,0 +1,51 @@
+create main-window #1
+set #1 window-title "Attrs"
+create grid-layout #2
+create label #3
+set #3 text "a"
+insert #2 #3 before=end slot=default
+attr #2 #3 column 0
+attr #2 #3 row 0
+attr #2 #3 column-span 1
+create label #4
+set #4 text "b"
+insert #2 #4 before=end slot=default
+attr #2 #4 column 1
+attr #2 #4 row 0
+attr #2 #4 column-span 1
+create label #5
+set #5 text "c"
+insert #2 #5 before=end slot=default
+attr #2 #5 column 0
+attr #2 #5 row 1
+attr #2 #5 column-span 1
+create push-button #6
+listen #6 clicked on
+set #6 text "Rotate"
+insert #2 #6 before=end slot=default
+attr #2 #6 column 0
+attr #2 #6 row 5
+insert #1 #2 before=end slot=default
+call #1 present []
+event #6 clicked []
+remove #2 #3
+insert #2 #3 before=#6 slot=default
+attr #2 #3 column 0
+attr #2 #3 row 0
+attr #2 #3 column-span 1
+attr #2 #4 column 0
+attr #2 #4 column-span 2
+attr #2 #5 column 1
+attr #2 #5 row 0
+attr #2 #3 row 1
+event #6 clicked []
+remove #2 #4
+insert #2 #4 before=#6 slot=default
+attr #2 #4 column 0
+attr #2 #4 row 0
+attr #2 #4 column-span 2
+attr #2 #5 column 0
+attr #2 #3 column 1
+attr #2 #3 row 0
+attr #2 #4 row 1
+attr #2 #4 column-span 1

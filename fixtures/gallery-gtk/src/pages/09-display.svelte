@@ -13,22 +13,22 @@
 
 <box orientation="vertical" spacing="6">
   <box orientation="horizontal" spacing="6">
-    <image iconName="dialog-information" pixelSize={32} />
-    <image iconName="edit-find" pixelSize={24} />
+    <image icon-name="dialog-information" pixel-size={32} />
+    <image icon-name="edit-find" pixel-size={24} />
     <spinner bind:spinning {...{ "onnotify::spinning": () => spinEchoes++ }} />
     <label label="echo spinning: {spinEchoes}" />
   </box>
   <separator orientation="horizontal" />
   <box orientation="horizontal" spacing="6">
-    <picture alternativeText="no file" canShrink={true} contentFit="contain" />
-    <drawingarea contentWidth={40} contentHeight={20} />
-    <graphicsoffload enabled="enabled" blackBackground={false} />
+    <picture alternative-text="no file" can-shrink={true} content-fit="contain" />
+    <drawing-area content-width={40} content-height={20} />
+    <graphics-offload enabled="enabled" black-background={false} />
   </box>
   <calendar
     bind:day
-    showHeading={true}
-    showDayNames={true}
-    showWeekNumbers={false}
+    show-heading={true}
+    show-day-names={true}
+    show-week-numbers={false}
     {...{ "onnotify::day": () => dayEchoes++ }}
     {...{ "onday-selected": () => selected++ }}
   />

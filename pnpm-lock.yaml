@@ -27,6 +27,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  bench/keyed-bench-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   docs/site:
     dependencies:
       '@astrojs/starlight':
@@ -103,6 +119,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/bind-this-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/bind-value:
     dependencies:
       svelte:
@@ -119,7 +151,39 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/bind-value-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/borrowed-walk:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/borrowed-walk-qt:
     dependencies:
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -167,6 +231,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/child-attrs-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/counter:
     dependencies:
       svelte:
@@ -184,6 +264,22 @@ importers:
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
   fixtures/counter-mac:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/counter-qt:
     dependencies:
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -317,7 +413,39 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/keyed-list-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/keyed-stress:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/keyed-stress-qt:
     dependencies:
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -371,7 +499,45 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/lists-recycle-qt:
+    dependencies:
+      '@svelters/lists':
+        specifier: workspace:*
+        version: link:../../packages/lists
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/lists-stress:
+    dependencies:
+      '@svelters/lists':
+        specifier: workspace:*
+        version: link:../../packages/lists
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/lists-stress-qt:
     dependencies:
       '@svelters/lists':
         specifier: workspace:*
@@ -406,6 +572,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/menus-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/native-close:
     dependencies:
       svelte:
@@ -422,7 +604,42 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/native-close-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/styles:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/renderer':
+        specifier: workspace:*
+        version: link:../../packages/renderer
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/styles-qt:
     dependencies:
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -473,7 +690,42 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/timers-qt:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/virtual-list:
+    dependencies:
+      '@svelters/lists':
+        specifier: workspace:*
+        version: link:../../packages/lists
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/virtual-list-qt:
     dependencies:
       '@svelters/lists':
         specifier: workspace:*

@@ -35,9 +35,9 @@
 <window title="bind:this" bind:this={win}>
   <box orientation="vertical" spacing="6">
     <entry bind:this={entry} text="seed" onchanged={() => (edited = 'yes')} />
-    <button onclick={readEntry}>Read</button>
-    <button onclick={hide}>Hide</button>
-    <button onclick={probe}>Probe</button>
+    <button onclicked={readEntry}>Read</button>
+    <button onclicked={hide}>Hide</button>
+    <button onclicked={probe}>Probe</button>
     <label>{read}</label>
     <label>reads: {reads}</label>
     <label>edited: {edited}</label>

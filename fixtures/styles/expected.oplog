@@ -20,7 +20,7 @@ style #4 name "toggle"
 set #4 label "Toggle"
 insert #2 #4 before=end slot=default
 create entry #5
-set #5 placeholder "type here"
+set #5 placeholder-text "type here"
 style #5 classes "sv-k-entry field svelte-1n46o8q"
 insert #2 #5 before=end slot=default
 create button #6

@@ -5,11 +5,11 @@
 </script>
 
 <window title="Slots">
-  <headerbar slot="titlebar">
-    <button slot="start" onclick={() => saved++}>Save</button>
+  <header-bar slot="titlebar">
+    <button slot="start" onclicked={() => saved++}>Save</button>
     {#if saved > 0}
       <button slot="end">Undo</button>
     {/if}
-  </headerbar>
+  </header-bar>
   <label>{saved} saves</label>
 </window>

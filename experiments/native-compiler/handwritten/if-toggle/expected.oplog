@@ -1,6 +1,6 @@
 create window #1
 set #1 title "If toggle"
-create headerbar #2
+create header-bar #2
 set #2 title "Toggle"
 insert #1 #2 before=end slot=titlebar
 create box #3

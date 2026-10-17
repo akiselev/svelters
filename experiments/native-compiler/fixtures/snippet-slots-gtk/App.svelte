@@ -15,15 +15,15 @@
 {/snippet}
 
 {#snippet bar()}
-  <headerbar>
-    <button onclick={() => count++}>Add</button>
+  <header-bar>
+    <button onclicked={() => count++}>Add</button>
     <sv-slot name="end">{@render actions(count)}</sv-slot>
-  </headerbar>
+  </header-bar>
 {/snippet}
 
 <Frame title="Slots" titlebar={custom ? bar : null}>
   <box orientation="vertical">
     <label>{count} items</label>
-    <button onclick={() => (custom = !custom)}>Toggle</button>
+    <button onclicked={() => (custom = !custom)}>Toggle</button>
   </box>
 </Frame>

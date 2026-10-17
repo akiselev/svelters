@@ -9,16 +9,16 @@
 </script>
 
 {#snippet ownStatus()}
-  <statusbar />
+  <status-bar />
 {/snippet}
 
 <MainWindow status={own ? ownStatus : undefined}>
   {#snippet menu()}
-    <menubar />
+    <menu-bar />
   {/snippet}
-  <box orientation="vertical">
+  <box-layout direction="top-to-bottom">
     <label>Clicked {n} times</label>
-    <button onclick={() => n++}>Click</button>
-    <button onclick={() => (own = !own)}>Status</button>
-  </box>
+    <push-button onclicked={() => n++}>Click</push-button>
+    <push-button onclicked={() => (own = !own)}>Status</push-button>
+  </box-layout>
 </MainWindow>

@@ -65,20 +65,20 @@
 <window title="borrowed-walk" bind:this={win}>
   <box orientation="vertical" spacing="6" bind:this={box}>
     <entry bind:this={entry} text="seed" />
-    <button onclick={walk}>Walk</button>
-    <button onclick={drop}>Drop</button>
-    <button onclick={probe}>Probe</button>
+    <button onclicked={walk}>Walk</button>
+    <button onclicked={drop}>Drop</button>
+    <button onclicked={probe}>Probe</button>
     <label>{same}</label>
     <label>{root}</label>
     <label>{depth}</label>
     <label>{inner}</label>
     <label>{stale}</label>
     {#if show}
-      <scrolledwindow bind:this={scroll}>
+      <scrolled-window bind:this={scroll}>
         <box orientation="vertical" spacing="2">
           <label>row</label>
         </box>
-      </scrolledwindow>
+      </scrolled-window>
     {/if}
   </box>
 </window>

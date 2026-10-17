@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { BACKENDS, cases } from './cases.mjs';
+import { BACKENDS, cases, scriptOf, targetsOf } from './cases.mjs';
 
 const here = import.meta.dirname;
 const repo = path.resolve(here, '../../..');
@@ -34,7 +34,7 @@ const tree = (r) => (r.dump ?? []).map(({ class: c, d, text }) => ({ class: c, d
 
 for (const backend of BACKENDS) {
   for (const c of cases()) {
-    if (only.length && !only.includes(c.name)) continue;
+    if ((only.length && !only.includes(c.name)) || !targetsOf(c).some((t) => t.name === backend)) continue;
     const dir = path.join(here, 'out', backend, c.name);
     const tag = `${backend}/${c.name}`;
     if (!fs.existsSync(path.join(dir, 'dist/app.js'))) {
@@ -43,14 +43,14 @@ for (const backend of BACKENDS) {
     }
     // scripts with `sync`/`deferred` steps (toolkit callbacks the driver cannot cause) have a
     // clicks-only twin for the real toolkits; the toolkit then calls setup/bind/... itself
-    const script = c.nativeScript ?? c.script;
+    const script = c.nativeScript ?? scriptOf(c, backend);
     const ours = run(backend, dir, script, path.join(dir, 'native.json'), path.join(dir, 'native.png'));
     const problems = [];
     if (!ours.ok) problems.push(`run failed: ${JSON.stringify(ours.failures ?? ours.errors)}`);
     if (ours.errors?.length) problems.push(`host errors: ${JSON.stringify(ours.errors)}`);
     let against = '';
     if (!c.own) {
-      const theirs = run(backend, path.join(repo, 'fixtures', c.name), script, path.join(dir, 'native-js.json'), null);
+      const theirs = run(backend, path.dirname(c.jsExpected), script, path.join(dir, 'native-js.json'), null);
       if (!theirs.ok) problems.push(`JS pipeline run failed on ${backend}: ${JSON.stringify(theirs.failures ?? theirs.errors)}`);
       else if (JSON.stringify(tree(ours)) !== JSON.stringify(tree(theirs))) {
         problems.push(`native tree differs from the JS pipeline's:\n  ours:   ${JSON.stringify(tree(ours))}\n  theirs: ${JSON.stringify(tree(theirs))}`);

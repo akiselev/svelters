@@ -19,11 +19,11 @@
 </script>
 
 <box orientation="vertical" spacing="6">
-  <menubar>
+  <menu-bar>
     <menu label="File">
       <action label="Open" icon="document-open" shortcut="Ctrl+O" enabled={openEnabled} onactivate={() => add('open')} />
       <action label="Autosave" checkable bind:checked={autosave} ontoggled={() => echoAutosave++} />
-      <menuseparator />
+      <menu-separator />
       <menu label="Recent">
         {#each recent as r (r)}
           <action label={r} onactivate={() => add(r)} />
@@ -38,26 +38,26 @@
       <action label="Small" group="size" bind:checked={small} ontoggled={() => echoSize++} />
       <action label="Large" group="size" bind:checked={large} ontoggled={() => echoSize++} />
     </menu>
-  </menubar>
-  <toolbar>
+  </menu-bar>
+  <tool-bar>
     <action icon="edit-copy" label="Copy" onactivate={() => add('copy')} />
-    <menuseparator />
+    <menu-separator />
     <action icon="format-text-bold" label="Bold" checkable />
-  </toolbar>
+  </tool-bar>
   <box orientation="horizontal" spacing="6">
-    <button label="Reverse recent" onclick={() => (recent = [...recent].reverse())} />
-    <button label="Drop first recent" onclick={() => (recent = recent.slice(1))} />
-    <button label="Toggle extra item" onclick={() => (extra = !extra)} />
-    <button label="Toggle Open enabled" onclick={() => (openEnabled = !openEnabled)} />
+    <button label="Reverse recent" onclicked={() => (recent = [...recent].reverse())} />
+    <button label="Drop first recent" onclicked={() => (recent = recent.slice(1))} />
+    <button label="Toggle extra item" onclicked={() => (extra = !extra)} />
+    <button label="Toggle Open enabled" onclicked={() => (openEnabled = !openEnabled)} />
   </box>
   <label label="log: {log}" />
   <label label="autosave: {autosave}, small: {small}, large: {large}" />
   <label label="echo autosave: {echoAutosave}" />
   <label label="echo size: {echoSize}" />
   <button label="Right click for a context menu">
-    <contextmenu>
+    <context-menu>
       <action label="Paste" onactivate={() => add('paste')} />
       <action label="Select all" onactivate={() => add('select-all')} />
-    </contextmenu>
+    </context-menu>
   </button>
 </box>

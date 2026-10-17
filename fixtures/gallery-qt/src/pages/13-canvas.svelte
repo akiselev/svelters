@@ -7,12 +7,12 @@
   let step = $state(0);
 </script>
 
-<box orientation="vertical" spacing={6}>
+<box-layout direction="top-to-bottom" spacing={6}>
   <label>canvas: redraws {step}</label>
-  <button label="redraw" onclick={() => step++} />
+  <push-button text="redraw" onclicked={() => step++} />
   <canvas
-    contentWidth={240}
-    contentHeight={120}
+    content-width={240}
+    content-height={120}
     {@attach draw((ctx, { width, height }) => {
       ctx.fillStyle = '#e01b24';
       ctx.fillRect(10, 10, 80, 60);
@@ -31,4 +31,4 @@
       ctx.fillText(`${width}x${height} draw ${step}`, 10, 90);
     })}
   />
-</box>
+</box-layout>

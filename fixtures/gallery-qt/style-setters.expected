@@ -1,8 +1,8 @@
 # Ops the setter row of the styling page must produce in the TestHost answering QSS (check-pages.mjs; #N is any handle).
-# rules: .setters { spacing; orientation; contents-margins }, .grow { stretch } (child attribute); inline: minimum-/maximum-width
+# rules: .setters { spacing; direction; contents-margins }, .grow { stretch } (child attribute); inline: minimum-/maximum-width
 set #N spacing 16
-set #N orientation "horizontal"
-set #N contentsMargins {"top":4,"right":0,"bottom":0,"left":0}
+set #N direction "left-to-right"
+set #N contents-margins {"top":4,"right":0,"bottom":0,"left":0}
 attr #N #N stretch 1
-set #N minimumWidth 120
-set #N maximumWidth 160
+set #N minimum-width 120
+set #N maximum-width 160
