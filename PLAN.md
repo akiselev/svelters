@@ -52,6 +52,7 @@ Widget metadata and codegen run alongside these layers: upstream sources plus an
 | --- | --- | --- |
 | **P** | **Prototype: counter + keyed list on screen in GTK4 and Qt from one JS bundle** | — |
 | P1 | JS lane: build pipeline, `@svelters/dom` shim, fixtures, op-log TestHost in Node | — |
+| F1 | Fork work: element `bind:this` + renderer binding hook for `bind:<prop>` in our Svelte fork (phase A: compiler/runtime; phase B: renderer + binding metadata, after P5) | P1b |
 | P1b | Switch L1 to the vendored renderer fork (`@svelters/renderer`), renderer conformance suite, weekly upstream tracking | P1 |
 | P2 | Host lane: Rust workspace, ABI crate + C header, rquickjs host, log backend | ABI draft |
 | P3 | GTK lane: Python GIR/PyGObject ingestion → metadata → generated GTK4 backend tables + verification tests | ABI draft, schema v0 |

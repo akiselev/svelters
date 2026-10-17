@@ -10,6 +10,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | P2 host lane | DONE | 5ebc7aa | 21/21 tests; 4 P1 fixtures byte-identical in QuickJS; engine-agnostic core + JsEngine trait |
 | P3 GTK lane | DONE | 8f5dfe1 | 443 Gtk kinds ingested; 298 kinds/1304 props/349 signals in tables; 22 tests + P1 oplog replay pass |
 | P4 Qt lane | DONE | dd6c28c | 192 classes ingested; 8 elements annotated; 41 generated tests pass; leaf-crate rebuild verified |
+| F1 fork bindings | IN PROGRESS | | phase A: bind:this + bind hook in fork; phase B after P5 |
 | P5 integration | IN PROGRESS | | |
 | M2 dev loop | QUEUED | | |
 | M3 metadata + codegen | QUEUED | | |
