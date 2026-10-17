@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Runs a cargo command in one of a few machine-wide build slots, so parallel agents queue for the
+# CPU instead of all compiling at once on a few cores each. Every worktree shares the same slots.
+#
+#   tools/dev/cargo-slot cargo nextest run --workspace
+#   tools/dev/cargo-slot xvfb-run -a cargo nextest run -p counter
+#
+# SVELTERS_SLOTS (default 2) slots, each given SVELTERS_SLOT_JOBS (default 6) cores: CARGO_BUILD_JOBS
+# and NEXTEST_TEST_THREADS are set from it unless already set. The build dir is per checkout
+# (target/build), as .cargo/config.toml already says; sccache shares compiled deps across them.
+set -euo pipefail
+
+slots=${SVELTERS_SLOTS:-2}
+jobs=${SVELTERS_SLOT_JOBS:-6}
+dir=${XDG_RUNTIME_DIR:-/tmp}/svelters-cargo-slots
+mkdir -p "$dir"
+
+waited=0
+while :; do
+  for i in $(seq 1 "$slots"); do
+    exec {fd}>"$dir/slot-$i.lock"
+    if flock -n "$fd"; then
+      [ "$waited" -gt 0 ] && echo "cargo-slot: got slot $i after ${waited}s" >&2
+      export CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-$jobs}
+      export NEXTEST_TEST_THREADS=${NEXTEST_TEST_THREADS:-$jobs}
+      export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-target/build}
+      # The lock fd is inherited by the command and released when it exits.
+      exec "$@"
+    fi
+    exec {fd}>&-
+  done
+  [ "$waited" -eq 0 ] && echo "cargo-slot: all $slots slots busy, waiting" >&2
+  sleep 5
+  waited=$((waited + 5))
+done
