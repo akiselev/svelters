@@ -22,16 +22,28 @@ events, bindings, slots, lifetime, styling) generated from `metadata/` plus hand
 - Compiler crate skeleton `crates/svelters-compiler` (diagnostics + a subset template parser),
   no JS parser dependency yet.
 
-## Foundation decision (pending)
+## Foundation decision (2026-10-17)
 
-- oxc and swc are rejected: too heavy to build (clean dev build of the parser alone, 4 cores:
-  oxc 14 s, swc 17 s; biome 12 s, boa 9 s).
-- rsvelte and svelte-rs (both MIT) are byte-exact DOM ports built on oxc; being evaluated for
-  reusable parser/scope code.
-- Leading proposal: a verbatim Rust port of Svelte's own parser (`phases/1-parse`, ~4.4k lines
-  + generated entities table), acorn (~6.3k lines, typed ESTree structs) and `phases/scope.js`
-  (~1.5k lines), with HTML-only rules behind a native-mode flag and an AST-diff test against
-  `svelte/compiler`'s `parse()`.
+**Port Svelte's front end verbatim to Rust; no JS parser crates.**
+
+- Rejected: oxc, swc (user direction: build cost; clean dev build of the parser alone on 4 cores:
+  oxc 14 s, swc 17 s; biome 12 s, boa 9 s). rsvelte and svelte-rs (MIT) are byte-exact DOM ports
+  built on oxc, so their code is not reused directly; they remain references.
+- Ported (verbatim structure, typed output): Svelte `phases/1-parse` (minus `read/style.js`),
+  acorn 8.19.0 (minus the TypeScript plugin), Svelte `phases/scope.js`.
+- Not ported: Svelte's CSS parser. Native styling only needs a small subset (user direction), so
+  `style.rs` parses selectors/declarations we can lower to native properties.
+- Correctness oracle: real acorn and `svelte/compiler` output over their own test corpora,
+  Svelte's runtime samples and our fixtures, diffed as JSON with a no-regression ratchet.
+- Contracts: `docs/notes/native-compiler/modules.md`, `runtime-contract.md`.
+
+## Work plan
+
+Phase 1 (parallel agents, one worktree each): A acorn, B acorn regexp, C native style subset,
+D Svelte template parser, E scope analysis, F oracle harness, G semantic specs + `BackendSemantics`,
+H native JS runtime + hand-written compiled fixtures. Phase 2 (coordinator): analysis of runes,
+native lowering to a typed IR, JS generation with source maps, Vite plugin, end-to-end fixtures on
+the log backend, GTK and Qt; styling + named-slot extension; report.
 
 ## Environment notes (not committed)
 
