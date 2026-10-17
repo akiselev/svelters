@@ -1,0 +1,12 @@
+# Manual generator run: python3 tools/metadata/qt/gen_cpp.py --config tools/metadata/qt/gen.dev.toml --out <dir>
+[input]
+metadata = "../../../metadata/qt"
+overrides = "../../../metadata/overrides/qt"
+
+[output]
+backend = "svl_qt_backend.cpp"
+verify = "svl_qt_verify.cpp"
+dts = "qt.d.ts"
+
+[elements]
+tags = []

@@ -97,7 +97,10 @@ def validate(kind: dict[str, Any]) -> list[str]:
     walk(kind, kind.get("id", "?"))
     for key, ident in LIST_KEYS.items():
         recs = kind.get(key) if key != "slots" else (kind.get("children") or {}).get("slots")
-        names = [r.get(ident) for r in recs or []]
+        # Additive: overloaded records (same name) are distinguished by their unique `id` when every record has one.
+        recs = recs or []
+        use = "id" if recs and all(r.get("id") for r in recs) else ident
+        names = [r.get(use) for r in recs]
         dupes = sorted({n for n in names if names.count(n) > 1})
         if dupes:
             errs.append(f"duplicate {key}: {dupes}")

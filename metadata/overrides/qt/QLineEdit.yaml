@@ -1,0 +1,13 @@
+elements:
+  - tag: entry
+    construct: { class: QLineEdit }
+    props:
+      - { js: text, native: text, suppress_signals: true }
+      - { js: placeholder, native: placeholderText }
+    signals:
+      - js: changed
+        native: textChanged
+        connect: "textChanged(QString)"
+        args: [{ name: text, type: string }]
+        trigger: '$w->setText(QStringLiteral("v") + QString::number($i))'
+        expect_args: ["v0"]

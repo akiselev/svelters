@@ -7,3 +7,6 @@ publish.workspace = true
 
 [dependencies]
 svelters-abi.workspace = true
+svelters-backend-log.workspace = true
+rquickjs.workspace = true
+serde_json.workspace = true

@@ -1,0 +1,4 @@
+# Minimal element so that the window `menubar` slot can be exercised.
+elements:
+  - tag: menubar
+    construct: { class: QMenuBar }

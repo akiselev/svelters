@@ -1,0 +1,75 @@
+# Element `window`. Slot annotations follow docs/notes/signals-and-slots-semantics.md section 2.5
+# (op descriptors with `native`/`args`/`effects`). Every effect becomes a generated test.
+# Child policy follows uic's QMainWindow mapping; ownership is cross-checked against the PySide
+# typesystem replace_child entries and the probes in docs/notes/scripts/qt_slot_ownership_probe.py.
+elements:
+  - tag: window
+    construct: { class: QMainWindow }
+    props:
+      - { js: title, native: windowTitle }
+    methods:
+      - { js: show, native: show }
+      - { js: present, native: show }
+      - { js: close, native: close }
+      - { js: resize, native: resize, params: [i32, i32] }
+    children:
+      policy: named_slots
+      default_slot: central
+      slots:
+        - name: central
+          content: widget
+          accepts: [QWidget]
+          cardinality: one
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            get: { native: "QMainWindow::centralWidget() const" }
+            set:
+              native: "QMainWindow::setCentralWidget(QWidget*)"
+              args: [child]
+              effects: { child: parented, old: deleted }     # probe: the old widget is deleted
+            remove:                                           # NOT setCentralWidget(nullptr): that deletes
+              native: "QMainWindow::takeCentralWidget()"
+              effects: { child: unparented }
+          provenance: [{ origin: uic, ref: "WriteInitialization::acceptWidget" }, { origin: typesystem, ref: replace_child }, { origin: probe, ref: qt_slot_ownership_probe.py }]
+        - name: menubar
+          content: widget
+          accepts: [QMenuBar]
+          route_by_kind: true
+          cardinality: one
+          host: self
+          default: { kind: lazy, restore: restore }
+          on_remove: destroys_child
+          ops:
+            get: { native: "QMainWindow::menuWidget() const" }   # menuBar() would create one
+            set:
+              native: "QMainWindow::setMenuBar(QMenuBar*)"
+              args: [child]
+              effects: { child: parented, old: deleted }
+            remove:
+              native: "QMainWindow::setMenuBar(QMenuBar*)"
+              args: [null]
+              effects: { child: deleted }
+          provenance: [{ origin: typesystem, ref: replace_child }, { origin: probe, ref: qt_slot_ownership_probe.py }]
+        - name: statusbar
+          content: widget
+          accepts: [QStatusBar]
+          route_by_kind: true
+          cardinality: one
+          host: self
+          default: { kind: lazy }
+          on_remove: destroys_child
+          ops:
+            get:                                                 # statusBar() would create one
+              native: "QMainWindow::findChild<QStatusBar*>(Qt::FindChildOptions) const"
+              args: ["const:Qt::FindDirectChildrenOnly"]
+            set:
+              native: "QMainWindow::setStatusBar(QStatusBar*)"
+              args: [child]
+              effects: { child: parented, old: deleted }
+            remove:
+              native: "QMainWindow::setStatusBar(QStatusBar*)"
+              args: [null]
+              effects: { child: deleted }
+          provenance: [{ origin: typesystem, ref: replace_child }, { origin: probe, ref: qt_slot_ownership_probe.py }]

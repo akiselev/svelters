@@ -1,0 +1,340 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOption:ctor:QStyleOption(int version, int type)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QStyleOption(int version, int type)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "QStyleOption::Version",
+          "name": "version",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": "SO_Default",
+          "name": "type",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "SO_Default",
+          "value": "0"
+        },
+        {
+          "name": "SO_FocusRect",
+          "value": "1"
+        },
+        {
+          "name": "SO_Button",
+          "value": "2"
+        },
+        {
+          "name": "SO_Tab",
+          "value": "3"
+        },
+        {
+          "name": "SO_MenuItem",
+          "value": "4"
+        },
+        {
+          "name": "SO_Frame",
+          "value": "5"
+        },
+        {
+          "name": "SO_ProgressBar",
+          "value": "6"
+        },
+        {
+          "name": "SO_ToolBox",
+          "value": "7"
+        },
+        {
+          "name": "SO_Header",
+          "value": "8"
+        },
+        {
+          "name": "SO_DockWidget",
+          "value": "9"
+        },
+        {
+          "name": "SO_ViewItem",
+          "value": "10"
+        },
+        {
+          "name": "SO_TabWidgetFrame",
+          "value": "11"
+        },
+        {
+          "name": "SO_TabBarBase",
+          "value": "12"
+        },
+        {
+          "name": "SO_RubberBand",
+          "value": "13"
+        },
+        {
+          "name": "SO_ToolBar",
+          "value": "14"
+        },
+        {
+          "name": "SO_GraphicsItem",
+          "value": "15"
+        },
+        {
+          "name": "SO_Complex",
+          "value": "0xf0000"
+        },
+        {
+          "name": "SO_Slider",
+          "value": "0xf0001"
+        },
+        {
+          "name": "SO_SpinBox",
+          "value": "0xf0002"
+        },
+        {
+          "name": "SO_ToolButton",
+          "value": "0xf0003"
+        },
+        {
+          "name": "SO_ComboBox",
+          "value": "0xf0004"
+        },
+        {
+          "name": "SO_TitleBar",
+          "value": "0xf0005"
+        },
+        {
+          "name": "SO_GroupBox",
+          "value": "0xf0006"
+        },
+        {
+          "name": "SO_SizeGrip",
+          "value": "0xf0007"
+        },
+        {
+          "name": "SO_CustomBase",
+          "value": "0xf00"
+        },
+        {
+          "name": "SO_ComplexCustomBase",
+          "value": "0xf000000"
+        }
+      ],
+      "metaobject": null,
+      "name": "OptionType",
+      "origin": "qdoc"
+    },
+    {
+      "members": [
+        {
+          "name": "Type",
+          "value": "SO_Default"
+        }
+      ],
+      "metaobject": null,
+      "name": "StyleOptionType",
+      "origin": "qdoc"
+    },
+    {
+      "members": [
+        {
+          "name": "Version",
+          "value": "1"
+        }
+      ],
+      "metaobject": null,
+      "name": "StyleOptionVersion",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOption",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOption:method:void initFrom(const QWidget *widget)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "initFrom",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void initFrom(const QWidget *widget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOption:method:T qstyleoption_cast(QStyleOption *option)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "qstyleoption_cast",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "T",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "T qstyleoption_cast(QStyleOption *option)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOption:method:T qstyleoption_cast(const QStyleOption *option)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "qstyleoption_cast",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "T",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "T qstyleoption_cast(const QStyleOption *option)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Stores the parameters used by QStyle functions",
+    "header": "qstyleoption.h",
+    "module": "QtWidgets",
+    "name": "QStyleOption"
+  },
+  "ownership": [],
+  "properties": [],
+  "qobject": false,
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

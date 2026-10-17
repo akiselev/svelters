@@ -51,3 +51,30 @@ fixtures/timers test: PASS timers (9 ops)
 - Bundles: `fixtures/<name>/dist/app.js`, 137-163 kB unminified each (counter 140010 B), source maps on, `fragments: "tree"`, `browser` condition, no `{@html}`.
 - `svelters-test` rejects bundles containing `node:`, `require(`, `process.`, `Buffer`, top-level `import`/`export` or dynamic `import()`: all four bundles pass. The runner evaluates each bundle with `vm.SourceTextModule` in a context that has only `console`, `queueMicrotask`, virtual-time `setTimeout`/`setInterval`/`clear*` and `__svelters_host`.
 - Op-log snapshots are `fixtures/<name>/expected.oplog`; scripts are `fixtures/<name>/script.json`. Known unsupported: see "Not done" in the notes.
+
+## P1b completion record
+
+Svelte is now the vendored custom-renderer fork: `vendor/svelte/svelte-5.57.2-f3de3f2.tgz` (sha256 `c58ac253...aabed`), upstream `custom-condition` @ `f3de3f236bd5` = top of the #18042 / #18405 / #18461 / #18511 stack, built from source; provenance and build command in `vendor/svelte/PIN`. All packages resolve `svelte` to it through `overrides.svelte` in `pnpm-workspace.yaml`.
+
+Commands from the repo root (build/test parallelism capped at 4):
+
+```text
+$ pnpm install --network-concurrency=4
+$ pnpm test                      # = pnpm -r --workspace-concurrency=4 test; default backend = renderer
+packages/renderer test: # pass 4 / # fail 0
+tests/renderer-conformance test: PASS prod (1089 lines, node == qjs)
+tests/renderer-conformance test: PASS dev (1089 lines, node == qjs)
+tests/renderer-conformance test: PASS values2 (33 lines, node == qjs)
+tests/renderer-conformance test: PASS hmr (73 lines, node == qjs)
+fixtures/counter test: PASS counter (19 ops)
+fixtures/keyed-list test: PASS keyed-list (87 ops)
+fixtures/if-toggle test: PASS if-toggle (35 ops)
+fixtures/timers test: PASS timers (9 ops)
+$ SVELTERS_BACKEND=shim pnpm test     # DOM-shim fallback, same expected.oplog files
+fixtures/counter PASS (19) / keyed-list PASS (87) / if-toggle PASS (35) / timers PASS (9)
+```
+
+- Op logs from the renderer are byte-identical to the shim logs for all four fixtures; no `expected.oplog` changed. Host contract (globals, dispatch, handle numbering, log format, step semantics) is unchanged. Additions: `__svelters_dispatch` now returns `{ results, event }`; the renderer path needs no DOM globals. Details in `docs/notes/p1-js-lane.md`, section "P1b".
+- Conformance (Node and quickjs-ng v0.17.0, sha256-checked download via `tests/renderer-conformance/get-qjs.sh`): prod, dev, values2, hmr runs equal Node == qjs, and equal the trial's stack streams (node ids and read counters ignored).
+- Upstream bug reports (not filed): `docs/notes/svelte-fork-upstream-bugs.md`. Weekly refresh procedure: `tests/renderer-conformance/WEEKLY.md`.
+- Not done: `sv-item` / `set_child_attr`; `sv-slot` is covered by the renderer unit test only, and is unsupported on the shim path.

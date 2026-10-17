@@ -1,0 +1,1088 @@
+===== Counter
+--- mount  [ops 17; tree el=2 text=2 comment=0]
+    op: create #2t text ""
+    op: insert #2t into #1<window> before null
+    op: create #3f fragment
+    op: create #4<box>
+    op: create #5f fragment
+    op: create #6<button>
+    op: create #7f fragment
+    op: create #8t text " "
+    op: insert #8t into #7f before null
+    op: insert #8t into #6<button> before null
+    op: insert #6<button> into #5f before null
+    op: insert #6<button> into #4<box> before null
+    op: insert #4<box> into #3f before null
+    op: set #6<button>.disabled = false [boolean]
+    op: text #8t = "Clicked 0"
+    op: listen #6<button> click {}
+    op: move #4<box> into #1<window> before #2t
+    | <window>
+    |   <box>
+    |     <button disabled=false>
+    |       "Clicked 0"
+    |   ""
+    |
+  > emit returned ["0"]
+--- click 1  [ops 1; tree el=2 text=2 comment=0]
+    op: text #8t = "Clicked 1"
+    | <window>
+    |   <box>
+    |     <button disabled=false>
+    |       "Clicked 1"
+    |   ""
+    |
+  > emit returned ["1"]
+--- click 2  [ops 1; tree el=2 text=2 comment=0]
+    op: text #8t = "Clicked 2"
+    | <window>
+    |   <box>
+    |     <button disabled=false>
+    |       "Clicked 2"
+    |   ""
+    |
+  > emit returned ["2"]
+--- click 3  [ops 2; tree el=2 text=2 comment=0]
+    op: set #6<button>.disabled = true [boolean]
+    op: text #8t = "Clicked 3"
+    | <window>
+    |   <box>
+    |     <button disabled=true>
+    |       "Clicked 3"
+    |   ""
+    |
+  > emit returned ["3"]
+--- click 4  [ops 1; tree el=2 text=2 comment=0]
+    op: text #8t = "Clicked 4"
+    | <window>
+    |   <box>
+    |     <button disabled=true>
+    |       "Clicked 4"
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #4<box>
+    op: remove #2t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== If
+--- mount  [ops 18; tree el=2 text=2 comment=1]
+    op: create #10t text ""
+    op: insert #10t into #9<window> before null
+    op: create #11f fragment
+    op: create #12<box>
+    op: create #13f fragment
+    op: create #14c comment ""
+    op: insert #14c into #13f before null
+    op: insert #14c into #12<box> before null
+    op: insert #12<box> into #11f before null
+    op: create #15f fragment
+    op: create #16<label>
+    op: create #17f fragment
+    op: create #18t text "even"
+    op: insert #18t into #17f before null
+    op: insert #18t into #16<label> before null
+    op: insert #16<label> into #15f before null
+    op: move #16<label> into #12<box> before #14c
+    op: move #12<box> into #9<window> before #10t
+    | <window>
+    |   <box>
+    |     <label>
+    |       "even"
+    |     <!---->
+    |   ""
+    |
+--- inc -> 1  [ops 9; tree el=2 text=2 comment=1]
+    op: create #19f fragment
+    op: create #20<label>
+    op: create #21f fragment
+    op: create #22t text "odd"
+    op: insert #22t into #21f before null
+    op: insert #22t into #20<label> before null
+    op: insert #20<label> into #19f before null
+    op: move #20<label> into #12<box> before #14c
+    op: remove #16<label>
+    | <window>
+    |   <box>
+    |     <label>
+    |       "odd"
+    |     <!---->
+    |   ""
+    |
+--- inc -> 2  [ops 9; tree el=2 text=2 comment=1]
+    op: create #23f fragment
+    op: create #24<label>
+    op: create #25f fragment
+    op: create #26t text "two"
+    op: insert #26t into #25f before null
+    op: insert #26t into #24<label> before null
+    op: insert #24<label> into #23f before null
+    op: move #24<label> into #12<box> before #14c
+    op: remove #20<label>
+    | <window>
+    |   <box>
+    |     <label>
+    |       "two"
+    |     <!---->
+    |   ""
+    |
+--- inc -> 3  [ops 9; tree el=2 text=2 comment=1]
+    op: create #27f fragment
+    op: create #28<label>
+    op: create #29f fragment
+    op: create #30t text "odd"
+    op: insert #30t into #29f before null
+    op: insert #30t into #28<label> before null
+    op: insert #28<label> into #27f before null
+    op: move #28<label> into #12<box> before #14c
+    op: remove #24<label>
+    | <window>
+    |   <box>
+    |     <label>
+    |       "odd"
+    |     <!---->
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #12<box>
+    op: remove #10t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Each
+--- mount  [ops 38; tree el=4 text=5 comment=0]
+    op: create #32t text ""
+    op: insert #32t into #31<window> before null
+    op: create #33f fragment
+    op: create #34<list>
+    op: insert #34<list> into #33f before null
+    op: create #35t text ""
+    op: insert #35t into #34<list> before null
+    op: create #36f fragment
+    op: create #37<row>
+    op: create #38f fragment
+    op: create #39t text " "
+    op: insert #39t into #38f before null
+    op: insert #39t into #37<row> before null
+    op: insert #37<row> into #36f before null
+    op: set #37<row>.key = 1 [number]
+    op: text #39t = "a"
+    op: move #37<row> into #34<list> before #35t
+    op: create #40f fragment
+    op: create #41<row>
+    op: create #42f fragment
+    op: create #43t text " "
+    op: insert #43t into #42f before null
+    op: insert #43t into #41<row> before null
+    op: insert #41<row> into #40f before null
+    op: set #41<row>.key = 2 [number]
+    op: text #43t = "b"
+    op: move #41<row> into #34<list> before #35t
+    op: create #44f fragment
+    op: create #45<row>
+    op: create #46f fragment
+    op: create #47t text " "
+    op: insert #47t into #46f before null
+    op: insert #47t into #45<row> before null
+    op: insert #45<row> into #44f before null
+    op: set #45<row>.key = 3 [number]
+    op: text #47t = "c"
+    op: move #45<row> into #34<list> before #35t
+    op: move #34<list> into #31<window> before #32t
+    | <window>
+    |   <list>
+    |     <row key=1>
+    |       "a"
+    |     <row key=2>
+    |       "b"
+    |     <row key=3>
+    |       "c"
+    |     ""
+    |   ""
+    |
+--- reverse  [ops 2; tree el=4 text=5 comment=0]
+    op: move #45<row> into #34<list> before #37<row>
+    op: move #37<row> into #34<list> before #35t
+    | <window>
+    |   <list>
+    |     <row key=3>
+    |       "c"
+    |     <row key=2>
+    |       "b"
+    |     <row key=1>
+    |       "a"
+    |     ""
+    |   ""
+    |
+--- insert at 1  [ops 14; tree el=5 text=6 comment=0]
+    op: create #48t text ""
+    op: create #49f fragment
+    op: insert #48t into #49f before null
+    op: create #50f fragment
+    op: create #51<row>
+    op: create #52f fragment
+    op: create #53t text " "
+    op: insert #53t into #52f before null
+    op: insert #53t into #51<row> before null
+    op: insert #51<row> into #50f before null
+    op: set #51<row>.key = 4 [number]
+    op: text #53t = "d"
+    op: move #51<row> into #49f before #48t
+    op: move #51<row> into #34<list> before #41<row>
+    | <window>
+    |   <list>
+    |     <row key=3>
+    |       "c"
+    |     <row key=4>
+    |       "d"
+    |     <row key=2>
+    |       "b"
+    |     <row key=1>
+    |       "a"
+    |     ""
+    |   ""
+    |
+--- remove first  [ops 1; tree el=4 text=5 comment=0]
+    op: remove #45<row>
+    | <window>
+    |   <list>
+    |     <row key=4>
+    |       "d"
+    |     <row key=2>
+    |       "b"
+    |     <row key=1>
+    |       "a"
+    |     ""
+    |   ""
+    |
+--- rename first  [ops 1; tree el=4 text=5 comment=0]
+    op: text #53t = "Z"
+    | <window>
+    |   <list>
+    |     <row key=4>
+    |       "Z"
+    |     <row key=2>
+    |       "b"
+    |     <row key=1>
+    |       "a"
+    |     ""
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #34<list>
+    op: remove #32t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Snippet
+--- mount  [ops 36; tree el=3 text=4 comment=2]
+    op: create #55t text ""
+    op: insert #55t into #54<window> before null
+    op: create #56f fragment
+    op: create #57<box>
+    op: create #58f fragment
+    op: create #59c comment ""
+    op: insert #59c into #58f before null
+    op: create #60t text " "
+    op: insert #60t into #58f before null
+    op: create #61c comment ""
+    op: insert #61c into #58f before null
+    op: insert #59c into #57<box> before null
+    op: insert #60t into #57<box> before null
+    op: insert #61c into #57<box> before null
+    op: insert #57<box> into #56f before null
+    op: create #62f fragment
+    op: create #63<cell>
+    op: create #64f fragment
+    op: create #65t text " "
+    op: insert #65t into #64f before null
+    op: insert #65t into #63<cell> before null
+    op: insert #63<cell> into #62f before null
+    op: set #63<cell>.v = 1 [number]
+    op: text #65t = "1"
+    op: move #63<cell> into #57<box> before #59c
+    op: create #66f fragment
+    op: create #67<cell>
+    op: create #68f fragment
+    op: create #69t text " "
+    op: insert #69t into #68f before null
+    op: insert #69t into #67<cell> before null
+    op: insert #67<cell> into #66f before null
+    op: set #67<cell>.v = 10 [number]
+    op: text #69t = "10"
+    op: move #67<cell> into #57<box> before #61c
+    op: move #57<box> into #54<window> before #55t
+    | <window>
+    |   <box>
+    |     <cell v=1>
+    |       "1"
+    |     <!---->
+    |     " "
+    |     <cell v=10>
+    |       "10"
+    |     <!---->
+    |   ""
+    |
+--- inc  [ops 4; tree el=3 text=4 comment=2]
+    op: set #63<cell>.v = 2 [number]
+    op: text #65t = "2"
+    op: set #67<cell>.v = 20 [number]
+    op: text #69t = "20"
+    | <window>
+    |   <box>
+    |     <cell v=2>
+    |       "2"
+    |     <!---->
+    |     " "
+    |     <cell v=20>
+    |       "20"
+    |     <!---->
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #57<box>
+    op: remove #55t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Key
+--- mount  [ops 19; tree el=2 text=2 comment=1]
+    op: create #71t text ""
+    op: insert #71t into #70<window> before null
+    op: create #72f fragment
+    op: create #73<box>
+    op: create #74f fragment
+    op: create #75c comment ""
+    op: insert #75c into #74f before null
+    op: insert #75c into #73<box> before null
+    op: insert #73<box> into #72f before null
+    op: create #76f fragment
+    op: create #77<k>
+    op: create #78f fragment
+    op: create #79t text " "
+    op: insert #79t into #78f before null
+    op: insert #79t into #77<k> before null
+    op: insert #77<k> into #76f before null
+    op: text #79t = "0"
+    op: move #77<k> into #73<box> before #75c
+    op: move #73<box> into #70<window> before #71t
+    | <window>
+    |   <box>
+    |     <k>
+    |       "0"
+    |     <!---->
+    |   ""
+    |
+--- inc  [ops 10; tree el=2 text=2 comment=1]
+    op: create #80f fragment
+    op: create #81<k>
+    op: create #82f fragment
+    op: create #83t text " "
+    op: insert #83t into #82f before null
+    op: insert #83t into #81<k> before null
+    op: insert #81<k> into #80f before null
+    op: text #83t = "1"
+    op: move #81<k> into #73<box> before #75c
+    op: remove #77<k>
+    | <window>
+    |   <box>
+    |     <k>
+    |       "1"
+    |     <!---->
+    |   ""
+    |
+  > k node replaced: true
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #73<box>
+    op: remove #71t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Await
+--- mount  [ops 14; tree el=2 text=1 comment=1]
+    op: create #85t text ""
+    op: insert #85t into #84<window> before null
+    op: create #86f fragment
+    op: create #87<box>
+    op: create #88f fragment
+    op: create #89c comment ""
+    op: insert #89c into #88f before null
+    op: insert #89c into #87<box> before null
+    op: insert #87<box> into #86f before null
+    op: move #87<box> into #84<window> before #85t
+    op: create #90f fragment
+    op: create #91<spinner>
+    op: insert #91<spinner> into #90f before null
+    op: move #91<spinner> into #87<box> before #89c
+    | <window>
+    |   <box>
+    |     <spinner>
+    |     <!---->
+    |   ""
+    |
+--- resolved  [ops 10; tree el=2 text=2 comment=1]
+    op: create #92f fragment
+    op: create #93<done>
+    op: create #94f fragment
+    op: create #95t text " "
+    op: insert #95t into #94f before null
+    op: insert #95t into #93<done> before null
+    op: insert #93<done> into #92f before null
+    op: text #95t = "10"
+    op: move #93<done> into #87<box> before #89c
+    op: remove #91<spinner>
+    | <window>
+    |   <box>
+    |     <done>
+    |       "10"
+    |     <!---->
+    |   ""
+    |
+--- set(2) pending  [ops 5; tree el=2 text=1 comment=1]
+    op: create #96f fragment
+    op: create #97<spinner>
+    op: insert #97<spinner> into #96f before null
+    op: move #97<spinner> into #87<box> before #89c
+    op: remove #93<done>
+    | <window>
+    |   <box>
+    |     <spinner>
+    |     <!---->
+    |   ""
+    |
+--- resolved 2  [ops 10; tree el=2 text=2 comment=1]
+    op: create #98f fragment
+    op: create #99<done>
+    op: create #100f fragment
+    op: create #101t text " "
+    op: insert #101t into #100f before null
+    op: insert #101t into #99<done> before null
+    op: insert #99<done> into #98f before null
+    op: text #101t = "20"
+    op: move #99<done> into #87<box> before #89c
+    op: remove #97<spinner>
+    | <window>
+    |   <box>
+    |     <done>
+    |       "20"
+    |     <!---->
+    |   ""
+    |
+--- set(-1) -> reject  [ops 15; tree el=2 text=2 comment=1]
+    op: create #102f fragment
+    op: create #103<spinner>
+    op: insert #103<spinner> into #102f before null
+    op: move #103<spinner> into #87<box> before #89c
+    op: remove #99<done>
+    op: create #104f fragment
+    op: create #105<err>
+    op: create #106f fragment
+    op: create #107t text " "
+    op: insert #107t into #106f before null
+    op: insert #107t into #105<err> before null
+    op: insert #105<err> into #104f before null
+    op: text #107t = "neg"
+    op: move #105<err> into #87<box> before #89c
+    op: remove #103<spinner>
+    | <window>
+    |   <box>
+    |     <err>
+    |       "neg"
+    |     <!---->
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #87<box>
+    op: remove #85t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== BindThis
+--- mount  [ops 14; tree el=1 text=2 comment=1]
+    op: create #109t text ""
+    op: insert #109t into #108<window> before null
+    op: create #110f fragment
+    op: create #111c comment ""
+    op: create #112t text ""
+    op: insert #111c into #110f before null
+    op: insert #112t into #110f before null
+    op: create #113f fragment
+    op: create #114<entry>
+    op: insert #114<entry> into #113f before null
+    op: move #114<entry> into #110f before #112t
+    op: insert #111c into #108<window> before #109t
+    op: insert #114<entry> into #108<window> before #109t
+    op: insert #112t into #108<window> before #109t
+    | <window>
+    |   <!---->
+    |   <entry>
+    |   ""
+    |   ""
+    |
+  > bound is entry node: true #114<entry>
+--- toggle off  [ops 1; tree el=0 text=2 comment=1]
+    op: remove #114<entry>
+    | <window>
+    |   <!---->
+    |   ""
+    |   ""
+    |
+  > after removal bound = undefined
+--- unmount  [ops 3; tree el=0 text=0 comment=0]
+    op: remove #111c
+    op: remove #112t
+    op: remove #109t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Props
+--- mount  [ops 24; tree el=2 text=2 comment=2]
+    op: create #116t text ""
+    op: insert #116t into #115<window> before null
+    op: create #117f fragment
+    op: create #118<box>
+    op: create #119f fragment
+    op: create #120c comment ""
+    op: insert #120c into #119f before null
+    op: insert #120c into #118<box> before null
+    op: insert #118<box> into #117f before null
+    op: create #121f fragment
+    op: create #122<button>
+    op: create #123f fragment
+    op: create #124c comment ""
+    op: insert #124c into #123f before null
+    op: insert #124c into #122<button> before null
+    op: insert #122<button> into #121f before null
+    op: create #125t text ""
+    op: text #125t = "inner 5"
+    op: insert #125t into #122<button> before #124c
+    op: set #122<button>.text = "hello" [string]
+    op: set #122<button>.count = 5 [number]
+    op: listen #122<button> click {}
+    op: move #122<button> into #118<box> before #120c
+    op: move #118<box> into #115<window> before #116t
+    | <window>
+    |   <box>
+    |     <button text="hello" count=5>
+    |       "inner 5"
+    |       <!---->
+    |     <!---->
+    |   ""
+    |
+--- parent inc  [ops 2; tree el=2 text=2 comment=2]
+    op: text #125t = "inner 6"
+    op: set #122<button>.count = 6 [number]
+    | <window>
+    |   <box>
+    |     <button text="hello" count=6>
+    |       "inner 6"
+    |       <!---->
+    |     <!---->
+    |   ""
+    |
+--- child press  [ops 0; tree el=2 text=2 comment=2]
+    | <window>
+    |   <box>
+    |     <button text="hello" count=6>
+    |       "inner 6"
+    |       <!---->
+    |     <!---->
+    |   ""
+    |
+  > parent received [6]
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #118<box>
+    op: remove #116t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Events
+--- mount  [ops 10; tree el=1 text=1 comment=0]
+    op: create #127t text ""
+    op: insert #127t into #126<window> before null
+    op: create #128f fragment
+    op: create #129<window>
+    op: insert #129<window> into #128f before null
+    op: listen #129<window> close-request {}
+    op: listen #129<window> click {}
+    op: listen #129<window> keypress {}
+    op: listen #129<window> activate {}
+    op: move #129<window> into #126<window> before #127t
+    | <window>
+    |   <window>
+    |   ""
+    |
+  > close-request(widget, 7) -> ["true"]
+  > keypress -> ["handled"] prevented true
+  > click -> ["handled"] prevented true
+  > activate -> ["42"]
+  > handler saw [{"argc":2,"args":[["widget"],7]}]
+  > listener keys on node ["close-request","click","keypress","activate"]
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #129<window>
+    op: remove #127t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Values
+--- mount  [ops 19; tree el=1 text=1 comment=0]
+    op: create #131t text ""
+    op: insert #131t into #130<window> before null
+    op: create #132f fragment
+    op: create #133<widget>
+    op: insert #133<widget> into #132f before null
+    op: set #133<widget>.num = 1 [number]
+    op: set #133<widget>.float = 1.5 [number]
+    op: set #133<widget>.bool = true [boolean]
+    op: set #133<widget>.falsy = false [boolean]
+    op: unset #133<widget>.nul
+    op: set #133<widget>.obj = object {"a":1} [object]
+    op: set #133<widget>.arr = array [1,2] [array]
+    op: set #133<widget>.str = "s" [string]
+    op: set #133<widget>.value = 1 [number]
+    op: set #133<widget>.checked = false [boolean]
+    op: set #133<widget>.class = "a b" [string]
+    op: set #133<widget>.style = "color: red" [string]
+    op: set #133<widget>.spreadNum = 1 [number]
+    op: move #133<widget> into #130<window> before #131t
+    | <window>
+    |   <widget num=1 float=1.5 bool=true falsy=false obj=object {"a":1} arr=array [1,2] str="s" value=1 checked=false class="a b" style="color: red" spreadNum=1>
+    |   ""
+    |
+--- inc  [ops 5; tree el=1 text=1 comment=0]
+    op: set #133<widget>.num = 2 [number]
+    op: set #133<widget>.arr = array [1,2] [array]
+    op: set #133<widget>.value = 2 [number]
+    op: set #133<widget>.checked = true [boolean]
+    op: set #133<widget>.spreadNum = 2 [number]
+    | <window>
+    |   <widget num=2 float=1.5 bool=true falsy=false obj=object {"a":1} arr=array [1,2] str="s" value=2 checked=true class="a b" style="color: red" spreadNum=2>
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #133<widget>
+    op: remove #131t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Directives
+--- mount  [ops 8; tree el=1 text=1 comment=0]
+    op: create #135t text ""
+    op: insert #135t into #134<window> before null
+    op: create #136f fragment
+    op: create #137<widget>
+    op: insert #137<widget> into #136f before null
+    op: unset #137<widget>.class
+    op: set #137<widget>.style = "color: blue;" [string]
+    op: move #137<widget> into #134<window> before #135t
+    | <window>
+    |   <widget style="color: blue;">
+    |   ""
+    |
+--- toggle  [ops 2; tree el=1 text=1 comment=0]
+    op: set #137<widget>.class = "active" [string]
+    op: set #137<widget>.style = "color: red" [string]
+    | <window>
+    |   <widget style="color: red" class="active">
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #137<widget>
+    op: remove #135t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Attach
+--- mount  [ops 6; tree el=1 text=1 comment=0]
+    op: create #139t text ""
+    op: insert #139t into #138<window> before null
+    op: create #140f fragment
+    op: create #141<widget>
+    op: insert #141<widget> into #140f before null
+    op: move #141<widget> into #138<window> before #139t
+    | <window>
+    |   <widget>
+    |   ""
+    |
+--- inc  [ops 0; tree el=1 text=1 comment=0]
+    | <window>
+    |   <widget>
+    |   ""
+    |
+  > log ["action mount 1","attach n=1 tag=widget","action update 2","detach n=1","attach n=2 tag=widget"]
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #141<widget>
+    op: remove #139t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== Form (bind:value via $bindable wrapper)
+--- mount  [ops 24; tree el=3 text=2 comment=1]
+    op: create #143t text ""
+    op: insert #143t into #142<window> before null
+    op: create #144f fragment
+    op: create #145<box>
+    op: create #146f fragment
+    op: create #147c comment ""
+    op: insert #147c into #146f before null
+    op: create #148t text " "
+    op: insert #148t into #146f before null
+    op: create #149<label>
+    op: insert #149<label> into #146f before null
+    op: insert #147c into #145<box> before null
+    op: insert #148t into #145<box> before null
+    op: insert #149<label> into #145<box> before null
+    op: insert #145<box> into #144f before null
+    op: create #150f fragment
+    op: create #151<entry>
+    op: insert #151<entry> into #150f before null
+    op: set #151<entry>.text = "Ann" [string]
+    op: listen #151<entry> changed {}
+    op: set #151<entry>.placeholder = "Name" [string]
+    op: move #151<entry> into #145<box> before #147c
+    op: set #149<label>.text = "Hello Ann" [string]
+    op: move #145<box> into #142<window> before #143t
+    | <window>
+    |   <box>
+    |     <entry text="Ann" placeholder="Name">
+    |     <!---->
+    |     " "
+    |     <label text="Hello Ann">
+    |   ""
+    |
+--- native typed "Bob"  [ops 2; tree el=3 text=2 comment=1]
+    op: set #151<entry>.text = "Bob" [string]
+    op: set #149<label>.text = "Hello Bob" [string]
+    | <window>
+    |   <box>
+    |     <entry text="Bob" placeholder="Name">
+    |     <!---->
+    |     " "
+    |     <label text="Hello Bob">
+    |   ""
+    |
+  > parent name = Bob
+--- parent setName("Cy")  [ops 2; tree el=3 text=2 comment=1]
+    op: set #151<entry>.text = "Cy" [string]
+    op: set #149<label>.text = "Hello Cy" [string]
+    | <window>
+    |   <box>
+    |     <entry text="Cy" placeholder="Name">
+    |     <!---->
+    |     " "
+    |     <label text="Hello Cy">
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #145<box>
+    op: remove #143t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== ShimApp1 (compile/scripts/App.svelte)
+--- mount  [ops 67; tree el=6 text=8 comment=2]
+    op: create #153t text ""
+    op: insert #153t into #152<window> before null
+    op: create #154f fragment
+    op: create #155<window>
+    op: create #156f fragment
+    op: create #157<button>
+    op: set #157<button>.class = "btn" [string]
+    op: create #158f fragment
+    op: create #159t text " "
+    op: insert #159t into #158f before null
+    op: insert #159t into #157<button> before null
+    op: insert #157<button> into #156f before null
+    op: create #160t text " "
+    op: insert #160t into #156f before null
+    op: create #161c comment ""
+    op: insert #161c into #156f before null
+    op: create #162t text " "
+    op: insert #162t into #156f before null
+    op: create #163c comment ""
+    op: insert #163c into #156f before null
+    op: create #164t text " "
+    op: insert #164t into #156f before null
+    op: create #165<entry>
+    op: insert #165<entry> into #156f before null
+    op: insert #157<button> into #155<window> before null
+    op: insert #160t into #155<window> before null
+    op: insert #161c into #155<window> before null
+    op: insert #162t into #155<window> before null
+    op: insert #163c into #155<window> before null
+    op: insert #164t into #155<window> before null
+    op: insert #165<entry> into #155<window> before null
+    op: insert #155<window> into #154f before null
+    op: create #166f fragment
+    op: create #167<label>
+    op: create #168f fragment
+    op: create #169t text "even"
+    op: insert #169t into #168f before null
+    op: insert #169t into #167<label> before null
+    op: insert #167<label> into #166f before null
+    op: move #167<label> into #155<window> before #161c
+    op: create #170f fragment
+    op: create #171<row>
+    op: create #172f fragment
+    op: create #173t text " "
+    op: insert #173t into #172f before null
+    op: insert #173t into #171<row> before null
+    op: insert #171<row> into #170f before null
+    op: set #171<row>.data-id = 1 [number]
+    op: text #173t = "a"
+    op: move #171<row> into #155<window> before #163c
+    op: create #174f fragment
+    op: create #175<row>
+    op: create #176f fragment
+    op: create #177t text " "
+    op: insert #177t into #176f before null
+    op: insert #177t into #175<row> before null
+    op: insert #175<row> into #174f before null
+    op: set #175<row>.data-id = 2 [number]
+    op: text #177t = "b"
+    op: move #175<row> into #155<window> before #163c
+    op: set #155<window>.title = "hi" [string]
+    op: set #157<button>.disabled = false [boolean]
+    op: text #159t = "Clicked 0"
+    op: set #165<entry>.value = "hi" [string]
+    op: listen #157<button> click {}
+    op: listen #165<entry> input {}
+    op: move #155<window> into #152<window> before #153t
+    | <window>
+    |   <window title="hi">
+    |     <button class="btn" disabled=false>
+    |       "Clicked 0"
+    |     " "
+    |     <label>
+    |       "even"
+    |     <!---->
+    |     " "
+    |     <row data-id=1>
+    |       "a"
+    |     <row data-id=2>
+    |       "b"
+    |     <!---->
+    |     " "
+    |     <entry value="hi">
+    |   ""
+    |
+--- after 5 clicks  [ops 51; tree el=6 text=8 comment=2]
+    op: create #178f fragment
+    op: create #179<label>
+    op: create #180f fragment
+    op: create #181t text "odd"
+    op: insert #181t into #180f before null
+    op: insert #181t into #179<label> before null
+    op: insert #179<label> into #178f before null
+    op: move #179<label> into #155<window> before #161c
+    op: remove #167<label>
+    op: text #159t = "Clicked 1"
+    op: create #182f fragment
+    op: create #183<label>
+    op: create #184f fragment
+    op: create #185t text "even"
+    op: insert #185t into #184f before null
+    op: insert #185t into #183<label> before null
+    op: insert #183<label> into #182f before null
+    op: move #183<label> into #155<window> before #161c
+    op: remove #179<label>
+    op: text #159t = "Clicked 2"
+    op: create #186f fragment
+    op: create #187<label>
+    op: create #188f fragment
+    op: create #189t text "odd"
+    op: insert #189t into #188f before null
+    op: insert #189t into #187<label> before null
+    op: insert #187<label> into #186f before null
+    op: move #187<label> into #155<window> before #161c
+    op: remove #183<label>
+    op: text #159t = "Clicked 3"
+    op: create #190f fragment
+    op: create #191<label>
+    op: create #192f fragment
+    op: create #193t text "even"
+    op: insert #193t into #192f before null
+    op: insert #193t into #191<label> before null
+    op: insert #191<label> into #190f before null
+    op: move #191<label> into #155<window> before #161c
+    op: remove #187<label>
+    op: set #157<button>.disabled = true [boolean]
+    op: text #159t = "Clicked 4"
+    op: create #194f fragment
+    op: create #195<label>
+    op: create #196f fragment
+    op: create #197t text "odd"
+    op: insert #197t into #196f before null
+    op: insert #197t into #195<label> before null
+    op: insert #195<label> into #194f before null
+    op: move #195<label> into #155<window> before #161c
+    op: remove #191<label>
+    op: text #159t = "Clicked 5"
+    | <window>
+    |   <window title="hi">
+    |     <button class="btn" disabled=true>
+    |       "Clicked 5"
+    |     " "
+    |     <label>
+    |       "odd"
+    |     <!---->
+    |     " "
+    |     <row data-id=1>
+    |       "a"
+    |     <row data-id=2>
+    |       "b"
+    |     <!---->
+    |     " "
+    |     <entry value="hi">
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #155<window>
+    op: remove #153t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
+===== ShimApp2 (compile/scripts/App2.svelte)
+effect n= 0 el= undefined
+--- mount  [ops 48; tree el=4 text=5 comment=3]
+    op: create #199t text ""
+    op: insert #199t into #198<window> before null
+    op: create #200f fragment
+    op: create #201<box>
+    op: create #202f fragment
+    op: create #203c comment ""
+    op: insert #203c into #202f before null
+    op: create #204t text " "
+    op: insert #204t into #202f before null
+    op: create #205c comment ""
+    op: insert #205c into #202f before null
+    op: create #206t text " "
+    op: insert #206t into #202f before null
+    op: create #207c comment ""
+    op: insert #207c into #202f before null
+    op: insert #203c into #201<box> before null
+    op: insert #204t into #201<box> before null
+    op: insert #205c into #201<box> before null
+    op: insert #206t into #201<box> before null
+    op: insert #207c into #201<box> before null
+    op: insert #201<box> into #200f before null
+    op: set #201<box>.style = "color: red;" [string]
+    op: create #208f fragment
+    op: create #209<cell>
+    op: create #210f fragment
+    op: create #211t text " "
+    op: insert #211t into #210f before null
+    op: insert #211t into #209<cell> before null
+    op: insert #209<cell> into #208f before null
+    op: set #209<cell>.v = 0 [number]
+    op: text #211t = "0"
+    op: move #209<cell> into #201<box> before #203c
+    op: create #212f fragment
+    op: create #213<k>
+    op: create #214f fragment
+    op: create #215t text " "
+    op: insert #215t into #214f before null
+    op: insert #215t into #213<k> before null
+    op: insert #213<k> into #212f before null
+    op: text #215t = "0"
+    op: move #213<k> into #201<box> before #205c
+    op: unset #201<box>.class
+    op: listen #201<box> activate {}
+    op: move #201<box> into #198<window> before #199t
+    op: create #216f fragment
+    op: create #217<spinner>
+    op: insert #217<spinner> into #216f before null
+    op: move #217<spinner> into #201<box> before #207c
+    | <window>
+    |   <box style="color: red;">
+    |     <cell v=0>
+    |       "0"
+    |     <!---->
+    |     " "
+    |     <k>
+    |       "0"
+    |     <!---->
+    |     " "
+    |     <spinner>
+    |     <!---->
+    |   ""
+    |
+--- settle  [ops 10; tree el=4 text=6 comment=3]
+    op: create #218f fragment
+    op: create #219<done>
+    op: create #220f fragment
+    op: create #221t text " "
+    op: insert #221t into #220f before null
+    op: insert #221t into #219<done> before null
+    op: insert #219<done> into #218f before null
+    op: text #221t = "0"
+    op: move #219<done> into #201<box> before #207c
+    op: remove #217<spinner>
+    | <window>
+    |   <box style="color: red;">
+    |     <cell v=0>
+    |       "0"
+    |     <!---->
+    |     " "
+    |     <k>
+    |       "0"
+    |     <!---->
+    |     " "
+    |     <done>
+    |       "0"
+    |     <!---->
+    |   ""
+    |
+effect n= 1 el= undefined
+--- activate  [ops 13; tree el=4 text=6 comment=3]
+    op: set #209<cell>.v = 1 [number]
+    op: text #211t = "1"
+    op: create #222f fragment
+    op: create #223<k>
+    op: create #224f fragment
+    op: create #225t text " "
+    op: insert #225t into #224f before null
+    op: insert #225t into #223<k> before null
+    op: insert #223<k> into #222f before null
+    op: text #225t = "1"
+    op: move #223<k> into #201<box> before #205c
+    op: remove #213<k>
+    op: set #201<box>.class = "on" [string]
+    | <window>
+    |   <box style="color: red;" class="on">
+    |     <cell v=1>
+    |       "1"
+    |     <!---->
+    |     " "
+    |     <k>
+    |       "1"
+    |     <!---->
+    |     " "
+    |     <done>
+    |       "0"
+    |     <!---->
+    |   ""
+    |
+--- settle  [ops 0; tree el=4 text=6 comment=3]
+    | <window>
+    |   <box style="color: red;" class="on">
+    |     <cell v=1>
+    |       "1"
+    |     <!---->
+    |     " "
+    |     <k>
+    |       "1"
+    |     <!---->
+    |     " "
+    |     <done>
+    |       "0"
+    |     <!---->
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #201<box>
+    op: remove #199t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
