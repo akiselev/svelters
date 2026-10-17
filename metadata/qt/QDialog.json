@@ -77,6 +77,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QDialog",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QDialog:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -731,6 +746,8 @@
         "set": "setModal"
       },
       "brief": "Whether show() should pop up the dialog as modal or modeless",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "modal",
       "metaobject": {
         "constant": false,
@@ -751,6 +768,7 @@
       "name": "modal",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -771,6 +789,8 @@
         "set": "setSizeGripEnabled"
       },
       "brief": "Whether the size grip is enabled",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "sizeGripEnabled",
       "metaobject": {
         "constant": false,
@@ -791,6 +811,7 @@
       "name": "sizeGripEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

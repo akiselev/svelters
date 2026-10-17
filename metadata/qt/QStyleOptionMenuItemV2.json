@@ -32,6 +32,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionMenuItemV2",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionMenuItemV2:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Enhances QStyleOptionMenuItem with new members",

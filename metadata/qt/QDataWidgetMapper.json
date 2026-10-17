@@ -65,6 +65,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QDataWidgetMapper",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QDataWidgetMapper:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -977,6 +987,8 @@
         "set": "setCurrentIndex"
       },
       "brief": "The current row or column",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentIndex",
       "metaobject": {
         "constant": false,
@@ -1000,6 +1012,7 @@
         "signal": "currentIndexChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1020,6 +1033,8 @@
         "set": "setOrientation"
       },
       "brief": "The orientation of the model",
+      "default": "Horizontal",
+      "default_origin": "runtime",
       "js_name": "orientation",
       "metaobject": {
         "constant": false,
@@ -1040,6 +1055,7 @@
       "name": "orientation",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Orientation",
@@ -1060,6 +1076,8 @@
         "set": "setSubmitPolicy"
       },
       "brief": "The current submit policy",
+      "default": "AutoSubmit",
+      "default_origin": "runtime",
       "js_name": "submitPolicy",
       "metaobject": {
         "constant": false,
@@ -1080,6 +1098,7 @@
       "name": "submitPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SubmitPolicy",

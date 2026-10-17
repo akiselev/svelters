@@ -129,6 +129,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QRhiWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QRhiWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1006,9 +1016,11 @@
         "set": null
       },
       "brief": null,
+      "default": null,
       "js_name": "autoRenderTarget",
       "name": "autoRenderTarget",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1029,6 +1041,8 @@
         "set": "setColorBufferFormat"
       },
       "brief": null,
+      "default": "RGBA8",
+      "default_origin": "runtime",
       "js_name": "colorBufferFormat",
       "metaobject": {
         "constant": false,
@@ -1052,6 +1066,7 @@
         "signal": "colorBufferFormatChanged(TextureFormat)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "TextureFormat",
@@ -1072,6 +1087,7 @@
         "set": "setFixedColorBufferSize"
       },
       "brief": null,
+      "default": null,
       "js_name": "fixedColorBufferSize",
       "metaobject": {
         "constant": false,
@@ -1095,6 +1111,7 @@
         "signal": "fixedColorBufferSizeChanged(QSize)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -1115,6 +1132,8 @@
         "set": "setMirrorVertically"
       },
       "brief": null,
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "mirrorVertically",
       "metaobject": {
         "constant": false,
@@ -1138,6 +1157,7 @@
         "signal": "mirrorVerticallyChanged(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1158,6 +1178,8 @@
         "set": "setSampleCount"
       },
       "brief": null,
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "sampleCount",
       "metaobject": {
         "constant": false,
@@ -1181,6 +1203,7 @@
         "signal": "sampleCountChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

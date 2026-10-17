@@ -342,6 +342,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemView",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemView:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -4666,6 +4673,7 @@
         "set": "setAlternatingRowColors"
       },
       "brief": "Whether to draw the background using alternating colors",
+      "default": null,
       "js_name": "alternatingRowColors",
       "metaobject": {
         "constant": false,
@@ -4686,6 +4694,7 @@
       "name": "alternatingRowColors",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4706,6 +4715,7 @@
         "set": "setAutoScroll"
       },
       "brief": "Whether autoscrolling in drag move events is enabled",
+      "default": null,
       "js_name": "autoScroll",
       "metaobject": {
         "constant": false,
@@ -4726,6 +4736,7 @@
       "name": "autoScroll",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4746,6 +4757,7 @@
         "set": "setAutoScrollMargin"
       },
       "brief": "The size of the area when auto scrolling is triggered",
+      "default": null,
       "js_name": "autoScrollMargin",
       "metaobject": {
         "constant": false,
@@ -4766,6 +4778,7 @@
       "name": "autoScrollMargin",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -4786,6 +4799,7 @@
         "set": "setDefaultDropAction"
       },
       "brief": "The drop action that will be used by default in QAbstractItemView::drag()",
+      "default": null,
       "js_name": "defaultDropAction",
       "metaobject": {
         "constant": false,
@@ -4806,6 +4820,7 @@
       "name": "defaultDropAction",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DropAction",
@@ -4826,6 +4841,7 @@
         "set": "setDragDropMode"
       },
       "brief": "The drag and drop event the view will act upon",
+      "default": null,
       "js_name": "dragDropMode",
       "metaobject": {
         "constant": false,
@@ -4846,6 +4862,7 @@
       "name": "dragDropMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "DragDropMode",
@@ -4866,6 +4883,7 @@
         "set": "setDragDropOverwriteMode"
       },
       "brief": "The view's drag and drop behavior",
+      "default": null,
       "js_name": "dragDropOverwriteMode",
       "metaobject": {
         "constant": false,
@@ -4886,6 +4904,7 @@
       "name": "dragDropOverwriteMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4906,6 +4925,7 @@
         "set": "setDragEnabled"
       },
       "brief": "Whether the view supports dragging of its own items",
+      "default": null,
       "js_name": "dragEnabled",
       "metaobject": {
         "constant": false,
@@ -4926,6 +4946,7 @@
       "name": "dragEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4946,6 +4967,7 @@
         "set": "setEditTriggers"
       },
       "brief": "Which actions will initiate item editing",
+      "default": null,
       "js_name": "editTriggers",
       "metaobject": {
         "constant": false,
@@ -4966,6 +4988,7 @@
       "name": "editTriggers",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "EditTriggers",
@@ -4986,6 +5009,7 @@
         "set": "setHorizontalScrollMode"
       },
       "brief": "How the view scrolls its contents in the horizontal direction",
+      "default": null,
       "js_name": "horizontalScrollMode",
       "metaobject": {
         "constant": false,
@@ -5006,6 +5030,7 @@
       "name": "horizontalScrollMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ScrollMode",
@@ -5026,6 +5051,7 @@
         "set": "setIconSize"
       },
       "brief": "The size of items' icons",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -5049,6 +5075,7 @@
         "signal": "iconSizeChanged(QSize)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -5069,6 +5096,7 @@
         "set": "setKeyboardSearchFlags"
       },
       "brief": null,
+      "default": null,
       "js_name": "keyboardSearchFlags",
       "metaobject": {
         "constant": false,
@@ -5089,6 +5117,7 @@
       "name": "keyboardSearchFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::MatchFlags",
@@ -5109,6 +5138,7 @@
         "set": "setSelectionBehavior"
       },
       "brief": "Which selection behavior the view uses",
+      "default": null,
       "js_name": "selectionBehavior",
       "metaobject": {
         "constant": false,
@@ -5129,6 +5159,7 @@
       "name": "selectionBehavior",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SelectionBehavior",
@@ -5149,6 +5180,7 @@
         "set": "setSelectionMode"
       },
       "brief": "Which selection mode the view operates in",
+      "default": null,
       "js_name": "selectionMode",
       "metaobject": {
         "constant": false,
@@ -5169,6 +5201,7 @@
       "name": "selectionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SelectionMode",
@@ -5189,6 +5222,7 @@
         "set": "setDropIndicatorShown"
       },
       "brief": "Whether the drop indicator is shown when dragging items and dropping",
+      "default": null,
       "js_name": "showDropIndicator",
       "metaobject": {
         "constant": false,
@@ -5209,6 +5243,7 @@
       "name": "showDropIndicator",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -5229,6 +5264,7 @@
         "set": "setTabKeyNavigation"
       },
       "brief": "Whether item navigation with tab and backtab is enabled",
+      "default": null,
       "js_name": "tabKeyNavigation",
       "metaobject": {
         "constant": false,
@@ -5249,6 +5285,7 @@
       "name": "tabKeyNavigation",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -5269,6 +5306,7 @@
         "set": "setTextElideMode"
       },
       "brief": "The position of the \"...\" in elided text",
+      "default": null,
       "js_name": "textElideMode",
       "metaobject": {
         "constant": false,
@@ -5289,6 +5327,7 @@
       "name": "textElideMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextElideMode",
@@ -5309,6 +5348,7 @@
         "set": "setUpdateThreshold"
       },
       "brief": null,
+      "default": null,
       "js_name": "updateThreshold",
       "metaobject": {
         "constant": false,
@@ -5329,6 +5369,7 @@
       "name": "updateThreshold",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -5349,6 +5390,7 @@
         "set": "setVerticalScrollMode"
       },
       "brief": "How the view scrolls its contents in the vertical direction",
+      "default": null,
       "js_name": "verticalScrollMode",
       "metaobject": {
         "constant": false,
@@ -5369,6 +5411,7 @@
       "name": "verticalScrollMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ScrollMode",

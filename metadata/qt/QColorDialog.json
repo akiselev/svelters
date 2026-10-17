@@ -112,6 +112,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QColorDialog",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QColorDialog:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -789,6 +804,7 @@
         "set": "setCurrentColor"
       },
       "brief": "The currently selected color in the dialog",
+      "default": null,
       "js_name": "currentColor",
       "metaobject": {
         "constant": false,
@@ -812,6 +828,7 @@
         "signal": "currentColorChanged(QColor)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QColor",
@@ -832,6 +849,7 @@
         "set": "setOptions"
       },
       "brief": "The various options that affect the look and feel of the dialog",
+      "default": null,
       "js_name": "options",
       "metaobject": {
         "constant": false,
@@ -852,6 +870,7 @@
       "name": "options",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ColorDialogOptions",

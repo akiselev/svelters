@@ -131,6 +131,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTabBar",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTabBar:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2967,6 +2977,8 @@
         "set": "setAutoHide"
       },
       "brief": "If true, the tab bar is automatically hidden when it contains less than 2 tabs",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoHide",
       "metaobject": {
         "constant": false,
@@ -2987,6 +2999,7 @@
       "name": "autoHide",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3007,6 +3020,8 @@
         "set": "setChangeCurrentOnDrag"
       },
       "brief": "If true, then the current tab is automatically changed when dragging over the tabbar",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "changeCurrentOnDrag",
       "metaobject": {
         "constant": false,
@@ -3027,6 +3042,7 @@
       "name": "changeCurrentOnDrag",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3047,6 +3063,8 @@
         "set": null
       },
       "brief": "The number of tabs in the tab bar",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "count",
       "metaobject": {
         "constant": false,
@@ -3067,6 +3085,7 @@
       "name": "count",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3087,6 +3106,8 @@
         "set": "setCurrentIndex"
       },
       "brief": "The index of the tab bar's visible tab",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentIndex",
       "metaobject": {
         "constant": false,
@@ -3110,6 +3131,7 @@
         "signal": "currentChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3130,6 +3152,8 @@
         "set": "setDocumentMode"
       },
       "brief": "Whether or not the tab bar is rendered in a mode suitable for the main window",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "documentMode",
       "metaobject": {
         "constant": false,
@@ -3150,6 +3174,7 @@
       "name": "documentMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3170,6 +3195,8 @@
         "set": "setDrawBase"
       },
       "brief": "Defines whether or not tab bar should draw its base",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "drawBase",
       "metaobject": {
         "constant": false,
@@ -3190,6 +3217,7 @@
       "name": "drawBase",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3210,6 +3238,8 @@
         "set": "setElideMode"
       },
       "brief": "How to elide text in the tab bar",
+      "default": "ElideNone",
+      "default_origin": "runtime",
       "js_name": "elideMode",
       "metaobject": {
         "constant": false,
@@ -3230,6 +3260,7 @@
       "name": "elideMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextElideMode",
@@ -3250,6 +3281,8 @@
         "set": "setExpanding"
       },
       "brief": "When expanding is true QTabBar will expand the tabs to use the empty space",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "expanding",
       "metaobject": {
         "constant": false,
@@ -3270,6 +3303,7 @@
       "name": "expanding",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3290,6 +3324,7 @@
         "set": "setIconSize"
       },
       "brief": "Size for icons in the tab bar",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -3310,6 +3345,7 @@
       "name": "iconSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -3330,6 +3366,8 @@
         "set": "setMovable"
       },
       "brief": "This property holds whether the user can move the tabs within the tabbar area",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "movable",
       "metaobject": {
         "constant": false,
@@ -3350,6 +3388,7 @@
       "name": "movable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3370,6 +3409,7 @@
         "set": "setSelectionBehaviorOnRemove"
       },
       "brief": "What tab should be set as current when removeTab is called if the removed tab is also the current tab",
+      "default": null,
       "js_name": "selectionBehaviorOnRemove",
       "metaobject": {
         "constant": false,
@@ -3390,6 +3430,7 @@
       "name": "selectionBehaviorOnRemove",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SelectionBehavior",
@@ -3410,6 +3451,8 @@
         "set": "setShape"
       },
       "brief": "The shape of the tabs in the tab bar",
+      "default": "RoundedNorth",
+      "default_origin": "runtime",
       "js_name": "shape",
       "metaobject": {
         "constant": false,
@@ -3430,6 +3473,7 @@
       "name": "shape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Shape",
@@ -3450,6 +3494,8 @@
         "set": "setTabsClosable"
       },
       "brief": "Whether or not a tab bar should place close buttons on each tab",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabsClosable",
       "metaobject": {
         "constant": false,
@@ -3470,6 +3516,7 @@
       "name": "tabsClosable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3490,6 +3537,8 @@
         "set": "setUsesScrollButtons"
       },
       "brief": "Whether or not a tab bar should use buttons to scroll tabs when it has many tabs",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "usesScrollButtons",
       "metaobject": {
         "constant": false,
@@ -3510,6 +3559,7 @@
       "name": "usesScrollButtons",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

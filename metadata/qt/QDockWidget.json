@@ -134,6 +134,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QDockWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QDockWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -799,6 +809,8 @@
         "set": "setAllowedAreas"
       },
       "brief": "Areas where the dock widget may be placed",
+      "default": "DockWidgetArea_Mask|AllDockWidgetAreas",
+      "default_origin": "runtime",
       "js_name": "allowedAreas",
       "metaobject": {
         "constant": false,
@@ -822,6 +834,7 @@
         "signal": "allowedAreasChanged(Qt::DockWidgetAreas)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DockWidgetAreas",
@@ -842,6 +855,8 @@
         "set": "setDockLocation"
       },
       "brief": "The current dock location, or Qt::NoDockLocation if this dock widget is floating or has no mainwindow parent",
+      "default": "NoDockWidgetArea",
+      "default_origin": "runtime",
       "js_name": "dockLocation",
       "metaobject": {
         "constant": false,
@@ -865,6 +880,7 @@
         "signal": "dockLocationChanged(Qt::DockWidgetArea)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DockWidgetArea",
@@ -885,6 +901,8 @@
         "set": "setFeatures"
       },
       "brief": "Whether the dock widget is movable, closable, and floatable",
+      "default": "DockWidgetClosable|DockWidgetMovable|DockWidgetFloatable",
+      "default_origin": "runtime",
       "js_name": "features",
       "metaobject": {
         "constant": false,
@@ -908,6 +926,7 @@
         "signal": "featuresChanged(QDockWidget::DockWidgetFeatures)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "DockWidgetFeatures",
@@ -928,6 +947,8 @@
         "set": "setFloating"
       },
       "brief": "Whether the dock widget is floating",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "floating",
       "metaobject": {
         "constant": false,
@@ -951,6 +972,7 @@
         "signal": "topLevelChanged(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -971,6 +993,8 @@
         "set": null
       },
       "brief": "The dock widget title (caption)",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowTitle",
       "metaobject": {
         "constant": false,
@@ -991,6 +1015,7 @@
       "name": "windowTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

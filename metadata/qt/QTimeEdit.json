@@ -80,6 +80,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTimeEdit",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTimeEdit:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [],
   "native": {
     "brief": "Widget for editing times based on the QDateTimeEdit widget",

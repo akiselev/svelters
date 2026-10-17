@@ -45,6 +45,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QErrorMessage",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QErrorMessage:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "protected",

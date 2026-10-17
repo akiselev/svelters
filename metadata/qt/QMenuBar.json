@@ -44,6 +44,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QMenuBar",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMenuBar:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1452,6 +1462,8 @@
         "set": "setDefaultUp"
       },
       "brief": "The popup orientation",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "defaultUp",
       "metaobject": {
         "constant": false,
@@ -1472,6 +1484,7 @@
       "name": "defaultUp",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1492,6 +1505,8 @@
         "set": "setNativeMenuBar"
       },
       "brief": "Whether or not a menubar will be used as a native menubar on platforms that support it",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "nativeMenuBar",
       "metaobject": {
         "constant": false,
@@ -1512,6 +1527,7 @@
       "name": "nativeMenuBar",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

@@ -121,6 +121,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QCalendarWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QCalendarWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1877,6 +1887,8 @@
         "set": "setDateEditAcceptDelay"
       },
       "brief": "The time an inactive date edit is shown before its contents are accepted",
+      "default": 1500,
+      "default_origin": "runtime",
       "js_name": "dateEditAcceptDelay",
       "metaobject": {
         "constant": false,
@@ -1897,6 +1909,7 @@
       "name": "dateEditAcceptDelay",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1917,6 +1930,8 @@
         "set": "setDateEditEnabled"
       },
       "brief": "Whether the date edit popup is enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "dateEditEnabled",
       "metaobject": {
         "constant": false,
@@ -1937,6 +1952,7 @@
       "name": "dateEditEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1957,6 +1973,8 @@
         "set": "setFirstDayOfWeek"
       },
       "brief": "Value identifying the day displayed in the first column",
+      "default": "Sunday",
+      "default_origin": "runtime",
       "js_name": "firstDayOfWeek",
       "metaobject": {
         "constant": false,
@@ -1977,6 +1995,7 @@
       "name": "firstDayOfWeek",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DayOfWeek",
@@ -1997,6 +2016,8 @@
         "set": "setGridVisible"
       },
       "brief": "Whether the table grid is displayed",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "gridVisible",
       "metaobject": {
         "constant": false,
@@ -2017,6 +2038,7 @@
       "name": "gridVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2037,6 +2059,8 @@
         "set": "setHorizontalHeaderFormat"
       },
       "brief": "The format of the horizontal header",
+      "default": "ShortDayNames",
+      "default_origin": "runtime",
       "js_name": "horizontalHeaderFormat",
       "metaobject": {
         "constant": false,
@@ -2057,6 +2081,7 @@
       "name": "horizontalHeaderFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "HorizontalHeaderFormat",
@@ -2077,6 +2102,7 @@
         "set": "setMaximumDate"
       },
       "brief": "The maximum date of the currently specified date range",
+      "default": null,
       "js_name": "maximumDate",
       "metaobject": {
         "constant": false,
@@ -2097,6 +2123,7 @@
       "name": "maximumDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
@@ -2117,6 +2144,7 @@
         "set": "setMinimumDate"
       },
       "brief": "The minimum date of the currently specified date range",
+      "default": null,
       "js_name": "minimumDate",
       "metaobject": {
         "constant": false,
@@ -2137,6 +2165,7 @@
       "name": "minimumDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
@@ -2157,6 +2186,8 @@
         "set": "setNavigationBarVisible"
       },
       "brief": "Whether the navigation bar is shown or not",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "navigationBarVisible",
       "metaobject": {
         "constant": false,
@@ -2177,6 +2208,7 @@
       "name": "navigationBarVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2197,6 +2229,7 @@
         "set": "setSelectedDate"
       },
       "brief": "The currently selected date",
+      "default": null,
       "js_name": "selectedDate",
       "metaobject": {
         "constant": false,
@@ -2217,6 +2250,7 @@
       "name": "selectedDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
@@ -2237,6 +2271,8 @@
         "set": "setSelectionMode"
       },
       "brief": "The type of selection the user can make in the calendar",
+      "default": "SingleSelection",
+      "default_origin": "runtime",
       "js_name": "selectionMode",
       "metaobject": {
         "constant": false,
@@ -2257,6 +2293,7 @@
       "name": "selectionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SelectionMode",
@@ -2277,6 +2314,8 @@
         "set": "setVerticalHeaderFormat"
       },
       "brief": "The format of the vertical header",
+      "default": "ISOWeekNumbers",
+      "default_origin": "runtime",
       "js_name": "verticalHeaderFormat",
       "metaobject": {
         "constant": false,
@@ -2297,6 +2336,7 @@
       "name": "verticalHeaderFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "VerticalHeaderFormat",

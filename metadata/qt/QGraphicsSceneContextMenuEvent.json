@@ -38,6 +38,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneContextMenuEvent",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneContextMenuEvent:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",

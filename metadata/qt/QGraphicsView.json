@@ -206,6 +206,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsView",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsView:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -4428,6 +4438,8 @@
         "set": "setAlignment"
       },
       "brief": "The alignment of the scene in the view when the whole scene is visible",
+      "default": "AlignCenter",
+      "default_origin": "runtime",
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -4448,6 +4460,7 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -4468,6 +4481,7 @@
         "set": "setBackgroundBrush"
       },
       "brief": "The background brush of the scene",
+      "default": null,
       "js_name": "backgroundBrush",
       "metaobject": {
         "constant": false,
@@ -4488,6 +4502,7 @@
       "name": "backgroundBrush",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
@@ -4508,6 +4523,8 @@
         "set": "setCacheMode"
       },
       "brief": "Which parts of the view are cached",
+      "default": "CacheNone",
+      "default_origin": "runtime",
       "js_name": "cacheMode",
       "metaobject": {
         "constant": false,
@@ -4528,6 +4545,7 @@
       "name": "cacheMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "CacheMode",
@@ -4548,6 +4566,8 @@
         "set": "setDragMode"
       },
       "brief": "The behavior for dragging the mouse over the scene while the left mouse button is pressed",
+      "default": "NoDrag",
+      "default_origin": "runtime",
       "js_name": "dragMode",
       "metaobject": {
         "constant": false,
@@ -4568,6 +4588,7 @@
       "name": "dragMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "DragMode",
@@ -4588,6 +4609,7 @@
         "set": "setForegroundBrush"
       },
       "brief": "The foreground brush of the scene",
+      "default": null,
       "js_name": "foregroundBrush",
       "metaobject": {
         "constant": false,
@@ -4608,6 +4630,7 @@
       "name": "foregroundBrush",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
@@ -4628,6 +4651,8 @@
         "set": "setInteractive"
       },
       "brief": "Whether the view allows scene interaction",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "interactive",
       "metaobject": {
         "constant": false,
@@ -4648,6 +4673,7 @@
       "name": "interactive",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4668,6 +4694,8 @@
         "set": "setOptimizationFlags"
       },
       "brief": "Flags that can be used to tune QGraphicsView's performance",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "optimizationFlags",
       "metaobject": {
         "constant": false,
@@ -4688,6 +4716,7 @@
       "name": "optimizationFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "OptimizationFlags",
@@ -4708,6 +4737,7 @@
         "set": "setRenderHints"
       },
       "brief": "The default render hints for the view",
+      "default": null,
       "js_name": "renderHints",
       "metaobject": {
         "constant": false,
@@ -4728,6 +4758,7 @@
       "name": "renderHints",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPainter::RenderHints",
@@ -4748,6 +4779,8 @@
         "set": "setResizeAnchor"
       },
       "brief": "How the view should position the scene when the view is resized",
+      "default": "NoAnchor",
+      "default_origin": "runtime",
       "js_name": "resizeAnchor",
       "metaobject": {
         "constant": false,
@@ -4768,6 +4801,7 @@
       "name": "resizeAnchor",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewportAnchor",
@@ -4788,6 +4822,8 @@
         "set": "setRubberBandSelectionMode"
       },
       "brief": "The behavior for selecting items with a rubber band selection rectangle",
+      "default": "IntersectsItemShape",
+      "default_origin": "runtime",
       "js_name": "rubberBandSelectionMode",
       "metaobject": {
         "constant": false,
@@ -4808,6 +4844,7 @@
       "name": "rubberBandSelectionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ItemSelectionMode",
@@ -4828,6 +4865,7 @@
         "set": "setSceneRect"
       },
       "brief": "The area of the scene visualized by this view",
+      "default": null,
       "js_name": "sceneRect",
       "metaobject": {
         "constant": false,
@@ -4848,6 +4886,7 @@
       "name": "sceneRect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRectF",
@@ -4868,6 +4907,8 @@
         "set": "setTransformationAnchor"
       },
       "brief": "How the view should position the scene during transformations",
+      "default": "AnchorViewCenter",
+      "default_origin": "runtime",
       "js_name": "transformationAnchor",
       "metaobject": {
         "constant": false,
@@ -4888,6 +4929,7 @@
       "name": "transformationAnchor",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewportAnchor",
@@ -4908,6 +4950,8 @@
         "set": "setViewportUpdateMode"
       },
       "brief": "How the viewport should update its contents",
+      "default": "MinimalViewportUpdate",
+      "default_origin": "runtime",
       "js_name": "viewportUpdateMode",
       "metaobject": {
         "constant": false,
@@ -4928,6 +4972,7 @@
       "name": "viewportUpdateMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewportUpdateMode",

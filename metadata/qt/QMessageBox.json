@@ -482,6 +482,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QMessageBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMessageBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -3490,6 +3505,8 @@
         "set": "setDetailedText"
       },
       "brief": "The text to be displayed in the details area",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "detailedText",
       "metaobject": {
         "constant": false,
@@ -3510,6 +3527,7 @@
       "name": "detailedText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3530,6 +3548,8 @@
         "set": "setIcon"
       },
       "brief": "The message box's icon",
+      "default": "NoIcon",
+      "default_origin": "runtime",
       "js_name": "icon",
       "metaobject": {
         "constant": false,
@@ -3550,6 +3570,7 @@
       "name": "icon",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Icon",
@@ -3570,6 +3591,7 @@
         "set": "setIconPixmap"
       },
       "brief": "The current icon",
+      "default": null,
       "js_name": "iconPixmap",
       "metaobject": {
         "constant": false,
@@ -3590,6 +3612,7 @@
       "name": "iconPixmap",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPixmap",
@@ -3610,6 +3633,8 @@
         "set": "setInformativeText"
       },
       "brief": "The informative text that provides a fuller description for the message",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "informativeText",
       "metaobject": {
         "constant": false,
@@ -3630,6 +3655,7 @@
       "name": "informativeText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3650,6 +3676,7 @@
         "set": "setOptions"
       },
       "brief": "Options that affect the look and feel of the dialog",
+      "default": null,
       "js_name": "options",
       "metaobject": {
         "constant": false,
@@ -3670,6 +3697,7 @@
       "name": "options",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Options",
@@ -3690,6 +3718,8 @@
         "set": "setStandardButtons"
       },
       "brief": "Collection of standard buttons in the message box",
+      "default": "NoButton",
+      "default_origin": "runtime",
       "js_name": "standardButtons",
       "metaobject": {
         "constant": false,
@@ -3710,6 +3740,7 @@
       "name": "standardButtons",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "StandardButtons",
@@ -3730,6 +3761,8 @@
         "set": "setText"
       },
       "brief": "The message box text to be displayed",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -3750,6 +3783,7 @@
       "name": "text",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3770,6 +3804,8 @@
         "set": "setTextFormat"
       },
       "brief": "The format of the text displayed by the message box",
+      "default": "AutoText",
+      "default_origin": "runtime",
       "js_name": "textFormat",
       "metaobject": {
         "constant": false,
@@ -3790,6 +3826,7 @@
       "name": "textFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextFormat",
@@ -3810,6 +3847,8 @@
         "set": "setTextInteractionFlags"
       },
       "brief": null,
+      "default": "TextSelectableByMouse|LinksAccessibleByMouse",
+      "default_origin": "runtime",
       "js_name": "textInteractionFlags",
       "metaobject": {
         "constant": false,
@@ -3830,6 +3869,7 @@
       "name": "textInteractionFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextInteractionFlags",

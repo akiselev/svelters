@@ -144,6 +144,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QFrame",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QFrame:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -744,6 +754,7 @@
         "set": "setFrameRect"
       },
       "brief": "The frame's rectangle",
+      "default": null,
       "js_name": "frameRect",
       "metaobject": {
         "constant": false,
@@ -764,6 +775,7 @@
       "name": "frameRect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRect",
@@ -784,6 +796,8 @@
         "set": "setFrameShadow"
       },
       "brief": "The frame shadow value from the frame style",
+      "default": "Plain",
+      "default_origin": "runtime",
       "js_name": "frameShadow",
       "metaobject": {
         "constant": false,
@@ -804,6 +818,7 @@
       "name": "frameShadow",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Shadow",
@@ -824,6 +839,8 @@
         "set": "setFrameShape"
       },
       "brief": "The frame shape value from the frame style",
+      "default": "NoFrame",
+      "default_origin": "runtime",
       "js_name": "frameShape",
       "metaobject": {
         "constant": false,
@@ -844,6 +861,7 @@
       "name": "frameShape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Shape",
@@ -864,6 +882,8 @@
         "set": null
       },
       "brief": "The width of the frame that is drawn",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "frameWidth",
       "metaobject": {
         "constant": false,
@@ -884,6 +904,7 @@
       "name": "frameWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -904,6 +925,8 @@
         "set": "setLineWidth"
       },
       "brief": "The line width",
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "lineWidth",
       "metaobject": {
         "constant": false,
@@ -924,6 +947,7 @@
       "name": "lineWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -944,6 +968,8 @@
         "set": "setMidLineWidth"
       },
       "brief": "The width of the mid-line",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "midLineWidth",
       "metaobject": {
         "constant": false,
@@ -964,6 +990,7 @@
       "name": "midLineWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

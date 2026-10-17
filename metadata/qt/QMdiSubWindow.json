@@ -78,6 +78,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QMdiSubWindow",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMdiSubWindow:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -1359,6 +1369,8 @@
         "set": "setKeyboardPageStep"
       },
       "brief": "Sets how far a widget should move or resize when using the keyboard page keys",
+      "default": 20,
+      "default_origin": "runtime",
       "js_name": "keyboardPageStep",
       "metaobject": {
         "constant": false,
@@ -1379,6 +1391,7 @@
       "name": "keyboardPageStep",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1399,6 +1412,8 @@
         "set": "setKeyboardSingleStep"
       },
       "brief": "Sets how far a widget should move or resize when using the keyboard arrow keys",
+      "default": 5,
+      "default_origin": "runtime",
       "js_name": "keyboardSingleStep",
       "metaobject": {
         "constant": false,
@@ -1419,6 +1434,7 @@
       "name": "keyboardSingleStep",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

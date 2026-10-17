@@ -129,6 +129,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QProgressDialog",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QProgressDialog:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1137,6 +1152,8 @@
         "set": "setAutoClose"
       },
       "brief": "Whether the dialog gets hidden by reset()",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "autoClose",
       "metaobject": {
         "constant": false,
@@ -1157,6 +1174,7 @@
       "name": "autoClose",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1177,6 +1195,8 @@
         "set": "setAutoReset"
       },
       "brief": "Whether the progress dialog calls reset() as soon as value() equals maximum()",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "autoReset",
       "metaobject": {
         "constant": false,
@@ -1197,6 +1217,7 @@
       "name": "autoReset",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1217,6 +1238,8 @@
         "set": "setLabelText"
       },
       "brief": "The label's text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "labelText",
       "metaobject": {
         "constant": false,
@@ -1237,6 +1260,7 @@
       "name": "labelText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1257,6 +1281,8 @@
         "set": "setMaximum"
       },
       "brief": "The highest value represented by the progress bar",
+      "default": 100,
+      "default_origin": "runtime",
       "js_name": "maximum",
       "metaobject": {
         "constant": false,
@@ -1277,6 +1303,7 @@
       "name": "maximum",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1297,6 +1324,8 @@
         "set": "setMinimum"
       },
       "brief": "The lowest value represented by the progress bar",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "minimum",
       "metaobject": {
         "constant": false,
@@ -1317,6 +1346,7 @@
       "name": "minimum",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1337,6 +1367,8 @@
         "set": "setMinimumDuration"
       },
       "brief": "The time that must pass before the dialog appears",
+      "default": 4000,
+      "default_origin": "runtime",
       "js_name": "minimumDuration",
       "metaobject": {
         "constant": false,
@@ -1357,6 +1389,7 @@
       "name": "minimumDuration",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1377,6 +1410,8 @@
         "set": "setValue"
       },
       "brief": "The current amount of progress made",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "value",
       "metaobject": {
         "constant": false,
@@ -1397,6 +1432,15 @@
       "name": "value",
       "notify": null,
       "origin": "qdoc",
+      "range": {
+        "follows": [
+          "minimum",
+          "maximum"
+        ],
+        "max": 100,
+        "min": 0,
+        "origin": "runtime"
+      },
       "role": "value",
       "type": {
         "native": "int",
@@ -1417,6 +1461,8 @@
         "set": null
       },
       "brief": "Whether the dialog was canceled",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "wasCanceled",
       "metaobject": {
         "constant": false,
@@ -1437,6 +1483,7 @@
       "name": "wasCanceled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

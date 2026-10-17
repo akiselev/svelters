@@ -186,6 +186,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScene",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScene:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -4477,6 +4487,7 @@
         "set": "setBackgroundBrush"
       },
       "brief": "The background brush of the scene",
+      "default": null,
       "js_name": "backgroundBrush",
       "metaobject": {
         "constant": false,
@@ -4497,6 +4508,7 @@
       "name": "backgroundBrush",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
@@ -4517,6 +4529,8 @@
         "set": "setBspTreeDepth"
       },
       "brief": "The depth of QGraphicsScene's BSP index tree",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "bspTreeDepth",
       "metaobject": {
         "constant": false,
@@ -4537,6 +4551,7 @@
       "name": "bspTreeDepth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -4557,6 +4572,8 @@
         "set": "setFocusOnTouch"
       },
       "brief": "Whether items gain focus when receiving a touch begin event",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "focusOnTouch",
       "metaobject": {
         "constant": false,
@@ -4577,6 +4594,7 @@
       "name": "focusOnTouch",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4597,6 +4615,7 @@
         "set": "setFont"
       },
       "brief": "The scene's default font",
+      "default": null,
       "js_name": "font",
       "metaobject": {
         "constant": false,
@@ -4617,6 +4636,7 @@
       "name": "font",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
@@ -4637,6 +4657,7 @@
         "set": "setForegroundBrush"
       },
       "brief": "The foreground brush of the scene",
+      "default": null,
       "js_name": "foregroundBrush",
       "metaobject": {
         "constant": false,
@@ -4657,6 +4678,7 @@
       "name": "foregroundBrush",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
@@ -4677,6 +4699,8 @@
         "set": "setItemIndexMethod"
       },
       "brief": "The item indexing method",
+      "default": "BspTreeIndex",
+      "default_origin": "runtime",
       "js_name": "itemIndexMethod",
       "metaobject": {
         "constant": false,
@@ -4697,6 +4721,7 @@
       "name": "itemIndexMethod",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ItemIndexMethod",
@@ -4717,6 +4742,8 @@
         "set": "setMinimumRenderSize"
       },
       "brief": "The minimal view-transformed size an item must have to be drawn",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "minimumRenderSize",
       "metaobject": {
         "constant": false,
@@ -4737,6 +4764,7 @@
       "name": "minimumRenderSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -4757,6 +4785,7 @@
         "set": "setPalette"
       },
       "brief": "The scene's default palette",
+      "default": null,
       "js_name": "palette",
       "metaobject": {
         "constant": false,
@@ -4777,6 +4806,7 @@
       "name": "palette",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPalette",
@@ -4797,6 +4827,7 @@
         "set": "setSceneRect"
       },
       "brief": "The scene rectangle; the bounding rectangle of the scene",
+      "default": null,
       "js_name": "sceneRect",
       "metaobject": {
         "constant": false,
@@ -4817,6 +4848,7 @@
       "name": "sceneRect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRectF",
@@ -4837,6 +4869,8 @@
         "set": "setStickyFocus"
       },
       "brief": "Whether clicking into the scene background will clear focus",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "stickyFocus",
       "metaobject": {
         "constant": false,
@@ -4857,6 +4891,7 @@
       "name": "stickyFocus",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

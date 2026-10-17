@@ -94,6 +94,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QInputDialog",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QInputDialog:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2202,9 +2217,11 @@
         "set": "setCancelButtonText"
       },
       "brief": "The text for the button used to cancel the dialog",
+      "default": null,
       "js_name": "cancelButtonText",
       "name": "cancelButtonText",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2225,9 +2242,11 @@
         "set": "setComboBoxEditable"
       },
       "brief": "Whether or not the combo box used in the input dialog is editable",
+      "default": null,
       "js_name": "comboBoxEditable",
       "name": "comboBoxEditable",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2248,9 +2267,11 @@
         "set": "setComboBoxItems"
       },
       "brief": "The items used in the combo box for the input dialog",
+      "default": null,
       "js_name": "comboBoxItems",
       "name": "comboBoxItems",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QStringList",
@@ -2271,9 +2292,11 @@
         "set": "setDoubleDecimals"
       },
       "brief": "Sets the precision of the double spinbox in decimals",
+      "default": null,
       "js_name": "doubleDecimals",
       "name": "doubleDecimals",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2294,9 +2317,11 @@
         "set": "setDoubleMaximum"
       },
       "brief": "The maximum double precision floating point value accepted as input",
+      "default": null,
       "js_name": "doubleMaximum",
       "name": "doubleMaximum",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "double",
@@ -2317,9 +2342,11 @@
         "set": "setDoubleMinimum"
       },
       "brief": "The minimum double precision floating point value accepted as input",
+      "default": null,
       "js_name": "doubleMinimum",
       "name": "doubleMinimum",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "double",
@@ -2340,9 +2367,11 @@
         "set": "setDoubleStep"
       },
       "brief": "The step by which the double value is increased and decreased",
+      "default": null,
       "js_name": "doubleStep",
       "name": "doubleStep",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "double",
@@ -2363,9 +2392,11 @@
         "set": "setDoubleValue"
       },
       "brief": "The current double precision floating point value accepted as input",
+      "default": null,
       "js_name": "doubleValue",
       "name": "doubleValue",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2386,9 +2417,11 @@
         "set": "setInputMode"
       },
       "brief": "The mode used for input",
+      "default": null,
       "js_name": "inputMode",
       "name": "inputMode",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "InputMode",
@@ -2409,9 +2442,11 @@
         "set": "setIntMaximum"
       },
       "brief": "The maximum integer value accepted as input",
+      "default": null,
       "js_name": "intMaximum",
       "name": "intMaximum",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2432,9 +2467,11 @@
         "set": "setIntMinimum"
       },
       "brief": "The minimum integer value accepted as input",
+      "default": null,
       "js_name": "intMinimum",
       "name": "intMinimum",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2455,9 +2492,11 @@
         "set": "setIntStep"
       },
       "brief": "The step by which the integer value is increased and decreased",
+      "default": null,
       "js_name": "intStep",
       "name": "intStep",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2478,9 +2517,11 @@
         "set": "setIntValue"
       },
       "brief": "The current integer value accepted as input",
+      "default": null,
       "js_name": "intValue",
       "name": "intValue",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2501,9 +2542,11 @@
         "set": "setLabelText"
       },
       "brief": "The label's text which describes what needs to be input",
+      "default": null,
       "js_name": "labelText",
       "name": "labelText",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2524,9 +2567,11 @@
         "set": "setOkButtonText"
       },
       "brief": "The text for the button used to accept the entry in the dialog",
+      "default": null,
       "js_name": "okButtonText",
       "name": "okButtonText",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2547,9 +2592,11 @@
         "set": "setOptions"
       },
       "brief": "The various options that affect the look and feel of the dialog",
+      "default": null,
       "js_name": "options",
       "name": "options",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "InputDialogOptions",
@@ -2570,9 +2617,11 @@
         "set": "setTextEchoMode"
       },
       "brief": "The echo mode for the text value",
+      "default": null,
       "js_name": "textEchoMode",
       "name": "textEchoMode",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QLineEdit::EchoMode",
@@ -2593,9 +2642,11 @@
         "set": "setTextValue"
       },
       "brief": "The text value for the input dialog",
+      "default": null,
       "js_name": "textValue",
       "name": "textValue",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

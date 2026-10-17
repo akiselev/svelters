@@ -78,6 +78,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGroupBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGroupBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -811,6 +821,8 @@
         "set": "setAlignment"
       },
       "brief": "The alignment of the group box title",
+      "default": "AlignLeft|AlignLeading",
+      "default_origin": "runtime",
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -831,6 +843,7 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -851,6 +864,8 @@
         "set": "setCheckable"
       },
       "brief": "Whether the group box has a checkbox in its title",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "checkable",
       "metaobject": {
         "constant": false,
@@ -871,6 +886,7 @@
       "name": "checkable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -891,6 +907,8 @@
         "set": "setChecked"
       },
       "brief": "Whether the group box is checked",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "checked",
       "metaobject": {
         "constant": false,
@@ -914,6 +932,7 @@
         "signal": "toggled(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -934,6 +953,8 @@
         "set": "setFlat"
       },
       "brief": "Whether the group box is painted flat or has a frame",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "flat",
       "metaobject": {
         "constant": false,
@@ -954,6 +975,7 @@
       "name": "flat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -974,6 +996,8 @@
         "set": "setTitle"
       },
       "brief": "The group box title text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "title",
       "metaobject": {
         "constant": false,
@@ -994,6 +1018,7 @@
       "name": "title",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

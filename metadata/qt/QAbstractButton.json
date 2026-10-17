@@ -44,6 +44,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -1359,6 +1366,7 @@
         "set": "setAutoExclusive"
       },
       "brief": "Whether auto-exclusivity is enabled",
+      "default": null,
       "js_name": "autoExclusive",
       "metaobject": {
         "constant": false,
@@ -1379,6 +1387,7 @@
       "name": "autoExclusive",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1399,6 +1408,7 @@
         "set": "setAutoRepeat"
       },
       "brief": "Whether autoRepeat is enabled",
+      "default": null,
       "js_name": "autoRepeat",
       "metaobject": {
         "constant": false,
@@ -1419,6 +1429,7 @@
       "name": "autoRepeat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1439,6 +1450,7 @@
         "set": "setAutoRepeatDelay"
       },
       "brief": "The initial delay of auto-repetition",
+      "default": null,
       "js_name": "autoRepeatDelay",
       "metaobject": {
         "constant": false,
@@ -1459,6 +1471,7 @@
       "name": "autoRepeatDelay",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1479,6 +1492,7 @@
         "set": "setAutoRepeatInterval"
       },
       "brief": "The interval of auto-repetition",
+      "default": null,
       "js_name": "autoRepeatInterval",
       "metaobject": {
         "constant": false,
@@ -1499,6 +1513,7 @@
       "name": "autoRepeatInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1519,6 +1534,7 @@
         "set": "setCheckable"
       },
       "brief": "Whether the button is checkable",
+      "default": null,
       "js_name": "checkable",
       "metaobject": {
         "constant": false,
@@ -1539,6 +1555,7 @@
       "name": "checkable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1559,6 +1576,7 @@
         "set": "setChecked"
       },
       "brief": "Whether the button is checked",
+      "default": null,
       "js_name": "checked",
       "metaobject": {
         "constant": false,
@@ -1582,6 +1600,7 @@
         "signal": "toggled(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1602,6 +1621,7 @@
         "set": "setDown"
       },
       "brief": "Whether the button is pressed down",
+      "default": null,
       "js_name": "down",
       "metaobject": {
         "constant": false,
@@ -1622,6 +1642,7 @@
       "name": "down",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1642,6 +1663,7 @@
         "set": "setIcon"
       },
       "brief": "The icon shown on the button",
+      "default": null,
       "js_name": "icon",
       "metaobject": {
         "constant": false,
@@ -1662,6 +1684,7 @@
       "name": "icon",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QIcon",
@@ -1682,6 +1705,7 @@
         "set": "setIconSize"
       },
       "brief": "The icon size used for this button",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -1702,6 +1726,7 @@
       "name": "iconSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -1722,6 +1747,7 @@
         "set": "setShortcut"
       },
       "brief": "The mnemonic associated with the button",
+      "default": null,
       "js_name": "shortcut",
       "metaobject": {
         "constant": false,
@@ -1742,6 +1768,7 @@
       "name": "shortcut",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QKeySequence",
@@ -1762,6 +1789,7 @@
         "set": "setText"
       },
       "brief": "The text shown on the button",
+      "default": null,
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -1782,6 +1810,7 @@
       "name": "text",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

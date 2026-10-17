@@ -281,6 +281,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QWizard",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QWizard:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2028,6 +2043,8 @@
         "set": "setCurrentId"
       },
       "brief": "The ID of the current page",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentId",
       "metaobject": {
         "constant": false,
@@ -2051,6 +2068,7 @@
         "signal": "currentIdChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2071,6 +2089,8 @@
         "set": "setOptions"
       },
       "brief": "The various options that affect the look and feel of the wizard",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "options",
       "metaobject": {
         "constant": false,
@@ -2091,6 +2111,7 @@
       "name": "options",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "WizardOptions",
@@ -2111,6 +2132,8 @@
         "set": "setStartId"
       },
       "brief": "The ID of the first page",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "startId",
       "metaobject": {
         "constant": false,
@@ -2131,6 +2154,7 @@
       "name": "startId",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2151,6 +2175,8 @@
         "set": "setSubTitleFormat"
       },
       "brief": "The text format used by page subtitles",
+      "default": "AutoText",
+      "default_origin": "runtime",
       "js_name": "subTitleFormat",
       "metaobject": {
         "constant": false,
@@ -2171,6 +2197,7 @@
       "name": "subTitleFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextFormat",
@@ -2191,6 +2218,8 @@
         "set": "setTitleFormat"
       },
       "brief": "The text format used by page titles",
+      "default": "AutoText",
+      "default_origin": "runtime",
       "js_name": "titleFormat",
       "metaobject": {
         "constant": false,
@@ -2211,6 +2240,7 @@
       "name": "titleFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextFormat",
@@ -2231,6 +2261,8 @@
         "set": "setWizardStyle"
       },
       "brief": "The look and feel of the wizard",
+      "default": "ClassicStyle",
+      "default_origin": "runtime",
       "js_name": "wizardStyle",
       "metaobject": {
         "constant": false,
@@ -2251,6 +2283,7 @@
       "name": "wizardStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "WizardStyle",

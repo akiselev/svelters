@@ -1,0 +1,23 @@
+{"schema": "svelters-verified/v1", "toolkit": "gtk", "version": "4.22.4", "entries": [
+{"fact": "svelters-api:v1:type:gtk:Gtk:Box:prop:spacing", "fingerprint": "07e95a5cde874007", "result": "pass", "test": "generated::verify::prop_box_spacing", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Box:slot:children", "fingerprint": "e056f754c37013cf", "result": "pass", "test": "generated::verify::slot_box_children", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:label", "fingerprint": "773013b38c87f8f4", "result": "pass", "test": "generated::verify::prop_button_label", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked", "fingerprint": "69ecf22f7506854f", "result": "pass", "test": "generated::verify::signal_button_clicked", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:text", "fingerprint": "09b537c3a23910e5", "result": "pass", "test": "generated::verify::echo_editable_text", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:text", "fingerprint": "09b537c3a23910e5", "result": "pass", "test": "generated::verify::prop_editable_text", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:changed", "fingerprint": "2d098ebc0e5e9d2b", "result": "pass", "test": "generated::verify::signal_editable_changed", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:notify::text", "fingerprint": "3136d888ea897ce9", "result": "pass", "test": "generated::verify::signal_editable_notify_text", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Entry:binding:text", "fingerprint": "3df4ac2501ba7e82", "result": "pass", "test": "generated::verify::binding_entry_text", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:placeholder-text", "fingerprint": "6ef454b5626fe171", "result": "pass", "test": "generated::verify::prop_entry_placeholder_text", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title", "fingerprint": "1d52bf0b599f7886", "result": "pass", "test": "generated::verify::prop_headerbar_title", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:end", "fingerprint": "66a0966464afaf7c", "result": "pass", "test": "generated::verify::slot_headerbar_end", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:start", "fingerprint": "1347cea50567263f", "result": "pass", "test": "generated::verify::slot_headerbar_start", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:title", "fingerprint": "143b234460110fb2", "result": "pass", "test": "generated::verify::slot_headerbar_title", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:label", "fingerprint": "148cc637bc63e985", "result": "pass", "test": "generated::verify::prop_label_label", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation", "fingerprint": "63d313dbd2010718", "result": "pass", "test": "generated::verify::prop_orientable_orientation", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:slot:child", "fingerprint": "b9d6357bfda0e1a9", "result": "pass", "test": "generated::verify::slot_scrolledwindow_child", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Window:method:present", "fingerprint": "a154546dac56aeba", "result": "pass", "test": "generated::verify::method_window_present", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:title", "fingerprint": "69ad40a290a938fe", "result": "pass", "test": "generated::verify::prop_window_title", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child", "fingerprint": "7d9b09269591c309", "result": "pass", "test": "generated::verify::slot_window_child", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar", "fingerprint": "b07557021d29c57c", "result": "pass", "test": "generated::verify::slot_window_titlebar", "version": "4.22.4"}
+]}

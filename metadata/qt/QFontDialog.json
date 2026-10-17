@@ -122,6 +122,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QFontDialog",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QFontDialog:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -677,6 +692,7 @@
         "set": "setCurrentFont"
       },
       "brief": "The current font of the dialog",
+      "default": null,
       "js_name": "currentFont",
       "metaobject": {
         "constant": false,
@@ -700,6 +716,7 @@
         "signal": "currentFontChanged(QFont)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
@@ -720,6 +737,7 @@
         "set": "setOptions"
       },
       "brief": "The various options that affect the look and feel of the dialog",
+      "default": null,
       "js_name": "options",
       "metaobject": {
         "constant": false,
@@ -740,6 +758,7 @@
       "name": "options",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "FontDialogOptions",

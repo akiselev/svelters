@@ -79,6 +79,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QCheckBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QCheckBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -516,6 +526,8 @@
         "set": "setTristate"
       },
       "brief": "Whether the checkbox is a tri-state checkbox",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tristate",
       "metaobject": {
         "constant": false,
@@ -536,6 +548,7 @@
       "name": "tristate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

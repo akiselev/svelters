@@ -46,6 +46,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QPinchGesture",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QPinchGesture:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -761,6 +771,7 @@
         "set": "setCenterPoint"
       },
       "brief": "The current center point",
+      "default": null,
       "js_name": "centerPoint",
       "metaobject": {
         "constant": false,
@@ -781,6 +792,7 @@
       "name": "centerPoint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
@@ -801,6 +813,8 @@
         "set": "setChangeFlags"
       },
       "brief": "The property of the gesture that has changed in the current step",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "changeFlags",
       "metaobject": {
         "constant": false,
@@ -821,6 +835,7 @@
       "name": "changeFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ChangeFlags",
@@ -841,6 +856,7 @@
         "set": "setLastCenterPoint"
       },
       "brief": "The last position of the center point recorded for this gesture",
+      "default": null,
       "js_name": "lastCenterPoint",
       "metaobject": {
         "constant": false,
@@ -861,6 +877,7 @@
       "name": "lastCenterPoint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
@@ -881,6 +898,8 @@
         "set": "setLastRotationAngle"
       },
       "brief": "The last reported angle covered by the gesture motion",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "lastRotationAngle",
       "metaobject": {
         "constant": false,
@@ -901,6 +920,7 @@
       "name": "lastRotationAngle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -921,6 +941,8 @@
         "set": "setLastScaleFactor"
       },
       "brief": "The last scale factor recorded for this gesture",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "lastScaleFactor",
       "metaobject": {
         "constant": false,
@@ -941,6 +963,7 @@
       "name": "lastScaleFactor",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -961,6 +984,8 @@
         "set": "setRotationAngle"
       },
       "brief": "The angle covered by the gesture motion",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "rotationAngle",
       "metaobject": {
         "constant": false,
@@ -981,6 +1006,7 @@
       "name": "rotationAngle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -1001,6 +1027,8 @@
         "set": "setScaleFactor"
       },
       "brief": "The current scale factor",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "scaleFactor",
       "metaobject": {
         "constant": false,
@@ -1021,6 +1049,7 @@
       "name": "scaleFactor",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -1041,6 +1070,7 @@
         "set": "setStartCenterPoint"
       },
       "brief": "The starting position of the center point",
+      "default": null,
       "js_name": "startCenterPoint",
       "metaobject": {
         "constant": false,
@@ -1061,6 +1091,7 @@
       "name": "startCenterPoint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
@@ -1081,6 +1112,8 @@
         "set": "setTotalChangeFlags"
       },
       "brief": "The property of the gesture that has change",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "totalChangeFlags",
       "metaobject": {
         "constant": false,
@@ -1101,6 +1134,7 @@
       "name": "totalChangeFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ChangeFlags",
@@ -1121,6 +1155,8 @@
         "set": "setTotalRotationAngle"
       },
       "brief": "The total angle covered by the gesture",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "totalRotationAngle",
       "metaobject": {
         "constant": false,
@@ -1141,6 +1177,7 @@
       "name": "totalRotationAngle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -1161,6 +1198,8 @@
         "set": "setTotalScaleFactor"
       },
       "brief": "The total scale factor",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "totalScaleFactor",
       "metaobject": {
         "constant": false,
@@ -1181,6 +1220,7 @@
       "name": "totalScaleFactor",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",

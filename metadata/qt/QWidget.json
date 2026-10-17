@@ -73,6 +73,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -10800,6 +10810,8 @@
         "set": "setAcceptDrops"
       },
       "brief": "Whether drop events are enabled for this widget",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "acceptDrops",
       "metaobject": {
         "constant": false,
@@ -10820,6 +10832,7 @@
       "name": "acceptDrops",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -10840,6 +10853,8 @@
         "set": "setAccessibleDescription"
       },
       "brief": "The widget's description as seen by assistive technologies",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "accessibleDescription",
       "metaobject": {
         "constant": false,
@@ -10860,6 +10875,7 @@
       "name": "accessibleDescription",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -10880,6 +10896,8 @@
         "set": "setAccessibleIdentifier"
       },
       "brief": "The widget's identifier as seen by assistive technologies",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "accessibleIdentifier",
       "metaobject": {
         "constant": false,
@@ -10900,6 +10918,7 @@
       "name": "accessibleIdentifier",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -10920,6 +10939,8 @@
         "set": "setAccessibleName"
       },
       "brief": "The widget's name as seen by assistive technologies",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "accessibleName",
       "metaobject": {
         "constant": false,
@@ -10940,6 +10961,7 @@
       "name": "accessibleName",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -10960,6 +10982,8 @@
         "set": "setAutoFillBackground"
       },
       "brief": "Whether the widget background is filled automatically",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoFillBackground",
       "metaobject": {
         "constant": false,
@@ -10980,6 +11004,7 @@
       "name": "autoFillBackground",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11000,6 +11025,7 @@
         "set": "setBaseSize"
       },
       "brief": "The base size of the widget",
+      "default": null,
       "js_name": "baseSize",
       "metaobject": {
         "constant": false,
@@ -11020,6 +11046,7 @@
       "name": "baseSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -11040,6 +11067,7 @@
         "set": null
       },
       "brief": "The bounding rectangle of the widget's children",
+      "default": null,
       "js_name": "childrenRect",
       "metaobject": {
         "constant": false,
@@ -11060,6 +11088,7 @@
       "name": "childrenRect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRect",
@@ -11080,6 +11109,7 @@
         "set": null
       },
       "brief": "The combined region occupied by the widget's children",
+      "default": null,
       "js_name": "childrenRegion",
       "metaobject": {
         "constant": false,
@@ -11100,6 +11130,7 @@
       "name": "childrenRegion",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRegion",
@@ -11120,6 +11151,8 @@
         "set": "setContextMenuPolicy"
       },
       "brief": "How the widget shows a context menu",
+      "default": "DefaultContextMenu",
+      "default_origin": "runtime",
       "js_name": "contextMenuPolicy",
       "metaobject": {
         "constant": false,
@@ -11140,6 +11173,7 @@
       "name": "contextMenuPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ContextMenuPolicy",
@@ -11160,6 +11194,7 @@
         "set": "setCursor"
       },
       "brief": "The cursor shape for this widget",
+      "default": null,
       "js_name": "cursor",
       "metaobject": {
         "constant": false,
@@ -11180,6 +11215,7 @@
       "name": "cursor",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QCursor",
@@ -11200,6 +11236,8 @@
         "set": "setEnabled"
       },
       "brief": "Whether the widget is enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "enabled",
       "metaobject": {
         "constant": false,
@@ -11220,6 +11258,7 @@
       "name": "enabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11240,6 +11279,8 @@
         "set": null
       },
       "brief": "Whether this widget (or its focus proxy) has the keyboard input focus",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "focus",
       "metaobject": {
         "constant": false,
@@ -11260,6 +11301,7 @@
       "name": "focus",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11280,6 +11322,8 @@
         "set": "setFocusPolicy"
       },
       "brief": "The way the widget accepts keyboard focus",
+      "default": "NoFocus",
+      "default_origin": "runtime",
       "js_name": "focusPolicy",
       "metaobject": {
         "constant": false,
@@ -11300,6 +11344,7 @@
       "name": "focusPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::FocusPolicy",
@@ -11320,6 +11365,7 @@
         "set": "setFont"
       },
       "brief": "The font currently set for the widget",
+      "default": null,
       "js_name": "font",
       "metaobject": {
         "constant": false,
@@ -11340,6 +11386,7 @@
       "name": "font",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
@@ -11360,6 +11407,7 @@
         "set": null
       },
       "brief": "Geometry of the widget relative to its parent including any window frame",
+      "default": null,
       "js_name": "frameGeometry",
       "metaobject": {
         "constant": false,
@@ -11380,6 +11428,7 @@
       "name": "frameGeometry",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRect",
@@ -11400,6 +11449,7 @@
         "set": null
       },
       "brief": "The size of the widget including any window frame",
+      "default": null,
       "js_name": "frameSize",
       "metaobject": {
         "constant": false,
@@ -11420,6 +11470,7 @@
       "name": "frameSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -11440,6 +11491,8 @@
         "set": null
       },
       "brief": "Whether the widget is shown in full screen mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "fullScreen",
       "metaobject": {
         "constant": false,
@@ -11460,6 +11513,7 @@
       "name": "fullScreen",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11480,6 +11534,7 @@
         "set": "setGeometry"
       },
       "brief": "The geometry of the widget relative to its parent and excluding the window frame",
+      "default": null,
       "js_name": "geometry",
       "metaobject": {
         "constant": false,
@@ -11500,6 +11555,7 @@
       "name": "geometry",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRect",
@@ -11520,6 +11576,8 @@
         "set": null
       },
       "brief": "The height of the widget excluding any window frame",
+      "default": 480,
+      "default_origin": "runtime",
       "js_name": "height",
       "metaobject": {
         "constant": false,
@@ -11540,6 +11598,7 @@
       "name": "height",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -11560,6 +11619,8 @@
         "set": "setInputMethodHints"
       },
       "brief": "What input method specific hints the widget has",
+      "default": "ImhNone",
+      "default_origin": "runtime",
       "js_name": "inputMethodHints",
       "metaobject": {
         "constant": false,
@@ -11580,6 +11641,7 @@
       "name": "inputMethodHints",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::InputMethodHints",
@@ -11600,6 +11662,8 @@
         "set": null
       },
       "brief": "Whether this widget's window is the active window",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "isActiveWindow",
       "metaobject": {
         "constant": false,
@@ -11620,6 +11684,7 @@
       "name": "isActiveWindow",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11640,6 +11705,8 @@
         "set": "setLayoutDirection"
       },
       "brief": "The layout direction for this widget",
+      "default": "LeftToRight",
+      "default_origin": "runtime",
       "js_name": "layoutDirection",
       "metaobject": {
         "constant": false,
@@ -11660,6 +11727,7 @@
       "name": "layoutDirection",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::LayoutDirection",
@@ -11680,6 +11748,7 @@
         "set": "setLocale"
       },
       "brief": "The widget's locale",
+      "default": null,
       "js_name": "locale",
       "metaobject": {
         "constant": false,
@@ -11700,6 +11769,7 @@
       "name": "locale",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QLocale",
@@ -11720,6 +11790,8 @@
         "set": null
       },
       "brief": "Whether this widget is maximized",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "maximized",
       "metaobject": {
         "constant": false,
@@ -11740,6 +11812,7 @@
       "name": "maximized",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11760,6 +11833,8 @@
         "set": "setMaximumHeight"
       },
       "brief": "The widget's maximum height in pixels",
+      "default": 16777215,
+      "default_origin": "runtime",
       "js_name": "maximumHeight",
       "metaobject": {
         "constant": false,
@@ -11780,6 +11855,7 @@
       "name": "maximumHeight",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -11800,6 +11876,7 @@
         "set": "setMaximumSize"
       },
       "brief": "The widget's maximum size in pixels",
+      "default": null,
       "js_name": "maximumSize",
       "metaobject": {
         "constant": false,
@@ -11820,6 +11897,7 @@
       "name": "maximumSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -11840,6 +11918,8 @@
         "set": "setMaximumWidth"
       },
       "brief": "The widget's maximum width in pixels",
+      "default": 16777215,
+      "default_origin": "runtime",
       "js_name": "maximumWidth",
       "metaobject": {
         "constant": false,
@@ -11860,6 +11940,7 @@
       "name": "maximumWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -11880,6 +11961,8 @@
         "set": null
       },
       "brief": "Whether this widget is minimized (iconified)",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "minimized",
       "metaobject": {
         "constant": false,
@@ -11900,6 +11983,7 @@
       "name": "minimized",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -11920,6 +12004,8 @@
         "set": "setMinimumHeight"
       },
       "brief": "The widget's minimum height in pixels",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "minimumHeight",
       "metaobject": {
         "constant": false,
@@ -11940,6 +12026,7 @@
       "name": "minimumHeight",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -11960,6 +12047,7 @@
         "set": "setMinimumSize"
       },
       "brief": "The widget's minimum size",
+      "default": null,
       "js_name": "minimumSize",
       "metaobject": {
         "constant": false,
@@ -11980,6 +12068,7 @@
       "name": "minimumSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -12000,6 +12089,7 @@
         "set": null
       },
       "brief": "The recommended minimum size for the widget",
+      "default": null,
       "js_name": "minimumSizeHint",
       "metaobject": {
         "constant": false,
@@ -12020,6 +12110,7 @@
       "name": "minimumSizeHint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -12040,6 +12131,8 @@
         "set": "setMinimumWidth"
       },
       "brief": "The widget's minimum width in pixels",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "minimumWidth",
       "metaobject": {
         "constant": false,
@@ -12060,6 +12153,7 @@
       "name": "minimumWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -12080,6 +12174,8 @@
         "set": null
       },
       "brief": "Whether the widget is a modal widget",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "modal",
       "metaobject": {
         "constant": false,
@@ -12100,6 +12196,7 @@
       "name": "modal",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -12120,6 +12217,8 @@
         "set": "setMouseTracking"
       },
       "brief": "Whether mouse tracking is enabled for the widget",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "mouseTracking",
       "metaobject": {
         "constant": false,
@@ -12140,6 +12239,7 @@
       "name": "mouseTracking",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -12160,6 +12260,7 @@
         "set": null
       },
       "brief": "The geometry of the widget as it will appear when shown as a normal (not maximized or full screen) top-level widget",
+      "default": null,
       "js_name": "normalGeometry",
       "metaobject": {
         "constant": false,
@@ -12180,6 +12281,7 @@
       "name": "normalGeometry",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRect",
@@ -12200,6 +12302,7 @@
         "set": "setPalette"
       },
       "brief": "The widget's palette",
+      "default": null,
       "js_name": "palette",
       "metaobject": {
         "constant": false,
@@ -12220,6 +12323,7 @@
       "name": "palette",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPalette",
@@ -12240,6 +12344,7 @@
         "set": null
       },
       "brief": "The position of the widget within its parent widget",
+      "default": null,
       "js_name": "pos",
       "metaobject": {
         "constant": false,
@@ -12260,6 +12365,7 @@
       "name": "pos",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPoint",
@@ -12280,6 +12386,7 @@
         "set": null
       },
       "brief": "The internal geometry of the widget excluding any window frame",
+      "default": null,
       "js_name": "rect",
       "metaobject": {
         "constant": false,
@@ -12300,6 +12407,7 @@
       "name": "rect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRect",
@@ -12320,6 +12428,7 @@
         "set": null
       },
       "brief": "The size of the widget excluding any window frame",
+      "default": null,
       "js_name": "size",
       "metaobject": {
         "constant": false,
@@ -12340,6 +12449,7 @@
       "name": "size",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -12360,6 +12470,7 @@
         "set": null
       },
       "brief": "The recommended size for the widget",
+      "default": null,
       "js_name": "sizeHint",
       "metaobject": {
         "constant": false,
@@ -12380,6 +12491,7 @@
       "name": "sizeHint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -12400,6 +12512,7 @@
         "set": "setSizeIncrement"
       },
       "brief": "The size increment of the widget",
+      "default": null,
       "js_name": "sizeIncrement",
       "metaobject": {
         "constant": false,
@@ -12420,6 +12533,7 @@
       "name": "sizeIncrement",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -12440,6 +12554,7 @@
         "set": "setSizePolicy"
       },
       "brief": "The default layout behavior of the widget",
+      "default": null,
       "js_name": "sizePolicy",
       "metaobject": {
         "constant": false,
@@ -12460,6 +12575,7 @@
       "name": "sizePolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizePolicy",
@@ -12480,6 +12596,8 @@
         "set": "setStatusTip"
       },
       "brief": "The widget's status tip",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "statusTip",
       "metaobject": {
         "constant": false,
@@ -12500,6 +12618,7 @@
       "name": "statusTip",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -12520,6 +12639,8 @@
         "set": "setStyleSheet"
       },
       "brief": "The widget's style sheet",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "styleSheet",
       "metaobject": {
         "constant": false,
@@ -12540,6 +12661,7 @@
       "name": "styleSheet",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -12560,6 +12682,8 @@
         "set": "setTabletTracking"
       },
       "brief": "Whether tablet tracking is enabled for the widget",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabletTracking",
       "metaobject": {
         "constant": false,
@@ -12580,6 +12704,7 @@
       "name": "tabletTracking",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -12600,6 +12725,8 @@
         "set": "setToolTip"
       },
       "brief": "The widget's tooltip",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "toolTip",
       "metaobject": {
         "constant": false,
@@ -12620,6 +12747,7 @@
       "name": "toolTip",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -12640,6 +12768,8 @@
         "set": "setToolTipDuration"
       },
       "brief": "The widget's tooltip duration",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "toolTipDuration",
       "metaobject": {
         "constant": false,
@@ -12660,6 +12790,7 @@
       "name": "toolTipDuration",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -12680,6 +12811,8 @@
         "set": "setUpdatesEnabled"
       },
       "brief": "Whether updates are enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "updatesEnabled",
       "metaobject": {
         "constant": false,
@@ -12700,6 +12833,7 @@
       "name": "updatesEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -12720,6 +12854,8 @@
         "set": "setVisible"
       },
       "brief": "Whether the widget is visible",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "visible",
       "metaobject": {
         "constant": false,
@@ -12740,6 +12876,7 @@
       "name": "visible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -12760,6 +12897,8 @@
         "set": "setWhatsThis"
       },
       "brief": "The widget's What's This help text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "whatsThis",
       "metaobject": {
         "constant": false,
@@ -12780,6 +12919,7 @@
       "name": "whatsThis",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -12800,6 +12940,8 @@
         "set": null
       },
       "brief": "The width of the widget excluding any window frame",
+      "default": 640,
+      "default_origin": "runtime",
       "js_name": "width",
       "metaobject": {
         "constant": false,
@@ -12820,6 +12962,7 @@
       "name": "width",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -12840,6 +12983,8 @@
         "set": "setWindowFilePath"
       },
       "brief": "The file path associated with a widget",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowFilePath",
       "metaobject": {
         "constant": false,
@@ -12860,6 +13005,7 @@
       "name": "windowFilePath",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -12880,9 +13026,11 @@
         "set": "setWindowFlags"
       },
       "brief": null,
+      "default": null,
       "js_name": "windowFlags",
       "name": "windowFlags",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::WindowFlags",
@@ -12903,6 +13051,7 @@
         "set": "setWindowIcon"
       },
       "brief": "The widget's icon",
+      "default": null,
       "js_name": "windowIcon",
       "metaobject": {
         "constant": false,
@@ -12926,6 +13075,7 @@
         "signal": "windowIconChanged(QIcon)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QIcon",
@@ -12946,6 +13096,8 @@
         "set": "setWindowIconText"
       },
       "brief": "The text to be displayed on the icon of a minimized window",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowIconText",
       "metaobject": {
         "constant": false,
@@ -12969,6 +13121,7 @@
         "signal": "windowIconTextChanged(QString)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -12989,6 +13142,8 @@
         "set": "setWindowModality"
       },
       "brief": "Which windows are blocked by the modal widget",
+      "default": "NonModal",
+      "default_origin": "runtime",
       "js_name": "windowModality",
       "metaobject": {
         "constant": false,
@@ -13009,6 +13164,7 @@
       "name": "windowModality",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::WindowModality",
@@ -13029,6 +13185,8 @@
         "set": "setWindowModified"
       },
       "brief": "Whether the document shown in the window has unsaved changes",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "windowModified",
       "metaobject": {
         "constant": false,
@@ -13049,6 +13207,7 @@
       "name": "windowModified",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -13069,6 +13228,8 @@
         "set": "setWindowOpacity"
       },
       "brief": "Level of opacity for the window",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "windowOpacity",
       "metaobject": {
         "constant": false,
@@ -13089,6 +13250,7 @@
       "name": "windowOpacity",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "double",
@@ -13109,6 +13271,8 @@
         "set": "setWindowTitle"
       },
       "brief": "The window title (caption)",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowTitle",
       "metaobject": {
         "constant": false,
@@ -13132,6 +13296,7 @@
         "signal": "windowTitleChanged(QString)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -13152,6 +13317,8 @@
         "set": null
       },
       "brief": "The x coordinate of the widget relative to its parent including any window frame",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "x",
       "metaobject": {
         "constant": false,
@@ -13172,6 +13339,7 @@
       "name": "x",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -13192,6 +13360,8 @@
         "set": null
       },
       "brief": "The y coordinate of the widget relative to its parent and including any window frame",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "y",
       "metaobject": {
         "constant": false,
@@ -13212,6 +13382,7 @@
       "name": "y",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
