@@ -1,0 +1,32 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Module"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "6 (last 6, 2 steps) x18 mounted 1"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "+1"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "+5"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Factor"
+ }
+]

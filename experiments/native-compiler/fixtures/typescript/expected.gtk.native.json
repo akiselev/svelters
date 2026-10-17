@@ -1,0 +1,72 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Typed"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "3 shown (all)"
+ },
+ {
+  "class": "GtkBox",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 3,
+  "text": "✓ Milk"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "Toggle"
+ },
+ {
+  "class": "GtkBox",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 3,
+  "text": "· Eggs"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "Toggle"
+ },
+ {
+  "class": "GtkBox",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 3,
+  "text": "· Bread"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "Toggle"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Add"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Filter"
+ }
+]
