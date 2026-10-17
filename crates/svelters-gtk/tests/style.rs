@@ -165,6 +165,10 @@ fn opacity_goes_through_the_widget_api() {
 
 #[test]
 fn token_changes_rewrite_one_provider_and_var_follows() {
+    // CSS custom properties (`:root`, `var()`) arrived in GTK 4.16.
+    if svelters_gtk::testing::skip_below_gtk(4, 16) {
+        return;
+    }
     on_gtk(|| {
         let (h, label, _b) = app();
         sheet(&h, "@tokens", ":root {\n  --sv-fg: #102030;\n}\n");
@@ -179,6 +183,10 @@ fn token_changes_rewrite_one_provider_and_var_follows() {
 
 #[test]
 fn the_scheme_drives_media_queries_in_every_provider() {
+    // `@media (prefers-color-scheme)` and GtkCssProvider:prefers-color-scheme arrived in GTK 4.20.
+    if svelters_gtk::testing::skip_below_gtk(4, 20) {
+        return;
+    }
     on_gtk(|| {
         let (h, label, _b) = app();
         sheet(&h, "S", "label.m { color: #111111; }\n@media (prefers-color-scheme: dark) {\n  label.m { color: #eeeeee; }\n}\n");

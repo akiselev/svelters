@@ -1067,6 +1067,11 @@ impl Inner {
         if !lookup::in_chain(kind, p.kind) {
             return None;
         }
+        // A property newer than the running GTK is unavailable (no descriptor), with the reason.
+        if let Err(e) = crate::compat::require(p.since, &format!("property {}:{}", KINDS[p.kind as usize - 1].gtype, p.name)) {
+            self.set_error(e);
+            return None;
+        }
         let mut table = self.types.borrow_mut();
         let readable = p.flags & F_READ != 0;
         let writable = p.flags & F_WRITE != 0;

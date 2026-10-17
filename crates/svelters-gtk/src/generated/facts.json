@@ -952,7 +952,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",
-   "fingerprint": "883990797455a64e",
+   "fingerprint": "95bfe851313780cd",
    "kind": "Calendar",
    "name": "date",
    "section": "properties",

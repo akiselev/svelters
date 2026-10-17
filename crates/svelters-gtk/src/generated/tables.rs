@@ -479,7 +479,7 @@ pub static PROPS: [PropInfo; 1316] = [
     PropInfo { kind: 34, name: "icon-name", js_name: "icon-name", ty: ValueTy::Str, gtype: "gchararray", flags: 19, echo: &[], via: "", target: "", since: (0, 0) },
     PropInfo { kind: 34, name: "label", js_name: "label", ty: ValueTy::Str, gtype: "gchararray", flags: 19, echo: &[], via: "", target: "", since: (0, 0) },
     PropInfo { kind: 34, name: "use-underline", js_name: "use-underline", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[], via: "", target: "", since: (0, 0) },
-    PropInfo { kind: 36, name: "date", js_name: "date", ty: ValueTy::Boxed, gtype: "GDateTime", flags: 19, echo: &[], via: "", target: "", since: (0, 0) },
+    PropInfo { kind: 36, name: "date", js_name: "date", ty: ValueTy::Boxed, gtype: "GDateTime", flags: 19, echo: &[], via: "", target: "", since: (4, 16) },
     PropInfo { kind: 36, name: "day", js_name: "day", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &["notify::day", "day-selected"], via: "", target: "", since: (0, 0) },
     PropInfo { kind: 36, name: "month", js_name: "month", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &[], via: "", target: "", since: (0, 0) },
     PropInfo { kind: 36, name: "show-day-names", js_name: "show-day-names", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[], via: "", target: "", since: (0, 0) },

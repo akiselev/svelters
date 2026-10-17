@@ -9,6 +9,13 @@ The project is being rebuilt (v2).
 
 The 2021 prototype is preserved at the `v1-legacy` tag.
 
+## Toolkit versions
+
+| Toolkit | Supported | CI |
+| --- | --- | --- |
+| GTK | **4.14 or newer**, one build: kinds and properties newer than 4.14 are looked up at run time and refused with a "needs GTK x.y" error on older GTK ([notes](docs/notes/fg1-gtk-compat.md)). Needs GLib 2.80 (`girepository-2.0`). | Ubuntu 24.04 (GTK 4.14) and Arch (latest) |
+| Qt | Qt 6 | Qt 6.11 |
+
 ## Layout
 
 | Path | What |

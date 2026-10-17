@@ -277,14 +277,21 @@ fn variants_dates_and_string_forms() {
 
         // GDateTime <-> a Date (epoch milliseconds typed DATETIME): GtkCalendar:date
         let c = h.create("Calendar");
-        let slot = h.prop_desc(c, "date").unwrap().params[0].clone();
-        assert_eq!((slot.tag, slot.ty), (SVL_F64, SVL_T_DATETIME));
         let ms = 1_700_000_123_456.0;
-        h.set_value(c, "date", &Value::DateTime(ms)).unwrap();
-        let dt = h.obj(c).property::<glib::DateTime>("date");
-        assert_eq!(dt.to_unix(), 1_700_000_123);
-        let Value::DateTime(back) = h.get_value(c, "date") else { panic!("datetime") };
-        assert!((back - ms).abs() < 1.0, "{back} vs {ms}");
+        if svelters_gtk::compat::has((4, 16)) {
+            let slot = h.prop_desc(c, "date").unwrap().params[0].clone();
+            assert_eq!((slot.tag, slot.ty), (SVL_F64, SVL_T_DATETIME));
+            h.set_value(c, "date", &Value::DateTime(ms)).unwrap();
+            let dt = h.obj(c).property::<glib::DateTime>("date");
+            assert_eq!(dt.to_unix(), 1_700_000_123);
+            let Value::DateTime(back) = h.get_value(c, "date") else { panic!("datetime") };
+            assert!((back - ms).abs() < 1.0, "{back} vs {ms}");
+        } else {
+            // GtkCalendar:date is GTK 4.16: undescribed, and refused with a version error.
+            assert!(h.prop_desc(c, "date").is_none());
+            let e = h.set_value(c, "date", &Value::DateTime(ms)).unwrap_err();
+            assert!(e.contains("property GtkCalendar:date needs GTK 4.16"), "{e}");
+        }
 
         // string forms: a shortcut trigger and a GFile (path or URI)
         let sc = h.create("Shortcut");

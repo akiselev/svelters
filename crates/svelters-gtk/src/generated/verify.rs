@@ -2141,9 +2141,12 @@ fn signal_calendar_notify_day() {
     });
 }
 
-/// property Calendar.date (JS date, round trip): GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test
+/// property Calendar.date (JS date, round trip): GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test; the property is GTK 4.16 (absent at run time on 4.14, GIR has no version)
 #[test]
 fn prop_calendar_date() {
+    if crate::testing::skip_below_gtk(4, 16) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("calendar");
