@@ -18,7 +18,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
 | A1 API surface + galleries | IN PROGRESS | | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |
 | X1 object returns + GTK GI calls | IN PROGRESS | | borrowed handles with stable identity; GTK dynamic method invocation via GIRepository/libffi; picks gaps from metadata/A1-GAPS.md |
-| X2 sync handlers + frame clock | IN PROGRESS | | call_sync, signal results via event-object flags, request_frame (GdkFrameClock / Qt); picks gaps from metadata/A1-GAPS.md |
+| X2 sync handlers + frame clock | DONE | ba5bb65 | call_sync with event-object results (e.result / preventDefault), close-request per-event veto, key handled on GTK+Qt, rAF on GdkFrameClock / QWindow::requestUpdate; ABI v2.1 additive; 127/127 nextest; listen phases deferred (listen_ex proposal) |
 | P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
 | M2 dev loop | QUEUED | | |
 | M3 metadata + codegen | QUEUED | | |

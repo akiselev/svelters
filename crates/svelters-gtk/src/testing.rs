@@ -22,10 +22,27 @@ fn gtk_thread() -> &'static Mutex<Sender<Job>> {
     static TX: OnceLock<Mutex<Sender<Job>>> = OnceLock::new();
     TX.get_or_init(|| {
         let (tx, rx) = channel::<Job>();
+        // GDK's Vulkan path under Xvfb (lavapipe) asserts in gdk_vulkan_context_surface_detach
+        // when windows close mid-present; tests default to cairo. An explicit GSK_RENDERER wins.
+        if std::env::var_os("GSK_RENDERER").is_none() {
+            // SAFETY: runs once, before the GTK thread exists; test code never reads the
+            // environment concurrently with this.
+            unsafe { std::env::set_var("GSK_RENDERER", "cairo") };
+        }
         std::thread::Builder::new()
             .name("gtk-main".into())
             .spawn(move || {
-                if let Err(e) = gtk::init() {
+                // Opening the display can fail transiently when many test processes hit one
+                // Xvfb at once; retry briefly before giving up.
+                let mut init = gtk::init();
+                for _ in 0..4 {
+                    if init.is_ok() {
+                        break;
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(250));
+                    init = gtk::init();
+                }
+                if let Err(e) = init {
                     eprintln!("gtk::init failed (run under xvfb-run): {e}");
                     return; // dropping rx makes every on_gtk fail loudly
                 }
