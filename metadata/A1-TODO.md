@@ -18,6 +18,10 @@ Changes since the inventory was written (2026-10-17):
   `sync_required` (see `docs/notes/x2-sync-frame.md`, "What A1 should annotate"); items marked G5
   with bool results are now doable. Qt input widgets in your batch can get `synthetic: key_press`.
 
+- X1 is merged: GTK methods are callable through GIRepository (`dispatch: dynamic` annotations
+  with `args`/`expect`), and object getters on both toolkits return borrowed handles. Items marked
+  G2 or G3 are now doable (except out params, callbacks and arrays: S2).
+
 Common to every batch:
 - **Facts to annotate**, by column: P = properties (JS name, sample, echo suppression), S =
   signals (trigger, handler result), M = methods, C = child slots (ops + effects = ownership),

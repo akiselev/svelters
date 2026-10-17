@@ -68,7 +68,10 @@ class Model:
             k = self.kind_id[d["id"]]
             self.props += [(k, p) for p in sorted(d["properties"], key=lambda p: p["name"])]
             self.signals += [(k, s) for s in sorted(d["signals"], key=lambda s: s["name"])]
-            self.methods += [(k, m) for m in sorted(d["methods"], key=lambda m: m["name"]) if "annotated" in m]
+            # Only zero-arg generated calls go into METHODS; `dispatch: dynamic` methods are called
+            # through GIRepository (X1) and only get verification tests.
+            self.methods += [(k, m) for m in sorted(d["methods"], key=lambda m: m["name"])
+                             if "annotated" in m and m.get("dispatch", "zero_arg") == "zero_arg"]
             for s in d.get("children", {}).get("slots", []):
                 self.slots.append((k, s, d))
         self.slots.sort(key=lambda t: (t[0], t[1]["name"]))
@@ -508,6 +511,23 @@ def prop_sample(m: Model, d: dict, p: dict) -> tuple[str, str]:
     raise Untestable(f"property {p['name']}: type {ref} has no generated test (supported: string, bool, integers, floats, enums)")
 
 
+def v_lit(a) -> str:
+    """A testing::V literal for a dynamic-call argument."""
+    if a is None:
+        return "V::Null"
+    if isinstance(a, bool):
+        return f"V::Bool({str(a).lower()})"
+    if isinstance(a, int):
+        return f"V::I64({a})"
+    if isinstance(a, float):
+        return f"V::F64({a!r})"
+    if isinstance(a, str):
+        return f"V::Str({rs(a)}.into())"
+    if isinstance(a, list):
+        return "V::List(vec![" + ", ".join(v_lit(x) for x in a) + "])"
+    raise Untestable(f"no V literal for {a!r}")
+
+
 def ann_prov(r: dict) -> str:
     return prov_str((r.get("annotated") or {}).get("provenance") or r.get("provenance") or "")
 
@@ -717,6 +737,15 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
             def mk(me=me, d=d, jn=jn):
                 if not me.get("expect"):
                     raise Untestable("method annotation needs `expect`")
+                if me.get("dispatch") == "dynamic":
+                    args = ", ".join(v_lit(a) for a in me.get("args", []))
+                    return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']} (dynamic GI call): {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
+        {me.get('setup', '')}
+        let r = h.call_args(o, {rs(jn)}, &[{args}]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!({me['expect']}, "postcondition: {me['expect'].replace('"', "'")}");
+""")]
                 return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']}: {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
         {me.get('setup', '')}
         h.call(o, {rs(jn)}).unwrap();

@@ -119,20 +119,17 @@ pub fn slot_for(table: &mut TypeTable, t: Type, ps: Option<&glib::ParamSpec>) ->
     } else if t == strv() {
         SlotDesc::new(SVL_LIST).typed(table.id(t)).flags(SVL_D_NULLABLE)
     } else if t.is_a(Type::OBJECT) || is_iface(t) {
-        let kind = lookup::kind_by_name(t.name());
-        if kind != 0 {
-            let mut s = SlotDesc::new(SVL_HANDLE).typed(kind).flags(SVL_D_NULLABLE);
-            if has_string_form(t) {
-                s = s.flags(SVL_D_STRING_FORM);
-            }
-            s
+        // Widgets and objects with a kind travel as handles (ours owned, the rest borrowed);
+        // other objects (icons, layouts) are opaque BOXED values.
+        let mut s = if lookup::is_handle_type(t) {
+            SlotDesc::new(SVL_HANDLE).typed(lookup::nearest_kind(t)).flags(SVL_D_NULLABLE)
         } else {
-            let mut s = SlotDesc::new(SVL_BOXED).typed(table.id(t)).flags(SVL_D_NULLABLE);
-            if has_string_form(t) {
-                s = s.flags(SVL_D_STRING_FORM);
-            }
-            s
+            SlotDesc::new(SVL_BOXED).typed(table.id(t)).flags(SVL_D_NULLABLE)
+        };
+        if has_string_form(t) {
+            s = s.flags(SVL_D_STRING_FORM);
         }
+        s
     } else if let Some(rec) = Rec::of(t) {
         let mut s = SlotDesc::new(SVL_RECORD).typed(table.id(t)).flags(SVL_D_NULLABLE);
         if rec == Rec::Color {
