@@ -10,6 +10,14 @@ use svelters_abi::{svl_backend, svl_host};
 unsafe extern "C" {
     fn svl_qt_backend() -> *const svl_backend;
     fn svl_qt_set_host(host: *const svl_host);
+    fn svl_qt_dump(h: u64) -> *const std::ffi::c_char;
+    fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
+    fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
+    fn svl_qt_close(h: u64) -> i32;
+    fn svl_qt_run_later(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void, ms: i32);
+    fn svl_qt_on_first_paint(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void);
+    fn svl_qt_set_timing(on: i32);
+    fn svl_qt_take_timing(ns: *mut u64, calls: *mut u64);
 }
 
 /// The Qt backend vtable. `run` creates the `QApplication` (if none exists) and owns the loop.
@@ -24,4 +32,106 @@ pub fn backend() -> &'static svl_backend {
 /// `host` must stay valid for as long as the backend can call it.
 pub unsafe fn set_host(host: *const svl_host) {
     unsafe { svl_qt_set_host(host) }
+}
+
+/// Tooling hooks of the generated backend (not part of the backend ABI). Call them on the Qt
+/// main thread only.
+pub mod hooks {
+    use super::*;
+    use std::ffi::{CString, c_void};
+
+    /// The widget tree below handle `h` in layout order, as a JSON array of `{d, class, text}`.
+    pub fn dump(h: u64) -> String {
+        // SAFETY: the returned pointer is a NUL-terminated buffer valid until the next call; it is copied here.
+        unsafe { std::ffi::CStr::from_ptr(svl_qt_dump(h)) }.to_string_lossy().into_owned()
+    }
+
+    /// Grabs the widget behind `h`; saves a PNG when `path` is given (otherwise it only forces
+    /// layout and rendering).
+    pub fn grab_png(h: u64, path: Option<&str>) -> Result<(), String> {
+        let p = path.map(CString::new).transpose().map_err(|e| e.to_string())?;
+        let ptr = p.as_ref().map_or(std::ptr::null(), |c| c.as_ptr());
+        match unsafe { svl_qt_grab_png(h, ptr) } {
+            0 => Ok(()),
+            _ => Err(format!("cannot grab handle {h}")),
+        }
+    }
+
+    /// Types `text` into the `QLineEdit` behind `h` with key events, replacing its content.
+    pub fn type_text(h: u64, text: &str) -> Result<(), String> {
+        let t = CString::new(text).map_err(|e| e.to_string())?;
+        match unsafe { svl_qt_type_text(h, t.as_ptr()) } {
+            0 => Ok(()),
+            _ => Err(format!("handle {h} is not a line edit")),
+        }
+    }
+
+    /// Closes the top-level widget behind `h` like the window's close button.
+    pub fn close(h: u64) -> Result<(), String> {
+        match unsafe { svl_qt_close(h) } {
+            0 => Ok(()),
+            _ => Err(format!("cannot close handle {h}")),
+        }
+    }
+
+    /// Runs `f` on the Qt loop after `ms` milliseconds (creates the `QApplication` if needed).
+    pub fn run_later(ms: i32, f: Box<dyn FnOnce()>) {
+        extern "C" fn tramp(ud: *mut c_void) {
+            // SAFETY: `ud` is the `Box<Box<dyn FnOnce()>>` leaked below; Qt calls it exactly once.
+            let f = unsafe { Box::from_raw(ud as *mut Box<dyn FnOnce()>) };
+            f();
+        }
+        let ud = Box::into_raw(Box::new(f)) as *mut c_void;
+        unsafe { svl_qt_run_later(tramp, ud, ms) };
+    }
+
+    /// Calls `f` when the first widget paints (creates the `QApplication` if needed).
+    pub fn on_first_paint(f: Box<dyn FnOnce()>) {
+        extern "C" fn tramp(ud: *mut c_void) {
+            // SAFETY: as in `run_later`; the filter calls it once.
+            let f = unsafe { Box::from_raw(ud as *mut Box<dyn FnOnce()>) };
+            f();
+        }
+        let ud = Box::into_raw(Box::new(f)) as *mut c_void;
+        unsafe { svl_qt_on_first_paint(tramp, ud) };
+    }
+
+    pub fn set_timing(on: bool) {
+        unsafe { svl_qt_set_timing(on as i32) }
+    }
+
+    /// `(nanoseconds, calls)` spent inside backend calls since the last take.
+    pub fn take_timing() -> (u64, u64) {
+        let (mut ns, mut calls) = (0, 0);
+        unsafe { svl_qt_take_timing(&mut ns, &mut calls) };
+        (ns, calls)
+    }
+}
+
+/// Minimal libtest command line for `harness = false` tests that must run on the main thread
+/// (Qt), so `cargo nextest` can list and run them: `--list [--format terse] [--ignored]` prints
+/// `<name>: test`, and a run executes `body` when no filter is given or `name` matches one.
+pub fn run_as_test(name: &str, body: impl FnOnce()) {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--list") {
+        if !args.iter().any(|a| a == "--ignored") {
+            println!("{name}: test");
+        }
+        return;
+    }
+    let mut filters = Vec::new();
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        match a.as_str() {
+            "--test-threads" | "--format" | "--color" | "--skip" | "--logfile" => {
+                it.next();
+            }
+            f if !f.starts_with('-') => filters.push(f),
+            _ => {}
+        }
+    }
+    let selected = filters.is_empty() || filters.iter().any(|f| name == *f || name.contains(*f));
+    if selected {
+        body();
+    }
 }

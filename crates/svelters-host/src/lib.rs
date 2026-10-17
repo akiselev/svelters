@@ -19,7 +19,7 @@ mod engine;
 mod quickjs;
 pub mod testing;
 
-pub use crate::core::{ConsoleLine, HostConfig};
+pub use crate::core::{ConsoleLine, HostConfig, Timing};
 pub use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
 
 use crate::core::{Core, Sched};
@@ -42,6 +42,11 @@ struct Callbacks {
 impl HostCallbacks for Callbacks {
     fn post_event(&self, h: svl_handle, signal: svl_id, args: &[Value]) {
         self.core.push_event(h, signal, args.to_vec());
+        // A live backend reports a native event from its loop and expects the host to schedule
+        // the checkpoint that delivers it. Scripted backends call `checkpoint` themselves.
+        if !self.core.cfg.scripted {
+            self.core.backend().wake();
+        }
     }
 
     fn checkpoint(&self) {
@@ -134,6 +139,21 @@ impl<'a> Host<'a> {
     /// Drains captured `console.*` output.
     pub fn take_console(&self) -> Vec<ConsoleLine> {
         self.core.take_console()
+    }
+
+    /// True when no events are queued and no timers are pending (and JS is not running).
+    pub fn is_idle(&self) -> bool {
+        self.core.is_idle()
+    }
+
+    /// Number of checkpoints that ran so far.
+    pub fn checkpoint_count(&self) -> u64 {
+        self.core.checkpoint_count()
+    }
+
+    /// Returns and resets the time split counters (all zero unless `HostConfig::timing`).
+    pub fn take_timing(&self) -> Timing {
+        self.core.take_timing()
     }
 
     /// Setting this flag from any thread interrupts the running script once.

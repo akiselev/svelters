@@ -8,6 +8,7 @@ mod convert;
 pub mod generated;
 mod lookup;
 pub mod testing;
+pub mod timing;
 mod util;
 
 pub use backend::GtkBackend;
