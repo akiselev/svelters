@@ -357,6 +357,7 @@ enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };   /* listen_ex flags; 4 i
 - Support is per backend and per signal. A combination that has no honest native meaning fails with an error that names the reason; see "Listener phases per backend" in `docs/notes/x3-childattr-listen.md`.
 - The op log gets one more word on `listen` lines (`listen #1 key-pressed on after+capture`, only when flags are set) and one line type `attr #<parent> #<child> <name> <json>` (`null` = reset).
 
+
 ### Non-widget kinds: menus and actions (X4, no ABI change)
 
 Menu nodes are ordinary kinds of the existing ops; nothing is added to the vtable. The conventions both backends follow:
@@ -371,6 +372,32 @@ Menu nodes are ordinary kinds of the existing ops; nothing is added to the vtabl
 - **Signals.** `activate(checked)` (a click, Enter or the shortcut) and `toggled(checked)` (the check state changed because of the user). Writing `checked` from JS never posts `toggled` for that action (no echo). In a radio `group` the user's pick posts `toggled(false)` for the previous member and `toggled(true)` for the new one; Qt also posts `toggled(false)` for the previous member when JS selects another one (the member really changed state).
 - **Radio.** Actions of one parent with the same `group` name are exclusive; each keeps its own `checked`. GTK: one string-state `GSimpleAction` per (parent, group). Qt: an exclusive `QActionGroup` per (parent, group), a child of the parent.
 - **Methods.** `contextmenu.popup(...)` and `popdown()` (never a blocking `exec`). GTK takes `popup(x, y)`; Qt takes a `Point` record.
+
+### ABI v2.3 additive (X6: styling)
+
+One optional member appended after `listen_ex` (a backend without it answers every styling op with "styling is not supported by this backend"). No existing member changes. Design: `plans/milestones/X6-styling.md`, user guide: `docs/site` styling page.
+
+```c
+/* backend, appended after listen_ex */
+int (*style)(void *self, uint32_t op, svl_handle h, const svl_value *v);
+```
+
+`v` is an `SVL_STR` or `SVL_NULL` (clear). The return value is `>= 0` on success and `< 0` on error with `last_error`. Fields inside one string are separated by `\x01` (`SVL_STYLE_SEP`). JS reaches it as `host.style(op, handle, text)`, which returns the integer.
+
+| Op | `h` | Payload | Meaning |
+| --- | --- | --- | --- |
+| `SVL_STYLE_TARGET` 0 | 0 | none | Returns the dialect the backend renders: `1` CSS (GTK), `2` QSS (Qt), `0` none. The log backend and TestHost answer `1`. JS then renders and sends only that dialect. |
+| `SVL_STYLE_CLASSES` 1 | widget | `a b c` | The element's user classes (the `class` attribute with Svelte's scope hash, plus `sv-k-<tag>` for kinds whose CSS name / Qt class another kind shares). GTK diffs against the previous set with `add_css_class`/`remove_css_class` so the widget's own classes (`text-button`, `toggle`) survive. Qt sets the dynamic property `class` to `"<QtClass> a b c"` and re-polishes (`.QPushButton` keeps matching; see `docs/notes/styling-gtk-css-qss.md` 3.2). |
+| `SVL_STYLE_NAME` 2 | widget | `id` | The `id` attribute: `gtk_widget_set_name` / `setObjectName`, so `#id` selectors match. |
+| `SVL_STYLE_INLINE` 3 | widget | declaration lines | `style=` / `style:` translated to the backend's dialect, one `prop: value;` per line. GTK dedupes by content into a shared class (`sv-s<hash>`) in an append-only inline provider flushed once per main-loop turn. Qt sets `".QClass {\n...}"` as the widget's own sheet. `NULL` removes it. |
+| `SVL_STYLE_OPACITY` 4 | widget | `0`..`1` | Inline `opacity` through the widget API (`gtk_widget_set_opacity`, `QGraphicsOpacityEffect`), never CSS. |
+| `SVL_STYLE_SHEET` 5 | 0 | `id\x01text` | Install or replace the component sheet `id`. `id` alone (no separator) removes it; `NULL` clears every sheet. `@tokens` is the token layer (GTK: a `:root { --sv-*: v }` provider below the component providers; Qt does not get it: tokens are substituted before sending). GTK: one `GtkCssProvider` per id. Qt: a map of id to text, concatenated in registration order into the application stylesheet, set once per main-loop turn. |
+| `SVL_STYLE_SCHEME` 6 | 0 | `light\|dark` then `\x01role=#rrggbb`... | GTK: sets `prefers-color-scheme` on every provider it owns (so `@media (prefers-color-scheme: dark)` in component CSS applies) and the toolkit's dark preference. Qt: sets the application `QPalette` from the role pairs (`window`, `button`, `windowText`, `text`, `buttonText`, `base`, `highlight`, `highlightedText`, `placeholderText`) derived from the token set, then re-polishes. |
+
+Ordering: the first styling use of an app sends `SHEET` with `NULL` (so a hot-reloaded bundle drops sheets of modules that no longer exist), then `SCHEME`, then the token layer, then sheets, then per-element ops. Apps that never use styling send nothing. Dead widget handles are a no-op in the host.
+
+Op log lines: `style #h classes|name|inline|opacity <json|null>`, `style sheet "<id>" <json text|null>` (id `*` = clear), `style scheme "<scheme>" <number of palette pairs>`.
+
 
 Later ABI additions, not part of v2:
 

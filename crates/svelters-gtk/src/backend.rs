@@ -31,6 +31,7 @@ use svelters_abi::*;
 mod extras;
 mod menus;
 pub(crate) use menus::signal_name as menus_signal_name;
+mod style;
 mod vlist;
 use extras::CallErr;
 
@@ -112,6 +113,9 @@ pub(crate) struct Inner {
     vlists: RefCell<HashMap<u64, Rc<vlist::VList>>>,
     /// Menu and action nodes (see `menus.rs`).
     menus: RefCell<HashMap<u64, menus::Node>>,
+    /// Styling state (see `style.rs`).
+    style: RefCell<style::StyleState>,
+    style_flush_queued: Cell<bool>,
 }
 
 /// Slot value recorded for an event controller attached to a widget (it is not in `SLOTS`).
@@ -414,6 +418,7 @@ impl Inner {
     /// caller may be inside a signal emission: a toplevel is hidden now and destroyed from an
     /// idle, and the table's strong reference is dropped from an idle.
     fn destroy(self: &Rc<Self>, h: u64) -> Res<()> {
+        self.style_forget(h);
         // A boxed handle: drop the held value (idempotent).
         if self.state.borrow_mut().boxed.remove(&h).is_some() {
             return Ok(());
@@ -1079,6 +1084,8 @@ impl GtkBackend {
             files: RefCell::new(HashMap::new()),
             vlists: RefCell::new(HashMap::new()),
             menus: RefCell::new(HashMap::new()),
+            style: RefCell::default(),
+            style_flush_queued: Cell::new(false),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -1107,8 +1114,14 @@ impl GtkBackend {
             set_child_attr: Some(b_set_child_attr),
             get_child_attr: Some(b_get_child_attr),
             listen_ex: Some(b_listen_ex),
+            style: Some(b_style),
         });
         Ok(GtkBackend { vtable, ctl })
+    }
+
+    /// CSS parse errors reported by the styling providers since the last call.
+    pub fn take_style_errors(&self) -> Vec<String> {
+        self.ctl.local.take_style_errors()
     }
 
     /// The C ABI vtable; valid while `self` lives.
@@ -1304,6 +1317,26 @@ unsafe extern "C" fn b_listen(p: *mut c_void, h: svl_handle, signal: svl_id, on:
 
 unsafe extern "C" fn b_listen_ex(p: *mut c_void, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> c_int {
     run_int(unsafe { ctl(p) }, |i| i.listen_ex(h, signal, on, flags))
+}
+
+unsafe extern "C" fn b_style(p: *mut c_void, op: u32, h: svl_handle, v: *const svl_value) -> c_int {
+    let c = unsafe { ctl(p) };
+    let text: Option<String> = if v.is_null() || unsafe { (*v).tag } != SVL_STR {
+        None
+    } else {
+        unsafe { convert::as_str(&*v) }.map(|s| s.into_owned())
+    };
+    match catch_unwind(AssertUnwindSafe(|| c.local.style_op(op, h, text.as_deref()))) {
+        Ok(Ok(n)) => n.max(0),
+        Ok(Err(e)) => {
+            c.local.set_error(e);
+            -1
+        }
+        Err(_) => {
+            c.local.set_error("internal panic in svelters-gtk".into());
+            -1
+        }
+    }
 }
 
 unsafe extern "C" fn b_set_child_attr(p: *mut c_void, parent: svl_handle, child: svl_handle, attr: svl_id, v: *const svl_value) -> c_int {

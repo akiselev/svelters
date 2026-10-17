@@ -110,10 +110,12 @@ Order seen on the production renderer: script, `$effect.pre`, host ops, `mount()
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `class`, `class:x`, `class={{...}}` | compiles, JS-only today | The renderer drops `class`, `style` and `id`. Mapping to style classes is **planned**. |
-| `style`, `style:x` | compiles, JS-only today | **planned** as a structured channel. |
+| `class`, `class:x`, `class={{...}}` | works | The class string is diffed and forwarded: GTK css classes, Qt `class` property. See [Styling](/guides/styling/). |
+| `id` | works | Widget name (GTK) and object name (Qt), for `#id` selectors. |
+| `style`, `style:x` | works | A structured channel: parsed, checked against the portable vocabulary and sent as declarations. `opacity` goes through the widget API. |
 | `<style>` with `css: 'injected'` | forbidden | |
-| `<style>` (external CSS) | compiles | Not translated to GTK CSS or QSS yet. **planned**. See [Styling](/guides/styling/). |
+| `<style>` (external CSS) | works | Scoped by Svelte, translated at build time to GTK CSS and QSS with diagnostics, carried in the bundle as data. `@native gtk { }` and `@native qt { }` pass through. |
+| `--sv-*` tokens, dark scheme | works | `setTokens` and `setColorScheme` from `@svelters/renderer/style`. |
 
 ## Motion
 

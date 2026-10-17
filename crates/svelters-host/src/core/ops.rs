@@ -611,6 +611,16 @@ impl Core {
         })
     }
 
+    /// A styling op (ABI v2.3). `h == 0` ops are app-wide; a dead widget handle is a no-op.
+    pub(crate) fn op_style(&self, op: u32, h: svl_handle, text: Option<&str>) -> Result<i32, OpError> {
+        self.timed(|| {
+            if h != 0 && self.live_kind(h)?.is_none() {
+                return Ok(0);
+            }
+            self.backend.style(op, h, text).map_err(|e| self.backend_err(e))
+        })
+    }
+
     pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
         self.timed(|| {
             let k = match self.live_kind(h)? {

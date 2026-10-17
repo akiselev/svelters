@@ -14,6 +14,10 @@ unsafe extern "C" {
     fn svl_qt_test_throw_next();
     fn svl_qt_native_prop(h: u64, name: *const std::ffi::c_char, on_layout: i32) -> *const std::ffi::c_char;
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
+    fn svl_qt_pixel(h: u64, x: i32, y: i32) -> i32;
+    fn svl_qt_palette_color(h: u64, background: i32) -> i32;
+    fn svl_qt_app_stylesheet() -> *const std::ffi::c_char;
+    fn svl_qt_opacity(h: u64) -> f64;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_close(h: u64) -> i32;
     fn svl_qt_grid_cell(grid: u64, child: u64, row: *mut i32, col: *mut i32, row_span: *mut i32, col_span: *mut i32) -> i32;
@@ -95,6 +99,33 @@ pub mod hooks {
             0 => Ok(()),
             _ => Err(format!("cannot grab handle {h}")),
         }
+    }
+
+    /// A rendered pixel of the widget behind `h` as 0xRRGGBB (from `grab()`), or None when out of range.
+    pub fn pixel(h: u64, x: i32, y: i32) -> Option<u32> {
+        match unsafe { svl_qt_pixel(h, x, y) } {
+            v if v >= 0 => Some(v as u32),
+            _ => None,
+        }
+    }
+
+    /// The widget's foreground (or background) palette colour after QSS, 0xRRGGBB.
+    pub fn palette_color(h: u64, background: bool) -> Option<u32> {
+        match unsafe { svl_qt_palette_color(h, background as i32) } {
+            v if v >= 0 => Some(v as u32),
+            _ => None,
+        }
+    }
+
+    /// The application stylesheet currently set.
+    pub fn app_stylesheet() -> String {
+        // SAFETY: NUL-terminated buffer valid until the next call; copied here.
+        unsafe { std::ffi::CStr::from_ptr(svl_qt_app_stylesheet()) }.to_string_lossy().into_owned()
+    }
+
+    /// The opacity of the widget's `QGraphicsOpacityEffect` (1.0 without one).
+    pub fn opacity(h: u64) -> f64 {
+        unsafe { svl_qt_opacity(h) }
     }
 
     /// Types `text` into the `QLineEdit` behind `h` with key events, replacing its content.

@@ -125,7 +125,7 @@ Four P lanes ran in parallel once the ABI was agreed, then integrated in P5. Sta
 | M6 release binding linker | QUEUED | tree-shaken native roots to thin generated bindings |
 | M7 egui | QUEUED | egui backend |
 
-Later: styling, accessibility, devtools, packaging, upstream-compat automation, ecosystem integrations.
+Later: accessibility, devtools, packaging, upstream-compat automation, ecosystem integrations.
 
 ## P5 measurements
 

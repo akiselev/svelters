@@ -1,0 +1,49 @@
+style sheet "*" null
+style scheme "light" 0
+style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style sheet "src/App.svelte" ".app.svelte-1n46o8q {\n  background-color: var(--sv-bg);\n  background-image: none;\n}\n.card.svelte-1n46o8q {\n  margin: var(--sv-space-3);\n  padding: var(--sv-space-3);\n  background-color: var(--sv-surface);\n  border: 1px solid var(--sv-border);\n  border-radius: var(--sv-radius);\n  background-image: none;\n}\n.title.svelte-1n46o8q {\n  color: var(--sv-fg);\n  font-size: 14pt;\n}\n.title.big.svelte-1n46o8q {\n  font-weight: bold;\n}\nbutton.sv-k-button.primary.svelte-1n46o8q {\n  background-color: var(--sv-accent);\n  color: var(--sv-accent-fg);\n  border-radius: 6px;\n  padding: 6px 14px;\n  background-image: none;\n}\nbutton.sv-k-button.primary.svelte-1n46o8q:hover {\n  background-color: var(--sv-accent-hover);\n  background-image: none;\n}\nbutton.sv-k-button.primary.active.svelte-1n46o8q {\n  border: 2px solid var(--sv-danger);\n}\nentry.sv-k-entry.field.svelte-1n46o8q {\n  color: var(--sv-fg);\n}\nentry.sv-k-entry.field.svelte-1n46o8q:focus {\n  border-color: var(--sv-accent);\n}\n@media (prefers-color-scheme: dark) {\n.card.svelte-1n46o8q {\n  border-color: #666;\n}\n}\nbutton.text-button { min-height: 24px; }\n"
+create window #1
+set #1 title "Styles"
+style #1 classes "sv-k-window app svelte-1n46o8q"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 8
+style #2 classes "sv-k-box card svelte-1n46o8q"
+create label #3
+style #3 classes "sv-k-label title svelte-1n46o8q"
+set #3 label "Styled"
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+style #4 classes "sv-k-button primary svelte-1n46o8q"
+style #4 name "toggle"
+set #4 label "Toggle"
+insert #2 #4 before=end slot=default
+create entry #5
+set #5 placeholder "type here"
+style #5 classes "sv-k-entry field svelte-1n46o8q"
+insert #2 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+style #6 classes "sv-k-button"
+set #6 label "Theme"
+insert #2 #6 before=end slot=default
+create button #7
+listen #7 clicked on
+style #7 classes "sv-k-button"
+set #7 label "Accent"
+insert #2 #7 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #4 clicked []
+style #3 classes "sv-k-label title svelte-1n46o8q big"
+style #3 inline "color: #c01c28;"
+style #4 classes "sv-k-button primary svelte-1n46o8q active"
+event #6 clicked []
+event #7 clicked []
+style sheet "@tokens" ":root {\n  --sv-bg: #242424;\n  --sv-fg: #ffffff;\n  --sv-surface: #303030;\n  --sv-border: #4a4a4a;\n  --sv-accent: #26a269;\n  --sv-accent-hover: #4a90e8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #9a9996;\n  --sv-danger: #ff7b63;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style scheme "dark" 0
+event #4 clicked []
+style #3 classes "sv-k-label title svelte-1n46o8q"
+style #3 inline null
+style #4 classes "sv-k-button primary svelte-1n46o8q"

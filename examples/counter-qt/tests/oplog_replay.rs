@@ -216,6 +216,39 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 }
                 attrs += 1;
             }
+            // ABI v2.3 styling. The logs speak the CSS dialect, so sheet and inline text (which Qt
+            // would read as QSS) is skipped; classes, names and opacity replay as they are.
+            "style" => {
+                let text = |s: &str| match parse_val(s).value() {
+                    Value::Str(t) => Some(t),
+                    _ => None,
+                };
+                match parts[1] {
+                    "sheet" => {
+                        b.style(SVL_STYLE_SHEET, 0, None).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                    }
+                    "scheme" => {
+                        let Some(sc) = text(parts[2]) else { panic!("{ctx}: scheme") };
+                        b.style(SVL_STYLE_SCHEME, 0, Some(&sc)).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                    }
+                    _ => {
+                        let op = match parts[2] {
+                            "classes" => SVL_STYLE_CLASSES,
+                            "name" => SVL_STYLE_NAME,
+                            "opacity" => SVL_STYLE_OPACITY,
+                            _ => continue,
+                        };
+                        let t = text(parts[3]);
+                        b.style(op, hd(parts[1]), t.as_deref()).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                        if op == SVL_STYLE_CLASSES {
+                            let cls = counter_qt::hooks::native_prop(hd(parts[1]), "class", false);
+                            for c in t.as_deref().unwrap_or("").split_whitespace() {
+                                assert!(cls.contains(c), "{ctx}: class {c} missing in {cls}");
+                            }
+                        }
+                    }
+                }
+            }
             "event" => {
                 let (o, sig) = (hd(parts[1]), parts[2]);
                 let sid = b.resolve(NameKind::Signal, kind(o), sig);

@@ -162,6 +162,18 @@ typedef enum svl_name_kind {
 
 /* ABI v2.2: listen_ex flags, and where they ride back in the signal id of post_event/call_sync. */
 enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };
+
+/* ABI v2.3 `style` ops. */
+enum {
+  SVL_STYLE_TARGET = 0,   /* h = 0, v = NULL: returns the dialect below */
+  SVL_STYLE_CLASSES = 1,  /* widget h: space separated user classes */
+  SVL_STYLE_NAME = 2,     /* widget h: widget name / object name (the `id` attribute) */
+  SVL_STYLE_INLINE = 3,   /* widget h: declaration lines in the backend's dialect */
+  SVL_STYLE_OPACITY = 4,  /* widget h: "0".."1" through the widget API */
+  SVL_STYLE_SHEET = 5,    /* h = 0: "id\x01text" component sheet; "@tokens" is the token layer */
+  SVL_STYLE_SCHEME = 6    /* h = 0: "light"|"dark" then "\x01role=#rrggbb" palette pairs */
+};
+enum { SVL_STYLE_TARGET_NONE = 0, SVL_STYLE_TARGET_CSS = 1, SVL_STYLE_TARGET_QSS = 2 };
 #define SVL_SIGNAL_FLAGS_SHIFT 28
 #define SVL_SIGNAL_ID_MASK 0x0FFFFFFFu
 
@@ -278,6 +290,11 @@ typedef struct svl_backend {
   /* Like `listen` with SVL_LISTEN_* flags; events of that connection carry
      `signal | flags << SVL_SIGNAL_FLAGS_SHIFT` in post_event/call_sync. */
   int (*listen_ex)(void *self, svl_handle h, svl_id signal, bool on, uint32_t flags);
+
+  /* ABI v2.3 (X6 styling; may be NULL). One member, many ops: `op` is SVL_STYLE_*, `v` is an
+     SVL_STR (or SVL_NULL to clear). Returns >= 0 on success; SVL_STYLE_TARGET returns the dialect
+     (SVL_STYLE_TARGET_CSS / _QSS / _NONE). Payload formats: plans/architecture/backend-abi.md. */
+  int (*style)(void *self, uint32_t op, svl_handle h, const svl_value *v);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

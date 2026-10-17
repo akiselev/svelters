@@ -55,3 +55,11 @@ harness = false
 [[test]]
 name = "lists_e2e"
 harness = false
+
+[[test]]
+name = "style"
+harness = false
+
+[[test]]
+name = "host_style"
+harness = false
