@@ -1,0 +1,85 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Passed as argument to various keybinding signals for moving the cursor position.",
+    "file": "gtk/gtkenums.h",
+    "line": 352,
+    "md": "Passed as argument to various keybinding signals for moving the\ncursor position."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MovementStep",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "buffer_ends": {
+      "brief": "Move to ends of the buffer",
+      "file": "gtk/gtkenums.h",
+      "line": 362,
+      "md": "Move to ends of the buffer"
+    },
+    "display_line_ends": {
+      "brief": "Move to either end of a line",
+      "file": "gtk/gtkenums.h",
+      "line": 358,
+      "md": "Move to either end of a line"
+    },
+    "display_lines": {
+      "brief": "Move up or down lines (wrapped lines)",
+      "file": "gtk/gtkenums.h",
+      "line": 357,
+      "md": "Move up or down lines (wrapped lines)"
+    },
+    "horizontal_pages": {
+      "brief": "Move horizontally by pages",
+      "file": "gtk/gtkenums.h",
+      "line": 363,
+      "md": "Move horizontally by pages"
+    },
+    "logical_positions": {
+      "brief": "Move forward or back by graphemes",
+      "file": "gtk/gtkenums.h",
+      "line": 354,
+      "md": "Move forward or back by graphemes"
+    },
+    "pages": {
+      "brief": "Move by pages",
+      "file": "gtk/gtkenums.h",
+      "line": 361,
+      "md": "Move by pages"
+    },
+    "paragraph_ends": {
+      "brief": "Move to either end of a paragraph",
+      "file": "gtk/gtkenums.h",
+      "line": 360,
+      "md": "Move to either end of a paragraph"
+    },
+    "paragraphs": {
+      "brief": "Move up or down paragraphs (newline-ended lines)",
+      "file": "gtk/gtkenums.h",
+      "line": 359,
+      "md": "Move up or down paragraphs (newline-ended lines)"
+    },
+    "visual_positions": {
+      "brief": "Move left or right by graphemes",
+      "file": "gtk/gtkenums.h",
+      "line": 355,
+      "md": "Move left or right by graphemes"
+    },
+    "words": {
+      "brief": "Move forward or back by words",
+      "file": "gtk/gtkenums.h",
+      "line": 356,
+      "md": "Move forward or back by words"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

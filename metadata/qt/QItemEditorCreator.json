@@ -28,7 +28,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -42,6 +42,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QItemEditorCreator",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QItemEditorCreator:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -99,7 +106,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray valuePropertyName() const override",
       "since": null,

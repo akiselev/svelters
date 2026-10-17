@@ -43,6 +43,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsAnchorLayout",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsAnchorLayout:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -76,7 +83,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         },
         {
@@ -96,7 +103,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         }
       ],
@@ -153,7 +160,7 @@
             "native": "Qt::Orientations",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::Orientation>"
           }
         }
       ],
@@ -200,7 +207,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         },
         {
@@ -220,7 +227,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -267,7 +274,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         },
         {
@@ -287,7 +294,7 @@
             "native": "Qt::AnchorPoint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AnchorPoint>"
           }
         }
       ],
@@ -476,7 +483,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -624,7 +631,7 @@
             "native": "Qt::SizeHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SizeHint>"
           }
         },
         {
@@ -634,7 +641,7 @@
             "native": "const QSizeF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -642,7 +649,7 @@
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
       "since": null,

@@ -1,0 +1,252 @@
+{
+  "doc": {
+    "brief": "The QAbstractButton class is the abstract base class of button widgets, providing functionality common to buttons.",
+    "index_brief": "The abstract base class of button widgets, providing functionality common to buttons",
+    "url": "https://doc.qt.io/qt-6/qabstractbutton.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractButton(QWidget *parent)": {
+      "brief": "Constructs an abstract button with a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#QAbstractButton"
+    },
+    "QButtonGroup * group() const": {
+      "brief": "Returns the group that this button belongs to.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#group"
+    },
+    "QIcon icon() const": {
+      "brief": "This property holds the icon shown on the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#icon-prop"
+    },
+    "QKeySequence shortcut() const": {
+      "brief": "This property holds the mnemonic associated with the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#shortcut-prop"
+    },
+    "QSize iconSize() const": {
+      "brief": "This property holds the icon size used for this button.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#iconSize-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the text shown on the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+    },
+    "bool autoExclusive() const": {
+      "brief": "This property holds whether auto-exclusivity is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoExclusive-prop"
+    },
+    "bool autoRepeat() const": {
+      "brief": "This property holds whether autoRepeat is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeat-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#event"
+    },
+    "bool hitButton(const QPoint &pos) const": {
+      "brief": "Returns `true` if *pos* is inside the clickable button rectangle; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#hitButton"
+    },
+    "bool isCheckable() const": {
+      "brief": "This property holds whether the button is checkable",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checkable-prop"
+    },
+    "bool isChecked() const": {
+      "brief": "This property holds whether the button is checked",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checked-prop"
+    },
+    "bool isDown() const": {
+      "brief": "This property holds whether the button is pressed down",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#down-prop"
+    },
+    "int autoRepeatDelay() const": {
+      "brief": "This property holds the initial delay of auto-repetition",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeatDelay-prop"
+    },
+    "int autoRepeatInterval() const": {
+      "brief": "This property holds the interval of auto-repetition",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeatInterval-prop"
+    },
+    "void animateClick()": {
+      "brief": "Performs an animated click: the button is pressed immediately, and released 100ms later.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#animateClick"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#changeEvent"
+    },
+    "void checkStateSet()": {
+      "brief": "This virtual handler is called when [setChecked](xref:qt:QAbstractButton)() is used, unless it is called from within [nextCheckState](xref:qt:QAbstractButton)().",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checkStateSet"
+    },
+    "void click()": {
+      "brief": "Performs a click.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#click"
+    },
+    "void clicked(bool checked)": {
+      "brief": "This signal is emitted when the button is activated (i.e., pressed down then released while the mouse cursor is inside the button), when the shortcut key is typed, or when...",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#clicked"
+    },
+    "void focusInEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#focusOutEvent"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#keyReleaseEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#mouseReleaseEvent"
+    },
+    "void nextCheckState()": {
+      "brief": "This virtual handler is called when a button is clicked.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#nextCheckState"
+    },
+    "void paintEvent(QPaintEvent *e) override = 0": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#paintEvent"
+    },
+    "void pressed()": {
+      "brief": "This signal is emitted when the button is pressed down.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#pressed"
+    },
+    "void released()": {
+      "brief": "This signal is emitted when the button is released.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#released"
+    },
+    "void setAutoExclusive(bool)": {
+      "brief": "This property holds whether auto-exclusivity is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoExclusive-prop"
+    },
+    "void setAutoRepeat(bool)": {
+      "brief": "This property holds whether autoRepeat is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeat-prop"
+    },
+    "void setAutoRepeatDelay(int)": {
+      "brief": "This property holds the initial delay of auto-repetition",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeatDelay-prop"
+    },
+    "void setAutoRepeatInterval(int)": {
+      "brief": "This property holds the interval of auto-repetition",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeatInterval-prop"
+    },
+    "void setCheckable(bool)": {
+      "brief": "This property holds whether the button is checkable",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checkable-prop"
+    },
+    "void setChecked(bool)": {
+      "brief": "This property holds whether the button is checked",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checked-prop"
+    },
+    "void setDown(bool)": {
+      "brief": "This property holds whether the button is pressed down",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#down-prop"
+    },
+    "void setIcon(const QIcon &icon)": {
+      "brief": "This property holds the icon shown on the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#icon-prop"
+    },
+    "void setIconSize(const QSize &size)": {
+      "brief": "This property holds the icon size used for this button.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#iconSize-prop"
+    },
+    "void setShortcut(const QKeySequence &key)": {
+      "brief": "This property holds the mnemonic associated with the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#shortcut-prop"
+    },
+    "void setText(const QString &text)": {
+      "brief": "This property holds the text shown on the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#timerEvent"
+    },
+    "void toggle()": {
+      "brief": "Toggles the state of a checkable button.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#toggle"
+    },
+    "void toggled(bool checked)": {
+      "brief": "This signal is emitted whenever a checkable button changes its state. *checked* is true if the button is checked, or false if the button is unchecked.",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#toggled"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "autoExclusive": {
+      "brief": "Whether auto-exclusivity is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoExclusive-prop"
+    },
+    "autoRepeat": {
+      "brief": "Whether autoRepeat is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeat-prop"
+    },
+    "autoRepeatDelay": {
+      "brief": "The initial delay of auto-repetition",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeatDelay-prop"
+    },
+    "autoRepeatInterval": {
+      "brief": "The interval of auto-repetition",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeatInterval-prop"
+    },
+    "checkable": {
+      "brief": "Whether the button is checkable",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checkable-prop"
+    },
+    "checked": {
+      "brief": "Whether the button is checked",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#checked-prop"
+    },
+    "down": {
+      "brief": "Whether the button is pressed down",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#down-prop"
+    },
+    "icon": {
+      "brief": "The icon shown on the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#icon-prop"
+    },
+    "iconSize": {
+      "brief": "The icon size used for this button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#iconSize-prop"
+    },
+    "shortcut": {
+      "brief": "The mnemonic associated with the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#shortcut-prop"
+    },
+    "text": {
+      "brief": "The text shown on the button",
+      "url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

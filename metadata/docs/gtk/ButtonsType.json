@@ -1,0 +1,61 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Prebuilt sets of buttons for `GtkDialog`.",
+    "file": "gtk/deprecated/gtkmessagedialog.h",
+    "line": 49,
+    "md": "Prebuilt sets of buttons for `GtkDialog`.\n\nIf none of these choices are appropriate, simply use\n%GTK_BUTTONS_NONE and call [`Dialog.add_buttons()`](xref:gtk:Gtk.Dialog#method:add_buttons).\n\n> Please note that %GTK_BUTTONS_OK, %GTK_BUTTONS_YES_NO\n> and %GTK_BUTTONS_OK_CANCEL are discouraged by the\n> [GNOME Human Interface Guidelines](https://developer.gnome.org/hig/)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ButtonsType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "cancel": {
+      "brief": "a Cancel button",
+      "file": "gtk/deprecated/gtkmessagedialog.h",
+      "line": 54,
+      "md": "a Cancel button"
+    },
+    "close": {
+      "brief": "a Close button",
+      "file": "gtk/deprecated/gtkmessagedialog.h",
+      "line": 53,
+      "md": "a Close button"
+    },
+    "none": {
+      "brief": "no buttons at all",
+      "file": "gtk/deprecated/gtkmessagedialog.h",
+      "line": 51,
+      "md": "no buttons at all"
+    },
+    "ok": {
+      "brief": "an OK button",
+      "file": "gtk/deprecated/gtkmessagedialog.h",
+      "line": 52,
+      "md": "an OK button"
+    },
+    "ok_cancel": {
+      "brief": "OK and Cancel buttons",
+      "file": "gtk/deprecated/gtkmessagedialog.h",
+      "line": 56,
+      "md": "OK and Cancel buttons"
+    },
+    "yes_no": {
+      "brief": "Yes and No buttons",
+      "file": "gtk/deprecated/gtkmessagedialog.h",
+      "line": 55,
+      "md": "Yes and No buttons"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -38,9 +38,9 @@
           "name": "argv",
           "type": {
             "native": "char **",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -54,6 +54,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QApplication",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QApplication:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -470,7 +480,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font()",
       "since": null,
@@ -507,7 +517,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font(const QWidget *widget)",
       "since": null,
@@ -534,9 +544,9 @@
           "name": "className",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -544,7 +554,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font(const char *className)",
       "since": null,
@@ -599,7 +609,7 @@
             "native": "Qt::UIEffect",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::UIEffect>"
           }
         }
       ],
@@ -659,7 +669,7 @@
         "native": "Qt::NavigationMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::NavigationMode>"
       },
       "signature": "Qt::NavigationMode navigationMode()",
       "since": null,
@@ -743,7 +753,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "QPalette palette(const QWidget *widget)",
       "since": null,
@@ -770,9 +780,9 @@
           "name": "className",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -780,7 +790,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "QPalette palette(const char *className)",
       "since": null,
@@ -957,7 +967,7 @@
             "native": "Qt::UIEffect",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::UIEffect>"
           }
         },
         {
@@ -1004,7 +1014,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         },
         {
@@ -1012,9 +1022,9 @@
           "name": "className",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -1088,7 +1098,7 @@
             "native": "Qt::NavigationMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::NavigationMode>"
           }
         }
       ],
@@ -1125,7 +1135,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         },
         {
@@ -1133,9 +1143,9 @@
           "name": "className",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -1498,7 +1508,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1634,7 +1644,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1724,6 +1734,7 @@
         "set": "setAutoSipEnabled"
       },
       "brief": "Toggles automatic SIP (software input panel) visibility",
+      "default": null,
       "js_name": "autoSipEnabled",
       "metaobject": {
         "constant": false,
@@ -1744,6 +1755,7 @@
       "name": "autoSipEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1764,6 +1776,7 @@
         "set": "setCursorFlashTime"
       },
       "brief": "The text cursor's flash (blink) time in milliseconds",
+      "default": null,
       "js_name": "cursorFlashTime",
       "metaobject": {
         "constant": false,
@@ -1784,6 +1797,7 @@
       "name": "cursorFlashTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1804,6 +1818,7 @@
         "set": "setDoubleClickInterval"
       },
       "brief": "The time limit in milliseconds that distinguishes a double click from two consecutive mouse clicks",
+      "default": null,
       "js_name": "doubleClickInterval",
       "metaobject": {
         "constant": false,
@@ -1824,6 +1839,7 @@
       "name": "doubleClickInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1844,6 +1860,7 @@
         "set": "setKeyboardInputInterval"
       },
       "brief": "The time limit in milliseconds that distinguishes a key press from two consecutive key presses",
+      "default": null,
       "js_name": "keyboardInputInterval",
       "metaobject": {
         "constant": false,
@@ -1864,6 +1881,7 @@
       "name": "keyboardInputInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1884,6 +1902,7 @@
         "set": "setStartDragDistance"
       },
       "brief": "The minimum distance required for a drag and drop operation to start",
+      "default": null,
       "js_name": "startDragDistance",
       "metaobject": {
         "constant": false,
@@ -1904,6 +1923,7 @@
       "name": "startDragDistance",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1924,6 +1944,7 @@
         "set": "setStartDragTime"
       },
       "brief": "The time in milliseconds that a mouse button must be held down before a drag and drop operation will begin",
+      "default": null,
       "js_name": "startDragTime",
       "metaobject": {
         "constant": false,
@@ -1944,6 +1965,7 @@
       "name": "startDragTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1964,6 +1986,7 @@
         "set": "setStyleSheet"
       },
       "brief": "The application style sheet",
+      "default": null,
       "js_name": "styleSheet",
       "metaobject": {
         "constant": false,
@@ -1984,6 +2007,7 @@
       "name": "styleSheet",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2004,6 +2028,7 @@
         "set": "setWheelScrollLines"
       },
       "brief": "The number of lines to scroll a widget, when the mouse wheel is rotated",
+      "default": null,
       "js_name": "wheelScrollLines",
       "metaobject": {
         "constant": false,
@@ -2024,6 +2049,7 @@
       "name": "wheelScrollLines",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

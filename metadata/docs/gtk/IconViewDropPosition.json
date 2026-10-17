@@ -1,0 +1,63 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An enum for determining where a dropped item goes.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtkiconview.h",
+    "line": 55,
+    "md": "An enum for determining where a dropped item goes."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IconViewDropPosition",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "drop_above": {
+      "brief": "dropped item is inserted above",
+      "file": "gtk/deprecated/gtkiconview.h",
+      "line": 61,
+      "md": "dropped item is inserted above"
+    },
+    "drop_below": {
+      "brief": "dropped item is inserted below",
+      "file": "gtk/deprecated/gtkiconview.h",
+      "line": 62,
+      "md": "dropped item is inserted below"
+    },
+    "drop_into": {
+      "brief": "dropped item replaces the item",
+      "file": "gtk/deprecated/gtkiconview.h",
+      "line": 58,
+      "md": "dropped item replaces the item"
+    },
+    "drop_left": {
+      "brief": "dropped item is inserted to the left",
+      "file": "gtk/deprecated/gtkiconview.h",
+      "line": 59,
+      "md": "dropped item is inserted to the left"
+    },
+    "drop_right": {
+      "brief": "dropped item is inserted to the right",
+      "file": "gtk/deprecated/gtkiconview.h",
+      "line": 60,
+      "md": "dropped item is inserted to the right"
+    },
+    "no_drop": {
+      "brief": "no drop possible",
+      "file": "gtk/deprecated/gtkiconview.h",
+      "line": 57,
+      "md": "no drop possible"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

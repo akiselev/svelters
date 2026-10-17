@@ -1,0 +1,71 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFlattenListModel` that flattens `list`.",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 489,
+      "md": "Creates a new `GtkFlattenListModel` that flattens `list`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that concatenates other list models.",
+    "file": "gtk/gtkflattenlistmodel.c",
+    "line": 27,
+    "md": "A list model that concatenates other list models.\n\n`GtkFlattenListModel` takes a list model containing list models, and flattens\nit into a single model. Each list model becomes a section in the single model."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FlattenListModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_model": {
+      "brief": "Gets the model set via gtk_flatten_list_model_set_model().",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 559,
+      "md": "Gets the model set via gtk_flatten_list_model_set_model()."
+    },
+    "get_model_for_item": {
+      "brief": "Returns the model containing the item at the given position.",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 575,
+      "md": "Returns the model containing the item at the given position."
+    },
+    "set_model": {
+      "brief": "Sets a new model to be flattened.",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 514,
+      "md": "Sets a new model to be flattened."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 447,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being flattened.",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 459,
+      "md": "The model being flattened."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkflattenlistmodel.c",
+      "line": 469,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

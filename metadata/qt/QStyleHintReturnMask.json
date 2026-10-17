@@ -29,31 +29,46 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleHintReturnMask::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleHintReturnMask::Type",
           "name": "Type",
           "value": "SH_Mask"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleHintReturnMask::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleHintReturnMask::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleHintReturnMask",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleHintReturnMask:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Style hints that return a QRegion",

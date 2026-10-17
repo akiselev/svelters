@@ -44,6 +44,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QWizardPage",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QWizardPage:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -67,7 +77,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         }
       ],
@@ -297,7 +307,7 @@
             "native": "QWizard::WizardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardPixmap>"
           }
         }
       ],
@@ -305,7 +315,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap(QWizard::WizardPixmap which) const",
       "since": null,
@@ -352,9 +362,9 @@
           "name": "property",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -362,9 +372,9 @@
           "name": "changedSignal",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],
@@ -401,7 +411,7 @@
             "native": "QWizard::WizardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardButton>"
           }
         },
         {
@@ -569,7 +579,7 @@
             "native": "QWizard::WizardPixmap",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QWizard::WizardPixmap>"
           }
         },
         {
@@ -579,7 +589,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -802,6 +812,8 @@
         "set": "setSubTitle"
       },
       "brief": "The subtitle of the page",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "subTitle",
       "metaobject": {
         "constant": false,
@@ -822,6 +834,7 @@
       "name": "subTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -842,6 +855,8 @@
         "set": "setTitle"
       },
       "brief": "The title of the page",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "title",
       "metaobject": {
         "constant": false,
@@ -862,6 +877,7 @@
       "name": "title",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

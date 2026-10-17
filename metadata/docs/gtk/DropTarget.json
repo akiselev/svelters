@@ -1,0 +1,172 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkDropTarget` object.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 916,
+      "md": "Creates a new `GtkDropTarget` object.\n\nIf the drop target should support more than 1 type, pass\n%G_TYPE_INVALID for `type` and then call\n[`DropTarget.set_gtypes()`](xref:gtk:Gtk.DropTarget#method:set_gtypes)."
+    }
+  },
+  "doc": {
+    "brief": "An event controller to receive Drag-and-Drop operations.",
+    "file": "gtk/gtkdroptarget.c",
+    "line": 38,
+    "md": "An event controller to receive Drag-and-Drop operations.\n\nThe most basic way to use a `GtkDropTarget` to receive drops on a\nwidget is to create it via [`DropTarget.new()`](xref:gtk:Gtk.DropTarget#constructor:new), passing in the\n`GType` of the data you want to receive and connect to the\n[`DropTarget::drop`](xref:gtk:Gtk.DropTarget#event:drop) signal to receive the data:\n\n```c\nstatic gboolean\non_drop (GtkDropTarget *target,\n         const GValue  *value,\n         double         x,\n         double         y,\n         gpointer       data)\n{\n  MyWidget *self = data;\n\n  // Call the appropriate setter depending on the type of data\n  // that we received\n  if (G_VALUE_HOLDS (value, G_TYPE_FILE))\n    my_widget_set_file (self, g_value_get_object (value));\n  else if (G_VALUE_HOLDS (value, GDK_TYPE_PIXBUF))\n    my_widget_set_pixbuf (self, g_value_get_object (value));\n  else\n    return FALSE;\n\n  return TRUE;\n}\n\nstatic void\nmy_widget_init (MyWidget *self)\n{\n  GtkDropTarget *target =\n    gtk_drop_target_new (G_TYPE_INVALID, GDK_ACTION_COPY);\n\n  // This widget accepts two types of drop types: GFile objects\n  // and GdkPixbuf objects\n  gtk_drop_target_set_gtypes (target, (GType [2]) {\n    G_TYPE_FILE,\n    GDK_TYPE_PIXBUF,\n  }, 2);\n\n  g_signal_connect (target, \"drop\", G_CALLBACK (on_drop), self);\n  gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (target));\n}\n```\n\n`GtkDropTarget` supports more options, such as:\n\n * rejecting potential drops via the [`DropTarget::accept`](xref:gtk:Gtk.DropTarget#event:accept) signal\n   and the [`DropTarget.reject()`](xref:gtk:Gtk.DropTarget#method:reject) function to let other drop\n   targets handle the drop\n * tracking an ongoing drag operation before the drop via the\n   [`DropTarget::enter`](xref:gtk:Gtk.DropTarget#event:enter), [`DropTarget::motion`](xref:gtk:Gtk.DropTarget#event:motion) and\n   [`DropTarget::leave`](xref:gtk:Gtk.DropTarget#event:leave) signals\n * configuring how to receive data by setting the\n   [`DropTarget:preload`](xref:gtk:Gtk.DropTarget#property:preload) property and listening for its\n   availability via the [`DropTarget:value`](xref:gtk:Gtk.DropTarget#property:value) property\n\nHowever, `GtkDropTarget` is ultimately modeled in a synchronous way\nand only supports data transferred via `GType`. If you want full control\nover an ongoing drop, the [`DropTargetAsync`](xref:gtk:Gtk.DropTargetAsync) object gives you\nthis ability.\n\nWhile a pointer is dragged over the drop target's widget and the drop\nhas not been rejected, that widget will receive the\n%GTK_STATE_FLAG_DROP_ACTIVE state, which can be used to style the widget.\n\nIf you are not interested in receiving the drop, but just want to update\nUI state during a Drag-and-Drop operation (e.g. switching tabs), you can\nuse [`DropControllerMotion`](xref:gtk:Gtk.DropControllerMotion)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DropTarget",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_actions": {
+      "brief": "Gets the actions that this drop target supports.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1044,
+      "md": "Gets the actions that this drop target supports."
+    },
+    "get_current_drop": {
+      "brief": "Gets the currently handled drop operation.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1117,
+      "md": "Gets the currently handled drop operation.\n\nIf no drop operation is going on, `NULL` is returned.",
+      "since": "4.4"
+    },
+    "get_drop": {
+      "brief": "Gets the currently handled drop operation.",
+      "deprecated": "4.4",
+      "deprecated_md": "Use [`DropTarget.get_current_drop()`](xref:gtk:Gtk.DropTarget#method:get_current_drop) instead",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1097,
+      "md": "Gets the currently handled drop operation.\n\nIf no drop operation is going on, `NULL` is returned."
+    },
+    "get_formats": {
+      "brief": "Gets the data formats that this drop target accepts.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 951,
+      "md": "Gets the data formats that this drop target accepts.\n\nIf the result is `NULL`, all formats are expected to be supported."
+    },
+    "get_gtypes": {
+      "brief": "Gets the list of supported `GType`s that can be dropped on the target.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1000,
+      "md": "Gets the list of supported `GType`s that can be dropped on the target.\n\nIf no types have been set, `NULL` will be returned."
+    },
+    "get_preload": {
+      "brief": "Gets whether data should be preloaded on hover.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1081,
+      "md": "Gets whether data should be preloaded on hover."
+    },
+    "get_value": {
+      "brief": "Gets the current drop data, as a `GValue`.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1137,
+      "md": "Gets the current drop data, as a `GValue`."
+    },
+    "reject": {
+      "brief": "Rejects the ongoing drop operation.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1156,
+      "md": "Rejects the ongoing drop operation.\n\nIf no drop operation is ongoing, i.e when [`DropTarget:current-drop`](xref:gtk:Gtk.DropTarget#property:current-drop)\nis `NULL`, this function does nothing.\n\nThis function should be used when delaying the decision\non whether to accept a drag or not until after reading\nthe data."
+    },
+    "set_actions": {
+      "brief": "Sets the actions that this drop target supports.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1023,
+      "md": "Sets the actions that this drop target supports."
+    },
+    "set_gtypes": {
+      "brief": "Sets the supported `GType`s for this drop target.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 969,
+      "md": "Sets the supported `GType`s for this drop target."
+    },
+    "set_preload": {
+      "brief": "Sets whether data should be preloaded on hover.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 1060,
+      "md": "Sets whether data should be preloaded on hover."
+    }
+  },
+  "properties": {
+    "actions": {
+      "brief": "The `GdkDragActions` that this drop target supports.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 682,
+      "md": "The `GdkDragActions` that this drop target supports."
+    },
+    "current-drop": {
+      "brief": "The `GdkDrop` that is currently being performed.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 704,
+      "md": "The `GdkDrop` that is currently being performed.",
+      "since": "4.4"
+    },
+    "drop": {
+      "brief": "The `GdkDrop` that is currently being performed.",
+      "deprecated": "4.4",
+      "deprecated_md": "Use [`DropTarget:current-drop`](xref:gtk:Gtk.DropTarget#property:current-drop) instead",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 692,
+      "md": "The `GdkDrop` that is currently being performed."
+    },
+    "formats": {
+      "brief": "The `GdkContentFormats` that determine the supported data formats.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 716,
+      "md": "The `GdkContentFormats` that determine the supported data formats."
+    },
+    "preload": {
+      "brief": "Whether the drop data should be preloaded when the pointer is only hovering over the widget but has not been released.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 726,
+      "md": "Whether the drop data should be preloaded when the pointer is only\nhovering over the widget but has not been released.\n\nSetting this property allows finer grained reaction to an ongoing\ndrop at the cost of loading more data.\n\nThe default value for this property is `FALSE` to avoid downloading\nhuge amounts of data by accident.\n\nFor example, if somebody drags a full document of gigabytes of text\nfrom a text editor across a widget with a preloading drop target,\nthis data will be downloaded, even if the data is ultimately dropped\nelsewhere.\n\nFor a lot of data formats, the amount of data is very small (like\n%GDK_TYPE_RGBA), so enabling this property does not hurt at all.\nAnd for local-only Drag-and-Drop operations, no data transfer is done,\nso enabling it there is free."
+    },
+    "value": {
+      "brief": "The value for this drop operation.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 753,
+      "md": "The value for this drop operation.\n\nThis is `NULL` if the data has not been loaded yet or no drop\noperation is going on.\n\nData may be available before the [`DropTarget::drop`](xref:gtk:Gtk.DropTarget#event:drop)\nsignal gets emitted - for example when the [`DropTarget:preload`](xref:gtk:Gtk.DropTarget#property:preload)\nproperty is set. You can use the ::notify signal to be notified\nof available data."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "accept": {
+      "brief": "Emitted on the drop site when a drop operation is about to begin.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 773,
+      "md": "Emitted on the drop site when a drop operation is about to begin.\n\nIf the drop is not accepted, `FALSE` will be returned and the drop target\nwill ignore the drop. If `TRUE` is returned, the drop is accepted for now\nbut may be rejected later via a call to [`DropTarget.reject()`](xref:gtk:Gtk.DropTarget#method:reject)\nor ultimately by returning `FALSE` from a [`DropTarget::drop`](xref:gtk:Gtk.DropTarget#event:drop)\nhandler.\n\nThe default handler for this signal decides whether to accept the drop\nbased on the formats provided by the `drop`.\n\nIf the decision whether the drop will be accepted or rejected depends\non the data, this function should return `TRUE`, the\n[`DropTarget:preload`](xref:gtk:Gtk.DropTarget#property:preload) property should be set and the value\nshould be inspected via the ::notify:value signal, calling\n[`DropTarget.reject()`](xref:gtk:Gtk.DropTarget#method:reject) if required."
+    },
+    "drop": {
+      "brief": "Emitted on the drop site when the user drops the data onto the widget.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 878,
+      "md": "Emitted on the drop site when the user drops the data onto the widget.\n\nThe signal handler must determine whether the pointer position is in\na drop zone or not. If it is not in a drop zone, it returns `FALSE`\nand no further processing is necessary.\n\nOtherwise, the handler returns `TRUE`. In this case, this handler will\naccept the drop. The handler is responsible for using the given `value`\nand performing the drop operation."
+    },
+    "enter": {
+      "brief": "Emitted on the drop site when the pointer enters the widget.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 810,
+      "md": "Emitted on the drop site when the pointer enters the widget.\n\nIt can be used to set up custom highlighting."
+    },
+    "leave": {
+      "brief": "Emitted on the drop site when the pointer leaves the widget.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 860,
+      "md": "Emitted on the drop site when the pointer leaves the widget.\n\nIts main purpose it to undo things done in\n[`DropTarget::enter`](xref:gtk:Gtk.DropTarget#event:enter)."
+    },
+    "motion": {
+      "brief": "Emitted while the pointer is moving over the drop target.",
+      "file": "gtk/gtkdroptarget.c",
+      "line": 836,
+      "md": "Emitted while the pointer is moving over the drop target."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

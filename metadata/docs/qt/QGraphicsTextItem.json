@@ -1,0 +1,240 @@
+{
+  "doc": {
+    "brief": "The QGraphicsTextItem class provides a text item that you can add to a [QGraphicsScene](xref:qt:QGraphicsScene) to display formatted text.",
+    "index_brief": "Text item that you can add to a QGraphicsScene to display formatted text",
+    "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsTextItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QColor defaultTextColor() const": {
+      "brief": "Returns the default text color that is used for unformatted text.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#defaultTextColor"
+    },
+    "QFont font() const": {
+      "brief": "Returns the item's font, which is used to render the text.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#font"
+    },
+    "QGraphicsTextItem(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsTextItem. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#QGraphicsTextItem"
+    },
+    "QGraphicsTextItem(const QString &text, QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsTextItem, using *text* as the default plain text. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#QGraphicsTextItem-1"
+    },
+    "QPainterPath opaqueArea() const override": {
+      "brief": "Reimplements: [QGraphicsItem::opaqueArea](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#opaqueArea"
+    },
+    "QPainterPath shape() const override": {
+      "brief": "Reimplements: [QGraphicsItem::shape](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#shape"
+    },
+    "QRectF boundingRect() const override": {
+      "brief": "Reimplements: [QGraphicsItem::boundingRect](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#boundingRect"
+    },
+    "QString toHtml() const": {
+      "brief": "Returns the item's text converted to HTML, or an empty [QString](xref:qt:QString) if no text has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#toHtml"
+    },
+    "QString toPlainText() const": {
+      "brief": "Returns the item's text converted to plain text, or an empty [QString](xref:qt:QString) if no text has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#toPlainText"
+    },
+    "QTextCursor textCursor() const": {
+      "brief": "This property represents the visible text cursor in an editable text item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#textCursor-prop"
+    },
+    "QTextDocument * document() const": {
+      "brief": "Returns the item's text document.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#document"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override": {
+      "brief": "Reimplements: [QGraphicsItem::inputMethodQuery](xref:qt:QGraphicsItem)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#inputMethodQuery"
+    },
+    "Qt::TextInteractionFlags textInteractionFlags() const": {
+      "brief": "Returns the current text interaction flags.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#textInteractionFlags"
+    },
+    "bool contains(const QPointF &point) const override": {
+      "brief": "Reimplements: [QGraphicsItem::contains](xref:qt:QGraphicsItem)(const QPointF &point) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#contains"
+    },
+    "bool isObscuredBy(const QGraphicsItem *item) const override": {
+      "brief": "Reimplements: [QGraphicsItem::isObscuredBy](xref:qt:QGraphicsItem)(const QGraphicsItem *item) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#isObscuredBy"
+    },
+    "bool openExternalLinks() const": {
+      "brief": "Specifies whether [QGraphicsTextItem](xref:qt:QGraphicsTextItem) should automatically open links using [QDesktopServices::openUrl](xref:qt:QDesktopServices)() instead of emitting the...",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#openExternalLinks-prop"
+    },
+    "bool sceneEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::sceneEvent](xref:qt:QGraphicsItem)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#sceneEvent"
+    },
+    "bool tabChangesFocus() const": {
+      "brief": "Returns `true` if the **Tab** key will cause the widget to change focus; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#tabChangesFocus"
+    },
+    "int type() const override": {
+      "brief": "Reimplements: [QGraphicsItem::type](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#type"
+    },
+    "qreal textWidth() const": {
+      "brief": "Returns the text width.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#textWidth"
+    },
+    "void adjustSize()": {
+      "brief": "Adjusts the text item to a reasonable size.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#adjustSize"
+    },
+    "void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::contextMenuEvent](xref:qt:QGraphicsItem)(QGraphicsSceneContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#contextMenuEvent"
+    },
+    "void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dragEnterEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dragLeaveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dragMoveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#dragMoveEvent"
+    },
+    "void dropEvent(QGraphicsSceneDragDropEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::dropEvent](xref:qt:QGraphicsItem)(QGraphicsSceneDragDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#dropEvent"
+    },
+    "void focusInEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::focusInEvent](xref:qt:QGraphicsItem)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::focusOutEvent](xref:qt:QGraphicsItem)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#focusOutEvent"
+    },
+    "void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::hoverEnterEvent](xref:qt:QGraphicsItem)(QGraphicsSceneHoverEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#hoverEnterEvent"
+    },
+    "void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::hoverLeaveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneHoverEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#hoverLeaveEvent"
+    },
+    "void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::hoverMoveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneHoverEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#hoverMoveEvent"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::inputMethodEvent](xref:qt:QGraphicsItem)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#inputMethodEvent"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::keyPressEvent](xref:qt:QGraphicsItem)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::keyReleaseEvent](xref:qt:QGraphicsItem)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#keyReleaseEvent"
+    },
+    "void linkActivated(const QString &link)": {
+      "brief": "This signal is emitted when the user clicks on a link on a text item that enables [Qt::LinksAccessibleByMouse](https://doc.qt.io/qt-6/qt.html#TextInteractionFlag-enum) or...",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#linkActivated"
+    },
+    "void linkHovered(const QString &link)": {
+      "brief": "This signal is emitted when the user hovers over a link on a text item that enables [Qt::LinksAccessibleByMouse](https://doc.qt.io/qt-6/qt.html#TextInteractionFlag-enum). *link* is the link that was...",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#linkHovered"
+    },
+    "void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mouseDoubleClickEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mouseMoveEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mousePressEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override": {
+      "brief": "Reimplements: [QGraphicsItem::mouseReleaseEvent](xref:qt:QGraphicsItem)(QGraphicsSceneMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#mouseReleaseEvent"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override": {
+      "brief": "Reimplements: [QGraphicsItem::paint](xref:qt:QGraphicsItem)(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#paint"
+    },
+    "void setDefaultTextColor(const QColor &col)": {
+      "brief": "Sets the color for unformatted text to *col*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setDefaultTextColor"
+    },
+    "void setDocument(QTextDocument *document)": {
+      "brief": "Sets the text document *document* on the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setDocument"
+    },
+    "void setFont(const QFont &font)": {
+      "brief": "Sets the font used to render the text item to *font*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setFont"
+    },
+    "void setHtml(const QString &text)": {
+      "brief": "Sets the item's text to *text*, assuming that text is HTML formatted.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setHtml"
+    },
+    "void setOpenExternalLinks(bool open)": {
+      "brief": "Specifies whether [QGraphicsTextItem](xref:qt:QGraphicsTextItem) should automatically open links using [QDesktopServices::openUrl](xref:qt:QDesktopServices)() instead of emitting the...",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#openExternalLinks-prop"
+    },
+    "void setPlainText(const QString &text)": {
+      "brief": "Sets the item's text to *text*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setPlainText"
+    },
+    "void setTabChangesFocus(bool b)": {
+      "brief": "If *b* is true, the **Tab** key will cause the widget to change focus; otherwise, the tab key will insert a tab into the document.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setTabChangesFocus"
+    },
+    "void setTextCursor(const QTextCursor &cursor)": {
+      "brief": "This property represents the visible text cursor in an editable text item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#textCursor-prop"
+    },
+    "void setTextInteractionFlags(Qt::TextInteractionFlags flags)": {
+      "brief": "Sets the flags *flags* to specify how the text item should react to user input.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setTextInteractionFlags"
+    },
+    "void setTextWidth(qreal width)": {
+      "brief": "Sets the preferred width for the item's text.",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#setTextWidth"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "openExternalLinks": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#openExternalLinks-prop"
+    },
+    "textCursor": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qgraphicstextitem.html#textCursor-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

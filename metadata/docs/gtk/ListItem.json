@@ -1,0 +1,179 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used by list widgets to represent items in a [`ListModel`](xref:gtk:Gio.ListModel).",
+    "file": "gtk/gtklistitem.c",
+    "line": 27,
+    "md": "Used by list widgets to represent items in a [`ListModel`](xref:gtk:Gio.ListModel).\n\n`GtkListItem` objects are managed by the list widget (with its factory)\nand cannot be created by applications, but they need to be populated\nby application code. This is done by calling [`ListItem.set_child()`](xref:gtk:Gtk.ListItem#method:set_child).\n\n`GtkListItem` objects exist in 2 stages:\n\n1. The unbound stage where the listitem is not currently connected to\n   an item in the list. In that case, the [`ListItem:item`](xref:gtk:Gtk.ListItem#property:item)\n   property is set to `NULL`.\n\n2. The bound stage where the listitem references an item from the list.\n   The [`ListItem:item`](xref:gtk:Gtk.ListItem#property:item) property is not `NULL`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListItem",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_accessible_description": {
+      "brief": "Gets the accessible description of `self`.",
+      "file": "gtk/gtklistitem.c",
+      "line": 640,
+      "md": "Gets the accessible description of `self`.",
+      "since": "4.12"
+    },
+    "get_accessible_label": {
+      "brief": "Gets the accessible label of `self`.",
+      "file": "gtk/gtklistitem.c",
+      "line": 686,
+      "md": "Gets the accessible label of `self`.",
+      "since": "4.12"
+    },
+    "get_activatable": {
+      "brief": "Checks if a listitem has been set to be activatable via [`ListItem.set_activatable()`](xref:gtk:Gtk.ListItem#method:set_activatable).",
+      "file": "gtk/gtklistitem.c",
+      "line": 508,
+      "md": "Checks if a listitem has been set to be activatable via\n[`ListItem.set_activatable()`](xref:gtk:Gtk.ListItem#method:set_activatable)."
+    },
+    "get_child": {
+      "brief": "Gets the child previously set via [`ListItem.set_child()`](xref:gtk:Gtk.ListItem#method:set_child) or `NULL` if none was set.",
+      "file": "gtk/gtklistitem.c",
+      "line": 340,
+      "md": "Gets the child previously set via [`ListItem.set_child()`](xref:gtk:Gtk.ListItem#method:set_child)\nor `NULL` if none was set."
+    },
+    "get_focusable": {
+      "brief": "Checks if a listitem has been set to be focusable via [`ListItem.set_focusable()`](xref:gtk:Gtk.ListItem#method:set_focusable).",
+      "file": "gtk/gtklistitem.c",
+      "line": 557,
+      "md": "Checks if a listitem has been set to be focusable via\n[`ListItem.set_focusable()`](xref:gtk:Gtk.ListItem#method:set_focusable).",
+      "since": "4.12"
+    },
+    "get_item": {
+      "brief": "Gets the model item that associated with `self`.",
+      "file": "gtk/gtklistitem.c",
+      "line": 317,
+      "md": "Gets the model item that associated with `self`.\n\nIf `self` is unbound, this function returns `NULL`."
+    },
+    "get_position": {
+      "brief": "Gets the position in the model that `self` currently displays.",
+      "file": "gtk/gtklistitem.c",
+      "line": 407,
+      "md": "Gets the position in the model that `self` currently displays.\n\nIf `self` is unbound, `GTK_INVALID_LIST_POSITION` is returned."
+    },
+    "get_selectable": {
+      "brief": "Checks if a listitem has been set to be selectable via [`ListItem.set_selectable()`](xref:gtk:Gtk.ListItem#method:set_selectable).",
+      "file": "gtk/gtklistitem.c",
+      "line": 454,
+      "md": "Checks if a listitem has been set to be selectable via\n[`ListItem.set_selectable()`](xref:gtk:Gtk.ListItem#method:set_selectable).\n\nDo not confuse this function with [`ListItem.get_selected()`](xref:gtk:Gtk.ListItem#method:get_selected)."
+    },
+    "get_selected": {
+      "brief": "Checks if the item is displayed as selected.",
+      "file": "gtk/gtklistitem.c",
+      "line": 430,
+      "md": "Checks if the item is displayed as selected.\n\nThe selected state is maintained by the list widget and its model\nand cannot be set otherwise."
+    },
+    "set_accessible_description": {
+      "brief": "Sets the accessible description for the listitem.",
+      "file": "gtk/gtklistitem.c",
+      "line": 612,
+      "md": "Sets the accessible description for the listitem.\n\nThe accessible description may be used by e.g. screen readers.",
+      "since": "4.12"
+    },
+    "set_accessible_label": {
+      "brief": "Sets the accessible label for the listitem.",
+      "file": "gtk/gtklistitem.c",
+      "line": 658,
+      "md": "Sets the accessible label for the listitem.\n\nThe accessible label may be used by e.g. screen readers.",
+      "since": "4.12"
+    },
+    "set_activatable": {
+      "brief": "Sets `self` to be activatable.",
+      "file": "gtk/gtklistitem.c",
+      "line": 525,
+      "md": "Sets `self` to be activatable.\n\nIf an item is activatable, double-clicking on the item, using\nthe Return key or calling [`Widget.activate()`](xref:gtk:Gtk.Widget#method:activate) will activate\nthe item. Activating instructs the containing view to handle\nactivation. `GtkListView` for example will be emitting the\n[`ListView::activate`](xref:gtk:Gtk.ListView#event:activate) signal.\n\nBy default, listitems are activatable."
+    },
+    "set_child": {
+      "brief": "Sets the child to be used for this listitem.",
+      "file": "gtk/gtklistitem.c",
+      "line": 360,
+      "md": "Sets the child to be used for this listitem.\n\nThis function is typically called by applications when\nsetting up a listitem so that the widget can be reused when\nbinding it multiple times."
+    },
+    "set_focusable": {
+      "brief": "Sets `self` to be focusable.",
+      "file": "gtk/gtklistitem.c",
+      "line": 576,
+      "md": "Sets `self` to be focusable.\n\nIf an item is focusable, it can be focused using the keyboard.\nThis works similar to [`Widget.set_focusable()`](xref:gtk:Gtk.Widget#method:set_focusable).\n\nNote that if items are not focusable, the keyboard cannot be used to activate\nthem and selecting only works if one of the listitem's children is focusable.\n\nBy default, listitems are focusable.",
+      "since": "4.12"
+    },
+    "set_selectable": {
+      "brief": "Sets `self` to be selectable.",
+      "file": "gtk/gtklistitem.c",
+      "line": 473,
+      "md": "Sets `self` to be selectable.\n\nIf an item is selectable, clicking on the item or using the keyboard\nwill try to select or unselect the item. If this succeeds is up to\nthe model to determine, as it is managing the selected state.\n\nNote that this means that making an item non-selectable has no\ninfluence on the selected state at all. A non-selectable item\nmay still be selected.\n\nBy default, listitems are selectable. When rebinding them to\na new item, they will also be reset to be selectable by GTK."
+    }
+  },
+  "properties": {
+    "accessible-description": {
+      "brief": "The accessible description to set on the listitem.",
+      "file": "gtk/gtklistitem.c",
+      "line": 188,
+      "md": "The accessible description to set on the listitem.",
+      "since": "4.12"
+    },
+    "accessible-label": {
+      "brief": "The accessible label to set on the listitem.",
+      "file": "gtk/gtklistitem.c",
+      "line": 200,
+      "md": "The accessible label to set on the listitem.",
+      "since": "4.12"
+    },
+    "activatable": {
+      "brief": "If the item can be activated by the user.",
+      "file": "gtk/gtklistitem.c",
+      "line": 212,
+      "md": "If the item can be activated by the user."
+    },
+    "child": {
+      "brief": "Widget used for display.",
+      "file": "gtk/gtklistitem.c",
+      "line": 222,
+      "md": "Widget used for display."
+    },
+    "focusable": {
+      "brief": "If the item can be focused with the keyboard.",
+      "file": "gtk/gtklistitem.c",
+      "line": 232,
+      "md": "If the item can be focused with the keyboard.",
+      "since": "4.12"
+    },
+    "item": {
+      "brief": "Displayed item.",
+      "file": "gtk/gtklistitem.c",
+      "line": 244,
+      "md": "Displayed item."
+    },
+    "position": {
+      "brief": "Position of the item.",
+      "file": "gtk/gtklistitem.c",
+      "line": 254,
+      "md": "Position of the item."
+    },
+    "selectable": {
+      "brief": "If the item can be selected by the user.",
+      "file": "gtk/gtklistitem.c",
+      "line": 264,
+      "md": "If the item can be selected by the user."
+    },
+    "selected": {
+      "brief": "If the item is currently selected.",
+      "file": "gtk/gtklistitem.c",
+      "line": 274,
+      "md": "If the item is currently selected."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

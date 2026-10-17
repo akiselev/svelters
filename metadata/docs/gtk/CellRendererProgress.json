@@ -1,0 +1,71 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellRendererProgress`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 724,
+      "md": "Creates a new `GtkCellRendererProgress`."
+    }
+  },
+  "doc": {
+    "brief": "Renders numbers as progress bars",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You should use [`ProgressBar`](xref:gtk:Gtk.ProgressBar) instead",
+    "file": "gtk/deprecated/gtkcellrendererprogress.c",
+    "line": 38,
+    "md": "Renders numbers as progress bars\n\n`GtkCellRendererProgress` renders a numeric value as a progress par in a cell.\nAdditionally, it can display a text on top of the progress bar."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererProgress",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "inverted": {
+      "brief": "Whether progess is inverted.",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 692,
+      "md": "Whether progess is inverted."
+    },
+    "pulse": {
+      "brief": "Setting this to a non-negative value causes the cell renderer to enter \"activity mode\", where a block bounces back and forth to indicate that some progress is made, without specifying exactly how much.",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 642,
+      "md": "Setting this to a non-negative value causes the cell renderer to\nenter \"activity mode\", where a block bounces back and forth to\nindicate that some progress is made, without specifying exactly how\nmuch.\n\nEach increment of the property causes the block to move by a little\nbit.\n\nTo indicate that the activity has not started yet, set the property\nto zero. To indicate completion, set the property to %G_MAXINT."
+    },
+    "text": {
+      "brief": "The \"text\" property determines the label which will be drawn over the progress bar.",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 628,
+      "md": "The \"text\" property determines the label which will be drawn\nover the progress bar. Setting this property to `NULL` causes the default\nlabel to be displayed. Setting this property to an empty string causes\nno label to be displayed."
+    },
+    "text-xalign": {
+      "brief": "The \"text-xalign\" property controls the horizontal alignment of the text in the progress bar.",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 662,
+      "md": "The \"text-xalign\" property controls the horizontal alignment of the\ntext in the progress bar.  Valid values range from 0 (left) to 1\n(right).  Reserved for RTL layouts."
+    },
+    "text-yalign": {
+      "brief": "The \"text-yalign\" property controls the vertical alignment of the text in the progress bar.",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 675,
+      "md": "The \"text-yalign\" property controls the vertical alignment of the\ntext in the progress bar.  Valid values range from 0 (top) to 1\n(bottom)."
+    },
+    "value": {
+      "brief": "The \"value\" property determines the percentage to which the progress bar will be \"filled in\".",
+      "file": "gtk/deprecated/gtkcellrendererprogress.c",
+      "line": 616,
+      "md": "The \"value\" property determines the percentage to which the\nprogress bar will be \"filled in\"."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

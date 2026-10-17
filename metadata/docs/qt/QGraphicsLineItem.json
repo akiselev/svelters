@@ -1,0 +1,87 @@
+{
+  "doc": {
+    "brief": "The QGraphicsLineItem class provides a line item that you can add to a [QGraphicsScene](xref:qt:QGraphicsScene).",
+    "index_brief": "Line item that you can add to a QGraphicsScene",
+    "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsLineItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsLineItem(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsLineItem. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#QGraphicsLineItem"
+    },
+    "QGraphicsLineItem(const QLineF &line, QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsLineItem, using *line* as the default line. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#QGraphicsLineItem-1"
+    },
+    "QGraphicsLineItem(qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsLineItem, using the line between (*x1*, *y1*) and (*x2*, *y2*) as the default line. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#QGraphicsLineItem-2"
+    },
+    "QLineF line() const": {
+      "brief": "Returns the item's line, or a null line if no line has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#line"
+    },
+    "QPainterPath opaqueArea() const override": {
+      "brief": "Reimplements: [QGraphicsItem::opaqueArea](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#opaqueArea"
+    },
+    "QPainterPath shape() const override": {
+      "brief": "Reimplements: [QGraphicsItem::shape](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#shape"
+    },
+    "QPen pen() const": {
+      "brief": "Returns the item's pen, or a black solid 0-width pen if no pen has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#pen"
+    },
+    "QRectF boundingRect() const override": {
+      "brief": "Reimplements: [QGraphicsItem::boundingRect](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#boundingRect"
+    },
+    "bool contains(const QPointF &point) const override": {
+      "brief": "Reimplements: [QGraphicsItem::contains](xref:qt:QGraphicsItem)(const QPointF &point) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#contains"
+    },
+    "bool isObscuredBy(const QGraphicsItem *item) const override": {
+      "brief": "Reimplements: [QGraphicsItem::isObscuredBy](xref:qt:QGraphicsItem)(const QGraphicsItem *item) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#isObscuredBy"
+    },
+    "int type() const override": {
+      "brief": "Reimplements: [QGraphicsItem::type](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#type"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override": {
+      "brief": "Reimplements: [QGraphicsItem::paint](xref:qt:QGraphicsItem)(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#paint"
+    },
+    "void setLine(const QLineF &line)": {
+      "brief": "Sets the item's line to be the given *line*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#setLine"
+    },
+    "void setLine(qreal x1, qreal y1, qreal x2, qreal y2)": {
+      "brief": "Sets the item's line to be the line between (*x1*, *y1*) and (*x2*, *y2*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#setLine-1"
+    },
+    "void setPen(const QPen &pen)": {
+      "brief": "Sets the item's pen to *pen*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslineitem.html#setPen"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

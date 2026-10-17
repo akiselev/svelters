@@ -92,6 +92,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -459,7 +469,7 @@
             "native": "Qt::DropAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DropAction>"
           }
         }
       ],
@@ -580,7 +590,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -849,7 +859,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1067,7 +1077,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList mimeTypes() const",
       "since": null,
@@ -1327,7 +1337,7 @@
             "native": "QAbstractItemView::ScrollHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollHint>"
           }
         }
       ],
@@ -1577,7 +1587,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -1661,7 +1671,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -1745,7 +1755,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -1960,7 +1970,7 @@
             "native": "Qt::DropActions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DropAction>"
           }
         }
       ],
@@ -2044,7 +2054,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -2091,7 +2101,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],
@@ -2125,7 +2135,7 @@
         "native": "Qt::DropActions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DropAction>"
       },
       "signature": "Qt::DropActions supportedDragActions() const",
       "since": null,
@@ -2151,7 +2161,7 @@
         "native": "Qt::DropActions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DropAction>"
       },
       "signature": "Qt::DropActions supportedDropActions() const",
       "since": null,
@@ -2383,7 +2393,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect visualItemRect(const QTableWidgetItem *item) const",
       "since": null,
@@ -2545,6 +2555,8 @@
         "set": "setColumnCount"
       },
       "brief": "The number of columns in the table",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "columnCount",
       "metaobject": {
         "constant": false,
@@ -2565,6 +2577,7 @@
       "name": "columnCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2585,6 +2598,8 @@
         "set": "setRowCount"
       },
       "brief": "The number of rows in the table",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "rowCount",
       "metaobject": {
         "constant": false,
@@ -2605,6 +2620,7 @@
       "name": "rowCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2625,6 +2641,8 @@
         "set": "setSupportedDragActions"
       },
       "brief": "The drag actions supported by this view",
+      "default": "CopyAction|MoveAction",
+      "default_origin": "runtime",
       "js_name": "supportedDragActions",
       "metaobject": {
         "constant": false,
@@ -2645,12 +2663,13 @@
       "name": "supportedDragActions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DropActions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DropAction>"
       }
     }
   ],

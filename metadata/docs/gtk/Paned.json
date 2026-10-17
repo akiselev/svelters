@@ -1,0 +1,232 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPaned` widget.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1617,
+      "md": "Creates a new `GtkPaned` widget."
+    }
+  },
+  "doc": {
+    "brief": "Arranges its children in two panes, horizontally or vertically.",
+    "file": "gtk/gtkpaned.c",
+    "line": 45,
+    "md": "Arranges its children in two panes, horizontally or vertically.\n\nThe division between the two panes is adjustable by the user\nby dragging a handle.\n\nChild widgets are added to the panes of the widget with\n[`Paned.set_start_child()`](xref:gtk:Gtk.Paned#method:set_start_child) and [`Paned.set_end_child()`](xref:gtk:Gtk.Paned#method:set_end_child).\nThe division between the two children is set by default from the size\nrequests of the children, but it can be adjusted by the user.\n\nA paned widget draws a separator between the two child widgets and a\nsmall handle that the user can drag to adjust the division. It does not\ndraw any relief around the children or around the separator. (The space\nin which the separator is called the gutter.) Often, it is useful to put\neach child inside a [`Frame`](xref:gtk:Gtk.Frame) so that the gutter appears as a\nridge. No separator is drawn if one of the children is missing.\n\nEach child has two options that can be set, \"resize\" and \"shrink\". If\n\"resize\" is true then, when the `GtkPaned` is resized, that child will\nexpand or shrink along with the paned widget. If \"shrink\" is true, then\nthat child can be made smaller than its requisition by the user.\nSetting \"shrink\" to false allows the application to set a minimum size.\nIf \"resize\" is false for both children, then this is treated as if\n\"resize\" is true for both children.\n\nThe application can set the position of the slider as if it were set\nby the user, by calling [`Paned.set_position()`](xref:gtk:Gtk.Paned#method:set_position).\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`Paned::accept-position`](xref:gtk:Gtk.Paned#event:accept-position)\n- [`Paned::cancel-position`](xref:gtk:Gtk.Paned#event:cancel-position)\n- [`Paned::cycle-child-focus`](xref:gtk:Gtk.Paned#event:cycle-child-focus)\n- [`Paned::cycle-handle-focus`](xref:gtk:Gtk.Paned#event:cycle-handle-focus)\n- [`Paned::move-handle`](xref:gtk:Gtk.Paned#event:move-handle)\n- [`Paned::toggle-handle-focus`](xref:gtk:Gtk.Paned#event:toggle-handle-focus)\n\n# CSS nodes\n\n```\npaned\n├── <child>\n├── separator[.wide]\n╰── <child>\n```\n\n`GtkPaned` has a main CSS node with name paned, and a subnode for\nthe separator with name separator. The subnode gets a .wide style\nclass when the paned is supposed to be wide.\n\nIn horizontal orientation, the nodes are arranged based on the text\ndirection, so in left-to-right mode, :first-child will select the\nleftmost child, while it will select the rightmost child in\nRTL layouts.\n\n## Creating a paned widget with minimum sizes.\n\n```c\nGtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);\nGtkWidget *frame1 = gtk_frame_new (NULL);\nGtkWidget *frame2 = gtk_frame_new (NULL);\n\ngtk_widget_set_size_request (hpaned, 200, -1);\n\ngtk_paned_set_start_child (GTK_PANED (hpaned), frame1);\ngtk_paned_set_resize_start_child (GTK_PANED (hpaned), TRUE);\ngtk_paned_set_shrink_start_child (GTK_PANED (hpaned), FALSE);\ngtk_widget_set_size_request (frame1, 50, -1);\n\ngtk_paned_set_end_child (GTK_PANED (hpaned), frame2);\ngtk_paned_set_resize_end_child (GTK_PANED (hpaned), FALSE);\ngtk_paned_set_shrink_end_child (GTK_PANED (hpaned), FALSE);\ngtk_widget_set_size_request (frame2, 50, -1);\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Paned",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_end_child": {
+      "brief": "Retrieves the end child of the given `GtkPaned`.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1783,
+      "md": "Retrieves the end child of the given `GtkPaned`."
+    },
+    "get_position": {
+      "brief": "Obtains the position of the divider between the two panes.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1873,
+      "md": "Obtains the position of the divider between the two panes."
+    },
+    "get_resize_end_child": {
+      "brief": "Returns whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can be resized.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1820,
+      "md": "Returns whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can be resized."
+    },
+    "get_resize_start_child": {
+      "brief": "Returns whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can be resized.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1700,
+      "md": "Returns whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can be resized."
+    },
+    "get_shrink_end_child": {
+      "brief": "Returns whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can shrink.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1857,
+      "md": "Returns whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can shrink."
+    },
+    "get_shrink_start_child": {
+      "brief": "Returns whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can shrink.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1737,
+      "md": "Returns whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can shrink."
+    },
+    "get_start_child": {
+      "brief": "Retrieves the start child of the given `GtkPaned`.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1663,
+      "md": "Retrieves the start child of the given `GtkPaned`."
+    },
+    "get_wide_handle": {
+      "brief": "Gets whether the separator should be wide.",
+      "file": "gtk/gtkpaned.c",
+      "line": 2598,
+      "md": "Gets whether the separator should be wide."
+    },
+    "set_end_child": {
+      "brief": "Sets the end child of `paned` to `child`.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1753,
+      "md": "Sets the end child of `paned` to `child`.\n\nIf `child` is `NULL`, the existing child will be removed."
+    },
+    "set_position": {
+      "brief": "Sets the position of the divider between the two panes.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1889,
+      "md": "Sets the position of the divider between the two panes."
+    },
+    "set_resize_end_child": {
+      "brief": "Sets whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can be resized.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1799,
+      "md": "Sets whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can be resized."
+    },
+    "set_resize_start_child": {
+      "brief": "Sets whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can be resized.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1679,
+      "md": "Sets whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can be resized."
+    },
+    "set_shrink_end_child": {
+      "brief": "Sets whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can shrink.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1836,
+      "md": "Sets whether the [`Paned:end-child`](xref:gtk:Gtk.Paned#property:end-child) can shrink."
+    },
+    "set_shrink_start_child": {
+      "brief": "Sets whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can shrink.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1716,
+      "md": "Sets whether the [`Paned:start-child`](xref:gtk:Gtk.Paned#property:start-child) can shrink."
+    },
+    "set_start_child": {
+      "brief": "Sets the start child of `paned` to `child`.",
+      "file": "gtk/gtkpaned.c",
+      "line": 1633,
+      "md": "Sets the start child of `paned` to `child`.\n\nIf `child` is `NULL`, the existing child will be removed."
+    },
+    "set_wide_handle": {
+      "brief": "Sets whether the separator should be wide.",
+      "file": "gtk/gtkpaned.c",
+      "line": 2571,
+      "md": "Sets whether the separator should be wide."
+    }
+  },
+  "properties": {
+    "end-child": {
+      "brief": "The second child.",
+      "file": "gtk/gtkpaned.c",
+      "line": 553,
+      "md": "The second child."
+    },
+    "max-position": {
+      "brief": "The largest possible value for the [`Paned:position`](xref:gtk:Gtk.Paned#property:position) property.",
+      "file": "gtk/gtkpaned.c",
+      "line": 472,
+      "md": "The largest possible value for the [`Paned:position`](xref:gtk:Gtk.Paned#property:position)\nproperty.\n\nThis property is derived from the size and shrinkability\nof the widget's children."
+    },
+    "min-position": {
+      "brief": "The smallest possible value for the [`Paned:position`](xref:gtk:Gtk.Paned#property:position) property.",
+      "file": "gtk/gtkpaned.c",
+      "line": 458,
+      "md": "The smallest possible value for the [`Paned:position`](xref:gtk:Gtk.Paned#property:position)\nproperty.\n\nThis property is derived from the size and shrinkability\nof the widget's children."
+    },
+    "position": {
+      "brief": "Position of the separator in pixels, from the left/top.",
+      "file": "gtk/gtkpaned.c",
+      "line": 438,
+      "md": "Position of the separator in pixels, from the left/top."
+    },
+    "position-set": {
+      "brief": "Whether the [`Paned:position`](xref:gtk:Gtk.Paned#property:position) property has been set.",
+      "file": "gtk/gtkpaned.c",
+      "line": 448,
+      "md": "Whether the [`Paned:position`](xref:gtk:Gtk.Paned#property:position) property has been set."
+    },
+    "resize-end-child": {
+      "brief": "Determines whether the second child expands and shrinks along with the paned widget.",
+      "file": "gtk/gtkpaned.c",
+      "line": 510,
+      "md": "Determines whether the second child expands and shrinks\nalong with the paned widget."
+    },
+    "resize-start-child": {
+      "brief": "Determines whether the first child expands and shrinks along with the paned widget.",
+      "file": "gtk/gtkpaned.c",
+      "line": 499,
+      "md": "Determines whether the first child expands and shrinks\nalong with the paned widget."
+    },
+    "shrink-end-child": {
+      "brief": "Determines whether the second child can be made smaller than its requisition.",
+      "file": "gtk/gtkpaned.c",
+      "line": 532,
+      "md": "Determines whether the second child can be made smaller\nthan its requisition."
+    },
+    "shrink-start-child": {
+      "brief": "Determines whether the first child can be made smaller than its requisition.",
+      "file": "gtk/gtkpaned.c",
+      "line": 521,
+      "md": "Determines whether the first child can be made smaller\nthan its requisition."
+    },
+    "start-child": {
+      "brief": "The first child.",
+      "file": "gtk/gtkpaned.c",
+      "line": 543,
+      "md": "The first child."
+    },
+    "wide-handle": {
+      "brief": "Whether the `GtkPaned` should provide a stronger visual separation.",
+      "file": "gtk/gtkpaned.c",
+      "line": 486,
+      "md": "Whether the `GtkPaned` should provide a stronger visual separation.\n\nFor example, this could be set when a paned contains two\n[`Notebook`](xref:gtk:Gtk.Notebook)s, whose tab rows would otherwise merge visually."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "accept-position": {
+      "brief": "Emitted to accept the current position of the handle when moving it using key bindings.",
+      "file": "gtk/gtkpaned.c",
+      "line": 675,
+      "md": "Emitted to accept the current position of the handle when\nmoving it using key bindings.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Return</kbd> or\n<kbd>Space</kbd>."
+    },
+    "cancel-position": {
+      "brief": "Emitted to cancel moving the position of the handle using key bindings.",
+      "file": "gtk/gtkpaned.c",
+      "line": 701,
+      "md": "Emitted to cancel moving the position of the handle using key\nbindings.\n\nThe position of the handle will be reset to the value prior to\nmoving it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Escape</kbd>."
+    },
+    "cycle-child-focus": {
+      "brief": "Emitted to cycle the focus between the children of the paned.",
+      "file": "gtk/gtkpaned.c",
+      "line": 566,
+      "md": "Emitted to cycle the focus between the children of the paned.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding is <kbd>F6</kbd>."
+    },
+    "cycle-handle-focus": {
+      "brief": "Emitted to cycle whether the paned should grab focus to allow the user to change position of the handle by using key bindings.",
+      "file": "gtk/gtkpaned.c",
+      "line": 648,
+      "md": "Emitted to cycle whether the paned should grab focus to allow\nthe user to change position of the handle by using key bindings.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>F8</kbd>."
+    },
+    "move-handle": {
+      "brief": "Emitted to move the handle with key bindings.",
+      "file": "gtk/gtkpaned.c",
+      "line": 617,
+      "md": "Emitted to move the handle with key bindings.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>←</kbd>, <kbd>←</kbd>,\n<kbd>Ctrl</kbd>+<kbd>→</kbd>, <kbd>→</kbd>,\n<kbd>Ctrl</kbd>+<kbd>↑</kbd>, <kbd>↑</kbd>,\n<kbd>Ctrl</kbd>+<kbd>↓</kbd>, <kbd>↓</kbd>,\n<kbd>PgUp</kbd>, <kbd>PgDn</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>."
+    },
+    "toggle-handle-focus": {
+      "brief": "Emitted to accept the current position of the handle and then move focus to the next widget in the focus chain.",
+      "file": "gtk/gtkpaned.c",
+      "line": 592,
+      "md": "Emitted to accept the current position of the handle and then\nmove focus to the next widget in the focus chain.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding is <kbd>Tab</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

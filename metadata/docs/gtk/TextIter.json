@@ -1,0 +1,565 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Iterates over the contents of a `GtkTextBuffer`.",
+    "file": "gtk/gtktextiter.c",
+    "line": 35,
+    "md": "Iterates over the contents of a `GtkTextBuffer`.\n\nYou may wish to begin by reading the\n[text widget conceptual overview](section-text-widget.html),\nwhich gives an overview of all the objects and data types\nrelated to the text widget and how they work together."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextIter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "assign": {
+      "brief": "Assigns the value of `other` to `iter`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 449,
+      "md": "Assigns the value of `other` to `iter`.\n\nThis function is not useful in applications, because\niterators can be assigned with `GtkTextIter i = j;`.\n\nThe function is used by language bindings."
+    },
+    "backward_char": {
+      "brief": "Moves backward by one character offset.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2262,
+      "md": "Moves backward by one character offset.\n\nReturns `TRUE` if movement was possible; if `iter` was the first\nin the buffer (character offset 0), this function returns `FALSE`\nfor convenience when writing loops."
+    },
+    "backward_chars": {
+      "brief": "Moves `count` characters backward, if possible.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2373,
+      "md": "Moves `count` characters backward, if possible.\n\nIf `count` would move past the start or end of the buffer, moves\nto the start or end of the buffer.\n\nThe return value indicates whether the iterator moved\nonto a dereferenceable position; if the iterator didn’t move, or\nmoved onto the end iterator, then `FALSE` is returned. If `count` is 0,\nthe function does nothing and returns `FALSE`."
+    },
+    "backward_cursor_position": {
+      "brief": "Like [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position), but moves backward.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3707,
+      "md": "Like [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position), but moves backward."
+    },
+    "backward_cursor_positions": {
+      "brief": "Moves up to `count` cursor positions.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3741,
+      "md": "Moves up to `count` cursor positions.\n\nSee [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position) for details."
+    },
+    "backward_find_char": {
+      "brief": "Same as [`TextIter.forward_find_char()`](xref:gtk:Gtk.TextIter#method:forward_find_char), but goes backward from `iter`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4472,
+      "md": "Same as [`TextIter.forward_find_char()`](xref:gtk:Gtk.TextIter#method:forward_find_char),\nbut goes backward from `iter`."
+    },
+    "backward_line": {
+      "brief": "Moves `iter` to the start of the previous line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2585,
+      "md": "Moves `iter` to the start of the previous line.\n\nReturns `TRUE` if `iter` could be moved; i.e. if `iter` was at\ncharacter offset 0, this function returns `FALSE`. Therefore,\nif `iter` was already on line 0, but not at the start of the line,\n`iter` is snapped to the start of the line and the function returns\n`TRUE`. (Note that this implies that\nin a loop calling this function, the line number may not change on\nevery iteration, if your first iteration is on line 0.)"
+    },
+    "backward_lines": {
+      "brief": "Moves `count` lines backward, if possible.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2719,
+      "md": "Moves `count` lines backward, if possible.\n\nIf `count` would move past the start or end of the buffer, moves to\nthe start or end of the buffer.\n\nThe return value indicates whether the iterator moved\nonto a dereferenceable position; if the iterator didn’t move, or\nmoved onto the end iterator, then `FALSE` is returned. If `count` is 0,\nthe function does nothing and returns `FALSE`. If `count` is negative,\nmoves forward by 0 - `count` lines."
+    },
+    "backward_search": {
+      "brief": "Same as [`TextIter.forward_search()`](xref:gtk:Gtk.TextIter#method:forward_search), but moves backward.",
+      "file": "gtk/gtktextiter.c",
+      "line": 5283,
+      "md": "Same as [`TextIter.forward_search()`](xref:gtk:Gtk.TextIter#method:forward_search), but moves backward.\n\n`match_end` will never be set to a `GtkTextIter` located after `iter`,\neven if there is a possible `match_start` before or at `iter`."
+    },
+    "backward_sentence_start": {
+      "brief": "Moves backward to the previous sentence start.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3559,
+      "md": "Moves backward to the previous sentence start.\n\nIf `iter` is already at the start of a sentence, moves backward\nto the next one.\n\nSentence boundaries are determined by Pango and should\nbe correct for nearly any language."
+    },
+    "backward_sentence_starts": {
+      "brief": "Calls [`TextIter.backward_sentence_start()`](xref:gtk:Gtk.TextIter#method:backward_sentence_start) up to `count` times.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3602,
+      "md": "Calls [`TextIter.backward_sentence_start()`](xref:gtk:Gtk.TextIter#method:backward_sentence_start) up to `count` times.\n\nIf `count` is negative, moves forward instead of backward."
+    },
+    "backward_to_tag_toggle": {
+      "brief": "Moves backward to the next toggle (on or off) of the `tag`, or to the next toggle of any tag if `tag` is `NULL`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4318,
+      "md": "Moves backward to the next toggle (on or off) of the\n`tag`, or to the next toggle of any tag if\n`tag` is `NULL`.\n\nIf no matching tag toggles are found,\nreturns `FALSE`, otherwise `TRUE`. Does not return toggles\nlocated at `iter`, only toggles before `iter`. Sets `iter`\nto the location of the toggle, or the start of the buffer\nif no toggle is found."
+    },
+    "backward_visible_cursor_position": {
+      "brief": "Moves `iter` backward to the previous visible cursor position.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3777,
+      "md": "Moves `iter` backward to the previous visible cursor position.\n\nSee [`TextIter.backward_cursor_position()`](xref:gtk:Gtk.TextIter#method:backward_cursor_position) for details."
+    },
+    "backward_visible_cursor_positions": {
+      "brief": "Moves up to `count` visible cursor positions.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3813,
+      "md": "Moves up to `count` visible cursor positions.\n\nSee [`TextIter.backward_cursor_position()`](xref:gtk:Gtk.TextIter#method:backward_cursor_position) for details."
+    },
+    "backward_visible_line": {
+      "brief": "Moves `iter` to the start of the previous visible line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2799,
+      "md": "Moves `iter` to the start of the previous visible line.\n\nReturns `TRUE` if\n`iter` could be moved; i.e. if `iter` was at character offset 0, this\nfunction returns `FALSE`. Therefore if `iter` was already on line 0,\nbut not at the start of the line, `iter` is snapped to the start of\nthe line and the function returns `TRUE`. (Note that this implies that\nin a loop calling this function, the line number may not change on\nevery iteration, if your first iteration is on line 0.)"
+    },
+    "backward_visible_lines": {
+      "brief": "Moves `count` visible lines backward, if possible.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2880,
+      "md": "Moves `count` visible lines backward, if possible.\n\nIf `count` would move past the start or end of the buffer, moves to\nthe start or end of the buffer.\n\nThe return value indicates whether the iterator moved\nonto a dereferenceable position; if the iterator didn’t move, or\nmoved onto the end iterator, then `FALSE` is returned. If `count` is 0,\nthe function does nothing and returns `FALSE`. If `count` is negative,\nmoves forward by 0 - `count` lines."
+    },
+    "backward_visible_word_start": {
+      "brief": "Moves backward to the previous visible word start.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3374,
+      "md": "Moves backward to the previous visible word start.\n\nIf `iter` is currently on a word start, moves backward to the\nnext one after that.\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language."
+    },
+    "backward_visible_word_starts": {
+      "brief": "Calls [`TextIter.backward_visible_word_start()`](xref:gtk:Gtk.TextIter#method:backward_visible_word_start) up to `count` times.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3412,
+      "md": "Calls [`TextIter.backward_visible_word_start()`](xref:gtk:Gtk.TextIter#method:backward_visible_word_start) up to `count` times."
+    },
+    "backward_word_start": {
+      "brief": "Moves backward to the previous word start.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3294,
+      "md": "Moves backward to the previous word start.\n\nIf `iter` is currently on a word start, moves backward to the\nnext one after that.\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language"
+    },
+    "backward_word_starts": {
+      "brief": "Calls [`TextIter.backward_word_start()`](xref:gtk:Gtk.TextIter#method:backward_word_start) up to `count` times.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3336,
+      "md": "Calls [`TextIter.backward_word_start()`](xref:gtk:Gtk.TextIter#method:backward_word_start) up to `count` times."
+    },
+    "can_insert": {
+      "brief": "Considering the default editability of the buffer, and tags that affect editability, determines whether text inserted at `iter` would be editable.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1457,
+      "md": "Considering the default editability of the buffer, and tags that\naffect editability, determines whether text inserted at `iter` would\nbe editable.\n\nIf text inserted at `iter` would be editable then the\nuser should be allowed to insert text at `iter`.\n[`TextBuffer.insert_interactive()`](xref:gtk:Gtk.TextBuffer#method:insert_interactive) uses this function\nto decide whether insertions are allowed at a given position."
+    },
+    "compare": {
+      "brief": "A qsort()-style function that returns negative if `lhs` is less than `rhs`, positive if `lhs` is greater than `rhs`, and 0 if they’re equal.",
+      "file": "gtk/gtktextiter.c",
+      "line": 5494,
+      "md": "A qsort()-style function that returns negative if `lhs` is less than\n`rhs`, positive if `lhs` is greater than `rhs`, and 0 if they’re equal.\n\nOrdering is in character offset order, i.e. the first character\nin the buffer is less than the second character in the buffer."
+    },
+    "copy": {
+      "brief": "Creates a dynamically-allocated copy of an iterator.",
+      "file": "gtk/gtktextiter.c",
+      "line": 403,
+      "md": "Creates a dynamically-allocated copy of an iterator.\n\nThis function is not useful in applications, because\niterators can be copied with a simple assignment\n(`GtkTextIter i = j;`).\n\nThe function is used by language bindings."
+    },
+    "editable": {
+      "brief": "Returns whether the character at `iter` is within an editable region of text.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1414,
+      "md": "Returns whether the character at `iter` is within an editable region\nof text.\n\nNon-editable text is “locked” and can’t be changed by the\nuser via `GtkTextView`. If no tags applied to this text affect\neditability, `default_setting` will be returned.\n\nYou don’t want to use this function to decide whether text can be\ninserted at `iter`, because for insertion you don’t want to know\nwhether the char at `iter` is inside an editable range, you want to\nknow whether a new character inserted at `iter` would be inside an\neditable range. Use [`TextIter.can_insert()`](xref:gtk:Gtk.TextIter#method:can_insert) to handle this\ncase."
+    },
+    "ends_line": {
+      "brief": "Returns `TRUE` if `iter` points to the start of the paragraph delimiter characters for a line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1589,
+      "md": "Returns `TRUE` if `iter` points to the start of the paragraph\ndelimiter characters for a line.\n\nDelimiters will be either a newline, a carriage return, a carriage\nreturn followed by a newline, or a Unicode paragraph separator\ncharacter.\n\nNote that an iterator pointing to the \\n of a \\r\\n pair will not be\ncounted as the end of a line, the line ends before the \\r. The end\niterator is considered to be at the end of a line, even though there\nare no paragraph delimiter chars there."
+    },
+    "ends_sentence": {
+      "brief": "Determines whether `iter` ends a sentence.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3503,
+      "md": "Determines whether `iter` ends a sentence.\n\nSentence boundaries are determined by Pango and should\nbe correct for nearly any language."
+    },
+    "ends_tag": {
+      "brief": "Returns `TRUE` if `tag` is toggled off at exactly this point.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1234,
+      "md": "Returns `TRUE` if `tag` is toggled off at exactly this point.\n\nIf `tag` is `NULL`, returns `TRUE` if any tag is toggled off at this point.\n\nNote that if this function returns `TRUE`, it means that\n`iter` is at the end of the tagged range, but that the character\nat `iter` is outside the tagged range. In other words,\nunlike [`TextIter.starts_tag()`](xref:gtk:Gtk.TextIter#method:starts_tag), if this function\nreturns `TRUE`, [`TextIter.has_tag()`](xref:gtk:Gtk.TextIter#method:has_tag) will return\n`FALSE` for the same parameters."
+    },
+    "ends_word": {
+      "brief": "Determines whether `iter` ends a natural-language word.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3447,
+      "md": "Determines whether `iter` ends a natural-language word.\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language."
+    },
+    "equal": {
+      "brief": "Tests whether two iterators are equal, using the fastest possible mechanism.",
+      "file": "gtk/gtktextiter.c",
+      "line": 5432,
+      "md": "Tests whether two iterators are equal, using the fastest possible\nmechanism.\n\nThis function is very fast; you can expect it to perform\nbetter than e.g. getting the character offset for each\niterator and comparing the offsets yourself. Also, it’s a\nbit faster than [`TextIter.compare()`](xref:gtk:Gtk.TextIter#method:compare)."
+    },
+    "forward_char": {
+      "brief": "Moves `iter` forward by one character offset.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2230,
+      "md": "Moves `iter` forward by one character offset.\n\nNote that images embedded in the buffer occupy 1 character slot, so\nthis function may actually move onto an image instead of a character,\nif you have images in your buffer. If `iter` is the end iterator or\none character before it, `iter` will now point at the end iterator,\nand this function returns `FALSE` for convenience when writing loops."
+    },
+    "forward_chars": {
+      "brief": "Moves `count` characters if possible.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2299,
+      "md": "Moves `count` characters if possible.\n\nIf `count` would move past the start or end of the buffer,\nmoves to the start or end of the buffer.\n\nThe return value indicates whether the new position of\n`iter` is different from its original position, and dereferenceable\n(the last iterator in the buffer is not dereferenceable). If `count`\nis 0, the function does nothing and returns `FALSE`."
+    },
+    "forward_cursor_position": {
+      "brief": "Moves `iter` forward by a single cursor position.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3679,
+      "md": "Moves `iter` forward by a single cursor position.\n\nCursor positions are (unsurprisingly) positions where the\ncursor can appear. Perhaps surprisingly, there may not be\na cursor position between all characters. The most common\nexample for European languages would be a carriage return/newline\nsequence.\n\nFor some Unicode characters, the equivalent of say the letter “a”\nwith an accent mark will be represented as two characters, first\nthe letter then a \"combining mark\" that causes the accent to be\nrendered; so the cursor can’t go between those two characters.\n\nSee also the [`LogAttr`](xref:gtk:Pango.LogAttr) struct and the `break`\nfunction."
+    },
+    "forward_cursor_positions": {
+      "brief": "Moves up to `count` cursor positions.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3721,
+      "md": "Moves up to `count` cursor positions.\n\nSee [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position) for details."
+    },
+    "forward_find_char": {
+      "brief": "Advances `iter`, calling `pred` on each character.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4433,
+      "md": "Advances `iter`, calling `pred` on each character.\n\nIf `pred` returns `TRUE`, returns `TRUE` and stops scanning.\nIf `pred` never returns `TRUE`, `iter` is set to `limit` if\n`limit` is non-`NULL`, otherwise to the end iterator."
+    },
+    "forward_line": {
+      "brief": "Moves `iter` to the start of the next line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2534,
+      "md": "Moves `iter` to the start of the next line.\n\nIf the iter is already on the last line of the buffer,\nmoves the iter to the end of the current line. If after\nthe operation, the iter is at the end of the buffer and not\ndereferenceable, returns `FALSE`. Otherwise, returns `TRUE`."
+    },
+    "forward_lines": {
+      "brief": "Moves `count` lines forward, if possible.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2665,
+      "md": "Moves `count` lines forward, if possible.\n\nIf `count` would move past the start or end of the buffer, moves to\nthe start or end of the buffer.\n\nThe return value indicates whether the iterator moved\nonto a dereferenceable position; if the iterator didn’t move, or\nmoved onto the end iterator, then `FALSE` is returned. If `count` is 0,\nthe function does nothing and returns `FALSE`. If `count` is negative,\nmoves backward by 0 - `count` lines."
+    },
+    "forward_search": {
+      "brief": "Searches forward for `str`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4953,
+      "md": "Searches forward for `str`.\n\nAny match is returned by setting `match_start` to the first character\nof the match and `match_end` to the first character after the match.\nThe search will not continue past `limit`. Note that a search is a\nlinear or O(n) operation, so you may wish to use `limit` to avoid\nlocking up your UI on large buffers.\n\n`match_start` will never be set to a `GtkTextIter` located before `iter`,\neven if there is a possible `match_end` after or at `iter`."
+    },
+    "forward_sentence_end": {
+      "brief": "Moves forward to the next sentence end.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3539,
+      "md": "Moves forward to the next sentence end.\n\nIf `iter` is at the end of a sentence, moves to the next\nend of sentence.\n\nSentence boundaries are determined by Pango and should\nbe correct for nearly any language."
+    },
+    "forward_sentence_ends": {
+      "brief": "Calls [`TextIter.forward_sentence_end()`](xref:gtk:Gtk.TextIter#method:forward_sentence_end) `count` times.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3582,
+      "md": "Calls [`TextIter.forward_sentence_end()`](xref:gtk:Gtk.TextIter#method:forward_sentence_end) `count` times.\n\nIf `count` is negative, moves backward instead of forward."
+    },
+    "forward_to_end": {
+      "brief": "Moves `iter` forward to the “end iterator”, which points one past the last valid character in the buffer.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4120,
+      "md": "Moves `iter` forward to the “end iterator”, which points\none past the last valid character in the buffer.\n\n[`TextIter.get_char()`](xref:gtk:Gtk.TextIter#method:get_char) called on the end iterator\nreturns 0, which is convenient for writing loops."
+    },
+    "forward_to_line_end": {
+      "brief": "Moves the iterator to point to the paragraph delimiter characters.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4178,
+      "md": "Moves the iterator to point to the paragraph delimiter characters.\n\nThe possible characters are either a newline, a carriage return,\na carriage return/newline in sequence, or the Unicode paragraph\nseparator character.\n\nIf the iterator is already at the paragraph delimiter\ncharacters, moves to the paragraph delimiter characters for the\nnext line. If `iter` is on the last line in the buffer, which does\nnot end in paragraph delimiters, moves to the end iterator (end of\nthe last line), and returns `FALSE`."
+    },
+    "forward_to_tag_toggle": {
+      "brief": "Moves forward to the next toggle (on or off) of the `tag`, or to the next toggle of any tag if `tag` is `NULL`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4231,
+      "md": "Moves forward to the next toggle (on or off) of the\n`tag`, or to the next toggle of any tag if\n`tag` is `NULL`.\n\nIf no matching tag toggles are found,\nreturns `FALSE`, otherwise `TRUE`. Does not return toggles\nlocated at `iter`, only toggles after `iter`. Sets `iter` to\nthe location of the toggle, or to the end of the buffer\nif no toggle is found."
+    },
+    "forward_visible_cursor_position": {
+      "brief": "Moves `iter` forward to the next visible cursor position.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3761,
+      "md": "Moves `iter` forward to the next visible cursor position.\n\nSee [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position) for details."
+    },
+    "forward_visible_cursor_positions": {
+      "brief": "Moves up to `count` visible cursor positions.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3793,
+      "md": "Moves up to `count` visible cursor positions.\n\nSee [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position) for details."
+    },
+    "forward_visible_line": {
+      "brief": "Moves `iter` to the start of the next visible line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2762,
+      "md": "Moves `iter` to the start of the next visible line.\n\nReturns `TRUE` if there\nwas a next line to move to, and `FALSE` if `iter` was simply moved to\nthe end of the buffer and is now not dereferenceable, or if `iter` was\nalready at the end of the buffer."
+    },
+    "forward_visible_lines": {
+      "brief": "Moves `count` visible lines forward, if possible.",
+      "file": "gtk/gtktextiter.c",
+      "line": 2839,
+      "md": "Moves `count` visible lines forward, if possible.\n\nIf `count` would move past the start or end of the buffer, moves to\nthe start or end of the buffer.\n\nThe return value indicates whether the iterator moved\nonto a dereferenceable position; if the iterator didn’t move, or\nmoved onto the end iterator, then `FALSE` is returned. If `count` is 0,\nthe function does nothing and returns `FALSE`. If `count` is negative,\nmoves backward by 0 - `count` lines."
+    },
+    "forward_visible_word_end": {
+      "brief": "Moves forward to the next visible word end.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3354,
+      "md": "Moves forward to the next visible word end.\n\nIf `iter` is currently on a word end, moves forward to the\nnext one after that.\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language"
+    },
+    "forward_visible_word_ends": {
+      "brief": "Calls [`TextIter.forward_visible_word_end()`](xref:gtk:Gtk.TextIter#method:forward_visible_word_end) up to `count` times.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3394,
+      "md": "Calls [`TextIter.forward_visible_word_end()`](xref:gtk:Gtk.TextIter#method:forward_visible_word_end) up to `count` times."
+    },
+    "forward_word_end": {
+      "brief": "Moves forward to the next word end.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3274,
+      "md": "Moves forward to the next word end.\n\nIf `iter` is currently on a word end, moves forward to the\nnext one after that.\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language."
+    },
+    "forward_word_ends": {
+      "brief": "Calls [`TextIter.forward_word_end()`](xref:gtk:Gtk.TextIter#method:forward_word_end) up to `count` times.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3318,
+      "md": "Calls [`TextIter.forward_word_end()`](xref:gtk:Gtk.TextIter#method:forward_word_end) up to `count` times."
+    },
+    "free": {
+      "brief": "Free an iterator allocated on the heap.",
+      "file": "gtk/gtktextiter.c",
+      "line": 431,
+      "md": "Free an iterator allocated on the heap.\n\nThis function is intended for use in language bindings,\nand is not especially useful for applications, because\niterators can simply be allocated on the stack."
+    },
+    "get_buffer": {
+      "brief": "Returns the `GtkTextBuffer` this iterator is associated with.",
+      "file": "gtk/gtktextiter.c",
+      "line": 378,
+      "md": "Returns the `GtkTextBuffer` this iterator is associated with."
+    },
+    "get_bytes_in_line": {
+      "brief": "Returns the number of bytes in the line containing `iter`, including the paragraph delimiters.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1760,
+      "md": "Returns the number of bytes in the line containing `iter`,\nincluding the paragraph delimiters."
+    },
+    "get_char": {
+      "brief": "The Unicode character at this iterator is returned.",
+      "file": "gtk/gtktextiter.c",
+      "line": 851,
+      "md": "The Unicode character at this iterator is returned.\n\nEquivalent to operator* on a C++ iterator. If the element at\nthis iterator is a non-character element, such as an image\nembedded in the buffer, the Unicode “unknown” character 0xFFFC\nis returned. If invoked on the end iterator, zero is returned;\nzero is not a valid Unicode character.\n\nSo you can write a loop which ends when this function returns 0."
+    },
+    "get_chars_in_line": {
+      "brief": "Returns the number of characters in the line containing `iter`, including the paragraph delimiters.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1708,
+      "md": "Returns the number of characters in the line containing `iter`,\nincluding the paragraph delimiters."
+    },
+    "get_child_anchor": {
+      "brief": "If the location at `iter` contains a child anchor, the anchor is returned.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1045,
+      "md": "If the location at `iter` contains a child anchor, the\nanchor is returned.\n\nOtherwise, `NULL` is returned."
+    },
+    "get_language": {
+      "brief": "Returns the language in effect at `iter`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1522,
+      "md": "Returns the language in effect at `iter`.\n\nIf no tags affecting language apply to `iter`, the return\nvalue is identical to that of `get_default_language`."
+    },
+    "get_line": {
+      "brief": "Returns the line number containing the iterator.",
+      "file": "gtk/gtktextiter.c",
+      "line": 624,
+      "md": "Returns the line number containing the iterator.\n\nLines in a `GtkTextBuffer` are numbered beginning\nwith 0 for the first line in the buffer."
+    },
+    "get_line_index": {
+      "brief": "Returns the byte index of the iterator, counting from the start of a newline-terminated line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 686,
+      "md": "Returns the byte index of the iterator, counting\nfrom the start of a newline-terminated line.\n\nRemember that `GtkTextBuffer` encodes text in\nUTF-8, and that characters can require a variable\nnumber of bytes to represent."
+    },
+    "get_line_offset": {
+      "brief": "Returns the character offset of the iterator, counting from the start of a newline-terminated line.",
+      "file": "gtk/gtktextiter.c",
+      "line": 656,
+      "md": "Returns the character offset of the iterator,\ncounting from the start of a newline-terminated line.\n\nThe first character on the line has offset 0."
+    },
+    "get_marks": {
+      "brief": "Returns a list of all `GtkTextMark` at this location.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1076,
+      "md": "Returns a list of all `GtkTextMark` at this location.\n\nBecause marks are not iterable (they don’t take up any \"space\"\nin the buffer, they are just marks in between iterable locations),\nmultiple marks can exist in the same place.\n\nThe returned list is not in any meaningful order."
+    },
+    "get_offset": {
+      "brief": "Returns the character offset of an iterator.",
+      "file": "gtk/gtktextiter.c",
+      "line": 583,
+      "md": "Returns the character offset of an iterator.\n\nEach character in a `GtkTextBuffer` has an offset,\nstarting with 0 for the first character in the buffer.\nUse [`TextBuffer.get_iter_at_offset()`](xref:gtk:Gtk.TextBuffer#method:get_iter_at_offset) to convert\nan offset back into an iterator."
+    },
+    "get_paintable": {
+      "brief": "If the element at `iter` is a paintable, the paintable is returned.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1015,
+      "md": "If the element at `iter` is a paintable, the paintable is returned.\n\nOtherwise, `NULL` is returned."
+    },
+    "get_slice": {
+      "brief": "Returns the text in the given range.",
+      "file": "gtk/gtktextiter.c",
+      "line": 901,
+      "md": "Returns the text in the given range.\n\nA “slice” is an array of characters encoded in UTF-8 format,\nincluding the Unicode “unknown” character 0xFFFC for iterable\nnon-character elements in the buffer, such as images.\nBecause images are encoded in the slice, byte and\ncharacter offsets in the returned array will correspond to byte\noffsets in the text buffer. Note that 0xFFFC can occur in normal\ntext as well, so it is not a reliable indicator that a paintable or\nwidget is in the buffer."
+    },
+    "get_tags": {
+      "brief": "Returns a list of tags that apply to `iter`, in ascending order of priority.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1370,
+      "md": "Returns a list of tags that apply to `iter`, in ascending order of\npriority.\n\nThe highest-priority tags are last.\n\nThe `GtkTextTag`s in the list don’t have a reference added,\nbut you have to free the list itself."
+    },
+    "get_text": {
+      "brief": "Returns text in the given range.",
+      "file": "gtk/gtktextiter.c",
+      "line": 932,
+      "md": "Returns text in the given range.\n\nIf the range\ncontains non-text elements such as images, the character and byte\noffsets in the returned string will not correspond to character and\nbyte offsets in the buffer. If you want offsets to correspond, see\n[`TextIter.get_slice()`](xref:gtk:Gtk.TextIter#method:get_slice)."
+    },
+    "get_toggled_tags": {
+      "brief": "Returns a list of `GtkTextTag` that are toggled on or off at this point.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1123,
+      "md": "Returns a list of `GtkTextTag` that are toggled on or off at this\npoint.\n\nIf `toggled_on` is `TRUE`, the list contains tags that are\ntoggled on. If a tag is toggled on at `iter`, then some non-empty\nrange of characters following `iter` has that tag applied to it.  If\na tag is toggled off, then some non-empty range following `iter`\ndoes not have the tag applied to it."
+    },
+    "get_visible_line_index": {
+      "brief": "Returns the number of bytes from the start of the line to the given `iter`, not counting bytes that are invisible due to tags with the “invisible” flag toggled on.",
+      "file": "gtk/gtktextiter.c",
+      "line": 783,
+      "md": "Returns the number of bytes from the start of the\nline to the given `iter`, not counting bytes that\nare invisible due to tags with the “invisible” flag\ntoggled on."
+    },
+    "get_visible_line_offset": {
+      "brief": "Returns the offset in characters from the start of the line to the given `iter`, not counting characters that are invisible due to tags with the “invisible” flag toggled on.",
+      "file": "gtk/gtktextiter.c",
+      "line": 718,
+      "md": "Returns the offset in characters from the start of the\nline to the given `iter`, not counting characters that\nare invisible due to tags with the “invisible” flag\ntoggled on."
+    },
+    "get_visible_slice": {
+      "brief": "Returns visible text in the given range.",
+      "file": "gtk/gtktextiter.c",
+      "line": 960,
+      "md": "Returns visible text in the given range.\n\nLike [`TextIter.get_slice()`](xref:gtk:Gtk.TextIter#method:get_slice), but invisible text\nis not included. Invisible text is usually invisible because\na `GtkTextTag` with the “invisible” attribute turned on has\nbeen applied to it."
+    },
+    "get_visible_text": {
+      "brief": "Returns visible text in the given range.",
+      "file": "gtk/gtktextiter.c",
+      "line": 987,
+      "md": "Returns visible text in the given range.\n\nLike [`TextIter.get_text()`](xref:gtk:Gtk.TextIter#method:get_text), but invisible text\nis not included. Invisible text is usually invisible because\na `GtkTextTag` with the “invisible” attribute turned on has\nbeen applied to it."
+    },
+    "has_tag": {
+      "brief": "Returns `TRUE` if `iter` points to a character that is part of a range tagged with `tag`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1328,
+      "md": "Returns `TRUE` if `iter` points to a character that is part\nof a range tagged with `tag`.\n\nSee also [`TextIter.starts_tag()`](xref:gtk:Gtk.TextIter#method:starts_tag) and\n[`TextIter.ends_tag()`](xref:gtk:Gtk.TextIter#method:ends_tag)."
+    },
+    "in_range": {
+      "brief": "Checks whether `iter` falls in the range [`start`, `end`).",
+      "file": "gtk/gtktextiter.c",
+      "line": 5566,
+      "md": "Checks whether `iter` falls in the range [`start`, `end`).\n\n`start` and `end` must be in ascending order."
+    },
+    "inside_sentence": {
+      "brief": "Determines whether `iter` is inside a sentence (as opposed to in between two sentences, e.g. after a period and before the first letter of the next sentence).",
+      "file": "gtk/gtktextiter.c",
+      "line": 3520,
+      "md": "Determines whether `iter` is inside a sentence (as opposed to in\nbetween two sentences, e.g. after a period and before the first\nletter of the next sentence).\n\nSentence boundaries are determined by Pango and should be correct\nfor nearly any language."
+    },
+    "inside_word": {
+      "brief": "Determines whether the character pointed by `iter` is part of a natural-language word (as opposed to say inside some whitespace).",
+      "file": "gtk/gtktextiter.c",
+      "line": 3464,
+      "md": "Determines whether the character pointed by `iter` is part of a\nnatural-language word (as opposed to say inside some whitespace).\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language.\n\nNote that if [`TextIter.starts_word()`](xref:gtk:Gtk.TextIter#method:starts_word) returns `TRUE`,\nthen this function returns `TRUE` too, since `iter` points to\nthe first character of the word."
+    },
+    "is_cursor_position": {
+      "brief": "Determine if `iter` is at a cursor position.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3833,
+      "md": "Determine if `iter` is at a cursor position.\n\nSee [`TextIter.forward_cursor_position()`](xref:gtk:Gtk.TextIter#method:forward_cursor_position) or\n[`LogAttr`](xref:gtk:Pango.LogAttr) or `break` for details\non what a cursor position is."
+    },
+    "is_end": {
+      "brief": "Returns `TRUE` if `iter` is the end iterator.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1653,
+      "md": "Returns `TRUE` if `iter` is the end iterator.\n\nThis means it is one past the last dereferenceable iterator\nin the buffer. [`TextIter.is_end()`](xref:gtk:Gtk.TextIter#method:is_end) is the most efficient\nway to check whether an iterator is the end iterator."
+    },
+    "is_start": {
+      "brief": "Returns `TRUE` if `iter` is the first iterator in the buffer.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1694,
+      "md": "Returns `TRUE` if `iter` is the first iterator in the buffer."
+    },
+    "order": {
+      "brief": "Swaps the value of `first` and `second` if `second` comes before `first` in the buffer.",
+      "file": "gtk/gtktextiter.c",
+      "line": 5592,
+      "md": "Swaps the value of `first` and `second` if `second` comes before\n`first` in the buffer.\n\nThat is, ensures that `first` and `second` are in sequence.\nMost text buffer functions that take a range call this\nautomatically on your behalf, so there’s no real reason to\ncall it yourself in those cases. There are some exceptions,\nsuch as [`TextIter.in_range()`](xref:gtk:Gtk.TextIter#method:in_range), that expect a\npre-sorted range."
+    },
+    "set_line": {
+      "brief": "Moves iterator `iter` to the start of the line `line_number`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4038,
+      "md": "Moves iterator `iter` to the start of the line `line_number`.\n\nIf `line_number` is negative or larger than or equal to the number of lines\nin the buffer, moves `iter` to the start of the last line in the buffer."
+    },
+    "set_line_index": {
+      "brief": "Same as [`TextIter.set_line_offset()`](xref:gtk:Gtk.TextIter#method:set_line_offset), but works with a byte index.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3891,
+      "md": "Same as [`TextIter.set_line_offset()`](xref:gtk:Gtk.TextIter#method:set_line_offset), but works with a\nbyte index. The given byte index must be at\nthe start of a character, it can’t be in the middle of a UTF-8\nencoded character."
+    },
+    "set_line_offset": {
+      "brief": "Moves `iter` within a line, to a new character (not byte) offset.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3851,
+      "md": "Moves `iter` within a line, to a new character (not byte) offset.\n\nThe given character offset must be less than or equal to the number\nof characters in the line; if equal, `iter` moves to the start of the\nnext line. See [`TextIter.set_line_index()`](xref:gtk:Gtk.TextIter#method:set_line_index) if you have a byte\nindex rather than a character offset."
+    },
+    "set_offset": {
+      "brief": "Sets `iter` to point to `char_offset`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 4075,
+      "md": "Sets `iter` to point to `char_offset`.\n\n`char_offset` counts from the start\nof the entire text buffer, starting with 0."
+    },
+    "set_visible_line_index": {
+      "brief": "Like [`TextIter.set_line_index()`](xref:gtk:Gtk.TextIter#method:set_line_index), but the index is in visible bytes, i.e. text with a tag making it invisible is not counted in the index.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3978,
+      "md": "Like [`TextIter.set_line_index()`](xref:gtk:Gtk.TextIter#method:set_line_index), but the index is in visible\nbytes, i.e. text with a tag making it invisible is not counted\nin the index."
+    },
+    "set_visible_line_offset": {
+      "brief": "Like [`TextIter.set_line_offset()`](xref:gtk:Gtk.TextIter#method:set_line_offset), but the offset is in visible characters, i.e. text with a tag making it invisible is not counted in the offset.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3937,
+      "md": "Like [`TextIter.set_line_offset()`](xref:gtk:Gtk.TextIter#method:set_line_offset), but the offset is in visible\ncharacters, i.e. text with a tag making it invisible is not\ncounted in the offset."
+    },
+    "starts_line": {
+      "brief": "Returns `TRUE` if `iter` begins a paragraph.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1550,
+      "md": "Returns `TRUE` if `iter` begins a paragraph.\n\nThis is the case if [`TextIter.get_line_offset()`](xref:gtk:Gtk.TextIter#method:get_line_offset)\nwould return 0. However this function is potentially more\nefficient than [`TextIter.get_line_offset()`](xref:gtk:Gtk.TextIter#method:get_line_offset), because\nit doesn’t have to compute the offset, it just has to see\nwhether it’s 0."
+    },
+    "starts_sentence": {
+      "brief": "Determines whether `iter` begins a sentence.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3486,
+      "md": "Determines whether `iter` begins a sentence.\n\nSentence boundaries are determined by Pango and\nshould be correct for nearly any language."
+    },
+    "starts_tag": {
+      "brief": "Returns `TRUE` if `tag` is toggled on at exactly this point.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1184,
+      "md": "Returns `TRUE` if `tag` is toggled on at exactly this point.\n\nIf `tag` is `NULL`, returns `TRUE` if any tag is toggled on at this point.\n\nNote that if this function returns `TRUE`, it means that\n`iter` is at the beginning of the tagged range, and that the\ncharacter at `iter` is inside the tagged range. In other\nwords, unlike [`TextIter.ends_tag()`](xref:gtk:Gtk.TextIter#method:ends_tag), if\nthis function returns `TRUE`, [`TextIter.has_tag()`](xref:gtk:Gtk.TextIter#method:has_tag)\nwill also return `TRUE` for the same parameters."
+    },
+    "starts_word": {
+      "brief": "Determines whether `iter` begins a natural-language word.",
+      "file": "gtk/gtktextiter.c",
+      "line": 3430,
+      "md": "Determines whether `iter` begins a natural-language word.\n\nWord breaks are determined by Pango and should be correct\nfor nearly any language."
+    },
+    "toggles_tag": {
+      "brief": "Gets whether a range with `tag` applied to it begins or ends at `iter`.",
+      "file": "gtk/gtktextiter.c",
+      "line": 1284,
+      "md": "Gets whether a range with `tag` applied to it begins\nor ends at `iter`.\n\nThis is equivalent to (gtk_text_iter_starts_tag() ||\ngtk_text_iter_ends_tag())"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

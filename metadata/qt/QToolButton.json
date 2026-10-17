@@ -43,16 +43,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QToolButton::ToolButtonPopupMode",
       "members": [
         {
+          "cpp": "QToolButton::DelayedPopup",
           "name": "DelayedPopup",
           "value": "0"
         },
         {
+          "cpp": "QToolButton::MenuButtonPopup",
           "name": "MenuButtonPopup",
           "value": "1"
         },
         {
+          "cpp": "QToolButton::InstantPopup",
           "name": "InstantPopup",
           "value": "2"
         }
@@ -67,12 +72,23 @@
         "scoped": false
       },
       "name": "ToolButtonPopupMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QToolButton",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QToolButton:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -130,7 +146,7 @@
         "native": "Qt::ArrowType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ArrowType>"
       },
       "signature": "Qt::ArrowType arrowType() const",
       "since": null,
@@ -348,7 +364,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -482,7 +498,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -645,7 +661,7 @@
         "native": "QToolButton::ToolButtonPopupMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QToolButton::ToolButtonPopupMode>"
       },
       "signature": "QToolButton::ToolButtonPopupMode popupMode() const",
       "since": null,
@@ -674,7 +690,7 @@
             "native": "Qt::ArrowType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ArrowType>"
           }
         }
       ],
@@ -822,7 +838,7 @@
             "native": "QToolButton::ToolButtonPopupMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QToolButton::ToolButtonPopupMode>"
           }
         }
       ],
@@ -859,7 +875,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],
@@ -919,7 +935,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -982,7 +998,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       },
       "signature": "Qt::ToolButtonStyle toolButtonStyle() const",
       "since": null,
@@ -1019,6 +1035,8 @@
         "set": "setArrowType"
       },
       "brief": "Whether the button displays an arrow instead of a normal icon",
+      "default": "NoArrow",
+      "default_origin": "runtime",
       "js_name": "arrowType",
       "metaobject": {
         "constant": false,
@@ -1039,12 +1057,13 @@
       "name": "arrowType",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ArrowType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ArrowType>"
       }
     },
     {
@@ -1059,6 +1078,8 @@
         "set": "setAutoRaise"
       },
       "brief": "Whether auto-raising is enabled or not",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoRaise",
       "metaobject": {
         "constant": false,
@@ -1079,6 +1100,7 @@
       "name": "autoRaise",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1099,6 +1121,8 @@
         "set": "setPopupMode"
       },
       "brief": "Describes the way that popup menus are used with tool buttons",
+      "default": "DelayedPopup",
+      "default_origin": "runtime",
       "js_name": "popupMode",
       "metaobject": {
         "constant": false,
@@ -1119,12 +1143,13 @@
       "name": "popupMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ToolButtonPopupMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ToolButtonPopupMode>"
+        "ref": "enum<QToolButton::ToolButtonPopupMode>"
       }
     },
     {
@@ -1139,6 +1164,8 @@
         "set": "setToolButtonStyle"
       },
       "brief": "Whether the tool button displays an icon only, text only, or text beside/below the icon",
+      "default": "ToolButtonIconOnly",
+      "default_origin": "runtime",
       "js_name": "toolButtonStyle",
       "metaobject": {
         "constant": false,
@@ -1159,12 +1186,13 @@
       "name": "toolButtonStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       }
     }
   ],

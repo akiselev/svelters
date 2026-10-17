@@ -1,0 +1,57 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkEditableLabel` widget.",
+      "file": "gtk/gtkeditablelabel.c",
+      "line": 581,
+      "md": "Creates a new `GtkEditableLabel` widget."
+    }
+  },
+  "doc": {
+    "brief": "Allows users to edit the displayed text by switching to an “edit mode”.",
+    "file": "gtk/gtkeditablelabel.c",
+    "line": 38,
+    "md": "Allows users to edit the displayed text by switching to an “edit mode”.\n\n`GtkEditableLabel` does not have API of its own, but it\nimplements the [`Editable`](xref:gtk:Gtk.Editable) interface.\n\nThe default bindings for activating the edit mode is\nto click or press the Enter key. The default bindings\nfor leaving the edit mode are the Enter key (to save\nthe results) or the Escape key (to cancel the editing).\n\n# Shortcuts and Gestures\n\n`GtkEditableLabel` supports the following keyboard shortcuts:\n\n- <kbd>Enter</kbd> starts editing.\n- <kbd>Escape</kbd> stops editing.\n\n# Actions\n\n`GtkEditableLabel` defines a set of built-in actions:\n\n- `editing.starts` switches the widget into editing mode.\n- `editing.stop` switches the widget out of editing mode.\n\n# CSS nodes\n\n```\neditablelabel[.editing]\n╰── stack\n    ├── label\n    ╰── text\n```\n\n`GtkEditableLabel` has a main node with the name editablelabel.\nWhen the entry is in editing mode, it gets the .editing style\nclass.\n\nFor all the subnodes added to the text node in various situations,\nsee [`Text`](xref:gtk:Gtk.Text)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EditableLabel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_editing": {
+      "brief": "Returns whether the label is currently in “editing mode”.",
+      "file": "gtk/gtkeditablelabel.c",
+      "line": 597,
+      "md": "Returns whether the label is currently in “editing mode”."
+    },
+    "start_editing": {
+      "brief": "Switches the label into “editing mode”.",
+      "file": "gtk/gtkeditablelabel.c",
+      "line": 613,
+      "md": "Switches the label into “editing mode”."
+    },
+    "stop_editing": {
+      "brief": "Switches the label out of “editing mode”.",
+      "file": "gtk/gtkeditablelabel.c",
+      "line": 635,
+      "md": "Switches the label out of “editing mode”.\n\nIf `commit` is `TRUE`, the resulting text is kept as the\n[`Editable:text`](xref:gtk:Gtk.Editable#property:text) property value, otherwise the\nresulting text is discarded and the label will keep its\nprevious [`Editable:text`](xref:gtk:Gtk.Editable#property:text) property value."
+    }
+  },
+  "properties": {
+    "editing": {
+      "brief": "This property is `TRUE` while the widget is in edit mode.",
+      "file": "gtk/gtkeditablelabel.c",
+      "line": 506,
+      "md": "This property is `TRUE` while the widget is in edit mode."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -13,28 +13,41 @@
   "constructors": [],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QColormap::Mode",
       "members": [
         {
+          "cpp": "QColormap::Direct",
           "name": "Direct",
           "value": "0"
         },
         {
+          "cpp": "QColormap::Indexed",
           "name": "Indexed",
           "value": "1"
         },
         {
+          "cpp": "QColormap::Gray",
           "name": "Gray",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "Mode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QColormap",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QColormap:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -66,7 +79,7 @@
         "native": "const QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "const QColor colorAt(uint pixel) const",
       "since": null,
@@ -92,7 +105,7 @@
         "native": "const QList<QColor>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<record<Color>>"
       },
       "signature": "const QList<QColor> colormap() const",
       "since": null,
@@ -181,7 +194,7 @@
         "native": "QColormap::Mode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QColormap::Mode>"
       },
       "signature": "QColormap::Mode mode() const",
       "since": null,
@@ -210,7 +223,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],

@@ -50,31 +50,46 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionComplex::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionComplex::Type",
           "name": "Type",
           "value": "SO_Complex"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionComplex::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionComplex::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionComplex",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionComplex:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to hold parameters that are common to all complex controls",

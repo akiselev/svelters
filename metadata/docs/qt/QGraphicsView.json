@@ -1,0 +1,507 @@
+{
+  "doc": {
+    "brief": "The QGraphicsView class provides a widget for displaying the contents of a [QGraphicsScene](xref:qt:QGraphicsScene).",
+    "index_brief": "Widget for displaying the contents of a QGraphicsScene",
+    "url": "https://doc.qt.io/qt-6/qgraphicsview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBrush backgroundBrush() const": {
+      "brief": "This property holds the background brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#backgroundBrush-prop"
+    },
+    "QBrush foregroundBrush() const": {
+      "brief": "This property holds the foreground brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#foregroundBrush-prop"
+    },
+    "QGraphicsItem * itemAt(const QPoint &pos) const": {
+      "brief": "Returns the item at position *pos*, which is in viewport coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#itemAt"
+    },
+    "QGraphicsItem * itemAt(int x, int y) const": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#itemAt-1"
+    },
+    "QGraphicsScene * scene() const": {
+      "brief": "Returns a pointer to the scene that is currently visualized in the view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#scene"
+    },
+    "QGraphicsView(QGraphicsScene *scene, QWidget *parent)": {
+      "brief": "Constructs a QGraphicsView and sets the visualized scene to *scene*. *parent* is passed to [QWidget](xref:qt:QWidget)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#QGraphicsView-1"
+    },
+    "QGraphicsView(QWidget *parent)": {
+      "brief": "Constructs a QGraphicsView. *parent* is passed to [QWidget](xref:qt:QWidget)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#QGraphicsView"
+    },
+    "QGraphicsView::CacheMode cacheMode() const": {
+      "brief": "This property holds which parts of the view are cached",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#cacheMode-prop"
+    },
+    "QGraphicsView::DragMode dragMode() const": {
+      "brief": "This property holds the behavior for dragging the mouse over the scene while the left mouse button is pressed.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dragMode-prop"
+    },
+    "QGraphicsView::OptimizationFlags optimizationFlags() const": {
+      "brief": "flags that can be used to tune [QGraphicsView](xref:qt:QGraphicsView)'s performance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#optimizationFlags-prop"
+    },
+    "QGraphicsView::ViewportAnchor resizeAnchor() const": {
+      "brief": "how the view should position the scene when the view is resized.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#resizeAnchor-prop"
+    },
+    "QGraphicsView::ViewportAnchor transformationAnchor() const": {
+      "brief": "how the view should position the scene during transformations.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#transformationAnchor-prop"
+    },
+    "QGraphicsView::ViewportUpdateMode viewportUpdateMode() const": {
+      "brief": "how the viewport should update its contents.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#viewportUpdateMode-prop"
+    },
+    "QList<QGraphicsItem *> items() const": {
+      "brief": "Returns a list of all the items in the associated scene, in descending stacking order (i.e., the first item in the returned list is the uppermost item).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items"
+    },
+    "QList<QGraphicsItem *> items(const QPainterPath &path, Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns a list of all the items that, depending on *mode*, are either contained by or intersect with *path*. *path* is in viewport coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items-4"
+    },
+    "QList<QGraphicsItem *> items(const QPoint &pos) const": {
+      "brief": "Returns a list of all the items at the position *pos* in the view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items-1"
+    },
+    "QList<QGraphicsItem *> items(const QPolygon &polygon, Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns a list of all the items that, depending on *mode*, are either contained by or intersect with *polygon*. *polygon* is in viewport coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items-5"
+    },
+    "QList<QGraphicsItem *> items(const QRect &rect, Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns a list of all the items that, depending on *mode*, are either contained by or intersect with *rect*. *rect* is in viewport coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items-6"
+    },
+    "QList<QGraphicsItem *> items(int x, int y) const": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items-2"
+    },
+    "QList<QGraphicsItem *> items(int x, int y, int w, int h, Qt::ItemSelectionMode mode) const": {
+      "brief": "This convenience function is equivalent to calling items([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*), *mode*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#items-3"
+    },
+    "QPainter::RenderHints renderHints() const": {
+      "brief": "This property holds the default render hints for the view",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#renderHints-prop"
+    },
+    "QPainterPath mapFromScene(const QPainterPath &path) const": {
+      "brief": "Returns the scene coordinate painter path *path* to a viewport coordinate painter path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapFromScene"
+    },
+    "QPainterPath mapToScene(const QPainterPath &path) const": {
+      "brief": "Returns the viewport painter path *path* mapped to a scene coordinate painter path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapToScene"
+    },
+    "QPoint mapFromScene(const QPointF &point) const": {
+      "brief": "Returns the scene coordinate *point* to viewport coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapFromScene-1"
+    },
+    "QPoint mapFromScene(qreal x, qreal y) const": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapFromScene-4"
+    },
+    "QPointF mapToScene(const QPoint &point) const": {
+      "brief": "Returns the viewport coordinate *point* mapped to scene coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapToScene-1"
+    },
+    "QPointF mapToScene(int x, int y) const": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapToScene-4"
+    },
+    "QPolygon mapFromScene(const QPolygonF &polygon) const": {
+      "brief": "Returns the scene coordinate polygon *polygon* to a viewport coordinate polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapFromScene-2"
+    },
+    "QPolygon mapFromScene(const QRectF &rect) const": {
+      "brief": "Returns the scene rectangle *rect* to a viewport coordinate polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapFromScene-3"
+    },
+    "QPolygon mapFromScene(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapFromScene-5"
+    },
+    "QPolygonF mapToScene(const QPolygon &polygon) const": {
+      "brief": "Returns the viewport polygon *polygon* mapped to a scene coordinate polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapToScene-2"
+    },
+    "QPolygonF mapToScene(const QRect &rect) const": {
+      "brief": "Returns the viewport rectangle *rect* mapped to a scene coordinate polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapToScene-3"
+    },
+    "QPolygonF mapToScene(int x, int y, int w, int h) const": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mapToScene-5"
+    },
+    "QRect rubberBandRect() const": {
+      "brief": "This functions returns the current rubber band area (in viewport coordinates) if the user is currently doing an itemselection with rubber band.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#rubberBandRect"
+    },
+    "QRectF sceneRect() const": {
+      "brief": "This property holds the area of the scene visualized by this view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#sceneRect-prop"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::sizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#sizeHint"
+    },
+    "QTransform transform() const": {
+      "brief": "Returns the current transformation matrix for the view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#transform"
+    },
+    "QTransform viewportTransform() const": {
+      "brief": "Returns a matrix that maps scene coordinates to viewport coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#viewportTransform"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override": {
+      "brief": "Reimplements: [QWidget::inputMethodQuery](xref:qt:QWidget)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#inputMethodQuery"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the scene in the view when the whole scene is visible.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#alignment-prop"
+    },
+    "Qt::ItemSelectionMode rubberBandSelectionMode() const": {
+      "brief": "This property holds the behavior for selecting items with a rubber band selection rectangle.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#rubberBandSelectionMode-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::event](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#event"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#focusNextPrevChild"
+    },
+    "bool isInteractive() const": {
+      "brief": "This property holds whether the view allows scene interaction.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#interactive-prop"
+    },
+    "bool isTransformed() const": {
+      "brief": "Returns `true` if the view is transformed (i.e., a non-identity transform has been assigned, or the scrollbars are adjusted).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#isTransformed"
+    },
+    "bool viewportEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::viewportEvent](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#viewportEvent"
+    },
+    "void centerOn(const QGraphicsItem *item)": {
+      "brief": "Scrolls the contents of the viewport to ensure that *item* is centered in the view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#centerOn-1"
+    },
+    "void centerOn(const QPointF &pos)": {
+      "brief": "Scrolls the contents of the viewport to ensure that the scene coordinate *pos*, is centered in the view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#centerOn"
+    },
+    "void centerOn(qreal x, qreal y)": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#centerOn-2"
+    },
+    "void contextMenuEvent(QContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::contextMenuEvent](xref:qt:QAbstractScrollArea)(QContextMenuEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#contextMenuEvent"
+    },
+    "void dragEnterEvent(QDragEnterEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragEnterEvent](xref:qt:QAbstractScrollArea)(QDragEnterEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragLeaveEvent](xref:qt:QAbstractScrollArea)(QDragLeaveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragMoveEvent](xref:qt:QAbstractScrollArea)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dragMoveEvent"
+    },
+    "void drawBackground(QPainter *painter, const QRectF &rect)": {
+      "brief": "Draws the background of the scene using *painter*, before any items and the foreground are drawn.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#drawBackground"
+    },
+    "void drawForeground(QPainter *painter, const QRectF &rect)": {
+      "brief": "Draws the foreground of the scene using *painter*, after the background and all items are drawn.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#drawForeground"
+    },
+    "void drawItems(QPainter *painter, int numItems, QGraphicsItem *[] items, const QStyleOptionGraphicsItem[] options)": {
+      "url": "https://doc.qt.io/qt-6/qgraphicsview-obsolete.html#drawItems"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dropEvent](xref:qt:QAbstractScrollArea)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dropEvent"
+    },
+    "void ensureVisible(const QGraphicsItem *item, int xmargin, int ymargin)": {
+      "brief": "Scrolls the contents of the viewport so that the center of item *item* is visible, with margins specified in pixels by *xmargin* and *ymargin*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#ensureVisible-1"
+    },
+    "void ensureVisible(const QRectF &rect, int xmargin, int ymargin)": {
+      "brief": "Scrolls the contents of the viewport so that the scene rectangle *rect* is visible, with margins specified in pixels by *xmargin* and *ymargin*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#ensureVisible"
+    },
+    "void ensureVisible(qreal x, qreal y, qreal w, qreal h, int xmargin, int ymargin)": {
+      "brief": "This function is provided for convenience.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#ensureVisible-2"
+    },
+    "void fitInView(const QGraphicsItem *item, Qt::AspectRatioMode aspectRatioMode)": {
+      "brief": "Ensures that *item* fits tightly inside the view, scaling the view according to *aspectRatioMode*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#fitInView-1"
+    },
+    "void fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode)": {
+      "brief": "Scales the view matrix and scrolls the scroll bars to ensure that the scene rectangle *rect* fits inside the viewport. *rect* must be inside the scene rect; otherwise, fitInView() cannot guarantee...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#fitInView"
+    },
+    "void fitInView(qreal x, qreal y, qreal w, qreal h, Qt::AspectRatioMode aspectRatioMode)": {
+      "brief": "This convenience function is equivalent to calling fitInView([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*), *aspectRatioMode*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#fitInView-2"
+    },
+    "void focusInEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#focusOutEvent"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event) override": {
+      "brief": "Reimplements: [QWidget::inputMethodEvent](xref:qt:QWidget)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#inputMethodEvent"
+    },
+    "void invalidateScene(const QRectF &rect, QGraphicsScene::SceneLayers layers)": {
+      "brief": "Invalidates and schedules a redraw of *layers* inside *rect*. *rect* is in scene coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#invalidateScene"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::keyPressEvent](xref:qt:QAbstractScrollArea)(QKeyEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#keyReleaseEvent"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseDoubleClickEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseMoveEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mousePressEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseReleaseEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#paintEvent"
+    },
+    "void render(QPainter *painter, const QRectF &target, const QRect &source, Qt::AspectRatioMode aspectRatioMode)": {
+      "brief": "Renders the *source* rect, which is in view coordinates, from the scene into *target*, which is in paint device coordinates, using *painter*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#render"
+    },
+    "void resetCachedContent()": {
+      "brief": "Resets any cached content.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#resetCachedContent"
+    },
+    "void resetTransform()": {
+      "brief": "Resets the view transformation to the identity matrix.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#resetTransform"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::resizeEvent](xref:qt:QAbstractScrollArea)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#resizeEvent"
+    },
+    "void rotate(qreal angle)": {
+      "brief": "Rotates the current view transformation *angle* degrees clockwise.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#rotate"
+    },
+    "void rubberBandChanged(QRect rubberBandRect, QPointF fromScenePoint, QPointF toScenePoint)": {
+      "brief": "This signal is emitted when the rubber band rect is changed.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#rubberBandChanged"
+    },
+    "void scale(qreal sx, qreal sy)": {
+      "brief": "Scales the current view transformation by (*sx*, *sy*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#scale"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#scrollContentsBy"
+    },
+    "void setAlignment(Qt::Alignment alignment)": {
+      "brief": "This property holds the alignment of the scene in the view when the whole scene is visible.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#alignment-prop"
+    },
+    "void setBackgroundBrush(const QBrush &brush)": {
+      "brief": "This property holds the background brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#backgroundBrush-prop"
+    },
+    "void setCacheMode(QGraphicsView::CacheMode mode)": {
+      "brief": "This property holds which parts of the view are cached",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#cacheMode-prop"
+    },
+    "void setDragMode(QGraphicsView::DragMode mode)": {
+      "brief": "This property holds the behavior for dragging the mouse over the scene while the left mouse button is pressed.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dragMode-prop"
+    },
+    "void setForegroundBrush(const QBrush &brush)": {
+      "brief": "This property holds the foreground brush of the scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#foregroundBrush-prop"
+    },
+    "void setInteractive(bool allowed)": {
+      "brief": "This property holds whether the view allows scene interaction.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#interactive-prop"
+    },
+    "void setOptimizationFlag(QGraphicsView::OptimizationFlag flag, bool enabled)": {
+      "brief": "Enables *flag* if *enabled* is true; otherwise disables *flag*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#setOptimizationFlag"
+    },
+    "void setOptimizationFlags(QGraphicsView::OptimizationFlags flags)": {
+      "brief": "flags that can be used to tune [QGraphicsView](xref:qt:QGraphicsView)'s performance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#optimizationFlags-prop"
+    },
+    "void setRenderHint(QPainter::RenderHint hint, bool enabled)": {
+      "brief": "If *enabled* is true, the render hint *hint* is enabled; otherwise it is disabled.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#setRenderHint"
+    },
+    "void setRenderHints(QPainter::RenderHints hints)": {
+      "brief": "This property holds the default render hints for the view",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#renderHints-prop"
+    },
+    "void setResizeAnchor(QGraphicsView::ViewportAnchor anchor)": {
+      "brief": "how the view should position the scene when the view is resized.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#resizeAnchor-prop"
+    },
+    "void setRubberBandSelectionMode(Qt::ItemSelectionMode mode)": {
+      "brief": "This property holds the behavior for selecting items with a rubber band selection rectangle.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#rubberBandSelectionMode-prop"
+    },
+    "void setScene(QGraphicsScene *scene)": {
+      "brief": "Sets the current scene to *scene*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#setScene"
+    },
+    "void setSceneRect(const QRectF &rect)": {
+      "brief": "This property holds the area of the scene visualized by this view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#sceneRect-prop"
+    },
+    "void setSceneRect(qreal x, qreal y, qreal w, qreal h)": {
+      "brief": "This property holds the area of the scene visualized by this view.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#sceneRect-prop"
+    },
+    "void setTransform(const QTransform &matrix, bool combine)": {
+      "brief": "Sets the view's current transformation matrix to *matrix*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#setTransform"
+    },
+    "void setTransformationAnchor(QGraphicsView::ViewportAnchor anchor)": {
+      "brief": "how the view should position the scene during transformations.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#transformationAnchor-prop"
+    },
+    "void setViewportUpdateMode(QGraphicsView::ViewportUpdateMode mode)": {
+      "brief": "how the viewport should update its contents.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#viewportUpdateMode-prop"
+    },
+    "void setupViewport(QWidget *widget) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::setupViewport](xref:qt:QAbstractScrollArea)(QWidget *viewport).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#setupViewport"
+    },
+    "void shear(qreal sh, qreal sv)": {
+      "brief": "Shears the current view transformation by (*sh*, *sv*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#shear"
+    },
+    "void showEvent(QShowEvent *event) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#showEvent"
+    },
+    "void translate(qreal dx, qreal dy)": {
+      "brief": "Translates the current view transformation by (*dx*, *dy*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#translate"
+    },
+    "void updateScene(const QList<QRectF> &rects)": {
+      "brief": "Schedules an update of the scene rectangles *rects*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#updateScene"
+    },
+    "void updateSceneRect(const QRectF &rect)": {
+      "brief": "Notifies [QGraphicsView](xref:qt:QGraphicsView) that the scene's scene rect has changed. *rect* is the new scene rect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#updateSceneRect"
+    },
+    "void wheelEvent(QWheelEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::wheelEvent](xref:qt:QAbstractScrollArea)(QWheelEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "alignment": {
+      "brief": "The alignment of the scene in the view when the whole scene is visible",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#alignment-prop"
+    },
+    "backgroundBrush": {
+      "brief": "The background brush of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#backgroundBrush-prop"
+    },
+    "cacheMode": {
+      "brief": "Which parts of the view are cached",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#cacheMode-prop"
+    },
+    "dragMode": {
+      "brief": "The behavior for dragging the mouse over the scene while the left mouse button is pressed",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#dragMode-prop"
+    },
+    "foregroundBrush": {
+      "brief": "The foreground brush of the scene",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#foregroundBrush-prop"
+    },
+    "interactive": {
+      "brief": "Whether the view allows scene interaction",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#interactive-prop"
+    },
+    "optimizationFlags": {
+      "brief": "Flags that can be used to tune QGraphicsView's performance",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#optimizationFlags-prop"
+    },
+    "renderHints": {
+      "brief": "The default render hints for the view",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#renderHints-prop"
+    },
+    "resizeAnchor": {
+      "brief": "How the view should position the scene when the view is resized",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#resizeAnchor-prop"
+    },
+    "rubberBandSelectionMode": {
+      "brief": "The behavior for selecting items with a rubber band selection rectangle",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#rubberBandSelectionMode-prop"
+    },
+    "sceneRect": {
+      "brief": "The area of the scene visualized by this view",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#sceneRect-prop"
+    },
+    "transformationAnchor": {
+      "brief": "How the view should position the scene during transformations",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#transformationAnchor-prop"
+    },
+    "viewportUpdateMode": {
+      "brief": "How the viewport should update its contents",
+      "url": "https://doc.qt.io/qt-6/qgraphicsview.html#viewportUpdateMode-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

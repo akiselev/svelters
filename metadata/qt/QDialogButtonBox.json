@@ -30,7 +30,7 @@
             "native": "QDialogButtonBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDialogButtonBox::StandardButton>"
           }
         },
         {
@@ -64,7 +64,7 @@
             "native": "QDialogButtonBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDialogButtonBox::StandardButton>"
           }
         },
         {
@@ -74,7 +74,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -132,7 +132,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -154,178 +154,234 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QDialogButtonBox::ButtonLayout",
       "members": [
         {
+          "cpp": "QDialogButtonBox::WinLayout",
           "name": "WinLayout",
           "value": "0"
         },
         {
+          "cpp": "QDialogButtonBox::MacLayout",
           "name": "MacLayout",
           "value": "1"
         },
         {
+          "cpp": "QDialogButtonBox::KdeLayout",
           "name": "KdeLayout",
           "value": "2"
         },
         {
+          "cpp": "QDialogButtonBox::GnomeLayout",
           "name": "GnomeLayout",
           "value": "3"
         },
         {
+          "cpp": "QDialogButtonBox::AndroidLayout",
           "name": "AndroidLayout",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "ButtonLayout",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QDialogButtonBox::ButtonRole",
       "members": [
         {
+          "cpp": "QDialogButtonBox::InvalidRole",
           "name": "InvalidRole",
           "value": "-1"
         },
         {
+          "cpp": "QDialogButtonBox::AcceptRole",
           "name": "AcceptRole",
           "value": "0"
         },
         {
+          "cpp": "QDialogButtonBox::RejectRole",
           "name": "RejectRole",
           "value": "1"
         },
         {
+          "cpp": "QDialogButtonBox::DestructiveRole",
           "name": "DestructiveRole",
           "value": "2"
         },
         {
+          "cpp": "QDialogButtonBox::ActionRole",
           "name": "ActionRole",
           "value": "3"
         },
         {
+          "cpp": "QDialogButtonBox::HelpRole",
           "name": "HelpRole",
           "value": "4"
         },
         {
+          "cpp": "QDialogButtonBox::YesRole",
           "name": "YesRole",
           "value": "5"
         },
         {
+          "cpp": "QDialogButtonBox::NoRole",
           "name": "NoRole",
           "value": "6"
         },
         {
+          "cpp": "QDialogButtonBox::ResetRole",
           "name": "ResetRole",
           "value": "7"
         },
         {
+          "cpp": "QDialogButtonBox::ApplyRole",
           "name": "ApplyRole",
           "value": "8"
         },
         {
+          "cpp": "QDialogButtonBox::NRoles",
           "name": "NRoles",
           "value": "9"
         }
       ],
       "metaobject": null,
       "name": "ButtonRole",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QDialogButtonBox::StandardButtons",
+      "fullname": "QDialogButtonBox::StandardButton",
       "members": [
         {
+          "cpp": "QDialogButtonBox::NoButton",
           "name": "NoButton",
           "value": "0x00000000"
         },
         {
+          "cpp": "QDialogButtonBox::Ok",
           "name": "Ok",
           "value": "0x00000400"
         },
         {
+          "cpp": "QDialogButtonBox::Save",
           "name": "Save",
           "value": "0x00000800"
         },
         {
+          "cpp": "QDialogButtonBox::SaveAll",
           "name": "SaveAll",
           "value": "0x00001000"
         },
         {
+          "cpp": "QDialogButtonBox::Open",
           "name": "Open",
           "value": "0x00002000"
         },
         {
+          "cpp": "QDialogButtonBox::Yes",
           "name": "Yes",
           "value": "0x00004000"
         },
         {
+          "cpp": "QDialogButtonBox::YesToAll",
           "name": "YesToAll",
           "value": "0x00008000"
         },
         {
+          "cpp": "QDialogButtonBox::No",
           "name": "No",
           "value": "0x00010000"
         },
         {
+          "cpp": "QDialogButtonBox::NoToAll",
           "name": "NoToAll",
           "value": "0x00020000"
         },
         {
+          "cpp": "QDialogButtonBox::Abort",
           "name": "Abort",
           "value": "0x00040000"
         },
         {
+          "cpp": "QDialogButtonBox::Retry",
           "name": "Retry",
           "value": "0x00080000"
         },
         {
+          "cpp": "QDialogButtonBox::Ignore",
           "name": "Ignore",
           "value": "0x00100000"
         },
         {
+          "cpp": "QDialogButtonBox::Close",
           "name": "Close",
           "value": "0x00200000"
         },
         {
+          "cpp": "QDialogButtonBox::Cancel",
           "name": "Cancel",
           "value": "0x00400000"
         },
         {
+          "cpp": "QDialogButtonBox::Discard",
           "name": "Discard",
           "value": "0x00800000"
         },
         {
+          "cpp": "QDialogButtonBox::Help",
           "name": "Help",
           "value": "0x01000000"
         },
         {
+          "cpp": "QDialogButtonBox::Apply",
           "name": "Apply",
           "value": "0x02000000"
         },
         {
+          "cpp": "QDialogButtonBox::Reset",
           "name": "Reset",
           "value": "0x04000000"
         },
         {
+          "cpp": "QDialogButtonBox::RestoreDefaults",
           "name": "RestoreDefaults",
           "value": "0x08000000"
         },
         {
+          "cpp": "QDialogButtonBox::FirstButton",
           "name": "FirstButton",
           "value": "Ok"
         },
         {
+          "cpp": "QDialogButtonBox::LastButton",
           "name": "LastButton",
           "value": "RestoreDefaults"
         }
       ],
       "metaobject": null,
       "name": "StandardButton",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDialogButtonBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QDialogButtonBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -349,7 +405,7 @@
             "native": "QDialogButtonBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDialogButtonBox::StandardButton>"
           }
         }
       ],
@@ -396,7 +452,7 @@
             "native": "QDialogButtonBox::ButtonRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDialogButtonBox::ButtonRole>"
           }
         }
       ],
@@ -443,7 +499,7 @@
             "native": "QDialogButtonBox::ButtonRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDialogButtonBox::ButtonRole>"
           }
         }
       ],
@@ -480,7 +536,7 @@
             "native": "QDialogButtonBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDialogButtonBox::StandardButton>"
           }
         }
       ],
@@ -525,7 +581,7 @@
         "native": "QDialogButtonBox::ButtonRole",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDialogButtonBox::ButtonRole>"
       },
       "signature": "QDialogButtonBox::ButtonRole buttonRole(QAbstractButton *button) const",
       "since": null,
@@ -551,7 +607,7 @@
         "native": "QList<QAbstractButton *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QAbstractButton>>"
       },
       "signature": "QList<QAbstractButton *> buttons() const",
       "since": null,
@@ -703,7 +759,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -806,7 +862,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -843,7 +899,7 @@
             "native": "QDialogButtonBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDialogButtonBox::StandardButton>"
           }
         }
       ],
@@ -888,7 +944,7 @@
         "native": "QDialogButtonBox::StandardButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDialogButtonBox::StandardButton>"
       },
       "signature": "QDialogButtonBox::StandardButton standardButton(QAbstractButton *button) const",
       "since": null,
@@ -914,7 +970,7 @@
         "native": "QDialogButtonBox::StandardButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDialogButtonBox::StandardButton>"
       },
       "signature": "QDialogButtonBox::StandardButtons standardButtons() const",
       "since": null,
@@ -959,6 +1015,8 @@
         "set": "setCenterButtons"
       },
       "brief": "Whether the buttons in the button box are centered",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "centerButtons",
       "metaobject": {
         "constant": false,
@@ -979,6 +1037,7 @@
       "name": "centerButtons",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -999,6 +1058,8 @@
         "set": "setOrientation"
       },
       "brief": "The orientation of the button box",
+      "default": "Horizontal",
+      "default_origin": "runtime",
       "js_name": "orientation",
       "metaobject": {
         "constant": false,
@@ -1019,12 +1080,13 @@
       "name": "orientation",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     },
     {
@@ -1039,6 +1101,8 @@
         "set": "setStandardButtons"
       },
       "brief": "Collection of standard buttons in the button box",
+      "default": "NoButton",
+      "default_origin": "runtime",
       "js_name": "standardButtons",
       "metaobject": {
         "constant": false,
@@ -1059,12 +1123,13 @@
       "name": "standardButtons",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "StandardButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDialogButtonBox::StandardButton>"
       }
     }
   ],

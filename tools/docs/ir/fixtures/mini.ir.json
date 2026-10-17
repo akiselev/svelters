@@ -1,0 +1,168 @@
+{
+  "schema": "svelters-docs-ir/v0",
+  "toolkit": {
+    "id": "demo",
+    "name": "Demo Toolkit",
+    "version": "1.2.3",
+    "language": "Rust",
+    "status": "prototype",
+    "doc_license": {
+      "spdx": "MIT",
+      "name": "MIT License",
+      "url": "https://opensource.org/license/mit",
+      "attribution": "Demo docs, (c) the Demo authors.",
+      "redistribution": "full"
+    },
+    "text_policy": "full",
+    "upstream_docs": "https://demo.invalid/docs/",
+    "notices": ["Demo docs, (c) the Demo authors."]
+  },
+  "extension_schemas": {
+    "demo": {
+      "title": "Demo specifics",
+      "fields": [
+        { "key": "css_node", "label": "CSS node", "format": "code", "scope": "entity" },
+        { "key": "notes", "label": "Notes", "format": "markdown", "scope": "entity" }
+      ]
+    }
+  },
+  "entities": [
+    {
+      "id": "demo:Widget",
+      "kind": "class",
+      "name": "Widget",
+      "qualified": "Widget",
+      "native_name": "DemoWidget",
+      "abstract": true,
+      "tags": [],
+      "status": { "tier": "ingested", "tested": false, "note": "Raw: facts only." },
+      "summary": { "md": "Base class of all demo widgets.", "license": "MIT", "origin": "manual" },
+      "upstream": { "url": "https://demo.invalid/docs/widget.html", "label": "Demo reference: Widget" },
+      "bases": [],
+      "interfaces": [],
+      "properties": [
+        {
+          "name": "visible",
+          "js_name": "visible",
+          "origin": "gir",
+          "type": { "display": "boolean", "neutral": "bool" },
+          "default": "true",
+          "access": { "read": true, "write": true },
+          "notify": "notify::visible",
+          "bindable": true,
+          "doc": { "md": "Whether the widget is shown. See [Align](xref:demo:Align).", "license": "MIT", "origin": "manual" }
+        }
+      ],
+      "events": [],
+      "methods": [
+        { "name": "show", "origin": "gir", "signature": "show(): void", "params": [], "returns": { "display": "void" } }
+      ],
+      "constructors": [],
+      "values": [],
+      "serdes": { "status": "unknown" },
+      "abi_symbols": ["set_prop"]
+    },
+    {
+      "id": "demo:Button",
+      "kind": "class",
+      "name": "Button",
+      "qualified": "Button",
+      "native_name": "DemoButton",
+      "tags": ["button"],
+      "status": {
+        "tier": "annotated",
+        "tested": true,
+        "annotation_files": ["metadata/overrides/demo/Button.yaml"],
+        "test_note": "Generated tests pass."
+      },
+      "summary": { "md": "A clickable button.", "license": "MIT", "origin": "manual" },
+      "description": { "md": "# Heading\n\nA button with a [label](xref:demo:Button#property:label) and an <unknown> tag.\n\n```svelte\n<button label=\"x\" />\n```", "license": "MIT", "origin": "manual" },
+      "upstream": { "url": "https://demo.invalid/docs/button.html", "label": "Demo reference: Button" },
+      "bases": ["demo:Widget", "demo:Missing"],
+      "interfaces": [],
+      "lifetime": { "class": "owned", "origin": "derived", "note": "Owned by its parent." },
+      "properties": [
+        {
+          "name": "label",
+          "js_name": "label",
+          "origin": "gir",
+          "origins": ["gir", "manual"],
+          "annotated": true,
+          "type": { "display": "string", "neutral": "string", "nullable": true },
+          "default": "\"\"",
+          "access": { "read": true, "write": true },
+          "notify": "notify::label",
+          "bindable": true,
+          "availability": { "since": "1.1" }
+        }
+      ],
+      "events": [
+        {
+          "name": "clicked",
+          "js_event": "clicked",
+          "handler_prop": "onclicked",
+          "handler_aliases": ["onclick"],
+          "params": [],
+          "returns": { "display": "void" },
+          "handler_result": "none",
+          "sync_required": false,
+          "phase": "first",
+          "origin": "gir",
+          "annotated": true,
+          "doc": { "md": "Emitted when clicked.", "license": "MIT", "origin": "manual" }
+        }
+      ],
+      "methods": [],
+      "constructors": [],
+      "values": [],
+      "children": {
+        "policy": "single_child",
+        "default_slot": "child",
+        "slots": [
+          { "name": "child", "cardinality": "one", "accepts": ["Widget"], "default": true, "ops": { "set": "set_child(Widget)" }, "ownership": { "set": "child parented" }, "annotated": true }
+        ]
+      },
+      "examples": [{ "title": "Using <button>", "lang": "svelte", "code": "<button label=\"Hi\" onclick={() => {}} />\n", "generated": true, "tested": false }],
+      "screenshot": "demo/button",
+      "serdes": { "status": "unknown" },
+      "abi_symbols": ["create", "destroy", "listen", "set_prop"],
+      "extensions": { "demo": { "css_node": "button", "notes": "Styled through the `button` node." } }
+    },
+    {
+      "id": "demo:Align",
+      "kind": "enum",
+      "name": "Align",
+      "qualified": "Align",
+      "native_name": "DemoAlign",
+      "tags": [],
+      "status": { "tier": "ingested", "tested": false },
+      "upstream": { "url": "https://demo.invalid/docs/align.html", "label": "Demo reference: Align" },
+      "bases": [],
+      "interfaces": [],
+      "properties": [],
+      "events": [],
+      "methods": [],
+      "constructors": [],
+      "values": [
+        { "name": "start", "value": 0 },
+        { "name": "end", "nick": "end", "value": 1 }
+      ],
+      "serdes": { "status": "unknown" }
+    }
+  ],
+  "coverage": {
+    "kinds": 3,
+    "kinds_by_type": { "class": 2, "enum": 1 },
+    "elements": 1,
+    "annotated_kinds": 1,
+    "tested_kinds": 1,
+    "properties": 2,
+    "events": 1,
+    "methods": 1,
+    "annotated_properties": 1,
+    "annotated_events": 1,
+    "properties_by_origin": { "gir": 2 },
+    "docs": { "kinds_with_description": 1 },
+    "serdes": { "status": "unknown", "supported_types": null, "total_types": null }
+  }
+}

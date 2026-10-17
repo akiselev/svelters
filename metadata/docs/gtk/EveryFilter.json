@@ -1,0 +1,31 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty \"every\" filter.",
+      "file": "gtk/gtkmultifilter.c",
+      "line": 541,
+      "md": "Creates a new empty \"every\" filter.\n\nUse [`MultiFilter.append()`](xref:gtk:Gtk.MultiFilter#method:append) to add filters to it.\n\nThis filter matches an item if each of the filters added to it\nmatches the item. In particular, this means that if no filter\nhas been added to it, the filter matches every item."
+    }
+  },
+  "doc": {
+    "brief": "Matches an item when each of its filters matches.",
+    "file": "gtk/gtkmultifilter.c",
+    "line": 51,
+    "md": "Matches an item when each of its filters matches.\n\nTo add filters to a `GtkEveryFilter`, use [`MultiFilter.append()`](xref:gtk:Gtk.MultiFilter#method:append)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EveryFilter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

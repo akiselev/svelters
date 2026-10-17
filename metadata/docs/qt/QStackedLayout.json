@@ -1,0 +1,136 @@
+{
+  "doc": {
+    "brief": "The QStackedLayout class provides a stack of widgets where only one widget is visible at a time.",
+    "index_brief": "Stack of widgets where only one widget is visible at a time",
+    "url": "https://doc.qt.io/qt-6/qstackedlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStackedLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QLayoutItem * itemAt(int index) const override": {
+      "brief": "Reimplements: [QLayout::itemAt](xref:qt:QLayout)(int index) const.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#itemAt"
+    },
+    "QLayoutItem * takeAt(int index) override": {
+      "brief": "Reimplements: [QLayout::takeAt](xref:qt:QLayout)(int index).",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#takeAt"
+    },
+    "QSize minimumSize() const override": {
+      "brief": "Reimplements: [QLayout::minimumSize](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#minimumSize"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QLayoutItem::sizeHint](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#sizeHint"
+    },
+    "QStackedLayout()": {
+      "brief": "Constructs a QStackedLayout with no parent.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#QStackedLayout"
+    },
+    "QStackedLayout(QLayout *parentLayout)": {
+      "brief": "Constructs a new QStackedLayout and inserts it into the given *parentLayout*.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#QStackedLayout-1"
+    },
+    "QStackedLayout(QWidget *parent)": {
+      "brief": "Constructs a new QStackedLayout with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#QStackedLayout-2"
+    },
+    "QStackedLayout::StackingMode stackingMode() const": {
+      "brief": "determines the way visibility of child widgets are handled.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#stackingMode-prop"
+    },
+    "QWidget * currentWidget() const": {
+      "brief": "Returns the current widget, or `nullptr` if there are no widgets in this layout.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#currentWidget"
+    },
+    "QWidget * widget(int index) const": {
+      "brief": "Returns the widget at the given *index*, or `nullptr` if there is no widget at the given position.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#widget"
+    },
+    "bool hasHeightForWidth() const override": {
+      "brief": "Reimplements: [QLayoutItem::hasHeightForWidth](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#hasHeightForWidth"
+    },
+    "int addWidget(QWidget *widget)": {
+      "brief": "Adds the given *widget* to the end of this layout and returns the index position of the *widget*.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#addWidget"
+    },
+    "int count() const override": {
+      "brief": "This property holds the number of widgets contained in the layout",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#count-prop"
+    },
+    "int currentIndex() const": {
+      "brief": "This property holds the index position of the widget that is visible",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#currentIndex-prop"
+    },
+    "int heightForWidth(int width) const override": {
+      "brief": "Reimplements: [QLayoutItem::heightForWidth](xref:qt:QLayoutItem)(int) const.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#heightForWidth"
+    },
+    "int insertWidget(int index, QWidget *widget)": {
+      "brief": "Inserts the given *widget* at the given *index* in this [QStackedLayout](xref:qt:QStackedLayout).",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#insertWidget"
+    },
+    "void addItem(QLayoutItem *item) override": {
+      "brief": "Reimplements: [QLayout::addItem](xref:qt:QLayout)(QLayoutItem *item).",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#addItem"
+    },
+    "void currentChanged(int index)": {
+      "brief": "This signal is emitted whenever the current widget in the layout changes.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#currentChanged"
+    },
+    "void setCurrentIndex(int index)": {
+      "brief": "This property holds the index position of the widget that is visible",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#currentIndex-prop"
+    },
+    "void setCurrentWidget(QWidget *widget)": {
+      "brief": "Sets the current widget to be the specified *widget*.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#setCurrentWidget"
+    },
+    "void setGeometry(const QRect &rect) override": {
+      "brief": "Reimplements: [QLayout::setGeometry](xref:qt:QLayout)(const QRect &r).",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#setGeometry"
+    },
+    "void setStackingMode(QStackedLayout::StackingMode stackingMode)": {
+      "brief": "determines the way visibility of child widgets are handled.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#stackingMode-prop"
+    },
+    "void widgetAdded(int index)": {
+      "brief": "This signal is emitted whenever a widget is added or inserted.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#widgetAdded"
+    },
+    "void widgetRemoved(int index)": {
+      "brief": "This signal is emitted whenever a widget is removed from the layout.",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#widgetRemoved"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "count": {
+      "brief": "The number of widgets contained in the layout",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#count-prop"
+    },
+    "currentIndex": {
+      "brief": "The index position of the widget that is visible",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#currentIndex-prop"
+    },
+    "stackingMode": {
+      "brief": "Determines the way visibility of child widgets are handled",
+      "url": "https://doc.qt.io/qt-6/qstackedlayout.html#stackingMode-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

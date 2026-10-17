@@ -1,0 +1,341 @@
+{
+  "doc": {
+    "brief": "The QTableView class provides a default model/view implementation of a table view.",
+    "index_brief": "Default model/view implementation of a table view",
+    "url": "https://doc.qt.io/qt-6/qtableview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTableView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QHeaderView * horizontalHeader() const": {
+      "brief": "Returns the table view's horizontal header.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#horizontalHeader"
+    },
+    "QHeaderView * verticalHeader() const": {
+      "brief": "Returns the table view's vertical header.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#verticalHeader"
+    },
+    "QModelIndex indexAt(const QPoint &pos) const override": {
+      "brief": "Reimplements: [QAbstractItemView::indexAt](xref:qt:QAbstractItemView)(const QPoint &point) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#indexAt"
+    },
+    "QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override": {
+      "brief": "Reimplements: [QAbstractItemView::moveCursor](xref:qt:QAbstractItemView)(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#moveCursor"
+    },
+    "QModelIndexList selectedIndexes() const override": {
+      "brief": "Reimplements: [QAbstractItemView::selectedIndexes](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#selectedIndexes"
+    },
+    "QRect visualRect(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRect](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#visualRect"
+    },
+    "QRegion visualRegionForSelection(const QItemSelection &selection) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRegionForSelection](xref:qt:QAbstractItemView)(const QItemSelection &selection) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#visualRegionForSelection"
+    },
+    "QSize viewportSizeHint() const override": {
+      "brief": "Reimplements: [QAbstractItemView::viewportSizeHint](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#viewportSizeHint"
+    },
+    "QTableView(QWidget *parent)": {
+      "brief": "Constructs a table view with a *parent* to represent the data.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#QTableView"
+    },
+    "Qt::PenStyle gridStyle() const": {
+      "brief": "This property holds the pen style used to draw the grid.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#gridStyle-prop"
+    },
+    "bool isColumnHidden(int column) const": {
+      "brief": "Returns `true` if the given *column* is hidden; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#isColumnHidden"
+    },
+    "bool isCornerButtonEnabled() const": {
+      "brief": "This property holds whether the button in the top-left corner is enabled",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#cornerButtonEnabled-prop"
+    },
+    "bool isIndexHidden(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::isIndexHidden](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#isIndexHidden"
+    },
+    "bool isRowHidden(int row) const": {
+      "brief": "Returns `true` if the given *row* is hidden; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#isRowHidden"
+    },
+    "bool isSortingEnabled() const": {
+      "brief": "This property holds whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#sortingEnabled-prop"
+    },
+    "bool showGrid() const": {
+      "brief": "This property holds whether the grid is shown",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#showGrid-prop"
+    },
+    "bool wordWrap() const": {
+      "brief": "This property holds the item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#wordWrap-prop"
+    },
+    "int columnAt(int x) const": {
+      "brief": "Returns the column in which the given x-coordinate, *x*, in contents coordinates is located.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnAt"
+    },
+    "int columnSpan(int row, int column) const": {
+      "brief": "Returns the column span of the table element at (*row*, *column*).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnSpan"
+    },
+    "int columnViewportPosition(int column) const": {
+      "brief": "Returns the x-coordinate in contents coordinates of the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnViewportPosition"
+    },
+    "int columnWidth(int column) const": {
+      "brief": "Returns the width of the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnWidth"
+    },
+    "int horizontalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::horizontalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#horizontalOffset"
+    },
+    "int rowAt(int y) const": {
+      "brief": "Returns the row in which the given y-coordinate, *y*, in contents coordinates is located.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowAt"
+    },
+    "int rowHeight(int row) const": {
+      "brief": "Returns the height of the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowHeight"
+    },
+    "int rowSpan(int row, int column) const": {
+      "brief": "Returns the row span of the table element at (*row*, *column*).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowSpan"
+    },
+    "int rowViewportPosition(int row) const": {
+      "brief": "Returns the y-coordinate in contents coordinates of the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowViewportPosition"
+    },
+    "int sizeHintForColumn(int column) const override": {
+      "brief": "Reimplements: [QAbstractItemView::sizeHintForColumn](xref:qt:QAbstractItemView)(int column) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#sizeHintForColumn"
+    },
+    "int sizeHintForRow(int row) const override": {
+      "brief": "Reimplements: [QAbstractItemView::sizeHintForRow](xref:qt:QAbstractItemView)(int row) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#sizeHintForRow"
+    },
+    "int verticalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::verticalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#verticalOffset"
+    },
+    "void clearSpans()": {
+      "brief": "Removes all row and column spans in the table view.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#clearSpans"
+    },
+    "void columnCountChanged(int oldCount, int newCount)": {
+      "brief": "This slot is called whenever columns are added or deleted.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnCountChanged"
+    },
+    "void columnMoved(int column, int oldIndex, int newIndex)": {
+      "brief": "This slot is called to change the index of the given *column* in the table view.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnMoved"
+    },
+    "void columnResized(int column, int oldWidth, int newWidth)": {
+      "brief": "This slot is called to change the width of the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#columnResized"
+    },
+    "void currentChanged(const QModelIndex &current, const QModelIndex &previous) override": {
+      "brief": "Reimplements: [QAbstractItemView::currentChanged](xref:qt:QAbstractItemView)(const QModelIndex &current, const QModelIndex &previous).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#currentChanged"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::dropEvent](xref:qt:QAbstractItemView)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#dropEvent"
+    },
+    "void hideColumn(int column)": {
+      "brief": "Hide the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#hideColumn"
+    },
+    "void hideRow(int row)": {
+      "brief": "Hide the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#hideRow"
+    },
+    "void initViewItemOption(QStyleOptionViewItem *option) const override": {
+      "brief": "Reimplements: [QAbstractItemView::initViewItemOption](xref:qt:QAbstractItemView)(QStyleOptionViewItem *option) const.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#initViewItemOption"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#paintEvent"
+    },
+    "void resizeColumnToContents(int column)": {
+      "brief": "Resizes the given *column* based on the size hints of the delegate used to render each item in the column.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#resizeColumnToContents"
+    },
+    "void resizeColumnsToContents()": {
+      "brief": "Resizes all columns based on the size hints of the delegate used to render each item in the columns.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#resizeColumnsToContents"
+    },
+    "void resizeRowToContents(int row)": {
+      "brief": "Resizes the given *row* based on the size hints of the delegate used to render each item in the row.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#resizeRowToContents"
+    },
+    "void resizeRowsToContents()": {
+      "brief": "Resizes all rows based on the size hints of the delegate used to render each item in the rows.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#resizeRowsToContents"
+    },
+    "void rowCountChanged(int oldCount, int newCount)": {
+      "brief": "This slot is called whenever rows are added or deleted.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowCountChanged"
+    },
+    "void rowMoved(int row, int oldIndex, int newIndex)": {
+      "brief": "This slot is called to change the index of the given *row* in the table view.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowMoved"
+    },
+    "void rowResized(int row, int oldHeight, int newHeight)": {
+      "brief": "This slot is called to change the height of the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#rowResized"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#scrollContentsBy"
+    },
+    "void scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) override": {
+      "brief": "Reimplements: [QAbstractItemView::scrollTo](xref:qt:QAbstractItemView)(const QModelIndex &index, QAbstractItemView::ScrollHint hint).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#scrollTo"
+    },
+    "void selectColumn(int column)": {
+      "brief": "Selects the given *column* in the table view if the current SelectionMode and SelectionBehavior allows columns to be selected.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#selectColumn"
+    },
+    "void selectRow(int row)": {
+      "brief": "Selects the given *row* in the table view if the current SelectionMode and SelectionBehavior allows rows to be selected.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#selectRow"
+    },
+    "void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override": {
+      "brief": "Reimplements: [QAbstractItemView::selectionChanged](xref:qt:QAbstractItemView)(const QItemSelection &selected, const QItemSelection &deselected).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#selectionChanged"
+    },
+    "void setColumnHidden(int column, bool hide)": {
+      "brief": "If *hide* is true the given *column* will be hidden; otherwise it will be shown.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setColumnHidden"
+    },
+    "void setColumnWidth(int column, int width)": {
+      "brief": "Sets the width of the given *column* to be *width*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setColumnWidth"
+    },
+    "void setCornerButtonEnabled(bool enable)": {
+      "brief": "This property holds whether the button in the top-left corner is enabled",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#cornerButtonEnabled-prop"
+    },
+    "void setGridStyle(Qt::PenStyle style)": {
+      "brief": "This property holds the pen style used to draw the grid.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#gridStyle-prop"
+    },
+    "void setHorizontalHeader(QHeaderView *header)": {
+      "brief": "Sets the widget to use for the horizontal header to *header*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setHorizontalHeader"
+    },
+    "void setModel(QAbstractItemModel *model) override": {
+      "brief": "Reimplements: [QAbstractItemView::setModel](xref:qt:QAbstractItemView)(QAbstractItemModel *model).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setModel"
+    },
+    "void setRootIndex(const QModelIndex &index) override": {
+      "brief": "Reimplements: [QAbstractItemView::setRootIndex](xref:qt:QAbstractItemView)(const QModelIndex &index).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setRootIndex"
+    },
+    "void setRowHeight(int row, int height)": {
+      "brief": "Sets the height of the given *row* to be *height*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setRowHeight"
+    },
+    "void setRowHidden(int row, bool hide)": {
+      "brief": "If *hide* is true *row* will be hidden, otherwise it will be shown.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setRowHidden"
+    },
+    "void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelection](xref:qt:QAbstractItemView)(const QRect &rect, QItemSelectionModel::SelectionFlags flags).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setSelection"
+    },
+    "void setSelectionModel(QItemSelectionModel *selectionModel) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelectionModel](xref:qt:QAbstractItemView)(QItemSelectionModel *selectionModel).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setSelectionModel"
+    },
+    "void setShowGrid(bool show)": {
+      "brief": "This property holds whether the grid is shown",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#showGrid-prop"
+    },
+    "void setSortingEnabled(bool enable)": {
+      "brief": "If *enable* is true, enables sorting for the table and immediately trigger a call to [sortByColumn](xref:qt:QTableView)() with the current sort section and order",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setSortingEnabled"
+    },
+    "void setSpan(int row, int column, int rowSpanCount, int columnSpanCount)": {
+      "brief": "Sets the span of the table element at (*row*, *column*) to the number of rows and columns specified by (*rowSpanCount*, *columnSpanCount*).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setSpan"
+    },
+    "void setVerticalHeader(QHeaderView *header)": {
+      "brief": "Sets the widget to use for the vertical header to *header*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#setVerticalHeader"
+    },
+    "void setWordWrap(bool on)": {
+      "brief": "This property holds the item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#wordWrap-prop"
+    },
+    "void showColumn(int column)": {
+      "brief": "Show the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#showColumn"
+    },
+    "void showRow(int row)": {
+      "brief": "Show the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#showRow"
+    },
+    "void sortByColumn(int column, Qt::SortOrder order)": {
+      "brief": "Sorts the model by the values in the given *column* and *order*.",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#sortByColumn"
+    },
+    "void timerEvent(QTimerEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::timerEvent](xref:qt:QAbstractItemView)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#timerEvent"
+    },
+    "void updateGeometries() override": {
+      "brief": "Reimplements: [QAbstractItemView::updateGeometries](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#updateGeometries"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "cornerButtonEnabled": {
+      "brief": "Whether the button in the top-left corner is enabled",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#cornerButtonEnabled-prop"
+    },
+    "gridStyle": {
+      "brief": "The pen style used to draw the grid",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#gridStyle-prop"
+    },
+    "showGrid": {
+      "brief": "Whether the grid is shown",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#showGrid-prop"
+    },
+    "sortingEnabled": {
+      "brief": "Whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#sortingEnabled-prop"
+    },
+    "wordWrap": {
+      "brief": "The item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qtableview.html#wordWrap-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtableview-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

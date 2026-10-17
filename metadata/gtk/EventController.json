@@ -24,6 +24,13 @@
   "id": "svelters-api:v1:type:gtk:Gtk:EventController",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:gtk:Gtk:EventController:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: abstract type, JS cannot create it"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:EventController:method:get_current_event",

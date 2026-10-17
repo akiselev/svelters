@@ -1,0 +1,167 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkTreePath` This refers to a row.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 602,
+      "md": "Creates a new `GtkTreePath`\nThis refers to a row."
+    },
+    "new_first": {
+      "brief": "Creates a new `GtkTreePath`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 785,
+      "md": "Creates a new `GtkTreePath`.\n\nThe string representation of this path is “0”."
+    },
+    "new_from_indices": {
+      "brief": "Creates a new path with `first_index` and `varargs` as indices.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 679,
+      "md": "Creates a new path with `first_index` and `varargs` as indices."
+    },
+    "new_from_indicesv": {
+      "brief": "Creates a new path with the given `indices` array of `length`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 714,
+      "md": "Creates a new path with the given `indices` array of `length`."
+    },
+    "new_from_string": {
+      "brief": "Creates a new `GtkTreePath` initialized to `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 624,
+      "md": "Creates a new `GtkTreePath` initialized to `path`.\n\n`path` is expected to be a colon separated list of numbers.\nFor example, the string “10:4:0” would create a path of depth\n3 pointing to the 11th child of the root node, the 5th\nchild of that 11th child, and the 1st child of that 5th child.\nIf an invalid path string is passed in, `NULL` is returned."
+    }
+  },
+  "doc": {
+    "brief": "An opaque structure representing a path to a row in a model.",
+    "deprecated": "4.10",
+    "file": "gtk/deprecated/gtktreemodel.c",
+    "line": 256,
+    "md": "An opaque structure representing a path to a row in a model."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreePath",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append_index": {
+      "brief": "Appends a new index to a path.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 807,
+      "md": "Appends a new index to a path.\n\nAs a result, the depth of the path is increased."
+    },
+    "compare": {
+      "brief": "Compares two paths.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 985,
+      "md": "Compares two paths.\n\nIf `a` appears before `b` in a tree, then -1 is returned.\nIf `b` appears before `a`, then 1 is returned.\nIf the two nodes are equal, then 0 is returned."
+    },
+    "copy": {
+      "brief": "Creates a new `GtkTreePath` as a copy of `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 955,
+      "md": "Creates a new `GtkTreePath` as a copy of `path`."
+    },
+    "down": {
+      "brief": "Moves `path` to point to the first child of the current path.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1162,
+      "md": "Moves `path` to point to the first child of the current path."
+    },
+    "free": {
+      "brief": "Frees `path`. If `path` is `NULL`, it simply returns.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 937,
+      "md": "Frees `path`. If `path` is `NULL`, it simply returns."
+    },
+    "get_depth": {
+      "brief": "Returns the current depth of `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 867,
+      "md": "Returns the current depth of `path`."
+    },
+    "get_indices": {
+      "brief": "Returns the current indices of `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 885,
+      "md": "Returns the current indices of `path`.\n\nThis is an array of integers, each representing a node in a tree.\nThis value should not be freed.\n\nThe length of the array can be obtained with gtk_tree_path_get_depth()."
+    },
+    "get_indices_with_depth": {
+      "brief": "Returns the current indices of `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 908,
+      "md": "Returns the current indices of `path`.\n\nThis is an array of integers, each representing a node in a tree.\nIt also returns the number of elements in the array.\nThe array should not be freed."
+    },
+    "is_ancestor": {
+      "brief": "Returns `TRUE` if `descendant` is a descendant of `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1023,
+      "md": "Returns `TRUE` if `descendant` is a descendant of `path`."
+    },
+    "is_descendant": {
+      "brief": "Returns `TRUE` if `path` is a descendant of `ancestor`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1058,
+      "md": "Returns `TRUE` if `path` is a descendant of `ancestor`."
+    },
+    "next": {
+      "brief": "Moves the `path` to point to the next node at the current depth.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1094,
+      "md": "Moves the `path` to point to the next node at the current depth."
+    },
+    "prepend_index": {
+      "brief": "Prepends a new index to a path.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 835,
+      "md": "Prepends a new index to a path.\n\nAs a result, the depth of the path is increased."
+    },
+    "prev": {
+      "brief": "Moves the `path` to point to the previous node at the current depth, if it exists.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1111,
+      "md": "Moves the `path` to point to the previous node at the\ncurrent depth, if it exists."
+    },
+    "to_string": {
+      "brief": "Generates a string representation of the path.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 742,
+      "md": "Generates a string representation of the path.\n\nThis string is a “:” separated list of numbers.\nFor example, “4:10:0:3” would be an acceptable\nreturn value for this string. If the path has\ndepth 0, `NULL` is returned."
+    },
+    "up": {
+      "brief": "Moves the `path` to point to its parent node, if it has a parent.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1139,
+      "md": "Moves the `path` to point to its parent node, if it has a parent."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

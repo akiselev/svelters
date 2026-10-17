@@ -42,20 +42,26 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QCalendarWidget::HorizontalHeaderFormat",
       "members": [
         {
+          "cpp": "QCalendarWidget::NoHorizontalHeader",
           "name": "NoHorizontalHeader",
           "value": "0"
         },
         {
+          "cpp": "QCalendarWidget::SingleLetterDayNames",
           "name": "SingleLetterDayNames",
           "value": "1"
         },
         {
+          "cpp": "QCalendarWidget::ShortDayNames",
           "name": "ShortDayNames",
           "value": "2"
         },
         {
+          "cpp": "QCalendarWidget::LongDayNames",
           "name": "LongDayNames",
           "value": "3"
         }
@@ -71,15 +77,20 @@
         "scoped": false
       },
       "name": "HorizontalHeaderFormat",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QCalendarWidget::SelectionMode",
       "members": [
         {
+          "cpp": "QCalendarWidget::NoSelection",
           "name": "NoSelection",
           "value": "0"
         },
         {
+          "cpp": "QCalendarWidget::SingleSelection",
           "name": "SingleSelection",
           "value": "1"
         }
@@ -93,15 +104,20 @@
         "scoped": false
       },
       "name": "SelectionMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QCalendarWidget::VerticalHeaderFormat",
       "members": [
         {
+          "cpp": "QCalendarWidget::NoVerticalHeader",
           "name": "NoVerticalHeader",
           "value": "0"
         },
         {
+          "cpp": "QCalendarWidget::ISOWeekNumbers",
           "name": "ISOWeekNumbers",
           "value": "1"
         }
@@ -115,12 +131,23 @@
         "scoped": false
       },
       "name": "VerticalHeaderFormat",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QCalendarWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QCalendarWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -274,7 +301,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -282,7 +309,7 @@
         "native": "QTextCharFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCharFormat>"
       },
       "signature": "QTextCharFormat dateTextFormat(QDate date) const",
       "since": null,
@@ -392,7 +419,7 @@
         "native": "Qt::DayOfWeek",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DayOfWeek>"
       },
       "signature": "Qt::DayOfWeek firstDayOfWeek() const",
       "since": null,
@@ -418,7 +445,7 @@
         "native": "QTextCharFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCharFormat>"
       },
       "signature": "QTextCharFormat headerTextFormat() const",
       "since": null,
@@ -444,7 +471,7 @@
         "native": "QCalendarWidget::HorizontalHeaderFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCalendarWidget::HorizontalHeaderFormat>"
       },
       "signature": "QCalendarWidget::HorizontalHeaderFormat horizontalHeaderFormat() const",
       "since": null,
@@ -585,7 +612,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate maximumDate() const",
       "since": null,
@@ -611,7 +638,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate minimumDate() const",
       "since": null,
@@ -637,7 +664,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -739,7 +766,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -749,7 +776,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -820,7 +847,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate selectedDate() const",
       "since": null,
@@ -846,7 +873,7 @@
         "native": "QCalendarWidget::SelectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCalendarWidget::SelectionMode>"
       },
       "signature": "QCalendarWidget::SelectionMode selectionMode() const",
       "since": null,
@@ -1033,7 +1060,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         },
         {
@@ -1043,7 +1070,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1080,7 +1107,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         },
         {
@@ -1090,7 +1117,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -1127,7 +1154,7 @@
             "native": "Qt::DayOfWeek",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DayOfWeek>"
           }
         }
       ],
@@ -1201,7 +1228,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -1238,7 +1265,7 @@
             "native": "QCalendarWidget::HorizontalHeaderFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCalendarWidget::HorizontalHeaderFormat>"
           }
         }
       ],
@@ -1275,7 +1302,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1312,7 +1339,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1386,7 +1413,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1423,7 +1450,7 @@
             "native": "QCalendarWidget::SelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCalendarWidget::SelectionMode>"
           }
         }
       ],
@@ -1460,7 +1487,7 @@
             "native": "QCalendarWidget::VerticalHeaderFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCalendarWidget::VerticalHeaderFormat>"
           }
         }
       ],
@@ -1497,7 +1524,7 @@
             "native": "Qt::DayOfWeek",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DayOfWeek>"
           }
         },
         {
@@ -1507,7 +1534,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -1697,7 +1724,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1726,7 +1753,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1786,7 +1813,7 @@
         "native": "QCalendarWidget::VerticalHeaderFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCalendarWidget::VerticalHeaderFormat>"
       },
       "signature": "QCalendarWidget::VerticalHeaderFormat verticalHeaderFormat() const",
       "since": null,
@@ -1815,7 +1842,7 @@
             "native": "Qt::DayOfWeek",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DayOfWeek>"
           }
         }
       ],
@@ -1823,7 +1850,7 @@
         "native": "QTextCharFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCharFormat>"
       },
       "signature": "QTextCharFormat weekdayTextFormat(Qt::DayOfWeek dayOfWeek) const",
       "since": null,
@@ -1877,6 +1904,8 @@
         "set": "setDateEditAcceptDelay"
       },
       "brief": "The time an inactive date edit is shown before its contents are accepted",
+      "default": 1500,
+      "default_origin": "runtime",
       "js_name": "dateEditAcceptDelay",
       "metaobject": {
         "constant": false,
@@ -1897,6 +1926,7 @@
       "name": "dateEditAcceptDelay",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1917,6 +1947,8 @@
         "set": "setDateEditEnabled"
       },
       "brief": "Whether the date edit popup is enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "dateEditEnabled",
       "metaobject": {
         "constant": false,
@@ -1937,6 +1969,7 @@
       "name": "dateEditEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1957,6 +1990,8 @@
         "set": "setFirstDayOfWeek"
       },
       "brief": "Value identifying the day displayed in the first column",
+      "default": "Sunday",
+      "default_origin": "runtime",
       "js_name": "firstDayOfWeek",
       "metaobject": {
         "constant": false,
@@ -1977,12 +2012,13 @@
       "name": "firstDayOfWeek",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DayOfWeek",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DayOfWeek>"
       }
     },
     {
@@ -1997,6 +2033,8 @@
         "set": "setGridVisible"
       },
       "brief": "Whether the table grid is displayed",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "gridVisible",
       "metaobject": {
         "constant": false,
@@ -2017,6 +2055,7 @@
       "name": "gridVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2037,6 +2076,8 @@
         "set": "setHorizontalHeaderFormat"
       },
       "brief": "The format of the horizontal header",
+      "default": "ShortDayNames",
+      "default_origin": "runtime",
       "js_name": "horizontalHeaderFormat",
       "metaobject": {
         "constant": false,
@@ -2057,12 +2098,13 @@
       "name": "horizontalHeaderFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "HorizontalHeaderFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<HorizontalHeaderFormat>"
+        "ref": "enum<QCalendarWidget::HorizontalHeaderFormat>"
       }
     },
     {
@@ -2077,6 +2119,7 @@
         "set": "setMaximumDate"
       },
       "brief": "The maximum date of the currently specified date range",
+      "default": null,
       "js_name": "maximumDate",
       "metaobject": {
         "constant": false,
@@ -2097,12 +2140,13 @@
       "name": "maximumDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2117,6 +2161,7 @@
         "set": "setMinimumDate"
       },
       "brief": "The minimum date of the currently specified date range",
+      "default": null,
       "js_name": "minimumDate",
       "metaobject": {
         "constant": false,
@@ -2137,12 +2182,13 @@
       "name": "minimumDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2157,6 +2203,8 @@
         "set": "setNavigationBarVisible"
       },
       "brief": "Whether the navigation bar is shown or not",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "navigationBarVisible",
       "metaobject": {
         "constant": false,
@@ -2177,6 +2225,7 @@
       "name": "navigationBarVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2197,6 +2246,7 @@
         "set": "setSelectedDate"
       },
       "brief": "The currently selected date",
+      "default": null,
       "js_name": "selectedDate",
       "metaobject": {
         "constant": false,
@@ -2217,12 +2267,13 @@
       "name": "selectedDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2237,6 +2288,8 @@
         "set": "setSelectionMode"
       },
       "brief": "The type of selection the user can make in the calendar",
+      "default": "SingleSelection",
+      "default_origin": "runtime",
       "js_name": "selectionMode",
       "metaobject": {
         "constant": false,
@@ -2257,12 +2310,13 @@
       "name": "selectionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SelectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SelectionMode>"
+        "ref": "enum<QCalendarWidget::SelectionMode>"
       }
     },
     {
@@ -2277,6 +2331,8 @@
         "set": "setVerticalHeaderFormat"
       },
       "brief": "The format of the vertical header",
+      "default": "ISOWeekNumbers",
+      "default_origin": "runtime",
       "js_name": "verticalHeaderFormat",
       "metaobject": {
         "constant": false,
@@ -2297,12 +2353,13 @@
       "name": "verticalHeaderFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "VerticalHeaderFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<VerticalHeaderFormat>"
+        "ref": "enum<QCalendarWidget::VerticalHeaderFormat>"
       }
     }
   ],
@@ -2331,7 +2388,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -2366,7 +2423,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],

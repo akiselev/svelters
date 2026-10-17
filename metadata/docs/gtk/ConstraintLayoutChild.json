@@ -1,0 +1,24 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkLayoutChild` subclass for children in a `GtkConstraintLayout`.",
+    "file": "gtk/gtkconstraintlayout.c",
+    "line": 188,
+    "md": "`GtkLayoutChild` subclass for children in a `GtkConstraintLayout`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintLayoutChild",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

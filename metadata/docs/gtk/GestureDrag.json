@@ -1,0 +1,63 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes drags.",
+      "file": "gtk/gtkgesturedrag.c",
+      "line": 209,
+      "md": "Returns a newly created `GtkGesture` that recognizes drags."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes drag gestures.",
+    "file": "gtk/gtkgesturedrag.c",
+    "line": 20,
+    "md": "Recognizes drag gestures.\n\nThe drag operation itself can be tracked throughout the\n[`GestureDrag::drag-begin`](xref:gtk:Gtk.GestureDrag#event:drag-begin),\n[`GestureDrag::drag-update`](xref:gtk:Gtk.GestureDrag#event:drag-update) and\n[`GestureDrag::drag-end`](xref:gtk:Gtk.GestureDrag#event:drag-end) signals, and the relevant\ncoordinates can be extracted through\n[`GestureDrag.get_offset()`](xref:gtk:Gtk.GestureDrag#method:get_offset) and\n[`GestureDrag.get_start_point()`](xref:gtk:Gtk.GestureDrag#method:get_start_point)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureDrag",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_offset": {
+      "brief": "Gets the offset from the start point.",
+      "file": "gtk/gtkgesturedrag.c",
+      "line": 263,
+      "md": "Gets the offset from the start point.\n\nIf the `gesture` is active, this function returns `TRUE` and\nfills in `x` and `y` with the coordinates of the current point,\nas an offset to the starting drag point."
+    },
+    "get_start_point": {
+      "brief": "Gets the point where the drag started.",
+      "file": "gtk/gtkgesturedrag.c",
+      "line": 223,
+      "md": "Gets the point where the drag started.\n\nIf the `gesture` is active, this function returns `TRUE`\nand fills in `x` and `y` with the drag start coordinates,\nin widget-relative coordinates."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "drag-begin": {
+      "brief": "Emitted whenever dragging starts.",
+      "file": "gtk/gtkgesturedrag.c",
+      "line": 145,
+      "md": "Emitted whenever dragging starts."
+    },
+    "drag-end": {
+      "brief": "Emitted whenever the dragging is finished.",
+      "file": "gtk/gtkgesturedrag.c",
+      "line": 183,
+      "md": "Emitted whenever the dragging is finished."
+    },
+    "drag-update": {
+      "brief": "Emitted whenever the dragging point moves.",
+      "file": "gtk/gtkgesturedrag.c",
+      "line": 164,
+      "md": "Emitted whenever the dragging point moves."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

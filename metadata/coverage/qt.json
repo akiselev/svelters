@@ -1,0 +1,2642 @@
+[
+ {
+  "abstract": true,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QAbstractButton",
+  "lifetime": "borrowed_only",
+  "methods": [
+   0,
+   40
+  ],
+  "native": "QAbstractButton",
+  "ownership": false,
+  "props": [
+   0,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QAbstractItemView",
+  "lifetime": "borrowed_only",
+  "methods": [
+   0,
+   119
+  ],
+  "native": "QAbstractItemView",
+  "ownership": false,
+  "props": [
+   0,
+   18
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   7
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 1,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QAbstractScrollArea",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   39
+  ],
+  "native": "QAbstractScrollArea",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 10,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QAbstractSlider",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   32
+  ],
+  "native": "QAbstractSlider",
+  "ownership": false,
+  "props": [
+   0,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 11,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QAbstractSpinBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   54
+  ],
+  "native": "QAbstractSpinBox",
+  "ownership": false,
+  "props": [
+   0,
+   12
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QBoxLayout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   32
+  ],
+  "native": "QBoxLayout",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 8,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QCalendarWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   52
+  ],
+  "native": "QCalendarWidget",
+  "ownership": false,
+  "props": [
+   0,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 1,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QCheckBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   13
+  ],
+  "native": "QCheckBox",
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": "colordialog",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QColorDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   17
+  ],
+  "native": "QColorDialog",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QColumnView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   28
+  ],
+  "native": "QColumnView",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 14,
+  "element": "combobox",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QComboBox",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   82
+  ],
+  "native": "QComboBox",
+  "ownership": false,
+  "props": [
+   2,
+   16
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   7
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QCommandLinkButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   7
+  ],
+  "native": "QCommandLinkButton",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": "dateedit",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDateEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "QDateEdit",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 7,
+  "element": "datetimeedit",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDateTimeEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   64
+  ],
+  "native": "QDateTimeEdit",
+  "ownership": false,
+  "props": [
+   2,
+   17
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 4,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDial",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   17
+  ],
+  "native": "QDial",
+  "ownership": false,
+  "props": [
+   0,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "QDialog",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 3,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDialogButtonBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   15
+  ],
+  "native": "QDialogButtonBox",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 5,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDockWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "QDockWidget",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   5
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 9,
+  "element": "doublespinbox",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QDoubleSpinBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   22
+  ],
+  "native": "QDoubleSpinBox",
+  "ownership": false,
+  "props": [
+   2,
+   9
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QErrorMessage",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "QErrorMessage",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 5,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QFileDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   62
+  ],
+  "native": "QFileDialog",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   9
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QFocusFrame",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   6
+  ],
+  "native": "QFocusFrame",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 1,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QFontComboBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   14
+  ],
+  "native": "QFontComboBox",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QFontDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   12
+  ],
+  "native": "QFontDialog",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 6,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QFormLayout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   39
+  ],
+  "native": "QFormLayout",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 5,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QFrame",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   18
+  ],
+  "native": "QFrame",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 9,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QGraphicsView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   80
+  ],
+  "native": "QGraphicsView",
+  "ownership": false,
+  "props": [
+   0,
+   13
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QGridLayout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   36
+  ],
+  "native": "QGridLayout",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 5,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QGroupBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   21
+  ],
+  "native": "QGroupBox",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QHBoxLayout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "QHBoxLayout",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QHeaderView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   83
+  ],
+  "native": "QHeaderView",
+  "ownership": false,
+  "props": [
+   0,
+   12
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   11
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QInputDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   50
+  ],
+  "native": "QInputDialog",
+  "ownership": false,
+  "props": [
+   0,
+   18
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QKeySequenceEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   14
+  ],
+  "native": "QKeySequenceEdit",
+  "ownership": false,
+  "props": [
+   0,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 6,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QLCDNumber",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "QLCDNumber",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 11,
+  "element": "label",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "QLabel",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   48
+  ],
+  "native": "QLabel",
+  "ownership": false,
+  "props": [
+   5,
+   12
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QLayout",
+  "lifetime": "borrowed_only",
+  "methods": [
+   0,
+   45
+  ],
+  "native": "QLayout",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "defaults": 19,
+  "element": "entry",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "QLineEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   85
+  ],
+  "native": "QLineEdit",
+  "ownership": false,
+  "props": [
+   5,
+   19
+  ],
+  "props_annotated": 5,
+  "signal_results": 1,
+  "signals": [
+   1,
+   7
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   8,
+   8
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 13,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QListView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   64
+  ],
+  "native": "QListView",
+  "ownership": false,
+  "props": [
+   0,
+   14
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 4,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QListWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   40
+  ],
+  "native": "QListWidget",
+  "ownership": false,
+  "props": [
+   0,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   10
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 6,
+  "element": "window",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QMainWindow",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   50
+  ],
+  "native": "QMainWindow",
+  "ownership": true,
+  "props": [
+   0,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 1,
+  "signals": [
+   0,
+   3
+  ],
+  "slots": 3,
+  "slots_own": 3,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 5,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QMdiArea",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   42
+  ],
+  "native": "QMdiArea",
+  "ownership": false,
+  "props": [
+   0,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QMdiSubWindow",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   36
+  ],
+  "native": "QMdiSubWindow",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 4,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QMenu",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   51
+  ],
+  "native": "QMenu",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": "menubar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QMenuBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   35
+  ],
+  "native": "QMenuBar",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 7,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QMessageBox",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   52
+  ],
+  "native": "QMessageBox",
+  "ownership": false,
+  "props": [
+   0,
+   9
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 15,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QPlainTextEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   93
+  ],
+  "native": "QPlainTextEdit",
+  "ownership": false,
+  "props": [
+   0,
+   16
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   9
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 10,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QProgressBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   27
+  ],
+  "native": "QProgressBar",
+  "ownership": false,
+  "props": [
+   0,
+   10
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 8,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QProgressDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   29
+  ],
+  "native": "QProgressDialog",
+  "ownership": false,
+  "props": [
+   0,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 3,
+  "element": "button",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "QPushButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "QPushButton",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QRadioButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   7
+  ],
+  "native": "QRadioButton",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 3,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QRhiWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   26
+  ],
+  "native": "QRhiWidget",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QRubberBand",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "QRubberBand",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": "scrolledwindow",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "QScrollArea",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   16
+  ],
+  "native": "QScrollArea",
+  "ownership": true,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QScrollBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   12
+  ],
+  "native": "QScrollBar",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QSizeGrip",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "QSizeGrip",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QSlider",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   12
+  ],
+  "native": "QSlider",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 9,
+  "element": "spinbox",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QSpinBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   23
+  ],
+  "native": "QSpinBox",
+  "ownership": false,
+  "props": [
+   5,
+   9
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QSplashScreen",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   10
+  ],
+  "native": "QSplashScreen",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 4,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QSplitter",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   34
+  ],
+  "native": "QSplitter",
+  "ownership": false,
+  "props": [
+   0,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QSplitterHandle",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   13
+  ],
+  "native": "QSplitterHandle",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QStackedLayout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   18
+  ],
+  "native": "QStackedLayout",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QStackedWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "QStackedWidget",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 1,
+  "element": "statusbar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QStatusBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   16
+  ],
+  "native": "QStatusBar",
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 12,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTabBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   74
+  ],
+  "native": "QTabBar",
+  "ownership": false,
+  "props": [
+   0,
+   14
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   5
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 10,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTabWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   58
+  ],
+  "native": "QTabWidget",
+  "ownership": false,
+  "props": [
+   0,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 5,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTableView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   71
+  ],
+  "native": "QTableView",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 3,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTableWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   58
+  ],
+  "native": "QTableWidget",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   15
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTextBrowser",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   30
+  ],
+  "native": "QTextBrowser",
+  "ownership": false,
+  "props": [
+   0,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 16,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTextEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   110
+  ],
+  "native": "QTextEdit",
+  "ownership": false,
+  "props": [
+   0,
+   18
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   7
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": "timeedit",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTimeEdit",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "QTimeEdit",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 6,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QToolBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   26
+  ],
+  "native": "QToolBar",
+  "ownership": false,
+  "props": [
+   0,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   8
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QToolBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   23
+  ],
+  "native": "QToolBox",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 4,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QToolButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   28
+  ],
+  "native": "QToolButton",
+  "ownership": false,
+  "props": [
+   0,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 11,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTreeView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   95
+  ],
+  "native": "QTreeView",
+  "ownership": false,
+  "props": [
+   0,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 3,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QTreeWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   48
+  ],
+  "native": "QTreeWidget",
+  "ownership": false,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   10
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 1,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QUndoView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   8
+  ],
+  "native": "QUndoView",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QVBoxLayout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "QVBoxLayout",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 39,
+  "element": "box",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "QWidget",
+  "lifetime": "owned",
+  "methods": [
+   3,
+   258
+  ],
+  "native": "QWidget",
+  "ownership": true,
+  "props": [
+   9,
+   61
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   0,
+   4
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   16,
+   16
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 6,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QWizard",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   48
+  ],
+  "native": "QWizard",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   5
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "defaults": 2,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "QWizardPage",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   21
+  ],
+  "native": "QWizardPage",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ }
+]

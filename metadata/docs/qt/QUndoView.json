@@ -1,0 +1,80 @@
+{
+  "doc": {
+    "brief": "The QUndoView class displays the contents of a [QUndoStack](xref:qt:QUndoStack).",
+    "index_brief": "Displays the contents of a QUndoStack",
+    "url": "https://doc.qt.io/qt-6/qundoview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QUndoView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QIcon cleanIcon() const": {
+      "brief": "This property holds the icon used to represent the clean state.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#cleanIcon-prop"
+    },
+    "QString emptyLabel() const": {
+      "brief": "This property holds the label used for the empty state.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#emptyLabel-prop"
+    },
+    "QUndoGroup * group() const": {
+      "brief": "Returns the group displayed by this view.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#group"
+    },
+    "QUndoStack * stack() const": {
+      "brief": "Returns the stack currently displayed by this view.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#stack"
+    },
+    "QUndoView(QUndoGroup *group, QWidget *parent)": {
+      "brief": "Constructs a new view with parent *parent* and sets the observed group to *group*.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#QUndoView-1"
+    },
+    "QUndoView(QUndoStack *stack, QWidget *parent)": {
+      "brief": "Constructs a new view with parent *parent* and sets the observed stack to *stack*.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#QUndoView-2"
+    },
+    "QUndoView(QWidget *parent)": {
+      "brief": "Constructs a new view with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#QUndoView"
+    },
+    "void setCleanIcon(const QIcon &icon)": {
+      "brief": "This property holds the icon used to represent the clean state.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#cleanIcon-prop"
+    },
+    "void setEmptyLabel(const QString &label)": {
+      "brief": "This property holds the label used for the empty state.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#emptyLabel-prop"
+    },
+    "void setGroup(QUndoGroup *group)": {
+      "brief": "Sets the group displayed by this view to *group*.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#setGroup"
+    },
+    "void setStack(QUndoStack *stack)": {
+      "brief": "Sets the stack displayed by this view to *stack*.",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#setStack"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "cleanIcon": {
+      "brief": "The icon used to represent the clean state",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#cleanIcon-prop"
+    },
+    "emptyLabel": {
+      "brief": "The label used for the empty state",
+      "url": "https://doc.qt.io/qt-6/qundoview.html#emptyLabel-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,147 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new font picker widget.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 751,
+      "md": "Creates a new font picker widget."
+    },
+    "new_with_font": {
+      "brief": "Creates a new font picker widget showing the given font.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 766,
+      "md": "Creates a new font picker widget showing the given font."
+    }
+  },
+  "doc": {
+    "brief": "The `GtkFontButton` allows to open a font chooser dialog to change the font.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+    "file": "gtk/deprecated/gtkfontbutton.c",
+    "line": 50,
+    "md": "The `GtkFontButton` allows to open a font chooser dialog to change\nthe font.\n\nIt is suitable widget for selecting a font in a preference dialog.\n\n# CSS nodes\n\n```\nfontbutton\n╰── button.font\n    ╰── [content]\n```\n\n`GtkFontButton` has a single CSS node with name fontbutton which\ncontains a button node with the .font style class."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_modal": {
+      "brief": "Gets whether the dialog is modal.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 853,
+      "md": "Gets whether the dialog is modal."
+    },
+    "get_title": {
+      "brief": "Retrieves the title of the font chooser dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 808,
+      "md": "Retrieves the title of the font chooser dialog."
+    },
+    "get_use_font": {
+      "brief": "Returns whether the selected font is used in the label.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 871,
+      "md": "Returns whether the selected font is used in the label."
+    },
+    "get_use_size": {
+      "brief": "Returns whether the selected size is used in the label.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 918,
+      "md": "Returns whether the selected size is used in the label."
+    },
+    "set_modal": {
+      "brief": "Sets whether the dialog should be modal.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 827,
+      "md": "Sets whether the dialog should be modal."
+    },
+    "set_title": {
+      "brief": "Sets the title for the font chooser dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 782,
+      "md": "Sets the title for the font chooser dialog."
+    },
+    "set_use_font": {
+      "brief": "If `use_font` is `TRUE`, the font name will be written using the selected font.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 889,
+      "md": "If `use_font` is `TRUE`, the font name will be written\nusing the selected font."
+    },
+    "set_use_size": {
+      "brief": "If `use_size` is `TRUE`, the font name will be written using the selected size.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 936,
+      "md": "If `use_size` is `TRUE`, the font name will be written using\nthe selected size."
+    }
+  },
+  "properties": {
+    "modal": {
+      "brief": "Whether the font chooser dialog should be modal.",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 535,
+      "md": "Whether the font chooser dialog should be modal."
+    },
+    "title": {
+      "brief": "The title of the font chooser dialog.",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 502,
+      "md": "The title of the font chooser dialog."
+    },
+    "use-font": {
+      "brief": "Whether the buttons label will be drawn in the selected font.",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 513,
+      "md": "Whether the buttons label will be drawn in the selected font."
+    },
+    "use-size": {
+      "brief": "Whether the buttons label will use the selected font size.",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 524,
+      "md": "Whether the buttons label will use the selected font size."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the font button is activated.",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 567,
+      "md": "Emitted to when the font button is activated.\n\nThe `::activate` signal on `GtkFontButton` is an action signal and\nemitting it causes the button to present its dialog.",
+      "since": "4.4"
+    },
+    "font-set": {
+      "brief": "Emitted when the user selects a font.",
+      "file": "gtk/deprecated/gtkfontbutton.c",
+      "line": 546,
+      "md": "Emitted when the user selects a font.\n\nWhen handling this signal, use [`FontChooser.get_font()`](xref:gtk:Gtk.FontChooser#method:get_font)\nto find out which font was just selected.\n\nNote that this signal is only emitted when the user changes the font.\nIf you need to react to programmatic font changes as well, use\nthe notify::font signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

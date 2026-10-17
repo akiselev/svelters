@@ -1,0 +1,169 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Flags to use with gtk_set_debug_flags().",
+    "file": "gtk/gtkdebug.h",
+    "line": 36,
+    "md": "Flags to use with gtk_set_debug_flags().\n\nSettings these flags causes GTK to print out different\ntypes of debugging information. Some of these flags are\nonly available when GTK has been configured with `-Ddebug=true`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DebugFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "a11y": {
+      "brief": "Information about accessibility state changes",
+      "file": "gtk/gtkdebug.h",
+      "line": 54,
+      "md": "Information about accessibility state changes"
+    },
+    "actions": {
+      "brief": "Information about actions and menu models",
+      "file": "gtk/gtkdebug.h",
+      "line": 49,
+      "md": "Information about actions and menu models"
+    },
+    "builder": {
+      "brief": "Information about deprecated GtkBuilder features.",
+      "file": "gtk/gtkdebug.h",
+      "line": 87,
+      "md": "Information about deprecated GtkBuilder features.",
+      "since": "4.18"
+    },
+    "builder_objects": {
+      "brief": "Log unused GtkBuilder objects",
+      "file": "gtk/gtkdebug.h",
+      "line": 53,
+      "md": "Log unused GtkBuilder objects"
+    },
+    "builder_trace": {
+      "brief": "Trace GtkBuilder operation",
+      "file": "gtk/gtkdebug.h",
+      "line": 45,
+      "md": "Trace GtkBuilder operation"
+    },
+    "constraints": {
+      "brief": "Information from the constraints solver",
+      "file": "gtk/gtkdebug.h",
+      "line": 52,
+      "md": "Information from the constraints solver"
+    },
+    "css": {
+      "brief": "Information about deprecated CSS features.",
+      "file": "gtk/gtkdebug.h",
+      "line": 79,
+      "md": "Information about deprecated CSS features.",
+      "since": "4.16"
+    },
+    "geometry": {
+      "brief": "Information about size allocation",
+      "file": "gtk/gtkdebug.h",
+      "line": 42,
+      "md": "Information about size allocation"
+    },
+    "iconfallback": {
+      "brief": "Information about icon fallback.",
+      "file": "gtk/gtkdebug.h",
+      "line": 63,
+      "md": "Information about icon fallback.",
+      "since": "4.2"
+    },
+    "icontheme": {
+      "brief": "Information about icon themes",
+      "file": "gtk/gtkdebug.h",
+      "line": 43,
+      "md": "Information about icon themes"
+    },
+    "interactive": {
+      "brief": "Open the GTK inspector",
+      "file": "gtk/gtkdebug.h",
+      "line": 48,
+      "md": "Open the GTK inspector"
+    },
+    "invert_text_dir": {
+      "brief": "Inverts the default text-direction.",
+      "file": "gtk/gtkdebug.h",
+      "line": 71,
+      "md": "Inverts the default text-direction.",
+      "since": "4.8"
+    },
+    "keybindings": {
+      "brief": "Information about keyboard shortcuts",
+      "file": "gtk/gtkdebug.h",
+      "line": 40,
+      "md": "Information about keyboard shortcuts"
+    },
+    "layout": {
+      "brief": "Information from layout managers",
+      "file": "gtk/gtkdebug.h",
+      "line": 50,
+      "md": "Information from layout managers"
+    },
+    "modules": {
+      "brief": "Information about modules and extensions",
+      "file": "gtk/gtkdebug.h",
+      "line": 41,
+      "md": "Information about modules and extensions"
+    },
+    "no_css_cache": {
+      "brief": "Disable the style property cache",
+      "file": "gtk/gtkdebug.h",
+      "line": 47,
+      "md": "Disable the style property cache"
+    },
+    "printing": {
+      "brief": "Information about printing",
+      "file": "gtk/gtkdebug.h",
+      "line": 44,
+      "md": "Information about printing"
+    },
+    "session": {
+      "brief": "Information about session saving.",
+      "file": "gtk/gtkdebug.h",
+      "line": 103,
+      "md": "Information about session saving.",
+      "since": "4.22"
+    },
+    "size_request": {
+      "brief": "Information about size requests",
+      "file": "gtk/gtkdebug.h",
+      "line": 46,
+      "md": "Information about size requests"
+    },
+    "snapshot": {
+      "brief": "Include debug render nodes in the generated snapshots",
+      "file": "gtk/gtkdebug.h",
+      "line": 51,
+      "md": "Include debug render nodes in the generated snapshots"
+    },
+    "text": {
+      "brief": "Information about GtkTextView",
+      "file": "gtk/gtkdebug.h",
+      "line": 38,
+      "md": "Information about GtkTextView"
+    },
+    "touchscreen": {
+      "brief": "Show touch UI elements for pointer events.",
+      "file": "gtk/gtkdebug.h",
+      "line": 95,
+      "md": "Show touch UI elements for pointer events.",
+      "since": "4.20"
+    },
+    "tree": {
+      "brief": "Information about GtkTreeView",
+      "file": "gtk/gtkdebug.h",
+      "line": 39,
+      "md": "Information about GtkTreeView"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

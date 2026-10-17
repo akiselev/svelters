@@ -1,0 +1,144 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkTreeExpander`",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 767,
+      "md": "Creates a new `GtkTreeExpander`"
+    }
+  },
+  "doc": {
+    "brief": "Provides an expander for a tree-like list.",
+    "file": "gtk/gtktreeexpander.c",
+    "line": 34,
+    "md": "Provides an expander for a tree-like list.\n\nIt is typically placed as a bottommost child into a `GtkListView`\nto allow users to expand and collapse children in a list with a\n[`TreeListModel`](xref:gtk:Gtk.TreeListModel). `GtkTreeExpander` provides the common UI\nelements, gestures and keybindings for this purpose.\n\nOn top of this, the \"listitem.expand\", \"listitem.collapse\" and\n\"listitem.toggle-expand\" actions are provided to allow adding custom\nUI for managing expanded state.\n\nIt is important to mention that you want to set the\n[`ListItem:focusable`](xref:gtk:Gtk.ListItem#property:focusable) property to FALSE when using this\nwidget, as you want the keyboard focus to be in the treexpander, and not\ninside the list to make use of the keybindings.\n\nThe `GtkTreeListModel` must be set to not be passthrough. Then it\nwill provide [`TreeListRow`](xref:gtk:Gtk.TreeListRow) items which can be set via\n[`TreeExpander.set_list_row()`](xref:gtk:Gtk.TreeExpander#method:set_list_row) on the expander.\nThe expander will then watch that row item automatically.\n[`TreeExpander.set_child()`](xref:gtk:Gtk.TreeExpander#method:set_child) sets the widget that displays\nthe actual row contents.\n\n`GtkTreeExpander` can be modified with properties such as\n[`TreeExpander:indent-for-icon`](xref:gtk:Gtk.TreeExpander#property:indent-for-icon),\n[`TreeExpander:indent-for-depth`](xref:gtk:Gtk.TreeExpander#property:indent-for-depth), and\n[`TreeExpander:hide-expander`](xref:gtk:Gtk.TreeExpander#property:hide-expander) to achieve a different appearance.\nThis can even be done to influence individual rows, for example by binding\nthe [`TreeExpander:hide-expander`](xref:gtk:Gtk.TreeExpander#property:hide-expander) property to the item count of\nthe model of the treelistrow, to hide the expander for rows without children,\neven if the row is expandable.\n\n## Shortcuts and Gestures\n\n`GtkTreeExpander` supports the following keyboard shortcuts:\n\n- <kbd>+</kbd> or <kbd>*</kbd> expands the expander.\n- <kbd>-</kbd> or <kbd>/</kbd> collapses the expander.\n- Left and right arrow keys, when combined with <kbd>Shift</kbd> or\n  <kbd>Ctrl</kbd>+<kbd>Shift</kbd>, will expand or collapse, depending on\n  the locale's text direction.\n- <kbd>Ctrl</kbd>+<kbd>␣</kbd> toggles the expander state.\n\nThe row can also expand on drag gestures.\n\n## Actions\n\n`GtkTreeExpander` defines a set of built-in actions:\n\n- `listitem.expand` expands the expander if it can be expanded.\n- `listitem.collapse` collapses the expander.\n- `listitem.toggle-expand` tries to expand the expander if it was collapsed\n  or collapses it if it was expanded.\n\n## CSS nodes\n\n```\ntreeexpander\n├── [indent]*\n├── [expander]\n╰── <child>\n```\n\n`GtkTreeExpander` has zero or one CSS nodes with the name \"expander\" that\nshould display the expander icon. The node will be `:checked` when it\nis expanded. If the node is not expandable, an \"indent\" node will be\ndisplayed instead.\n\nFor every level of depth, another \"indent\" node is prepended.\n\n## Accessibility\n\nUntil GTK 4.10, `GtkTreeExpander` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nSince GTK 4.12, `GtkTreeExpander` uses the [`AccessibleRole.button`](xref:gtk:Gtk.AccessibleRole#value:button) role.\nToggling it will change the `GTK_ACCESSIBLE_STATE_EXPANDED` state."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeExpander",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child widget displayed by `self`.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 781,
+      "md": "Gets the child widget displayed by `self`."
+    },
+    "get_hide_expander": {
+      "brief": "Gets whether the TreeExpander should be hidden in a GtkTreeListRow.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 998,
+      "md": "Gets whether the TreeExpander should be hidden in a GtkTreeListRow.",
+      "since": "4.10"
+    },
+    "get_indent_for_depth": {
+      "brief": "TreeExpander indents each level of depth with an additional indent.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 912,
+      "md": "TreeExpander indents each level of depth with an additional indent.",
+      "since": "4.10"
+    },
+    "get_indent_for_icon": {
+      "brief": "TreeExpander indents the child by the width of an expander-icon if it is not expandable.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 955,
+      "md": "TreeExpander indents the child by the width of an expander-icon if it is not expandable.",
+      "since": "4.6"
+    },
+    "get_item": {
+      "brief": "Forwards the item set on the `GtkTreeListRow` that `self` is managing.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 833,
+      "md": "Forwards the item set on the `GtkTreeListRow` that `self` is managing.\n\nThis call is essentially equivalent to calling:\n\n```c\ngtk_tree_list_row_get_item (gtk_tree_expander_get_list_row (`self`));\n```"
+    },
+    "get_list_row": {
+      "brief": "Gets the list row managed by `self`.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 858,
+      "md": "Gets the list row managed by `self`."
+    },
+    "set_child": {
+      "brief": "Sets the content widget to display.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 797,
+      "md": "Sets the content widget to display."
+    },
+    "set_hide_expander": {
+      "brief": "Sets whether the expander icon should be visible in a GtkTreeListRow.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 1016,
+      "md": "Sets whether the expander icon should be visible in a GtkTreeListRow.",
+      "since": "4.10"
+    },
+    "set_indent_for_depth": {
+      "brief": "Sets if the TreeExpander should indent the child according to its depth.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 930,
+      "md": "Sets if the TreeExpander should indent the child according to its depth.",
+      "since": "4.10"
+    },
+    "set_indent_for_icon": {
+      "brief": "Sets if the TreeExpander should indent the child by the width of an expander-icon when it is not expandable.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 973,
+      "md": "Sets if the TreeExpander should indent the child by the width of an expander-icon when it is not expandable.",
+      "since": "4.6"
+    },
+    "set_list_row": {
+      "brief": "Sets the tree list row that this expander should manage.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 874,
+      "md": "Sets the tree list row that this expander should manage."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget with the actual contents.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 555,
+      "md": "The child widget with the actual contents."
+    },
+    "hide-expander": {
+      "brief": "Whether the expander icon should be hidden in a GtkTreeListRow.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 565,
+      "md": "Whether the expander icon should be hidden in a GtkTreeListRow.\nNote that this property simply hides the icon.  The actions and keybinding\n(i.e. collapse and expand) are not affected by this property.\n\nA common use for this property would be to bind to the number of children in a\nGtkTreeListRow's model in order to hide the expander when a row has no children.",
+      "since": "4.10"
+    },
+    "indent-for-depth": {
+      "brief": "TreeExpander indents the child according to its depth.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 582,
+      "md": "TreeExpander indents the child according to its depth.",
+      "since": "4.10"
+    },
+    "indent-for-icon": {
+      "brief": "TreeExpander indents the child by the width of an expander-icon if it is not expandable.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 594,
+      "md": "TreeExpander indents the child by the width of an expander-icon if it is not expandable.",
+      "since": "4.6"
+    },
+    "item": {
+      "brief": "The item held by this expander's row.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 606,
+      "md": "The item held by this expander's row."
+    },
+    "list-row": {
+      "brief": "The list row to track for expander state.",
+      "file": "gtk/gtktreeexpander.c",
+      "line": 616,
+      "md": "The list row to track for expander state."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

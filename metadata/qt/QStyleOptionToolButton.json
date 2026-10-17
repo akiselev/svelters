@@ -30,62 +30,86 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolButton::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionToolButton::Type",
           "name": "Type",
           "value": "SO_ToolButton"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolButton::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionToolButton::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QStyleOptionToolButton::ToolButtonFeatures",
+      "fullname": "QStyleOptionToolButton::ToolButtonFeature",
       "members": [
         {
+          "cpp": "QStyleOptionToolButton::None",
           "name": "None",
           "value": "0x00"
         },
         {
+          "cpp": "QStyleOptionToolButton::Arrow",
           "name": "Arrow",
           "value": "0x01"
         },
         {
+          "cpp": "QStyleOptionToolButton::Menu",
           "name": "Menu",
           "value": "0x04"
         },
         {
+          "cpp": "QStyleOptionToolButton::MenuButtonPopup",
           "name": "MenuButtonPopup",
           "value": "Menu"
         },
         {
+          "cpp": "QStyleOptionToolButton::PopupDelay",
           "name": "PopupDelay",
           "value": "0x08"
         },
         {
+          "cpp": "QStyleOptionToolButton::HasMenu",
           "name": "HasMenu",
           "value": "0x10"
         }
       ],
       "metaobject": null,
       "name": "ToolButtonFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionToolButton",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionToolButton:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a tool button",

@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the panning direction of a [`GesturePan`](xref:gtk:GesturePan).",
+    "file": "gtk/gtkenums.h",
+    "line": 1077,
+    "md": "Describes the panning direction of a [`GesturePan`](xref:gtk:GesturePan)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PanDirection",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "down": {
+      "brief": "panned downwards",
+      "file": "gtk/gtkenums.h",
+      "line": 1082,
+      "md": "panned downwards"
+    },
+    "left": {
+      "brief": "panned towards the left",
+      "file": "gtk/gtkenums.h",
+      "line": 1079,
+      "md": "panned towards the left"
+    },
+    "right": {
+      "brief": "panned towards the right",
+      "file": "gtk/gtkenums.h",
+      "line": 1080,
+      "md": "panned towards the right"
+    },
+    "up": {
+      "brief": "panned upwards",
+      "file": "gtk/gtkenums.h",
+      "line": 1081,
+      "md": "panned upwards"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

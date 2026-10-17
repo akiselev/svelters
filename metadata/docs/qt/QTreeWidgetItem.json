@@ -1,0 +1,302 @@
+{
+  "doc": {
+    "brief": "The QTreeWidgetItem class provides an item for use with the [QTreeWidget](xref:qt:QTreeWidget) convenience class.",
+    "index_brief": "Item for use with the QTreeWidget convenience class",
+    "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidgetItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBrush background(int column) const": {
+      "brief": "Returns the brush used to render the background of the specified *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#background"
+    },
+    "QBrush foreground(int column) const": {
+      "brief": "Returns the brush used to render the foreground (e.g. text) of the specified *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#foreground"
+    },
+    "QDataStream & operator<<(QDataStream &out, const QTreeWidgetItem &item)": {
+      "brief": "Writes the tree widget item *item* to stream *out*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#operator-lt-lt"
+    },
+    "QDataStream & operator>>(QDataStream &in, QTreeWidgetItem &item)": {
+      "brief": "Reads a tree widget item from stream *in* into *item*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#operator-gt-gt"
+    },
+    "QFont font(int column) const": {
+      "brief": "Returns the font used to render the text in the specified *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#font"
+    },
+    "QIcon icon(int column) const": {
+      "brief": "Returns the icon that is displayed in the specified *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#icon"
+    },
+    "QList<QTreeWidgetItem *> takeChildren()": {
+      "brief": "Removes the list of children and returns it, otherwise returns an empty list.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#takeChildren"
+    },
+    "QSize sizeHint(int column) const": {
+      "brief": "Returns the size hint set for the tree item in the given *column* (see [QSize](xref:qt:QSize)).",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#sizeHint"
+    },
+    "QString statusTip(int column) const": {
+      "brief": "Returns the status tip for the contents of the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#statusTip"
+    },
+    "QString text(int column) const": {
+      "brief": "Returns the text in the specified *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#text"
+    },
+    "QString toolTip(int column) const": {
+      "brief": "Returns the tool tip for the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#toolTip"
+    },
+    "QString whatsThis(int column) const": {
+      "brief": "Returns the \"What's This?\" help for the contents of the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#whatsThis"
+    },
+    "QTreeWidget * treeWidget() const": {
+      "brief": "Returns the tree widget that contains the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#treeWidget"
+    },
+    "QTreeWidgetItem * child(int index) const": {
+      "brief": "Returns the item at the given *index* in the list of the item's children.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#child"
+    },
+    "QTreeWidgetItem * clone() const": {
+      "brief": "Creates a deep copy of the item and of its children.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#clone"
+    },
+    "QTreeWidgetItem * parent() const": {
+      "brief": "Returns the item's parent.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#parent"
+    },
+    "QTreeWidgetItem * takeChild(int index)": {
+      "brief": "Removes the item at *index* and returns it, otherwise return 0.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#takeChild"
+    },
+    "QTreeWidgetItem(QTreeWidget *parent, QTreeWidgetItem *preceding, int type)": {
+      "brief": "Constructs a tree widget item of the specified *type* and inserts it into the given *parent* after the *preceding* item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-5"
+    },
+    "QTreeWidgetItem(QTreeWidget *parent, const QStringList &strings, int type)": {
+      "brief": "Constructs a tree widget item of the specified *type* and appends it to the items in the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-6"
+    },
+    "QTreeWidgetItem(QTreeWidget *parent, int type)": {
+      "brief": "Constructs a tree widget item of the specified *type* and appends it to the items in the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-2"
+    },
+    "QTreeWidgetItem(QTreeWidgetItem *parent, QTreeWidgetItem *preceding, int type)": {
+      "brief": "Constructs a tree widget item of the specified *type* that is inserted into the *parent* after the *preceding* child item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-7"
+    },
+    "QTreeWidgetItem(QTreeWidgetItem *parent, const QStringList &strings, int type)": {
+      "brief": "Constructs a tree widget item and append it to the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-8"
+    },
+    "QTreeWidgetItem(QTreeWidgetItem *parent, int type)": {
+      "brief": "Constructs a tree widget item and append it to the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-3"
+    },
+    "QTreeWidgetItem(const QStringList &strings, int type)": {
+      "brief": "Constructs a tree widget item of the specified *type*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-4"
+    },
+    "QTreeWidgetItem(int type)": {
+      "brief": "Constructs a tree widget item of the specified *type*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#QTreeWidgetItem-1"
+    },
+    "QTreeWidgetItem::ChildIndicatorPolicy childIndicatorPolicy() const": {
+      "brief": "Returns the item indicator policy.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#childIndicatorPolicy"
+    },
+    "QVariant data(int column, int role) const": {
+      "brief": "Returns the value for the item's *column* and *role*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#data"
+    },
+    "Qt::CheckState checkState(int column) const": {
+      "brief": "Returns the check state of the label in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#checkState"
+    },
+    "Qt::ItemFlags flags() const": {
+      "brief": "Returns the flags used to describe the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#flags"
+    },
+    "bool isDisabled() const": {
+      "brief": "Returns `true` if the item is disabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#isDisabled"
+    },
+    "bool isExpanded() const": {
+      "brief": "Returns `true` if the item is expanded, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#isExpanded"
+    },
+    "bool isFirstColumnSpanned() const": {
+      "brief": "Returns `true` if the item is spanning all the columns in a row; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#isFirstColumnSpanned"
+    },
+    "bool isHidden() const": {
+      "brief": "Returns `true` if the item is hidden, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#isHidden"
+    },
+    "bool isSelected() const": {
+      "brief": "Returns `true` if the item is selected, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#isSelected"
+    },
+    "bool operator<(const QTreeWidgetItem &other) const": {
+      "brief": "Returns `true` if the text in the item is less than the text in the *other* item, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#operator-lt"
+    },
+    "int childCount() const": {
+      "brief": "Returns the number of child items.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#childCount"
+    },
+    "int columnCount() const": {
+      "brief": "Returns the number of columns in the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#columnCount"
+    },
+    "int indexOfChild(QTreeWidgetItem *child) const": {
+      "brief": "Returns the index of the given *child* in the item's list of children.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#indexOfChild"
+    },
+    "int textAlignment(int column) const": {
+      "brief": "Returns the text alignment for the label in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#textAlignment"
+    },
+    "int type() const": {
+      "brief": "Returns the type passed to the [QTreeWidgetItem](xref:qt:QTreeWidgetItem) constructor.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#type"
+    },
+    "void addChild(QTreeWidgetItem *child)": {
+      "brief": "Appends the *child* item to the list of children.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#addChild"
+    },
+    "void addChildren(const QList<QTreeWidgetItem *> &children)": {
+      "brief": "Appends the given list of *children* to the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#addChildren"
+    },
+    "void emitDataChanged()": {
+      "brief": "Causes the model associated with this item to emit a [dataChanged](xref:qt:QAbstractItemModel)() signal for this item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#emitDataChanged"
+    },
+    "void insertChild(int index, QTreeWidgetItem *child)": {
+      "brief": "Inserts the *child* item at *index* in the list of children.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#insertChild"
+    },
+    "void insertChildren(int index, const QList<QTreeWidgetItem *> &children)": {
+      "brief": "Inserts the given list of *children* into the list of the item children at *index* .",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#insertChildren"
+    },
+    "void read(QDataStream &in)": {
+      "brief": "Reads the item from stream *in*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#read"
+    },
+    "void removeChild(QTreeWidgetItem *child)": {
+      "brief": "Removes the given item indicated by *child*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#removeChild"
+    },
+    "void setBackground(int column, const QBrush &brush)": {
+      "brief": "Sets the background brush of the label in the given *column* to the specified *brush*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setBackground"
+    },
+    "void setCheckState(int column, Qt::CheckState state)": {
+      "brief": "Sets the item in the given *column* check state to be *state*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setCheckState"
+    },
+    "void setChildIndicatorPolicy(QTreeWidgetItem::ChildIndicatorPolicy policy)": {
+      "brief": "Sets the item indicator *policy*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setChildIndicatorPolicy"
+    },
+    "void setData(int column, int role, const QVariant &value)": {
+      "brief": "Sets the value for the item's *column* and *role* to the given *value*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setData"
+    },
+    "void setDisabled(bool disabled)": {
+      "brief": "Disables the item if *disabled* is true; otherwise enables the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setDisabled"
+    },
+    "void setExpanded(bool expand)": {
+      "brief": "Expands the item if *expand* is true, otherwise collapses the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setExpanded"
+    },
+    "void setFirstColumnSpanned(bool span)": {
+      "brief": "Sets the first section to span all columns if *span* is true; otherwise all item sections are shown.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setFirstColumnSpanned"
+    },
+    "void setFlags(Qt::ItemFlags flags)": {
+      "brief": "Sets the flags for the item to the given *flags*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setFlags"
+    },
+    "void setFont(int column, const QFont &font)": {
+      "brief": "Sets the font used to display the text in the given *column* to the given *font*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setFont"
+    },
+    "void setForeground(int column, const QBrush &brush)": {
+      "brief": "Sets the foreground brush of the label in the given *column* to the specified *brush*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setForeground"
+    },
+    "void setHidden(bool hide)": {
+      "brief": "Hides the item if *hide* is true, otherwise shows the item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setHidden"
+    },
+    "void setIcon(int column, const QIcon &icon)": {
+      "brief": "Sets the icon to be displayed in the given *column* to *icon*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setIcon"
+    },
+    "void setSelected(bool select)": {
+      "brief": "Sets the selected state of the item to *select*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setSelected"
+    },
+    "void setSizeHint(int column, const QSize &size)": {
+      "brief": "Sets the size hint for the tree item in the given *column* to be *size*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setSizeHint"
+    },
+    "void setStatusTip(int column, const QString &statusTip)": {
+      "brief": "Sets the status tip for the given *column* to the given *statusTip*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setStatusTip"
+    },
+    "void setText(int column, const QString &text)": {
+      "brief": "Sets the text to be displayed in the given *column* to the given *text*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setText"
+    },
+    "void setTextAlignment(int column, Qt::Alignment alignment)": {
+      "brief": "Sets the text alignment for the label in the given *column* to the *alignment* specified.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setTextAlignment"
+    },
+    "void setTextAlignment(int column, int alignment)": {
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem-obsolete.html#setTextAlignment-1"
+    },
+    "void setToolTip(int column, const QString &toolTip)": {
+      "brief": "Sets the tooltip for the given *column* to *toolTip*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setToolTip"
+    },
+    "void setWhatsThis(int column, const QString &whatsThis)": {
+      "brief": "Sets the \"What's This?\" help for the given *column* to *whatsThis*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#setWhatsThis"
+    },
+    "void sortChildren(int column, Qt::SortOrder order)": {
+      "brief": "Sorts the children of the item using the given *order*, by the values in the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#sortChildren"
+    },
+    "void write(QDataStream &out) const": {
+      "brief": "Writes the item to stream *out*.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitem.html#write"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

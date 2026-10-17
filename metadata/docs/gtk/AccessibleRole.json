@@ -1,0 +1,542 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The accessible role for a [`Accessible`](xref:gtk:Accessible) implementation.",
+    "file": "gtk/gtkenums.h",
+    "line": 1283,
+    "md": "The accessible role for a [`Accessible`](xref:gtk:Accessible) implementation.\n\nAbstract roles are only used as part of the ontology; application\ndevelopers must not use abstract roles in their code."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleRole",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "alert": {
+      "brief": "An element with important, and usually time-sensitive, information",
+      "file": "gtk/gtkenums.h",
+      "line": 1285,
+      "md": "An element with important, and usually\n  time-sensitive, information"
+    },
+    "alert_dialog": {
+      "brief": "A type of dialog that contains an alert message",
+      "file": "gtk/gtkenums.h",
+      "line": 1287,
+      "md": "A type of dialog that contains an\n  alert message"
+    },
+    "application": {
+      "brief": "A toplevel element of a graphical user interface.",
+      "file": "gtk/gtkenums.h",
+      "line": 1403,
+      "md": "A toplevel element of a graphical user interface.\n\nThis is the role that GTK uses by default for windows.",
+      "since": "4.12"
+    },
+    "article": {
+      "brief": "A section of a page that consists of a composition that forms an independent part of a document, page, or site.",
+      "file": "gtk/gtkenums.h",
+      "line": 1429,
+      "md": "A section of a page that consists of a composition that forms an independent\npart of a document, page, or site.",
+      "since": "4.14"
+    },
+    "banner": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1289,
+      "md": "Unused"
+    },
+    "block_quote": {
+      "brief": "A section of content that is quoted from another source.",
+      "file": "gtk/gtkenums.h",
+      "line": 1421,
+      "md": "A section of content that is quoted from another source.",
+      "since": "4.14"
+    },
+    "button": {
+      "brief": "An input element that allows for user-triggered actions when clicked or pressed",
+      "file": "gtk/gtkenums.h",
+      "line": 1290,
+      "md": "An input element that allows for\n  user-triggered actions when clicked or pressed"
+    },
+    "caption": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1292,
+      "md": "Unused"
+    },
+    "cell": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1293,
+      "md": "Unused"
+    },
+    "checkbox": {
+      "brief": "A checkable input element that has three possible values: `true`, `false`, or `mixed`",
+      "file": "gtk/gtkenums.h",
+      "line": 1294,
+      "md": "A checkable input element that has\n  three possible values: `true`, `false`, or `mixed`"
+    },
+    "column_header": {
+      "brief": "A header in a columned list.",
+      "file": "gtk/gtkenums.h",
+      "line": 1296,
+      "md": "A header in a columned list."
+    },
+    "combo_box": {
+      "brief": "An input that controls another element, such as a list or a grid, that can dynamically pop up to help the user set the value of the input",
+      "file": "gtk/gtkenums.h",
+      "line": 1297,
+      "md": "An input that controls another element,\n  such as a list or a grid, that can dynamically pop up to help the user\n  set the value of the input"
+    },
+    "command": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1300,
+      "md": "Abstract role."
+    },
+    "comment": {
+      "brief": "A comment contains content expressing reaction to other content.",
+      "file": "gtk/gtkenums.h",
+      "line": 1438,
+      "md": "A comment contains content expressing reaction to other content.",
+      "since": "4.14"
+    },
+    "composite": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1301,
+      "md": "Abstract role."
+    },
+    "dialog": {
+      "brief": "A dialog is a window that is designed to interrupt the current processing of an application in order to prompt the user to enter information or require a response.",
+      "file": "gtk/gtkenums.h",
+      "line": 1302,
+      "md": "A dialog is a window that is designed to interrupt\n  the current processing of an application in order to prompt the user to enter\n  information or require a response."
+    },
+    "document": {
+      "brief": "Content that assistive technology users may want to browse in a reading mode.",
+      "file": "gtk/gtkenums.h",
+      "line": 1305,
+      "md": "Content that assistive technology users may want to\n  browse in a reading mode."
+    },
+    "feed": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1307,
+      "md": "Unused"
+    },
+    "form": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1308,
+      "md": "Unused"
+    },
+    "generic": {
+      "brief": "A nameless container that has no semantic meaning of its own.",
+      "file": "gtk/gtkenums.h",
+      "line": 1309,
+      "md": "A nameless container that has no semantic meaning\n  of its own. This is the role that GTK uses by default for widgets."
+    },
+    "grid": {
+      "brief": "A grid of items.",
+      "file": "gtk/gtkenums.h",
+      "line": 1311,
+      "md": "A grid of items."
+    },
+    "grid_cell": {
+      "brief": "An item in a grid or tree grid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1312,
+      "md": "An item in a grid or tree grid."
+    },
+    "group": {
+      "brief": "An element that groups multiple related widgets.",
+      "file": "gtk/gtkenums.h",
+      "line": 1313,
+      "md": "An element that groups multiple related widgets. GTK uses\n  this role for various containers, like [`HeaderBar`](xref:gtk:Gtk.HeaderBar) or [`Notebook`](xref:gtk:Gtk.Notebook)."
+    },
+    "heading": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1315,
+      "md": "Unused"
+    },
+    "img": {
+      "brief": "An image.",
+      "file": "gtk/gtkenums.h",
+      "line": 1316,
+      "md": "An image."
+    },
+    "input": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1317,
+      "md": "Abstract role."
+    },
+    "label": {
+      "brief": "A visible name or caption for a user interface component.",
+      "file": "gtk/gtkenums.h",
+      "line": 1318,
+      "md": "A visible name or caption for a user interface component."
+    },
+    "landmark": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1319,
+      "md": "Abstract role."
+    },
+    "legend": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1320,
+      "md": "Unused"
+    },
+    "link": {
+      "brief": "A clickable link.",
+      "file": "gtk/gtkenums.h",
+      "line": 1321,
+      "md": "A clickable link."
+    },
+    "list": {
+      "brief": "A list of items.",
+      "file": "gtk/gtkenums.h",
+      "line": 1322,
+      "md": "A list of items."
+    },
+    "list_box": {
+      "brief": "Unused.",
+      "file": "gtk/gtkenums.h",
+      "line": 1323,
+      "md": "Unused."
+    },
+    "list_item": {
+      "brief": "An item in a list.",
+      "file": "gtk/gtkenums.h",
+      "line": 1324,
+      "md": "An item in a list."
+    },
+    "log": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1325,
+      "md": "Unused"
+    },
+    "main": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1326,
+      "md": "Unused"
+    },
+    "marquee": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1327,
+      "md": "Unused"
+    },
+    "math": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1328,
+      "md": "Unused"
+    },
+    "menu": {
+      "brief": "A menu.",
+      "file": "gtk/gtkenums.h",
+      "line": 1330,
+      "md": "A menu."
+    },
+    "menu_bar": {
+      "brief": "A menubar.",
+      "file": "gtk/gtkenums.h",
+      "line": 1331,
+      "md": "A menubar."
+    },
+    "menu_item": {
+      "brief": "An item in a menu.",
+      "file": "gtk/gtkenums.h",
+      "line": 1332,
+      "md": "An item in a menu."
+    },
+    "menu_item_checkbox": {
+      "brief": "A check item in a menu.",
+      "file": "gtk/gtkenums.h",
+      "line": 1333,
+      "md": "A check item in a menu."
+    },
+    "menu_item_radio": {
+      "brief": "A radio item in a menu.",
+      "file": "gtk/gtkenums.h",
+      "line": 1334,
+      "md": "A radio item in a menu."
+    },
+    "meter": {
+      "brief": "An element that represents a value within a known range.",
+      "file": "gtk/gtkenums.h",
+      "line": 1329,
+      "md": "An element that represents a value within a known range."
+    },
+    "navigation": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1335,
+      "md": "Unused"
+    },
+    "none": {
+      "brief": "An element that is not represented to accessibility technologies.",
+      "file": "gtk/gtkenums.h",
+      "line": 1336,
+      "md": "An element that is not represented to accessibility technologies.\n  This role is synonymous to @GTK_ACCESSIBLE_ROLE_PRESENTATION."
+    },
+    "note": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1338,
+      "md": "Unused"
+    },
+    "option": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1339,
+      "md": "Unused"
+    },
+    "paragraph": {
+      "brief": "A paragraph of content.",
+      "file": "gtk/gtkenums.h",
+      "line": 1413,
+      "md": "A paragraph of content.",
+      "since": "4.14"
+    },
+    "presentation": {
+      "brief": "An element that is not represented to accessibility technologies.",
+      "file": "gtk/gtkenums.h",
+      "line": 1340,
+      "md": "An element that is not represented to accessibility technologies.\n  This role is synonymous to @GTK_ACCESSIBLE_ROLE_NONE."
+    },
+    "progress_bar": {
+      "brief": "An element that displays the progress status for tasks that take a long time.",
+      "file": "gtk/gtkenums.h",
+      "line": 1342,
+      "md": "An element that displays the progress\n  status for tasks that take a long time."
+    },
+    "radio": {
+      "brief": "A checkable input in a group of radio roles, only one of which can be checked at a time.",
+      "file": "gtk/gtkenums.h",
+      "line": 1344,
+      "md": "A checkable input in a group of radio roles,\n  only one of which can be checked at a time."
+    },
+    "radio_group": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1346,
+      "md": "Unused"
+    },
+    "range": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1347,
+      "md": "Abstract role."
+    },
+    "region": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1348,
+      "md": "Unused"
+    },
+    "row": {
+      "brief": "A row in a columned list.",
+      "file": "gtk/gtkenums.h",
+      "line": 1349,
+      "md": "A row in a columned list."
+    },
+    "row_group": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1350,
+      "md": "Unused"
+    },
+    "row_header": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1351,
+      "md": "Unused"
+    },
+    "scrollbar": {
+      "brief": "A graphical object that controls the scrolling of content within a viewing area, regardless of whether the content is fully displayed within the viewing area.",
+      "file": "gtk/gtkenums.h",
+      "line": 1352,
+      "md": "A graphical object that controls the scrolling\n  of content within a viewing area, regardless of whether the content is fully\n  displayed within the viewing area."
+    },
+    "search": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1355,
+      "md": "Unused"
+    },
+    "search_box": {
+      "brief": "A type of textbox intended for specifying search criteria.",
+      "file": "gtk/gtkenums.h",
+      "line": 1356,
+      "md": "A type of textbox intended for specifying\n  search criteria."
+    },
+    "section": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1358,
+      "md": "Abstract role."
+    },
+    "section_head": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1359,
+      "md": "Abstract role."
+    },
+    "select": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1360,
+      "md": "Abstract role."
+    },
+    "separator": {
+      "brief": "A divider that separates and distinguishes sections of content or groups of menuitems.",
+      "file": "gtk/gtkenums.h",
+      "line": 1361,
+      "md": "A divider that separates and distinguishes\n  sections of content or groups of menuitems."
+    },
+    "slider": {
+      "brief": "A user input where the user selects a value from within a given range.",
+      "file": "gtk/gtkenums.h",
+      "line": 1363,
+      "md": "A user input where the user selects a value\n  from within a given range."
+    },
+    "spin_button": {
+      "brief": "A form of range that expects the user to select from among discrete choices.",
+      "file": "gtk/gtkenums.h",
+      "line": 1365,
+      "md": "A form of range that expects the user to\n  select from among discrete choices."
+    },
+    "status": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1367,
+      "md": "Unused"
+    },
+    "structure": {
+      "brief": "Abstract role.",
+      "file": "gtk/gtkenums.h",
+      "line": 1368,
+      "md": "Abstract role."
+    },
+    "switch": {
+      "brief": "A type of checkbox that represents on/off values, as opposed to checked/unchecked values.",
+      "file": "gtk/gtkenums.h",
+      "line": 1369,
+      "md": "A type of checkbox that represents on/off values,\n  as opposed to checked/unchecked values."
+    },
+    "tab": {
+      "brief": "An item in a list of tab used for switching pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 1371,
+      "md": "An item in a list of tab used for switching pages."
+    },
+    "tab_list": {
+      "brief": "A list of tabs for switching pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 1373,
+      "md": "A list of tabs for switching pages."
+    },
+    "tab_panel": {
+      "brief": "A page in a notebook or stack.",
+      "file": "gtk/gtkenums.h",
+      "line": 1374,
+      "md": "A page in a notebook or stack."
+    },
+    "table": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1372,
+      "md": "Unused"
+    },
+    "terminal": {
+      "brief": "A virtual terminal.",
+      "file": "gtk/gtkenums.h",
+      "line": 1446,
+      "md": "A virtual terminal.",
+      "since": "4.14"
+    },
+    "text_box": {
+      "brief": "A type of input that allows free-form text as its value.",
+      "file": "gtk/gtkenums.h",
+      "line": 1375,
+      "md": "A type of input that allows free-form text\n  as its value."
+    },
+    "time": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1377,
+      "md": "Unused"
+    },
+    "timer": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1378,
+      "md": "Unused"
+    },
+    "toggle_button": {
+      "brief": "A type of push button which stays pressed until depressed by a second activation.",
+      "file": "gtk/gtkenums.h",
+      "line": 1394,
+      "md": "A type of push button which stays pressed until depressed by a second\nactivation.",
+      "since": "4.10"
+    },
+    "toolbar": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1379,
+      "md": "Unused"
+    },
+    "tooltip": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1380,
+      "md": "Unused"
+    },
+    "tree": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1381,
+      "md": "Unused"
+    },
+    "tree_grid": {
+      "brief": "A treeview-like, columned list.",
+      "file": "gtk/gtkenums.h",
+      "line": 1382,
+      "md": "A treeview-like, columned list."
+    },
+    "tree_item": {
+      "brief": "Unused",
+      "file": "gtk/gtkenums.h",
+      "line": 1383,
+      "md": "Unused"
+    },
+    "widget": {
+      "brief": "Abstract role for interactive components of a graphical user interface",
+      "file": "gtk/gtkenums.h",
+      "line": 1384,
+      "md": "Abstract role for interactive components of a\n  graphical user interface"
+    },
+    "window": {
+      "brief": "Abstract role for windows.",
+      "file": "gtk/gtkenums.h",
+      "line": 1386,
+      "md": "Abstract role for windows."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -18,6 +18,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTapGesture",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTapGesture:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -38,7 +48,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF position() const",
       "since": null,
@@ -67,7 +77,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -103,6 +113,7 @@
         "set": "setPosition"
       },
       "brief": "The position of the tap",
+      "default": null,
       "js_name": "position",
       "metaobject": {
         "constant": false,
@@ -123,12 +134,13 @@
       "name": "position",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     }
   ],

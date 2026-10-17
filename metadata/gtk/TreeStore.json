@@ -100,6 +100,16 @@
     "Gtk.TreeSortable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:TreeStore:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "deprecated": true,

@@ -35,7 +35,10 @@ node! {
         pub options: Option<SvelteOptions>,
         pub fragment: Fragment,
         pub css: Option<StyleBlock>,
+        /// Absent (not null) in Svelte's JSON when there is no instance script.
+        #[serde(skip_serializing_if = "Option::is_none")]
         pub instance: Option<Script>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         pub module: Option<Script>,
         /// Comments found in `<script>` and `{expressions}`.
         pub comments: Vec<JsComment>,
@@ -45,8 +48,8 @@ node! {
     }
 }
 
-/// `<svelte:options>`; only the fields Svelte interprets, plus the raw attributes.
 node! {
+    /// `<svelte:options>`; only the fields Svelte interprets, plus the raw attributes.
     pub struct SvelteOptions {
         #[serde(skip_serializing_if = "Option::is_none")]
         pub runes: Option<bool>,
@@ -60,6 +63,9 @@ node! {
         pub namespace: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
         pub css: Option<String>,
+        /// `customRenderer` option of the custom-renderer fork: a module path, or null to opt out.
+        #[serde(rename = "customRenderer", skip_serializing_if = "Option::is_none")]
+        pub custom_renderer: Option<Option<String>>,
         /// `customElement` is accepted by the parser but unsupported by this compiler: kept raw.
         #[serde(skip)]
         pub custom_element: Option<Span>,
@@ -146,9 +152,29 @@ node! { pub struct ExpressionTag { pub expression: Expression } }
 node! { pub struct HtmlTag { pub expression: Expression } }
 node! {
     /// `{@const x = y}`: exactly one declarator with an init.
-    pub struct ConstTag { pub declaration: VariableDeclaration }
+    pub struct ConstTag {
+        #[serde(serialize_with = "ser_variable_declaration")]
+        pub declaration: VariableDeclaration,
+    }
 }
-node! { pub struct DeclarationTag { pub declaration: VariableDeclaration } }
+node! {
+    pub struct DeclarationTag {
+        #[serde(serialize_with = "ser_variable_declaration")]
+        pub declaration: VariableDeclaration,
+    }
+}
+
+/// `VariableDeclaration` carries its `type` only inside `Statement`; in a field position it
+/// needs it too.
+fn ser_variable_declaration<S: serde::Serializer>(d: &VariableDeclaration, s: S) -> Result<S::Ok, S::Error> {
+    #[derive(Serialize)]
+    #[serde(tag = "type", rename = "VariableDeclaration")]
+    struct Tagged<'a> {
+        #[serde(flatten)]
+        d: &'a VariableDeclaration,
+    }
+    Tagged { d }.serialize(s)
+}
 node! { pub struct DebugTag { pub identifiers: Vec<Identifier> } }
 node! {
     /// `expression` is a CallExpression or a ChainExpression wrapping one.
@@ -288,6 +314,9 @@ pub enum TextOrExpressionTag {
 }
 
 node! {
+    /// Tagged so that it serializes with `type` also outside `AttributeLike` (script, style
+    /// and `<svelte:options>` attributes).
+    #[serde(tag = "type", rename = "Attribute")]
     pub struct Attribute {
         pub name: String,
         #[serde(skip)]
@@ -305,7 +334,7 @@ node! {
         #[serde(skip)]
         pub name_span: Option<Span>,
         pub expression: Option<Expression>,
-        #[serde(skip_serializing_if = "Vec::is_empty")]
+        /// Always present in Svelte's JSON (`[]` when there are none).
         pub modifiers: Vec<String>,
     }
 }

@@ -1,0 +1,64 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes changes in a filter in more detail and allows objects using the filter to optimize refiltering items.",
+    "file": "gtk/gtkfilter.h",
+    "line": 51,
+    "md": "Describes changes in a filter in more detail and allows objects\nusing the filter to optimize refiltering items.\n\nIf you are writing an implementation and are not sure which\nvalue to pass, `GTK_FILTER_CHANGE_DIFFERENT` is always a correct\nchoice.\n\nNew values may be added in the future."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FilterChange",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "different": {
+      "brief": "The filter change cannot be described with any of the other enumeration values",
+      "file": "gtk/gtkfilter.h",
+      "line": 53,
+      "md": "The filter change cannot be\n  described with any of the other enumeration values"
+    },
+    "different_rewatch": {
+      "brief": "Similar to [`FilterChange.DIFFERENT`](xref:gtk:Gtk.FilterChange#value:DIFFERENT), but signs that item watches should be recreated.",
+      "file": "gtk/gtkfilter.h",
+      "line": 72,
+      "md": "Similar to [`FilterChange.DIFFERENT`](xref:gtk:Gtk.FilterChange#value:DIFFERENT),\nbut signs that item watches should be recreated. This is used by\n[`FilterListModel`](xref:gtk:Gtk.FilterListModel) to keep the list up-to-date when items\nchange.",
+      "since": "4.20"
+    },
+    "less_strict": {
+      "brief": "The filter is less strict than it was before: All items that it used to return true still return true, others now may, too.",
+      "file": "gtk/gtkfilter.h",
+      "line": 55,
+      "md": "The filter is less strict than\n  it was before: All items that it used to return true\n  still return true, others now may, too."
+    },
+    "less_strict_rewatch": {
+      "brief": "Similar to [`FilterChange.LESS_STRICT`](xref:gtk:Gtk.FilterChange#value:LESS_STRICT), but signs that item watches should be recreated.",
+      "file": "gtk/gtkfilter.h",
+      "line": 83,
+      "md": "Similar to [`FilterChange.LESS_STRICT`](xref:gtk:Gtk.FilterChange#value:LESS_STRICT),\nbut signs that item watches should be recreated. This is used by\n[`FilterListModel`](xref:gtk:Gtk.FilterListModel) to keep the list up-to-date when items\nchange.",
+      "since": "4.20"
+    },
+    "more_strict": {
+      "brief": "The filter is more strict than it was before: All items that it used to return false still return false, others now may, too.",
+      "file": "gtk/gtkfilter.h",
+      "line": 58,
+      "md": "The filter is more strict than\n  it was before: All items that it used to return false\n  still return false, others now may, too."
+    },
+    "more_strict_rewatch": {
+      "brief": "Similar to [`FilterChange.MORE_STRICT`](xref:gtk:Gtk.FilterChange#value:MORE_STRICT), but signs that item watches should be recreated.",
+      "file": "gtk/gtkfilter.h",
+      "line": 94,
+      "md": "Similar to [`FilterChange.MORE_STRICT`](xref:gtk:Gtk.FilterChange#value:MORE_STRICT),\nbut signs that item watches should be recreated. This is used by\n[`FilterListModel`](xref:gtk:Gtk.FilterListModel) to keep the list up-to-date when items\nchange.",
+      "since": "4.20"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,114 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCenterLayout`.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 639,
+      "md": "Creates a new `GtkCenterLayout`."
+    }
+  },
+  "doc": {
+    "brief": "Manages up to three children.",
+    "file": "gtk/gtkcenterlayout.c",
+    "line": 28,
+    "md": "Manages up to three children.\n\nThe start widget is allocated at the start of the layout (left in\nleft-to-right locales and right in right-to-left ones), and the end\nwidget at the end.\n\nThe center widget is centered regarding the full width of the layout's."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CenterLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_baseline_position": {
+      "brief": "Returns the baseline position of the layout.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 708,
+      "md": "Returns the baseline position of the layout."
+    },
+    "get_center_widget": {
+      "brief": "Returns the center widget of the layout.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 780,
+      "md": "Returns the center widget of the layout."
+    },
+    "get_end_widget": {
+      "brief": "Returns the end widget of the layout.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 816,
+      "md": "Returns the end widget of the layout."
+    },
+    "get_orientation": {
+      "brief": "Gets the current orienration of the layout manager.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 672,
+      "md": "Gets the current orienration of the layout manager."
+    },
+    "get_shrink_center_last": {
+      "brief": "Gets whether `self` shrinks the center widget after other children.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 866,
+      "md": "Gets whether `self` shrinks the center widget after other children.",
+      "since": "4.12"
+    },
+    "get_start_widget": {
+      "brief": "Returns the start widget of the layout.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 744,
+      "md": "Returns the start widget of the layout."
+    },
+    "set_baseline_position": {
+      "brief": "Sets the new baseline position of `self`",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 688,
+      "md": "Sets the new baseline position of `self`"
+    },
+    "set_center_widget": {
+      "brief": "Sets the new center widget of `self`.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 760,
+      "md": "Sets the new center widget of `self`.\n\nTo remove the existing center widget, pass `NULL`."
+    },
+    "set_end_widget": {
+      "brief": "Sets the new end widget of `self`.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 796,
+      "md": "Sets the new end widget of `self`.\n\nTo remove the existing center widget, pass `NULL`."
+    },
+    "set_orientation": {
+      "brief": "Sets the orientation of `self`.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 652,
+      "md": "Sets the orientation of `self`."
+    },
+    "set_shrink_center_last": {
+      "brief": "Sets whether to shrink the center widget after other children.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 832,
+      "md": "Sets whether to shrink the center widget after other children.\n\nBy default, when there's no space to give all three children their\nnatural widths, the start and end widgets start shrinking and the\ncenter child keeps natural width until they reach minimum width.\n\nIf set to `FALSE`, start and end widgets keep natural width and the\ncenter widget starts shrinking instead.",
+      "since": "4.12"
+    },
+    "set_start_widget": {
+      "brief": "Sets the new start widget of `self`.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 724,
+      "md": "Sets the new start widget of `self`.\n\nTo remove the existing start widget, pass `NULL`."
+    }
+  },
+  "properties": {
+    "shrink-center-last": {
+      "brief": "Whether to shrink the center widget after other children.",
+      "file": "gtk/gtkcenterlayout.c",
+      "line": 609,
+      "md": "Whether to shrink the center widget after other children.\n\nBy default, when there's no space to give all three children their\nnatural widths, the start and end widgets start shrinking and the\ncenter child keeps natural width until they reach minimum width.\n\nIf set to `FALSE`, start and end widgets keep natural width and the\ncenter widget starts shrinking instead.",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

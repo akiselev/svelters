@@ -53,7 +53,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -77,6 +77,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsLinearLayout",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsLinearLayout:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -182,7 +189,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment(QGraphicsLayoutItem *item) const",
       "since": null,
@@ -428,7 +435,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -541,7 +548,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -578,7 +585,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -662,7 +669,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -783,7 +790,7 @@
             "native": "Qt::SizeHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SizeHint>"
           }
         },
         {
@@ -793,7 +800,7 @@
             "native": "const QSizeF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -801,7 +808,7 @@
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
       "since": null,

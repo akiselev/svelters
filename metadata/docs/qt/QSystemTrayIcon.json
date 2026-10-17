@@ -1,0 +1,120 @@
+{
+  "doc": {
+    "brief": "The QSystemTrayIcon class provides an icon for an application in the system tray.",
+    "index_brief": "Icon for an application in the system tray",
+    "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSystemTrayIcon",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QIcon icon() const": {
+      "brief": "This property holds the system tray icon",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#icon-prop"
+    },
+    "QMenu * contextMenu() const": {
+      "brief": "Returns the current context menu for the system tray entry.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#contextMenu"
+    },
+    "QRect geometry() const": {
+      "brief": "Returns the geometry of the system tray icon in screen coordinates.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#geometry"
+    },
+    "QString toolTip() const": {
+      "brief": "This property holds the tooltip for the system tray entry",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#toolTip-prop"
+    },
+    "QSystemTrayIcon(QObject *parent)": {
+      "brief": "Constructs a QSystemTrayIcon object with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#QSystemTrayIcon"
+    },
+    "QSystemTrayIcon(const QIcon &icon, QObject *parent)": {
+      "brief": "Constructs a QSystemTrayIcon object with the given *icon* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#QSystemTrayIcon-1"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#event"
+    },
+    "bool isSystemTrayAvailable()": {
+      "brief": "Returns `true` if the system tray is available; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#isSystemTrayAvailable"
+    },
+    "bool isVisible() const": {
+      "brief": "This property holds whether the system tray entry is visible",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#visible-prop"
+    },
+    "bool supportsMessages()": {
+      "brief": "Returns `true` if the system tray supports balloon messages; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#supportsMessages"
+    },
+    "void activated(QSystemTrayIcon::ActivationReason reason)": {
+      "brief": "This signal is emitted when the user activates the system tray icon. *reason* specifies the reason for activation.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#activated"
+    },
+    "void hide()": {
+      "brief": "Hides the system tray entry.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#hide"
+    },
+    "void messageClicked()": {
+      "brief": "This signal is emitted when the message displayed using [showMessage](xref:qt:QSystemTrayIcon)() was clicked by the user.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#messageClicked"
+    },
+    "void setContextMenu(QMenu *menu)": {
+      "brief": "Sets the specified *menu* to be the context menu for the system tray icon.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#setContextMenu"
+    },
+    "void setIcon(const QIcon &icon)": {
+      "brief": "This property holds the system tray icon",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#icon-prop"
+    },
+    "void setToolTip(const QString &tip)": {
+      "brief": "This property holds the tooltip for the system tray entry",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#toolTip-prop"
+    },
+    "void setVisible(bool visible)": {
+      "brief": "This property holds whether the system tray entry is visible",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#visible-prop"
+    },
+    "void show()": {
+      "brief": "Shows the icon in the system tray.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#show"
+    },
+    "void showMessage(const QString &title, const QString &message, QSystemTrayIcon::MessageIcon icon, int millisecondsTimeoutHint)": {
+      "brief": "Shows a balloon message for the entry with the given *title*, *message* and *icon* for the time specified in *millisecondsTimeoutHint*. *title* and *message* must be plain text strings.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#showMessage"
+    },
+    "void showMessage(const QString &title, const QString &message, const QIcon &icon, int millisecondsTimeoutHint)": {
+      "brief": "Shows a balloon message for the entry with the given *title*, *message*, and custom icon *icon* for the time specified in *millisecondsTimeoutHint*.",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#showMessage-1"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "icon": {
+      "brief": "The system tray icon",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#icon-prop"
+    },
+    "toolTip": {
+      "brief": "The tooltip for the system tray entry",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#toolTip-prop"
+    },
+    "visible": {
+      "brief": "Whether the system tray entry is visible",
+      "url": "https://doc.qt.io/qt-6/qsystemtrayicon.html#visible-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

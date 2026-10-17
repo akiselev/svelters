@@ -1,23 +1,36 @@
 upstream:      https://github.com/sveltejs/svelte
-branch:        custom-condition   (top of the stack; head of PR #18511)
-commit:        f3de3f236bd586c764fd48bab04f41c54c5ff80d   "chore: force `custom-renderer` custom condition"
-stack:
+branch:        svelters/renderer   (local fork branch, not pushed; /projects/svelte-fork)
+base:          f3de3f236bd586c764fd48bab04f41c54c5ff80d   "chore: force `custom-renderer` custom condition" (top of the upstream stack, head of PR #18511, branch `custom-condition`)
+commit:        27b7dfb706dc650e5376d8b0d9dedbb1ffd2c655   "feat: element bind:this and a renderer bind hook under customRenderer"   (1 local commit on top of the base)
+local patches:
+  27b7dfb706dc650e5376d8b0d9dedbb1ffd2c655  allow `bind:this` and `bind:<name>` on elements under `experimental.customRenderer`.
+             `bind:this` reuses `$.bind_this`. Other names compile to `$.bind_renderer(node, name, get, set)`, which calls the
+             optional `renderer.bind(element, name, get, set) -> { update?, destroy? }` (types: `RendererBinding`).
+             `bind:group` and bindings on svelte:window/document/body stay compile errors. A renderer without `bind` gets the
+             runtime error `bind_unsupported_by_renderer`. `customRenderer={null}` components keep the DOM validation.
+             `input`/`textarea` DOM init in RegularElement is skipped under a renderer.
+             Files: compiler analyze+transform BindDirective.js, RegularElement.js; internal/client/dom/elements/bindings/renderer.js;
+             client errors; custom-renderer/types.d.ts; tests/custom-renderers/{renderer.ts,shared.ts,bind.test.ts,samples/bind-*}.
+             Design and upstream proposal text: docs/notes/fork-bindings.md.
+stack (upstream, unchanged):
   #18042  svelte-custom-renderer        ece83ddb7b063cbdeb1925a540bca8482eabc436   custom renderer API
   #18405  fix-interleaving              2c404177f313ce9fe2195b2b5db565013f4dfea6   interleaving renderers (`foreign`)
   #18461  add-custom-renderer-flag      fc2d5de4dff37a22e18f503e9afe7fff012ba81b   tree-shakeable custom_renderer flag
   #18511  custom-condition              f3de3f236bd586c764fd48bab04f41c54c5ff80d   `custom-renderer` export condition
 upstream main at pin time: 40bb08482f4857d91221638dec544a532bc35389 (not merged in; the stack was already refreshed against it)
 package:       svelte 5.57.2 (as reported by packages/svelte/package.json)
-tarball:       svelte-5.57.2-f3de3f2.tgz
-sha256:        c58ac25310cf500ea3b7e70781800e8cc671f1c8c6d7b43f560bf955e95aabed
-built:         2026-10-16, Node v22.22.2, pnpm 10.33.4, linux x86_64
+tarball:       svelte-5.57.2-27b7dfb.tgz
+sha256:        5ab8df08fd08a61a70a996ce0b62ed8918bb17fe73a9b37ff5cfe404856b5973
+built:         2026-10-17, Node v22.22.2, pnpm 10.33.4, linux x86_64
 build command (from a clean checkout of the commit above):
-  git checkout f3de3f236bd586c764fd48bab04f41c54c5ff80d
+  git checkout svelters/renderer
   pnpm install --frozen-lockfile --network-concurrency=4
   cd packages/svelte
   npx rollup -c && node scripts/process-messages && node scripts/generate-types.js
   pnpm pack --pack-destination <dir>          # then rename to svelte-<version>-<shortsha>.tgz
   (the full `pnpm build` also runs generate:browser-support and check-treeshakeability, which are slow and not needed for the tarball)
+fork test run: `pnpm vitest run --maxWorkers=4 packages/svelte/tests/custom-renderers` from the fork ROOT (not packages/svelte): 6 files, 118 tests, green (was 4 files, 87 tests).
+  full `svelte` project: 7860 passed, 8 failed; the same 8 fail on the unpatched base (signals x2, runtime-runes effect-loop-infinite, error-boundary-20, mount-unmount-anchor, dom+hydrate).
 consumed via:  `overrides.svelte` in pnpm-workspace.yaml (file:vendor/svelte/<tarball>)
 conditions:    bundles must resolve with export condition `custom-renderer` (or `browser`) plus `production`/`development`; any other condition gets the server build, which throws `custom_renderer_unavailable_on_server`.
-refresh:       tests/renderer-conformance/WEEKLY.md
+refresh:       tests/renderer-conformance/WEEKLY.md (the weekly merge keeps the local commit on top of `svelters/renderer`)

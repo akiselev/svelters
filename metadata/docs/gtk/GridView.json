@@ -1,0 +1,176 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkGridView` that uses the given `factory` for mapping items to widgets.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1243,
+      "md": "Creates a new `GtkGridView` that uses the given `factory` for\nmapping items to widgets.\n\nThe function takes ownership of the\narguments, so you can write code like\n```c\ngrid_view = gtk_grid_view_new (create_model (),\n  gtk_builder_list_item_factory_new_from_resource (\"/resource.ui\"));\n```"
+    }
+  },
+  "doc": {
+    "brief": "Presents a large dynamic grid of items.",
+    "file": "gtk/gtkgridview.c",
+    "line": 44,
+    "md": "Presents a large dynamic grid of items.\n\n`GtkGridView` uses its factory to generate one child widget for each\nvisible item and shows them in a grid. The orientation of the grid view\ndetermines if the grid reflows vertically or horizontally.\n\n`GtkGridView` allows the user to select items according to the selection\ncharacteristics of the model. For models that allow multiple selected items,\nit is possible to turn on _rubberband selection_, using\n[`GridView:enable-rubberband`](xref:gtk:Gtk.GridView#property:enable-rubberband).\n\nTo learn more about the list widget framework, see the\n[overview](section-list-widget.html).\n\n# Actions\n\n`GtkGridView` defines a set of built-in actions:\n\n- `list.activate-item` activates the item at given position by emitting the\n  the [`GridView::activate`](xref:gtk:Gtk.GridView#event:activate) signal.\n\n# CSS nodes\n\n```\ngridview\n├── child[.activatable]\n│\n├── child[.activatable]\n│\n┊\n╰── [rubberband]\n```\n\n`GtkGridView` uses a single CSS node with name `gridview`. Each child uses\na single CSS node with name `child`. If the [`ListItem:activatable`](xref:gtk:Gtk.ListItem#property:activatable)\nproperty is set, the corresponding row will have the `.activatable` style\nclass. For rubberband selection, a subnode with name `rubberband` is used.\n\n# Accessibility\n\n`GtkGridView` uses the [`AccessibleRole.grid`](xref:gtk:Gtk.AccessibleRole#value:grid) role, and the items\nuse the [`AccessibleRole.grid_cell`](xref:gtk:Gtk.AccessibleRole#value:grid_cell) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GridView",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_enable_rubberband": {
+      "brief": "Returns whether rows can be selected by dragging with the mouse.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1526,
+      "md": "Returns whether rows can be selected by dragging with the mouse."
+    },
+    "get_factory": {
+      "brief": "Gets the factory that's currently used to populate list items.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1323,
+      "md": "Gets the factory that's currently used to populate list items."
+    },
+    "get_max_columns": {
+      "brief": "Gets the maximum number of columns that the grid will use.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1361,
+      "md": "Gets the maximum number of columns that the grid will use."
+    },
+    "get_min_columns": {
+      "brief": "Gets the minimum number of columns that the grid will use.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1410,
+      "md": "Gets the minimum number of columns that the grid will use."
+    },
+    "get_model": {
+      "brief": "Gets the model that's currently used to read the items displayed.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1281,
+      "md": "Gets the model that's currently used to read the items displayed."
+    },
+    "get_single_click_activate": {
+      "brief": "Returns whether items will be activated on single click and selected on hover.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1488,
+      "md": "Returns whether items will be activated on single click and\nselected on hover."
+    },
+    "get_tab_behavior": {
+      "brief": "Gets the behavior set for the <kbd>Tab</kbd> key.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1565,
+      "md": "Gets the behavior set for the <kbd>Tab</kbd> key.",
+      "since": "4.12"
+    },
+    "scroll_to": {
+      "brief": "Scrolls to the item at the given position and performs the actions specified in `flags`.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1583,
+      "md": "Scrolls to the item at the given position and performs the actions\nspecified in `flags`.\n\nThis function works no matter if the gridview is shown or focused.\nIf it isn't, then the changes will take effect once that happens.",
+      "since": "4.12"
+    },
+    "set_enable_rubberband": {
+      "brief": "Sets whether selections can be changed by dragging with the mouse.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1505,
+      "md": "Sets whether selections can be changed by dragging with the mouse."
+    },
+    "set_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for populating list items.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1339,
+      "md": "Sets the `GtkListItemFactory` to use for populating list items."
+    },
+    "set_max_columns": {
+      "brief": "Sets the maximum number of columns to use.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1377,
+      "md": "Sets the maximum number of columns to use.\n\nThis number must be at least 1.\n\nIf `max_columns` is smaller than the minimum set via\n[`GridView.set_min_columns()`](xref:gtk:Gtk.GridView#method:set_min_columns), that value is used instead."
+    },
+    "set_min_columns": {
+      "brief": "Sets the minimum number of columns to use.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1426,
+      "md": "Sets the minimum number of columns to use.\n\nThis number must be at least 1.\n\nIf `min_columns` is smaller than the minimum set via\n[`GridView.set_max_columns()`](xref:gtk:Gtk.GridView#method:set_max_columns), that value is ignored."
+    },
+    "set_model": {
+      "brief": "Sets the model to use.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1297,
+      "md": "Sets the model to use.\n\nThis must be a [`SelectionModel`](xref:gtk:Gtk.SelectionModel)."
+    },
+    "set_single_click_activate": {
+      "brief": "Sets whether items should be activated on single click and selected on hover.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1455,
+      "md": "Sets whether items should be activated on single click and\nselected on hover."
+    },
+    "set_tab_behavior": {
+      "brief": "Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1542,
+      "md": "Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys.",
+      "since": "4.12"
+    }
+  },
+  "properties": {
+    "enable-rubberband": {
+      "brief": "Allow rubberband selection.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1105,
+      "md": "Allow rubberband selection."
+    },
+    "factory": {
+      "brief": "Factory for populating list items.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1115,
+      "md": "Factory for populating list items.\n\nThe factory must be for configuring [`ListItem`](xref:gtk:Gtk.ListItem) objects."
+    },
+    "max-columns": {
+      "brief": "Maximum number of columns per row.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1128,
+      "md": "Maximum number of columns per row.\n\nIf this number is smaller than [`GridView:min-columns`](xref:gtk:Gtk.GridView#property:min-columns),\nthat value is used instead."
+    },
+    "min-columns": {
+      "brief": "Minimum number of columns per row.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1141,
+      "md": "Minimum number of columns per row."
+    },
+    "model": {
+      "brief": "Model for the items displayed.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1151,
+      "md": "Model for the items displayed."
+    },
+    "single-click-activate": {
+      "brief": "Activate rows on single click and select them on hover.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1161,
+      "md": "Activate rows on single click and select them on hover."
+    },
+    "tab-behavior": {
+      "brief": "Behavior of the <kbd>Tab</kbd> key",
+      "file": "gtk/gtkgridview.c",
+      "line": 1171,
+      "md": "Behavior of the <kbd>Tab</kbd> key",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when a cell has been activated by the user, usually via activating the GtkGridView|list.activate-item action.",
+      "file": "gtk/gtkgridview.c",
+      "line": 1186,
+      "md": "Emitted when a cell has been activated by the user,\nusually via activating the GtkGridView|list.activate-item action.\n\nThis allows for a convenient way to handle activation in a gridview.\nSee [`ListItem:activatable`](xref:gtk:Gtk.ListItem#property:activatable) for details on how to use\nthis signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

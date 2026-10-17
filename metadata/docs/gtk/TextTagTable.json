@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkTextTagTable`.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 210,
+      "md": "Creates a new `GtkTextTagTable`.\n\nThe table contains no tags by default."
+    }
+  },
+  "doc": {
+    "brief": "Collects the tags in a `GtkTextBuffer`.",
+    "file": "gtk/gtktexttagtable.c",
+    "line": 39,
+    "md": "Collects the tags in a `GtkTextBuffer`.\n\nYou may wish to begin by reading the\n[text widget conceptual overview](section-text-widget.html),\nwhich gives an overview of all the objects and data types\nrelated to the text widget and how they work together.\n\n# GtkTextTagTables as GtkBuildable\n\nThe `GtkTextTagTable` implementation of the `GtkBuildable` interface\nsupports adding tags by specifying “tag” as the “type” attribute\nof a `<child>` element.\n\nAn example of a UI definition fragment specifying tags:\n```xml\n<object class=\"GtkTextTagTable\">\n <child type=\"tag\">\n   <object class=\"GtkTextTag\"/>\n </child>\n</object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextTagTable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add": {
+      "brief": "Add a tag to the table.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 280,
+      "md": "Add a tag to the table.\n\nThe tag is assigned the highest priority in the table.\n\n`tag` must not be in a tag table already, and may not have\nthe same name as an already-added tag."
+    },
+    "foreach": {
+      "brief": "Calls `func` on each tag in `table`, with user data `data`.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 440,
+      "md": "Calls `func` on each tag in `table`, with user data `data`.\n\nNote that the table may not be modified while iterating\nover it (you can’t add/remove tags)."
+    },
+    "get_size": {
+      "brief": "Returns the size of the table (number of tags)",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 471,
+      "md": "Returns the size of the table (number of tags)"
+    },
+    "lookup": {
+      "brief": "Look up a named tag.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 339,
+      "md": "Look up a named tag."
+    },
+    "remove": {
+      "brief": "Remove a tag from the table.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 362,
+      "md": "Remove a tag from the table.\n\nIf a `GtkTextBuffer` has `table` as its tag table, the tag is\nremoved from the buffer. The table’s reference to the tag is\nremoved, so the tag will end up destroyed if you don’t have\na reference to it."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "tag-added": {
+      "brief": "Emitted every time a new tag is added in the `GtkTextTagTable`.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 147,
+      "md": "Emitted every time a new tag is added in the `GtkTextTagTable`."
+    },
+    "tag-changed": {
+      "brief": "Emitted every time a tag in the `GtkTextTagTable` changes.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 124,
+      "md": "Emitted every time a tag in the `GtkTextTagTable` changes."
+    },
+    "tag-removed": {
+      "brief": "Emitted every time a tag is removed from the `GtkTextTagTable`.",
+      "file": "gtk/gtktexttagtable.c",
+      "line": 165,
+      "md": "Emitted every time a tag is removed from the `GtkTextTagTable`.\n\nThe `tag` is still valid by the time the signal is emitted, but\nit is not associated with a tag table any more."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFileChooserNative`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 531,
+      "md": "Creates a new `GtkFileChooserNative`."
+    }
+  },
+  "doc": {
+    "brief": "`GtkFileChooserNative` is an abstraction of a dialog suitable for use with “File Open” or “File Save as” commands.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+    "file": "gtk/gtkfilechoosernative.c",
+    "line": 41,
+    "md": "`GtkFileChooserNative` is an abstraction of a dialog suitable\nfor use with “File Open” or “File Save as” commands.\n\nBy default, this just uses a `GtkFileChooserDialog` to implement\nthe actual dialog. However, on some platforms, such as Windows and\nmacOS, the native platform file chooser is used instead. When the\napplication is running in a sandboxed environment without direct\nfilesystem access (such as Flatpak), `GtkFileChooserNative` may call\nthe proper APIs (portals) to let the user choose a file and make it\navailable to the application.\n\nWhile the API of `GtkFileChooserNative` closely mirrors `GtkFileChooserDialog`,\nthe main difference is that there is no access to any `GtkWindow` or `GtkWidget`\nfor the dialog. This is required, as there may not be one in the case of a\nplatform native dialog.\n\nShowing, hiding and running the dialog is handled by the\n[`NativeDialog`](xref:gtk:Gtk.NativeDialog) functions.\n\nNote that unlike `GtkFileChooserDialog`, `GtkFileChooserNative` objects\nare not toplevel widgets, and GTK does not keep them alive. It is your\nresponsibility to keep a reference until you are done with the\nobject.\n\n## Typical usage\n\nIn the simplest of cases, you can the following code to use\n`GtkFileChooserNative` to select a file for opening:\n\n```c\nstatic void\non_response (GtkNativeDialog *native,\n             int              response)\n{\n  if (response == GTK_RESPONSE_ACCEPT)\n    {\n      GtkFileChooser *chooser = GTK_FILE_CHOOSER (native);\n      GFile *file = gtk_file_chooser_get_file (chooser);\n\n      open_file (file);\n\n      g_object_unref (file);\n    }\n\n  g_object_unref (native);\n}\n\n  // ...\n  GtkFileChooserNative *native;\n  GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;\n\n  native = gtk_file_chooser_native_new (\"Open File\",\n                                        parent_window,\n                                        action,\n                                        \"_Open\",\n                                        \"_Cancel\");\n\n  g_signal_connect (native, \"response\", G_CALLBACK (on_response), NULL);\n  gtk_native_dialog_show (GTK_NATIVE_DIALOG (native));\n```\n\nTo use a `GtkFileChooserNative` for saving, you can use this:\n\n```c\nstatic void\non_response (GtkNativeDialog *native,\n             int              response)\n{\n  if (response == GTK_RESPONSE_ACCEPT)\n    {\n      GtkFileChooser *chooser = GTK_FILE_CHOOSER (native);\n      GFile *file = gtk_file_chooser_get_file (chooser);\n\n      save_to_file (file);\n\n      g_object_unref (file);\n    }\n\n  g_object_unref (native);\n}\n\n  // ...\n  GtkFileChooserNative *native;\n  GtkFileChooser *chooser;\n  GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;\n\n  native = gtk_file_chooser_native_new (\"Save File\",\n                                        parent_window,\n                                        action,\n                                        \"_Save\",\n                                        \"_Cancel\");\n  chooser = GTK_FILE_CHOOSER (native);\n\n  if (user_edited_a_new_document)\n    gtk_file_chooser_set_current_name (chooser, _(\"Untitled document\"));\n  else\n    gtk_file_chooser_set_file (chooser, existing_file, NULL);\n\n  g_signal_connect (native, \"response\", G_CALLBACK (on_response), NULL);\n  gtk_native_dialog_show (GTK_NATIVE_DIALOG (native));\n```\n\nFor more information on how to best set up a file dialog,\nsee the [`FileChooserDialog`](xref:gtk:Gtk.FileChooserDialog) documentation.\n\n## Response Codes\n\n`GtkFileChooserNative` inherits from [`NativeDialog`](xref:gtk:Gtk.NativeDialog),\nwhich means it will return %GTK_RESPONSE_ACCEPT if the user accepted,\nand %GTK_RESPONSE_CANCEL if he pressed cancel. It can also return\n%GTK_RESPONSE_DELETE_EVENT if the window was unexpectedly closed.\n\n## Differences from `GtkFileChooserDialog`\n\nThere are a few things in the [`FileChooser`](xref:gtk:Gtk.FileChooser) interface that\nare not possible to use with `GtkFileChooserNative`, as such use would\nprohibit the use of a native dialog.\n\nNo operations that change the dialog work while the dialog is visible.\nSet all the properties that are required before showing the dialog.\n\n## Win32 details\n\nOn windows the `IFileDialog` implementation (added in Windows Vista) is\nused. It supports many of the features that `GtkFileChooser` has, but\nthere are some things it does not handle:\n\n* Any [`FileFilter`](xref:gtk:Gtk.FileFilter) added using a mimetype\n\nIf any of these features are used the regular `GtkFileChooserDialog`\nwill be used in place of the native one.\n\n## Portal details\n\nWhen the `org.freedesktop.portal.FileChooser` portal is available on\nthe session bus, it is used to bring up an out-of-process file chooser.\nDepending on the kind of session the application is running in, this may\nor may not be a GTK file chooser.\n\n## macOS details\n\nOn macOS the `NSSavePanel` and `NSOpenPanel` classes are used to provide\nnative file chooser dialogs. Some features provided by `GtkFileChooser`\nare not supported:\n\n* Shortcut folders."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileChooserNative",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_accept_label": {
+      "brief": "Retrieves the custom label text for the accept button.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 218,
+      "md": "Retrieves the custom label text for the accept button."
+    },
+    "get_cancel_label": {
+      "brief": "Retrieves the custom label text for the cancel button.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 264,
+      "md": "Retrieves the custom label text for the cancel button."
+    },
+    "set_accept_label": {
+      "brief": "Sets the custom label text for the accept button.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 236,
+      "md": "Sets the custom label text for the accept button.\n\nIf characters in `label` are preceded by an underscore, they are\nunderlined. If you need a literal underscore character in a label,\nuse “__” (two underscores). The first underlined character represents\na keyboard accelerator called a mnemonic.\n\nPressing Alt and that key should activate the button."
+    },
+    "set_cancel_label": {
+      "brief": "Sets the custom label text for the cancel button.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 282,
+      "md": "Sets the custom label text for the cancel button.\n\nIf characters in `label` are preceded by an underscore, they are\nunderlined. If you need a literal underscore character in a label,\nuse “__” (two underscores). The first underlined character represents\na keyboard accelerator called a mnemonic.\n\nPressing Alt and that key should activate the button."
+    }
+  },
+  "properties": {
+    "accept-label": {
+      "brief": "The text used for the label on the accept button in the dialog, or `NULL` to use the default text.",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 786,
+      "md": "The text used for the label on the accept button in the dialog, or\n`NULL` to use the default text."
+    },
+    "cancel-label": {
+      "brief": "The text used for the label on the cancel button in the dialog, or `NULL` to use the default text.",
+      "file": "gtk/gtkfilechoosernative.c",
+      "line": 797,
+      "md": "The text used for the label on the cancel button in the dialog, or\n`NULL` to use the default text."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

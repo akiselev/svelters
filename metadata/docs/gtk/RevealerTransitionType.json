@@ -1,0 +1,113 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "These enumeration values describe the possible transitions when the child of a `GtkRevealer` widget is shown or hidden.",
+    "file": "gtk/gtkrevealer.c",
+    "line": 62,
+    "md": "These enumeration values describe the possible transitions\nwhen the child of a `GtkRevealer` widget is shown or hidden."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:RevealerTransitionType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "crossfade": {
+      "brief": "Fade in",
+      "file": "gtk/gtkrevealer.c",
+      "line": 65,
+      "md": "Fade in"
+    },
+    "fade_slide_down": {
+      "brief": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE) and [`RevealerTransitionType.SLIDE_DOWN`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_DOWN).",
+      "file": "gtk/gtkrevealer.h",
+      "line": 59,
+      "md": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE)\nand [`RevealerTransitionType.SLIDE_DOWN`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_DOWN).",
+      "since": "4.22"
+    },
+    "fade_slide_left": {
+      "brief": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE) and [`RevealerTransitionType.SLIDE_LEFT`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_LEFT).",
+      "file": "gtk/gtkrevealer.h",
+      "line": 43,
+      "md": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE)\nand [`RevealerTransitionType.SLIDE_LEFT`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_LEFT).",
+      "since": "4.22"
+    },
+    "fade_slide_right": {
+      "brief": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE) and [`RevealerTransitionType.SLIDE_RIGHT`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_RIGHT).",
+      "file": "gtk/gtkrevealer.h",
+      "line": 35,
+      "md": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE)\nand [`RevealerTransitionType.SLIDE_RIGHT`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_RIGHT).",
+      "since": "4.22"
+    },
+    "fade_slide_up": {
+      "brief": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE) and [`RevealerTransitionType.SLIDE_UP`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_UP).",
+      "file": "gtk/gtkrevealer.h",
+      "line": 51,
+      "md": "Combination of [`RevealerTransitionType.CROSSFADE`](xref:gtk:Gtk.RevealerTransitionType#value:CROSSFADE)\nand [`RevealerTransitionType.SLIDE_UP`](xref:gtk:Gtk.RevealerTransitionType#value:SLIDE_UP).",
+      "since": "4.22"
+    },
+    "none": {
+      "brief": "No transition",
+      "file": "gtk/gtkrevealer.c",
+      "line": 64,
+      "md": "No transition"
+    },
+    "slide_down": {
+      "brief": "Slide in from the top",
+      "file": "gtk/gtkrevealer.c",
+      "line": 69,
+      "md": "Slide in from the top"
+    },
+    "slide_left": {
+      "brief": "Slide in from the right",
+      "file": "gtk/gtkrevealer.c",
+      "line": 67,
+      "md": "Slide in from the right"
+    },
+    "slide_right": {
+      "brief": "Slide in from the left",
+      "file": "gtk/gtkrevealer.c",
+      "line": 66,
+      "md": "Slide in from the left"
+    },
+    "slide_up": {
+      "brief": "Slide in from the bottom",
+      "file": "gtk/gtkrevealer.c",
+      "line": 68,
+      "md": "Slide in from the bottom"
+    },
+    "swing_down": {
+      "brief": "Floop in from the top",
+      "file": "gtk/gtkrevealer.c",
+      "line": 73,
+      "md": "Floop in from the top"
+    },
+    "swing_left": {
+      "brief": "Floop in from the right",
+      "file": "gtk/gtkrevealer.c",
+      "line": 71,
+      "md": "Floop in from the right"
+    },
+    "swing_right": {
+      "brief": "Floop in from the left",
+      "file": "gtk/gtkrevealer.c",
+      "line": 70,
+      "md": "Floop in from the left"
+    },
+    "swing_up": {
+      "brief": "Floop in from the bottom",
+      "file": "gtk/gtkrevealer.c",
+      "line": 72,
+      "md": "Floop in from the bottom"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,39 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "These flags indicate various properties of a `GtkTreeModel`.",
+    "deprecated": "4.10",
+    "deprecated_md": "There is no replacement",
+    "file": "gtk/deprecated/gtktreemodel.h",
+    "line": 60,
+    "md": "These flags indicate various properties of a `GtkTreeModel`.\n\nThey are returned by [`TreeModel.get_flags()`](xref:gtk:Gtk.TreeModel#method:get_flags), and must be\nstatic for the lifetime of the object. A more complete description\nof %GTK_TREE_MODEL_ITERS_PERSIST can be found in the overview of\nthis section."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeModelFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "iters_persist": {
+      "brief": "iterators survive all signals emitted by the tree",
+      "file": "gtk/deprecated/gtktreemodel.h",
+      "line": 62,
+      "md": "iterators survive all signals\n  emitted by the tree"
+    },
+    "list_only": {
+      "brief": "the model is a list only, and never has children",
+      "file": "gtk/deprecated/gtktreemodel.h",
+      "line": 64,
+      "md": "the model is a list only, and never\n  has children"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

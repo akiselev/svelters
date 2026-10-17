@@ -40,7 +40,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         },
         {
@@ -50,7 +50,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -74,7 +74,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         },
         {
@@ -84,7 +84,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -98,6 +98,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QSplashScreen",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSplashScreen:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -318,7 +328,7 @@
         "native": "const QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "const QPixmap pixmap() const",
       "since": null,
@@ -373,7 +383,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -430,7 +440,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],

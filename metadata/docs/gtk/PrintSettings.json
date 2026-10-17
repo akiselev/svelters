@@ -1,0 +1,482 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPrintSettings` object.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 95,
+      "md": "Creates a new `GtkPrintSettings` object."
+    },
+    "new_from_file": {
+      "brief": "Reads the print settings from `file_name`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1592,
+      "md": "Reads the print settings from `file_name`.\n\nReturns a new `GtkPrintSettings` object with the restored settings,\nor `NULL` if an error occurred. If the file could not be loaded then\nerror is set to either a `GFileError` or `GKeyFileError`.\n\nSee [`PrintSettings.to_file()`](xref:gtk:Gtk.PrintSettings#method:to_file)."
+    },
+    "new_from_gvariant": {
+      "brief": "Deserialize print settings from an a{sv} variant.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1832,
+      "md": "Deserialize print settings from an a{sv} variant.\n\nThe variant must be in the format produced by\n[`PrintSettings.to_gvariant()`](xref:gtk:Gtk.PrintSettings#method:to_gvariant)."
+    },
+    "new_from_key_file": {
+      "brief": "Reads the print settings from the group `group_name` in `key_file`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1683,
+      "md": "Reads the print settings from the group `group_name` in `key_file`.\n\nReturns a new `GtkPrintSettings` object with the restored settings,\nor `NULL` if an error occurred. If the file could not be loaded then\nerror is set to either `GFileError` or `GKeyFileError`."
+    }
+  },
+  "doc": {
+    "brief": "Collects the settings of a print dialog in a system-independent way.",
+    "file": "gtk/print/gtkprintsettings.c",
+    "line": 32,
+    "md": "Collects the settings of a print dialog in a system-independent way.\n\nThe main use for this object is that once you’ve printed you can get a\nsettings object that represents the settings the user chose, and the next\ntime you print you can pass that object in so that the user doesn’t have\nto re-set all his settings.\n\nIts also possible to enumerate the settings so that you can easily save\nthe settings for the next time your app runs, or even store them in a\ndocument. The predefined keys try to use shared values as much as possible\nso that moving such a document between systems still works."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintSettings",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Copies a `GtkPrintSettings` object.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 122,
+      "md": "Copies a `GtkPrintSettings` object."
+    },
+    "foreach": {
+      "brief": "Calls `func` for each key-value pair of `settings`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 459,
+      "md": "Calls `func` for each key-value pair of `settings`."
+    },
+    "get": {
+      "brief": "Looks up the string value associated with `key`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 149,
+      "md": "Looks up the string value associated with `key`."
+    },
+    "get_bool": {
+      "brief": "Returns the boolean represented by the value that is associated with `key`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 219,
+      "md": "Returns the boolean represented by the value\nthat is associated with `key`.\n\nThe string “true” represents `TRUE`, any other\nstring `FALSE`."
+    },
+    "get_collate": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_COLLATE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 743,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_COLLATE."
+    },
+    "get_default_source": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1411,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE."
+    },
+    "get_dither": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_DITHER.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1471,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_DITHER."
+    },
+    "get_double": {
+      "brief": "Returns the double value associated with `key`, or 0.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 324,
+      "md": "Returns the double value associated with `key`, or 0."
+    },
+    "get_double_with_default": {
+      "brief": "Returns the floating point number represented by the value that is associated with `key`, or `default_val` if the value does not represent a floating point number.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 296,
+      "md": "Returns the floating point number represented by\nthe value that is associated with `key`, or `default_val`\nif the value does not represent a floating point number.\n\nFloating point numbers are parsed with g_ascii_strtod()."
+    },
+    "get_duplex": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_DUPLEX.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 806,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_DUPLEX."
+    },
+    "get_finishings": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_FINISHINGS.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1499,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_FINISHINGS."
+    },
+    "get_int": {
+      "brief": "Returns the integer value of `key`, or 0.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 425,
+      "md": "Returns the integer value of `key`, or 0."
+    },
+    "get_int_with_default": {
+      "brief": "Returns the value of `key`, interpreted as an integer, or the default value.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 400,
+      "md": "Returns the value of `key`, interpreted as\nan integer, or the default value."
+    },
+    "get_length": {
+      "brief": "Returns the value associated with `key`, interpreted as a length.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 359,
+      "md": "Returns the value associated with `key`, interpreted\nas a length.\n\nThe returned value is converted to `units`."
+    },
+    "get_media_type": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1439,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE.\n\nThe set of media types is defined in PWG 5101.1-2002 PWG."
+    },
+    "get_n_copies": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_N_COPIES.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1046,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_N_COPIES."
+    },
+    "get_number_up": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1075,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP."
+    },
+    "get_number_up_layout": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 983,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT."
+    },
+    "get_orientation": {
+      "brief": "Get the value of %GTK_PRINT_SETTINGS_ORIENTATION, converted to a `GtkPageOrientation`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 506,
+      "md": "Get the value of %GTK_PRINT_SETTINGS_ORIENTATION,\nconverted to a `GtkPageOrientation`."
+    },
+    "get_output_bin": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1527,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN."
+    },
+    "get_page_ranges": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PAGE_RANGES.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1313,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PAGE_RANGES."
+    },
+    "get_page_set": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PAGE_SET.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 926,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PAGE_SET."
+    },
+    "get_paper_height": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT, converted to `unit`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 674,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT,\nconverted to `unit`."
+    },
+    "get_paper_size": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT, converted to a `GtkPaperSize`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 569,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT,\nconverted to a `GtkPaperSize`."
+    },
+    "get_paper_width": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH, converted to `unit`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 641,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH,\nconverted to `unit`."
+    },
+    "get_print_pages": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1250,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES."
+    },
+    "get_printer": {
+      "brief": "Convenience function to obtain the value of %GTK_PRINT_SETTINGS_PRINTER.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 475,
+      "md": "Convenience function to obtain the value of\n%GTK_PRINT_SETTINGS_PRINTER."
+    },
+    "get_printer_lpi": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1190,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI."
+    },
+    "get_quality": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_QUALITY.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 863,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_QUALITY."
+    },
+    "get_resolution": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1104,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION."
+    },
+    "get_resolution_x": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_X.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1139,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_X."
+    },
+    "get_resolution_y": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_Y.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1153,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_RESOLUTION_Y."
+    },
+    "get_reverse": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_REVERSE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 775,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_REVERSE."
+    },
+    "get_scale": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_SCALE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1219,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_SCALE."
+    },
+    "get_use_color": {
+      "brief": "Gets the value of %GTK_PRINT_SETTINGS_USE_COLOR.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 711,
+      "md": "Gets the value of %GTK_PRINT_SETTINGS_USE_COLOR."
+    },
+    "has_key": {
+      "brief": "Returns `TRUE`, if a value is associated with `key`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 202,
+      "md": "Returns `TRUE`, if a value is associated with `key`."
+    },
+    "load_file": {
+      "brief": "Reads the print settings from `file_name`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1555,
+      "md": "Reads the print settings from `file_name`.\n\nIf the file could not be loaded then error is set to either\na `GFileError` or `GKeyFileError`.\n\nSee [`PrintSettings.to_file()`](xref:gtk:Gtk.PrintSettings#method:to_file)."
+    },
+    "load_key_file": {
+      "brief": "Reads the print settings from the group `group_name` in `key_file`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1622,
+      "md": "Reads the print settings from the group `group_name` in `key_file`.\n\nIf the file could not be loaded then error is set to either a\n`GFileError` or `GKeyFileError`."
+    },
+    "set": {
+      "brief": "Associates `value` with `key`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 165,
+      "md": "Associates `value` with `key`."
+    },
+    "set_bool": {
+      "brief": "Sets `key` to a boolean value.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 277,
+      "md": "Sets `key` to a boolean value."
+    },
+    "set_collate": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_COLLATE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 759,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_COLLATE."
+    },
+    "set_default_source": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1425,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_DEFAULT_SOURCE."
+    },
+    "set_dither": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_DITHER.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1485,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_DITHER."
+    },
+    "set_double": {
+      "brief": "Sets `key` to a double value.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 340,
+      "md": "Sets `key` to a double value."
+    },
+    "set_duplex": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_DUPLEX.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 833,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_DUPLEX."
+    },
+    "set_finishings": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_FINISHINGS.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1513,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_FINISHINGS."
+    },
+    "set_int": {
+      "brief": "Sets `key` to an integer value.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 441,
+      "md": "Sets `key` to an integer value."
+    },
+    "set_length": {
+      "brief": "Associates a length in units of `unit` with `key`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 381,
+      "md": "Associates a length in units of `unit` with `key`."
+    },
+    "set_media_type": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1455,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_MEDIA_TYPE.\n\nThe set of media types is defined in PWG 5101.1-2002 PWG."
+    },
+    "set_n_copies": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_N_COPIES.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1060,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_N_COPIES."
+    },
+    "set_number_up": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1089,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP."
+    },
+    "set_number_up_layout": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1022,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_NUMBER_UP_LAYOUT."
+    },
+    "set_orientation": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_ORIENTATION.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 537,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_ORIENTATION."
+    },
+    "set_output_bin": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1541,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_OUTPUT_BIN."
+    },
+    "set_page_ranges": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PAGE_RANGES.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1374,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PAGE_RANGES."
+    },
+    "set_page_set": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PAGE_SET.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 953,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PAGE_SET."
+    },
+    "set_paper_height": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 693,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PAPER_HEIGHT."
+    },
+    "set_paper_size": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT, %GTK_PRINT_SETTINGS_PAPER_WIDTH and %GTK_PRINT_SETTINGS_PAPER_HEIGHT.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 600,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PAPER_FORMAT,\n%GTK_PRINT_SETTINGS_PAPER_WIDTH and\n%GTK_PRINT_SETTINGS_PAPER_HEIGHT."
+    },
+    "set_paper_width": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 658,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PAPER_WIDTH."
+    },
+    "set_print_pages": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1280,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PRINT_PAGES."
+    },
+    "set_printer": {
+      "brief": "Convenience function to set %GTK_PRINT_SETTINGS_PRINTER to `printer`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 491,
+      "md": "Convenience function to set %GTK_PRINT_SETTINGS_PRINTER\nto `printer`."
+    },
+    "set_printer_lpi": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1204,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_PRINTER_LPI."
+    },
+    "set_quality": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_QUALITY.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 893,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_QUALITY."
+    },
+    "set_resolution": {
+      "brief": "Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION, %GTK_PRINT_SETTINGS_RESOLUTION_X and %GTK_PRINT_SETTINGS_RESOLUTION_Y.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1118,
+      "md": "Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION,\n%GTK_PRINT_SETTINGS_RESOLUTION_X and\n%GTK_PRINT_SETTINGS_RESOLUTION_Y."
+    },
+    "set_resolution_xy": {
+      "brief": "Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION, %GTK_PRINT_SETTINGS_RESOLUTION_X and %GTK_PRINT_SETTINGS_RESOLUTION_Y.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1167,
+      "md": "Sets the values of %GTK_PRINT_SETTINGS_RESOLUTION,\n%GTK_PRINT_SETTINGS_RESOLUTION_X and\n%GTK_PRINT_SETTINGS_RESOLUTION_Y."
+    },
+    "set_reverse": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_REVERSE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 790,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_REVERSE."
+    },
+    "set_scale": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_SCALE.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1235,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_SCALE."
+    },
+    "set_use_color": {
+      "brief": "Sets the value of %GTK_PRINT_SETTINGS_USE_COLOR.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 727,
+      "md": "Sets the value of %GTK_PRINT_SETTINGS_USE_COLOR."
+    },
+    "to_file": {
+      "brief": "This function saves the print settings from `settings` to `file_name`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1715,
+      "md": "This function saves the print settings from `settings` to `file_name`.\n\nIf the file could not be written then error is set to either a\n`GFileError` or `GKeyFileError`."
+    },
+    "to_gvariant": {
+      "brief": "Serialize print settings to an a{sv} variant.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1813,
+      "md": "Serialize print settings to an a{sv} variant."
+    },
+    "to_key_file": {
+      "brief": "This function adds the print settings from `settings` to `key_file`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 1774,
+      "md": "This function adds the print settings from `settings` to `key_file`."
+    },
+    "unset": {
+      "brief": "Removes any value associated with `key`.",
+      "file": "gtk/print/gtkprintsettings.c",
+      "line": 186,
+      "md": "Removes any value associated with `key`.\n\nThis has the same effect as setting the value to `NULL`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

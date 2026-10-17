@@ -1,0 +1,74 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Error codes for `GtkRecentManager` operations",
+    "file": "gtk/gtkrecentmanager.h",
+    "line": 109,
+    "md": "Error codes for `GtkRecentManager` operations"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:RecentManagerError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "invalid_encoding": {
+      "brief": "the supplied string is not UTF-8 encoded.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 114,
+      "md": "the supplied string is not\n  UTF-8 encoded."
+    },
+    "invalid_uri": {
+      "brief": "the URI specified is not valid.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 113,
+      "md": "the URI specified is not valid."
+    },
+    "not_found": {
+      "brief": "the URI specified does not exists in the recently used resources list.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 111,
+      "md": "the URI specified does not exists in\n  the recently used resources list."
+    },
+    "not_registered": {
+      "brief": "no application has registered the specified item.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 116,
+      "md": "no application has registered\n  the specified item."
+    },
+    "read": {
+      "brief": "failure while reading the recently used resources file.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 118,
+      "md": "failure while reading the recently used\n  resources file."
+    },
+    "unknown": {
+      "brief": "unspecified error.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 122,
+      "md": "unspecified error."
+    },
+    "write": {
+      "brief": "failure while writing the recently used resources file.",
+      "file": "gtk/gtkrecentmanager.h",
+      "line": 120,
+      "md": "failure while writing the recently used\n  resources file."
+    }
+  },
+  "methods": {
+    "quark": {
+      "brief": "Registers an error quark for [`RecentManager`](xref:gtk:RecentManager) errors.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 246,
+      "md": "Registers an error quark for [`RecentManager`](xref:gtk:RecentManager) errors."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

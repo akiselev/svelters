@@ -51,6 +51,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:DragSource",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:DragSource:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:DragSource:method:drag_cancel",

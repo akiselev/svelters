@@ -1,0 +1,117 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkRevealer`.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 769,
+      "md": "Creates a new `GtkRevealer`."
+    }
+  },
+  "doc": {
+    "brief": "Animates the transition of its child from invisible to visible.",
+    "file": "gtk/gtkrevealer.c",
+    "line": 36,
+    "md": "Animates the transition of its child from invisible to visible.\n\nThe style of transition can be controlled with\n[`Revealer.set_transition_type()`](xref:gtk:Gtk.Revealer#method:set_transition_type).\n\nThese animations respect the [`Settings:gtk-enable-animations`](xref:gtk:Gtk.Settings#property:gtk-enable-animations)\nsetting.\n\n# CSS nodes\n\n`GtkRevealer` has a single CSS node with name revealer.\nWhen styling `GtkRevealer` using CSS, remember that it only hides its contents,\nnot itself. That means applied margin, padding and borders will be visible even\nwhen the [`Revealer:reveal-child`](xref:gtk:Gtk.Revealer#property:reveal-child) property is set to `FALSE`.\n\n# Accessibility\n\n`GtkRevealer` uses the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nThe child of `GtkRevealer`, if set, is always available in the accessibility\ntree, regardless of the state of the revealer widget."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Revealer",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child widget of `revealer`.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 955,
+      "md": "Gets the child widget of `revealer`."
+    },
+    "get_child_revealed": {
+      "brief": "Returns whether the child is fully revealed.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 825,
+      "md": "Returns whether the child is fully revealed.\n\nIn other words, this returns whether the transition\nto the revealed state is completed."
+    },
+    "get_reveal_child": {
+      "brief": "Returns whether the child is currently revealed.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 804,
+      "md": "Returns whether the child is currently revealed.\n\nThis function returns `TRUE` as soon as the transition\nis to the revealed state is started. To learn whether\nthe child is fully revealed (ie the transition is completed),\nuse [`Revealer.get_child_revealed()`](xref:gtk:Gtk.Revealer#method:get_child_revealed)."
+    },
+    "get_transition_duration": {
+      "brief": "Returns the amount of time (in milliseconds) that transitions will take.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 848,
+      "md": "Returns the amount of time (in milliseconds) that\ntransitions will take."
+    },
+    "get_transition_type": {
+      "brief": "Gets the type of animation that will be used for transitions in `revealer`.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 885,
+      "md": "Gets the type of animation that will be used\nfor transitions in `revealer`."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `revealer`.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 926,
+      "md": "Sets the child widget of `revealer`."
+    },
+    "set_reveal_child": {
+      "brief": "Tells the `GtkRevealer` to reveal or conceal its child.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 782,
+      "md": "Tells the `GtkRevealer` to reveal or conceal its child.\n\nThe transition will be animated with the current\ntransition type of `revealer`."
+    },
+    "set_transition_duration": {
+      "brief": "Sets the duration that transitions will take.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 865,
+      "md": "Sets the duration that transitions will take."
+    },
+    "set_transition_type": {
+      "brief": "Sets the type of animation that will be used for transitions in `revealer`.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 902,
+      "md": "Sets the type of animation that will be used for\ntransitions in `revealer`.\n\nAvailable types include various kinds of fades and slides."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 735,
+      "md": "The child widget."
+    },
+    "child-revealed": {
+      "brief": "Whether the child is revealed and the animation target reached.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 725,
+      "md": "Whether the child is revealed and the animation target reached."
+    },
+    "reveal-child": {
+      "brief": "Whether the revealer should reveal the child.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 715,
+      "md": "Whether the revealer should reveal the child."
+    },
+    "transition-duration": {
+      "brief": "The animation duration, in milliseconds.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 705,
+      "md": "The animation duration, in milliseconds."
+    },
+    "transition-type": {
+      "brief": "The type of animation used to transition.",
+      "file": "gtk/gtkrevealer.c",
+      "line": 694,
+      "md": "The type of animation used to transition."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

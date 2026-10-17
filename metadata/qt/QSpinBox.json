@@ -45,6 +45,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QSpinBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSpinBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -504,7 +514,7 @@
             "native": "QAbstractSpinBox::StepType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSpinBox::StepType>"
           }
         }
       ],
@@ -638,7 +648,7 @@
         "native": "QAbstractSpinBox::StepType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSpinBox::StepType>"
       },
       "signature": "QAbstractSpinBox::StepType stepType() const",
       "since": null,
@@ -748,7 +758,7 @@
         "native": "QValidator::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QValidator::State>"
       },
       "signature": "QValidator::State validate(QString &text, int &pos) const override",
       "since": null,
@@ -839,6 +849,8 @@
         "set": null
       },
       "brief": "The text of the spin box excluding any prefix, suffix, or leading or trailing whitespace",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "cleanText",
       "metaobject": {
         "constant": false,
@@ -859,6 +871,7 @@
       "name": "cleanText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -879,6 +892,8 @@
         "set": "setDisplayIntegerBase"
       },
       "brief": "The base used to display the value of the spin box",
+      "default": 10,
+      "default_origin": "runtime",
       "js_name": "displayIntegerBase",
       "metaobject": {
         "constant": false,
@@ -899,6 +914,7 @@
       "name": "displayIntegerBase",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -919,6 +935,8 @@
         "set": "setMaximum"
       },
       "brief": "The maximum value of the spin box",
+      "default": 99,
+      "default_origin": "runtime",
       "js_name": "maximum",
       "metaobject": {
         "constant": false,
@@ -939,6 +957,7 @@
       "name": "maximum",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -959,6 +978,8 @@
         "set": "setMinimum"
       },
       "brief": "The minimum value of the spin box",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "minimum",
       "metaobject": {
         "constant": false,
@@ -979,6 +1000,7 @@
       "name": "minimum",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -999,6 +1021,8 @@
         "set": "setPrefix"
       },
       "brief": "The spin box's prefix",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "prefix",
       "metaobject": {
         "constant": false,
@@ -1019,6 +1043,7 @@
       "name": "prefix",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1039,6 +1064,8 @@
         "set": "setSingleStep"
       },
       "brief": "The step value",
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "singleStep",
       "metaobject": {
         "constant": false,
@@ -1059,6 +1086,7 @@
       "name": "singleStep",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1079,6 +1107,8 @@
         "set": "setStepType"
       },
       "brief": "Step type",
+      "default": "DefaultStepType",
+      "default_origin": "runtime",
       "js_name": "stepType",
       "metaobject": {
         "constant": false,
@@ -1099,12 +1129,13 @@
       "name": "stepType",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "StepType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<StepType>"
+        "ref": "enum<QAbstractSpinBox::StepType>"
       }
     },
     {
@@ -1119,6 +1150,8 @@
         "set": "setSuffix"
       },
       "brief": "The suffix of the spin box",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "suffix",
       "metaobject": {
         "constant": false,
@@ -1139,6 +1172,7 @@
       "name": "suffix",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1159,6 +1193,8 @@
         "set": "setValue"
       },
       "brief": "The value of the spin box",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "value",
       "metaobject": {
         "constant": false,
@@ -1182,6 +1218,15 @@
         "signal": "valueChanged(int)"
       },
       "origin": "qdoc",
+      "range": {
+        "follows": [
+          "minimum",
+          "maximum"
+        ],
+        "max": 99,
+        "min": 0,
+        "origin": "runtime"
+      },
       "role": "value",
       "type": {
         "native": "int",

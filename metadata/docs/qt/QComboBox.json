@@ -1,0 +1,468 @@
+{
+  "doc": {
+    "brief": "The QComboBox widget combines a button with a dropdown list.",
+    "index_brief": "Combines a button with a dropdown list",
+    "url": "https://doc.qt.io/qt-6/qcombobox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QComboBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractItemDelegate * itemDelegate() const": {
+      "brief": "Returns the item delegate used by the popup list view.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#itemDelegate"
+    },
+    "QAbstractItemModel * model() const": {
+      "brief": "Returns the model used by the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#model"
+    },
+    "QAbstractItemView * view() const": {
+      "brief": "Returns the list view used for the combobox popup.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#view"
+    },
+    "QComboBox(QWidget *parent)": {
+      "brief": "Constructs a combobox with the given *parent*, using the default model [QStandardItemModel](xref:qt:QStandardItemModel).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#QComboBox"
+    },
+    "QComboBox::InsertPolicy insertPolicy() const": {
+      "brief": "This property holds the policy used to determine where user-inserted items should appear in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertPolicy-prop"
+    },
+    "QComboBox::LabelDrawingMode labelDrawingMode() const": {
+      "brief": "This property holds the mode used by the combobox to draw its label.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#labelDrawingMode-prop"
+    },
+    "QComboBox::SizeAdjustPolicy sizeAdjustPolicy() const": {
+      "brief": "This property holds the policy describing how the size of the combobox changes when the content changes.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#sizeAdjustPolicy-prop"
+    },
+    "QCompleter * completer() const": {
+      "brief": "Returns the completer that is used to auto complete text input for the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#completer"
+    },
+    "QIcon itemIcon(int index) const": {
+      "brief": "Returns the icon for the given *index* in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#itemIcon"
+    },
+    "QLineEdit * lineEdit() const": {
+      "brief": "Returns the line edit used to edit items in the combobox, or `nullptr` if there is no line edit.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#lineEdit"
+    },
+    "QModelIndex rootModelIndex() const": {
+      "brief": "Returns the root model item index for the items in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#rootModelIndex"
+    },
+    "QSize iconSize() const": {
+      "brief": "This property holds the size of the icons shown in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#iconSize-prop"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#sizeHint"
+    },
+    "QString currentText() const": {
+      "brief": "This property holds the current text",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentText-prop"
+    },
+    "QString itemText(int index) const": {
+      "brief": "Returns the text for the given *index* in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#itemText"
+    },
+    "QString placeholderText() const": {
+      "brief": "Sets a *placeholderText* text shown when no valid index is set.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#placeholderText-prop"
+    },
+    "QVariant currentData(int role) const": {
+      "brief": "This property holds the data for the current item",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentData-prop"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override": {
+      "brief": "Reimplements: [QWidget::inputMethodQuery](xref:qt:QWidget)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#inputMethodQuery"
+    },
+    "QVariant itemData(int index, int role) const": {
+      "brief": "Returns the data for the given *role* in the given *index* in the combobox, or an invalid [QVariant](xref:qt:QVariant) if there is no data for this role.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#itemData"
+    },
+    "bool duplicatesEnabled() const": {
+      "brief": "This property holds whether the user can enter duplicate items into the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#duplicatesEnabled-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#event"
+    },
+    "bool hasFrame() const": {
+      "brief": "This property holds whether the combo box draws itself with a frame.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#frame-prop"
+    },
+    "bool isEditable() const": {
+      "brief": "This property holds whether the combo box can be edited by the user.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#editable-prop"
+    },
+    "const QValidator * validator() const": {
+      "brief": "Returns the validator that is used to constrain text input for the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#validator"
+    },
+    "int count() const": {
+      "brief": "This property holds the number of items in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#count-prop"
+    },
+    "int currentIndex() const": {
+      "brief": "This property holds the index of the current item in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentIndex-prop"
+    },
+    "int findData(const QVariant &data, int role, Qt::MatchFlags flags) const": {
+      "brief": "Returns the index of the item containing the given *data* for the given *role*; otherwise returns -1.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#findData"
+    },
+    "int findText(const QString &text, Qt::MatchFlags flags) const": {
+      "brief": "Returns the index of the item containing the given *text*; otherwise returns -1.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#findText"
+    },
+    "int maxCount() const": {
+      "brief": "This property holds the maximum number of items allowed in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#maxCount-prop"
+    },
+    "int maxVisibleItems() const": {
+      "brief": "This property holds the maximum allowed size on screen of the combo box, measured in items",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#maxVisibleItems-prop"
+    },
+    "int minimumContentsLength() const": {
+      "brief": "This property holds the minimum number of characters that should fit into the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#minimumContentsLength-prop"
+    },
+    "int modelColumn() const": {
+      "brief": "This property holds the column in the model that is visible.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#modelColumn-prop"
+    },
+    "void activated(int index)": {
+      "brief": "This signal is sent when the user chooses an item in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#activated"
+    },
+    "void addItem(const QIcon &icon, const QString &text, const QVariant &userData)": {
+      "brief": "Adds an item to the combobox with the given *icon* and *text*, and containing the specified *userData* (stored in the [Qt::UserRole](https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum)).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#addItem-1"
+    },
+    "void addItem(const QString &text, const QVariant &userData)": {
+      "brief": "Adds an item to the combobox with the given *text*, and containing the specified *userData* (stored in the [Qt::UserRole](https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum)).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#addItem"
+    },
+    "void addItems(const QStringList &texts)": {
+      "brief": "Adds each of the strings in the given *texts* to the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#addItems"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Clears the combobox, removing all items.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#clear"
+    },
+    "void clearEditText()": {
+      "brief": "Clears the contents of the line edit used for editing in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#clearEditText"
+    },
+    "void contextMenuEvent(QContextMenuEvent *e) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#contextMenuEvent"
+    },
+    "void currentIndexChanged(int index)": {
+      "brief": "This signal is sent whenever the [currentIndex](xref:qt:QComboBox) in the combobox changes either through user interaction or programmatically.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentIndexChanged"
+    },
+    "void currentTextChanged(const QString &text)": {
+      "brief": "This signal is emitted whenever [currentText](xref:qt:QComboBox) changes.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentTextChanged"
+    },
+    "void editTextChanged(const QString &text)": {
+      "brief": "This signal is emitted when the text in the combobox's line edit widget is changed.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#editTextChanged"
+    },
+    "void focusInEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#focusOutEvent"
+    },
+    "void hideEvent(QHideEvent *e) override": {
+      "brief": "Reimplements: [QWidget::hideEvent](xref:qt:QWidget)(QHideEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#hideEvent"
+    },
+    "void hidePopup()": {
+      "brief": "Hides the list of items in the combobox if it is currently visible and resets the internal state, so that if the custom pop-up was shown inside the reimplemented [showPopup](xref:qt:QComboBox)()...",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#hidePopup"
+    },
+    "void highlighted(int index)": {
+      "brief": "This signal is sent when an item in the combobox popup list is highlighted by the user.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#highlighted"
+    },
+    "void initStyleOption(QStyleOptionComboBox *option) const": {
+      "brief": "Initialize *option* with the values from this [QComboBox](xref:qt:QComboBox).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#initStyleOption"
+    },
+    "void inputMethodEvent(QInputMethodEvent *e) override": {
+      "brief": "Reimplements: [QWidget::inputMethodEvent](xref:qt:QWidget)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#inputMethodEvent"
+    },
+    "void insertItem(int index, const QIcon &icon, const QString &text, const QVariant &userData)": {
+      "brief": "Inserts the *icon*, *text* and *userData* (stored in the [Qt::UserRole](https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum)) into the combobox at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertItem-1"
+    },
+    "void insertItem(int index, const QString &text, const QVariant &userData)": {
+      "brief": "Inserts the *text* and *userData* (stored in the [Qt::UserRole](https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum)) into the combobox at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertItem"
+    },
+    "void insertItems(int index, const QStringList &list)": {
+      "brief": "Inserts the strings from the *list* into the combobox as separate items, starting at the *index* specified.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertItems"
+    },
+    "void insertSeparator(int index)": {
+      "brief": "Inserts a separator item into the combobox at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertSeparator"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#keyReleaseEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#paintEvent"
+    },
+    "void removeItem(int index)": {
+      "brief": "Removes the item at the given *index* from the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#removeItem"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#resizeEvent"
+    },
+    "void setCompleter(QCompleter *completer)": {
+      "brief": "Sets the *completer* to use instead of the current completer.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setCompleter"
+    },
+    "void setCurrentIndex(int index)": {
+      "brief": "This property holds the index of the current item in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentIndex-prop"
+    },
+    "void setCurrentText(const QString &text)": {
+      "brief": "This property holds the current text",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentText-prop"
+    },
+    "void setDuplicatesEnabled(bool enable)": {
+      "brief": "This property holds whether the user can enter duplicate items into the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#duplicatesEnabled-prop"
+    },
+    "void setEditText(const QString &text)": {
+      "brief": "Sets the *text* in the combobox's text edit.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setEditText"
+    },
+    "void setEditable(bool editable)": {
+      "brief": "This property holds whether the combo box can be edited by the user.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#editable-prop"
+    },
+    "void setFrame(bool)": {
+      "brief": "This property holds whether the combo box draws itself with a frame.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#frame-prop"
+    },
+    "void setIconSize(const QSize &size)": {
+      "brief": "This property holds the size of the icons shown in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#iconSize-prop"
+    },
+    "void setInsertPolicy(QComboBox::InsertPolicy policy)": {
+      "brief": "This property holds the policy used to determine where user-inserted items should appear in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertPolicy-prop"
+    },
+    "void setItemData(int index, const QVariant &value, int role)": {
+      "brief": "Sets the data *role* for the item on the given *index* in the combobox to the specified *value*.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setItemData"
+    },
+    "void setItemDelegate(QAbstractItemDelegate *delegate)": {
+      "brief": "Sets the item *delegate* for the popup list view.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setItemDelegate"
+    },
+    "void setItemIcon(int index, const QIcon &icon)": {
+      "brief": "Sets the *icon* for the item on the given *index* in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setItemIcon"
+    },
+    "void setItemText(int index, const QString &text)": {
+      "brief": "Sets the *text* for the item on the given *index* in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setItemText"
+    },
+    "void setLabelDrawingMode(QComboBox::LabelDrawingMode labelDrawing)": {
+      "brief": "This property holds the mode used by the combobox to draw its label.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#labelDrawingMode-prop"
+    },
+    "void setLineEdit(QLineEdit *edit)": {
+      "brief": "Sets the line *edit* to use instead of the current line edit widget.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setLineEdit"
+    },
+    "void setMaxCount(int max)": {
+      "brief": "This property holds the maximum number of items allowed in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#maxCount-prop"
+    },
+    "void setMaxVisibleItems(int maxItems)": {
+      "brief": "This property holds the maximum allowed size on screen of the combo box, measured in items",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#maxVisibleItems-prop"
+    },
+    "void setMinimumContentsLength(int characters)": {
+      "brief": "This property holds the minimum number of characters that should fit into the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#minimumContentsLength-prop"
+    },
+    "void setModel(QAbstractItemModel *model)": {
+      "brief": "Sets the model to be *model*. *model* must not be `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setModel"
+    },
+    "void setModelColumn(int visibleColumn)": {
+      "brief": "This property holds the column in the model that is visible.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#modelColumn-prop"
+    },
+    "void setPlaceholderText(const QString &placeholderText)": {
+      "brief": "Sets a *placeholderText* text shown when no valid index is set.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#placeholderText-prop"
+    },
+    "void setRootModelIndex(const QModelIndex &index)": {
+      "brief": "Sets the root model item *index* for the items in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setRootModelIndex"
+    },
+    "void setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy)": {
+      "brief": "This property holds the policy describing how the size of the combobox changes when the content changes.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#sizeAdjustPolicy-prop"
+    },
+    "void setValidator(const QValidator *validator)": {
+      "brief": "Sets the *validator* to use instead of the current validator.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setValidator"
+    },
+    "void setView(QAbstractItemView *itemView)": {
+      "brief": "Sets the view to be used in the combobox popup to the given *itemView*.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#setView"
+    },
+    "void showEvent(QShowEvent *e) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#showEvent"
+    },
+    "void showPopup()": {
+      "brief": "Displays the list of items in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#showPopup"
+    },
+    "void textActivated(const QString &text)": {
+      "brief": "This signal is sent when the user chooses an item in the combobox.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#textActivated"
+    },
+    "void textHighlighted(const QString &text)": {
+      "brief": "This signal is sent when an item in the combobox popup list is highlighted by the user.",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#textHighlighted"
+    },
+    "void wheelEvent(QWheelEvent *e) override": {
+      "brief": "Reimplements: [QWidget::wheelEvent](xref:qt:QWidget)(QWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "count": {
+      "brief": "The number of items in the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#count-prop"
+    },
+    "currentData": {
+      "brief": "The data for the current item",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentData-prop"
+    },
+    "currentIndex": {
+      "brief": "The index of the current item in the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentIndex-prop"
+    },
+    "currentText": {
+      "brief": "The current text",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#currentText-prop"
+    },
+    "duplicatesEnabled": {
+      "brief": "Whether the user can enter duplicate items into the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#duplicatesEnabled-prop"
+    },
+    "editable": {
+      "brief": "Whether the combo box can be edited by the user",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#editable-prop"
+    },
+    "frame": {
+      "brief": "Whether the combo box draws itself with a frame",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#frame-prop"
+    },
+    "iconSize": {
+      "brief": "The size of the icons shown in the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#iconSize-prop"
+    },
+    "insertPolicy": {
+      "brief": "The policy used to determine where user-inserted items should appear in the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#insertPolicy-prop"
+    },
+    "labelDrawingMode": {
+      "brief": "The mode used by the combobox to draw its label",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#labelDrawingMode-prop"
+    },
+    "maxCount": {
+      "brief": "The maximum number of items allowed in the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#maxCount-prop"
+    },
+    "maxVisibleItems": {
+      "brief": "The maximum allowed size on screen of the combo box, measured in items",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#maxVisibleItems-prop"
+    },
+    "minimumContentsLength": {
+      "brief": "The minimum number of characters that should fit into the combobox",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#minimumContentsLength-prop"
+    },
+    "modelColumn": {
+      "brief": "The column in the model that is visible",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#modelColumn-prop"
+    },
+    "placeholderText": {
+      "brief": "Sets a placeholderText text shown when no valid index is set",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#placeholderText-prop"
+    },
+    "sizeAdjustPolicy": {
+      "brief": "The policy describing how the size of the combobox changes when the content changes",
+      "url": "https://doc.qt.io/qt-6/qcombobox.html#sizeAdjustPolicy-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::down-arrow",
+      "::drop-down"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qcombobox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

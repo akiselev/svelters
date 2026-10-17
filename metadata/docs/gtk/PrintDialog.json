@@ -1,0 +1,182 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPrintDialog` object.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 437,
+      "md": "Creates a new `GtkPrintDialog` object.",
+      "since": "4.14"
+    }
+  },
+  "doc": {
+    "brief": "Asynchronous API to present a print dialog to the user.",
+    "file": "gtk/gtkprintdialog.c",
+    "line": 220,
+    "md": "Asynchronous API to present a print dialog to the user.\n\n`GtkPrintDialog` collects the arguments that are needed to present\n the dialog, such as a title for the dialog and whether it should\n be modal.\n\nThe dialog is shown with the [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup) function.\n\nThe actual printing can be done with [`PrintDialog.print()`](xref:gtk:Gtk.PrintDialog#method:print) or\n[`PrintDialog.print_file()`](xref:gtk:Gtk.PrintDialog#method:print_file). These APIs follows the GIO async pattern,\nand the results can be obtained by calling the corresponding finish methods.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_accept_label": {
+      "brief": "Returns the label that will be shown on the accept button of the print dialog.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 499,
+      "md": "Returns the label that will be shown on the\naccept button of the print dialog.",
+      "since": "4.14"
+    },
+    "get_modal": {
+      "brief": "Returns whether the print dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 545,
+      "md": "Returns whether the print dialog blocks\ninteraction with the parent window while\nit is presented.",
+      "since": "4.14"
+    },
+    "get_page_setup": {
+      "brief": "Returns the page setup.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 590,
+      "md": "Returns the page setup.",
+      "since": "4.14"
+    },
+    "get_print_settings": {
+      "brief": "Returns the print settings for the print dialog.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 628,
+      "md": "Returns the print settings for the print dialog.",
+      "since": "4.14"
+    },
+    "get_title": {
+      "brief": "Returns the title that will be shown on the print dialog.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 455,
+      "md": "Returns the title that will be shown on the\nprint dialog.",
+      "since": "4.14"
+    },
+    "print": {
+      "brief": "This function prints content from a stream.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 1568,
+      "md": "This function prints content from a stream.\n\nIf you pass `NULL` as `setup`, then this method will present a print dialog.\nOtherwise, it will attempt to print directly, without user interaction.\n\nThe `callback` will be called when the printing is done.",
+      "since": "4.14"
+    },
+    "print_file": {
+      "brief": "This function prints a file.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 1710,
+      "md": "This function prints a file.\n\nIf you pass `NULL` as `setup`, then this method will present a print dialog.\nOtherwise, it will attempt to print directly, without user interaction.",
+      "since": "4.14"
+    },
+    "print_file_finish": {
+      "brief": "Finishes the [`PrintDialog.print_file()`](xref:gtk:Gtk.PrintDialog#method:print_file) call and returns the results.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 1823,
+      "md": "Finishes the [`PrintDialog.print_file()`](xref:gtk:Gtk.PrintDialog#method:print_file) call and\nreturns the results.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.14"
+    },
+    "print_finish": {
+      "brief": "Finishes the [`PrintDialog.print()`](xref:gtk:Gtk.PrintDialog#method:print) call and returns the results.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 1672,
+      "md": "Finishes the [`PrintDialog.print()`](xref:gtk:Gtk.PrintDialog#method:print) call and\nreturns the results.\n\nIf the call was successful, the content to be printed should be\nwritten to the returned output stream. Otherwise, `NULL` is returned.\n\nThe overall results of the print operation will be returned in the\n[`OutputStream.close()`](xref:gtk:Gio.OutputStream#method:close) call, so if you are interested in the\nresults, you need to explicitly close the output stream (it will be\nclosed automatically if you just unref it). Be aware that the close\ncall may not be instant as it operation will for the printer to finish\nprinting.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.14"
+    },
+    "set_accept_label": {
+      "brief": "Sets the label that will be shown on the accept button of the print dialog shown for [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup).",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 518,
+      "md": "Sets the label that will be shown on the\naccept button of the print dialog shown for\n[`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup).",
+      "since": "4.14"
+    },
+    "set_modal": {
+      "brief": "Sets whether the print dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 565,
+      "md": "Sets whether the print dialog blocks\ninteraction with the parent window while\nit is presented.",
+      "since": "4.14"
+    },
+    "set_page_setup": {
+      "brief": "Set the page setup for the print dialog.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 608,
+      "md": "Set the page setup for the print dialog.",
+      "since": "4.14"
+    },
+    "set_print_settings": {
+      "brief": "Sets the print settings for the print dialog.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 646,
+      "md": "Sets the print settings for the print dialog.",
+      "since": "4.14"
+    },
+    "set_title": {
+      "brief": "Sets the title that will be shown on the print dialog.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 474,
+      "md": "Sets the title that will be shown on the print dialog.",
+      "since": "4.14"
+    },
+    "setup": {
+      "brief": "This function presents a print dialog to let the user select a printer, and set up print settings and page setup.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 1450,
+      "md": "This function presents a print dialog to let the user select a printer,\nand set up print settings and page setup.\n\nThe `callback` will be called when the dialog is dismissed.\nThe obtained [`PrintSetup`](xref:gtk:Gtk.PrintSetup) can then be passed\nto [`PrintDialog.print()`](xref:gtk:Gtk.PrintDialog#method:print) or [`PrintDialog.print_file()`](xref:gtk:Gtk.PrintDialog#method:print_file).\n\nOne possible use for this method is to have the user select a printer,\nthen show a page setup UI in the application (e.g. to arrange images\non a page), then call [`PrintDialog.print()`](xref:gtk:Gtk.PrintDialog#method:print) on `self`\nto do the printing without further user interaction.",
+      "since": "4.14"
+    },
+    "setup_finish": {
+      "brief": "Finishes the [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup) call.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 1537,
+      "md": "Finishes the [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup) call.\n\nIf the call was successful, it returns a [`PrintSetup`](xref:gtk:Gtk.PrintSetup)\nwhich contains the print settings and page setup information that\nwill be used to print.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.14"
+    }
+  },
+  "properties": {
+    "accept-label": {
+      "brief": "A label that may be shown on the accept button of a print dialog that is presented by [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup).",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 369,
+      "md": "A label that may be shown on the accept button of a print dialog\nthat is presented by [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup).",
+      "since": "4.14"
+    },
+    "modal": {
+      "brief": "Whether the print dialog is modal.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 394,
+      "md": "Whether the print dialog is modal.",
+      "since": "4.14"
+    },
+    "page-setup": {
+      "brief": "The page setup to use.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 382,
+      "md": "The page setup to use.",
+      "since": "4.14"
+    },
+    "print-settings": {
+      "brief": "The print settings to use.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 406,
+      "md": "The print settings to use.",
+      "since": "4.14"
+    },
+    "title": {
+      "brief": "A title that may be shown on the print dialog that is presented by [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup).",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 418,
+      "md": "A title that may be shown on the print dialog that is\npresented by [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup).",
+      "since": "4.14"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

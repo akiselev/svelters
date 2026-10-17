@@ -1,0 +1,159 @@
+{
+  "doc": {
+    "brief": "The QToolBox class provides a column of tabbed widget items.",
+    "index_brief": "Column of tabbed widget items",
+    "url": "https://doc.qt.io/qt-6/qtoolbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QToolBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QIcon itemIcon(int index) const": {
+      "brief": "Returns the icon of the item at position *index*, or a null icon if *index* is out of range.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#itemIcon"
+    },
+    "QString itemText(int index) const": {
+      "brief": "Returns the text of the item at position *index*, or an empty string if *index* is out of range.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#itemText"
+    },
+    "QString itemToolTip(int index) const": {
+      "brief": "Returns the tooltip of the item at position *index*, or an empty string if *index* is out of range.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#itemToolTip"
+    },
+    "QToolBox(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs a new toolbox with the given *parent* and the flags, *f*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#QToolBox"
+    },
+    "QWidget * currentWidget() const": {
+      "brief": "Returns a pointer to the current widget, or `nullptr` if there is no such item.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#currentWidget"
+    },
+    "QWidget * widget(int index) const": {
+      "brief": "Returns the widget at position *index*, or `nullptr` if there is no such item.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#widget"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QFrame::event](xref:qt:QFrame)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#event"
+    },
+    "bool isItemEnabled(int index) const": {
+      "brief": "Returns `true` if the item at position *index* is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#isItemEnabled"
+    },
+    "int addItem(QWidget *w, const QString &text)": {
+      "brief": "Adds the widget *w* in a new tab at bottom of the toolbox.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#addItem-1"
+    },
+    "int addItem(QWidget *widget, const QIcon &iconSet, const QString &text)": {
+      "brief": "Adds the *widget* in a new tab at bottom of the toolbox.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#addItem"
+    },
+    "int count() const": {
+      "brief": "This property holds the number of items contained in the toolbox.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#count-prop"
+    },
+    "int currentIndex() const": {
+      "brief": "This property holds the index of the current item",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#currentIndex-prop"
+    },
+    "int indexOf(const QWidget *widget) const": {
+      "brief": "Returns the index of *widget*, or -1 if the item does not exist.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#indexOf"
+    },
+    "int insertItem(int index, QWidget *widget, const QIcon &icon, const QString &text)": {
+      "brief": "Inserts the *widget* at position *index*, or at the bottom of the toolbox if *index* is out of range.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#insertItem"
+    },
+    "int insertItem(int index, QWidget *widget, const QString &text)": {
+      "brief": "Inserts the *widget* at position *index*, or at the bottom of the toolbox if *index* is out of range.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#insertItem-1"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QFrame::changeEvent](xref:qt:QFrame)(QEvent *ev).",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#changeEvent"
+    },
+    "void currentChanged(int index)": {
+      "brief": "This signal is emitted when the current item is changed.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#currentChanged"
+    },
+    "void itemInserted(int index)": {
+      "brief": "This virtual handler is called after a new item was added or inserted at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#itemInserted"
+    },
+    "void itemRemoved(int index)": {
+      "brief": "This virtual handler is called after an item was removed from position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#itemRemoved"
+    },
+    "void removeItem(int index)": {
+      "brief": "Removes the item at position *index* from the toolbox.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#removeItem"
+    },
+    "void setCurrentIndex(int index)": {
+      "brief": "This property holds the index of the current item",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#currentIndex-prop"
+    },
+    "void setCurrentWidget(QWidget *widget)": {
+      "brief": "Makes*widget* the current widget.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#setCurrentWidget"
+    },
+    "void setItemEnabled(int index, bool enabled)": {
+      "brief": "If *enabled* is true then the item at position *index* is enabled; otherwise the item at position *index* is disabled.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#setItemEnabled"
+    },
+    "void setItemIcon(int index, const QIcon &icon)": {
+      "brief": "Sets the icon of the item at position *index* to *icon*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#setItemIcon"
+    },
+    "void setItemText(int index, const QString &text)": {
+      "brief": "Sets the text of the item at position *index* to *text*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#setItemText"
+    },
+    "void setItemToolTip(int index, const QString &toolTip)": {
+      "brief": "Sets the tooltip of the item at position *index* to *toolTip*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#setItemToolTip"
+    },
+    "void showEvent(QShowEvent *e) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#showEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "count": {
+      "brief": "Number of items contained in the toolbox",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#count-prop"
+    },
+    "currentIndex": {
+      "brief": "The index of the current item",
+      "url": "https://doc.qt.io/qt-6/qtoolbox.html#currentIndex-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":first",
+      ":last",
+      ":middle",
+      ":next-selected",
+      ":only-one",
+      ":previous-selected",
+      ":selected"
+    ],
+    "sub_controls": [
+      "::tab"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtoolbox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -61,6 +61,7 @@
           "kind": "none",
           "origin": "manual"
         },
+        "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:start",
         "name": "start",
         "on_remove": "empty",
         "ops": {
@@ -137,6 +138,7 @@
           "kind": "none",
           "origin": "manual"
         },
+        "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:end",
         "name": "end",
         "on_remove": "empty",
         "ops": {
@@ -213,6 +215,7 @@
           "origin": "manual",
           "restore": null
         },
+        "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:title",
         "name": "title",
         "on_remove": "restore_default",
         "ops": {
@@ -293,6 +296,16 @@
     "Gtk.ConstraintTarget"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:method:get_decoration_layout",

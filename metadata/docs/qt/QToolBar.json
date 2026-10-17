@@ -1,0 +1,221 @@
+{
+  "doc": {
+    "brief": "The QToolBar class provides a movable panel that contains a set of controls.",
+    "index_brief": "Movable panel that contains a set of controls",
+    "url": "https://doc.qt.io/qt-6/qtoolbar.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QToolBar",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAction * actionAt(const QPoint &p) const": {
+      "brief": "Returns the action at point *p*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#actionAt"
+    },
+    "QAction * actionAt(int x, int y) const": {
+      "brief": "Returns the action at the point *x*, *y*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#actionAt-1"
+    },
+    "QAction * addSeparator()": {
+      "brief": "Adds a separator to the end of the toolbar.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#addSeparator"
+    },
+    "QAction * addWidget(QWidget *widget)": {
+      "brief": "Adds the given *widget* to the toolbar as the toolbar's last item.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#addWidget"
+    },
+    "QAction * insertSeparator(QAction *before)": {
+      "brief": "Inserts a separator into the toolbar in front of the toolbar item associated with the *before* action.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#insertSeparator"
+    },
+    "QAction * insertWidget(QAction *before, QWidget *widget)": {
+      "brief": "Inserts the given *widget* in front of the toolbar item associated with the *before* action.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#insertWidget"
+    },
+    "QAction * toggleViewAction() const": {
+      "brief": "Returns a checkable action that can be used to show or hide this toolbar.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#toggleViewAction"
+    },
+    "QSize iconSize() const": {
+      "brief": "size of icons in the toolbar.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#iconSize-prop"
+    },
+    "QToolBar(QWidget *parent)": {
+      "brief": "Constructs a QToolBar with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#QToolBar"
+    },
+    "QToolBar(const QString &title, QWidget *parent)": {
+      "brief": "Constructs a QToolBar with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#QToolBar-1"
+    },
+    "QWidget * widgetForAction(QAction *action) const": {
+      "brief": "Returns the widget associated with the specified *action*.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#widgetForAction"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "orientation of the toolbar",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#orientation-prop"
+    },
+    "Qt::ToolBarAreas allowedAreas() const": {
+      "brief": "areas where the toolbar may be placed",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#allowedAreas-prop"
+    },
+    "Qt::ToolButtonStyle toolButtonStyle() const": {
+      "brief": "This property holds the style of toolbar buttons",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#toolButtonStyle-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#event"
+    },
+    "bool isAreaAllowed(Qt::ToolBarArea area) const": {
+      "brief": "Returns `true` if this toolbar is dockable in the given *area*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#isAreaAllowed"
+    },
+    "bool isFloatable() const": {
+      "brief": "This property holds whether the toolbar can be dragged and dropped as an independent window.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#floatable-prop"
+    },
+    "bool isFloating() const": {
+      "brief": "This property holds whether the toolbar is an independent window.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#floating-prop"
+    },
+    "bool isMovable() const": {
+      "brief": "This property holds whether the user can move the toolbar within the toolbar area, or between toolbar areas.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#movable-prop"
+    },
+    "void actionEvent(QActionEvent *event) override": {
+      "brief": "Reimplements: [QWidget::actionEvent](xref:qt:QWidget)(QActionEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#actionEvent"
+    },
+    "void actionTriggered(QAction *action)": {
+      "brief": "This signal is emitted when an action in this toolbar is triggered.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#actionTriggered"
+    },
+    "void allowedAreasChanged(Qt::ToolBarAreas allowedAreas)": {
+      "brief": "This signal is emitted when the collection of allowed areas for the toolbar is changed.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#allowedAreasChanged"
+    },
+    "void changeEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Removes all actions from the toolbar.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#clear"
+    },
+    "void iconSizeChanged(const QSize &iconSize)": {
+      "brief": "This signal is emitted when the icon size is changed.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#iconSizeChanged"
+    },
+    "void movableChanged(bool movable)": {
+      "brief": "This signal is emitted when the toolbar becomes movable or fixed.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#movableChanged"
+    },
+    "void orientationChanged(Qt::Orientation orientation)": {
+      "brief": "This signal is emitted when the orientation of the toolbar changes.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#orientationChanged"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#paintEvent"
+    },
+    "void setAllowedAreas(Qt::ToolBarAreas areas)": {
+      "brief": "areas where the toolbar may be placed",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#allowedAreas-prop"
+    },
+    "void setFloatable(bool floatable)": {
+      "brief": "This property holds whether the toolbar can be dragged and dropped as an independent window.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#floatable-prop"
+    },
+    "void setIconSize(const QSize &iconSize)": {
+      "brief": "size of icons in the toolbar.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#iconSize-prop"
+    },
+    "void setMovable(bool movable)": {
+      "brief": "This property holds whether the user can move the toolbar within the toolbar area, or between toolbar areas.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#movable-prop"
+    },
+    "void setOrientation(Qt::Orientation orientation)": {
+      "brief": "orientation of the toolbar",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#orientation-prop"
+    },
+    "void setToolButtonStyle(Qt::ToolButtonStyle toolButtonStyle)": {
+      "brief": "This property holds the style of toolbar buttons",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#toolButtonStyle-prop"
+    },
+    "void toolButtonStyleChanged(Qt::ToolButtonStyle toolButtonStyle)": {
+      "brief": "This signal is emitted when the tool button style is changed.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#toolButtonStyleChanged"
+    },
+    "void topLevelChanged(bool topLevel)": {
+      "brief": "This signal is emitted when the [floating](xref:qt:QToolBar) property changes.",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#topLevelChanged"
+    },
+    "void visibilityChanged(bool visible)": {
+      "brief": "This signal is emitted when the toolbar becomes *visible* (or invisible).",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#visibilityChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "allowedAreas": {
+      "brief": "Areas where the toolbar may be placed",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#allowedAreas-prop"
+    },
+    "floatable": {
+      "brief": "Whether the toolbar can be dragged and dropped as an independent window",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#floatable-prop"
+    },
+    "floating": {
+      "brief": "Whether the toolbar is an independent window",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#floating-prop"
+    },
+    "iconSize": {
+      "brief": "Size of icons in the toolbar",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#iconSize-prop"
+    },
+    "movable": {
+      "brief": "Whether the user can move the toolbar within the toolbar area, or between toolbar areas",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#movable-prop"
+    },
+    "orientation": {
+      "brief": "Of the toolbar",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#orientation-prop"
+    },
+    "toolButtonStyle": {
+      "brief": "The style of toolbar buttons",
+      "url": "https://doc.qt.io/qt-6/qtoolbar.html#toolButtonStyle-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":bottom",
+      ":first",
+      ":last",
+      ":left",
+      ":middle",
+      ":only-one",
+      ":right",
+      ":top"
+    ],
+    "sub_controls": [
+      "::handle",
+      "::separator"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtoolbar-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

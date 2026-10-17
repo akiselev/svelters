@@ -29,31 +29,46 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionDockWidget::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionDockWidget::Type",
           "name": "Type",
           "value": "SO_DockWidget"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionDockWidget::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionDockWidget::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionDockWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionDockWidget:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a dock widget",

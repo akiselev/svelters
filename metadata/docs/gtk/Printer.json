@@ -1,0 +1,238 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPrinter`.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 404,
+      "md": "Creates a new `GtkPrinter`."
+    }
+  },
+  "doc": {
+    "brief": "Represents a printer.",
+    "file": "gtk/print/gtkprinter.c",
+    "line": 34,
+    "md": "Represents a printer.\n\nYou only need to deal directly with printers if you use the\nnon-portable [`PrintUnixDialog`](xref:gtk:Gtk.PrintUnixDialog) API.\n\nA `GtkPrinter` allows to get status information about the printer,\nsuch as its description, its location, the number of queued jobs,\netc. Most importantly, a `GtkPrinter` object can be used to create\na [`PrintJob`](xref:gtk:Gtk.PrintJob) object, which lets you print to the printer."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Printer",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "accepts_pdf": {
+      "brief": "Returns whether the printer accepts input in PDF format.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 789,
+      "md": "Returns whether the printer accepts input in\nPDF format."
+    },
+    "accepts_ps": {
+      "brief": "Returns whether the printer accepts input in PostScript format.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 819,
+      "md": "Returns whether the printer accepts input in\nPostScript format."
+    },
+    "compare": {
+      "brief": "Compares two printers.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 1122,
+      "md": "Compares two printers."
+    },
+    "get_backend": {
+      "brief": "Returns the backend of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 430,
+      "md": "Returns the backend of the printer."
+    },
+    "get_capabilities": {
+      "brief": "Returns the printer’s capabilities.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 1094,
+      "md": "Returns the printer’s capabilities.\n\nThis is useful when you’re using `GtkPrintUnixDialog`’s\nmanual-capabilities setting and need to know which settings\nthe printer can handle and which you must handle yourself.\n\nThis will return 0 unless the printer’s details are\navailable, see [`Printer.has_details()`](xref:gtk:Gtk.Printer#method:has_details) and\n[`Printer.request_details()`](xref:gtk:Gtk.Printer#method:request_details)."
+    },
+    "get_default_page_size": {
+      "brief": "Returns default page size of `printer`.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 1006,
+      "md": "Returns default page size of `printer`."
+    },
+    "get_description": {
+      "brief": "Gets the description of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 466,
+      "md": "Gets the description of the printer."
+    },
+    "get_hard_margins": {
+      "brief": "Retrieve the hard margins of `printer`.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 1028,
+      "md": "Retrieve the hard margins of `printer`.\n\nThese are the margins that define the area at the borders\nof the paper that the printer cannot print to.\n\nNote: This will not succeed unless the printer’s details are\navailable, see [`Printer.has_details()`](xref:gtk:Gtk.Printer#method:has_details) and\n[`Printer.request_details()`](xref:gtk:Gtk.Printer#method:request_details)."
+    },
+    "get_hard_margins_for_paper_size": {
+      "brief": "Retrieve the hard margins of `printer` for `paper_size`.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 1060,
+      "md": "Retrieve the hard margins of `printer` for `paper_size`.\n\nThese are the margins that define the area at the borders\nof the paper that the printer cannot print to.\n\nNote: This will not succeed unless the printer’s details are\navailable, see [`Printer.has_details()`](xref:gtk:Gtk.Printer#method:has_details) and\n[`Printer.request_details()`](xref:gtk:Gtk.Printer#method:request_details)."
+    },
+    "get_icon_name": {
+      "brief": "Gets the name of the icon to use for the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 574,
+      "md": "Gets the name of the icon to use for the printer."
+    },
+    "get_job_count": {
+      "brief": "Gets the number of jobs currently queued on the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 605,
+      "md": "Gets the number of jobs currently queued on the printer."
+    },
+    "get_location": {
+      "brief": "Returns a description of the location of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 538,
+      "md": "Returns a description of the location of the printer."
+    },
+    "get_name": {
+      "brief": "Returns the name of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 448,
+      "md": "Returns the name of the printer."
+    },
+    "get_state_message": {
+      "brief": "Returns the state message describing the current state of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 501,
+      "md": "Returns the state message describing the current state\nof the printer."
+    },
+    "has_details": {
+      "brief": "Returns whether the printer details are available.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 641,
+      "md": "Returns whether the printer details are available."
+    },
+    "is_accepting_jobs": {
+      "brief": "Returns whether the printer is accepting jobs",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 735,
+      "md": "Returns whether the printer is accepting jobs"
+    },
+    "is_active": {
+      "brief": "Returns whether the printer is currently active (i.e. accepts new jobs).",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 668,
+      "md": "Returns whether the printer is currently active (i.e.\naccepts new jobs)."
+    },
+    "is_default": {
+      "brief": "Returns whether the printer is the default printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 871,
+      "md": "Returns whether the printer is the default printer."
+    },
+    "is_paused": {
+      "brief": "Returns whether the printer is currently paused.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 698,
+      "md": "Returns whether the printer is currently paused.\n\nA paused printer still accepts jobs, but it is not\nprinting them."
+    },
+    "is_virtual": {
+      "brief": "Returns whether the printer is virtual (i.e. does not represent actual printer hardware, but something like a CUPS class).",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 769,
+      "md": "Returns whether the printer is virtual (i.e. does not\nrepresent actual printer hardware, but something like\na CUPS class)."
+    },
+    "list_papers": {
+      "brief": "Lists all the paper sizes `printer` supports.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 981,
+      "md": "Lists all the paper sizes `printer` supports.\n\nThis will return and empty list unless the printer’s details\nare available, see [`Printer.has_details()`](xref:gtk:Gtk.Printer#method:has_details) and\n[`Printer.request_details()`](xref:gtk:Gtk.Printer#method:request_details)."
+    },
+    "request_details": {
+      "brief": "Requests the printer details.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 900,
+      "md": "Requests the printer details.\n\nWhen the details are available, the\n[`Printer::details-acquired`](xref:gtk:Gtk.Printer#event:details-acquired) signal\nwill be emitted on `printer`."
+    }
+  },
+  "properties": {
+    "accepting-jobs": {
+      "brief": "`TRUE` if the printer is accepting jobs.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 233,
+      "md": "`TRUE` if the printer is accepting jobs."
+    },
+    "accepts-pdf": {
+      "brief": "`TRUE` if this printer can accept PDF.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 151,
+      "md": "`TRUE` if this printer can accept PDF."
+    },
+    "accepts-ps": {
+      "brief": "`TRUE` if this printer can accept PostScript.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 162,
+      "md": "`TRUE` if this printer can accept PostScript."
+    },
+    "backend": {
+      "brief": "The backend for the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 129,
+      "md": "The backend for the printer."
+    },
+    "icon-name": {
+      "brief": "Icon name to use for the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 195,
+      "md": "Icon name to use for the printer."
+    },
+    "is-virtual": {
+      "brief": "`FALSE` if this represents a real hardware device.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 140,
+      "md": "`FALSE` if this represents a real hardware device."
+    },
+    "job-count": {
+      "brief": "Number of jobs queued in the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 206,
+      "md": "Number of jobs queued in the printer."
+    },
+    "location": {
+      "brief": "Information about the location of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 184,
+      "md": "Information about the location of the printer."
+    },
+    "name": {
+      "brief": "The name of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 118,
+      "md": "The name of the printer."
+    },
+    "paused": {
+      "brief": "`TRUE` if this printer is paused.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 219,
+      "md": "`TRUE` if this printer is paused.\n\nA paused printer still accepts jobs, but it does\nnot print them."
+    },
+    "state-message": {
+      "brief": "String giving the current status of the printer.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 173,
+      "md": "String giving the current status of the printer."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "details-acquired": {
+      "brief": "Emitted in response to a request for detailed information about a printer from the print backend.",
+      "file": "gtk/print/gtkprinter.c",
+      "line": 244,
+      "md": "Emitted in response to a request for detailed information\nabout a printer from the print backend.\n\nThe `success` parameter indicates if the information was\nactually obtained."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

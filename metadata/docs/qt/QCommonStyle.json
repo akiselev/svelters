@@ -1,0 +1,99 @@
+{
+  "doc": {
+    "brief": "The QCommonStyle class encapsulates the common Look and Feel of a GUI.",
+    "index_brief": "Encapsulates the common Look and Feel of a GUI",
+    "url": "https://doc.qt.io/qt-6/qcommonstyle.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QCommonStyle()": {
+      "brief": "Constructs a QCommonStyle.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#QCommonStyle"
+    },
+    "QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *opt) const override": {
+      "brief": "Reimplements: [QStyle::generatedIconPixmap](xref:qt:QStyle)(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *option) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#generatedIconPixmap"
+    },
+    "QPixmap standardPixmap(QStyle::StandardPixmap sp, const QStyleOption *option, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::standardPixmap](https://doc.qt.io/qt-6/qstyle-obsolete.html#standardPixmap)(QStyle::StandardPixmap standardPixmap, const QStyleOption *option, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#standardPixmap"
+    },
+    "QRect subControlRect(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QStyle::SubControl sc, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::subControlRect](xref:qt:QStyle)(QStyle::ComplexControl control, const QStyleOptionComplex *option, QStyle::SubControl subControl, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#subControlRect"
+    },
+    "QRect subElementRect(QStyle::SubElement sr, const QStyleOption *opt, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::subElementRect](xref:qt:QStyle)(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#subElementRect"
+    },
+    "QSize sizeFromContents(QStyle::ContentsType contentsType, const QStyleOption *opt, const QSize &contentsSize, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::sizeFromContents](xref:qt:QStyle)(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#sizeFromContents"
+    },
+    "QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, const QPoint &pt, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::hitTestComplexControl](xref:qt:QStyle)(QStyle::ComplexControl control, const QStyleOptionComplex *option, const QPoint &position, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#hitTestComplexControl"
+    },
+    "int layoutSpacing(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::layoutSpacing](xref:qt:QStyle)(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const QWidget...",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#layoutSpacing"
+    },
+    "int pixelMetric(QStyle::PixelMetric m, const QStyleOption *opt, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::pixelMetric](xref:qt:QStyle)(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#pixelMetric"
+    },
+    "int styleHint(QStyle::StyleHint sh, const QStyleOption *opt, const QWidget *widget, QStyleHintReturn *hret) const override": {
+      "brief": "Reimplements: [QStyle::styleHint](xref:qt:QStyle)(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#styleHint"
+    },
+    "void drawComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QPainter *p, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::drawComplexControl](xref:qt:QStyle)(QStyle::ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#drawComplexControl"
+    },
+    "void drawControl(QStyle::ControlElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::drawControl](xref:qt:QStyle)(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#drawControl"
+    },
+    "void drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::drawPrimitive](xref:qt:QStyle)(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#drawPrimitive"
+    },
+    "void polish(QApplication *app) override": {
+      "brief": "Reimplements: [QStyle::polish](xref:qt:QStyle)(QApplication *application).",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#polish"
+    },
+    "void polish(QPalette &pal) override": {
+      "brief": "Reimplements: [QStyle::polish](xref:qt:QStyle)(QPalette &palette).",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#polish-1"
+    },
+    "void polish(QWidget *widget) override": {
+      "brief": "Reimplements: [QStyle::polish](xref:qt:QStyle)(QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#polish-2"
+    },
+    "void unpolish(QApplication *application) override": {
+      "brief": "Reimplements: [QStyle::unpolish](xref:qt:QStyle)(QApplication *application).",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#unpolish"
+    },
+    "void unpolish(QWidget *widget) override": {
+      "brief": "Reimplements: [QStyle::unpolish](xref:qt:QStyle)(QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qcommonstyle.html#unpolish-1"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

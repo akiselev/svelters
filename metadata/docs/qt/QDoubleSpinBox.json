@@ -1,0 +1,169 @@
+{
+  "doc": {
+    "brief": "The QDoubleSpinBox class provides a spin box widget that takes doubles.",
+    "index_brief": "Spin box widget that takes doubles",
+    "url": "https://doc.qt.io/qt-6/qdoublespinbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDoubleSpinBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractSpinBox::StepType stepType() const": {
+      "brief": "This property holds the step type.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#stepType-prop"
+    },
+    "QDoubleSpinBox(QWidget *parent)": {
+      "brief": "Constructs a spin box with 0.0 as minimum value and 99.99 as maximum value, a step value of 1.0 and a precision of 2 decimal places.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#QDoubleSpinBox"
+    },
+    "QString cleanText() const": {
+      "brief": "This property holds the text of the spin box excluding any prefix, suffix, or leading or trailing whitespace.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#cleanText-prop"
+    },
+    "QString prefix() const": {
+      "brief": "This property holds the spin box's prefix",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#prefix-prop"
+    },
+    "QString suffix() const": {
+      "brief": "This property holds the suffix of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#suffix-prop"
+    },
+    "QString textFromValue(double value) const": {
+      "brief": "This virtual function is used by the spin box whenever it needs to display the given *value*.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#textFromValue"
+    },
+    "QValidator::State validate(QString &text, int &pos) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::validate](xref:qt:QAbstractSpinBox)(QString &input, int &pos) const.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#validate"
+    },
+    "double maximum() const": {
+      "brief": "This property holds the maximum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#maximum-prop"
+    },
+    "double minimum() const": {
+      "brief": "This property holds the minimum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#minimum-prop"
+    },
+    "double singleStep() const": {
+      "brief": "This property holds the step value",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#singleStep-prop"
+    },
+    "double value() const": {
+      "brief": "This property holds the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#value-prop"
+    },
+    "double valueFromText(const QString &text) const": {
+      "brief": "This virtual function is used by the spin box whenever it needs to interpret *text* entered by the user as a value.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#valueFromText"
+    },
+    "int decimals() const": {
+      "brief": "This property holds the precision of the spin box, in decimals",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#decimals-prop"
+    },
+    "void fixup(QString &input) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::fixup](xref:qt:QAbstractSpinBox)(QString &input) const.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#fixup"
+    },
+    "void setDecimals(int prec)": {
+      "brief": "This property holds the precision of the spin box, in decimals",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#decimals-prop"
+    },
+    "void setMaximum(double max)": {
+      "brief": "This property holds the maximum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#maximum-prop"
+    },
+    "void setMinimum(double min)": {
+      "brief": "This property holds the minimum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#minimum-prop"
+    },
+    "void setPrefix(const QString &prefix)": {
+      "brief": "This property holds the spin box's prefix",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#prefix-prop"
+    },
+    "void setRange(double minimum, double maximum)": {
+      "brief": "Convenience function to set the *minimum* and *maximum* values with a single function call.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#setRange"
+    },
+    "void setSingleStep(double val)": {
+      "brief": "This property holds the step value",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#singleStep-prop"
+    },
+    "void setStepType(QAbstractSpinBox::StepType stepType)": {
+      "brief": "Sets the step type for the spin box to *stepType*, which is single step or adaptive decimal step.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#setStepType"
+    },
+    "void setSuffix(const QString &suffix)": {
+      "brief": "This property holds the suffix of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#suffix-prop"
+    },
+    "void setValue(double val)": {
+      "brief": "This property holds the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#value-prop"
+    },
+    "void textChanged(const QString &text)": {
+      "brief": "This signal is emitted whenever the spin box's text is changed.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#textChanged"
+    },
+    "void valueChanged(double d)": {
+      "brief": "This signal is emitted whenever the spin box's value is changed.",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#valueChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "cleanText": {
+      "brief": "The text of the spin box excluding any prefix, suffix, or leading or trailing whitespace",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#cleanText-prop"
+    },
+    "decimals": {
+      "brief": "The precision of the spin box, in decimals",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#decimals-prop"
+    },
+    "maximum": {
+      "brief": "The maximum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#maximum-prop"
+    },
+    "minimum": {
+      "brief": "The minimum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#minimum-prop"
+    },
+    "prefix": {
+      "brief": "The spin box's prefix",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#prefix-prop"
+    },
+    "singleStep": {
+      "brief": "The step value",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#singleStep-prop"
+    },
+    "stepType": {
+      "brief": "Step type",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#stepType-prop"
+    },
+    "suffix": {
+      "brief": "The suffix of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#suffix-prop"
+    },
+    "value": {
+      "brief": "The value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qdoublespinbox.html#value-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qdoublespinbox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

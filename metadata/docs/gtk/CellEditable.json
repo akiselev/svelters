@@ -1,0 +1,88 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Interface for widgets that can be used for editing cells",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets for displaying their\n  contents. See [`Editable`](xref:gtk:Gtk.Editable) for editable text widgets",
+    "file": "gtk/deprecated/gtkcelleditable.c",
+    "line": 18,
+    "md": "Interface for widgets that can be used for editing cells\n\nThe `GtkCellEditable` interface must be implemented for widgets to be usable\nto edit the contents of a `GtkTreeView` cell. It provides a way to specify how\ntemporary widgets should be configured for editing, get the new value, etc."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellEditable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "editing_done": {
+      "brief": "Emits the `GtkCellEditable::editing-done` signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 130,
+      "md": "Emits the `GtkCellEditable::editing-done` signal."
+    },
+    "remove_widget": {
+      "brief": "Emits the `GtkCellEditable::remove-widget` signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 146,
+      "md": "Emits the `GtkCellEditable::remove-widget` signal."
+    },
+    "start_editing": {
+      "brief": "Begins editing on a `cell_editable`.",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 104,
+      "md": "Begins editing on a `cell_editable`.\n\nThe `GtkCellRenderer` for the cell creates and returns a `GtkCellEditable` from\ngtk_cell_renderer_start_editing(), configured for the `GtkCellRenderer` type.\n\ngtk_cell_editable_start_editing() can then set up `cell_editable` suitably for\nediting a cell, e.g. making the Esc key emit `GtkCellEditable::editing-done`.\n\nNote that the `cell_editable` is created on-demand for the current edit; its\nlifetime is temporary and does not persist across other edits and/or cells."
+    }
+  },
+  "properties": {
+    "editing-canceled": {
+      "brief": "Indicates whether editing on the cell has been canceled.",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 44,
+      "md": "Indicates whether editing on the cell has been canceled."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "editing-done": {
+      "brief": "This signal is a sign for the cell renderer to update its value from the `cell_editable`.",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 54,
+      "md": "This signal is a sign for the cell renderer to update its\nvalue from the `cell_editable`.\n\nImplementations of `GtkCellEditable` are responsible for\nemitting this signal when they are done editing, e.g.\n`GtkEntry` emits this signal when the user presses Enter. Typical things to\ndo in a handler for ::editing-done are to capture the edited value,\ndisconnect the `cell_editable` from signals on the `GtkCellRenderer`, etc.\n\ngtk_cell_editable_editing_done() is a convenience method\nfor emitting `GtkCellEditable::editing-done`."
+    },
+    "remove-widget": {
+      "brief": "This signal is meant to indicate that the cell is finished editing, and the `cell_editable` widget is being removed and may subsequently be destroyed.",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 78,
+      "md": "This signal is meant to indicate that the cell is finished\nediting, and the `cell_editable` widget is being removed and may\nsubsequently be destroyed.\n\nImplementations of `GtkCellEditable` are responsible for\nemitting this signal when they are done editing. It must\nbe emitted after the `GtkCellEditable::editing-done` signal,\nto give the cell renderer a chance to update the cell's value\nbefore the widget is removed.\n\ngtk_cell_editable_remove_widget() is a convenience method\nfor emitting `GtkCellEditable::remove-widget`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "editing_done": {
+      "brief": "Emits the `GtkCellEditable::editing-done` signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 130,
+      "md": "Emits the `GtkCellEditable::editing-done` signal."
+    },
+    "remove_widget": {
+      "brief": "Emits the `GtkCellEditable::remove-widget` signal.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 146,
+      "md": "Emits the `GtkCellEditable::remove-widget` signal."
+    },
+    "start_editing": {
+      "brief": "Begins editing on a `cell_editable`.",
+      "file": "gtk/deprecated/gtkcelleditable.c",
+      "line": 104,
+      "md": "Begins editing on a `cell_editable`.\n\nThe `GtkCellRenderer` for the cell creates and returns a `GtkCellEditable` from\ngtk_cell_renderer_start_editing(), configured for the `GtkCellRenderer` type.\n\ngtk_cell_editable_start_editing() can then set up `cell_editable` suitably for\nediting a cell, e.g. making the Esc key emit `GtkCellEditable::editing-done`.\n\nNote that the `cell_editable` is created on-demand for the current edit; its\nlifetime is temporary and does not persist across other edits and/or cells."
+    }
+  }
+}

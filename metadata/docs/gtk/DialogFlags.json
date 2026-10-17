@@ -1,0 +1,45 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Flags used to influence dialog construction.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtkdialog.h",
+    "line": 35,
+    "md": "Flags used to influence dialog construction."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DialogFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "destroy_with_parent": {
+      "brief": "Destroy the dialog when its parent is destroyed",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 38,
+      "md": "Destroy the dialog when its parent is destroyed"
+    },
+    "modal": {
+      "brief": "Make the constructed dialog modal",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 37,
+      "md": "Make the constructed dialog modal"
+    },
+    "use_header_bar": {
+      "brief": "Create dialog with actions in header bar instead of action area",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 39,
+      "md": "Create dialog with actions in header\n  bar instead of action area"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

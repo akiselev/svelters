@@ -30,31 +30,46 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionTitleBar::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionTitleBar::Type",
           "name": "Type",
           "value": "SO_TitleBar"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionTitleBar::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionTitleBar::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionTitleBar",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionTitleBar:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a title bar",

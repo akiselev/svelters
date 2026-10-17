@@ -1,0 +1,38 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Values for the [`Settings:gtk-interface-reduced-motion`](xref:gtk:Gtk.Settings#property:gtk-interface-reduced-motion) and [`CssProvider:prefers-reduced-motion`](xref:gtk:Gtk.CssProvider#property:prefers-reduced-motion)...",
+    "file": "gtk/gtkenums.h",
+    "line": 2047,
+    "md": "Values for the [`Settings:gtk-interface-reduced-motion`](xref:gtk:Gtk.Settings#property:gtk-interface-reduced-motion)\nand [`CssProvider:prefers-reduced-motion`](xref:gtk:Gtk.CssProvider#property:prefers-reduced-motion) properties\nthat indicates the preferred level of motion animations.\n\nThis information can be used inside CSS via media queries.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ReducedMotion",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "no_preference": {
+      "brief": "The user has made no preference known to the system",
+      "file": "gtk/gtkenums.h",
+      "line": 2049,
+      "md": "The user has made no preference known to the system"
+    },
+    "reduce": {
+      "brief": "The user has notified the system that they prefer an interface that removes or replaces the types of motion-based animation that either trigger discomfort for those with vestibular motion sensitivity, or distraction for...",
+      "file": "gtk/gtkenums.h",
+      "line": 2050,
+      "md": "The user has notified the system that they\n  prefer an interface that removes or replaces the types of motion-based\n  animation that either trigger discomfort for those with vestibular\n  motion sensitivity, or distraction for those with attention deficits"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

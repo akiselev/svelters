@@ -15,6 +15,7 @@
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
 //! backend's one-shot `schedule_wake` for the earliest deadline.
 
+mod convert;
 mod core;
 mod engine;
 mod quickjs;
@@ -34,7 +35,9 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use svelters_abi::{AbiError, BackendRef, HostCallbacks, HostVtable, Value, svl_handle, svl_id};
+use svelters_abi::{
+    AbiError, BackendRef, HostCallbacks, HostVtable, SyncError, Value, svl_handle, svl_id,
+};
 
 type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
 
@@ -63,8 +66,20 @@ impl HostCallbacks for Callbacks {
         core::checkpoint(&self.core, &self.engine);
     }
 
-    fn call_sync(&self, _h: svl_handle, _signal: svl_id, _args: &[Value]) -> Result<Value, String> {
-        Err("call_sync is not supported yet (M4)".into())
+    fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<Value, SyncError> {
+        core::call_sync(&self.core, &self.engine, h, signal, args)
+    }
+
+    fn frame(&self) {
+        core::frame(&self.core, &self.engine);
+    }
+
+    fn invoke_callback(&self, callback: u64, args: &[Value]) -> Result<Value, String> {
+        self.core.invoke_callback(callback, args)
+    }
+
+    fn release_callback(&self, callback: u64) {
+        self.core.release_callback_from_native(callback);
     }
 
     fn on_destroyed(&self, h: svl_handle, reason: u32) {
@@ -156,9 +171,32 @@ impl<'a> Host<'a> {
         self.core.backend().run(&self.vt)
     }
 
+    /// The `svl_host` callbacks this host gives its backend, for embedders and tests that pump the
+    /// toolkit loop themselves instead of calling [`Host::run`] (attach them to the backend first).
+    pub fn host_callbacks(&self) -> *const svelters_abi::svl_host {
+        self.vt.as_raw()
+    }
+
     /// Runs one checkpoint directly (what the backend triggers through `svl_host.checkpoint`).
     pub fn checkpoint(&self) {
         core::checkpoint(&self.core, &self.engine);
+    }
+
+    /// Runs a full garbage collection. Values JS dropped without `dispose()` are queued for release
+    /// by their finalization callbacks (jobs) and handed to the backend at the next checkpoint.
+    pub fn collect_garbage(&self) {
+        let Some(_guard) = self.core.enter() else { return };
+        self.engine.borrow_mut().collect_garbage();
+    }
+
+    /// Number of callbacks that are still registered.
+    pub fn live_callbacks(&self) -> usize {
+        self.core.live_callbacks()
+    }
+
+    /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).
+    pub fn live_boxed(&self) -> usize {
+        self.core.live_boxed()
     }
 
     /// Runs queued JS jobs to exhaustion without firing timers or events.

@@ -1,0 +1,329 @@
+{
+  "doc": {
+    "brief": "The QMessageBox class provides a modal dialog for informing the user or for asking the user a question and receiving an answer.",
+    "index_brief": "Modal dialog for informing the user or for asking the user a question and receiving an answer",
+    "url": "https://doc.qt.io/qt-6/qmessagebox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QMessageBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractButton * button(QMessageBox::StandardButton which) const": {
+      "brief": "Returns a pointer corresponding to the standard button *which*, or `nullptr` if the standard button doesn't exist in this message box.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#button"
+    },
+    "QAbstractButton * clickedButton() const": {
+      "brief": "Returns the button that was clicked by the user, or `nullptr` if the user hit the **Esc** key and no [escape button](xref:qt:QMessageBox) was set.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#clickedButton"
+    },
+    "QAbstractButton * escapeButton() const": {
+      "brief": "Returns the button that is activated when escape is pressed.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#escapeButton"
+    },
+    "QCheckBox * checkBox() const": {
+      "brief": "Returns the checkbox shown on the dialog.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#checkBox"
+    },
+    "QList<QAbstractButton *> buttons() const": {
+      "brief": "Returns a list of all the buttons that have been added to the message box.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#buttons"
+    },
+    "QMessageBox(QMessageBox::Icon icon, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs an [application modal](https://doc.qt.io/qt-6/qt.html#WindowModality-enum) message box with the given *icon*, *title*, *text*, and standard *buttons*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#QMessageBox-1"
+    },
+    "QMessageBox(QWidget *parent)": {
+      "brief": "Constructs an [application modal](https://doc.qt.io/qt-6/qt.html#WindowModality-enum) message box with no text and no buttons. *parent* is passed to the [QDialog](xref:qt:QDialog) constructor.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#QMessageBox"
+    },
+    "QMessageBox(const QString &title, const QString &text, QMessageBox::Icon icon, int button0, int button1, int button2, QWidget *parent, Qt::WindowFlags f)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#QMessageBox-2"
+    },
+    "QMessageBox::ButtonRole buttonRole(QAbstractButton *button) const": {
+      "brief": "Returns the button role for the specified *button*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#buttonRole"
+    },
+    "QMessageBox::Icon icon() const": {
+      "brief": "This property holds the message box's icon",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#icon-prop"
+    },
+    "QMessageBox::Options options() const": {
+      "brief": "Options that affect the look and feel of the dialog.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#options-prop"
+    },
+    "QMessageBox::StandardButton critical(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)": {
+      "brief": "Opens a critical message box with the given *title* and *text* in front of the specified *parent* widget.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#critical"
+    },
+    "QMessageBox::StandardButton information(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)": {
+      "brief": "Opens an information message box with the given *title* and *text* in front of the specified *parent* widget.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#information"
+    },
+    "QMessageBox::StandardButton question(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)": {
+      "brief": "Opens a question message box with the given *title* and *text* in front of the specified *parent* widget.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#question"
+    },
+    "QMessageBox::StandardButton standardButton(QAbstractButton *button) const": {
+      "brief": "Returns the standard button enum value corresponding to the given *button*, or [NoButton](xref:qt:QMessageBox) if the given *button* isn't a standard button.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#standardButton"
+    },
+    "QMessageBox::StandardButton warning(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)": {
+      "brief": "Opens a warning message box with the given *title* and *text* in front of the specified *parent* widget.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#warning"
+    },
+    "QMessageBox::StandardButtons standardButtons() const": {
+      "brief": "collection of standard buttons in the message box",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#standardButtons-prop"
+    },
+    "QPixmap iconPixmap() const": {
+      "brief": "This property holds the current icon",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#iconPixmap-prop"
+    },
+    "QPixmap standardIcon(QMessageBox::Icon icon)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#standardIcon"
+    },
+    "QPushButton * addButton(QMessageBox::StandardButton button)": {
+      "brief": "Adds a standard *button* to the message box if it is valid to do so, and returns the push button.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#addButton-1"
+    },
+    "QPushButton * addButton(const QString &text, QMessageBox::ButtonRole role)": {
+      "brief": "Creates a button with the given *text*, adds it to the message box for the specified *role*, and returns it.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#addButton-2"
+    },
+    "QPushButton * defaultButton() const": {
+      "brief": "Returns the button that should be the message box's [default button](xref:qt:QPushButton).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#defaultButton"
+    },
+    "QString buttonText(int button) const": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#buttonText"
+    },
+    "QString detailedText() const": {
+      "brief": "This property holds the text to be displayed in the details area.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#detailedText-prop"
+    },
+    "QString informativeText() const": {
+      "brief": "This property holds the informative text that provides a fuller description for the message",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#informativeText-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the message box text to be displayed.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#text-prop"
+    },
+    "Qt::TextFormat textFormat() const": {
+      "brief": "This property holds the format of the text displayed by the message box",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#textFormat-prop"
+    },
+    "Qt::TextInteractionFlags textInteractionFlags() const": {
+      "brief": "Specifies how the label of the message box should interact with user input.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#textInteractionFlags-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#event"
+    },
+    "bool testOption(QMessageBox::Option option) const": {
+      "brief": "Returns `true` if the given *option* is enabled; otherwise, returns false.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#testOption"
+    },
+    "int critical(QWidget *parent, const QString &title, const QString &text, const QString &button0Text, const QString &button1Text, const QString &button2Text, int defaultButtonNumber, int escapeButtonNumber)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#critical-2"
+    },
+    "int critical(QWidget *parent, const QString &title, const QString &text, int button0, int button1, int button2)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#critical-1"
+    },
+    "int exec() override": {
+      "brief": "Reimplements: [QDialog::exec](xref:qt:QDialog)().",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#exec"
+    },
+    "int information(QWidget *parent, const QString &title, const QString &text, const QString &button0Text, const QString &button1Text, const QString &button2Text, int defaultButtonNumber, int escapeButtonNumber)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#information-2"
+    },
+    "int information(QWidget *parent, const QString &title, const QString &text, int button0, int button1, int button2)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#information-1"
+    },
+    "int question(QWidget *parent, const QString &title, const QString &text, const QString &button0Text, const QString &button1Text, const QString &button2Text, int defaultButtonNumber, int escapeButtonNumber)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#question-2"
+    },
+    "int question(QWidget *parent, const QString &title, const QString &text, int button0, int button1, int button2)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#question-1"
+    },
+    "int warning(QWidget *parent, const QString &title, const QString &text, const QString &button0Text, const QString &button1Text, const QString &button2Text, int defaultButtonNumber, int escapeButtonNumber)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#warning-2"
+    },
+    "int warning(QWidget *parent, const QString &title, const QString &text, int button0, int button1, int button2)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#warning-1"
+    },
+    "void about(QWidget *parent, const QString &title, const QString &text)": {
+      "brief": "Displays a simple about box with title *title* and text *text*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#about"
+    },
+    "void aboutQt(QWidget *parent, const QString &title)": {
+      "brief": "Displays a simple message box about Qt, with the given *title* and centered over *parent* (if *parent* is not `nullptr`).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#aboutQt"
+    },
+    "void addButton(QAbstractButton *button, QMessageBox::ButtonRole role)": {
+      "brief": "Adds the given *button* to the message box with the specified *role*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#addButton"
+    },
+    "void buttonClicked(QAbstractButton *button)": {
+      "brief": "This signal is emitted whenever a button is clicked inside the [QMessageBox](xref:qt:QMessageBox).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#buttonClicked"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#changeEvent"
+    },
+    "void closeEvent(QCloseEvent *e) override": {
+      "brief": "Reimplements: [QDialog::closeEvent](xref:qt:QDialog)(QCloseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#closeEvent"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QDialog::keyPressEvent](xref:qt:QDialog)(QKeyEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#keyPressEvent"
+    },
+    "void open(QObject *receiver, const char *member)": {
+      "brief": "Opens the dialog and connects its [finished](xref:qt:QDialog)() or [buttonClicked](xref:qt:QMessageBox)() signal to the slot specified by *receiver* and *member*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#open"
+    },
+    "void removeButton(QAbstractButton *button)": {
+      "brief": "Removes *button* from the button box without deleting it.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#removeButton"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QDialog::resizeEvent](xref:qt:QDialog)(QResizeEvent *).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#resizeEvent"
+    },
+    "void setButtonText(int button, const QString &text)": {
+      "url": "https://doc.qt.io/qt-6/qmessagebox-obsolete.html#setButtonText"
+    },
+    "void setCheckBox(QCheckBox *cb)": {
+      "brief": "Sets the checkbox *cb* on the message dialog.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setCheckBox"
+    },
+    "void setDefaultButton(QMessageBox::StandardButton button)": {
+      "brief": "Sets the message box's [default button](xref:qt:QPushButton) to *button*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setDefaultButton"
+    },
+    "void setDefaultButton(QPushButton *button)": {
+      "brief": "Sets the message box's [default button](xref:qt:QPushButton) to *button*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setDefaultButton-1"
+    },
+    "void setDetailedText(const QString &text)": {
+      "brief": "This property holds the text to be displayed in the details area.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#detailedText-prop"
+    },
+    "void setEscapeButton(QAbstractButton *button)": {
+      "brief": "Sets the button that gets activated when the **Escape** key is pressed to *button*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setEscapeButton"
+    },
+    "void setEscapeButton(QMessageBox::StandardButton button)": {
+      "brief": "Sets the buttons that gets activated when the **Escape** key is pressed to *button*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setEscapeButton-1"
+    },
+    "void setIcon(QMessageBox::Icon)": {
+      "brief": "This property holds the message box's icon",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#icon-prop"
+    },
+    "void setIconPixmap(const QPixmap &pixmap)": {
+      "brief": "This property holds the current icon",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#iconPixmap-prop"
+    },
+    "void setInformativeText(const QString &text)": {
+      "brief": "This property holds the informative text that provides a fuller description for the message",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#informativeText-prop"
+    },
+    "void setOption(QMessageBox::Option option, bool on)": {
+      "brief": "Sets the given *option* to be enabled if *on* is true; otherwise, clears the given *option*.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setOption"
+    },
+    "void setOptions(QMessageBox::Options options)": {
+      "brief": "Options that affect the look and feel of the dialog.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#options-prop"
+    },
+    "void setStandardButtons(QMessageBox::StandardButtons buttons)": {
+      "brief": "collection of standard buttons in the message box",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#standardButtons-prop"
+    },
+    "void setText(const QString &text)": {
+      "brief": "This property holds the message box text to be displayed.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#text-prop"
+    },
+    "void setTextFormat(Qt::TextFormat format)": {
+      "brief": "This property holds the format of the text displayed by the message box",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#textFormat-prop"
+    },
+    "void setTextInteractionFlags(Qt::TextInteractionFlags flags)": {
+      "brief": "Specifies how the label of the message box should interact with user input.",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#textInteractionFlags-prop"
+    },
+    "void setWindowModality(Qt::WindowModality windowModality)": {
+      "brief": "This function shadows [QWidget::setWindowModality](xref:qt:QWidget)().",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setWindowModality"
+    },
+    "void setWindowTitle(const QString &title)": {
+      "brief": "This function shadows [QWidget::setWindowTitle](xref:qt:QWidget)().",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#setWindowTitle"
+    },
+    "void showEvent(QShowEvent *e) override": {
+      "brief": "Reimplements: [QDialog::showEvent](xref:qt:QDialog)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#showEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "detailedText": {
+      "brief": "The text to be displayed in the details area",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#detailedText-prop"
+    },
+    "icon": {
+      "brief": "The message box's icon",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#icon-prop"
+    },
+    "iconPixmap": {
+      "brief": "The current icon",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#iconPixmap-prop"
+    },
+    "informativeText": {
+      "brief": "The informative text that provides a fuller description for the message",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#informativeText-prop"
+    },
+    "options": {
+      "brief": "Options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#options-prop"
+    },
+    "standardButtons": {
+      "brief": "Collection of standard buttons in the message box",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#standardButtons-prop"
+    },
+    "text": {
+      "brief": "The message box text to be displayed",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#text-prop"
+    },
+    "textFormat": {
+      "brief": "The format of the text displayed by the message box",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#textFormat-prop"
+    },
+    "textInteractionFlags": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qmessagebox.html#textInteractionFlags-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qmessagebox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,44 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The various platform states which can be queried using [`Accessible.get_platform_state()`](xref:gtk:Gtk.Accessible#method:get_platform_state).",
+    "file": "gtk/gtkaccessible.h",
+    "line": 38,
+    "md": "The various platform states which can be queried\nusing [`Accessible.get_platform_state()`](xref:gtk:Gtk.Accessible#method:get_platform_state).",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessiblePlatformState",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "active": {
+      "brief": "whether the accessible is active",
+      "file": "gtk/gtkaccessible.h",
+      "line": 42,
+      "md": "whether the accessible is active"
+    },
+    "focusable": {
+      "brief": "whether the accessible can be focused",
+      "file": "gtk/gtkaccessible.h",
+      "line": 40,
+      "md": "whether the accessible can be focused"
+    },
+    "focused": {
+      "brief": "whether the accessible has focus",
+      "file": "gtk/gtkaccessible.h",
+      "line": 41,
+      "md": "whether the accessible has focus"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

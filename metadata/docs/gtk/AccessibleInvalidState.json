@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible values for the %GTK_ACCESSIBLE_STATE_INVALID accessible state.",
+    "file": "gtk/gtkenums.h",
+    "line": 1849,
+    "md": "The possible values for the %GTK_ACCESSIBLE_STATE_INVALID\naccessible state.\n\nNote that the %GTK_ACCESSIBLE_INVALID_FALSE and\n%GTK_ACCESSIBLE_INVALID_TRUE have the same values\nas `FALSE` and `TRUE`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleInvalidState",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "false": {
+      "brief": "There are no detected errors in the value",
+      "file": "gtk/gtkenums.h",
+      "line": 1851,
+      "md": "There are no detected errors in the value"
+    },
+    "grammar": {
+      "brief": "A grammatical error was detected",
+      "file": "gtk/gtkenums.h",
+      "line": 1853,
+      "md": "A grammatical error was detected"
+    },
+    "spelling": {
+      "brief": "A spelling error was detected",
+      "file": "gtk/gtkenums.h",
+      "line": 1854,
+      "md": "A spelling error was detected"
+    },
+    "true": {
+      "brief": "The value entered by the user has failed validation",
+      "file": "gtk/gtkenums.h",
+      "line": 1852,
+      "md": "The value entered by the user has failed validation"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

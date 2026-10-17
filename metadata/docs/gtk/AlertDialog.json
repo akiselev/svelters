@@ -1,0 +1,182 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAlertDialog` object.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 286,
+      "md": "Creates a new `GtkAlertDialog` object.\n\nThe message will be set to the formatted string\nresulting from the arguments.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Collects the arguments that are needed to present a message to the user.",
+    "file": "gtk/gtkalertdialog.c",
+    "line": 29,
+    "md": "Collects the arguments that are needed to present a message to the user.\n\nThe message is shown with the [`AlertDialog.choose()`](xref:gtk:Gtk.AlertDialog#method:choose)\nfunction.\n\nIf you don't need to wait for a button to be clicked, you can use\n[`AlertDialog.show()`](xref:gtk:Gtk.AlertDialog#method:show).",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AlertDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "choose": {
+      "brief": "Shows the alert to the user.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 678,
+      "md": "Shows the alert to the user.\n\nIt is ok to pass `NULL` for the callback if the alert\ndoes not have more than one button. A simpler API for\nthis case is [`AlertDialog.show()`](xref:gtk:Gtk.AlertDialog#method:show).",
+      "since": "4.10"
+    },
+    "choose_finish": {
+      "brief": "Finishes the [`AlertDialog.choose()`](xref:gtk:Gtk.AlertDialog#method:choose) call.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 721,
+      "md": "Finishes the [`AlertDialog.choose()`](xref:gtk:Gtk.AlertDialog#method:choose) call.",
+      "since": "4.10"
+    },
+    "get_buttons": {
+      "brief": "Returns the button labels for the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 458,
+      "md": "Returns the button labels for the alert.",
+      "since": "4.10"
+    },
+    "get_cancel_button": {
+      "brief": "Returns the index of the cancel button.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 498,
+      "md": "Returns the index of the cancel button.",
+      "since": "4.10"
+    },
+    "get_default_button": {
+      "brief": "Returns the index of the default button.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 541,
+      "md": "Returns the index of the default button.",
+      "since": "4.10"
+    },
+    "get_detail": {
+      "brief": "Returns the detail text that will be shown in the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 412,
+      "md": "Returns the detail text that will be shown in the alert.",
+      "since": "4.10"
+    },
+    "get_message": {
+      "brief": "Returns the message that will be shown in the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 366,
+      "md": "Returns the message that will be shown in the alert.",
+      "since": "4.10"
+    },
+    "get_modal": {
+      "brief": "Returns whether the alert blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 323,
+      "md": "Returns whether the alert blocks interaction\nwith the parent window while it is presented.",
+      "since": "4.10"
+    },
+    "set_buttons": {
+      "brief": "Sets the button labels for the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 476,
+      "md": "Sets the button labels for the alert.",
+      "since": "4.10"
+    },
+    "set_cancel_button": {
+      "brief": "Sets the index of the cancel button.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 516,
+      "md": "Sets the index of the cancel button.\n\nSee [`AlertDialog:cancel-button`](xref:gtk:Gtk.AlertDialog#property:cancel-button) for\ndetails of how this value is used.",
+      "since": "4.10"
+    },
+    "set_default_button": {
+      "brief": "Sets the index of the default button.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 559,
+      "md": "Sets the index of the default button.\n\nSee [`AlertDialog:default-button`](xref:gtk:Gtk.AlertDialog#property:default-button) for\ndetails of how this value is used.",
+      "since": "4.10"
+    },
+    "set_detail": {
+      "brief": "Sets the detail text that will be shown in the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 430,
+      "md": "Sets the detail text that will be shown in the alert.",
+      "since": "4.10"
+    },
+    "set_message": {
+      "brief": "Sets the message that will be shown in the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 384,
+      "md": "Sets the message that will be shown in the alert.",
+      "since": "4.10"
+    },
+    "set_modal": {
+      "brief": "Sets whether the alert blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 342,
+      "md": "Sets whether the alert blocks interaction\nwith the parent window while it is presented.",
+      "since": "4.10"
+    },
+    "show": {
+      "brief": "Shows the alert to the user.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 750,
+      "md": "Shows the alert to the user.\n\nThis function is a simpler version of [`AlertDialog.choose()`](xref:gtk:Gtk.AlertDialog#method:choose)\nintended for dialogs with a single button.\n\nIf you want to cancel the dialog or if the alert has more than one\nbutton, you should use that function instead and provide it with a\n[`Cancellable`](xref:gtk:Gio.Cancellable) and callback respectively.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "buttons": {
+      "brief": "Labels for buttons to show in the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 222,
+      "md": "Labels for buttons to show in the alert.\n\nThe labels should be translated and may contain\na `_` character to indicate the mnemonic character.\n\nIf this property is not set, then a 'Close' button is\nautomatically created.",
+      "since": "4.10"
+    },
+    "cancel-button": {
+      "brief": "Determines what happens when the <kbd>Escape</kbd> key is pressed while the alert is shown.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 240,
+      "md": "Determines what happens when the <kbd>Escape</kbd> key is pressed\nwhile the alert is shown.\n\nIf this property holds the index of a button in [`AlertDialog:buttons`](xref:gtk:Gtk.AlertDialog#property:buttons),\nthen pressing Escape is treated as if that button was pressed. If it is -1\nor not a valid index for the `buttons` array, then an error is returned.\n\nIf `buttons` is `NULL`, then the automatically created 'Close' button\nis treated as both cancel and default button, so 0 is returned.",
+      "since": "4.10"
+    },
+    "default-button": {
+      "brief": "Determines what happens when the <kbd>Return</kbd> key is pressed while the alert is shown.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 260,
+      "md": "Determines what happens when the <kbd>Return</kbd> key is pressed\nwhile the alert is shown.\n\nIf this property holds the index of a button in [`AlertDialog:buttons`](xref:gtk:Gtk.AlertDialog#property:buttons),\nthen pressing Return is treated as if that button was pressed. If it is -1\nor not a valid index for the `buttons` array, then nothing happens.\n\nIf `buttons` is `NULL`, then the automatically created 'Close' button\nis treated as both cancel and default button, so 0 is returned.",
+      "since": "4.10"
+    },
+    "detail": {
+      "brief": "The detail text for the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 210,
+      "md": "The detail text for the alert.",
+      "since": "4.10"
+    },
+    "message": {
+      "brief": "The message for the alert.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 198,
+      "md": "The message for the alert.",
+      "since": "4.10"
+    },
+    "modal": {
+      "brief": "Whether the alert is modal.",
+      "file": "gtk/gtkalertdialog.c",
+      "line": 186,
+      "md": "Whether the alert is modal.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

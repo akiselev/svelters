@@ -1,0 +1,122 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Error codes that identify various errors that can occur while using `GtkBuilder`.",
+    "file": "gtk/gtkbuilder.h",
+    "line": 41,
+    "md": "Error codes that identify various errors that can occur while using\n`GtkBuilder`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BuilderError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "duplicate_id": {
+      "brief": "An object id occurred twice.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 59,
+      "md": "An object id occurred twice."
+    },
+    "invalid_attribute": {
+      "brief": "`GtkBuilder` found an attribute that it doesn’t understand.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 49,
+      "md": "`GtkBuilder` found an attribute that\n it doesn’t understand."
+    },
+    "invalid_function": {
+      "brief": "A function could not be found.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 66,
+      "md": "A function could not be found. This often happens\n  when symbols are set to be kept private. Compiling code with -rdynamic or using the\n  `gmodule-export-2.0` pkgconfig module can fix this problem."
+    },
+    "invalid_id": {
+      "brief": "An object id is unknown.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 65,
+      "md": "An object id is unknown."
+    },
+    "invalid_property": {
+      "brief": "The specified property is unknown for the object class.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 63,
+      "md": "The specified property is unknown for the object class."
+    },
+    "invalid_signal": {
+      "brief": "The specified signal is unknown for the object class.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 64,
+      "md": "The specified signal is unknown for the object class."
+    },
+    "invalid_tag": {
+      "brief": "`GtkBuilder` found a tag that it doesn’t understand.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 51,
+      "md": "`GtkBuilder` found a tag that\n it doesn’t understand."
+    },
+    "invalid_type_function": {
+      "brief": "A type-func attribute didn’t name a function that returns a `GType`.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 43,
+      "md": "A type-func attribute didn’t name\n a function that returns a `GType`."
+    },
+    "invalid_value": {
+      "brief": "`GtkBuilder` couldn’t parse some attribute value.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 55,
+      "md": "`GtkBuilder` couldn’t parse\n some attribute value."
+    },
+    "missing_attribute": {
+      "brief": "An attribute that is required by `GtkBuilder` was missing.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 47,
+      "md": "An attribute that is required by\n `GtkBuilder` was missing."
+    },
+    "missing_property_value": {
+      "brief": "A required property value was missing.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 53,
+      "md": "A required property value was\n missing."
+    },
+    "object_type_refused": {
+      "brief": "A specified object type is of the same type or derived from the type of the composite class being extended with builder XML.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 60,
+      "md": "A specified object type is of the same type or\n derived from the type of the composite class being extended with builder XML."
+    },
+    "template_mismatch": {
+      "brief": "The wrong type was specified in a composite class’s template XML",
+      "file": "gtk/gtkbuilder.h",
+      "line": 62,
+      "md": "The wrong type was specified in a composite class’s template XML"
+    },
+    "unhandled_tag": {
+      "brief": "The input contained a tag that `GtkBuilder` can’t handle.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 45,
+      "md": "The input contained a tag that `GtkBuilder`\n can’t handle."
+    },
+    "version_mismatch": {
+      "brief": "The input file requires a newer version of GTK.",
+      "file": "gtk/gtkbuilder.h",
+      "line": 57,
+      "md": "The input file requires a newer version\n of GTK."
+    }
+  },
+  "methods": {
+    "quark": {
+      "brief": "Registers an error quark for [`Builder`](xref:gtk:Gtk.Builder) errors.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 3060,
+      "md": "Registers an error quark for [`Builder`](xref:gtk:Gtk.Builder) errors."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

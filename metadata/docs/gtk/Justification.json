@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used for justifying the text inside a [`Label`](xref:gtk:Label) widget.",
+    "file": "gtk/gtkenums.h",
+    "line": 273,
+    "md": "Used for justifying the text inside a [`Label`](xref:gtk:Label) widget."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Justification",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "center": {
+      "brief": "The text is placed in the center of the label.",
+      "file": "gtk/gtkenums.h",
+      "line": 277,
+      "md": "The text is placed in the center of the label."
+    },
+    "fill": {
+      "brief": "The text is placed is distributed across the label.",
+      "file": "gtk/gtkenums.h",
+      "line": 278,
+      "md": "The text is placed is distributed across the label."
+    },
+    "left": {
+      "brief": "The text is placed at the left edge of the label.",
+      "file": "gtk/gtkenums.h",
+      "line": 275,
+      "md": "The text is placed at the left edge of the label."
+    },
+    "right": {
+      "brief": "The text is placed at the right edge of the label.",
+      "file": "gtk/gtkenums.h",
+      "line": 276,
+      "md": "The text is placed at the right edge of the label."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

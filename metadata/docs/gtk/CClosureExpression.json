@@ -1,0 +1,31 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkExpression` that calls `callback_func` when it is evaluated.",
+      "file": "gtk/gtkexpression.c",
+      "line": 1807,
+      "md": "Creates a `GtkExpression` that calls `callback_func` when it is evaluated.\n\nThis function is a variant of [`ClosureExpression.new()`](xref:gtk:Gtk.ClosureExpression#constructor:new) that\ncreates a `GClosure` by calling g_cclosure_new() with the given\n`callback_func`, `user_data` and `user_destroy`."
+    }
+  },
+  "doc": {
+    "brief": "A variant of `GtkClosureExpression` using a C closure.",
+    "file": "gtk/gtkexpression.c",
+    "line": 1781,
+    "md": "A variant of `GtkClosureExpression` using a C closure."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CClosureExpression",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -99,6 +99,24 @@
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ToggleButton",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:label",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "label",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked",
+        "from": "svelters-api:v1:type:gtk:Gtk:Button",
+        "name": "clicked",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Actionable",
@@ -106,6 +124,16 @@
     "Gtk.ConstraintTarget"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:ToggleButton:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:ToggleButton:method:get_active",

@@ -44,23 +44,31 @@
   ],
   "enums": [
     {
+      "flags_alias": "QMdiArea::AreaOptions",
+      "fullname": "QMdiArea::AreaOption",
       "members": [
         {
+          "cpp": "QMdiArea::DontMaximizeSubWindowOnActivation",
           "name": "DontMaximizeSubWindowOnActivation",
           "value": "0x1"
         }
       ],
       "metaobject": null,
       "name": "AreaOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QMdiArea::ViewMode",
       "members": [
         {
+          "cpp": "QMdiArea::SubWindowView",
           "name": "SubWindowView",
           "value": "0"
         },
         {
+          "cpp": "QMdiArea::TabbedView",
           "name": "TabbedView",
           "value": "1"
         }
@@ -74,19 +82,25 @@
         "scoped": false
       },
       "name": "ViewMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QMdiArea::WindowOrder",
       "members": [
         {
+          "cpp": "QMdiArea::CreationOrder",
           "name": "CreationOrder",
           "value": "0"
         },
         {
+          "cpp": "QMdiArea::StackingOrder",
           "name": "StackingOrder",
           "value": "1"
         },
         {
+          "cpp": "QMdiArea::ActivationHistoryOrder",
           "name": "ActivationHistoryOrder",
           "value": "2"
         }
@@ -101,12 +115,23 @@
         "scoped": false
       },
       "name": "WindowOrder",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QMdiArea",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMdiArea:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -179,7 +204,7 @@
         "native": "QMdiArea::WindowOrder",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMdiArea::WindowOrder>"
       },
       "signature": "QMdiArea::WindowOrder activationOrder() const",
       "since": null,
@@ -244,7 +269,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -278,7 +303,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush background() const",
       "since": null,
@@ -555,7 +580,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -742,7 +767,7 @@
             "native": "QMdiArea::WindowOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiArea::WindowOrder>"
           }
         }
       ],
@@ -816,7 +841,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -890,7 +915,7 @@
             "native": "QMdiArea::AreaOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiArea::AreaOption>"
           }
         },
         {
@@ -937,7 +962,7 @@
             "native": "QTabWidget::TabPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabWidget::TabPosition>"
           }
         }
       ],
@@ -974,7 +999,7 @@
             "native": "QTabWidget::TabShape",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabWidget::TabShape>"
           }
         }
       ],
@@ -1085,7 +1110,7 @@
             "native": "QMdiArea::ViewMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiArea::ViewMode>"
           }
         }
       ],
@@ -1193,7 +1218,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1222,7 +1247,7 @@
             "native": "QMdiArea::WindowOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiArea::WindowOrder>"
           }
         }
       ],
@@ -1230,7 +1255,7 @@
         "native": "QList<QMdiSubWindow *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QMdiSubWindow>>"
       },
       "signature": "QList<QMdiSubWindow *> subWindowList(QMdiArea::WindowOrder order) const",
       "since": null,
@@ -1256,7 +1281,7 @@
         "native": "QTabWidget::TabPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabPosition>"
       },
       "signature": "QTabWidget::TabPosition tabPosition() const",
       "since": null,
@@ -1282,7 +1307,7 @@
         "native": "QTabWidget::TabShape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabShape>"
       },
       "signature": "QTabWidget::TabShape tabShape() const",
       "since": null,
@@ -1363,7 +1388,7 @@
             "native": "QMdiArea::AreaOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiArea::AreaOption>"
           }
         }
       ],
@@ -1460,7 +1485,7 @@
         "native": "QMdiArea::ViewMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMdiArea::ViewMode>"
       },
       "signature": "QMdiArea::ViewMode viewMode() const",
       "since": null,
@@ -1542,6 +1567,8 @@
         "set": "setActivationOrder"
       },
       "brief": "The ordering criteria for subwindow lists",
+      "default": "CreationOrder",
+      "default_origin": "runtime",
       "js_name": "activationOrder",
       "metaobject": {
         "constant": false,
@@ -1562,12 +1589,13 @@
       "name": "activationOrder",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "WindowOrder",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<WindowOrder>"
+        "ref": "enum<QMdiArea::WindowOrder>"
       }
     },
     {
@@ -1582,6 +1610,7 @@
         "set": "setBackground"
       },
       "brief": "The background brush for the workspace",
+      "default": null,
       "js_name": "background",
       "metaobject": {
         "constant": false,
@@ -1602,12 +1631,13 @@
       "name": "background",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       }
     },
     {
@@ -1622,6 +1652,8 @@
         "set": "setDocumentMode"
       },
       "brief": "Whether the tab bar is set to document mode in tabbed view mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "documentMode",
       "metaobject": {
         "constant": false,
@@ -1642,6 +1674,7 @@
       "name": "documentMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1662,6 +1695,7 @@
         "set": "setTabPosition"
       },
       "brief": "The position of the tabs in tabbed view mode",
+      "default": null,
       "js_name": "tabPosition",
       "metaobject": {
         "constant": false,
@@ -1682,12 +1716,13 @@
       "name": "tabPosition",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTabWidget::TabPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabPosition>"
       }
     },
     {
@@ -1702,6 +1737,7 @@
         "set": "setTabShape"
       },
       "brief": "The shape of the tabs in tabbed view mode",
+      "default": null,
       "js_name": "tabShape",
       "metaobject": {
         "constant": false,
@@ -1722,12 +1758,13 @@
       "name": "tabShape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTabWidget::TabShape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabShape>"
       }
     },
     {
@@ -1742,6 +1779,8 @@
         "set": "setTabsClosable"
       },
       "brief": "Whether the tab bar should place close buttons on each tab in tabbed view mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabsClosable",
       "metaobject": {
         "constant": false,
@@ -1762,6 +1801,7 @@
       "name": "tabsClosable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1782,6 +1822,8 @@
         "set": "setTabsMovable"
       },
       "brief": "Whether the user can move the tabs within the tabbar area in tabbed view mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabsMovable",
       "metaobject": {
         "constant": false,
@@ -1802,6 +1844,7 @@
       "name": "tabsMovable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1822,6 +1865,8 @@
         "set": "setViewMode"
       },
       "brief": "The way sub-windows are displayed in the QMdiArea",
+      "default": "SubWindowView",
+      "default_origin": "runtime",
       "js_name": "viewMode",
       "metaobject": {
         "constant": false,
@@ -1842,12 +1887,13 @@
       "name": "viewMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ViewMode>"
+        "ref": "enum<QMdiArea::ViewMode>"
       }
     }
   ],

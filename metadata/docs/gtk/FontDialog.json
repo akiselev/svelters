@@ -1,0 +1,196 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFontDialog` object.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 249,
+      "md": "Creates a new `GtkFontDialog` object.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Asynchronous API to present a font chooser dialog.",
+    "file": "gtk/gtkfontdialog.c",
+    "line": 31,
+    "md": "Asynchronous API to present a font chooser dialog.\n\n`GtkFontDialog` collects the arguments that are needed to present\nthe dialog to the user, such as a title for the dialog and whether\nit should be modal.\n\nThe dialog is shown with the [`FontDialog.choose_font()`](xref:gtk:Gtk.FontDialog#method:choose_font)\nfunction or its variants.\n\nSee [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) for a convenient control\nthat uses `GtkFontDialog` and presents the results.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "choose_face": {
+      "brief": "Presents a font chooser dialog to the user.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 696,
+      "md": "Presents a font chooser dialog to the user.\n\nThe font chooser dialog will be set up for selecting a font face.\n\nA font face represents a font family and style, but no specific font size.",
+      "since": "4.10"
+    },
+    "choose_face_finish": {
+      "brief": "Finishes the [`FontDialog.choose_face()`](xref:gtk:Gtk.FontDialog#method:choose_face) call.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 750,
+      "md": "Finishes the [`FontDialog.choose_face()`](xref:gtk:Gtk.FontDialog#method:choose_face) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "choose_family": {
+      "brief": "Presents a font chooser dialog to the user.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 612,
+      "md": "Presents a font chooser dialog to the user.\n\nThe font chooser dialog will be set up for selecting a font family.",
+      "since": "4.10"
+    },
+    "choose_family_finish": {
+      "brief": "Finishes the [`FontDialog.choose_family()`](xref:gtk:Gtk.FontDialog#method:choose_family) call.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 666,
+      "md": "Finishes the [`FontDialog.choose_family()`](xref:gtk:Gtk.FontDialog#method:choose_family) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "choose_font": {
+      "brief": "Presents a font chooser dialog to the user.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 780,
+      "md": "Presents a font chooser dialog to the user.\n\nThe font chooser dialog will be set up for selecting a font.\n\nIf you want to let the user select font features as well,\nuse [`FontDialog.choose_font_and_features()`](xref:gtk:Gtk.FontDialog#method:choose_font_and_features) instead.",
+      "since": "4.10"
+    },
+    "choose_font_and_features": {
+      "brief": "Presents a font chooser dialog to the user.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 862,
+      "md": "Presents a font chooser dialog to the user.\n\nThe font chooser dialog will be set up for selecting a font\nand specify features for the selected font.\n\nFont features affect how the font is rendered, for example\nenabling glyph variants or ligatures.",
+      "since": "4.10"
+    },
+    "choose_font_and_features_finish": {
+      "brief": "Finishes the [`FontDialog.choose_font_and_features()`](xref:gtk:Gtk.FontDialog#method:choose_font_and_features) call.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 915,
+      "md": "Finishes the [`FontDialog.choose_font_and_features()`](xref:gtk:Gtk.FontDialog#method:choose_font_and_features) call.\n\nThe selected font and features are returned in `font_desc` and\n`font_features`.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "choose_font_finish": {
+      "brief": "Finishes the [`FontDialog.choose_font()`](xref:gtk:Gtk.FontDialog#method:choose_font) call.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 831,
+      "md": "Finishes the [`FontDialog.choose_font()`](xref:gtk:Gtk.FontDialog#method:choose_font) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "get_filter": {
+      "brief": "Returns the filter that decides which fonts to display in the font chooser dialog.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 437,
+      "md": "Returns the filter that decides which fonts to display\nin the font chooser dialog.",
+      "since": "4.10"
+    },
+    "get_font_map": {
+      "brief": "Returns the fontmap from which fonts are selected, or `NULL` for the default fontmap.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 397,
+      "md": "Returns the fontmap from which fonts are selected,\nor `NULL` for the default fontmap.",
+      "since": "4.10"
+    },
+    "get_language": {
+      "brief": "Returns the language for which font features are applied.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 356,
+      "md": "Returns the language for which font features are applied.",
+      "since": "4.10"
+    },
+    "get_modal": {
+      "brief": "Returns whether the font chooser dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 313,
+      "md": "Returns whether the font chooser dialog blocks interaction\nwith the parent window while it is presented.",
+      "since": "4.10"
+    },
+    "get_title": {
+      "brief": "Returns the title that will be shown on the font chooser dialog.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 267,
+      "md": "Returns the title that will be shown on the font chooser dialog.",
+      "since": "4.10"
+    },
+    "set_filter": {
+      "brief": "Adds a filter that decides which fonts to display in the font chooser dialog.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 455,
+      "md": "Adds a filter that decides which fonts to display\nin the font chooser dialog.\n\nThe filter must be able to handle both `PangoFontFamily`\nand `PangoFontFace` objects.",
+      "since": "4.10"
+    },
+    "set_font_map": {
+      "brief": "Sets the fontmap from which fonts are selected.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 416,
+      "md": "Sets the fontmap from which fonts are selected.\n\nIf `fontmap` is `NULL`, the default fontmap is used.",
+      "since": "4.10"
+    },
+    "set_language": {
+      "brief": "Sets the language for which font features are applied.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 374,
+      "md": "Sets the language for which font features are applied.",
+      "since": "4.10"
+    },
+    "set_modal": {
+      "brief": "Sets whether the font chooser dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 332,
+      "md": "Sets whether the font chooser dialog blocks interaction\nwith the parent window while it is presented.",
+      "since": "4.10"
+    },
+    "set_title": {
+      "brief": "Sets the title that will be shown on the font chooser dialog.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 285,
+      "md": "Sets the title that will be shown on the font chooser dialog.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "filter": {
+      "brief": "A filter to restrict what fonts are shown in the font chooser dialog.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 231,
+      "md": "A filter to restrict what fonts are shown in the font chooser dialog.",
+      "since": "4.10"
+    },
+    "font-map": {
+      "brief": "A custom font map to select fonts from.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 216,
+      "md": "A custom font map to select fonts from.\n\nA custom font map can be used to present application-specific\nfonts instead of or in addition to the normal system fonts.",
+      "since": "4.10"
+    },
+    "language": {
+      "brief": "The language for which the font features are selected.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 204,
+      "md": "The language for which the font features are selected.",
+      "since": "4.10"
+    },
+    "modal": {
+      "brief": "Whether the font chooser dialog is modal.",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 192,
+      "md": "Whether the font chooser dialog is modal.",
+      "since": "4.10"
+    },
+    "title": {
+      "brief": "A title that may be shown on the font chooser dialog that is presented by [`FontDialog.choose_font()`](xref:gtk:Gtk.FontDialog#method:choose_font).",
+      "file": "gtk/gtkfontdialog.c",
+      "line": 179,
+      "md": "A title that may be shown on the font chooser\ndialog that is presented by [`FontDialog.choose_font()`](xref:gtk:Gtk.FontDialog#method:choose_font).",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

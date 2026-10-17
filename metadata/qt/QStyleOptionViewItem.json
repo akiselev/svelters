@@ -29,120 +29,161 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionViewItem::Position",
       "members": [
         {
+          "cpp": "QStyleOptionViewItem::Left",
           "name": "Left",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionViewItem::Right",
           "name": "Right",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionViewItem::Top",
           "name": "Top",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionViewItem::Bottom",
           "name": "Bottom",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "Position",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionViewItem::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionViewItem::Type",
           "name": "Type",
           "value": "SO_ViewItem"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionViewItem::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionViewItem::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QStyleOptionViewItem::ViewItemFeatures",
+      "fullname": "QStyleOptionViewItem::ViewItemFeature",
       "members": [
         {
+          "cpp": "QStyleOptionViewItem::None",
           "name": "None",
           "value": "0x00"
         },
         {
+          "cpp": "QStyleOptionViewItem::WrapText",
           "name": "WrapText",
           "value": "0x01"
         },
         {
+          "cpp": "QStyleOptionViewItem::Alternate",
           "name": "Alternate",
           "value": "0x02"
         },
         {
+          "cpp": "QStyleOptionViewItem::HasCheckIndicator",
           "name": "HasCheckIndicator",
           "value": "0x04"
         },
         {
+          "cpp": "QStyleOptionViewItem::HasDisplay",
           "name": "HasDisplay",
           "value": "0x08"
         },
         {
+          "cpp": "QStyleOptionViewItem::HasDecoration",
           "name": "HasDecoration",
           "value": "0x10"
         },
         {
+          "cpp": "QStyleOptionViewItem::IsDecoratedRootColumn",
           "name": "IsDecoratedRootColumn",
           "value": "0x20"
         },
         {
+          "cpp": "QStyleOptionViewItem::IsDecorationForRootColumn",
           "name": "IsDecorationForRootColumn",
           "value": "0x40"
         }
       ],
       "metaobject": null,
       "name": "ViewItemFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionViewItem::ViewItemPosition",
       "members": [
         {
+          "cpp": "QStyleOptionViewItem::Invalid",
           "name": "Invalid",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionViewItem::Beginning",
           "name": "Beginning",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionViewItem::Middle",
           "name": "Middle",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionViewItem::End",
           "name": "End",
           "value": "3"
         },
         {
+          "cpp": "QStyleOptionViewItem::OnlyOne",
           "name": "OnlyOne",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "ViewItemPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionViewItem",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionViewItem:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters used to draw an item in a view widget",

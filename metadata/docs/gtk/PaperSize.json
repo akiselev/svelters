@@ -1,0 +1,176 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPaperSize` object by parsing a [PWG 5101.1-2002](ftp://ftp.pwg.org/pub/pwg/candidates/cs-pwgmsn10-20020226-5101.1.pdf) paper name.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 207,
+      "md": "Creates a new `GtkPaperSize` object by parsing a\n[PWG 5101.1-2002](ftp://ftp.pwg.org/pub/pwg/candidates/cs-pwgmsn10-20020226-5101.1.pdf)\npaper name.\n\nIf `name` is `NULL`, the default paper size is returned,\nsee `get_default`."
+    },
+    "new_custom": {
+      "brief": "Creates a new `GtkPaperSize` object with the given parameters.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 464,
+      "md": "Creates a new `GtkPaperSize` object with the\ngiven parameters."
+    },
+    "new_from_gvariant": {
+      "brief": "Deserialize a paper size from a `GVariant`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 1073,
+      "md": "Deserialize a paper size from a `GVariant`.\n\nThe `GVariant must be in the format produced by\n[`PaperSize.to_gvariant()`](xref:gtk:Gtk.PaperSize#method:to_gvariant)."
+    },
+    "new_from_ipp": {
+      "brief": "Creates a new `GtkPaperSize` object by using IPP information.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 375,
+      "md": "Creates a new `GtkPaperSize` object by using\nIPP information.\n\nIf `ipp_name` is not a recognized paper name,\n`width` and `height` are used to\nconstruct a custom `GtkPaperSize` object."
+    },
+    "new_from_key_file": {
+      "brief": "Reads a paper size from the group `group_name` in the key file `key_file`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 909,
+      "md": "Reads a paper size from the group `group_name` in the key file\n`key_file`."
+    },
+    "new_from_ppd": {
+      "brief": "Creates a new `GtkPaperSize` object by using PPD information.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 295,
+      "md": "Creates a new `GtkPaperSize` object by using\nPPD information.\n\nIf `ppd_name` is not a recognized PPD paper name,\n`ppd_display_name`, `width` and `height` are used to\nconstruct a custom `GtkPaperSize` object."
+    }
+  },
+  "doc": {
+    "brief": "`GtkPaperSize` handles paper sizes.",
+    "file": "gtk/print/gtkpapersize.c",
+    "line": 43,
+    "md": "`GtkPaperSize` handles paper sizes.\n\nIt uses the standard called\n[PWG 5101.1-2002 PWG: Standard for Media Standardized Names](http://www.pwg.org/standards.html)\nto name the paper sizes (and to get the data for the page sizes).\nIn addition to standard paper sizes, `GtkPaperSize` allows to\nconstruct custom paper sizes with arbitrary dimensions.\n\nThe `GtkPaperSize` object stores not only the dimensions (width\nand height) of a paper size and its name, it also provides\ndefault print margins."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PaperSize",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Copies an existing `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 501,
+      "md": "Copies an existing `GtkPaperSize`."
+    },
+    "free": {
+      "brief": "Free the given `GtkPaperSize` object.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 532,
+      "md": "Free the given `GtkPaperSize` object."
+    },
+    "get_default": {
+      "brief": "Returns the name of the default paper size, which depends on the current locale.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 759,
+      "md": "Returns the name of the default paper size, which\ndepends on the current locale."
+    },
+    "get_default_bottom_margin": {
+      "brief": "Gets the default bottom margin for the `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 844,
+      "md": "Gets the default bottom margin for the `GtkPaperSize`."
+    },
+    "get_default_left_margin": {
+      "brief": "Gets the default left margin for the `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 871,
+      "md": "Gets the default left margin for the `GtkPaperSize`."
+    },
+    "get_default_right_margin": {
+      "brief": "Gets the default right margin for the `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 890,
+      "md": "Gets the default right margin for the `GtkPaperSize`."
+    },
+    "get_default_top_margin": {
+      "brief": "Gets the default top margin for the `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 825,
+      "md": "Gets the default top margin for the `GtkPaperSize`."
+    },
+    "get_display_name": {
+      "brief": "Gets the human-readable name of the `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 631,
+      "md": "Gets the human-readable name of the `GtkPaperSize`."
+    },
+    "get_height": {
+      "brief": "Gets the paper height of the `GtkPaperSize`, in units of `unit`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 689,
+      "md": "Gets the paper height of the `GtkPaperSize`, in\nunits of `unit`."
+    },
+    "get_name": {
+      "brief": "Gets the name of the `GtkPaperSize`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 614,
+      "md": "Gets the name of the `GtkPaperSize`."
+    },
+    "get_paper_sizes": {
+      "brief": "Creates a list of known paper sizes.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 568,
+      "md": "Creates a list of known paper sizes."
+    },
+    "get_ppd_name": {
+      "brief": "Gets the PPD name of the `GtkPaperSize`, which may be `NULL`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 653,
+      "md": "Gets the PPD name of the `GtkPaperSize`, which\nmay be `NULL`."
+    },
+    "get_width": {
+      "brief": "Gets the paper width of the `GtkPaperSize`, in units of `unit`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 672,
+      "md": "Gets the paper width of the `GtkPaperSize`, in\nunits of `unit`."
+    },
+    "is_custom": {
+      "brief": "Returns `TRUE` if `size` is not a standard paper size.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 706,
+      "md": "Returns `TRUE` if `size` is not a standard paper size."
+    },
+    "is_equal": {
+      "brief": "Compares two `GtkPaperSize` objects.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 547,
+      "md": "Compares two `GtkPaperSize` objects."
+    },
+    "is_ipp": {
+      "brief": "Returns `TRUE` if `size` is an IPP standard paper size.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 720,
+      "md": "Returns `TRUE` if `size` is an IPP standard paper size."
+    },
+    "set_size": {
+      "brief": "Changes the dimensions of a `size` to `width` x `height`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 734,
+      "md": "Changes the dimensions of a `size` to `width` x `height`."
+    },
+    "to_gvariant": {
+      "brief": "Serialize a paper size to an `a{sv}` variant.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 1037,
+      "md": "Serialize a paper size to an `a{sv}` variant."
+    },
+    "to_key_file": {
+      "brief": "This function adds the paper size from `size` to `key_file`.",
+      "file": "gtk/print/gtkpapersize.c",
+      "line": 998,
+      "md": "This function adds the paper size from `size` to `key_file`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

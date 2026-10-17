@@ -1,0 +1,94 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkOverlay`.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 420,
+      "md": "Creates a new `GtkOverlay`."
+    }
+  },
+  "doc": {
+    "brief": "Places “overlay” widgets on top of a single main child.",
+    "file": "gtk/gtkoverlay.c",
+    "line": 34,
+    "md": "Places “overlay” widgets on top of a single main child.\n\nThe position of each overlay widget is determined by its\n[`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and [`Widget:valign`](xref:gtk:Gtk.Widget#property:valign)\nproperties. E.g. a widget with both alignments set to %GTK_ALIGN_START\nwill be placed at the top left corner of the `GtkOverlay` container,\nwhereas an overlay with halign set to %GTK_ALIGN_CENTER and valign set\nto %GTK_ALIGN_END will be placed a the bottom edge of the `GtkOverlay`,\nhorizontally centered. The position can be adjusted by setting the margin\nproperties of the child to non-zero values.\n\nMore complicated placement of overlays is possible by connecting\nto the [`Overlay::get-child-position`](xref:gtk:Gtk.Overlay#event:get-child-position) signal.\n\nAn overlay’s minimum and natural sizes are those of its main child.\nThe sizes of overlay children are not considered when measuring these\npreferred sizes.\n\n# GtkOverlay as GtkBuildable\n\nThe `GtkOverlay` implementation of the `GtkBuildable` interface\nsupports placing a child as an overlay by specifying “overlay” as\nthe “type” attribute of a `<child>` element.\n\n# CSS nodes\n\n`GtkOverlay` has a single CSS node with the name “overlay”. Overlay children\nwhose alignments cause them to be positioned at an edge get the style classes\n“.left”, “.right”, “.top”, and/or “.bottom” according to their position."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Overlay",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_overlay": {
+      "brief": "Adds `widget` to `overlay`.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 433,
+      "md": "Adds `widget` to `overlay`.\n\nThe widget will be stacked on top of the main widget\nadded with [`Overlay.set_child()`](xref:gtk:Gtk.Overlay#method:set_child).\n\nThe position at which `widget` is placed is determined\nfrom its [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and\n[`Widget:valign`](xref:gtk:Gtk.Widget#property:valign) properties."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `overlay`.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 609,
+      "md": "Gets the child widget of `overlay`."
+    },
+    "get_clip_overlay": {
+      "brief": "Gets whether `widget` should be clipped within the parent.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 554,
+      "md": "Gets whether `widget` should be clipped within the parent."
+    },
+    "get_measure_overlay": {
+      "brief": "Gets whether `widget`'s size is included in the measurement of `overlay`.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 505,
+      "md": "Gets whether `widget`'s size is included in the measurement of\n`overlay`."
+    },
+    "remove_overlay": {
+      "brief": "Removes an overlay that was added with gtk_overlay_add_overlay().",
+      "file": "gtk/gtkoverlay.c",
+      "line": 458,
+      "md": "Removes an overlay that was added with gtk_overlay_add_overlay()."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `overlay`.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 579,
+      "md": "Sets the child widget of `overlay`."
+    },
+    "set_clip_overlay": {
+      "brief": "Sets whether `widget` should be clipped within the parent.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 530,
+      "md": "Sets whether `widget` should be clipped within the parent."
+    },
+    "set_measure_overlay": {
+      "brief": "Sets whether `widget` is included in the measured size of `overlay`.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 477,
+      "md": "Sets whether `widget` is included in the measured size of `overlay`.\n\nThe overlay will request the size of the largest child that has\nthis property set to `TRUE`. Children who are not included may\nbe drawn outside of `overlay`'s allocation if they are too large."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The main child widget.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 323,
+      "md": "The main child widget."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "get-child-position": {
+      "brief": "Emitted to determine the position and size of any overlay child widgets.",
+      "file": "gtk/gtkoverlay.c",
+      "line": 334,
+      "md": "Emitted to determine the position and size of any overlay\nchild widgets.\n\nA handler for this signal should fill `allocation` with\nthe desired position and size for `widget`, relative to\nthe 'main' child of `overlay`.\n\nThe default handler for this signal uses the `widget`'s\nhalign and valign properties to determine the position\nand gives the widget its natural size (except that an\nalignment of %GTK_ALIGN_FILL will cause the overlay to\nbe full-width/height). If the main child is a\n`GtkScrolledWindow`, the overlays are placed relative\nto its contents."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

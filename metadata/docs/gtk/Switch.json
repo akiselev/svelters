@@ -1,0 +1,82 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSwitch` widget.",
+      "file": "gtk/gtkswitch.c",
+      "line": 756,
+      "md": "Creates a new `GtkSwitch` widget."
+    }
+  },
+  "doc": {
+    "brief": "Shows a \"light switch\" that has two states: on or off.",
+    "file": "gtk/gtkswitch.c",
+    "line": 26,
+    "md": "Shows a \"light switch\" that has two states: on or off.\n\nThe user can control which state should be active by clicking the\nempty area, or by dragging the slider.\n\n`GtkSwitch` can also express situations where the underlying state changes\nwith a delay. In this case, the slider position indicates the user's recent\nchange (represented by the [`Switch:active`](xref:gtk:Gtk.Switch#property:active) property), while the\ntrough color indicates the present underlying state (represented by the\n[`Switch:state`](xref:gtk:Gtk.Switch#property:state) property).\n\nSee [`Switch::state-set`](xref:gtk:Gtk.Switch#event:state-set) for details.\n\n# Shortcuts and Gestures\n\n`GtkSwitch` supports pan and drag gestures to move the slider.\n\n# CSS nodes\n\n```\nswitch\n├── image\n├── image\n╰── slider\n```\n\n`GtkSwitch` has four css nodes, the main node with the name switch and\nsubnodes for the slider and the on and off images. Neither of them is\nusing any style classes.\n\n# Accessibility\n\n`GtkSwitch` uses the [`AccessibleRole.switch`](xref:gtk:Gtk.AccessibleRole#value:switch) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Switch",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_active": {
+      "brief": "Gets whether the `GtkSwitch` is in its “on” or “off” state.",
+      "file": "gtk/gtkswitch.c",
+      "line": 809,
+      "md": "Gets whether the `GtkSwitch` is in its “on” or “off” state."
+    },
+    "get_state": {
+      "brief": "Gets the underlying state of the `GtkSwitch`.",
+      "file": "gtk/gtkswitch.c",
+      "line": 858,
+      "md": "Gets the underlying state of the `GtkSwitch`."
+    },
+    "set_active": {
+      "brief": "Changes the state of `self` to the desired one.",
+      "file": "gtk/gtkswitch.c",
+      "line": 769,
+      "md": "Changes the state of `self` to the desired one."
+    },
+    "set_state": {
+      "brief": "Sets the underlying state of the `GtkSwitch`.",
+      "file": "gtk/gtkswitch.c",
+      "line": 825,
+      "md": "Sets the underlying state of the `GtkSwitch`.\n\nThis function is typically called from a [`Switch::state-set`](xref:gtk:Gtk.Switch#event:state-set)\nsignal handler in order to set up delayed state changes.\n\nSee [`Switch::state-set`](xref:gtk:Gtk.Switch#event:state-set) for details."
+    }
+  },
+  "properties": {
+    "active": {
+      "brief": "Whether the `GtkSwitch` widget is in its on or off state.",
+      "file": "gtk/gtkswitch.c",
+      "line": 580,
+      "md": "Whether the `GtkSwitch` widget is in its on or off state."
+    },
+    "state": {
+      "brief": "The backend state that is controlled by the switch.",
+      "file": "gtk/gtkswitch.c",
+      "line": 590,
+      "md": "The backend state that is controlled by the switch.\n\nApplications should usually set the [`Switch:active`](xref:gtk:Gtk.Switch#property:active) property,\nexcept when indicating a change to the backend state which occurs\nseparately from the user's interaction.\n\nSee [`Switch::state-set`](xref:gtk:Gtk.Switch#event:state-set) for details."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to animate the switch.",
+      "file": "gtk/gtkswitch.c",
+      "line": 618,
+      "md": "Emitted to animate the switch.\n\nApplications should never connect to this signal,\nbut use the [`Switch:active`](xref:gtk:Gtk.Switch#property:active) property."
+    },
+    "state-set": {
+      "brief": "Emitted to change the underlying state.",
+      "file": "gtk/gtkswitch.c",
+      "line": 638,
+      "md": "Emitted to change the underlying state.\n\nThe ::state-set signal is emitted when the user changes the switch\nposition. The default handler calls [`Switch.set_state()`](xref:gtk:Gtk.Switch#method:set_state) with the\nvalue of `state`.\n\nTo implement delayed state change, applications can connect to this\nsignal, initiate the change of the underlying state, and call\n[`Switch.set_state()`](xref:gtk:Gtk.Switch#method:set_state) when the underlying state change is\ncomplete. The signal handler should return `TRUE` to prevent the\ndefault handler from running."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

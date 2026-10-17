@@ -1,0 +1,104 @@
+{
+  "doc": {
+    "brief": "The QFontComboBox widget is a combobox that lets the user select a font family.",
+    "index_brief": "Combobox that lets the user select a font family",
+    "url": "https://doc.qt.io/qt-6/qfontcombobox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QFontComboBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QFont currentFont() const": {
+      "brief": "This property holds the currently selected font",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#currentFont-prop"
+    },
+    "QFontComboBox(QWidget *parent)": {
+      "brief": "Constructs a font combobox with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#QFontComboBox"
+    },
+    "QFontComboBox::FontFilters fontFilters() const": {
+      "brief": "This property holds the filter for the combobox",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#fontFilters-prop"
+    },
+    "QFontDatabase::WritingSystem writingSystem() const": {
+      "brief": "This property holds the writing system that serves as a filter for the combobox",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#writingSystem-prop"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QComboBox::sizeHint](xref:qt:QComboBox)() const.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#sizeHint"
+    },
+    "QString sampleTextForFont(const QString &fontFamily) const": {
+      "brief": "Returns the sample text to show after the font name (when the combo is open) for a given *fontFamily*.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#sampleTextForFont"
+    },
+    "QString sampleTextForSystem(QFontDatabase::WritingSystem writingSystem) const": {
+      "brief": "Returns the sample text to show after the font name (when the combo is open) for a given *writingSystem*.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#sampleTextForSystem"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QComboBox::event](xref:qt:QComboBox)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#event"
+    },
+    "std::optional<QFont> displayFont(const QString &fontFamily) const": {
+      "brief": "Returns the font (if set) to be used to display a given *fontFamily* (when the combo is open).",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#displayFont"
+    },
+    "void currentFontChanged(const QFont &font)": {
+      "brief": "This signal is emitted whenever the current font changes, with the new *font*.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#currentFontChanged"
+    },
+    "void setCurrentFont(const QFont &f)": {
+      "brief": "This property holds the currently selected font",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#currentFont-prop"
+    },
+    "void setDisplayFont(const QString &fontFamily, const QFont &font)": {
+      "brief": "Sets the *font* to be used to display a given *fontFamily* (when the combo is open).",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#setDisplayFont"
+    },
+    "void setFontFilters(QFontComboBox::FontFilters filters)": {
+      "brief": "This property holds the filter for the combobox",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#fontFilters-prop"
+    },
+    "void setSampleTextForFont(const QString &fontFamily, const QString &sampleText)": {
+      "brief": "Sets the *sampleText* to show after the font name (when the combo is open) for a given *fontFamily*.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#setSampleTextForFont"
+    },
+    "void setSampleTextForSystem(QFontDatabase::WritingSystem writingSystem, const QString &sampleText)": {
+      "brief": "Sets the *sampleText* to show after the font name (when the combo is open) for a given *writingSystem*.",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#setSampleTextForSystem"
+    },
+    "void setWritingSystem(QFontDatabase::WritingSystem)": {
+      "brief": "This property holds the writing system that serves as a filter for the combobox",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#writingSystem-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "currentFont": {
+      "brief": "The currently selected font",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#currentFont-prop"
+    },
+    "fontFilters": {
+      "brief": "The filter for the combobox",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#fontFilters-prop"
+    },
+    "writingSystem": {
+      "brief": "The writing system that serves as a filter for the combobox",
+      "url": "https://doc.qt.io/qt-6/qfontcombobox.html#writingSystem-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

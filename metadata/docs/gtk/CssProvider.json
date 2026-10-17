@@ -1,0 +1,115 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkCssProvider`.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 953,
+      "md": "Returns a newly created `GtkCssProvider`."
+    }
+  },
+  "doc": {
+    "brief": "A style provider for CSS.",
+    "file": "gtk/gtkcssprovider.c",
+    "line": 59,
+    "md": "A style provider for CSS.\n\nIt is able to parse CSS-like input in order to style widgets.\n\nAn application can make GTK parse a specific CSS style sheet by calling\n[`CssProvider.load_from_file()`](xref:gtk:Gtk.CssProvider#method:load_from_file) or\n[`CssProvider.load_from_resource()`](xref:gtk:Gtk.CssProvider#method:load_from_resource)\nand adding the provider with [`StyleContext.add_provider()`](xref:gtk:Gtk.StyleContext#method:add_provider) or\n`add_provider_for_display`.\n\nIn addition, certain files will be read when GTK is initialized.\nFirst, the file `$XDG_CONFIG_HOME/gtk-4.0/gtk.css` is loaded if it\nexists. Then, GTK loads the first existing file among\n`XDG_DATA_HOME/themes/THEME/gtk-VERSION/gtk-VARIANT.css`,\n`$HOME/.themes/THEME/gtk-VERSION/gtk-VARIANT.css`,\n`$XDG_DATA_DIRS/themes/THEME/gtk-VERSION/gtk-VARIANT.css` and\n`DATADIR/share/themes/THEME/gtk-VERSION/gtk-VARIANT.css`,\nwhere `THEME` is the name of the current theme (see the\n[`Settings:gtk-theme-name`](xref:gtk:Gtk.Settings#property:gtk-theme-name) setting), `VARIANT` is the\nvariant to load (see the\n[`Settings:gtk-application-prefer-dark-theme`](xref:gtk:Gtk.Settings#property:gtk-application-prefer-dark-theme) setting),\n`DATADIR` is the prefix configured when GTK was compiled (unless\noverridden by the `GTK_DATA_PREFIX` environment variable), and\n`VERSION` is the GTK version number. If no file is found for the\ncurrent version, GTK tries older versions all the way back to 4.0.\n\nTo track errors while loading CSS, connect to the\n[`CssProvider::parsing-error`](xref:gtk:Gtk.CssProvider#event:parsing-error) signal."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CssProvider",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "load_from_bytes": {
+      "brief": "Loads `data` into `css_provider`.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1708,
+      "md": "Loads `data` into `css_provider`.\n\nThis clears any previously loaded information.",
+      "since": "4.12"
+    },
+    "load_from_data": {
+      "brief": "Loads `data` into `css_provider`.",
+      "deprecated": "4.12",
+      "deprecated_md": "Use [`CssProvider.load_from_string()`](xref:gtk:Gtk.CssProvider#method:load_from_string)\n  or [`CssProvider.load_from_bytes()`](xref:gtk:Gtk.CssProvider#method:load_from_bytes) instead",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1648,
+      "md": "Loads `data` into `css_provider`.\n\nThis clears any previously loaded information."
+    },
+    "load_from_file": {
+      "brief": "Loads the data contained in `file` into `css_provider`.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1737,
+      "md": "Loads the data contained in `file` into `css_provider`.\n\nThis clears any previously loaded information."
+    },
+    "load_from_path": {
+      "brief": "Loads the data contained in `path` into `css_provider`.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1784,
+      "md": "Loads the data contained in `path` into `css_provider`.\n\nThis clears any previously loaded information."
+    },
+    "load_from_resource": {
+      "brief": "Loads the data contained in the resource at `resource_path` into the `css_provider`.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1809,
+      "md": "Loads the data contained in the resource at `resource_path` into\nthe `css_provider`.\n\nThis clears any previously loaded information."
+    },
+    "load_from_string": {
+      "brief": "Loads `string` into `css_provider`.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1681,
+      "md": "Loads `string` into `css_provider`.\n\nThis clears any previously loaded information.",
+      "since": "4.12"
+    },
+    "load_named": {
+      "brief": "Loads a theme from the usual theme paths.",
+      "deprecated": "4.20",
+      "deprecated_md": "Using any of the other theme loaders, combine with media queries.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 1964,
+      "md": "Loads a theme from the usual theme paths.\n\nThe actual process of finding the theme might change between\nreleases, but it is guaranteed that this function uses the same\nmechanism to load the theme that GTK uses for loading its own theme."
+    },
+    "to_string": {
+      "brief": "Converts the `provider` into a string representation in CSS format.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 2219,
+      "md": "Converts the `provider` into a string representation in CSS\nformat.\n\nUsing [`CssProvider.load_from_string()`](xref:gtk:Gtk.CssProvider#method:load_from_string) with the return\nvalue from this function on a new provider created with\n[`CssProvider.new()`](xref:gtk:Gtk.CssProvider#constructor:new) will basically create a duplicate\nof this `provider`."
+    }
+  },
+  "properties": {
+    "prefers-color-scheme": {
+      "brief": "Define the color scheme used for rendering the user interface.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 295,
+      "md": "Define the color scheme used for rendering the user interface.\n\nThe UI can be set to either [`InterfaceColorScheme.LIGHT`](xref:gtk:Gtk.InterfaceColorScheme#value:LIGHT),\nor [`InterfaceColorScheme.DARK`](xref:gtk:Gtk.InterfaceColorScheme#value:DARK) mode. Other values will\nbe interpreted the same as [`InterfaceColorScheme.LIGHT`](xref:gtk:Gtk.InterfaceColorScheme#value:LIGHT).\n\nThis setting is be available for media queries in CSS:\n\n```css\n`media` (prefers-color-scheme: dark) {\n  // some dark mode styling\n}\n```\n\nChanging this setting will reload the style sheet.",
+      "since": "4.20"
+    },
+    "prefers-contrast": {
+      "brief": "Define the contrast mode to use for the user interface.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 321,
+      "md": "Define the contrast mode to use for the user interface.\n\nWhen set to [`InterfaceContrast.MORE`](xref:gtk:Gtk.InterfaceContrast#value:MORE) or\n[`InterfaceContrast.LESS`](xref:gtk:Gtk.InterfaceContrast#value:LESS), the UI is rendered in\nhigh or low contrast.\n\nWhen set to [`InterfaceContrast.NO_PREFERENCE`](xref:gtk:Gtk.InterfaceContrast#value:NO_PREFERENCE) (the default),\nthe user interface will be rendered in default mode.\n\nThis setting is be available for media queries in CSS:\n\n```css\n`media` (prefers-contrast: more) {\n  // some style with high contrast\n}\n```\n\nChanging this setting will reload the style sheet.",
+      "since": "4.20"
+    },
+    "prefers-reduced-motion": {
+      "brief": "Define the type of reduced motion to use for the user interface.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 350,
+      "md": "Define the type of reduced motion to use for the user interface.\n\nWhen set to [`ReducedMotion.REDUCE`](xref:gtk:Gtk.ReducedMotion#value:REDUCE) the UI is rendered in\nwith reduced motion animations.\n\nWhen set to [`ReducedMotion.NO_PREFERENCE`](xref:gtk:Gtk.ReducedMotion#value:NO_PREFERENCE) (the default),\nthe user interface will be rendered in default mode.\n\nThis setting is be available for media queries in CSS:\n\n```css\n`media` (prefers-reduced-motion: reduce) {\n  // some style with reduced motion\n}\n```\n\nChanging this setting will reload the style sheet.",
+      "since": "4.22"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "parsing-error": {
+      "brief": "Signals that a parsing error occurred.",
+      "file": "gtk/gtkcssprovider.c",
+      "line": 257,
+      "md": "Signals that a parsing error occurred.\n\nThe expected error values are in the [`CssParserError`](xref:gtk:Gtk.CssParserError)\nand [`CssParserWarning`](xref:gtk:Gtk.CssParserWarning) enumerations.\n\nThe `path`, `line` and `position` describe the actual location of\nthe error as accurately as possible.\n\nParsing errors are never fatal, so the parsing will resume after\nthe error. Errors may however cause parts of the given data or\neven all of it to not be parsed at all. So it is a useful idea\nto check that the parsing succeeds by connecting to this signal.\n\nErrors in the [`CssParserWarning`](xref:gtk:Gtk.CssParserWarning) enumeration should not\nbe treated as fatal errors.\n\nNote that this signal may be emitted at any time as the css provider\nmay opt to defer parsing parts or all of the input to a later time\nthan when a loading function was called."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

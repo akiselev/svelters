@@ -3,7 +3,10 @@ packages:
   - "fixtures/*"
   - "bench/*"
   - "tests/*"
+  - "docs/site"
+  - "experiments/native-compiler/handwritten"
+  - "experiments/native-compiler/compiled"
 
 # Every package resolves svelte to the vendored custom-renderer fork (see vendor/svelte/PIN).
 overrides:
-  svelte: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+  svelte: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz

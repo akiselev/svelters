@@ -1,0 +1,55 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Values that can be passed to the [`Widget.system_setting_changed()`](xref:gtk:Gtk.Widget#vfunc:system_setting_changed) vfunc.",
+    "file": "gtk/gtkenums.h",
+    "line": 1221,
+    "md": "Values that can be passed to the [`Widget.system_setting_changed()`](xref:gtk:Gtk.Widget#vfunc:system_setting_changed)\nvfunc.\n\nThe values indicate which system setting has changed.\nWidgets may need to drop caches, or react otherwise.\n\nMost of the values correspond to [`Settings`](xref:gtk:Settings) properties.\n\nMore values may be added over time."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SystemSetting",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "display": {
+      "brief": "The display has changed",
+      "file": "gtk/gtkenums.h",
+      "line": 1232,
+      "md": "The display has changed"
+    },
+    "dpi": {
+      "brief": "the [`Settings:gtk-xft-dpi`](xref:gtk:Gtk.Settings#property:gtk-xft-dpi) setting has changed",
+      "file": "gtk/gtkenums.h",
+      "line": 1223,
+      "md": "the [`Settings:gtk-xft-dpi`](xref:gtk:Gtk.Settings#property:gtk-xft-dpi) setting has changed"
+    },
+    "font_config": {
+      "brief": "The font configuration has changed in a way that requires text to be redrawn.",
+      "file": "gtk/gtkenums.h",
+      "line": 1225,
+      "md": "The font configuration has changed in a way that\n  requires text to be redrawn. This can be any of the\n  [`Settings:gtk-xft-antialias`](xref:gtk:Gtk.Settings#property:gtk-xft-antialias),\n  [`Settings:gtk-xft-hinting`](xref:gtk:Gtk.Settings#property:gtk-xft-hinting),\n  [`Settings:gtk-xft-hintstyle`](xref:gtk:Gtk.Settings#property:gtk-xft-hintstyle),\n  [`Settings:gtk-xft-rgba`](xref:gtk:Gtk.Settings#property:gtk-xft-rgba) or\n  [`Settings:gtk-fontconfig-timestamp`](xref:gtk:Gtk.Settings#property:gtk-fontconfig-timestamp) settings"
+    },
+    "font_name": {
+      "brief": "The [`Settings:gtk-font-name`](xref:gtk:Gtk.Settings#property:gtk-font-name) setting has changed",
+      "file": "gtk/gtkenums.h",
+      "line": 1224,
+      "md": "The [`Settings:gtk-font-name`](xref:gtk:Gtk.Settings#property:gtk-font-name) setting has changed"
+    },
+    "icon_theme": {
+      "brief": "The icon theme has changed in a way that requires icons to be looked up again",
+      "file": "gtk/gtkenums.h",
+      "line": 1233,
+      "md": "The icon theme has changed in a way that requires\n  icons to be looked up again"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

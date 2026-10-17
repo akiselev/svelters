@@ -1,0 +1,189 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty builder object.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1355,
+      "md": "Creates a new empty builder object.\n\nThis function is only useful if you intend to make multiple calls\nto [`Builder.add_from_file()`](xref:gtk:Gtk.Builder#method:add_from_file), [`Builder.add_from_resource()`](xref:gtk:Gtk.Builder#method:add_from_resource)\nor [`Builder.add_from_string()`](xref:gtk:Gtk.Builder#method:add_from_string) in order to merge multiple UI\ndescriptions into a single builder."
+    },
+    "new_from_file": {
+      "brief": "Parses the UI definition in the file `filename`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 3165,
+      "md": "Parses the UI definition in the file `filename`.\n\nIf there is an error opening the file or parsing the description then\nthe program will be aborted. You should only ever attempt to parse\nuser interface descriptions that are shipped as part of your program."
+    },
+    "new_from_resource": {
+      "brief": "Parses the UI definition at `resource_path`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 3190,
+      "md": "Parses the UI definition at `resource_path`.\n\nIf there is an error locating the resource or parsing the\ndescription, then the program will be aborted."
+    },
+    "new_from_string": {
+      "brief": "Parses the UI definition in `string`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 3214,
+      "md": "Parses the UI definition in `string`.\n\nIf `string` is `NULL`-terminated, then `length` should be -1.\nIf `length` is not -1, then it is the length of `string`.\n\nIf there is an error parsing `string` then the program will be\naborted. You should not attempt to parse user interface description\nfrom untrusted sources."
+    }
+  },
+  "doc": {
+    "brief": "Reads XML descriptions of a user interface and instantiates the described objects.",
+    "file": "gtk/gtkbuilder.c",
+    "line": 21,
+    "md": "Reads XML descriptions of a user interface and instantiates the described objects.\n\nTo create a `GtkBuilder` from a user interface description, call\n[`Builder.new_from_file()`](xref:gtk:Gtk.Builder#constructor:new_from_file), [`Builder.new_from_resource()`](xref:gtk:Gtk.Builder#constructor:new_from_resource)\nor [`Builder.new_from_string()`](xref:gtk:Gtk.Builder#constructor:new_from_string).\n\nIn the (unusual) case that you want to add user interface\ndescriptions from multiple sources to the same `GtkBuilder` you can\ncall [`Builder.new()`](xref:gtk:Gtk.Builder#constructor:new) to get an empty builder and populate it by\n(multiple) calls to [`Builder.add_from_file()`](xref:gtk:Gtk.Builder#method:add_from_file),\n[`Builder.add_from_resource()`](xref:gtk:Gtk.Builder#method:add_from_resource) or\n[`Builder.add_from_string()`](xref:gtk:Gtk.Builder#method:add_from_string).\n\nA `GtkBuilder` holds a reference to all objects that it has constructed\nand drops these references when it is finalized. This finalization can\ncause the destruction of non-widget objects or widgets which are not\ncontained in a toplevel window. For toplevel windows constructed by a\nbuilder, it is the responsibility of the user to call\n[`Window.destroy()`](xref:gtk:Gtk.Window#method:destroy) to get rid of them and all the widgets\nthey contain.\n\nThe functions [`Builder.get_object()`](xref:gtk:Gtk.Builder#method:get_object) and\n[`Builder.get_objects()`](xref:gtk:Gtk.Builder#method:get_objects) can be used to access the widgets in\nthe interface by the names assigned to them inside the UI description.\nToplevel windows returned by these functions will stay around until the\nuser explicitly destroys them with [`Window.destroy()`](xref:gtk:Gtk.Window#method:destroy). Other\nwidgets will either be part of a larger hierarchy constructed by the\nbuilder (in which case you should not have to worry about their lifecycle),\nor without a parent, in which case they have to be added to some container\nto make use of them. Non-widget objects need to be reffed with\ng_object_ref() to keep them beyond the lifespan of the builder.\n\n## GtkBuilder UI Definitions\n\n`GtkBuilder` parses textual descriptions of user interfaces which are\nspecified in XML format. We refer to these descriptions as “GtkBuilder\nUI definitions” or just “UI definitions” if the context is clear.\n\n### Structure of UI definitions\n\nUI definition files are always encoded in UTF-8.\n\nThe toplevel element is `<interface>`. It optionally takes a “domain”\nattribute, which will make the builder look for translated strings\nusing `dgettext()` in the domain specified. This can also be done by\ncalling [`Builder.set_translation_domain()`](xref:gtk:Gtk.Builder#method:set_translation_domain) on the builder.\nFor example:\n\n```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<interface domain=\"your-app\">\n  ...\n</interface>\n```\n\n### Requirements\n\nThe target toolkit version(s) are described by `<requires>` elements,\nthe “lib” attribute specifies the widget library in question (currently\nthe only supported value is “gtk”) and the “version” attribute specifies\nthe target version in the form “`<major>`.`<minor>`”. `GtkBuilder` will\nerror out if the version requirements are not met. For example:\n\n```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<interface domain=\"your-app\">\n  <requires lib=\"gtk\" version=\"4.0\" />\n</interface>\n```\n\n### Objects\n\nObjects are defined as children of the `<interface>` element.\n\nObjects are described by `<object>` elements, which can contain\n`<property>` elements to set properties, `<signal>` elements which\nconnect signals to handlers, and `<child>` elements, which describe\nchild objects.\n\nTypically, the specific kind of object represented by an `<object>`\nelement is specified by the “class” attribute. If the type has not\nbeen loaded yet, GTK tries to find the `get_type()` function from the\nclass name by applying heuristics. This works in most cases, but if\nnecessary, it is possible to specify the name of the `get_type()`\nfunction explicitly with the \"type-func\" attribute. If your UI definition\nis referencing internal types, you should make sure to call\n`g_type_ensure()` for each object type before parsing the UI definition.\n\nObjects may be given a name with the “id” attribute, which allows the\napplication to retrieve them from the builder with\n[`Builder.get_object()`](xref:gtk:Gtk.Builder#method:get_object). An id is also necessary to use the\nobject as property value in other parts of the UI definition. GTK\nreserves ids starting and ending with `___` (three consecutive\nunderscores) for its own purposes.\n\n### Properties\n\nSetting properties of objects is pretty straightforward with the\n`<property>` element: the “name” attribute specifies the name of the\nproperty, and the content of the element specifies the value:\n\n```xml\n<object class=\"GtkButton\">\n  <property name=\"label\">Hello, world</property>\n</object>\n```\n\nIf the “translatable” attribute is set to a true value, GTK uses\n`gettext()` (or `dgettext()` if the builder has a translation domain set)\nto find a translation for the value. This happens before the value\nis parsed, so it can be used for properties of any type, but it is\nprobably most useful for string properties. It is also possible to\nspecify a context to disambiguate short strings, and comments which\nmay help the translators:\n\n```xml\n<object class=\"GtkButton\">\n  <property name=\"label\"\n            translatable=\"yes\"\n            context=\"button\"\n            comments=\"A classic\">Hello, world</property>\n</object>\n```\n\nThe xgettext tool that is part of gettext can extract these strings,\nbut note that it only looks for translatable=\"yes\".\n\n`GtkBuilder` can parse textual representations for the most common\nproperty types:\n\n- characters\n- strings\n- integers\n- floating-point numbers\n- booleans (strings like “TRUE”, “t”, “yes”, “y”, “1” are interpreted\n  as true values, strings like “FALSE”, “f”, “no”, “n”, “0” are interpreted\n  as false values)\n- string lists (separated by newlines)\n- enumeration types (can be specified by their full C identifier their short\n  name used when registering the enumeration type, or their integer value)\n- flag types (can be specified by their C identifier or short name,\n  optionally combined with “|” for bitwise OR, or a single integer value\n  e.g., “GTK_INPUT_HINT_EMOJI|GTK_INPUT_HINT_LOWERCASE”, or “emoji|lowercase” or 520).\n- colors (in the format understood by [`RGBA.parse()`](xref:gtk:Gdk.RGBA#method:parse))\n- transforms (in the format understood by `parse`)\n- Pango attribute lists (in the format understood by [`AttrList.to_string()`](xref:gtk:Pango.AttrList#method:to_string))\n- Pango tab arrays (in the format understood by [`TabArray.to_string()`](xref:gtk:Pango.TabArray#method:to_string))\n- Pango font descriptions (in the format understood by `from_string`)\n- `GVariant` (in the format understood by `parse`)\n- textures (can be specified as an object id, a resource path or a filename of an image file to load relative to the Builder file or the CWD if [`Builder.add_from_string()`](xref:gtk:Gtk.Builder#method:add_from_string) was used)\n- GFile (like textures, can be specified as an object id, a URI or a filename of a file to load relative to the Builder file or the CWD if [`Builder.add_from_string()`](xref:gtk:Gtk.Builder#method:add_from_string) was used)\n\nObjects can be referred to by their name and by default refer to\nobjects declared in the local XML fragment and objects exposed via\n[`Builder.expose_object()`](xref:gtk:Gtk.Builder#method:expose_object). In general, `GtkBuilder` allows\nforward references to objects declared in the local XML; an object\ndoesn’t have to be constructed before it can be referred to. The\nexception to this rule is that an object has to be constructed before\nit can be used as the value of a construct-only property.\n\n### Child objects\n\nMany widgets have properties for child widgets, such as\n[`Expander:child`](xref:gtk:Gtk.Expander#property:child). In this case, the preferred way to\nspecify the child widget in a ui file is to simply set the property:\n\n```xml\n<object class=\"GtkExpander\">\n  <property name=\"child\">\n    <object class=\"GtkLabel\">\n    ...\n    </object>\n  </property>\n</object>\n```\n\nGeneric containers that can contain an arbitrary number of children,\nsuch as [`Box`](xref:gtk:Gtk.Box) instead use the `<child>` element. A `<child>`\nelement contains an `<object>` element which describes the child object.\nMost often, child objects are widgets inside a container, but they can\nalso be, e.g., actions in an action group, or columns in a tree model.\n\nAny object type that implements the [`Buildable`](xref:gtk:Gtk.Buildable) interface can\nspecify how children may be added to it. Since many objects and widgets that\nare included with GTK already implement the `GtkBuildable` interface,\ntypically child objects can be added using the `<child>` element without\nhaving to be concerned about the underlying implementation.\n\nSee the [`GtkWidget` documentation](class.Widget.html#gtkwidget-as-gtkbuildable)\nfor many examples of using `GtkBuilder` with widgets, including setting\nchild objects using the `<child>` element.\n\nA noteworthy special case to the general rule that only objects implementing\n`GtkBuildable` may specify how to handle the `<child>` element is that\n`GtkBuilder` provides special support for adding objects to a\n[`ListStore`](xref:gtk:Gio.ListStore) by using the `<child>` element. For instance:\n\n```xml\n<object class=\"GListStore\">\n  <property name=\"item-type\">MyObject</property>\n  <child>\n    <object class=\"MyObject\" />\n  </child>\n  ...\n</object>\n```\n\n### Property bindings\n\nIt is also possible to bind a property value to another object's\nproperty value using the attributes \"bind-source\" to specify the\nsource object of the binding, and optionally, \"bind-property\" and\n\"bind-flags\" to specify the source property and source binding flags\nrespectively. Internally, `GtkBuilder` implements this using\n[`Binding`](xref:gtk:GObject.Binding) objects.\n\nFor instance, in the example below the “label” property of the\n`bottom_label` widget is bound to the “label” property of the\n`top_button` widget:\n\n```xml\n<object class=\"GtkBox\">\n  <property name=\"orientation\">vertical</property>\n  <child>\n    <object class=\"GtkButton\" id=\"top_button\">\n      <property name=\"label\">Hello, world</property>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkLabel\" id=\"bottom_label\">\n      <property name=\"label\"\n                bind-source=\"top_button\"\n                bind-property=\"label\"\n                bind-flags=\"sync-create\" />\n    </object>\n  </child>\n</object>\n```\n\nFor more information, see the documentation of the\n[`Object.bind_property()`](xref:gtk:GObject.Object#method:bind_property) method.\n\nPlease note that another way to set up bindings between objects in .ui files\nis to use the `GtkExpression` methodology. See the\n[`GtkExpression` documentation](class.Expression.html#gtkexpression-in-ui-files)\nfor more information.\n\n### Internal children\n\nSometimes it is necessary to refer to widgets which have implicitly\nbeen constructed by GTK as part of a composite widget, to set\nproperties on them or to add further children (e.g. the content area\nof a `GtkDialog`). This can be achieved by setting the “internal-child”\nproperty of the `<child>` element to a true value. Note that `GtkBuilder`\nstill requires an `<object>` element for the internal child, even if it\nhas already been constructed.\n\n### Specialized children\n\nA number of widgets have different places where a child can be added\n(e.g. tabs vs. page content in notebooks). This can be reflected in\na UI definition by specifying the “type” attribute on a `<child>`\nThe possible values for the “type” attribute are described in the\nsections describing the widget-specific portions of UI definitions.\n\n### Signal handlers and function pointers\n\nSignal handlers are set up with the `<signal>` element. The “name”\nattribute specifies the name of the signal, and the “handler” attribute\nspecifies the function to connect to the signal.\n\n```xml\n<object class=\"GtkButton\" id=\"hello_button\">\n  <signal name=\"clicked\" handler=\"hello_button__clicked\" />\n</object>\n```\n\nThe remaining attributes, “after”, “swapped” and “object”, have the\nsame meaning as the corresponding parameters of the\n`signal_connect_object` or `signal_connect_data`\nfunctions:\n\n- “after” matches the `G_CONNECT_AFTER` flag, and will ensure that the\n  handler is called after the default class closure for the signal\n- “swapped” matches the `G_CONNECT_SWAPPED` flag, and will swap the\n  instance and closure arguments when invoking the signal handler\n- “object” will bind the signal handler to the lifetime of the object\n  referenced by the attribute\n\nBy default \"swapped\" will be set to \"yes\" if not specified otherwise, in\nthe case where \"object\" is set, for convenience. A “last_modification_time”\nattribute is also allowed, but it does not have a meaning to the builder.\n\nWhen compiling applications for Windows, you must declare signal callbacks\nwith the `G_MODULE_EXPORT` decorator, or they will not be put in the symbol\ntable:\n\n```c\nG_MODULE_EXPORT void\nhello_button__clicked (GtkButton *button,\n                       gpointer data)\n{\n  // ...\n}\n```\n\nOn Linux and Unix, this is not necessary; applications should instead\nbe compiled with the `-Wl,--export-dynamic` argument inside their compiler\nflags, and linked against `gmodule-export-2.0`.\n\n## Example UI Definition\n\n```xml\n<interface>\n  <object class=\"GtkDialog\" id=\"dialog1\">\n    <child internal-child=\"content_area\">\n      <object class=\"GtkBox\">\n        <child internal-child=\"action_area\">\n          <object class=\"GtkBox\">\n            <child>\n              <object class=\"GtkButton\" id=\"ok_button\">\n                <property name=\"label\" translatable=\"yes\">_Ok</property>\n                <property name=\"use-underline\">True</property>\n                <signal name=\"clicked\" handler=\"ok_button_clicked\"/>\n              </object>\n            </child>\n          </object>\n        </child>\n      </object>\n    </child>\n  </object>\n</interface>\n```\n\n## Using GtkBuildable for extending UI definitions\n\nObjects can implement the [`Buildable`](xref:gtk:Gtk.Buildable) interface to add custom\nelements and attributes to the XML. Typically, any extension will be\ndocumented in each type that implements the interface.\n\n## Menus\n\nIn addition to objects with properties that are created with `<object>` and\n`<property>` elements, `GtkBuilder` also allows to parse XML menu definitions\nas used by [`Menu`](xref:gtk:Gio.Menu) when exporting menu models over D-Bus, and as\ndescribed in the [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu) documentation. Menus can be defined\nas toplevel elements, or as property values for properties of type `GMenuModel`.\n\n## Templates\n\nWhen describing a [`Widget`](xref:gtk:Gtk.Widget), you can use the `<template>` tag to\ndescribe a UI bound to a specific widget type. GTK will automatically load\nthe UI definition when instantiating the type, and bind children and\nsignal handlers to instance fields and function symbols.\n\nFor more information, see the [`GtkWidget` documentation](class.Widget.html#building-composite-widgets-from-template-xml)\nfor details."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Builder",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_from_file": {
+      "brief": "Parses a file containing a UI definition and merges it with the current contents of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1373,
+      "md": "Parses a file containing a UI definition and merges it with\nthe current contents of `builder`.\n\nThis function is useful if you need to call\n[`Builder.set_current_object()`](xref:gtk:Gtk.Builder#method:set_current_object)) to add user data to\ncallbacks before loading GtkBuilder UI. Otherwise, you probably\nwant [`Builder.new_from_file()`](xref:gtk:Gtk.Builder#constructor:new_from_file) instead.\n\nIf an error occurs, 0 will be returned and `error` will be assigned a\n`GError` from the `GTK_BUILDER_ERROR`, `G_MARKUP_ERROR` or `G_FILE_ERROR`\ndomains.\n\nIt’s not really reasonable to attempt to handle failures of this\ncall. You should not use this function with untrusted files (ie:\nfiles that are not part of your application). Broken `GtkBuilder`\nfiles can easily crash your program, and it’s possible that memory\nwas leaked leading up to the reported failure. The only reasonable\nthing to do when an error is detected is to call `g_error()`."
+    },
+    "add_from_resource": {
+      "brief": "Parses a resource file containing a UI definition and merges it with the current contents of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1598,
+      "md": "Parses a resource file containing a UI definition\nand merges it with the current contents of `builder`.\n\nThis function is useful if you need to call\n[`Builder.set_current_object()`](xref:gtk:Gtk.Builder#method:set_current_object) to add user data to\ncallbacks before loading GtkBuilder UI. Otherwise, you probably\nwant [`Builder.new_from_resource()`](xref:gtk:Gtk.Builder#constructor:new_from_resource) instead.\n\nIf an error occurs, 0 will be returned and `error` will be assigned a\n`GError` from the %GTK_BUILDER_ERROR, %G_MARKUP_ERROR or %G_RESOURCE_ERROR\ndomain.\n\nIt’s not really reasonable to attempt to handle failures of this\ncall.  The only reasonable thing to do when an error is detected is\nto call g_error()."
+    },
+    "add_from_string": {
+      "brief": "Parses a string containing a UI definition and merges it with the current contents of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1750,
+      "md": "Parses a string containing a UI definition and merges it\nwith the current contents of `builder`.\n\nThis function is useful if you need to call\n[`Builder.set_current_object()`](xref:gtk:Gtk.Builder#method:set_current_object) to add user data to\ncallbacks before loading `GtkBuilder` UI. Otherwise, you probably\nwant [`Builder.new_from_string()`](xref:gtk:Gtk.Builder#constructor:new_from_string) instead.\n\nUpon errors `FALSE` will be returned and `error` will be assigned a\n`GError` from the %GTK_BUILDER_ERROR, %G_MARKUP_ERROR or\n%G_VARIANT_PARSE_ERROR domain.\n\nIt’s not really reasonable to attempt to handle failures of this\ncall.  The only reasonable thing to do when an error is detected is\nto call g_error()."
+    },
+    "add_objects_from_file": {
+      "brief": "Parses a file containing a UI definition building only the requested objects and merges them with the current contents of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1443,
+      "md": "Parses a file containing a UI definition building only the\nrequested objects and merges them with the current contents\nof `builder`.\n\nUpon errors, 0 will be returned and `error` will be assigned a\n`GError` from the %GTK_BUILDER_ERROR, %G_MARKUP_ERROR or %G_FILE_ERROR\ndomain.\n\nIf you are adding an object that depends on an object that is not\nits child (for instance a `GtkTreeView` that depends on its\n`GtkTreeModel`), you have to explicitly list all of them in `object_ids`."
+    },
+    "add_objects_from_resource": {
+      "brief": "Parses a resource file containing a UI definition, building only the requested objects and merges them with the current contents of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1675,
+      "md": "Parses a resource file containing a UI definition, building\nonly the requested objects and merges them with the current\ncontents of `builder`.\n\nUpon errors, 0 will be returned and `error` will be assigned a\n`GError` from the %GTK_BUILDER_ERROR, %G_MARKUP_ERROR or %G_RESOURCE_ERROR\ndomain.\n\nIf you are adding an object that depends on an object that is not\nits child (for instance a `GtkTreeView` that depends on its\n`GtkTreeModel`), you have to explicitly list all of them in `object_ids`."
+    },
+    "add_objects_from_string": {
+      "brief": "Parses a string containing a UI definition, building only the requested objects and merges them with the current contents of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1808,
+      "md": "Parses a string containing a UI definition, building only the\nrequested objects and merges them with the current contents of\n`builder`.\n\nUpon errors `FALSE` will be returned and `error` will be assigned a\n`GError` from the %GTK_BUILDER_ERROR or %G_MARKUP_ERROR domain.\n\nIf you are adding an object that depends on an object that is not\nits child (for instance a `GtkTreeView` that depends on its\n`GtkTreeModel`), you have to explicitly list all of them in `object_ids`."
+    },
+    "create_closure": {
+      "brief": "Creates a closure to invoke the function called `function_name`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 3130,
+      "md": "Creates a closure to invoke the function called `function_name`.\n\nThis is using the create_closure() implementation of `builder`'s\n[`BuilderScope`](xref:gtk:Gtk.BuilderScope).\n\nIf no closure could be created, `NULL` will be returned and `error`\nwill be set."
+    },
+    "expose_object": {
+      "brief": "Add `object` to the `builder` object pool so it can be referenced just like any other object built by builder.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1961,
+      "md": "Add `object` to the `builder` object pool so it can be\nreferenced just like any other object built by builder.\n\nOnly a single object may be added using `name`. However,\nit is not an error to expose the same object under multiple\nnames. `gtk_builder_get_object()` may be used to determine\nif an object has already been added with `name`."
+    },
+    "extend_with_template": {
+      "brief": "Main private entry point for building composite components from template XML.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1518,
+      "md": "Main private entry point for building composite components\nfrom template XML.\n\nMost likely you do not need to call this function in applications as\ntemplates are handled by `GtkWidget`."
+    },
+    "get_current_object": {
+      "brief": "Gets the current object set via gtk_builder_set_current_object().",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1992,
+      "md": "Gets the current object set via gtk_builder_set_current_object()."
+    },
+    "get_object": {
+      "brief": "Gets the object named `name`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1865,
+      "md": "Gets the object named `name`.\n\nNote that this function does not increment the reference count\nof the returned object."
+    },
+    "get_objects": {
+      "brief": "Gets all objects that have been constructed by `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1889,
+      "md": "Gets all objects that have been constructed by `builder`.\n\nNote that this function does not increment the reference\ncounts of the returned objects."
+    },
+    "get_scope": {
+      "brief": "Gets the scope in use that was set via gtk_builder_set_scope().",
+      "file": "gtk/gtkbuilder.c",
+      "line": 2040,
+      "md": "Gets the scope in use that was set via gtk_builder_set_scope()."
+    },
+    "get_translation_domain": {
+      "brief": "Gets the translation domain of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1943,
+      "md": "Gets the translation domain of `builder`."
+    },
+    "get_type_from_name": {
+      "brief": "Looks up a type by name.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 3026,
+      "md": "Looks up a type by name.\n\nThis is using the virtual function that `GtkBuilder` has\nfor that purpose. This is mainly used when implementing\nthe `GtkBuildable` interface on a type."
+    },
+    "set_current_object": {
+      "brief": "Sets the current object for the `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 2010,
+      "md": "Sets the current object for the `builder`.\n\nThe current object can be thought of as the `this` object that the\nbuilder is working for and will often be used as the default object\nwhen an object is optional.\n\n[`Widget.init_template()`](xref:gtk:Gtk.Widget#method:init_template) for example will set the current\nobject to the widget the template is inited for. For functions like\n[`Builder.new_from_resource()`](xref:gtk:Gtk.Builder#constructor:new_from_resource), the current object will be `NULL`."
+    },
+    "set_scope": {
+      "brief": "Sets the scope the builder should operate in.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 2058,
+      "md": "Sets the scope the builder should operate in.\n\nIf `scope` is `NULL`, a new [`BuilderCScope`](xref:gtk:Gtk.BuilderCScope) will be created."
+    },
+    "set_translation_domain": {
+      "brief": "Sets the translation domain of `builder`.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 1920,
+      "md": "Sets the translation domain of `builder`."
+    },
+    "value_from_string": {
+      "brief": "Demarshals a value from a string.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 2164,
+      "md": "Demarshals a value from a string.\n\nThis function calls g_value_init() on the `value` argument,\nso it need not be initialised beforehand.\n\nCan handle char, uchar, boolean, int, uint, long,\nulong, enum, flags, float, double, string, `GdkRGBA` and\n`GtkAdjustment` type values.\n\nUpon errors `FALSE` will be returned and `error` will be\nassigned a `GError` from the %GTK_BUILDER_ERROR domain."
+    },
+    "value_from_string_type": {
+      "brief": "Demarshals a value from a string.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 2303,
+      "md": "Demarshals a value from a string.\n\nUnlike [`Builder.value_from_string()`](xref:gtk:Gtk.Builder#method:value_from_string), this function\ntakes a `GType` instead of `GParamSpec`.\n\nCalls g_value_init() on the `value` argument, so it\nneed not be initialised beforehand.\n\nUpon errors `FALSE` will be returned and `error` will be\nassigned a `GError` from the %GTK_BUILDER_ERROR domain."
+    }
+  },
+  "properties": {
+    "current-object": {
+      "brief": "The object the builder is evaluating for.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 486,
+      "md": "The object the builder is evaluating for."
+    },
+    "scope": {
+      "brief": "The scope the builder is operating in",
+      "file": "gtk/gtkbuilder.c",
+      "line": 496,
+      "md": "The scope the builder is operating in"
+    },
+    "translation-domain": {
+      "brief": "The translation domain used when translating property values that have been marked as translatable.",
+      "file": "gtk/gtkbuilder.c",
+      "line": 472,
+      "md": "The translation domain used when translating property values that\nhave been marked as translatable.\n\nIf the translation domain is `NULL`, `GtkBuilder` uses gettext(),\notherwise g_dgettext()."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

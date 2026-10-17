@@ -1,0 +1,147 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkProgressBar`.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 583,
+      "md": "Creates a new `GtkProgressBar`."
+    }
+  },
+  "doc": {
+    "brief": "Displays the progress of a long-running operation.",
+    "file": "gtk/gtkprogressbar.c",
+    "line": 43,
+    "md": "Displays the progress of a long-running operation.\n\n`GtkProgressBar` provides a visual clue that processing is underway.\nIt can be used in two different modes: percentage mode and activity mode.\n\nWhen an application can determine how much work needs to take place\n(e.g. read a fixed number of bytes from a file) and can monitor its\nprogress, it can use the `GtkProgressBar` in percentage mode and the\nuser sees a growing bar indicating the percentage of the work that\nhas been completed. In this mode, the application is required to call\n[`ProgressBar.set_fraction()`](xref:gtk:Gtk.ProgressBar#method:set_fraction) periodically to update the progress bar.\n\nWhen an application has no accurate way of knowing the amount of work\nto do, it can use the `GtkProgressBar` in activity mode, which shows\nactivity by a block moving back and forth within the progress area. In\nthis mode, the application is required to call [`ProgressBar.pulse()`](xref:gtk:Gtk.ProgressBar#method:pulse)\nperiodically to update the progress bar.\n\nThere is quite a bit of flexibility provided to control the appearance\nof the `GtkProgressBar`. Functions are provided to control the orientation\nof the bar, optional text can be displayed along with the bar, and the\nstep size used in activity mode can be set.\n\n# CSS nodes\n\n```\nprogressbar[.osd]\n├── [text]\n╰── trough[.empty][.full]\n    ╰── progress[.pulse]\n```\n\n`GtkProgressBar` has a main CSS node with name progressbar and subnodes with\nnames text and trough, of which the latter has a subnode named progress. The\ntext subnode is only present if text is shown. The progress subnode has the\nstyle class .pulse when in activity mode. It gets the style classes .left,\n.right, .top or .bottom added when the progress 'touches' the corresponding\nend of the GtkProgressBar. The .osd class on the progressbar node is for use\nin overlays like the one Epiphany has for page loading progress.\n\n# Accessibility\n\n`GtkProgressBar` uses the [`AccessibleRole.progress_bar`](xref:gtk:Gtk.AccessibleRole#value:progress_bar) role\nand sets the [`AccessibleProperty.value_min`](xref:gtk:Gtk.AccessibleProperty#value:value_min), [`AccessibleProperty.value_max`](xref:gtk:Gtk.AccessibleProperty#value:value_max) and [`AccessibleProperty.value_now`](xref:gtk:Gtk.AccessibleProperty#value:value_now) properties to reflect\nthe progress."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_ellipsize": {
+      "brief": "Returns the ellipsizing position of the progress bar.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1144,
+      "md": "Returns the ellipsizing position of the progress bar.\n\nSee [`ProgressBar.set_ellipsize()`](xref:gtk:Gtk.ProgressBar#method:set_ellipsize)."
+    },
+    "get_fraction": {
+      "brief": "Returns the current fraction of the task that’s been completed.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1065,
+      "md": "Returns the current fraction of the task that’s been completed."
+    },
+    "get_inverted": {
+      "brief": "Returns whether the progress bar is inverted.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1099,
+      "md": "Returns whether the progress bar is inverted."
+    },
+    "get_pulse_step": {
+      "brief": "Retrieves the pulse step.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1081,
+      "md": "Retrieves the pulse step.\n\nSee [`ProgressBar.set_pulse_step()`](xref:gtk:Gtk.ProgressBar#method:set_pulse_step)."
+    },
+    "get_show_text": {
+      "brief": "Returns whether the `GtkProgressBar` shows text.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 933,
+      "md": "Returns whether the `GtkProgressBar` shows text.\n\nSee [`ProgressBar.set_show_text()`](xref:gtk:Gtk.ProgressBar#method:set_show_text)."
+    },
+    "get_text": {
+      "brief": "Retrieves the text that is displayed with the progress bar.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1046,
+      "md": "Retrieves the text that is displayed with the progress bar.\n\nThe return value is a reference to the text, not a copy of it,\nso will become invalid if you change the text in the progress bar."
+    },
+    "pulse": {
+      "brief": "Indicates that some progress has been made, but you don’t know how much.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 827,
+      "md": "Indicates that some progress has been made, but you don’t know how much.\n\nCauses the progress bar to enter “activity mode,” where a block\nbounces back and forth. Each call to [`ProgressBar.pulse()`](xref:gtk:Gtk.ProgressBar#method:pulse)\ncauses the block to move by a little bit (the amount of movement\nper pulse is determined by [`ProgressBar.set_pulse_step()`](xref:gtk:Gtk.ProgressBar#method:set_pulse_step))."
+    },
+    "set_ellipsize": {
+      "brief": "Sets the mode used to ellipsize the text.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1115,
+      "md": "Sets the mode used to ellipsize the text.\n\nThe text is ellipsized if there is not enough space\nto render the entire string."
+    },
+    "set_fraction": {
+      "brief": "Causes the progress bar to “fill in” the given fraction of the bar.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 763,
+      "md": "Causes the progress bar to “fill in” the given fraction\nof the bar.\n\nThe fraction should be between 0.0 and 1.0, inclusive."
+    },
+    "set_inverted": {
+      "brief": "Sets whether the progress bar is inverted.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 1019,
+      "md": "Sets whether the progress bar is inverted.\n\nProgress bars normally grow from top to bottom or left to right.\nInverted progress bars grow in the opposite direction."
+    },
+    "set_pulse_step": {
+      "brief": "Sets the fraction of total progress bar length to move the bouncing block.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 951,
+      "md": "Sets the fraction of total progress bar length to move the\nbouncing block.\n\nThe bouncing block is moved when [`ProgressBar.pulse()`](xref:gtk:Gtk.ProgressBar#method:pulse)\nis called."
+    },
+    "set_show_text": {
+      "brief": "Sets whether the progress bar will show text next to the bar.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 883,
+      "md": "Sets whether the progress bar will show text next to the bar.\n\nThe shown text is either the value of the [`ProgressBar:text`](xref:gtk:Gtk.ProgressBar#property:text)\nproperty or, if that is `NULL`, the [`ProgressBar:fraction`](xref:gtk:Gtk.ProgressBar#property:fraction) value,\nas a percentage.\n\nTo make a progress bar that is styled and sized suitably for containing\ntext (even if the actual text is blank), set [`ProgressBar:show-text`](xref:gtk:Gtk.ProgressBar#property:show-text)\nto `TRUE` and [`ProgressBar:text`](xref:gtk:Gtk.ProgressBar#property:text) to the empty string (not `NULL`)."
+    },
+    "set_text": {
+      "brief": "Causes the given `text` to appear next to the progress bar.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 847,
+      "md": "Causes the given `text` to appear next to the progress bar.\n\nIf `text` is `NULL` and [`ProgressBar:show-text`](xref:gtk:Gtk.ProgressBar#property:show-text) is `TRUE`,\nthe current value of [`ProgressBar:fraction`](xref:gtk:Gtk.ProgressBar#property:fraction) will be displayed\nas a percentage.\n\nIf `text` is non-`NULL` and [`ProgressBar:show-text`](xref:gtk:Gtk.ProgressBar#property:show-text) is `TRUE`,\nthe text will be displayed. In this case, it will not display the progress\npercentage. If `text` is the empty string, the progress bar will still\nbe styled and sized suitably for containing text, as long as\n[`ProgressBar:show-text`](xref:gtk:Gtk.ProgressBar#property:show-text) is `TRUE`."
+    }
+  },
+  "properties": {
+    "ellipsize": {
+      "brief": "The preferred place to ellipsize the string.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 250,
+      "md": "The preferred place to ellipsize the string.\n\nThe text will be ellipsized if the progress bar does not have enough room\nto display the entire string, specified as a `PangoEllipsizeMode`.\n\nNote that setting this property to a value other than\n%PANGO_ELLIPSIZE_NONE has the side-effect that the progress bar requests\nonly enough space to display the ellipsis (\"...\"). Another means to set a\nprogress bar's width is [`Widget.set_size_request()`](xref:gtk:Gtk.Widget#method:set_size_request)."
+    },
+    "fraction": {
+      "brief": "The fraction of total work that has been completed.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 199,
+      "md": "The fraction of total work that has been completed."
+    },
+    "inverted": {
+      "brief": "Invert the direction in which the progress bar grows.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 189,
+      "md": "Invert the direction in which the progress bar grows."
+    },
+    "pulse-step": {
+      "brief": "The fraction of total progress to move the bounding block when pulsed.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 210,
+      "md": "The fraction of total progress to move the bounding block when pulsed."
+    },
+    "show-text": {
+      "brief": "Sets whether the progress bar will show a text in addition to the bar itself.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 231,
+      "md": "Sets whether the progress bar will show a text in addition\nto the bar itself.\n\nThe shown text is either the value of the [`ProgressBar:text`](xref:gtk:Gtk.ProgressBar#property:text)\nproperty or, if that is `NULL`, the [`ProgressBar:fraction`](xref:gtk:Gtk.ProgressBar#property:fraction)\nvalue, as a percentage.\n\nTo make a progress bar that is styled and sized suitably for showing text\n(even if the actual text is blank), set [`ProgressBar:show-text`](xref:gtk:Gtk.ProgressBar#property:show-text)\nto `TRUE` and [`ProgressBar:text`](xref:gtk:Gtk.ProgressBar#property:text) to the empty string (not `NULL`)."
+    },
+    "text": {
+      "brief": "Text to be displayed in the progress bar.",
+      "file": "gtk/gtkprogressbar.c",
+      "line": 221,
+      "md": "Text to be displayed in the progress bar."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

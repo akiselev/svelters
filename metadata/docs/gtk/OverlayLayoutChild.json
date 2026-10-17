@@ -1,0 +1,62 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkLayoutChild` subclass for children in a `GtkOverlayLayout`.",
+    "file": "gtk/gtkoverlaylayout.c",
+    "line": 45,
+    "md": "`GtkLayoutChild` subclass for children in a `GtkOverlayLayout`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:OverlayLayoutChild",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_clip_overlay": {
+      "brief": "Retrieves whether the child is clipped.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 229,
+      "md": "Retrieves whether the child is clipped."
+    },
+    "get_measure": {
+      "brief": "Retrieves whether the child is measured.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 187,
+      "md": "Retrieves whether the child is measured."
+    },
+    "set_clip_overlay": {
+      "brief": "Sets whether to clip this child.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 203,
+      "md": "Sets whether to clip this child."
+    },
+    "set_measure": {
+      "brief": "Sets whether to measure this child.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 161,
+      "md": "Sets whether to measure this child."
+    }
+  },
+  "properties": {
+    "clip-overlay": {
+      "brief": "Whether the child should be clipped to fit the parent's size.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 143,
+      "md": "Whether the child should be clipped to fit the parent's size."
+    },
+    "measure": {
+      "brief": "Whether the child size should contribute to the `GtkOverlayLayout`'s measurement.",
+      "file": "gtk/gtkoverlaylayout.c",
+      "line": 132,
+      "md": "Whether the child size should contribute to the `GtkOverlayLayout`'s\nmeasurement."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

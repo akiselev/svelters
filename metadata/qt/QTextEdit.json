@@ -78,39 +78,51 @@
   ],
   "enums": [
     {
+      "flags_alias": "QTextEdit::AutoFormatting",
+      "fullname": "QTextEdit::AutoFormattingFlag",
       "members": [
         {
+          "cpp": "QTextEdit::AutoNone",
           "name": "AutoNone",
           "value": "0"
         },
         {
+          "cpp": "QTextEdit::AutoBulletList",
           "name": "AutoBulletList",
           "value": "0x00000001"
         },
         {
+          "cpp": "QTextEdit::AutoAll",
           "name": "AutoAll",
           "value": "0xffffffff"
         }
       ],
       "metaobject": null,
       "name": "AutoFormattingFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QTextEdit::LineWrapMode",
       "members": [
         {
+          "cpp": "QTextEdit::NoWrap",
           "name": "NoWrap",
           "value": "0"
         },
         {
+          "cpp": "QTextEdit::WidgetWidth",
           "name": "WidgetWidth",
           "value": "1"
         },
         {
+          "cpp": "QTextEdit::FixedPixelWidth",
           "name": "FixedPixelWidth",
           "value": "2"
         },
         {
+          "cpp": "QTextEdit::FixedColumnWidth",
           "name": "FixedColumnWidth",
           "value": "3"
         }
@@ -126,12 +138,23 @@
         "scoped": false
       },
       "name": "LineWrapMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QTextEdit",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTextEdit:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -178,7 +201,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -207,7 +230,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -278,7 +301,7 @@
         "native": "QTextEdit::AutoFormatting",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QTextEdit::AutoFormattingFlag>"
       },
       "signature": "QTextEdit::AutoFormatting autoFormatting() const",
       "since": null,
@@ -548,7 +571,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -582,7 +605,7 @@
         "native": "QTextCharFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCharFormat>"
       },
       "signature": "QTextCharFormat currentCharFormat() const",
       "since": null,
@@ -608,7 +631,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont currentFont() const",
       "since": null,
@@ -637,7 +660,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -645,7 +668,7 @@
         "native": "QTextCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCursor>"
       },
       "signature": "QTextCursor cursorForPosition(const QPoint &pos) const",
       "since": null,
@@ -671,7 +694,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect cursorRect() const",
       "since": null,
@@ -700,7 +723,7 @@
             "native": "const QTextCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCursor>"
           }
         }
       ],
@@ -708,7 +731,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect cursorRect(const QTextCursor &cursor) const",
       "since": null,
@@ -1051,7 +1074,7 @@
             "native": "QTextDocument::FindFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTextDocument::FindFlag>"
           }
         }
       ],
@@ -1098,7 +1121,7 @@
             "native": "QTextDocument::FindFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTextDocument::FindFlag>"
           }
         }
       ],
@@ -1413,7 +1436,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -1710,7 +1733,7 @@
         "native": "QTextEdit::LineWrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextEdit::LineWrapMode>"
       },
       "signature": "QTextEdit::LineWrapMode lineWrapMode() const",
       "since": null,
@@ -1749,7 +1772,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1786,7 +1809,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -1971,7 +1994,7 @@
             "native": "QTextCursor::MoveOperation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextCursor::MoveOperation>"
           }
         },
         {
@@ -1981,7 +2004,7 @@
             "native": "QTextCursor::MoveMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextCursor::MoveMode>"
           }
         }
       ],
@@ -2380,7 +2403,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -2417,7 +2440,7 @@
             "native": "QTextEdit::AutoFormatting",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTextEdit::AutoFormattingFlag>"
           }
         }
       ],
@@ -2454,7 +2477,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],
@@ -2491,7 +2514,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -2935,7 +2958,7 @@
             "native": "QTextEdit::LineWrapMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextEdit::LineWrapMode>"
           }
         }
       ],
@@ -3268,7 +3291,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -3305,7 +3328,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -3342,7 +3365,7 @@
             "native": "const QTextCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCursor>"
           }
         }
       ],
@@ -3379,7 +3402,7 @@
             "native": "Qt::TextInteractionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::TextInteractionFlag>"
           }
         }
       ],
@@ -3453,7 +3476,7 @@
             "native": "QTextOption::WrapMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextOption::WrapMode>"
           }
         }
       ],
@@ -3576,7 +3599,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor textBackgroundColor() const",
       "since": null,
@@ -3602,7 +3625,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor textColor() const",
       "since": null,
@@ -3628,7 +3651,7 @@
         "native": "QTextCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCursor>"
       },
       "signature": "QTextCursor textCursor() const",
       "since": null,
@@ -3654,7 +3677,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       },
       "signature": "Qt::TextInteractionFlags textInteractionFlags() const",
       "since": null,
@@ -3709,7 +3732,7 @@
             "native": "QTextDocument::MarkdownFeatures",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTextDocument::MarkdownFeature>"
           }
         }
       ],
@@ -3832,7 +3855,7 @@
         "native": "QTextOption::WrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextOption::WrapMode>"
       },
       "signature": "QTextOption::WrapMode wordWrapMode() const",
       "since": null,
@@ -3967,6 +3990,8 @@
         "set": "setAcceptRichText"
       },
       "brief": "Whether the text edit accepts rich text insertions by the user",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "acceptRichText",
       "metaobject": {
         "constant": false,
@@ -3987,6 +4012,7 @@
       "name": "acceptRichText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4007,6 +4033,8 @@
         "set": "setAutoFormatting"
       },
       "brief": "The enabled set of auto formatting features",
+      "default": "AutoNone",
+      "default_origin": "runtime",
       "js_name": "autoFormatting",
       "metaobject": {
         "constant": false,
@@ -4027,12 +4055,13 @@
       "name": "autoFormatting",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "AutoFormatting",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QTextEdit::AutoFormattingFlag>"
       }
     },
     {
@@ -4047,6 +4076,8 @@
         "set": "setCursorWidth"
       },
       "brief": null,
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "cursorWidth",
       "metaobject": {
         "constant": false,
@@ -4067,6 +4098,7 @@
       "name": "cursorWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -4087,6 +4119,7 @@
         "set": "setDocument"
       },
       "brief": "The underlying document of the text editor",
+      "default": null,
       "js_name": "document",
       "metaobject": {
         "constant": false,
@@ -4107,6 +4140,7 @@
       "name": "document",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTextDocument*",
@@ -4127,6 +4161,8 @@
         "set": "setDocumentTitle"
       },
       "brief": "The title of the document parsed from the text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "documentTitle",
       "metaobject": {
         "constant": false,
@@ -4147,6 +4183,7 @@
       "name": "documentTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -4167,6 +4204,8 @@
         "set": "setHtml"
       },
       "brief": null,
+      "default": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>",
+      "default_origin": "runtime",
       "js_name": "html",
       "metaobject": {
         "constant": false,
@@ -4190,6 +4229,7 @@
         "signal": "textChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -4210,6 +4250,8 @@
         "set": "setLineWrapColumnOrWidth"
       },
       "brief": "The position (in pixels or columns depending on the wrap mode) where text will be wrapped",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "lineWrapColumnOrWidth",
       "metaobject": {
         "constant": false,
@@ -4230,6 +4272,7 @@
       "name": "lineWrapColumnOrWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -4250,6 +4293,8 @@
         "set": "setLineWrapMode"
       },
       "brief": "The line wrap mode",
+      "default": "WidgetWidth",
+      "default_origin": "runtime",
       "js_name": "lineWrapMode",
       "metaobject": {
         "constant": false,
@@ -4270,12 +4315,13 @@
       "name": "lineWrapMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "LineWrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<LineWrapMode>"
+        "ref": "enum<QTextEdit::LineWrapMode>"
       }
     },
     {
@@ -4290,6 +4336,8 @@
         "set": "setMarkdown"
       },
       "brief": null,
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "markdown",
       "metaobject": {
         "constant": false,
@@ -4313,6 +4361,7 @@
         "signal": "textChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -4333,6 +4382,8 @@
         "set": "setOverwriteMode"
       },
       "brief": "Whether text entered by the user will overwrite existing text",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "overwriteMode",
       "metaobject": {
         "constant": false,
@@ -4353,6 +4404,7 @@
       "name": "overwriteMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4373,6 +4425,8 @@
         "set": "setPlaceholderText"
       },
       "brief": "The editor placeholder text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "placeholderText",
       "metaobject": {
         "constant": false,
@@ -4393,6 +4447,7 @@
       "name": "placeholderText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -4413,6 +4468,8 @@
         "set": "setPlainText"
       },
       "brief": "The text editor's contents as plain text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "plainText",
       "metaobject": {
         "constant": false,
@@ -4433,6 +4490,7 @@
       "name": "plainText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -4453,6 +4511,8 @@
         "set": "setReadOnly"
       },
       "brief": "Whether the text edit is read-only",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "readOnly",
       "metaobject": {
         "constant": false,
@@ -4473,6 +4533,7 @@
       "name": "readOnly",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4493,6 +4554,8 @@
         "set": "setTabChangesFocus"
       },
       "brief": "Whether Tab changes focus or is accepted as input",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabChangesFocus",
       "metaobject": {
         "constant": false,
@@ -4513,6 +4576,7 @@
       "name": "tabChangesFocus",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4533,6 +4597,8 @@
         "set": "setTabStopDistance"
       },
       "brief": "The tab stop distance in pixels",
+      "default": 80.0,
+      "default_origin": "runtime",
       "js_name": "tabStopDistance",
       "metaobject": {
         "constant": false,
@@ -4553,6 +4619,7 @@
       "name": "tabStopDistance",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -4573,6 +4640,8 @@
         "set": "setTextInteractionFlags"
       },
       "brief": null,
+      "default": "TextEditorInteraction",
+      "default_origin": "runtime",
       "js_name": "textInteractionFlags",
       "metaobject": {
         "constant": false,
@@ -4593,12 +4662,13 @@
       "name": "textInteractionFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       }
     },
     {
@@ -4613,6 +4683,8 @@
         "set": "setUndoRedoEnabled"
       },
       "brief": "Whether undo and redo are enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "undoRedoEnabled",
       "metaobject": {
         "constant": false,
@@ -4633,6 +4705,7 @@
       "name": "undoRedoEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4653,15 +4726,17 @@
         "set": "setWordWrapMode"
       },
       "brief": "The mode QTextEdit will use when wrapping text by words",
+      "default": null,
       "js_name": "wordWrapMode",
       "name": "wordWrapMode",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTextOption::WrapMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextOption::WrapMode>"
       }
     }
   ],
@@ -4725,7 +4800,7 @@
             "native": "const QTextCharFormat &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCharFormat>"
           }
         }
       ],

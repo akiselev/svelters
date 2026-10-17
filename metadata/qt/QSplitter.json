@@ -55,7 +55,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -79,6 +79,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QSplitter",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSplitter:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -613,7 +623,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -712,7 +722,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -851,7 +861,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -885,7 +895,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray saveState() const",
       "since": null,
@@ -1072,7 +1082,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -1146,7 +1156,7 @@
             "native": "const QList<int> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<i32>"
           }
         }
       ],
@@ -1227,7 +1237,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1253,7 +1263,7 @@
         "native": "QList<int>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<i32>"
       },
       "signature": "QList<int> sizes() const",
       "since": null,
@@ -1342,6 +1352,8 @@
         "set": "setChildrenCollapsible"
       },
       "brief": "Whether child widgets can be resized down to size 0 by the user",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "childrenCollapsible",
       "metaobject": {
         "constant": false,
@@ -1362,6 +1374,7 @@
       "name": "childrenCollapsible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1382,6 +1395,8 @@
         "set": "setHandleWidth"
       },
       "brief": "The width of the splitter handles",
+      "default": 4,
+      "default_origin": "runtime",
       "js_name": "handleWidth",
       "metaobject": {
         "constant": false,
@@ -1402,6 +1417,7 @@
       "name": "handleWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1422,6 +1438,8 @@
         "set": "setOpaqueResize"
       },
       "brief": null,
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "opaqueResize",
       "metaobject": {
         "constant": false,
@@ -1442,6 +1460,7 @@
       "name": "opaqueResize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1462,6 +1481,8 @@
         "set": "setOrientation"
       },
       "brief": "The orientation of the splitter",
+      "default": "Horizontal",
+      "default_origin": "runtime",
       "js_name": "orientation",
       "metaobject": {
         "constant": false,
@@ -1482,12 +1503,13 @@
       "name": "orientation",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     }
   ],

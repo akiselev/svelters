@@ -1,0 +1,85 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "GtkShortcutType specifies the kind of shortcut that is being described.",
+    "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+    "line": 37,
+    "md": "GtkShortcutType specifies the kind of shortcut that is being described.\n\nMore values may be added to this enumeration over time."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "accelerator": {
+      "brief": "The shortcut is a keyboard accelerator.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 39,
+      "md": "The shortcut is a keyboard accelerator. The GtkShortcutsShortcut:accelerator\n  property will be used."
+    },
+    "gesture": {
+      "brief": "The shortcut is a gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 54,
+      "md": "The shortcut is a gesture. The GtkShortcutsShortcut:icon property will be\n  used."
+    },
+    "gesture_pinch": {
+      "brief": "The shortcut is a pinch gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 42,
+      "md": "The shortcut is a pinch gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_rotate_clockwise": {
+      "brief": "The shortcut is a clockwise rotation gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 46,
+      "md": "The shortcut is a clockwise rotation gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_rotate_counterclockwise": {
+      "brief": "The shortcut is a counterclockwise rotation gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 48,
+      "md": "The shortcut is a counterclockwise rotation gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_stretch": {
+      "brief": "The shortcut is a stretch gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 44,
+      "md": "The shortcut is a stretch gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_swipe_left": {
+      "brief": "The shortcut is a swipe gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 57,
+      "md": "The shortcut is a swipe gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_swipe_right": {
+      "brief": "The shortcut is a swipe gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 59,
+      "md": "The shortcut is a swipe gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_two_finger_swipe_left": {
+      "brief": "The shortcut is a two-finger swipe gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 50,
+      "md": "The shortcut is a two-finger swipe gesture. GTK provides an icon and subtitle."
+    },
+    "gesture_two_finger_swipe_right": {
+      "brief": "The shortcut is a two-finger swipe gesture.",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.h",
+      "line": 52,
+      "md": "The shortcut is a two-finger swipe gesture. GTK provides an icon and subtitle."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

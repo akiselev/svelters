@@ -1,0 +1,419 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkText`.",
+      "file": "gtk/gtktext.c",
+      "line": 5636,
+      "md": "Creates a new `GtkText`."
+    },
+    "new_with_buffer": {
+      "brief": "Creates a new `GtkText` with the specified buffer.",
+      "file": "gtk/gtktext.c",
+      "line": 5649,
+      "md": "Creates a new `GtkText` with the specified buffer."
+    }
+  },
+  "doc": {
+    "brief": "A single-line text entry.",
+    "file": "gtk/gtktext.c",
+    "line": 78,
+    "md": "A single-line text entry.\n\n`GtkText` is the common implementation of single-line text editing\nthat is shared between [`Entry`](xref:gtk:Gtk.Entry), [`PasswordEntry`](xref:gtk:Gtk.PasswordEntry),\n[`SpinButton`](xref:gtk:Gtk.SpinButton), and other widgets. In all of these, a `GtkText`\ninstance is used as the delegate for the [`Editable`](xref:gtk:Gtk.Editable) implementation.\n\nA large number of key bindings s supported by default. If the entered\ntext is longer than the allocation of the widget, the widget will scroll\nso that the cursor position is visible.\n\nWhen using an entry for passwords and other sensitive information,\nit can be put into “password mode” using [`Text.set_visibility()`](xref:gtk:Gtk.Text#method:set_visibility).\nIn this mode, entered text is displayed using an “invisible” character.\nBy default, GTK picks the best invisible character that is available\nin the current font, but it can be changed with\n[`Text.set_invisible_char()`](xref:gtk:Gtk.Text#method:set_invisible_char).\n\nIf you want to add icons or progress display in an entry, look at\n[`Entry`](xref:gtk:Gtk.Entry). There are other alternatives for more specialized\nuse cases, such as [`SearchEntry`](xref:gtk:Gtk.SearchEntry).\n\nIf you need multi-line editable text, use [`TextView`](xref:gtk:Gtk.TextView).\n\n# Shortcuts and Gestures\n\n`GtkText` supports the following keyboard shortcuts:\n\n- <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> opens the context menu.\n- <kbd>Ctrl</kbd>+<kbd>A</kbd> or <kbd>Ctrl</kbd>+<kbd>&sol;</kbd>\n  selects all the text.\n- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd> or\n  <kbd>Ctrl</kbd>+<kbd>&bsol;</kbd> unselects all.\n- <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes the last modification.\n- <kbd>Ctrl</kbd>+<kbd>Y</kbd> or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>\n  redoes the last undone modification.\n- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> toggles the text direction.\n- <kbd>Clear</kbd> clears the content.\n\nAdditionally, the following signals have default keybindings:\n\n- [`Text::activate`](xref:gtk:Gtk.Text#event:activate)\n- [`Text::backspace`](xref:gtk:Gtk.Text#event:backspace)\n- [`Text::copy-clipboard`](xref:gtk:Gtk.Text#event:copy-clipboard)\n- [`Text::cut-clipboard`](xref:gtk:Gtk.Text#event:cut-clipboard)\n- [`Text::delete-from-cursor`](xref:gtk:Gtk.Text#event:delete-from-cursor)\n- [`Text::insert-emoji`](xref:gtk:Gtk.Text#event:insert-emoji)\n- [`Text::move-cursor`](xref:gtk:Gtk.Text#event:move-cursor)\n- [`Text::paste-clipboard`](xref:gtk:Gtk.Text#event:paste-clipboard)\n- [`Text::toggle-overwrite`](xref:gtk:Gtk.Text#event:toggle-overwrite)\n\n# Actions\n\n`GtkText` defines a set of built-in actions:\n\n- `clipboard.copy` copies the contents to the clipboard.\n- `clipboard.cut` copies the contents to the clipboard and deletes it from\n  the widget.\n- `clipboard.paste` inserts the contents of the clipboard into the widget.\n- `menu.popup` opens the context menu.\n- `misc.insert-emoji` opens the Emoji chooser.\n- `misc.toggle-visibility` toggles the `GtkText`:visibility property.\n- `misc.toggle-direction` toggles the text direction.\n- `selection.delete` deletes the current selection.\n- `selection.select-all` selects all of the widgets content.\n- `text.redo` redoes the last change to the contents.\n- `text.undo` undoes the last change to the contents.\n- `text.clear` removes all content.\n\n# CSS nodes\n\n```\ntext[.read-only]\n├── placeholder\n├── undershoot.left\n├── undershoot.right\n├── [selection]\n├── [cursor-handle[.top]\n├── [cursor-handle.bottom]\n├── [block-cursor]\n├── [cursor-handle[.top/.bottom][.insertion-cursor]]\n╰── [window.popup]\n```\n\n`GtkText` has a main node with the name `text`. Depending on the properties\nof the widget, the `.read-only` style class may appear.\n\nWhen the entry has a selection, it adds a subnode with the name `selection`.\n\nWhen the entry is in overwrite mode, it adds a subnode with the name\n`block-cursor` that determines how the block cursor is drawn.\n\nThe CSS node for a context menu is added as a subnode with the name `popup`.\n\nThe `undershoot` nodes are used to draw the underflow indication when content\nis scrolled out of view. These nodes get the `.left` or `.right` style class\nadded depending on where the indication is drawn.\n\nWhen touch is used and touch selection handles are shown, they are using\nCSS nodes with name `cursor-handle`. They get the `.top` or `.bottom` style\nclass depending on where they are shown in relation to the selection. If\nthere is just a single handle for the text cursor, it gets the style class\n`.insertion-cursor`.\n\n# Accessibility\n\n`GtkText` uses the [`AccessibleRole.none`](xref:gtk:Gtk.AccessibleRole#value:none) role, which causes it to be\nskipped for accessibility. This is because `GtkText` is expected to be used\nas a delegate for a `GtkEditable` implementation that will be represented\nto accessibility."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Text",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "compute_cursor_extents": {
+      "brief": "Determines the positions of the strong and weak cursors for a given character position.",
+      "file": "gtk/gtktext.c",
+      "line": 7481,
+      "md": "Determines the positions of the strong and weak cursors for a\ngiven character position.\n\nThe position of each cursor is stored as a zero-width rectangle.\nThe strong cursor location is the location where characters of\nthe directionality equal to the base direction are inserted.\nThe weak cursor location is the location where characters of\nthe directionality opposite to the base direction are inserted.\n\nThe rectangle positions are in widget coordinates.",
+      "since": "4.4"
+    },
+    "get_activates_default": {
+      "brief": "Returns whether pressing <kbd>Enter</kbd> will activate the default widget for the window containing the widget.",
+      "file": "gtk/gtktext.c",
+      "line": 6129,
+      "md": "Returns whether pressing <kbd>Enter</kbd> will activate\nthe default widget for the window containing the widget.\n\nSee [`Text.set_activates_default()`](xref:gtk:Gtk.Text#method:set_activates_default)."
+    },
+    "get_attributes": {
+      "brief": "Gets the attribute list that was set on the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7177,
+      "md": "Gets the attribute list that was set on the text widget.\n\nSee [`Text.set_attributes()`](xref:gtk:Gtk.Text#method:set_attributes)."
+    },
+    "get_buffer": {
+      "brief": "Get the entry buffer object which holds the text for this widget.",
+      "file": "gtk/gtktext.c",
+      "line": 5681,
+      "md": "Get the entry buffer object which holds the text for\nthis widget."
+    },
+    "get_enable_emoji_completion": {
+      "brief": "Returns whether Emoji completion is enabled.",
+      "file": "gtk/gtktext.c",
+      "line": 7378,
+      "md": "Returns whether Emoji completion is enabled."
+    },
+    "get_extra_menu": {
+      "brief": "Gets the extra menu model of the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7326,
+      "md": "Gets the extra menu model of the text widget.\n\nSee [`Text.set_extra_menu()`](xref:gtk:Gtk.Text#method:set_extra_menu)."
+    },
+    "get_input_hints": {
+      "brief": "Gets the input hints of the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7123,
+      "md": "Gets the input hints of the text widget."
+    },
+    "get_input_purpose": {
+      "brief": "Gets the input purpose of the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7073,
+      "md": "Gets the input purpose of the text widget."
+    },
+    "get_invisible_char": {
+      "brief": "Retrieves the character displayed when visibility is set to false.",
+      "file": "gtk/gtktext.c",
+      "line": 5936,
+      "md": "Retrieves the character displayed when visibility is set to false.\n\nNote that GTK does not compute this value unless it needs it,\nso the value returned by this function is not very useful unless\nit has been explicitly set with [`Text.set_invisible_char()`](xref:gtk:Gtk.Text#method:set_invisible_char)."
+    },
+    "get_max_length": {
+      "brief": "Retrieves the maximum allowed length of the contents.",
+      "file": "gtk/gtktext.c",
+      "line": 6058,
+      "md": "Retrieves the maximum allowed length of the contents.\n\nSee [`Text.set_max_length()`](xref:gtk:Gtk.Text#method:set_max_length).\n\nThis is equivalent to getting `self`'s `GtkEntryBuffer` and\ncalling [`EntryBuffer.get_max_length()`](xref:gtk:Gtk.EntryBuffer#method:get_max_length) on it."
+    },
+    "get_overwrite_mode": {
+      "brief": "Gets whether text is overwritten when typing.",
+      "file": "gtk/gtktext.c",
+      "line": 6014,
+      "md": "Gets whether text is overwritten when typing.\n\nSee [`Text.set_overwrite_mode()`](xref:gtk:Gtk.Text#method:set_overwrite_mode)."
+    },
+    "get_placeholder_text": {
+      "brief": "Retrieves the text that will be displayed when the text widget is empty and unfocused",
+      "file": "gtk/gtktext.c",
+      "line": 7021,
+      "md": "Retrieves the text that will be displayed when the text widget\nis empty and unfocused\n\nSee [`Text.set_placeholder_text()`](xref:gtk:Gtk.Text#method:set_placeholder_text)."
+    },
+    "get_propagate_text_width": {
+      "brief": "Returns whether the text widget will grow and shrink with the content.",
+      "file": "gtk/gtktext.c",
+      "line": 7421,
+      "md": "Returns whether the text widget will grow and shrink\nwith the content."
+    },
+    "get_tabs": {
+      "brief": "Gets the tab stops for the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7226,
+      "md": "Gets the tab stops for the text widget.\n\nSee [`Text.set_tabs()`](xref:gtk:Gtk.Text#method:set_tabs)."
+    },
+    "get_text_length": {
+      "brief": "Retrieves the length of the contents.",
+      "file": "gtk/gtktext.c",
+      "line": 6080,
+      "md": "Retrieves the length of the contents.\n\nThis is equivalent to getting `self`'s `GtkEntryBuffer`\nand calling [`EntryBuffer.get_length()`](xref:gtk:Gtk.EntryBuffer#method:get_length) on it."
+    },
+    "get_truncate_multiline": {
+      "brief": "Returns whether pasted text will be truncated to the first line.",
+      "file": "gtk/gtktext.c",
+      "line": 7463,
+      "md": "Returns whether pasted text will be truncated to the first line."
+    },
+    "get_visibility": {
+      "brief": "Retrieves whether the text is visible.",
+      "file": "gtk/gtktext.c",
+      "line": 5884,
+      "md": "Retrieves whether the text is visible."
+    },
+    "grab_focus_without_selecting": {
+      "brief": "Causes the text widget to have the keyboard focus.",
+      "file": "gtk/gtktext.c",
+      "line": 3509,
+      "md": "Causes the text widget to have the keyboard focus.\n\nIt behaves like [`Widget.grab_focus()`](xref:gtk:Gtk.Widget#method:grab_focus),\nexcept that it does not select the contents of `self`.\n\nYou only want to call this on some special entries\nwhich the user usually doesn't want to replace all\ntext in, such as search-as-you-type entries."
+    },
+    "set_activates_default": {
+      "brief": "Sets whether pressing <kbd>Enter</kbd> will activate the default widget.",
+      "file": "gtk/gtktext.c",
+      "line": 6099,
+      "md": "Sets whether pressing <kbd>Enter</kbd> will activate\nthe default widget.\n\nThis usually means that the dialog containing `self` will\nbe closed, since the default widget is usually one of\nthe dialog buttons."
+    },
+    "set_attributes": {
+      "brief": "Apply attributes to the contents of the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7146,
+      "md": "Apply attributes to the contents of the text widget."
+    },
+    "set_buffer": {
+      "brief": "Set the entry buffer object which holds the text for this widget.",
+      "file": "gtk/gtktext.c",
+      "line": 5698,
+      "md": "Set the entry buffer object which holds the text for\nthis widget."
+    },
+    "set_enable_emoji_completion": {
+      "brief": "Sets whether Emoji completion is enabled.",
+      "file": "gtk/gtktext.c",
+      "line": 7346,
+      "md": "Sets whether Emoji completion is enabled.\n\nIf it is, typing ':', followed by a recognized keyword,\nwill pop up a window with suggested Emojis matching the\nkeyword."
+    },
+    "set_extra_menu": {
+      "brief": "Sets a menu model to add to the context menu of the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7303,
+      "md": "Sets a menu model to add to the context menu of the text widget."
+    },
+    "set_input_hints": {
+      "brief": "Sets hints that allow input methods to fine-tune their behaviour.",
+      "file": "gtk/gtktext.c",
+      "line": 7096,
+      "md": "Sets hints that allow input methods to fine-tune their behaviour."
+    },
+    "set_input_purpose": {
+      "brief": "Sets the input purpose of the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7045,
+      "md": "Sets the input purpose of the text widget.\n\nThe input purpose can be used by on-screen keyboards\nand other input methods to adjust their behaviour."
+    },
+    "set_invisible_char": {
+      "brief": "Sets the character to use when in “password mode”.",
+      "file": "gtk/gtktext.c",
+      "line": 5902,
+      "md": "Sets the character to use when in “password mode”.\n\nBy default, GTK picks the best invisible char available in the\ncurrent font. If you set the invisible char to 0, then the user\nwill get no feedback at all; there will be no text on the screen\nas they type."
+    },
+    "set_max_length": {
+      "brief": "Sets the maximum allowed length of the contents.",
+      "file": "gtk/gtktext.c",
+      "line": 6035,
+      "md": "Sets the maximum allowed length of the contents.\n\nIf the current contents are longer than the given length,\nthey will be truncated to fit.\n\nThis is equivalent to getting `self`'s `GtkEntryBuffer` and\ncalling [`EntryBuffer.set_max_length()`](xref:gtk:Gtk.EntryBuffer#method:set_max_length) on it."
+    },
+    "set_overwrite_mode": {
+      "brief": "Sets whether the text is overwritten when typing.",
+      "file": "gtk/gtktext.c",
+      "line": 5991,
+      "md": "Sets whether the text is overwritten when typing."
+    },
+    "set_placeholder_text": {
+      "brief": "Sets the text to be displayed when the text widget is empty and unfocused.",
+      "file": "gtk/gtktext.c",
+      "line": 6979,
+      "md": "Sets the text to be displayed when the text widget is\nempty and unfocused.\n\nThis can be used to give a visual hint of the expected\ncontents of the text widget."
+    },
+    "set_propagate_text_width": {
+      "brief": "Sets whether the text widget should grow and shrink with the content.",
+      "file": "gtk/gtktext.c",
+      "line": 7396,
+      "md": "Sets whether the text widget should grow and shrink with the content."
+    },
+    "set_tabs": {
+      "brief": "Sets tab stops for the text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 7197,
+      "md": "Sets tab stops for the text widget."
+    },
+    "set_truncate_multiline": {
+      "brief": "Sets whether pasted text should be truncated to the first line.",
+      "file": "gtk/gtktext.c",
+      "line": 7440,
+      "md": "Sets whether pasted text should be truncated to the first line."
+    },
+    "set_visibility": {
+      "brief": "Sets whether the contents of the text widget are visible or not.",
+      "file": "gtk/gtktext.c",
+      "line": 5838,
+      "md": "Sets whether the contents of the text widget are visible or not.\n\nWhen visibility is set to false, characters are displayed\nas the invisible char, and it will also appear that way when\nthe text in the widget is copied to the clipboard.\n\nBy default, GTK picks the best invisible character available\nin the current font, but it can be changed with\n[`Text.set_invisible_char()`](xref:gtk:Gtk.Text#method:set_invisible_char).\n\nNote that you probably want to set [`Text:input-purpose`](xref:gtk:Gtk.Text#property:input-purpose)\nto [`InputPurpose.password`](xref:gtk:Gtk.InputPurpose#value:password) or [`InputPurpose.pin`](xref:gtk:Gtk.InputPurpose#value:pin)\nto inform input methods about the purpose of this widget, in addition\nto setting visibility to false."
+    },
+    "unset_invisible_char": {
+      "brief": "Unsets the invisible char.",
+      "file": "gtk/gtktext.c",
+      "line": 5959,
+      "md": "Unsets the invisible char.\n\nAfter calling this, the default invisible char is used again."
+    }
+  },
+  "properties": {
+    "activates-default": {
+      "brief": "Whether to activate the default widget when <kbd>Enter</kbd> is pressed.",
+      "file": "gtk/gtktext.c",
+      "line": 862,
+      "md": "Whether to activate the default widget when <kbd>Enter</kbd> is pressed."
+    },
+    "attributes": {
+      "brief": "A list of Pango attributes to apply to the text.",
+      "file": "gtk/gtktext.c",
+      "line": 970,
+      "md": "A list of Pango attributes to apply to the text.\n\nThis is mainly useful to change the size or weight of the text.\n\nThe `PangoAttribute`'s `start_index` and `end_index` must refer to the\n`GtkEntryBuffer` text, i.e. without the preedit string."
+    },
+    "buffer": {
+      "brief": "The `GtkEntryBuffer` object which stores the text.",
+      "file": "gtk/gtktext.c",
+      "line": 829,
+      "md": "The `GtkEntryBuffer` object which stores the text."
+    },
+    "enable-emoji-completion": {
+      "brief": "Whether to suggest Emoji replacements.",
+      "file": "gtk/gtktext.c",
+      "line": 995,
+      "md": "Whether to suggest Emoji replacements."
+    },
+    "extra-menu": {
+      "brief": "A menu model whose contents will be appended to the context menu.",
+      "file": "gtk/gtktext.c",
+      "line": 1025,
+      "md": "A menu model whose contents will be appended to the context menu."
+    },
+    "im-module": {
+      "brief": "Which input method module should be used.",
+      "file": "gtk/gtktext.c",
+      "line": 924,
+      "md": "Which input method module should be used.\n\nSee [`IMMulticontext`](xref:gtk:Gtk.IMMulticontext).\n\nSetting this to a non-`NULL` value overrides the system-wide\ninput method. See the [`Settings:gtk-im-module`](xref:gtk:Gtk.Settings#property:gtk-im-module)\nsetting."
+    },
+    "input-hints": {
+      "brief": "Additional hints that allow input methods to fine-tune their behaviour.",
+      "file": "gtk/gtktext.c",
+      "line": 958,
+      "md": "Additional hints that allow input methods to fine-tune\ntheir behaviour."
+    },
+    "input-purpose": {
+      "brief": "The purpose of this text field.",
+      "file": "gtk/gtktext.c",
+      "line": 940,
+      "md": "The purpose of this text field.\n\nThis information can be used by on-screen keyboards and other input\nmethods to adjust their behaviour.\n\nNote that setting the purpose to [`InputPurpose.password`](xref:gtk:Gtk.InputPurpose#value:password)\nor [`InputPurpose.pin`](xref:gtk:Gtk.InputPurpose#value:pin) is independent from setting\n[`Text:visibility`](xref:gtk:Gtk.Text#property:visibility)."
+    },
+    "invisible-char": {
+      "brief": "The character to used when masking contents (in “password mode”).",
+      "file": "gtk/gtktext.c",
+      "line": 852,
+      "md": "The character to used when masking contents (in “password mode”)."
+    },
+    "invisible-char-set": {
+      "brief": "Whether the invisible char has been set.",
+      "file": "gtk/gtktext.c",
+      "line": 903,
+      "md": "Whether the invisible char has been set."
+    },
+    "max-length": {
+      "brief": "Maximum number of characters that are allowed.",
+      "file": "gtk/gtktext.c",
+      "line": 839,
+      "md": "Maximum number of characters that are allowed.\n\nZero indicates no limit."
+    },
+    "overwrite-mode": {
+      "brief": "If text is overwritten when typing.",
+      "file": "gtk/gtktext.c",
+      "line": 893,
+      "md": "If text is overwritten when typing."
+    },
+    "placeholder-text": {
+      "brief": "The text that will be displayed in the `GtkText` when it is empty and unfocused.",
+      "file": "gtk/gtktext.c",
+      "line": 913,
+      "md": "The text that will be displayed in the `GtkText` when it is empty\nand unfocused."
+    },
+    "propagate-text-width": {
+      "brief": "Whether the widget should grow and shrink with the content.",
+      "file": "gtk/gtktext.c",
+      "line": 1015,
+      "md": "Whether the widget should grow and shrink with the content."
+    },
+    "scroll-offset": {
+      "brief": "Number of pixels scrolled of the screen to the left.",
+      "file": "gtk/gtktext.c",
+      "line": 872,
+      "md": "Number of pixels scrolled of the screen to the left."
+    },
+    "tabs": {
+      "brief": "Custom tabs for this text widget.",
+      "file": "gtk/gtktext.c",
+      "line": 985,
+      "md": "Custom tabs for this text widget."
+    },
+    "truncate-multiline": {
+      "brief": "When true, pasted multi-line text is truncated to the first line.",
+      "file": "gtk/gtktext.c",
+      "line": 883,
+      "md": "When true, pasted multi-line text is truncated to the first line."
+    },
+    "visibility": {
+      "brief": "If false, the text is masked with the “invisible char”.",
+      "file": "gtk/gtktext.c",
+      "line": 1005,
+      "md": "If false, the text is masked with the “invisible char”."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when the user hits the <kbd>Enter</kbd> key.",
+      "file": "gtk/gtktext.c",
+      "line": 1041,
+      "md": "Emitted when the user hits the <kbd>Enter</kbd> key.\n\nThe default bindings for this signal are all forms\nof the <kbd>Enter</kbd> key."
+    },
+    "backspace": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtktext.c",
+      "line": 1156,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Backspace</kbd> and <kbd>Shift</kbd>+<kbd>Backspace</kbd>."
+    },
+    "copy-clipboard": {
+      "brief": "Emitted to copy the selection to the clipboard.",
+      "file": "gtk/gtktext.c",
+      "line": 1197,
+      "md": "Emitted to copy the selection to the clipboard.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>c</kbd> and\n<kbd>Ctrl</kbd>+<kbd>Insert</kbd>."
+    },
+    "cut-clipboard": {
+      "brief": "Emitted to cut the selection to the clipboard.",
+      "file": "gtk/gtktext.c",
+      "line": 1176,
+      "md": "Emitted to cut the selection to the clipboard.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>x</kbd> and\n<kbd>Shift</kbd>+<kbd>Delete</kbd>."
+    },
+    "delete-from-cursor": {
+      "brief": "Emitted when the user initiates a text deletion.",
+      "file": "gtk/gtktext.c",
+      "line": 1124,
+      "md": "Emitted when the user initiates a text deletion.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nIf the `type` is [`DeleteType.chars`](xref:gtk:Gtk.DeleteType#value:chars), GTK deletes the\nselection if there is one, otherwise it deletes the requested\nnumber of characters.\n\nThe default bindings for this signal are <kbd>Delete</kbd>\nfor deleting a character and <kbd>Ctrl</kbd>+<kbd>Delete</kbd>\nfor deleting a word."
+    },
+    "insert-at-cursor": {
+      "brief": "Emitted when the user initiates the insertion of a fixed string at the cursor.",
+      "file": "gtk/gtktext.c",
+      "line": 1102,
+      "md": "Emitted when the user initiates the insertion of a\nfixed string at the cursor.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis signal has no default bindings."
+    },
+    "insert-emoji": {
+      "brief": "Emitted to present the Emoji chooser.",
+      "file": "gtk/gtktext.c",
+      "line": 1278,
+      "md": "Emitted to present the Emoji chooser.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>.</kbd> and\n<kbd>Ctrl</kbd>+<kbd>;</kbd>"
+    },
+    "move-cursor": {
+      "brief": "Emitted when the user initiates a cursor movement.",
+      "file": "gtk/gtktext.c",
+      "line": 1059,
+      "md": "Emitted when the user initiates a cursor movement.\n\nIf the cursor is not visible in `self`, this signal causes\nthe viewport to be moved instead.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nApplications should not connect to it, but may emit it with\n`signal_emit_by_name` if they need to control\nthe cursor programmatically.\n\nThe default bindings for this signal come in two variants,\nthe variant with the <kbd>Shift</kbd> modifier extends the\nselection, the variant without it does not.\nThere are too many key combinations to list them all here.\n\n- <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>\n  move by individual characters/lines\n- <kbd>Ctrl</kbd>+<kbd>←</kbd>, etc. move by words/paragraphs\n- <kbd>Home</kbd> and <kbd>End</kbd> move to the ends of the buffer"
+    },
+    "paste-clipboard": {
+      "brief": "Emitted to paste the contents of the clipboard.",
+      "file": "gtk/gtktext.c",
+      "line": 1218,
+      "md": "Emitted to paste the contents of the clipboard.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>v</kbd> and <kbd>Shift</kbd>+<kbd>Insert</kbd>."
+    },
+    "preedit-changed": {
+      "brief": "Emitted when the preedit text changes.",
+      "file": "gtk/gtktext.c",
+      "line": 1257,
+      "md": "Emitted when the preedit text changes.\n\nIf an input method is used, the typed text will not immediately\nbe committed to the buffer. So if you are interested in the text,\nconnect to this signal."
+    },
+    "toggle-overwrite": {
+      "brief": "Emitted to toggle the overwrite mode.",
+      "file": "gtk/gtktext.c",
+      "line": 1238,
+      "md": "Emitted to toggle the overwrite mode.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal is <kbd>Insert</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,80 @@
+{
+  "doc": {
+    "brief": "The QPlainTextDocumentLayout class implements a plain text layout for [QTextDocument](xref:qt:QTextDocument).",
+    "index_brief": "Implements a plain text layout for QTextDocument",
+    "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QPlainTextDocumentLayout(QTextDocument *document)": {
+      "brief": "Constructs a plain text document layout for the text *document*.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#QPlainTextDocumentLayout"
+    },
+    "QRectF blockBoundingRect(const QTextBlock &block) const override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::blockBoundingRect](xref:qt:QAbstractTextDocumentLayout)(const QTextBlock &block) const.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#blockBoundingRect"
+    },
+    "QRectF frameBoundingRect(QTextFrame *) const override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::frameBoundingRect](xref:qt:QAbstractTextDocumentLayout)(QTextFrame *frame) const.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#frameBoundingRect"
+    },
+    "QSizeF documentSize() const override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::documentSize](xref:qt:QAbstractTextDocumentLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#documentSize"
+    },
+    "int cursorWidth() const": {
+      "brief": "This property specifies the width of the cursor in pixels.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#cursorWidth-prop"
+    },
+    "int hitTest(const QPointF &, Qt::HitTestAccuracy) const override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::hitTest](xref:qt:QAbstractTextDocumentLayout)(const QPointF &point, Qt::HitTestAccuracy accuracy) const.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#hitTest"
+    },
+    "int pageCount() const override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::pageCount](xref:qt:QAbstractTextDocumentLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#pageCount"
+    },
+    "void documentChanged(int from, int charsRemoved, int charsAdded) override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::documentChanged](xref:qt:QAbstractTextDocumentLayout)(int position, int charsRemoved, int charsAdded).",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#documentChanged"
+    },
+    "void draw(QPainter *, const QAbstractTextDocumentLayout::PaintContext &) override": {
+      "brief": "Reimplements: [QAbstractTextDocumentLayout::draw](xref:qt:QAbstractTextDocumentLayout)(QPainter *painter, const QAbstractTextDocumentLayout::PaintContext &context).",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#draw"
+    },
+    "void ensureBlockLayout(const QTextBlock &block) const": {
+      "brief": "Ensures that *block* has a valid layout",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#ensureBlockLayout"
+    },
+    "void requestUpdate()": {
+      "brief": "Requests a complete update on all views.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#requestUpdate"
+    },
+    "void setCursorWidth(int width)": {
+      "brief": "This property specifies the width of the cursor in pixels.",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#cursorWidth-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "cursorWidth": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qplaintextdocumentlayout.html#cursorWidth-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

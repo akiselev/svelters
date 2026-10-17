@@ -1,0 +1,84 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellRendererToggle`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 320,
+      "md": "Creates a new `GtkCellRendererToggle`. Adjust rendering\nparameters using object properties. Object properties can be set\nglobally (with g_object_set()). Also, with `GtkTreeViewColumn`, you\ncan bind a property to a value in a `GtkTreeModel`. For example, you\ncan bind the “active” property on the cell renderer to a boolean value\nin the model, thus causing the check button to reflect the state of\nthe model."
+    }
+  },
+  "doc": {
+    "brief": "Renders a toggle button in a cell",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You should use [`ToggleButton`](xref:gtk:Gtk.ToggleButton) instead",
+    "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+    "line": 36,
+    "md": "Renders a toggle button in a cell\n\n`GtkCellRendererToggle` renders a toggle button in a cell. The\nbutton is drawn as a radio or a checkbutton, depending on the\n`GtkCellRendererToggle:radio` property.\nWhen activated, it emits the `GtkCellRendererToggle::toggled` signal."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererToggle",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_activatable": {
+      "brief": "Returns whether the cell renderer is activatable.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 615,
+      "md": "Returns whether the cell renderer is activatable. See\ngtk_cell_renderer_toggle_set_activatable()."
+    },
+    "get_active": {
+      "brief": "Returns whether the cell renderer is active.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 576,
+      "md": "Returns whether the cell renderer is active. See\ngtk_cell_renderer_toggle_set_active()."
+    },
+    "get_radio": {
+      "brief": "Returns whether we’re rendering radio toggles rather than checkboxes.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 556,
+      "md": "Returns whether we’re rendering radio toggles rather than checkboxes."
+    },
+    "set_activatable": {
+      "brief": "Makes the cell renderer activatable.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 636,
+      "md": "Makes the cell renderer activatable."
+    },
+    "set_active": {
+      "brief": "Activates or deactivates a cell renderer.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 597,
+      "md": "Activates or deactivates a cell renderer."
+    },
+    "set_radio": {
+      "brief": "If `radio` is `TRUE`, the cell renderer renders a radio toggle (i.e. a toggle in a group of mutually-exclusive toggles).",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 530,
+      "md": "If `radio` is `TRUE`, the cell renderer renders a radio toggle\n(i.e. a toggle in a group of mutually-exclusive toggles).\nIf `FALSE`, it renders a check toggle (a standalone boolean option).\nThis can be set globally for the cell renderer, or changed just\nbefore rendering each cell in the model (for `GtkTreeView`, you set\nup a per-row setting using `GtkTreeViewColumn` to associate model\ncolumns with cell renderer properties)."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "toggled": {
+      "brief": "The ::toggled signal is emitted when the cell is toggled.",
+      "file": "gtk/deprecated/gtkcellrenderertoggle.c",
+      "line": 222,
+      "md": "The ::toggled signal is emitted when the cell is toggled.\n\nIt is the responsibility of the application to update the model\nwith the correct value to store at `path`.  Often this is simply the\nopposite of the value currently stored at `path`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

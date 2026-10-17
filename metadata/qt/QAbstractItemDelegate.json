@@ -40,36 +40,51 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QAbstractItemDelegate::EndEditHint",
       "members": [
         {
+          "cpp": "QAbstractItemDelegate::NoHint",
           "name": "NoHint",
           "value": "0"
         },
         {
+          "cpp": "QAbstractItemDelegate::EditNextItem",
           "name": "EditNextItem",
           "value": "1"
         },
         {
+          "cpp": "QAbstractItemDelegate::EditPreviousItem",
           "name": "EditPreviousItem",
           "value": "2"
         },
         {
+          "cpp": "QAbstractItemDelegate::SubmitModelCache",
           "name": "SubmitModelCache",
           "value": "3"
         },
         {
+          "cpp": "QAbstractItemDelegate::RevertModelCache",
           "name": "RevertModelCache",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "EndEditHint",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -557,7 +572,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const = 0",
       "since": null,
@@ -683,7 +698,7 @@
             "native": "QAbstractItemDelegate::EndEditHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemDelegate::EndEditHint>"
           }
         }
       ],

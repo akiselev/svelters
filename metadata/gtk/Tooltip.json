@@ -30,6 +30,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:Tooltip",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:Tooltip:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:Tooltip:method:set_custom",

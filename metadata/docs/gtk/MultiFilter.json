@@ -1,0 +1,52 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Base class for filters that combine multiple filters.",
+    "file": "gtk/gtkmultifilter.c",
+    "line": 37,
+    "md": "Base class for filters that combine multiple filters."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MultiFilter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Adds a filter.",
+      "file": "gtk/gtkmultifilter.c",
+      "line": 310,
+      "md": "Adds a filter."
+    },
+    "remove": {
+      "brief": "Removes a filter.",
+      "file": "gtk/gtkmultifilter.c",
+      "line": 333,
+      "md": "Removes a filter.\n\nIf `position` is larger than the number of filters,\nnothing happens."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items.",
+      "file": "gtk/gtkmultifilter.c",
+      "line": 273,
+      "md": "The type of items.\n\nSee [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkmultifilter.c",
+      "line": 287,
+      "md": "The number of items.\n\nSee [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

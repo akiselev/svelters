@@ -1,0 +1,87 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible accessible states of a [`Accessible`](xref:gtk:Accessible).",
+    "file": "gtk/gtkenums.h",
+    "line": 1541,
+    "md": "The possible accessible states of a [`Accessible`](xref:gtk:Accessible)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleState",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "busy": {
+      "brief": "A “busy” state. This state has boolean values",
+      "file": "gtk/gtkenums.h",
+      "line": 1543,
+      "md": "A “busy” state. This state has boolean values"
+    },
+    "checked": {
+      "brief": "A “checked” state; indicates the current state of a [`CheckButton`](xref:gtk:CheckButton).",
+      "file": "gtk/gtkenums.h",
+      "line": 1544,
+      "md": "A “checked” state; indicates the current\n  state of a [`CheckButton`](xref:gtk:CheckButton). Value type: [`AccessibleTristate`](xref:gtk:AccessibleTristate)"
+    },
+    "disabled": {
+      "brief": "A “disabled” state; corresponds to the [`Widget:sensitive`](xref:gtk:Widget#property:sensitive) property.",
+      "file": "gtk/gtkenums.h",
+      "line": 1546,
+      "md": "A “disabled” state; corresponds to the\n  [`Widget:sensitive`](xref:gtk:Widget#property:sensitive) property. It indicates a UI element\n  that is perceivable, but not editable or operable. Value type: boolean"
+    },
+    "expanded": {
+      "brief": "An “expanded” state; corresponds to the [`Expander:expanded`](xref:gtk:Expander#property:expanded) property.",
+      "file": "gtk/gtkenums.h",
+      "line": 1549,
+      "md": "An “expanded” state; corresponds to the\n  [`Expander:expanded`](xref:gtk:Expander#property:expanded) property. Value type: boolean\n  or undefined"
+    },
+    "hidden": {
+      "brief": "A “hidden” state; corresponds to the [`Widget:visible`](xref:gtk:Widget#property:visible) property.",
+      "file": "gtk/gtkenums.h",
+      "line": 1552,
+      "md": "A “hidden” state; corresponds to the\n  [`Widget:visible`](xref:gtk:Widget#property:visible) property. You can use this state\n  explicitly on UI elements that should not be exposed to an assistive\n  technology. Value type: boolean\n  See also: %GTK_ACCESSIBLE_STATE_DISABLED"
+    },
+    "invalid": {
+      "brief": "An “invalid” state; set when a widget is showing an error.",
+      "file": "gtk/gtkenums.h",
+      "line": 1557,
+      "md": "An “invalid” state; set when a widget\n  is showing an error. Value type: [`AccessibleInvalidState`](xref:gtk:AccessibleInvalidState)"
+    },
+    "pressed": {
+      "brief": "A “pressed” state; indicates the current state of a [`ToggleButton`](xref:gtk:ToggleButton).",
+      "file": "gtk/gtkenums.h",
+      "line": 1559,
+      "md": "A “pressed” state; indicates the current\n  state of a [`ToggleButton`](xref:gtk:ToggleButton). Value type: [`AccessibleTristate`](xref:gtk:AccessibleTristate)\n  enumeration"
+    },
+    "selected": {
+      "brief": "A “selected” state; set when a widget is selected.",
+      "file": "gtk/gtkenums.h",
+      "line": 1562,
+      "md": "A “selected” state; set when a widget\n  is selected. Value type: boolean or undefined"
+    },
+    "visited": {
+      "brief": "Indicates that a widget with the GTK_ACCESSIBLE_ROLE_LINK has been visited.",
+      "file": "gtk/gtkenums.h",
+      "line": 1567,
+      "md": "Indicates that a widget with the GTK_ACCESSIBLE_ROLE_LINK has been visited.\nValue type: boolean.",
+      "since": "4.12"
+    }
+  },
+  "methods": {
+    "init_value": {
+      "brief": "Initializes `value` with the appropriate type for the `state`.",
+      "file": "gtk/gtkaccessiblevalue.c",
+      "line": 1705,
+      "md": "Initializes `value` with the appropriate type for the `state`.\n\nThis function is mostly meant for language bindings, in conjunction\nwith gtk_accessible_update_relation_state()."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

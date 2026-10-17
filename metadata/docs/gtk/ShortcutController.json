@@ -1,0 +1,107 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new shortcut controller.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 739,
+      "md": "Creates a new shortcut controller."
+    },
+    "new_for_model": {
+      "brief": "Creates a new shortcut controller that takes its shortcuts from the given list model.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 753,
+      "md": "Creates a new shortcut controller that takes its shortcuts from\nthe given list model.\n\nA controller created by this function does not let you add or\nremove individual shortcuts using the shortcut controller api,\nbut you can change the contents of the model."
+    }
+  },
+  "doc": {
+    "brief": "Manages keyboard shortcuts and their activation.",
+    "file": "gtk/gtkshortcutcontroller.c",
+    "line": 21,
+    "md": "Manages keyboard shortcuts and their activation.\n\nMost common shortcuts are using this controller implicitly, e.g. by\nadding a mnemonic underline to a [`Label`](xref:gtk:Gtk.Label), or by installing a key\nbinding using [`WidgetClass.add_binding()`](xref:gtk:Gtk.WidgetClass#method:add_binding), or by adding accelerators\nto global actions using [`Application.set_accels_for_action()`](xref:gtk:Gtk.Application#method:set_accels_for_action).\n\nBut it is possible to create your own shortcut controller, and add\nshortcuts to it.\n\n`GtkShortcutController` implements [`ListModel`](xref:gtk:Gio.ListModel) for querying the\nshortcuts that have been added to it.\n\n# GtkShortcutController as GtkBuildable\n\n`GtkShortcutController`s can be created in [`Builder`](xref:gtk:Gtk.Builder) ui files, to set up\nshortcuts in the same place as the widgets.\n\nAn example of a UI definition fragment with `GtkShortcutController`:\n```xml\n  <object class='GtkButton'>\n    <child>\n      <object class='GtkShortcutController'>\n        <property name='scope'>managed</property>\n        <child>\n          <object class='GtkShortcut'>\n            <property name='trigger'>&lt;Control&gt;k</property>\n            <property name='action'>activate</property>\n          </object>\n        </child>\n      </object>\n    </child>\n  </object>\n```\n\nThis example creates a [`ActivateAction`](xref:gtk:Gtk.ActivateAction) for triggering the\n`activate` signal of the [`Button`](xref:gtk:Gtk.Button). See [`ShortcutAction.parse_string()`](xref:gtk:Gtk.ShortcutAction#constructor:parse_string)\nfor the syntax for other kinds of [`ShortcutAction`](xref:gtk:Gtk.ShortcutAction). See\n[`ShortcutTrigger.parse_string()`](xref:gtk:Gtk.ShortcutTrigger#constructor:parse_string) to learn more about the syntax\nfor triggers."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutController",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_shortcut": {
+      "brief": "Adds `shortcut` to the list of shortcuts handled by `self`.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 776,
+      "md": "Adds `shortcut` to the list of shortcuts handled by `self`.\n\nIf this controller uses an external shortcut list, this\nfunction does nothing."
+    },
+    "get_mnemonics_modifiers": {
+      "brief": "Gets the mnemonics modifiers for when this controller activates its shortcuts.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 949,
+      "md": "Gets the mnemonics modifiers for when this controller activates its shortcuts."
+    },
+    "get_scope": {
+      "brief": "Gets the scope for when this controller activates its shortcuts.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 898,
+      "md": "Gets the scope for when this controller activates its shortcuts.\n\nSee [`ShortcutController.set_scope()`](xref:gtk:Gtk.ShortcutController#method:set_scope) for details."
+    },
+    "remove_shortcut": {
+      "brief": "Removes `shortcut` from the list of shortcuts handled by `self`.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 813,
+      "md": "Removes `shortcut` from the list of shortcuts handled by `self`.\n\nIf `shortcut` had not been added to `controller` or this controller\nuses an external shortcut list, this function does nothing."
+    },
+    "set_mnemonics_modifiers": {
+      "brief": "Sets the controller to use the given modifier for mnemonics.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 916,
+      "md": "Sets the controller to use the given modifier for mnemonics.\n\nThe mnemonics modifiers determines which modifiers need to be pressed to allow\nactivation of shortcuts with mnemonics triggers.\n\nGTK normally uses the Alt modifier for mnemonics, except in `GtkPopoverMenu`s,\nwhere mnemonics can be triggered without any modifiers. It should be very\nrarely necessary to change this, and doing so is likely to interfere with\nother shortcuts.\n\nThis value is only relevant for local shortcut controllers. Global and managed\nshortcut controllers will have their shortcuts activated from other places which\nhave their own modifiers for activating mnemonics."
+    },
+    "set_scope": {
+      "brief": "Sets the controller to have the given `scope`.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 859,
+      "md": "Sets the controller to have the given `scope`.\n\nThe scope allows shortcuts to be activated outside of the normal\nevent propagation. In particular, it allows installing global\nkeyboard shortcuts that can be activated even when a widget does\nnot have focus.\n\nWith %GTK_SHORTCUT_SCOPE_LOCAL, shortcuts will only be activated\nwhen the widget has focus."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 584,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "mnemonic-modifiers": {
+      "brief": "The modifiers that need to be pressed to allow mnemonics activation.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 596,
+      "md": "The modifiers that need to be pressed to allow mnemonics activation."
+    },
+    "model": {
+      "brief": "A list model to take shortcuts from.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 607,
+      "md": "A list model to take shortcuts from."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 617,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    },
+    "scope": {
+      "brief": "What scope the shortcuts will be handled in.",
+      "file": "gtk/gtkshortcutcontroller.c",
+      "line": 629,
+      "md": "What scope the shortcuts will be handled in."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

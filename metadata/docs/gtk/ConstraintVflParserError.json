@@ -1,0 +1,68 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Domain for VFL parsing errors.",
+    "file": "gtk/gtkenums.h",
+    "line": 1201,
+    "md": "Domain for VFL parsing errors."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintVflParserError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "invalid_attribute": {
+      "brief": "Invalid or unknown attribute",
+      "file": "gtk/gtkenums.h",
+      "line": 1204,
+      "md": "Invalid or unknown attribute"
+    },
+    "invalid_metric": {
+      "brief": "Invalid or unknown metric",
+      "file": "gtk/gtkenums.h",
+      "line": 1206,
+      "md": "Invalid or unknown metric"
+    },
+    "invalid_priority": {
+      "brief": "Invalid or unknown priority",
+      "file": "gtk/gtkenums.h",
+      "line": 1207,
+      "md": "Invalid or unknown priority"
+    },
+    "invalid_relation": {
+      "brief": "Invalid or unknown relation",
+      "file": "gtk/gtkenums.h",
+      "line": 1208,
+      "md": "Invalid or unknown relation"
+    },
+    "invalid_symbol": {
+      "brief": "Invalid or unknown symbol",
+      "file": "gtk/gtkenums.h",
+      "line": 1203,
+      "md": "Invalid or unknown symbol"
+    },
+    "invalid_view": {
+      "brief": "Invalid or unknown view",
+      "file": "gtk/gtkenums.h",
+      "line": 1205,
+      "md": "Invalid or unknown view"
+    }
+  },
+  "methods": {
+    "quark": {
+      "brief": "Registers an error quark for VFL error parsing.",
+      "file": "gtk/gtkconstraintlayout.c",
+      "line": 1927,
+      "md": "Registers an error quark for VFL error parsing."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

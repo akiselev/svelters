@@ -115,6 +115,7 @@ name = "counter-qt"
 version = "0.0.0"
 dependencies = [
  "svelters-abi",
+ "svelters-host",
  "svelters-qt-build",
 ]
 
@@ -1062,6 +1063,7 @@ version = "0.0.0"
 dependencies = [
  "gtk4",
  "svelters-abi",
+ "svelters-host",
 ]
 
 [[package]]

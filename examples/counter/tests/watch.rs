@@ -55,6 +55,9 @@ fn watch_reload(backend: &str) {
         }
     });
     let out = Command::new(env!("CARGO_BIN_EXE_counter"))
+        // GDK's Vulkan path under Xvfb (lavapipe) can assert in gdk_vulkan_context_surface_detach
+        // when a window closes mid-present; cairo avoids the GPU path. An explicit GSK_RENDERER wins.
+        .env("GSK_RENDERER", std::env::var("GSK_RENDERER").unwrap_or_else(|_| "cairo".into()))
         .args(["--backend", backend, "--timeout", "60", "--watch", "--reload-exit", "1", "--fixture"])
         .arg(&dir)
         .arg("--report")

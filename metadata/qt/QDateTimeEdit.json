@@ -31,7 +31,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         },
         {
@@ -65,7 +65,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         },
         {
@@ -123,7 +123,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         },
         {
@@ -145,48 +145,61 @@
   ],
   "enums": [
     {
+      "flags_alias": "QDateTimeEdit::Sections",
+      "fullname": "QDateTimeEdit::Section",
       "members": [
         {
+          "cpp": "QDateTimeEdit::NoSection",
           "name": "NoSection",
           "value": "0x0000"
         },
         {
+          "cpp": "QDateTimeEdit::AmPmSection",
           "name": "AmPmSection",
           "value": "0x0001"
         },
         {
+          "cpp": "QDateTimeEdit::MSecSection",
           "name": "MSecSection",
           "value": "0x0002"
         },
         {
+          "cpp": "QDateTimeEdit::SecondSection",
           "name": "SecondSection",
           "value": "0x0004"
         },
         {
+          "cpp": "QDateTimeEdit::MinuteSection",
           "name": "MinuteSection",
           "value": "0x0008"
         },
         {
+          "cpp": "QDateTimeEdit::HourSection",
           "name": "HourSection",
           "value": "0x0010"
         },
         {
+          "cpp": "QDateTimeEdit::DaySection",
           "name": "DaySection",
           "value": "0x0100"
         },
         {
+          "cpp": "QDateTimeEdit::MonthSection",
           "name": "MonthSection",
           "value": "0x0200"
         },
         {
+          "cpp": "QDateTimeEdit::YearSection",
           "name": "YearSection",
           "value": "0x0400"
         },
         {
+          "cpp": "QDateTimeEdit::TimeSections_Mask",
           "name": "TimeSections_Mask",
           "value": "AmPmSection|MSecSection|SecondSection|MinuteSection|HourSection"
         },
         {
+          "cpp": "QDateTimeEdit::DateSections_Mask",
           "name": "DateSections_Mask",
           "value": "DaySection|MonthSection|YearSection"
         }
@@ -209,12 +222,23 @@
         "scoped": false
       },
       "name": "Section",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -495,7 +519,7 @@
         "native": "QDateTimeEdit::Section",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDateTimeEdit::Section>"
       },
       "signature": "QDateTimeEdit::Section currentSection() const",
       "since": null,
@@ -547,7 +571,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate date() const",
       "since": null,
@@ -573,7 +597,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime dateTime() const",
       "since": null,
@@ -610,7 +634,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime dateTimeFromText(const QString &text) const",
       "since": null,
@@ -662,7 +686,7 @@
         "native": "QDateTimeEdit::Sections",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDateTimeEdit::Section>"
       },
       "signature": "QDateTimeEdit::Sections displayedSections() const",
       "since": null,
@@ -910,7 +934,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate maximumDate() const",
       "since": null,
@@ -936,7 +960,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime maximumDateTime() const",
       "since": null,
@@ -962,7 +986,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       },
       "signature": "QTime maximumTime() const",
       "since": null,
@@ -988,7 +1012,7 @@
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       },
       "signature": "QDate minimumDate() const",
       "since": null,
@@ -1014,7 +1038,7 @@
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       },
       "signature": "QDateTime minimumDateTime() const",
       "since": null,
@@ -1040,7 +1064,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       },
       "signature": "QTime minimumTime() const",
       "since": null,
@@ -1151,7 +1175,7 @@
         "native": "QDateTimeEdit::Section",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QDateTimeEdit::Section>"
       },
       "signature": "QDateTimeEdit::Section sectionAt(int index) const",
       "since": null,
@@ -1206,7 +1230,7 @@
             "native": "QDateTimeEdit::Section",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDateTimeEdit::Section>"
           }
         }
       ],
@@ -1354,7 +1378,7 @@
             "native": "QDateTimeEdit::Section",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDateTimeEdit::Section>"
           }
         }
       ],
@@ -1428,7 +1452,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1465,7 +1489,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         },
         {
@@ -1475,7 +1499,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1512,7 +1536,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1549,7 +1573,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         },
         {
@@ -1559,7 +1583,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1633,7 +1657,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1670,7 +1694,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1707,7 +1731,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1744,7 +1768,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -1781,7 +1805,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -1818,7 +1842,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1855,7 +1879,7 @@
             "native": "QDateTimeEdit::Section",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QDateTimeEdit::Section>"
           }
         }
       ],
@@ -1892,7 +1916,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1929,7 +1953,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         },
         {
@@ -1939,7 +1963,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],
@@ -1976,7 +2000,7 @@
             "native": "Qt::TimeSpec",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TimeSpec>"
           }
         }
       ],
@@ -2047,7 +2071,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2110,7 +2134,7 @@
         "native": "QAbstractSpinBox::StepEnabled",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QAbstractSpinBox::StepEnabledFlag>"
       },
       "signature": "QAbstractSpinBox::StepEnabled stepEnabled() const override",
       "since": null,
@@ -2139,7 +2163,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -2173,7 +2197,7 @@
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       },
       "signature": "QTime time() const",
       "since": null,
@@ -2199,7 +2223,7 @@
         "native": "Qt::TimeSpec",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TimeSpec>"
       },
       "signature": "Qt::TimeSpec timeSpec() const",
       "since": null,
@@ -2272,7 +2296,7 @@
         "native": "QValidator::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QValidator::State>"
       },
       "signature": "QValidator::State validate(QString &text, int &pos) const override",
       "since": null,
@@ -2346,6 +2370,8 @@
         "set": "setCalendarPopup"
       },
       "brief": "Current calendar pop-up show mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "calendarPopup",
       "metaobject": {
         "constant": false,
@@ -2366,6 +2392,7 @@
       "name": "calendarPopup",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2386,6 +2413,8 @@
         "set": "setCurrentSection"
       },
       "brief": "Current section of the spinbox",
+      "default": "MonthSection",
+      "default_origin": "runtime",
       "js_name": "currentSection",
       "metaobject": {
         "constant": false,
@@ -2406,12 +2435,13 @@
       "name": "currentSection",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Section",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Section>"
+        "ref": "enum<QDateTimeEdit::Section>"
       }
     },
     {
@@ -2426,6 +2456,8 @@
         "set": "setCurrentSectionIndex"
       },
       "brief": "Current section index of the spinbox",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "currentSectionIndex",
       "metaobject": {
         "constant": false,
@@ -2446,6 +2478,7 @@
       "name": "currentSectionIndex",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2466,6 +2499,7 @@
         "set": "setDate"
       },
       "brief": "QDate that is set in the widget",
+      "default": null,
       "js_name": "date",
       "metaobject": {
         "constant": false,
@@ -2489,12 +2523,13 @@
         "signal": "dateChanged(QDate)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2509,6 +2544,7 @@
         "set": "setDateTime"
       },
       "brief": "QDateTime that is set in the QDateTimeEdit",
+      "default": null,
       "js_name": "dateTime",
       "metaobject": {
         "constant": false,
@@ -2532,12 +2568,13 @@
         "signal": "dateTimeChanged(QDateTime)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       }
     },
     {
@@ -2552,6 +2589,8 @@
         "set": "setDisplayFormat"
       },
       "brief": "Format used to display the time/date of the date time edit",
+      "default": "M/d/yy h:mm Ap",
+      "default_origin": "runtime",
       "js_name": "displayFormat",
       "metaobject": {
         "constant": false,
@@ -2572,6 +2611,7 @@
       "name": "displayFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2592,6 +2632,8 @@
         "set": null
       },
       "brief": "Currently displayed fields of the date time edit",
+      "default": "AmPmSection|MinuteSection|HourSection|DateSections_Mask",
+      "default_origin": "runtime",
       "js_name": "displayedSections",
       "metaobject": {
         "constant": false,
@@ -2612,12 +2654,13 @@
       "name": "displayedSections",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Sections",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDateTimeEdit::Section>"
       }
     },
     {
@@ -2632,6 +2675,7 @@
         "set": "setMaximumDate"
       },
       "brief": "Maximum date of the date time edit",
+      "default": null,
       "js_name": "maximumDate",
       "metaobject": {
         "constant": false,
@@ -2652,12 +2696,13 @@
       "name": "maximumDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2672,6 +2717,7 @@
         "set": "setMaximumDateTime"
       },
       "brief": "Maximum datetime of the date time edit",
+      "default": null,
       "js_name": "maximumDateTime",
       "metaobject": {
         "constant": false,
@@ -2692,12 +2738,13 @@
       "name": "maximumDateTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       }
     },
     {
@@ -2712,6 +2759,7 @@
         "set": "setMaximumTime"
       },
       "brief": "Maximum time of the date time edit",
+      "default": null,
       "js_name": "maximumTime",
       "metaobject": {
         "constant": false,
@@ -2732,12 +2780,13 @@
       "name": "maximumTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       }
     },
     {
@@ -2752,6 +2801,7 @@
         "set": "setMinimumDate"
       },
       "brief": "Minimum date of the date time edit",
+      "default": null,
       "js_name": "minimumDate",
       "metaobject": {
         "constant": false,
@@ -2772,12 +2822,13 @@
       "name": "minimumDate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDate",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "date"
       }
     },
     {
@@ -2792,6 +2843,7 @@
         "set": "setMinimumDateTime"
       },
       "brief": "Minimum datetime of the date time edit",
+      "default": null,
       "js_name": "minimumDateTime",
       "metaobject": {
         "constant": false,
@@ -2812,12 +2864,13 @@
       "name": "minimumDateTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QDateTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "datetime"
       }
     },
     {
@@ -2832,6 +2885,7 @@
         "set": "setMinimumTime"
       },
       "brief": "Minimum time of the date time edit",
+      "default": null,
       "js_name": "minimumTime",
       "metaobject": {
         "constant": false,
@@ -2852,12 +2906,13 @@
       "name": "minimumTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       }
     },
     {
@@ -2872,6 +2927,8 @@
         "set": null
       },
       "brief": "Number of sections displayed. If the format is 'yyyy/yy/yyyy', sectionCount returns 3",
+      "default": 6,
+      "default_origin": "runtime",
       "js_name": "sectionCount",
       "metaobject": {
         "constant": false,
@@ -2892,6 +2949,7 @@
       "name": "sectionCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2912,6 +2970,7 @@
         "set": "setTime"
       },
       "brief": "QTime that is set in the widget",
+      "default": null,
       "js_name": "time",
       "metaobject": {
         "constant": false,
@@ -2935,12 +2994,13 @@
         "signal": "timeChanged(QTime)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTime",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "time"
       }
     },
     {
@@ -2955,6 +3015,8 @@
         "set": "setTimeSpec"
       },
       "brief": "Current timespec used by the date time edit",
+      "default": "LocalTime",
+      "default_origin": "runtime",
       "js_name": "timeSpec",
       "metaobject": {
         "constant": false,
@@ -2975,12 +3037,13 @@
       "name": "timeSpec",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TimeSpec",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TimeSpec>"
       }
     },
     {
@@ -2995,6 +3058,7 @@
         "set": "setTimeZone"
       },
       "brief": "Current timezone used by the datetime editing widget",
+      "default": null,
       "js_name": "timeZone",
       "metaobject": {
         "constant": false,
@@ -3015,6 +3079,7 @@
       "name": "timeZone",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTimeZone",
@@ -3049,7 +3114,7 @@
             "native": "QDate",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "date"
           }
         }
       ],
@@ -3084,7 +3149,7 @@
             "native": "const QDateTime &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "datetime"
           }
         }
       ],
@@ -3119,7 +3184,7 @@
             "native": "QTime",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "time"
           }
         }
       ],

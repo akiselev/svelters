@@ -1,0 +1,5 @@
+elements:
+  - tag: dateedit
+    construct: { class: QDateEdit }
+    props:
+      - { js: date, native: date, provenance: "QDateEdit::date (qdoc); typed by the S1 value model (ABI v3)" }

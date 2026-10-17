@@ -1,0 +1,99 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Provides a way to associate widgets with actions.",
+    "file": "gtk/gtkactionable.c",
+    "line": 26,
+    "md": "Provides a way to associate widgets with actions.\n\nIt primarily consists of two properties: [`Actionable:action-name`](xref:gtk:Gtk.Actionable#property:action-name)\nand [`Actionable:action-target`](xref:gtk:Gtk.Actionable#property:action-target). There are also some convenience\nAPIs for setting these properties.\n\nThe action will be looked up in action groups that are found among\nthe widgets ancestors. Most commonly, these will be the actions with\nthe “win.” or “app.” prefix that are associated with the\n`GtkApplicationWindow` or `GtkApplication`, but other action groups that\nare added with [`Widget.insert_action_group()`](xref:gtk:Gtk.Widget#method:insert_action_group) will be consulted\nas well."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Actionable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_action_name": {
+      "brief": "Gets the action name for `actionable`.",
+      "file": "gtk/gtkactionable.c",
+      "line": 78,
+      "md": "Gets the action name for `actionable`."
+    },
+    "get_action_target_value": {
+      "brief": "Gets the current target value of `actionable`.",
+      "file": "gtk/gtkactionable.c",
+      "line": 124,
+      "md": "Gets the current target value of `actionable`."
+    },
+    "set_action_name": {
+      "brief": "Specifies the name of the action with which this widget should be associated.",
+      "file": "gtk/gtkactionable.c",
+      "line": 95,
+      "md": "Specifies the name of the action with which this widget should be\nassociated.\n\nIf `action_name` is `NULL` then the widget will be unassociated from\nany previous action.\n\nUsually this function is used when the widget is located (or will be\nlocated) within the hierarchy of a `GtkApplicationWindow`.\n\nNames are of the form “win.save” or “app.quit” for actions on the\ncontaining [`ApplicationWindow`](xref:gtk:ApplicationWindow) or its associated [`Application`](xref:gtk:Application),\nrespectively. This is the same form used for actions in the [`Menu`](xref:gtk:Gio.Menu)\nassociated with the window."
+    },
+    "set_action_target": {
+      "brief": "Sets the target of an actionable widget.",
+      "file": "gtk/gtkactionable.c",
+      "line": 175,
+      "md": "Sets the target of an actionable widget.\n\nThis is a convenience function that calls [`Variant.new()`](xref:gtk:GLib.Variant#constructor:new) for\n`format_string` and uses the result to call\n[`Actionable.set_action_target_value()`](xref:gtk:Gtk.Actionable#method:set_action_target_value).\n\nIf you are setting a string-valued target and want to set\nthe action name at the same time, you can use\n[`Actionable.set_detailed_action_name()`](xref:gtk:Gtk.Actionable#method:set_detailed_action_name)."
+    },
+    "set_action_target_value": {
+      "brief": "Sets the target value of an actionable widget.",
+      "file": "gtk/gtkactionable.c",
+      "line": 141,
+      "md": "Sets the target value of an actionable widget.\n\nIf `target_value` is `NULL` then the target value is unset.\n\nThe target value has two purposes. First, it is used as the parameter\nto activation of the action associated with the `GtkActionable` widget.\nSecond, it is used to determine if the widget should be rendered as\n“active” — the widget is active if the state is equal to the given target.\n\nConsider the example of associating a set of buttons with a [`Action`](xref:gtk:Gio.Action)\nwith string state in a typical “radio button” situation. Each button\nwill be associated with the same action, but with a different target\nvalue for that action. Clicking on a particular button will activate\nthe action with the target of that button, which will typically cause\nthe action’s state to change to that value. Since the action’s state\nis now equal to the target value of the button, the button will now\nbe rendered as active (and the other buttons, with different targets,\nrendered inactive)."
+    },
+    "set_detailed_action_name": {
+      "brief": "Sets the action-name and associated string target value of an actionable widget.",
+      "file": "gtk/gtkactionable.c",
+      "line": 203,
+      "md": "Sets the action-name and associated string target value of an\nactionable widget.\n\n`detailed_action_name` is a string in the format accepted by\n`parse_detailed_name`."
+    }
+  },
+  "properties": {
+    "action-name": {
+      "brief": "The name of the action with which this widget should be associated.",
+      "file": "gtk/gtkactionable.c",
+      "line": 59,
+      "md": "The name of the action with which this widget should be associated."
+    },
+    "action-target": {
+      "brief": "The target value of the actionable widget's action.",
+      "file": "gtk/gtkactionable.c",
+      "line": 68,
+      "md": "The target value of the actionable widget's action."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_action_name": {
+      "brief": "Gets the action name for `actionable`.",
+      "file": "gtk/gtkactionable.c",
+      "line": 78,
+      "md": "Gets the action name for `actionable`."
+    },
+    "get_action_target_value": {
+      "brief": "Gets the current target value of `actionable`.",
+      "file": "gtk/gtkactionable.c",
+      "line": 124,
+      "md": "Gets the current target value of `actionable`."
+    },
+    "set_action_name": {
+      "brief": "Specifies the name of the action with which this widget should be associated.",
+      "file": "gtk/gtkactionable.c",
+      "line": 95,
+      "md": "Specifies the name of the action with which this widget should be\nassociated.\n\nIf `action_name` is `NULL` then the widget will be unassociated from\nany previous action.\n\nUsually this function is used when the widget is located (or will be\nlocated) within the hierarchy of a `GtkApplicationWindow`.\n\nNames are of the form “win.save” or “app.quit” for actions on the\ncontaining [`ApplicationWindow`](xref:gtk:ApplicationWindow) or its associated [`Application`](xref:gtk:Application),\nrespectively. This is the same form used for actions in the [`Menu`](xref:gtk:Gio.Menu)\nassociated with the window."
+    },
+    "set_action_target_value": {
+      "brief": "Sets the target value of an actionable widget.",
+      "file": "gtk/gtkactionable.c",
+      "line": 141,
+      "md": "Sets the target value of an actionable widget.\n\nIf `target_value` is `NULL` then the target value is unset.\n\nThe target value has two purposes. First, it is used as the parameter\nto activation of the action associated with the `GtkActionable` widget.\nSecond, it is used to determine if the widget should be rendered as\n“active” — the widget is active if the state is equal to the given target.\n\nConsider the example of associating a set of buttons with a [`Action`](xref:gtk:Gio.Action)\nwith string state in a typical “radio button” situation. Each button\nwill be associated with the same action, but with a different target\nvalue for that action. Clicking on a particular button will activate\nthe action with the target of that button, which will typically cause\nthe action’s state to change to that value. Since the action’s state\nis now equal to the target value of the button, the button will now\nbe rendered as active (and the other buttons, with different targets,\nrendered inactive)."
+    }
+  }
+}

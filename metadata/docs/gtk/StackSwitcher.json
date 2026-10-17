@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Create a new `GtkStackSwitcher`.",
+      "file": "gtk/gtkstackswitcher.c",
+      "line": 565,
+      "md": "Create a new `GtkStackSwitcher`."
+    }
+  },
+  "doc": {
+    "brief": "Shows a row of buttons to switch between `GtkStack` pages.",
+    "file": "gtk/gtkstackswitcher.c",
+    "line": 35,
+    "md": "Shows a row of buttons to switch between `GtkStack` pages.\n\nIt acts as a controller for the associated `GtkStack`.\n\nAll the content for the buttons comes from the properties of the stacks\n[`StackPage`](xref:gtk:Gtk.StackPage) objects; the button visibility in a `GtkStackSwitcher`\nwidget is controlled by the visibility of the child in the `GtkStack`.\n\nIt is possible to associate multiple `GtkStackSwitcher` widgets\nwith the same `GtkStack` widget.\n\n# CSS nodes\n\n`GtkStackSwitcher` has a single CSS node named stackswitcher and\nstyle class .stack-switcher.\n\nWhen circumstances require it, `GtkStackSwitcher` adds the\n.needs-attention style class to the widgets representing the\nstack pages.\n\n# Accessibility\n\n`GtkStackSwitcher` uses the [`AccessibleRole.tab_list`](xref:gtk:Gtk.AccessibleRole#value:tab_list) role\nand uses the [`AccessibleRole.tab`](xref:gtk:Gtk.AccessibleRole#value:tab) role for its buttons.\n\n# Orientable\n\nSince GTK 4.4, `GtkStackSwitcher` implements `GtkOrientable` allowing\nthe stack switcher to be made vertical with\n`gtk_orientable_set_orientation()`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_stack": {
+      "brief": "Retrieves the stack.",
+      "file": "gtk/gtkstackswitcher.c",
+      "line": 441,
+      "md": "Retrieves the stack."
+    },
+    "set_stack": {
+      "brief": "Sets the stack to control.",
+      "file": "gtk/gtkstackswitcher.c",
+      "line": 416,
+      "md": "Sets the stack to control."
+    }
+  },
+  "properties": {
+    "stack": {
+      "brief": "The stack.",
+      "file": "gtk/gtkstackswitcher.c",
+      "line": 546,
+      "md": "The stack."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

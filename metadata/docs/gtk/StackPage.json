@@ -1,0 +1,146 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An auxiliary class used by `GtkStack`.",
+    "file": "gtk/gtkstack.c",
+    "line": 126,
+    "md": "An auxiliary class used by `GtkStack`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StackPage",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Returns the stack child to which `self` belongs.",
+      "file": "gtk/gtkstack.c",
+      "line": 1881,
+      "md": "Returns the stack child to which `self` belongs."
+    },
+    "get_icon_name": {
+      "brief": "Returns the icon name of the page.",
+      "file": "gtk/gtkstack.c",
+      "line": 3181,
+      "md": "Returns the icon name of the page."
+    },
+    "get_name": {
+      "brief": "Returns the name of the page.",
+      "file": "gtk/gtkstack.c",
+      "line": 3073,
+      "md": "Returns the name of the page."
+    },
+    "get_needs_attention": {
+      "brief": "Returns whether the page is marked as “needs attention”.",
+      "file": "gtk/gtkstack.c",
+      "line": 3003,
+      "md": "Returns whether the page is marked as “needs attention”."
+    },
+    "get_title": {
+      "brief": "Gets the page title.",
+      "file": "gtk/gtkstack.c",
+      "line": 3140,
+      "md": "Gets the page title."
+    },
+    "get_use_underline": {
+      "brief": "Gets whether underlines in the page title indicate mnemonics.",
+      "file": "gtk/gtkstack.c",
+      "line": 3038,
+      "md": "Gets whether underlines in the page title indicate mnemonics."
+    },
+    "get_visible": {
+      "brief": "Returns whether `page` is visible in its `GtkStack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2958,
+      "md": "Returns whether `page` is visible in its `GtkStack`.\n\nThis is independent from the [`Widget:visible`](xref:gtk:Gtk.Widget#property:visible)\nproperty of its widget."
+    },
+    "set_icon_name": {
+      "brief": "Sets the icon name of the page.",
+      "file": "gtk/gtkstack.c",
+      "line": 3197,
+      "md": "Sets the icon name of the page."
+    },
+    "set_name": {
+      "brief": "Sets the name of the page.",
+      "file": "gtk/gtkstack.c",
+      "line": 3089,
+      "md": "Sets the name of the page."
+    },
+    "set_needs_attention": {
+      "brief": "Sets whether the page is marked as “needs attention”.",
+      "file": "gtk/gtkstack.c",
+      "line": 3018,
+      "md": "Sets whether the page is marked as “needs attention”."
+    },
+    "set_title": {
+      "brief": "Sets the page title.",
+      "file": "gtk/gtkstack.c",
+      "line": 3156,
+      "md": "Sets the page title."
+    },
+    "set_use_underline": {
+      "brief": "Sets whether underlines in the page title indicate mnemonics.",
+      "file": "gtk/gtkstack.c",
+      "line": 3052,
+      "md": "Sets whether underlines in the page title indicate mnemonics."
+    },
+    "set_visible": {
+      "brief": "Sets whether `page` is visible in its `GtkStack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2977,
+      "md": "Sets whether `page` is visible in its `GtkStack`."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child that this page is for.",
+      "file": "gtk/gtkstack.c",
+      "line": 498,
+      "md": "The child that this page is for."
+    },
+    "icon-name": {
+      "brief": "The icon name of the child page.",
+      "file": "gtk/gtkstack.c",
+      "line": 528,
+      "md": "The icon name of the child page."
+    },
+    "name": {
+      "brief": "The name of the child page.",
+      "file": "gtk/gtkstack.c",
+      "line": 508,
+      "md": "The name of the child page."
+    },
+    "needs-attention": {
+      "brief": "Whether the page requires the user attention.",
+      "file": "gtk/gtkstack.c",
+      "line": 538,
+      "md": "Whether the page requires the user attention.\n\nThis is used by the [`StackSwitcher`](xref:gtk:Gtk.StackSwitcher) to change the\nappearance of the corresponding button when a page needs\nattention and it is not the current one."
+    },
+    "title": {
+      "brief": "The title of the child page.",
+      "file": "gtk/gtkstack.c",
+      "line": 518,
+      "md": "The title of the child page."
+    },
+    "use-underline": {
+      "brief": "If set, an underline in the title indicates a mnemonic.",
+      "file": "gtk/gtkstack.c",
+      "line": 562,
+      "md": "If set, an underline in the title indicates a mnemonic."
+    },
+    "visible": {
+      "brief": "Whether this page is visible.",
+      "file": "gtk/gtkstack.c",
+      "line": 552,
+      "md": "Whether this page is visible."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

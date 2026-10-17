@@ -1,0 +1,154 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1071,
+      "md": "Creates a new `GtkLevelBar`."
+    },
+    "new_for_interval": {
+      "brief": "Creates a new `GtkLevelBar` for the specified interval.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1084,
+      "md": "Creates a new `GtkLevelBar` for the specified interval."
+    }
+  },
+  "doc": {
+    "brief": "Shows a level indicator.",
+    "file": "gtk/gtklevelbar.c",
+    "line": 21,
+    "md": "Shows a level indicator.\n\nTypical use cases are displaying the strength of a password, or\nshowing the charge level of a battery.\n\nUse [`LevelBar.set_value()`](xref:gtk:Gtk.LevelBar#method:set_value) to set the current value, and\n[`LevelBar.add_offset_value()`](xref:gtk:Gtk.LevelBar#method:add_offset_value) to set the value offsets at which\nthe bar will be considered in a different state. GTK will add a few\noffsets by default on the level bar: %GTK_LEVEL_BAR_OFFSET_LOW,\n%GTK_LEVEL_BAR_OFFSET_HIGH and %GTK_LEVEL_BAR_OFFSET_FULL, with\nvalues 0.25, 0.75 and 1.0 respectively.\n\nNote that it is your responsibility to update preexisting offsets\nwhen changing the minimum or maximum value. GTK will simply clamp\nthem to the new range.\n\n## Adding a custom offset on the bar\n\n```c\nstatic GtkWidget *\ncreate_level_bar (void)\n{\n  GtkWidget *widget;\n  GtkLevelBar *bar;\n\n  widget = gtk_level_bar_new ();\n  bar = GTK_LEVEL_BAR (widget);\n\n  // This changes the value of the default low offset\n\n  gtk_level_bar_add_offset_value (bar,\n                                  GTK_LEVEL_BAR_OFFSET_LOW,\n                                  0.10);\n\n  // This adds a new offset to the bar; the application will\n  // be able to change its color CSS like this:\n  //\n  // levelbar block.my-offset {\n  //   background-color: magenta;\n  //   border-style: solid;\n  //   border-color: black;\n  //   border-width: 1px;\n  // }\n\n  gtk_level_bar_add_offset_value (bar, \"my-offset\", 0.60);\n\n  return widget;\n}\n```\n\nThe default interval of values is between zero and one, but it’s possible\nto modify the interval using [`LevelBar.set_min_value()`](xref:gtk:Gtk.LevelBar#method:set_min_value) and\n[`LevelBar.set_max_value()`](xref:gtk:Gtk.LevelBar#method:set_max_value). The value will be always drawn in\nproportion to the admissible interval, i.e. a value of 15 with a specified\ninterval between 10 and 20 is equivalent to a value of 0.5 with an interval\nbetween 0 and 1. When %GTK_LEVEL_BAR_MODE_DISCRETE is used, the bar level\nis rendered as a finite number of separated blocks instead of a single one.\nThe number of blocks that will be rendered is equal to the number of units\nspecified by the admissible interval.\n\nFor instance, to build a bar rendered with five blocks, it’s sufficient to\nset the minimum value to 0 and the maximum value to 5 after changing the\nindicator mode to discrete.\n\n# GtkLevelBar as GtkBuildable\n\nThe `GtkLevelBar` implementation of the `GtkBuildable` interface supports a\ncustom `<offsets>` element, which can contain any number of `<offset>` elements,\neach of which must have \"name\" and \"value\" attributes.\n\n# CSS nodes\n\n```\nlevelbar[.discrete]\n╰── trough\n    ├── block.filled.level-name\n    ┊\n    ├── block.empty\n    ┊\n```\n\n`GtkLevelBar` has a main CSS node with name levelbar and one of the style\nclasses .discrete or .continuous and a subnode with name trough. Below the\ntrough node are a number of nodes with name block and style class .filled\nor .empty. In continuous mode, there is exactly one node of each, in discrete\nmode, the number of filled and unfilled nodes corresponds to blocks that are\ndrawn. The block.filled nodes also get a style class .level-name corresponding\nto the level for the current value.\n\nIn horizontal orientation, the nodes are always arranged from left to right,\nregardless of text direction.\n\n# Accessibility\n\n`GtkLevelBar` uses the [`AccessibleRole.meter`](xref:gtk:Gtk.AccessibleRole#value:meter) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:LevelBar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_offset_value": {
+      "brief": "Adds a new offset marker on `self` at the position specified by `value`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1373,
+      "md": "Adds a new offset marker on `self` at the position specified by `value`.\n\nWhen the bar value is in the interval topped by `value` (or between `value`\nand [`LevelBar:max-value`](xref:gtk:Gtk.LevelBar#property:max-value) in case the offset is the last one\non the bar) a style class named `level-`@name will be applied\nwhen rendering the level bar fill.\n\nIf another offset marker named `name` exists, its value will be\nreplaced by `value`."
+    },
+    "get_inverted": {
+      "brief": "Returns whether the levelbar is inverted.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1307,
+      "md": "Returns whether the levelbar is inverted."
+    },
+    "get_max_value": {
+      "brief": "Returns the `max-value` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1119,
+      "md": "Returns the `max-value` of the `GtkLevelBar`."
+    },
+    "get_min_value": {
+      "brief": "Returns the `min-value` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1103,
+      "md": "Returns the `min-value` of the `GtkLevelBar`."
+    },
+    "get_mode": {
+      "brief": "Returns the `mode` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1265,
+      "md": "Returns the `mode` of the `GtkLevelBar`."
+    },
+    "get_offset_value": {
+      "brief": "Fetches the value specified for the offset marker `name` in `self`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1407,
+      "md": "Fetches the value specified for the offset marker `name` in `self`."
+    },
+    "get_value": {
+      "brief": "Returns the `value` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1135,
+      "md": "Returns the `value` of the `GtkLevelBar`."
+    },
+    "remove_offset_value": {
+      "brief": "Removes an offset marker from a `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1345,
+      "md": "Removes an offset marker from a `GtkLevelBar`.\n\nThe marker must have been previously added with\n[`LevelBar.add_offset_value()`](xref:gtk:Gtk.LevelBar#method:add_offset_value)."
+    },
+    "set_inverted": {
+      "brief": "Sets whether the `GtkLevelBar` is inverted.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1323,
+      "md": "Sets whether the `GtkLevelBar` is inverted."
+    },
+    "set_max_value": {
+      "brief": "Sets the `max-value` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1201,
+      "md": "Sets the `max-value` of the `GtkLevelBar`.\n\nYou probably want to update preexisting level offsets after calling\nthis function."
+    },
+    "set_min_value": {
+      "brief": "Sets the `min-value` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1163,
+      "md": "Sets the `min-value` of the `GtkLevelBar`.\n\nYou probably want to update preexisting level offsets after calling\nthis function."
+    },
+    "set_mode": {
+      "brief": "Sets the `mode` of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1281,
+      "md": "Sets the `mode` of the `GtkLevelBar`."
+    },
+    "set_value": {
+      "brief": "Sets the value of the `GtkLevelBar`.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1240,
+      "md": "Sets the value of the `GtkLevelBar`."
+    }
+  },
+  "properties": {
+    "inverted": {
+      "brief": "Whether the `GtkLeveBar` is inverted.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 1010,
+      "md": "Whether the `GtkLeveBar` is inverted.\n\nLevel bars normally grow from top to bottom or left to right.\nInverted level bars grow in the opposite direction."
+    },
+    "max-value": {
+      "brief": "Determines the maximum value of the interval that can be displayed by the bar.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 980,
+      "md": "Determines the maximum value of the interval that can be displayed by the bar."
+    },
+    "min-value": {
+      "brief": "Determines the minimum value of the interval that can be displayed by the bar.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 970,
+      "md": "Determines the minimum value of the interval that can be displayed by the bar."
+    },
+    "mode": {
+      "brief": "Determines the way `GtkLevelBar` interprets the value properties to draw the level fill area.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 990,
+      "md": "Determines the way `GtkLevelBar` interprets the value properties to draw the\nlevel fill area.\n\nSpecifically, when the value is %GTK_LEVEL_BAR_MODE_CONTINUOUS,\n`GtkLevelBar` will draw a single block representing the current value in\nthat area; when the value is %GTK_LEVEL_BAR_MODE_DISCRETE,\nthe widget will draw a succession of separate blocks filling the\ndraw area, with the number of blocks being equal to the units separating\nthe integral roundings of [`LevelBar:min-value`](xref:gtk:Gtk.LevelBar#property:min-value) and\n[`LevelBar:max-value`](xref:gtk:Gtk.LevelBar#property:max-value)."
+    },
+    "value": {
+      "brief": "Determines the currently filled value of the level bar.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 960,
+      "md": "Determines the currently filled value of the level bar."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "offset-changed": {
+      "brief": "Emitted when an offset specified on the bar changes value.",
+      "file": "gtk/gtklevelbar.c",
+      "line": 936,
+      "md": "Emitted when an offset specified on the bar changes value.\n\nThis typically is the result of a [`LevelBar.add_offset_value()`](xref:gtk:Gtk.LevelBar#method:add_offset_value)\ncall.\n\nThe signal supports detailed connections; you can connect to the\ndetailed signal \"changed::x\" in order to only receive callbacks when\nthe value of offset \"x\" changes."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

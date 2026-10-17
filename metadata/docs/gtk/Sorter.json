@@ -1,0 +1,63 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes sorting criteria for a [`SortListModel`](xref:gtk:Gtk.SortListModel).",
+    "file": "gtk/gtksorter.c",
+    "line": 28,
+    "md": "Describes sorting criteria for a [`SortListModel`](xref:gtk:Gtk.SortListModel).\n\nIts primary user is [`SortListModel`](xref:gtk:Gtk.SortListModel)\n\nThe model will use a sorter to determine the order in which\nits items should appear by calling [`Sorter.compare()`](xref:gtk:Gtk.Sorter#method:compare)\nfor pairs of items.\n\nSorters may change their sorting behavior through their lifetime.\nIn that case, they will emit the [`Sorter::changed`](xref:gtk:Gtk.Sorter#event:changed) signal\nto notify that the sort order is no longer valid and should be updated\nby calling gtk_sorter_compare() again.\n\nGTK provides various pre-made sorter implementations for common sorting\noperations. [`ColumnView`](xref:gtk:Gtk.ColumnView) has built-in support for sorting lists\nvia the [`ColumnViewColumn:sorter`](xref:gtk:Gtk.ColumnViewColumn#property:sorter) property, where the user can\nchange the sorting by clicking on list headers.\n\nOf course, in particular for large lists, it is also possible to subclass\n`GtkSorter` and provide one's own sorter."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Sorter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "changed": {
+      "brief": "Notifies all users of the sorter that it has changed.",
+      "file": "gtk/gtksorter.c",
+      "line": 313,
+      "md": "Notifies all users of the sorter that it has changed.\n\nThis emits the [`Sorter::changed`](xref:gtk:Gtk.Sorter#event:changed) signal. Users\nof the sorter should then update the sort order via\n[`Sorter.compare()`](xref:gtk:Gtk.Sorter#method:compare).\n\nDepending on the `change` parameter, it may be possible to\nupdate the sort order without a full resorting. Refer to\nthe [`SorterChange`](xref:gtk:Gtk.SorterChange) documentation for details.\n\nThis function is intended for implementers of `GtkSorter`\nsubclasses and should not be called from other functions."
+    },
+    "compare": {
+      "brief": "Compares two given items according to the sort order implemented by the sorter.",
+      "file": "gtk/gtksorter.c",
+      "line": 148,
+      "md": "Compares two given items according to the sort order implemented\nby the sorter.\n\nSorters implement a partial order:\n\n* It is reflexive, ie a = a\n* It is antisymmetric, ie if a < b and b < a, then a = b\n* It is transitive, ie given any 3 items with a ≤ b and b ≤ c,\n  then a ≤ c\n\nThe sorter may signal it conforms to additional constraints\nvia the return value of [`Sorter.get_order()`](xref:gtk:Gtk.Sorter#method:get_order)."
+    },
+    "get_order": {
+      "brief": "Gets the order that `self` conforms to.",
+      "file": "gtk/gtksorter.c",
+      "line": 199,
+      "md": "Gets the order that `self` conforms to.\n\nSee [`SorterOrder`](xref:gtk:Gtk.SorterOrder) for details\nof the possible return values.\n\nThis function is intended to allow optimizations."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "Emitted whenever the sorter changed.",
+      "file": "gtk/gtksorter.c",
+      "line": 113,
+      "md": "Emitted whenever the sorter changed.\n\nUsers of the sorter should then update the sort order\nagain via gtk_sorter_compare().\n\n[`SortListModel`](xref:gtk:Gtk.SortListModel) handles this signal automatically.\n\nDepending on the `change` parameter, it may be possible to update\nthe sort order without a full resorting. Refer to the\n[`SorterChange`](xref:gtk:Gtk.SorterChange) documentation for details."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "compare": {
+      "brief": "Compares two given items according to the sort order implemented by the sorter.",
+      "file": "gtk/gtksorter.c",
+      "line": 148,
+      "md": "Compares two given items according to the sort order implemented\nby the sorter.\n\nSorters implement a partial order:\n\n* It is reflexive, ie a = a\n* It is antisymmetric, ie if a < b and b < a, then a = b\n* It is transitive, ie given any 3 items with a ≤ b and b ≤ c,\n  then a ≤ c\n\nThe sorter may signal it conforms to additional constraints\nvia the return value of [`Sorter.get_order()`](xref:gtk:Gtk.Sorter#method:get_order)."
+    },
+    "get_order": {
+      "brief": "Gets the order that `self` conforms to.",
+      "file": "gtk/gtksorter.c",
+      "line": 199,
+      "md": "Gets the order that `self` conforms to.\n\nSee [`SorterOrder`](xref:gtk:Gtk.SorterOrder) for details\nof the possible return values.\n\nThis function is intended to allow optimizations."
+    }
+  }
+}

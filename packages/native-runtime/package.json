@@ -1,0 +1,20 @@
+{
+  "name": "@svelters/native-runtime",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Runtime for components compiled by the experimental Rust compiler (X1): Svelte signals + direct host ops",
+  "exports": {
+    ".": "./src/index.js",
+    "./vite": "./vite.js"
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/testhost": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --import ./test/register.mjs --test test/*.test.mjs"
+  }
+}

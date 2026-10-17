@@ -29,31 +29,46 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleHintReturnVariant::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleHintReturnVariant::Type",
           "name": "Type",
           "value": "SH_Variant"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleHintReturnVariant::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleHintReturnVariant::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleHintReturnVariant",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleHintReturnVariant:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Style hints that return a QVariant",

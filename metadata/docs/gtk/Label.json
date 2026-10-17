@@ -1,0 +1,484 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new label with the given text inside it.",
+      "file": "gtk/gtklabel.c",
+      "line": 2990,
+      "md": "Creates a new label with the given text inside it.\n\nYou can pass `NULL` to get an empty label widget."
+    },
+    "new_with_mnemonic": {
+      "brief": "Creates a new label with the given text inside it, and a mnemonic.",
+      "file": "gtk/gtklabel.c",
+      "line": 3013,
+      "md": "Creates a new label with the given text inside it, and a mnemonic.\n\nIf characters in `str` are preceded by an underscore, they are\nunderlined. If you need a literal underscore character in a label, use\n'__' (two underscores). The first underlined character represents a\nkeyboard accelerator called a mnemonic. The mnemonic key can be used\nto activate another widget, chosen automatically, or explicitly using\n[`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget).\n\nIf [`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget) is not called, then the first\nactivatable ancestor of the label will be chosen as the mnemonic\nwidget. For instance, if the label is inside a button or menu item,\nthe button or menu item will automatically become the mnemonic widget\nand be activated by the mnemonic."
+    }
+  },
+  "doc": {
+    "brief": "Displays a small amount of text.",
+    "file": "gtk/gtklabel.c",
+    "line": 67,
+    "md": "Displays a small amount of text.\n\nMost labels are used to label another widget (such as an [`Entry`](xref:gtk:Entry)).\n\n## Shortcuts and Gestures\n\n`GtkLabel` supports the following keyboard shortcuts, when the cursor is\nvisible:\n\n- <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> opens the context menu.\n- <kbd>Ctrl</kbd>+<kbd>A</kbd> or <kbd>Ctrl</kbd>+<kbd>&sol;</kbd>\n  selects all.\n- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd> or\n  <kbd>Ctrl</kbd>+<kbd>&bsol;</kbd> unselects all.\n\nAdditionally, the following signals have default keybindings:\n\n- [`Label::activate-current-link`](xref:gtk:Gtk.Label#event:activate-current-link)\n- [`Label::copy-clipboard`](xref:gtk:Gtk.Label#event:copy-clipboard)\n- [`Label::move-cursor`](xref:gtk:Gtk.Label#event:move-cursor)\n\n## Actions\n\n`GtkLabel` defines a set of built-in actions:\n\n- `clipboard.copy` copies the text to the clipboard.\n- `clipboard.cut` doesn't do anything, since text in labels can't be deleted.\n- `clipboard.paste` doesn't do anything, since text in labels can't be\n  edited.\n- `link.open` opens the link, when activated on a link inside the label.\n- `link.copy` copies the link to the clipboard, when activated on a link\n  inside the label.\n- `menu.popup` opens the context menu.\n- `selection.delete` doesn't do anything, since text in labels can't be\n  deleted.\n- `selection.select-all` selects all of the text, if the label allows\n  selection.\n\n## CSS nodes\n\n```\nlabel\n├── [selection]\n├── [link]\n┊\n╰── [link]\n```\n\n`GtkLabel` has a single CSS node with the name label. A wide variety\nof style classes may be applied to labels, such as .title, .subtitle,\n.dim-label, etc. In the `GtkShortcutsWindow`, labels are used with the\n.keycap style class.\n\nIf the label has a selection, it gets a subnode with name selection.\n\nIf the label has links, there is one subnode per link. These subnodes\ncarry the link or visited state depending on whether they have been\nvisited. In this case, label node also gets a .link style class.\n\n## GtkLabel as GtkBuildable\n\nThe GtkLabel implementation of the GtkBuildable interface supports a\ncustom `<attributes>` element, which supports any number of `<attribute>`\nelements. The `<attribute>` element has attributes named “name“, “value“,\n“start“ and “end“ and allows you to specify [`Attribute`](xref:gtk:Pango.Attribute)\nvalues for this label.\n\nAn example of a UI definition fragment specifying Pango attributes:\n\n```xml\n<object class=\"GtkLabel\">\n  <attributes>\n    <attribute name=\"weight\" value=\"PANGO_WEIGHT_BOLD\"/>\n    <attribute name=\"background\" value=\"red\" start=\"5\" end=\"10\"/>\n  </attributes>\n</object>\n```\n\nThe start and end attributes specify the range of characters to which the\nPango attribute applies. If start and end are not specified, the attribute is\napplied to the whole text. Note that specifying ranges does not make much\nsense with translatable attributes. Use markup embedded in the translatable\ncontent instead.\n\n## Accessibility\n\n`GtkLabel` uses the [`AccessibleRole.label`](xref:gtk:Gtk.AccessibleRole#value:label) role.\n\n## Mnemonics\n\nLabels may contain “mnemonics”. Mnemonics are underlined characters in the\nlabel, used for keyboard navigation. Mnemonics are created by providing a\nstring with an underscore before the mnemonic character, such as `\"_File\"`,\nto the functions [`Label.new_with_mnemonic()`](xref:gtk:Gtk.Label#constructor:new_with_mnemonic) or\n[`Label.set_text_with_mnemonic()`](xref:gtk:Gtk.Label#method:set_text_with_mnemonic).\n\nMnemonics automatically activate any activatable widget the label is\ninside, such as a [`Button`](xref:gtk:Gtk.Button); if the label is not inside the\nmnemonic’s target widget, you have to tell the label about the target\nusing [`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget).\n\nHere’s a simple example where the label is inside a button:\n\n```c\n// Pressing Alt+H will activate this button\nGtkWidget *button = gtk_button_new ();\nGtkWidget *label = gtk_label_new_with_mnemonic (\"_Hello\");\ngtk_button_set_child (GTK_BUTTON (button), label);\n```\n\nThere’s a convenience function to create buttons with a mnemonic label\nalready inside:\n\n```c\n// Pressing Alt+H will activate this button\nGtkWidget *button = gtk_button_new_with_mnemonic (\"_Hello\");\n```\n\nTo create a mnemonic for a widget alongside the label, such as a\n[`Entry`](xref:gtk:Gtk.Entry), you have to point the label at the entry with\n[`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget):\n\n```c\n// Pressing Alt+H will focus the entry\nGtkWidget *entry = gtk_entry_new ();\nGtkWidget *label = gtk_label_new_with_mnemonic (\"_Hello\");\ngtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);\n```\n\n## Markup (styled text)\n\nTo make it easy to format text in a label (changing colors, fonts, etc.),\nlabel text can be provided in a simple markup format:\n\nHere’s how to create a label with a small font:\n```c\nGtkWidget *label = gtk_label_new (NULL);\ngtk_label_set_markup (GTK_LABEL (label), \"<small>Small text</small>\");\n```\n\n(See the Pango manual for complete documentation] of available\ntags, `parse_markup`)\n\nThe markup passed to [`Label.set_markup()`](xref:gtk:Gtk.Label#method:set_markup) must be valid XML; for example,\nliteral `<`, `>` and `&` characters must be escaped as `&lt;`, `&gt;`, and `&amp;`.\nIf you pass text obtained from the user, file, or a network to\n[`Label.set_markup()`](xref:gtk:Gtk.Label#method:set_markup), you’ll want to escape it with\n`markup_escape_text` or `markup_printf_escaped`.\n\nMarkup strings are just a convenient way to set the [`AttrList`](xref:gtk:Pango.AttrList)\non a label; [`Label.set_attributes()`](xref:gtk:Gtk.Label#method:set_attributes) may be a simpler way to set\nattributes in some cases. Be careful though; [`AttrList`](xref:gtk:Pango.AttrList) tends\nto cause internationalization problems, unless you’re applying attributes\nto the entire string (i.e. unless you set the range of each attribute\nto [0, `G_MAXINT`)). The reason is that specifying the `start_index` and\n`end_index` for a [`Attribute`](xref:gtk:Pango.Attribute) requires knowledge of the exact\nstring being displayed, so translations will cause problems.\n\n## Selectable labels\n\nLabels can be made selectable with [`Label.set_selectable()`](xref:gtk:Gtk.Label#method:set_selectable).\nSelectable labels allow the user to copy the label contents to the\nclipboard. Only labels that contain useful-to-copy information — such\nas error messages — should be made selectable.\n\n## Text layout\n\nA label can contain any number of paragraphs, but will have\nperformance problems if it contains more than a small number.\nParagraphs are separated by newlines or other paragraph separators\nunderstood by Pango.\n\nLabels can automatically wrap text if you call [`Label.set_wrap()`](xref:gtk:Gtk.Label#method:set_wrap).\n\n[`Label.set_justify()`](xref:gtk:Gtk.Label#method:set_justify) sets how the lines in a label align\nwith one another. If you want to set how the label as a whole aligns\nin its available space, see the [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and\n[`Widget:valign`](xref:gtk:Gtk.Widget#property:valign) properties.\n\nThe [`Label:width-chars`](xref:gtk:Gtk.Label#property:width-chars) and [`Label:max-width-chars`](xref:gtk:Gtk.Label#property:max-width-chars)\nproperties can be used to control the size allocation of ellipsized or\nwrapped labels. For ellipsizing labels, if either is specified (and less\nthan the actual text size), it is used as the minimum width, and the actual\ntext size is used as the natural width of the label. For wrapping labels,\nwidth-chars is used as the minimum width, if specified, and max-width-chars\nis used as the natural width. Even if max-width-chars specified, wrapping\nlabels will be rewrapped to use all of the available width.\n\n## Links\n\nGTK supports markup for clickable hyperlinks in addition to regular Pango\nmarkup. The markup for links is borrowed from HTML, using the `<a>` tag\nwith “href“, “title“ and “class“ attributes. GTK renders links similar to\nthe way they appear in web browsers, with colored, underlined text. The\n“title“ attribute is displayed as a tooltip on the link. The “class“\nattribute is used as style class on the CSS node for the link.\n\nAn example of inline links looks like this:\n\n```c\nconst char *text =\n\"Go to the \"\n\"<a href=\\\"https://www.gtk.org\\\" title=\\\"&lt;i&gt;Our&lt;/i&gt; website\\\">\"\n\"GTK website</a> for more...\";\nGtkWidget *label = gtk_label_new (NULL);\ngtk_label_set_markup (GTK_LABEL (label), text);\n```\n\nIt is possible to implement custom handling for links and their tooltips\nwith the [`Label::activate-link`](xref:gtk:Gtk.Label#event:activate-link) signal and the\n[`Label.get_current_uri()`](xref:gtk:Gtk.Label#method:get_current_uri) function."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Label",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_attributes": {
+      "brief": "Gets the label's attribute list.",
+      "file": "gtk/gtklabel.c",
+      "line": 3444,
+      "md": "Gets the label's attribute list.\n\nThis is the [`AttrList`](xref:gtk:Pango.AttrList) that was set on the label using\n[`Label.set_attributes()`](xref:gtk:Gtk.Label#method:set_attributes), if any. This function does not\nreflect attributes that come from the label's markup (see\n[`Label.set_markup()`](xref:gtk:Gtk.Label#method:set_markup)). If you want to get the effective\nattributes for the label, use\n`pango_layout_get_attributes (gtk_label_get_layout (self))`."
+    },
+    "get_current_uri": {
+      "brief": "Returns the URI for the active link in the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6026,
+      "md": "Returns the URI for the active link in the label.\n\nThe active link is the one under the mouse pointer or, in a\nselectable label, the link in which the text cursor is currently\npositioned.\n\nThis function is intended for use in a [`Label::activate-link`](xref:gtk:Gtk.Label#event:activate-link)\nhandler or for use in a [`Widget::query-tooltip`](xref:gtk:Gtk.Widget#event:query-tooltip) handler."
+    },
+    "get_ellipsize": {
+      "brief": "Returns the ellipsization mode of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4162,
+      "md": "Returns the ellipsization mode of the label.\n\nSee [`Label.set_ellipsize()`](xref:gtk:Gtk.Label#method:set_ellipsize)."
+    },
+    "get_extra_menu": {
+      "brief": "Gets the extra menu model of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6235,
+      "md": "Gets the extra menu model of the label.\n\nSee [`Label.set_extra_menu()`](xref:gtk:Gtk.Label#method:set_extra_menu)."
+    },
+    "get_justify": {
+      "brief": "Returns the justification of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4115,
+      "md": "Returns the justification of the label.\n\nSee [`Label.set_justify()`](xref:gtk:Gtk.Label#method:set_justify)."
+    },
+    "get_label": {
+      "brief": "Fetches the text from a label.",
+      "file": "gtk/gtklabel.c",
+      "line": 3492,
+      "md": "Fetches the text from a label.\n\nThe returned text includes any embedded underlines indicating\nmnemonics and Pango markup. (See [`Label.get_text()`](xref:gtk:Gtk.Label#method:get_text))."
+    },
+    "get_layout": {
+      "brief": "Gets the Pango layout used to display the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 5467,
+      "md": "Gets the Pango layout used to display the label.\n\nThe layout is useful to e.g. convert text positions to pixel\npositions, in combination with [`Label.get_layout_offsets()`](xref:gtk:Gtk.Label#method:get_layout_offsets).\nThe returned layout is owned by the `label` so need not be\nfreed by the caller. The `label` is free to recreate its layout\nat any time, so it should be considered read-only."
+    },
+    "get_layout_offsets": {
+      "brief": "Obtains the coordinates where the label will draw its Pango layout.",
+      "file": "gtk/gtklabel.c",
+      "line": 5491,
+      "md": "Obtains the coordinates where the label will draw its Pango layout.\n\nThe coordinates are useful to convert mouse events into coordinates\ninside the [`Layout`](xref:gtk:Pango.Layout), e.g. to take some action if some part\nof the label is clicked. Remember when using the [`Layout`](xref:gtk:Pango.Layout)\nfunctions you need to convert to and from pixels using `PANGO_PIXELS()`\nor `SCALE`."
+    },
+    "get_lines": {
+      "brief": "Gets the number of lines to which an ellipsized, wrapping label should be limited.",
+      "file": "gtk/gtklabel.c",
+      "line": 6108,
+      "md": "Gets the number of lines to which an ellipsized, wrapping\nlabel should be limited.\n\nSee [`Label.set_lines()`](xref:gtk:Gtk.Label#method:set_lines)."
+    },
+    "get_max_width_chars": {
+      "brief": "Retrieves the maximum width of the label in characters.",
+      "file": "gtk/gtklabel.c",
+      "line": 4241,
+      "md": "Retrieves the maximum width of the label in characters.\n\nSee [`Label.set_width_chars()`](xref:gtk:Gtk.Label#method:set_width_chars)."
+    },
+    "get_mnemonic_keyval": {
+      "brief": "Return the mnemonic accelerator.",
+      "file": "gtk/gtklabel.c",
+      "line": 3234,
+      "md": "Return the mnemonic accelerator.\n\nIf the label has been set so that it has a mnemonic key this function\nreturns the keyval used for the mnemonic accelerator. If there is no\nmnemonic set up it returns `GDK_KEY_VoidSymbol`."
+    },
+    "get_mnemonic_widget": {
+      "brief": "Retrieves the mnemonic target of this label.",
+      "file": "gtk/gtklabel.c",
+      "line": 3215,
+      "md": "Retrieves the mnemonic target of this label.\n\nSee [`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget)."
+    },
+    "get_natural_wrap_mode": {
+      "brief": "Returns natural line wrap mode used by the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4389,
+      "md": "Returns natural line wrap mode used by the label.\n\nSee [`Label.set_natural_wrap_mode()`](xref:gtk:Gtk.Label#method:set_natural_wrap_mode).",
+      "since": "4.6"
+    },
+    "get_selectable": {
+      "brief": "Returns whether the label is selectable.",
+      "file": "gtk/gtklabel.c",
+      "line": 5230,
+      "md": "Returns whether the label is selectable."
+    },
+    "get_selection_bounds": {
+      "brief": "Gets the selected range of characters in the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 5398,
+      "md": "Gets the selected range of characters in the label.\n\nThe returned `start` and `end` positions are in characters."
+    },
+    "get_single_line_mode": {
+      "brief": "Returns whether the label is in single line mode.",
+      "file": "gtk/gtklabel.c",
+      "line": 5628,
+      "md": "Returns whether the label is in single line mode."
+    },
+    "get_tabs": {
+      "brief": "Gets the tab stops for the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6280,
+      "md": "Gets the tab stops for the label.\n\nThe returned array will be `NULL` if “standard” (8-space) tabs are used.",
+      "since": "4.8"
+    },
+    "get_text": {
+      "brief": "Gets the text of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4061,
+      "md": "Gets the text of the label.\n\nThe returned text is as it appears on screen. This does not include\nany embedded underlines indicating mnemonics or Pango markup. (See\n[`Label.get_label()`](xref:gtk:Gtk.Label#method:get_label))"
+    },
+    "get_use_markup": {
+      "brief": "Returns whether the label’s text is interpreted as Pango markup.",
+      "file": "gtk/gtklabel.c",
+      "line": 5545,
+      "md": "Returns whether the label’s text is interpreted as Pango markup.\n\nSee [`Label.set_use_markup()`](xref:gtk:Gtk.Label#method:set_use_markup)."
+    },
+    "get_use_underline": {
+      "brief": "Returns whether underlines in the label indicate mnemonics.",
+      "file": "gtk/gtklabel.c",
+      "line": 5584,
+      "md": "Returns whether underlines in the label indicate mnemonics.\n\nSee [`Label.set_use_underline()`](xref:gtk:Gtk.Label#method:set_use_underline)."
+    },
+    "get_width_chars": {
+      "brief": "Retrieves the desired width of the label in characters.",
+      "file": "gtk/gtklabel.c",
+      "line": 4201,
+      "md": "Retrieves the desired width of the label in characters.\n\nSee [`Label.set_width_chars()`](xref:gtk:Gtk.Label#method:set_width_chars)."
+    },
+    "get_wrap": {
+      "brief": "Returns whether lines in the label are automatically wrapped.",
+      "file": "gtk/gtklabel.c",
+      "line": 4294,
+      "md": "Returns whether lines in the label are automatically wrapped.\n\nSee [`Label.set_wrap()`](xref:gtk:Gtk.Label#method:set_wrap)."
+    },
+    "get_wrap_mode": {
+      "brief": "Returns line wrap mode used by the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4344,
+      "md": "Returns line wrap mode used by the label.\n\nSee [`Label.set_wrap_mode()`](xref:gtk:Gtk.Label#method:set_wrap_mode)."
+    },
+    "get_xalign": {
+      "brief": "Gets the `xalign` of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6153,
+      "md": "Gets the `xalign` of the label.\n\nSee the [`Label:xalign`](xref:gtk:Gtk.Label#property:xalign) property."
+    },
+    "get_yalign": {
+      "brief": "Gets the `yalign` of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6197,
+      "md": "Gets the `yalign` of the label.\n\nSee the [`Label:yalign`](xref:gtk:Gtk.Label#property:yalign) property."
+    },
+    "select_region": {
+      "brief": "Selects a range of characters in the label, if the label is selectable.",
+      "file": "gtk/gtklabel.c",
+      "line": 5365,
+      "md": "Selects a range of characters in the label, if the label is selectable.\n\nSee [`Label.set_selectable()`](xref:gtk:Gtk.Label#method:set_selectable). If the label is not selectable,\nthis function has no effect. If `start_offset` or\n`end_offset` are -1, then the end of the label will be substituted."
+    },
+    "set_attributes": {
+      "brief": "Apply attributes to the label text.",
+      "file": "gtk/gtklabel.c",
+      "line": 3406,
+      "md": "Apply attributes to the label text.\n\nThe attributes set with this function will be applied and merged with\nany other attributes previously effected by way of the\n[`Label:use-underline`](xref:gtk:Gtk.Label#property:use-underline) or [`Label:use-markup`](xref:gtk:Gtk.Label#property:use-markup)\nproperties\n\nWhile it is not recommended to mix markup strings with manually set\nattributes, if you must; know that the attributes will be applied\nto the label after the markup string is parsed."
+    },
+    "set_ellipsize": {
+      "brief": "Sets the mode used to ellipsize the text.",
+      "file": "gtk/gtklabel.c",
+      "line": 4133,
+      "md": "Sets the mode used to ellipsize the text.\n\nThe text will be ellipsized if there is not\nenough space to render the entire string."
+    },
+    "set_extra_menu": {
+      "brief": "Sets a menu model to add to the context menu of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6215,
+      "md": "Sets a menu model to add to the context menu of the label."
+    },
+    "set_justify": {
+      "brief": "Sets the alignment of lines in the label relative to each other.",
+      "file": "gtk/gtklabel.c",
+      "line": 4081,
+      "md": "Sets the alignment of lines in the label relative to each other.\n\nThis function has no effect on labels containing only a single line.\n\n[`Justification.left`](xref:gtk:Gtk.Justification#value:left) is the default value when the widget\nis first created with [`Label.new()`](xref:gtk:Gtk.Label#constructor:new).\n\nIf you instead want to set the alignment of the label as a whole,\nuse [`Widget.set_halign()`](xref:gtk:Gtk.Widget#method:set_halign) instead."
+    },
+    "set_label": {
+      "brief": "Sets the text of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 3467,
+      "md": "Sets the text of the label.\n\nThe label is interpreted as including embedded underlines and/or Pango\nmarkup depending on the values of the [`Label:use-underline`](xref:gtk:Gtk.Label#property:use-underline)\nand [`Label:use-markup`](xref:gtk:Gtk.Label#property:use-markup) properties."
+    },
+    "set_lines": {
+      "brief": "Sets the number of lines to which an ellipsized, wrapping label should be limited.",
+      "file": "gtk/gtklabel.c",
+      "line": 6082,
+      "md": "Sets the number of lines to which an ellipsized, wrapping label\nshould be limited.\n\nThis has no effect if the label is not wrapping or ellipsized.\nSet this to -1 if you don’t want to limit the number of lines."
+    },
+    "set_markup": {
+      "brief": "Sets the labels text and attributes from markup.",
+      "file": "gtk/gtklabel.c",
+      "line": 3977,
+      "md": "Sets the labels text and attributes from markup.\n\nThe string must be marked up with Pango markup\n(see `parse_markup`).\n\nIf `str` is external data, you may need to escape it\nwith `markup_escape_text` or `markup_printf_escaped`:\n\n```c\nGtkWidget *self = gtk_label_new (NULL);\nconst char *str = \"...\";\nconst char *format = \"<span style=\\\"italic\\\">\\%s</span>\";\nchar *markup;\n\nmarkup = g_markup_printf_escaped (format, str);\ngtk_label_set_markup (GTK_LABEL (self), markup);\ng_free (markup);\n```\n\nThis function sets the [`Label:use-markup`](xref:gtk:Gtk.Label#property:use-markup) property\nto true.\n\nAlso see [`Label.set_text()`](xref:gtk:Gtk.Label#method:set_text)."
+    },
+    "set_markup_with_mnemonic": {
+      "brief": "Sets the labels text, attributes and mnemonic from markup.",
+      "file": "gtk/gtklabel.c",
+      "line": 4026,
+      "md": "Sets the labels text, attributes and mnemonic from markup.\n\nParses `str` which is marked up with Pango markup (see `parse_markup`),\nsetting the label’s text and attribute list based on the parse results.\nIf characters in `str` are preceded by an underscore, they are underlined\nindicating that they represent a keyboard accelerator called a mnemonic.\n\nThe mnemonic key can be used to activate another widget, chosen\nautomatically, or explicitly using [`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget)."
+    },
+    "set_max_width_chars": {
+      "brief": "Sets the maximum width of the label in characters.",
+      "file": "gtk/gtklabel.c",
+      "line": 4219,
+      "md": "Sets the maximum width of the label in characters."
+    },
+    "set_mnemonic_widget": {
+      "brief": "Associate the label with its mnemonic target.",
+      "file": "gtk/gtklabel.c",
+      "line": 3163,
+      "md": "Associate the label with its mnemonic target.\n\nIf the label has been set so that it has a mnemonic key (using\ni.e. [`Label.set_markup_with_mnemonic()`](xref:gtk:Gtk.Label#method:set_markup_with_mnemonic),\n[`Label.set_text_with_mnemonic()`](xref:gtk:Gtk.Label#method:set_text_with_mnemonic),\n[`Label.new_with_mnemonic()`](xref:gtk:Gtk.Label#constructor:new_with_mnemonic)\nor the [`Label:use_underline`](xref:gtk:Gtk.Label#property:use_underline) property) the label can\nbe associated with a widget that is the target of the mnemonic.\nWhen the label is inside a widget (like a [`Button`](xref:gtk:Gtk.Button) or a\n[`Notebook`](xref:gtk:Gtk.Notebook) tab) it is automatically associated with the\ncorrect widget, but sometimes (i.e. when the target is a [`Entry`](xref:gtk:Gtk.Entry)\nnext to the label) you need to set it explicitly using this function.\n\nThe target widget will be accelerated by emitting the\n[`Widget::mnemonic-activate`](xref:gtk:Gtk.Widget#event:mnemonic-activate) signal on it. The default handler\nfor this signal will activate the widget if there are no mnemonic\ncollisions and toggle focus between the colliding widgets otherwise."
+    },
+    "set_natural_wrap_mode": {
+      "brief": "Selects the line wrapping for the natural size request.",
+      "file": "gtk/gtklabel.c",
+      "line": 4362,
+      "md": "Selects the line wrapping for the natural size request.\n\nThis only affects the natural size requested, for the actual wrapping used,\nsee the [`Label:wrap-mode`](xref:gtk:Gtk.Label#property:wrap-mode) property.",
+      "since": "4.6"
+    },
+    "set_selectable": {
+      "brief": "Makes text in the label selectable.",
+      "file": "gtk/gtklabel.c",
+      "line": 5176,
+      "md": "Makes text in the label selectable.\n\nSelectable labels allow the user to select text from the label,\nfor copy-and-paste."
+    },
+    "set_single_line_mode": {
+      "brief": "Sets whether the label is in single line mode.",
+      "file": "gtk/gtklabel.c",
+      "line": 5602,
+      "md": "Sets whether the label is in single line mode."
+    },
+    "set_tabs": {
+      "brief": "Sets tab stops for the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6253,
+      "md": "Sets tab stops for the label.",
+      "since": "4.8"
+    },
+    "set_text": {
+      "brief": "Sets the text for the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 3372,
+      "md": "Sets the text for the label.\n\nIt overwrites any text that was there before and clears any\npreviously set mnemonic accelerators, and sets the\n[`Label:use-underline`](xref:gtk:Gtk.Label#property:use-underline) and\n[`Label:use-markup`](xref:gtk:Gtk.Label#property:use-markup) properties to false.\n\nAlso see [`Label.set_markup()`](xref:gtk:Gtk.Label#method:set_markup)."
+    },
+    "set_text_with_mnemonic": {
+      "brief": "Sets the text for the label, with mnemonics.",
+      "file": "gtk/gtklabel.c",
+      "line": 4461,
+      "md": "Sets the text for the label, with mnemonics.\n\nIf characters in `str` are preceded by an underscore, they are underlined\nindicating that they represent a keyboard accelerator called a mnemonic.\nThe mnemonic key can be used to activate another widget, chosen\nautomatically, or explicitly using [`Label.set_mnemonic_widget()`](xref:gtk:Gtk.Label#method:set_mnemonic_widget)."
+    },
+    "set_use_markup": {
+      "brief": "Sets whether the text of the label contains markup.",
+      "file": "gtk/gtklabel.c",
+      "line": 5522,
+      "md": "Sets whether the text of the label contains markup.\n\nSee [`Label.set_markup()`](xref:gtk:Gtk.Label#method:set_markup)."
+    },
+    "set_use_underline": {
+      "brief": "Sets whether underlines in the text indicate mnemonics.",
+      "file": "gtk/gtklabel.c",
+      "line": 5563,
+      "md": "Sets whether underlines in the text indicate mnemonics."
+    },
+    "set_width_chars": {
+      "brief": "Sets the desired width in characters of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4180,
+      "md": "Sets the desired width in characters of the label."
+    },
+    "set_wrap": {
+      "brief": "Toggles line wrapping within the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 4259,
+      "md": "Toggles line wrapping within the label.\n\nTrue makes it break lines if text exceeds the widget’s size.\nfalse lets the text get cut off by the edge of the widget if\nit exceeds the widget size.\n\nNote that setting line wrapping to true does not make the label\nwrap at its parent widget’s width, because GTK widgets conceptually\ncan’t make their requisition depend on the parent  widget’s size.\nFor a label that wraps at a specific position, set the label’s width\nusing [`Widget.set_size_request()`](xref:gtk:Gtk.Widget#method:set_size_request)."
+    },
+    "set_wrap_mode": {
+      "brief": "Controls how line wrapping is done.",
+      "file": "gtk/gtklabel.c",
+      "line": 4312,
+      "md": "Controls how line wrapping is done.\n\nThis only affects the label if line wrapping is on. (See\n[`Label.set_wrap()`](xref:gtk:Gtk.Label#method:set_wrap))\n\nThe default is [`WrapMode.word`](xref:gtk:Pango.WrapMode#value:word), which means\nwrap on word boundaries.\n\nFor sizing behavior, also consider the\n[`Label:natural-wrap-mode`](xref:gtk:Gtk.Label#property:natural-wrap-mode) property."
+    },
+    "set_xalign": {
+      "brief": "Sets the `xalign` of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6127,
+      "md": "Sets the `xalign` of the label.\n\nSee the [`Label:xalign`](xref:gtk:Gtk.Label#property:xalign) property."
+    },
+    "set_yalign": {
+      "brief": "Sets the `yalign` of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 6171,
+      "md": "Sets the `yalign` of the label.\n\nSee the [`Label:yalign`](xref:gtk:Gtk.Label#property:yalign) property."
+    }
+  },
+  "properties": {
+    "attributes": {
+      "brief": "A list of style attributes to apply to the text of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 2475,
+      "md": "A list of style attributes to apply to the text of the label."
+    },
+    "ellipsize": {
+      "brief": "The preferred place to ellipsize the string, if the label does not have enough room to display the entire string.",
+      "file": "gtk/gtklabel.c",
+      "line": 2628,
+      "md": "The preferred place to ellipsize the string, if the label does\nnot have enough room to display the entire string.\n\nNote that setting this property to a value other than\n[enum.Pango.EllipsizeMode.none] has the side-effect that the label requests\nonly enough space to display the ellipsis \"...\". In particular, this\nmeans that ellipsizing labels do not work well in notebook tabs, unless\nthe [`NotebookPage:tab-expand`](xref:gtk:Gtk.NotebookPage#property:tab-expand) child property is set to true.\n\nOther ways to set a label's width are [`Widget.set_size_request()`](xref:gtk:Gtk.Widget#method:set_size_request)\nand [`Label.set_width_chars()`](xref:gtk:Gtk.Label#method:set_width_chars)."
+    },
+    "extra-menu": {
+      "brief": "A menu model whose contents will be appended to the context menu.",
+      "file": "gtk/gtklabel.c",
+      "line": 2723,
+      "md": "A menu model whose contents will be appended to the context menu."
+    },
+    "justify": {
+      "brief": "The alignment of the lines in the text of the label, relative to each other.",
+      "file": "gtk/gtklabel.c",
+      "line": 2508,
+      "md": "The alignment of the lines in the text of the label, relative to each other.\n\nThis does *not* affect the alignment of the label within its allocation.\nSee [`Label:xalign`](xref:gtk:Gtk.Label#property:xalign) for that."
+    },
+    "label": {
+      "brief": "The contents of the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 2454,
+      "md": "The contents of the label.\n\nIf the string contains Pango markup (see `parse_markup`),\nyou will have to set the [`Label:use-markup`](xref:gtk:Gtk.Label#property:use-markup) property to\ntrue in order for the label to display the markup attributes. See also\n[`Label.set_markup()`](xref:gtk:Gtk.Label#method:set_markup) for a convenience function that sets both\nthis property and the [`Label:use-markup`](xref:gtk:Gtk.Label#property:use-markup) property at the\nsame time.\n\nIf the string contains underlines acting as mnemonics, you will have to\nset the [`Label:use-underline`](xref:gtk:Gtk.Label#property:use-underline) property to true in order\nfor the label to display them."
+    },
+    "lines": {
+      "brief": "The number of lines to which an ellipsized, wrapping label should display before it gets ellipsized.",
+      "file": "gtk/gtklabel.c",
+      "line": 2698,
+      "md": "The number of lines to which an ellipsized, wrapping label\nshould display before it gets ellipsized. This both prevents the label\nfrom ellipsizing before this many lines are displayed, and limits the\nheight request of the label to this many lines.\n\n::: warning\n    Setting this property has unintuitive and unfortunate consequences\n    for the minimum _width_ of the label. Specifically, if the height\n    of the label is such that it fits a smaller number of lines than\n    the value of this property, the label can not be ellipsized at all,\n    which means it must be wide enough to fit all the text fully.\n\nThis property has no effect if the label is not wrapping or ellipsized.\n\nSet this property to -1 if you don't want to limit the number of lines."
+    },
+    "max-width-chars": {
+      "brief": "The desired maximum width of the label, in characters.",
+      "file": "gtk/gtklabel.c",
+      "line": 2681,
+      "md": "The desired maximum width of the label, in characters.\n\nIf this property is set to -1, the width will be calculated automatically.\n\nSee the section on [text layout](class.Label.html#text-layout) for details\nof how [`Label:width-chars`](xref:gtk:Gtk.Label#property:width-chars) and [`Label:max-width-chars`](xref:gtk:Gtk.Label#property:max-width-chars)\ndetermine the width of ellipsized and wrapped labels."
+    },
+    "mnemonic-keyval": {
+      "brief": "The mnemonic accelerator key for the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 2607,
+      "md": "The mnemonic accelerator key for the label."
+    },
+    "mnemonic-widget": {
+      "brief": "The widget to be activated when the labels mnemonic key is pressed.",
+      "file": "gtk/gtklabel.c",
+      "line": 2618,
+      "md": "The widget to be activated when the labels mnemonic key is pressed."
+    },
+    "natural-wrap-mode": {
+      "brief": "Select the line wrapping for the natural size request.",
+      "file": "gtk/gtklabel.c",
+      "line": 2578,
+      "md": "Select the line wrapping for the natural size request.\n\nThis only affects the natural size requested. For the actual wrapping\nused, see the [`Label:wrap-mode`](xref:gtk:Gtk.Label#property:wrap-mode) property.\n\nThe default is [`NaturalWrapMode.inherit`](xref:gtk:Gtk.NaturalWrapMode#value:inherit), which inherits\nthe behavior of the [`Label:wrap-mode`](xref:gtk:Gtk.Label#property:wrap-mode) property.",
+      "since": "4.6"
+    },
+    "selectable": {
+      "brief": "Whether the label text can be selected with the mouse.",
+      "file": "gtk/gtklabel.c",
+      "line": 2597,
+      "md": "Whether the label text can be selected with the mouse."
+    },
+    "single-line-mode": {
+      "brief": "Whether the label is in single line mode.",
+      "file": "gtk/gtklabel.c",
+      "line": 2666,
+      "md": "Whether the label is in single line mode.\n\nIn single line mode, the height of the label does not depend on the\nactual text, it is always set to ascent + descent of the font. This\ncan be an advantage in situations where resizing the label because\nof text changes would be distracting, e.g. in a statusbar."
+    },
+    "tabs": {
+      "brief": "Custom tabs for this label.",
+      "file": "gtk/gtklabel.c",
+      "line": 2733,
+      "md": "Custom tabs for this label.",
+      "since": "4.8"
+    },
+    "use-markup": {
+      "brief": "True if the text of the label includes Pango markup.",
+      "file": "gtk/gtklabel.c",
+      "line": 2485,
+      "md": "True if the text of the label includes Pango markup.\n\nSee `parse_markup`."
+    },
+    "use-underline": {
+      "brief": "True if the text of the label indicates a mnemonic with an `_` before the mnemonic character.",
+      "file": "gtk/gtklabel.c",
+      "line": 2497,
+      "md": "True if the text of the label indicates a mnemonic with an `_`\nbefore the mnemonic character."
+    },
+    "width-chars": {
+      "brief": "The desired width of the label, in characters.",
+      "file": "gtk/gtklabel.c",
+      "line": 2649,
+      "md": "The desired width of the label, in characters.\n\nIf this property is set to -1, the width will be calculated automatically.\n\nSee the section on [text layout](class.Label.html#text-layout) for details\nof how [`Label:width-chars`](xref:gtk:Gtk.Label#property:width-chars) and [`Label:max-width-chars`](xref:gtk:Gtk.Label#property:max-width-chars)\ndetermine the width of ellipsized and wrapped labels."
+    },
+    "wrap": {
+      "brief": "True if the label text will wrap if it gets too wide.",
+      "file": "gtk/gtklabel.c",
+      "line": 2550,
+      "md": "True if the label text will wrap if it gets too wide."
+    },
+    "wrap-mode": {
+      "brief": "Controls how the line wrapping is done.",
+      "file": "gtk/gtklabel.c",
+      "line": 2560,
+      "md": "Controls how the line wrapping is done.\n\nThis only affects the formatting if line wrapping is on (see the\n[`Label:wrap`](xref:gtk:Gtk.Label#property:wrap) property). The default is [`WrapMode.word`](xref:gtk:Pango.WrapMode#value:word),\nwhich means wrap on word boundaries.\n\nFor sizing behavior, also consider the [`Label:natural-wrap-mode`](xref:gtk:Gtk.Label#property:natural-wrap-mode)\nproperty."
+    },
+    "xalign": {
+      "brief": "The horizontal alignment of the label text inside its size allocation.",
+      "file": "gtk/gtklabel.c",
+      "line": 2522,
+      "md": "The horizontal alignment of the label text inside its size allocation.\n\nCompare this to [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign), which determines how the\nlabels size allocation is positioned in the space available for the label."
+    },
+    "yalign": {
+      "brief": "The vertical alignment of the label text inside its size allocation.",
+      "file": "gtk/gtklabel.c",
+      "line": 2536,
+      "md": "The vertical alignment of the label text inside its size allocation.\n\nCompare this to [`Widget:valign`](xref:gtk:Gtk.Widget#property:valign), which determines how the\nlabels size allocation is positioned in the space available for the label."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-current-link": {
+      "brief": "Gets emitted when the user activates a link in the label.",
+      "file": "gtk/gtklabel.c",
+      "line": 2408,
+      "md": "Gets emitted when the user activates a link in the label.\n\nThe `::activate-current-link` is a [keybinding signal](class.SignalAction.html).\n\nApplications may also emit the signal with g_signal_emit_by_name()\nif they need to control activation of URIs programmatically.\n\nThe default bindings for this signal are all forms of the <kbd>Enter</kbd> key."
+    },
+    "activate-link": {
+      "brief": "Gets emitted to activate a URI.",
+      "file": "gtk/gtklabel.c",
+      "line": 2430,
+      "md": "Gets emitted to activate a URI.\n\nApplications may connect to it to override the default behaviour,\nwhich is to call [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch)."
+    },
+    "copy-clipboard": {
+      "brief": "Gets emitted to copy the selection to the clipboard.",
+      "file": "gtk/gtklabel.c",
+      "line": 2389,
+      "md": "Gets emitted to copy the selection to the clipboard.\n\nThe `::copy-clipboard` signal is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Ctrl</kbd>+<kbd>c</kbd>."
+    },
+    "move-cursor": {
+      "brief": "Gets emitted when the user initiates a cursor movement.",
+      "file": "gtk/gtklabel.c",
+      "line": 2347,
+      "md": "Gets emitted when the user initiates a cursor movement.\n\nThe `::move-cursor` signal is a [keybinding signal](class.SignalAction.html).\nIf the cursor is not visible in `entry`, this signal causes the viewport to\nbe moved instead.\n\nApplications should not connect to it, but may emit it with\n`signal_emit_by_name` if they need to control\nthe cursor programmatically.\n\nThe default bindings for this signal come in two variants, the\nvariant with the <kbd>Shift</kbd> modifier extends the selection,\nthe variant without the <kbd>Shift</kbd> modifier does not.\nThere are too many key combinations to list them all here.\n\n- <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>\n  move by individual characters/lines\n- <kbd>Ctrl</kbd>+<kbd>←</kbd>, etc. move by words/paragraphs\n- <kbd>Home</kbd> and <kbd>End</kbd> move to the ends of the buffer"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

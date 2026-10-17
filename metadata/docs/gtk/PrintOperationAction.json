@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Determines what action the print operation should perform.",
+    "file": "gtk/print/gtkprintoperation.h",
+    "line": 101,
+    "md": "Determines what action the print operation should perform.\n\nA parameter of this typs is passed to [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintOperationAction",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "export": {
+      "brief": "Export to a file. This requires the export-filename property to be set.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 108,
+      "md": "Export to a file. This requires\n  the export-filename property to be set."
+    },
+    "preview": {
+      "brief": "Show the print preview.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 107,
+      "md": "Show the print preview."
+    },
+    "print": {
+      "brief": "Start to print without showing the print dialog, based on the current print settings, if possible.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 104,
+      "md": "Start to print without showing\n  the print dialog, based on the current print settings, if possible.\n  Depending on the platform, a print dialog might appear anyway."
+    },
+    "print_dialog": {
+      "brief": "Show the print dialog.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 103,
+      "md": "Show the print dialog."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,76 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new event controller that will handle motion events.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 290,
+      "md": "Creates a new event controller that will handle motion events."
+    }
+  },
+  "doc": {
+    "brief": "Tracks the pointer position.",
+    "file": "gtk/gtkeventcontrollermotion.c",
+    "line": 20,
+    "md": "Tracks the pointer position.\n\nThe event controller offers [`EventControllerMotion::enter`](xref:gtk:Gtk.EventControllerMotion#event:enter)\nand [`EventControllerMotion::leave`](xref:gtk:Gtk.EventControllerMotion#event:leave) signals, as well as\n[`EventControllerMotion:is-pointer`](xref:gtk:Gtk.EventControllerMotion#property:is-pointer) and\n[`EventControllerMotion:contains-pointer`](xref:gtk:Gtk.EventControllerMotion#property:contains-pointer) properties\nwhich are updated to reflect changes in the pointer position as it\nmoves over the widget."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "contains_pointer": {
+      "brief": "Returns if a pointer is within `self` or one of its children.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 304,
+      "md": "Returns if a pointer is within `self` or one of its children."
+    },
+    "is_pointer": {
+      "brief": "Returns if a pointer is within `self`, but not one of its children.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 320,
+      "md": "Returns if a pointer is within `self`, but not one of its children."
+    }
+  },
+  "properties": {
+    "contains-pointer": {
+      "brief": "Whether the pointer is in the controllers widget or a descendant.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 212,
+      "md": "Whether the pointer is in the controllers widget or a descendant.\n\nSee also [`EventControllerMotion:is-pointer`](xref:gtk:Gtk.EventControllerMotion#property:is-pointer).\n\nWhen handling crossing events, this property is updated\nbefore [`EventControllerMotion::enter`](xref:gtk:Gtk.EventControllerMotion#event:enter), but after\n[`EventControllerMotion::leave`](xref:gtk:Gtk.EventControllerMotion#event:leave) is emitted."
+    },
+    "is-pointer": {
+      "brief": "Whether the pointer is in the controllers widget itself, as opposed to in a descendent widget.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 195,
+      "md": "Whether the pointer is in the controllers widget itself,\nas opposed to in a descendent widget.\n\nSee also [`EventControllerMotion:contains-pointer`](xref:gtk:Gtk.EventControllerMotion#property:contains-pointer).\n\nWhen handling crossing events, this property is updated\nbefore [`EventControllerMotion::enter`](xref:gtk:Gtk.EventControllerMotion#event:enter), but after\n[`EventControllerMotion::leave`](xref:gtk:Gtk.EventControllerMotion#event:leave) is emitted."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "enter": {
+      "brief": "Signals that the pointer has entered the widget.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 230,
+      "md": "Signals that the pointer has entered the widget."
+    },
+    "leave": {
+      "brief": "Signals that the pointer has left the widget.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 251,
+      "md": "Signals that the pointer has left the widget."
+    },
+    "motion": {
+      "brief": "Emitted when the pointer moves inside the widget.",
+      "file": "gtk/gtkeventcontrollermotion.c",
+      "line": 265,
+      "md": "Emitted when the pointer moves inside the widget."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

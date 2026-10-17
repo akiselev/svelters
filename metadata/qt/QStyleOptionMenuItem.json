@@ -29,89 +29,121 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionMenuItem::CheckType",
       "members": [
         {
+          "cpp": "QStyleOptionMenuItem::NotCheckable",
           "name": "NotCheckable",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionMenuItem::Exclusive",
           "name": "Exclusive",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionMenuItem::NonExclusive",
           "name": "NonExclusive",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "CheckType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionMenuItem::MenuItemType",
       "members": [
         {
+          "cpp": "QStyleOptionMenuItem::Normal",
           "name": "Normal",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionMenuItem::DefaultItem",
           "name": "DefaultItem",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionMenuItem::Separator",
           "name": "Separator",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionMenuItem::SubMenu",
           "name": "SubMenu",
           "value": "3"
         },
         {
+          "cpp": "QStyleOptionMenuItem::Scroller",
           "name": "Scroller",
           "value": "4"
         },
         {
+          "cpp": "QStyleOptionMenuItem::TearOff",
           "name": "TearOff",
           "value": "5"
         },
         {
+          "cpp": "QStyleOptionMenuItem::Margin",
           "name": "Margin",
           "value": "6"
         },
         {
+          "cpp": "QStyleOptionMenuItem::EmptyArea",
           "name": "EmptyArea",
           "value": "7"
         }
       ],
       "metaobject": null,
       "name": "MenuItemType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionMenuItem::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionMenuItem::Type",
           "name": "Type",
           "value": "SO_MenuItem"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionMenuItem::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionMenuItem::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionMenuItem",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionMenuItem:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameter necessary for drawing a menu item",

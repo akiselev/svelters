@@ -1,0 +1,320 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkListBox` container.",
+      "file": "gtk/gtklistbox.c",
+      "line": 385,
+      "md": "Creates a new `GtkListBox` container."
+    }
+  },
+  "doc": {
+    "brief": "Shows a vertical list.",
+    "file": "gtk/gtklistbox.c",
+    "line": 40,
+    "md": "Shows a vertical list.\n\nA `GtkListBox` only contains `GtkListBoxRow` children. These rows can\nby dynamically sorted and filtered, and headers can be added dynamically\ndepending on the row content. It also allows keyboard and mouse navigation\nand selection like a typical list.\n\nUsing `GtkListBox` is often an alternative to `GtkTreeView`, especially\nwhen the list contents has a more complicated layout than what is allowed\nby a `GtkCellRenderer`, or when the contents is interactive (i.e. has a\nbutton in it).\n\nAlthough a `GtkListBox` must have only `GtkListBoxRow` children, you can\nadd any kind of widget to it via [`ListBox.prepend()`](xref:gtk:Gtk.ListBox#method:prepend),\n[`ListBox.append()`](xref:gtk:Gtk.ListBox#method:append) and [`ListBox.insert()`](xref:gtk:Gtk.ListBox#method:insert) and a\n`GtkListBoxRow` widget will automatically be inserted between the list\nand the widget.\n\n`GtkListBoxRows` can be marked as activatable or selectable. If a row is\nactivatable, [`ListBox::row-activated`](xref:gtk:Gtk.ListBox#event:row-activated) will be emitted for it when\nthe user tries to activate it. If it is selectable, the row will be marked\nas selected when the user tries to select it.\n\n# GtkListBox as GtkBuildable\n\nThe `GtkListBox` implementation of the `GtkBuildable` interface supports\nsetting a child as the placeholder by specifying “placeholder” as the “type”\nattribute of a `<child>` element. See [`ListBox.set_placeholder()`](xref:gtk:Gtk.ListBox#method:set_placeholder)\nfor info.\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`ListBox::move-cursor`](xref:gtk:Gtk.ListBox#event:move-cursor)\n- [`ListBox::select-all`](xref:gtk:Gtk.ListBox#event:select-all)\n- [`ListBox::toggle-cursor-row`](xref:gtk:Gtk.ListBox#event:toggle-cursor-row)\n- [`ListBox::unselect-all`](xref:gtk:Gtk.ListBox#event:unselect-all)\n\n# CSS nodes\n\n```\nlist[.separators][.rich-list][.navigation-sidebar][.boxed-list]\n╰── row[.activatable]\n```\n\n`GtkListBox` uses a single CSS node named list. It may carry the .separators\nstyle class, when the [`ListBox:show-separators`](xref:gtk:Gtk.ListBox#property:show-separators) property is set.\nEach `GtkListBoxRow` uses a single CSS node named row. The row nodes get the\n.activatable style class added when appropriate.\n\nIt may also carry the .boxed-list style class. In this case, the list will be\nautomatically surrounded by a frame and have separators.\n\nThe main list node may also carry style classes to select\nthe style of [list presentation](section-list-widget.html#list-styles):\n.rich-list, .navigation-sidebar or .data-table.\n\n# Accessibility\n\n`GtkListBox` uses the [`AccessibleRole.list`](xref:gtk:Gtk.AccessibleRole#value:list) role and `GtkListBoxRow` uses\nthe [`AccessibleRole.list_item`](xref:gtk:Gtk.AccessibleRole#value:list_item) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListBox",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Append a widget to the list.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3028,
+      "md": "Append a widget to the list.\n\nIf a sort function is set, the widget will\nactually be inserted at the calculated position."
+    },
+    "bind_model": {
+      "brief": "Binds `model` to `box`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 4058,
+      "md": "Binds `model` to `box`.\n\nIf `box` was already bound to a model, that previous binding is\ndestroyed.\n\nThe contents of `box` are cleared and then filled with widgets that\nrepresent items from `model`. `box` is updated whenever `model` changes.\nIf `model` is `NULL`, `box` is left empty.\n\nIt is undefined to add or remove widgets directly (for example, with\n[`ListBox.insert()`](xref:gtk:Gtk.ListBox#method:insert)) while `box` is bound to a model.\n\nNote that using a model is incompatible with the filtering and sorting\nfunctionality in `GtkListBox`. When using a model, filtering and sorting\nshould be implemented by the model."
+    },
+    "drag_highlight_row": {
+      "brief": "Add a drag highlight to a row.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3132,
+      "md": "Add a drag highlight to a row.\n\nThis is a helper function for implementing DnD onto a `GtkListBox`.\nThe passed in `row` will be highlighted by setting the\n%GTK_STATE_FLAG_DROP_ACTIVE state and any previously highlighted\nrow will be unhighlighted.\n\nThe row will also be unhighlighted when the widget gets\na drag leave event."
+    },
+    "drag_unhighlight_row": {
+      "brief": "If a row has previously been highlighted via gtk_list_box_drag_highlight_row(), it will have the highlight removed.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3113,
+      "md": "If a row has previously been highlighted via gtk_list_box_drag_highlight_row(),\nit will have the highlight removed."
+    },
+    "get_activate_on_single_click": {
+      "brief": "Returns whether rows activate on single clicks.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1559,
+      "md": "Returns whether rows activate on single clicks."
+    },
+    "get_adjustment": {
+      "brief": "Gets the adjustment (if any) that the widget uses to for vertical scrolling.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1154,
+      "md": "Gets the adjustment (if any) that the widget uses to\nfor vertical scrolling."
+    },
+    "get_row_at_index": {
+      "brief": "Gets the n-th child in the list (not counting headers).",
+      "file": "gtk/gtklistbox.c",
+      "line": 853,
+      "md": "Gets the n-th child in the list (not counting headers).\n\nIf `index_` is negative or larger than the number of items in the\nlist, `NULL` is returned."
+    },
+    "get_row_at_y": {
+      "brief": "Gets the row at the `y` position.",
+      "file": "gtk/gtklistbox.c",
+      "line": 897,
+      "md": "Gets the row at the `y` position."
+    },
+    "get_selected_row": {
+      "brief": "Gets the selected row, or `NULL` if no rows are selected.",
+      "file": "gtk/gtklistbox.c",
+      "line": 833,
+      "md": "Gets the selected row, or `NULL` if no rows are selected.\n\nNote that the box may allow multiple selection, in which\ncase you should use [`ListBox.selected_foreach()`](xref:gtk:Gtk.ListBox#method:selected_foreach) to\nfind all selected rows."
+    },
+    "get_selected_rows": {
+      "brief": "Creates a list of all selected children.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1062,
+      "md": "Creates a list of all selected children."
+    },
+    "get_selection_mode": {
+      "brief": "Gets the selection mode of the listbox.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1253,
+      "md": "Gets the selection mode of the listbox."
+    },
+    "get_show_separators": {
+      "brief": "Returns whether the list box should show separators between rows.",
+      "file": "gtk/gtklistbox.c",
+      "line": 4155,
+      "md": "Returns whether the list box should show separators\nbetween rows."
+    },
+    "get_tab_behavior": {
+      "brief": "Returns the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys.",
+      "file": "gtk/gtklistbox.c",
+      "line": 4195,
+      "md": "Returns the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys.",
+      "since": "4.18"
+    },
+    "insert": {
+      "brief": "Insert the `child` into the `box` at `position`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3045,
+      "md": "Insert the `child` into the `box` at `position`.\n\nIf a sort function is\nset, the widget will actually be inserted at the calculated position.\n\nIf `position` is -1, or larger than the total number of items in the\n`box`, then the `child` will be appended to the end."
+    },
+    "invalidate_filter": {
+      "brief": "Update the filtering for all rows.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1362,
+      "md": "Update the filtering for all rows.\n\nCall this when result\nof the filter function on the `box` is changed due\nto an external factor. For instance, this would be used\nif the filter function just looked for a specific search\nstring and the entry with the search string has changed."
+    },
+    "invalidate_headers": {
+      "brief": "Update the separators for all rows.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1446,
+      "md": "Update the separators for all rows.\n\nCall this when result\nof the header function on the `box` is changed due\nto an external factor."
+    },
+    "invalidate_sort": {
+      "brief": "Update the sorting for all rows.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1405,
+      "md": "Update the sorting for all rows.\n\nCall this when result\nof the sort function on the `box` is changed due\nto an external factor."
+    },
+    "prepend": {
+      "brief": "Prepend a widget to the list.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3011,
+      "md": "Prepend a widget to the list.\n\nIf a sort function is set, the widget will\nactually be inserted at the calculated position."
+    },
+    "remove": {
+      "brief": "Removes a child from `box`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 2412,
+      "md": "Removes a child from `box`."
+    },
+    "remove_all": {
+      "brief": "Removes all rows from `box`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 2518,
+      "md": "Removes all rows from `box`.\n\nThis function does nothing if `box` is backed by a model.",
+      "since": "4.12"
+    },
+    "select_all": {
+      "brief": "Select all children of `box`, if the selection mode allows it.",
+      "file": "gtk/gtklistbox.c",
+      "line": 970,
+      "md": "Select all children of `box`, if the selection mode allows it."
+    },
+    "select_row": {
+      "brief": "Make `row` the currently selected row.",
+      "file": "gtk/gtklistbox.c",
+      "line": 925,
+      "md": "Make `row` the currently selected row."
+    },
+    "selected_foreach": {
+      "brief": "Calls a function for each selected child.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1032,
+      "md": "Calls a function for each selected child.\n\nNote that the selection cannot be modified from within this function."
+    },
+    "set_activate_on_single_click": {
+      "brief": "If `single` is `TRUE`, rows will be activated when you click on them, otherwise you need to double-click.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1535,
+      "md": "If `single` is `TRUE`, rows will be activated when you click on them,\notherwise you need to double-click."
+    },
+    "set_adjustment": {
+      "brief": "Sets the adjustment (if any) that the widget uses to for vertical scrolling.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1124,
+      "md": "Sets the adjustment (if any) that the widget uses to\nfor vertical scrolling.\n\nFor instance, this is used to get the page size for\nPageUp/Down key handling.\n\nIn the normal case when the `box` is packed inside\na `GtkScrolledWindow` the adjustment from that will\nbe picked up automatically, so there is no need\nto manually do that."
+    },
+    "set_filter_func": {
+      "brief": "By setting a filter function on the `box` one can decide dynamically which of the rows to show.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1269,
+      "md": "By setting a filter function on the `box` one can decide dynamically which\nof the rows to show.\n\nFor instance, to implement a search function on a list that\nfilters the original list to only show the matching rows.\n\nThe `filter_func` will be called for each row after the call, and\nit will continue to be called each time a row changes (via\n[`ListBoxRow.changed()`](xref:gtk:Gtk.ListBoxRow#method:changed)) or when [`ListBox.invalidate_filter()`](xref:gtk:Gtk.ListBox#method:invalidate_filter)\nis called.\n\nNote that using a filter function is incompatible with using a model\n(see [`ListBox.bind_model()`](xref:gtk:Gtk.ListBox#method:bind_model))."
+    },
+    "set_header_func": {
+      "brief": "Sets a header function.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1311,
+      "md": "Sets a header function.\n\nBy setting a header function on the `box` one can dynamically add headers\nin front of rows, depending on the contents of the row and its position\nin the list.\n\nFor instance, one could use it to add headers in front of the first item\nof a new kind, in a list sorted by the kind.\n\nThe `update_header` can look at the current header widget using\n[`ListBoxRow.get_header()`](xref:gtk:Gtk.ListBoxRow#method:get_header) and either update the state of the widget\nas needed, or set a new one using [`ListBoxRow.set_header()`](xref:gtk:Gtk.ListBoxRow#method:set_header). If no\nheader is needed, set the header to `NULL`.\n\nNote that you may get many calls `update_header` to this for a particular\nrow when e.g. changing things that don’t affect the header. In this case\nit is important for performance to not blindly replace an existing header\nwith an identical one.\n\nThe `update_header` function will be called for each row after the call,\nand it will continue to be called each time a row changes (via\n[`ListBoxRow.changed()`](xref:gtk:Gtk.ListBoxRow#method:changed)) and when the row before changes (either\nby [`ListBoxRow.changed()`](xref:gtk:Gtk.ListBoxRow#method:changed) on the previous row, or when the previous\nrow becomes a different row). It is also called for all rows when\n[`ListBox.invalidate_headers()`](xref:gtk:Gtk.ListBox#method:invalidate_headers) is called."
+    },
+    "set_placeholder": {
+      "brief": "Sets the placeholder widget that is shown in the list when it doesn't display any visible children.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1093,
+      "md": "Sets the placeholder widget that is shown in the list when\nit doesn't display any visible children."
+    },
+    "set_selection_mode": {
+      "brief": "Sets how selection works in the listbox.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1214,
+      "md": "Sets how selection works in the listbox."
+    },
+    "set_show_separators": {
+      "brief": "Sets whether the list box should show separators between rows.",
+      "file": "gtk/gtklistbox.c",
+      "line": 4128,
+      "md": "Sets whether the list box should show separators\nbetween rows."
+    },
+    "set_sort_func": {
+      "brief": "Sets a sort function.",
+      "file": "gtk/gtklistbox.c",
+      "line": 1467,
+      "md": "Sets a sort function.\n\nBy setting a sort function on the `box` one can dynamically reorder\nthe rows of the list, based on the contents of the rows.\n\nThe `sort_func` will be called for each row after the call, and will\ncontinue to be called each time a row changes (via\n[`ListBoxRow.changed()`](xref:gtk:Gtk.ListBoxRow#method:changed)) and when [`ListBox.invalidate_sort()`](xref:gtk:Gtk.ListBox#method:invalidate_sort)\nis called.\n\nNote that using a sort function is incompatible with using a model\n(see [`ListBox.bind_model()`](xref:gtk:Gtk.ListBox#method:bind_model))."
+    },
+    "set_tab_behavior": {
+      "brief": "Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys.",
+      "file": "gtk/gtklistbox.c",
+      "line": 4172,
+      "md": "Sets the behavior of the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys.",
+      "since": "4.18"
+    },
+    "unselect_all": {
+      "brief": "Unselect all children of `box`, if the selection mode allows it.",
+      "file": "gtk/gtklistbox.c",
+      "line": 991,
+      "md": "Unselect all children of `box`, if the selection mode allows it."
+    },
+    "unselect_row": {
+      "brief": "Unselects a single row of `box`, if the selection mode allows it.",
+      "file": "gtk/gtklistbox.c",
+      "line": 953,
+      "md": "Unselects a single row of `box`, if the selection mode allows it."
+    }
+  },
+  "properties": {
+    "accept-unpaired-release": {
+      "brief": "Whether to accept unpaired release events.",
+      "file": "gtk/gtklistbox.c",
+      "line": 547,
+      "md": "Whether to accept unpaired release events."
+    },
+    "activate-on-single-click": {
+      "brief": "Determines whether children can be activated with a single click, or require a double-click.",
+      "file": "gtk/gtklistbox.c",
+      "line": 536,
+      "md": "Determines whether children can be activated with a single\nclick, or require a double-click."
+    },
+    "selection-mode": {
+      "brief": "The selection mode used by the list box.",
+      "file": "gtk/gtklistbox.c",
+      "line": 525,
+      "md": "The selection mode used by the list box."
+    },
+    "show-separators": {
+      "brief": "Whether to show separators between rows.",
+      "file": "gtk/gtklistbox.c",
+      "line": 558,
+      "md": "Whether to show separators between rows."
+    },
+    "tab-behavior": {
+      "brief": "Behavior of the <kbd>Tab</kbd> key",
+      "file": "gtk/gtklistbox.c",
+      "line": 568,
+      "md": "Behavior of the <kbd>Tab</kbd> key",
+      "since": "4.18"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-cursor-row": {
+      "brief": "Emitted when the cursor row is activated.",
+      "file": "gtk/gtklistbox.c",
+      "line": 675,
+      "md": "Emitted when the cursor row is activated."
+    },
+    "move-cursor": {
+      "brief": "Emitted when the user initiates a cursor movement.",
+      "file": "gtk/gtklistbox.c",
+      "line": 706,
+      "md": "Emitted when the user initiates a cursor movement.\n\nThe default bindings for this signal come in two variants, the variant with\nthe Shift modifier extends the selection, the variant without the Shift\nmodifier does not. There are too many key combinations to list them all\nhere.\n\n- <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>\n  move by individual children\n- <kbd>Home</kbd>, <kbd>End</kbd> move to the ends of the box\n- <kbd>PgUp</kbd>, <kbd>PgDn</kbd> move vertically by pages"
+    },
+    "row-activated": {
+      "brief": "Emitted when a row has been activated by the user.",
+      "file": "gtk/gtklistbox.c",
+      "line": 658,
+      "md": "Emitted when a row has been activated by the user."
+    },
+    "row-selected": {
+      "brief": "Emitted when a new row is selected, or (with a `NULL` `row`) when the selection is cleared.",
+      "file": "gtk/gtklistbox.c",
+      "line": 583,
+      "md": "Emitted when a new row is selected, or (with a `NULL` `row`)\nwhen the selection is cleared.\n\nWhen the `box` is using %GTK_SELECTION_MULTIPLE, this signal will not\ngive you the full picture of selection changes, and you should use\nthe [`ListBox::selected-rows-changed`](xref:gtk:Gtk.ListBox#event:selected-rows-changed) signal instead."
+    },
+    "select-all": {
+      "brief": "Emitted to select all children of the box, if the selection mode permits it.",
+      "file": "gtk/gtklistbox.c",
+      "line": 619,
+      "md": "Emitted to select all children of the box, if the selection\nmode permits it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Ctrl</kbd>-<kbd>a</kbd>."
+    },
+    "selected-rows-changed": {
+      "brief": "Emitted when the set of selected rows changes.",
+      "file": "gtk/gtklistbox.c",
+      "line": 605,
+      "md": "Emitted when the set of selected rows changes."
+    },
+    "toggle-cursor-row": {
+      "brief": "Emitted when the cursor row is toggled.",
+      "file": "gtk/gtklistbox.c",
+      "line": 690,
+      "md": "Emitted when the cursor row is toggled.\n\nThe default bindings for this signal is <kbd>Ctrl</kbd>+<kbd>␣</kbd>."
+    },
+    "unselect-all": {
+      "brief": "Emitted to unselect all children of the box, if the selection mode permits it.",
+      "file": "gtk/gtklistbox.c",
+      "line": 638,
+      "md": "Emitted to unselect all children of the box, if the selection\nmode permits it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is\n<kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>a</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

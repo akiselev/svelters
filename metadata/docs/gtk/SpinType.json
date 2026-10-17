@@ -1,0 +1,67 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The values of the GtkSpinType enumeration are used to specify the change to make in gtk_spin_button_spin().",
+    "file": "gtk/gtkspinbutton.h",
+    "line": 73,
+    "md": "The values of the GtkSpinType enumeration are used to specify the\nchange to make in gtk_spin_button_spin()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SpinType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "end": {
+      "brief": "Go to the adjustments upper bound.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 80,
+      "md": "Go to the adjustments upper bound."
+    },
+    "home": {
+      "brief": "Go to the adjustments lower bound.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 79,
+      "md": "Go to the adjustments lower bound."
+    },
+    "page_backward": {
+      "brief": "Decrement by the adjustments page increment.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 78,
+      "md": "Decrement by the adjustments page increment."
+    },
+    "page_forward": {
+      "brief": "Increment by the adjustments page increment.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 77,
+      "md": "Increment by the adjustments page increment."
+    },
+    "step_backward": {
+      "brief": "Decrement by the adjustments step increment.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 76,
+      "md": "Decrement by the adjustments step increment."
+    },
+    "step_forward": {
+      "brief": "Increment by the adjustments step increment.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 75,
+      "md": "Increment by the adjustments step increment."
+    },
+    "user_defined": {
+      "brief": "Change by a specified amount.",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 81,
+      "md": "Change by a specified amount."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

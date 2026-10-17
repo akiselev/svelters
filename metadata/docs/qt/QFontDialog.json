@@ -1,0 +1,104 @@
+{
+  "doc": {
+    "brief": "The QFontDialog class provides a dialog widget for selecting a font.",
+    "index_brief": "Dialog widget for selecting a font",
+    "url": "https://doc.qt.io/qt-6/qfontdialog.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QFontDialog",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QFont currentFont() const": {
+      "brief": "Returns the current font.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#currentFont"
+    },
+    "QFont getFont(bool *ok, QWidget *parent)": {
+      "brief": "Executes a modal font dialog and returns a font.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#getFont-1"
+    },
+    "QFont getFont(bool *ok, const QFont &initial, QWidget *parent, const QString &title, QFontDialog::FontDialogOptions options)": {
+      "brief": "Executes a modal font dialog and returns a font.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#getFont"
+    },
+    "QFont selectedFont() const": {
+      "brief": "Returns the font that the user selected by clicking the **OK** or equivalent button.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#selectedFont"
+    },
+    "QFontDialog(QWidget *parent)": {
+      "brief": "Constructs a standard font dialog.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#QFontDialog"
+    },
+    "QFontDialog(const QFont &initial, QWidget *parent)": {
+      "brief": "Constructs a standard font dialog with the given *parent* and specified *initial* font.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#QFontDialog-1"
+    },
+    "QFontDialog::FontDialogOptions options() const": {
+      "brief": "This property holds the various options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#options-prop"
+    },
+    "bool testOption(QFontDialog::FontDialogOption option) const": {
+      "brief": "Returns `true` if the given *option* is enabled; otherwise, returns false.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#testOption"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#changeEvent"
+    },
+    "void currentFontChanged(const QFont &font)": {
+      "brief": "This signal is emitted when the current font is changed.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#currentFontChanged"
+    },
+    "void done(int result) override": {
+      "brief": "Reimplements: [QDialog::done](xref:qt:QDialog)(int r).",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#done"
+    },
+    "void fontSelected(const QFont &font)": {
+      "brief": "This signal is emitted when a font has been selected.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#fontSelected"
+    },
+    "void open(QObject *receiver, const char *member)": {
+      "brief": "Opens the dialog and connects its [fontSelected](xref:qt:QFontDialog)() signal to the slot specified by *receiver* and *member*.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#open"
+    },
+    "void setCurrentFont(const QFont &font)": {
+      "brief": "Sets the font highlighted in the [QFontDialog](xref:qt:QFontDialog) to the given *font*.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#setCurrentFont"
+    },
+    "void setOption(QFontDialog::FontDialogOption option, bool on)": {
+      "brief": "Sets the given *option* to be enabled if *on* is true; otherwise, clears the given *option*.",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#setOption"
+    },
+    "void setOptions(QFontDialog::FontDialogOptions options)": {
+      "brief": "This property holds the various options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#options-prop"
+    },
+    "void setVisible(bool visible) override": {
+      "brief": "Reimplements: [QDialog::setVisible](xref:qt:QDialog)(bool visible).",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#setVisible"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "currentFont": {
+      "brief": "The current font of the dialog",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#currentFont-prop"
+    },
+    "options": {
+      "brief": "The various options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qfontdialog.html#options-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

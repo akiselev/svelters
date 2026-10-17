@@ -1,0 +1,199 @@
+{
+  "doc": {
+    "brief": "The QSplitter class implements a splitter widget.",
+    "index_brief": "Implements a splitter widget",
+    "url": "https://doc.qt.io/qt-6/qsplitter.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSplitter",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QByteArray saveState() const": {
+      "brief": "Saves the state of the splitter's layout.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#saveState"
+    },
+    "QList<int> sizes() const": {
+      "brief": "Returns a list of the size parameters of all the widgets in this splitter.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#sizes"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QFrame::sizeHint](xref:qt:QFrame)() const.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#sizeHint"
+    },
+    "QSplitter(QWidget *parent)": {
+      "brief": "Constructs a horizontal splitter with the *parent* argument passed on to the [QFrame](xref:qt:QFrame) constructor.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#QSplitter"
+    },
+    "QSplitter(Qt::Orientation orientation, QWidget *parent)": {
+      "brief": "Constructs a splitter with the given *orientation* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#QSplitter-1"
+    },
+    "QSplitterHandle * createHandle()": {
+      "brief": "Returns a new splitter handle as a child widget of this splitter.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#createHandle"
+    },
+    "QSplitterHandle * handle(int index) const": {
+      "brief": "Returns the handle to the left of (or above) the item in the splitter's layout at the given *index*, or `nullptr` if there is no such item.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#handle"
+    },
+    "QWidget * replaceWidget(int index, QWidget *widget)": {
+      "brief": "Replaces the widget in the splitter's layout at the given *index* by *widget*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#replaceWidget"
+    },
+    "QWidget * widget(int index) const": {
+      "brief": "Returns the widget at the given *index* in the splitter's layout, or `nullptr` if there is no such widget.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#widget"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "This property holds the orientation of the splitter",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#orientation-prop"
+    },
+    "bool childrenCollapsible() const": {
+      "brief": "This property holds whether child widgets can be resized down to size 0 by the user",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#childrenCollapsible-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QFrame::event](xref:qt:QFrame)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#event"
+    },
+    "bool isCollapsible(int index) const": {
+      "brief": "Returns `true` if the widget at *index* is collapsible, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#isCollapsible"
+    },
+    "bool opaqueResize() const": {
+      "brief": "Returns `true` if widgets are resized dynamically (opaquely) while interactively moving the splitter.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#opaqueResize-prop"
+    },
+    "bool restoreState(const QByteArray &state)": {
+      "brief": "Restores the splitter's layout to the *state* specified.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#restoreState"
+    },
+    "int closestLegalPosition(int pos, int index)": {
+      "brief": "Returns the closest legal position to *pos* of the widget at *index*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#closestLegalPosition"
+    },
+    "int count() const": {
+      "brief": "Returns the number of widgets contained in the splitter's layout.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#count"
+    },
+    "int handleWidth() const": {
+      "brief": "This property holds the width of the splitter handles",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#handleWidth-prop"
+    },
+    "int indexOf(QWidget *widget) const": {
+      "brief": "Returns the index in the splitter's layout of the specified *widget*, or -1 if *widget* is not found.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#indexOf"
+    },
+    "void addWidget(QWidget *widget)": {
+      "brief": "Adds the given *widget* to the splitter's layout after all the other items.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#addWidget"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QFrame::changeEvent](xref:qt:QFrame)(QEvent *ev).",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#changeEvent"
+    },
+    "void childEvent(QChildEvent *c) override": {
+      "brief": "Reimplements: [QObject::childEvent](xref:qt:QObject)(QChildEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#childEvent"
+    },
+    "void getRange(int index, int *min, int *max) const": {
+      "brief": "Returns the valid range of the splitter at *index* in **min* and **max* if *min* and *max* are not 0.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#getRange"
+    },
+    "void insertWidget(int index, QWidget *widget)": {
+      "brief": "Inserts the *widget* specified into the splitter's layout at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#insertWidget"
+    },
+    "void moveSplitter(int pos, int index)": {
+      "brief": "Moves the left or top edge of the splitter handle at *index* as close as possible to position *pos*, which is the distance from the left or top edge of the widget.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#moveSplitter"
+    },
+    "void refresh()": {
+      "brief": "Updates the splitter's state.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#refresh"
+    },
+    "void resizeEvent(QResizeEvent *) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#resizeEvent"
+    },
+    "void setChildrenCollapsible(bool)": {
+      "brief": "This property holds whether child widgets can be resized down to size 0 by the user",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#childrenCollapsible-prop"
+    },
+    "void setCollapsible(int index, bool collapse)": {
+      "brief": "Sets whether the child widget at *index* is collapsible to *collapse*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#setCollapsible"
+    },
+    "void setHandleWidth(int)": {
+      "brief": "This property holds the width of the splitter handles",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#handleWidth-prop"
+    },
+    "void setOpaqueResize(bool opaque)": {
+      "brief": "Returns `true` if widgets are resized dynamically (opaquely) while interactively moving the splitter.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#opaqueResize-prop"
+    },
+    "void setOrientation(Qt::Orientation)": {
+      "brief": "This property holds the orientation of the splitter",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#orientation-prop"
+    },
+    "void setRubberBand(int pos)": {
+      "brief": "Displays a rubber band at position *pos*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#setRubberBand"
+    },
+    "void setSizes(const QList<int> &list)": {
+      "brief": "Sets the child widgets' respective sizes to the values given in the *list*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#setSizes"
+    },
+    "void setStretchFactor(int index, int stretch)": {
+      "brief": "Updates the size policy of the widget at position *index* to have a stretch factor of *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#setStretchFactor"
+    },
+    "void splitterMoved(int pos, int index)": {
+      "brief": "This signal is emitted when the splitter handle at a particular *index* has been moved to position *pos*.",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#splitterMoved"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "childrenCollapsible": {
+      "brief": "Whether child widgets can be resized down to size 0 by the user",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#childrenCollapsible-prop"
+    },
+    "handleWidth": {
+      "brief": "The width of the splitter handles",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#handleWidth-prop"
+    },
+    "opaqueResize": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#opaqueResize-prop"
+    },
+    "orientation": {
+      "brief": "The orientation of the splitter",
+      "url": "https://doc.qt.io/qt-6/qsplitter.html#orientation-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::handle"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qsplitter-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

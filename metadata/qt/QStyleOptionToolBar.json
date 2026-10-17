@@ -29,69 +29,96 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBar::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionToolBar::Type",
           "name": "Type",
           "value": "SO_ToolBar"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBar::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionToolBar::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QStyleOptionToolBar::ToolBarFeatures",
+      "fullname": "QStyleOptionToolBar::ToolBarFeature",
       "members": [
         {
+          "cpp": "QStyleOptionToolBar::None",
           "name": "None",
           "value": "0x0"
         },
         {
+          "cpp": "QStyleOptionToolBar::Movable",
           "name": "Movable",
           "value": "0x1"
         }
       ],
       "metaobject": null,
       "name": "ToolBarFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBar::ToolBarPosition",
       "members": [
         {
+          "cpp": "QStyleOptionToolBar::Beginning",
           "name": "Beginning",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionToolBar::Middle",
           "name": "Middle",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionToolBar::End",
           "name": "End",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionToolBar::OnlyOne",
           "name": "OnlyOne",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "ToolBarPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionToolBar",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionToolBar:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a toolbar",

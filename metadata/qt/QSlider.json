@@ -55,7 +55,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -77,28 +77,36 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QSlider::TickPosition",
       "members": [
         {
+          "cpp": "QSlider::NoTicks",
           "name": "NoTicks",
           "value": "0"
         },
         {
+          "cpp": "QSlider::TicksAbove",
           "name": "TicksAbove",
           "value": "1"
         },
         {
+          "cpp": "QSlider::TicksLeft",
           "name": "TicksLeft",
           "value": "TicksAbove"
         },
         {
+          "cpp": "QSlider::TicksBelow",
           "name": "TicksBelow",
           "value": "2"
         },
         {
+          "cpp": "QSlider::TicksRight",
           "name": "TicksRight",
           "value": "TicksBelow"
         },
         {
+          "cpp": "QSlider::TicksBothSides",
           "name": "TicksBothSides",
           "value": "3"
         }
@@ -116,12 +124,23 @@
         "scoped": false
       },
       "name": "TickPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QSlider",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSlider:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -216,7 +235,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -430,7 +449,7 @@
             "native": "QSlider::TickPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSlider::TickPosition>"
           }
         }
       ],
@@ -464,7 +483,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -516,7 +535,7 @@
         "native": "QSlider::TickPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSlider::TickPosition>"
       },
       "signature": "QSlider::TickPosition tickPosition() const",
       "since": null,
@@ -544,6 +563,8 @@
         "set": "setTickInterval"
       },
       "brief": "The interval between tickmarks",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "tickInterval",
       "metaobject": {
         "constant": false,
@@ -564,6 +585,7 @@
       "name": "tickInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -584,6 +606,8 @@
         "set": "setTickPosition"
       },
       "brief": "The tickmark position for this slider",
+      "default": "NoTicks",
+      "default_origin": "runtime",
       "js_name": "tickPosition",
       "metaobject": {
         "constant": false,
@@ -604,12 +628,13 @@
       "name": "tickPosition",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "TickPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<TickPosition>"
+        "ref": "enum<QSlider::TickPosition>"
       }
     }
   ],

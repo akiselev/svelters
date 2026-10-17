@@ -1,0 +1,58 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkAppChooser` is an interface for widgets which allow the user to choose an application.",
+    "deprecated": "4.10",
+    "deprecated_md": "The application selection widgets should be\n  implemented according to the design of each platform and/or\n  application requiring them.",
+    "file": "gtk/deprecated/gtkappchooser.c",
+    "line": 22,
+    "md": "`GtkAppChooser` is an interface for widgets which allow the user to\nchoose an application.\n\nThe main objects that implement this interface are\n[`AppChooserWidget`](xref:gtk:Gtk.AppChooserWidget),\n[`AppChooserDialog`](xref:gtk:Gtk.AppChooserDialog) and [`AppChooserButton`](xref:gtk:Gtk.AppChooserButton).\n\nApplications are represented by GIO `GAppInfo` objects here.\nGIO has a concept of recommended and fallback applications for a\ngiven content type. Recommended applications are those that claim\nto handle the content type itself, while fallback also includes\napplications that handle a more generic content type. GIO also\nknows the default and last-used application for a given content\ntype. The `GtkAppChooserWidget` provides detailed control over\nwhether the shown list of applications should include default,\nrecommended or fallback applications.\n\nTo obtain the application that has been selected in a `GtkAppChooser`,\nuse [`AppChooser.get_app_info()`](xref:gtk:Gtk.AppChooser#method:get_app_info)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AppChooser",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_app_info": {
+      "brief": "Returns the currently selected application.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooser.c",
+      "line": 108,
+      "md": "Returns the currently selected application."
+    },
+    "get_content_type": {
+      "brief": "Returns the content type for which the `GtkAppChooser` shows applications.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooser.c",
+      "line": 83,
+      "md": "Returns the content type for which the `GtkAppChooser`\nshows applications."
+    },
+    "refresh": {
+      "brief": "Reloads the list of applications.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooser.c",
+      "line": 125,
+      "md": "Reloads the list of applications."
+    }
+  },
+  "properties": {
+    "content-type": {
+      "brief": "The content type of the `GtkAppChooser` object.",
+      "file": "gtk/deprecated/gtkappchooser.c",
+      "line": 68,
+      "md": "The content type of the `GtkAppChooser` object.\n\nSee `GContentType` for more information about content types."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

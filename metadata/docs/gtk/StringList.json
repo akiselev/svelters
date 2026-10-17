@@ -1,0 +1,91 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkStringList` with the given `strings`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 540,
+      "md": "Creates a new `GtkStringList` with the given `strings`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that wraps an array of strings.",
+    "file": "gtk/gtkstringlist.c",
+    "line": 28,
+    "md": "A list model that wraps an array of strings.\n\nThe objects in the model are of type [`StringObject`](xref:gtk:Gtk.StringObject) and have\na \"string\" property that can be used inside expressions.\n\n`GtkStringList` is well-suited for any place where you would\ntypically use a `char*[]`, but need a list model.\n\n## GtkStringList as GtkBuildable\n\nThe `GtkStringList` implementation of the `GtkBuildable` interface\nsupports adding items directly using the `<items>` element and\nspecifying `<item>` elements for each item. Each `<item>` element\nsupports the regular translation attributes “translatable”,\n“context” and “comments”.\n\nHere is a UI definition fragment specifying a `GtkStringList`\n\n```xml\n<object class=\"GtkStringList\">\n  <items>\n    <item translatable=\"yes\">Factory</item>\n    <item translatable=\"yes\">Home</item>\n    <item translatable=\"yes\">Subway</item>\n  </items>\n</object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StringList",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Appends `string` to `self`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 607,
+      "md": "Appends `string` to `self`.\n\nThe `string` will be copied. See\n[`StringList.take()`](xref:gtk:Gtk.StringList#method:take) for a way to avoid that."
+    },
+    "find": {
+      "brief": "Gets the position of the `string` in `self`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 701,
+      "md": "Gets the position of the `string` in `self`.\n\nIf `self` does not contain `string` item, `G_MAXUINT` is returned.",
+      "since": "4.18"
+    },
+    "get_string": {
+      "brief": "Gets the string that is at `position` in `self`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 675,
+      "md": "Gets the string that is at `position` in `self`.\n\nIf `self` does not contain `position` items, `NULL` is returned.\n\nThis function returns the const char *. To get the\nobject wrapping it, use g_list_model_get_item()."
+    },
+    "remove": {
+      "brief": "Removes the string at `position` from `self`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 656,
+      "md": "Removes the string at `position` from `self`.\n\n`position` must be smaller than the current\nlength of the list."
+    },
+    "splice": {
+      "brief": "Changes `self` by removing `n_removals` strings and adding `additions` to it.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 556,
+      "md": "Changes `self` by removing `n_removals` strings and adding `additions`\nto it.\n\nThis function is more efficient than [`StringList.append()`](xref:gtk:Gtk.StringList#method:append)\nand [`StringList.remove()`](xref:gtk:Gtk.StringList#method:remove), because it only emits the\n::items-changed signal once for the change.\n\nThis function copies the strings in `additions`.\n\nThe parameters `position` and `n_removals` must be correct (ie:\n`position` + `n_removals` must be less than or equal to the length\nof the list at the time this function is called)."
+    },
+    "take": {
+      "brief": "Adds `string` to self at the end, and takes ownership of it.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 629,
+      "md": "Adds `string` to self at the end, and takes\nownership of it.\n\nThis variant of [`StringList.append()`](xref:gtk:Gtk.StringList#method:append)\nis convenient for formatting strings:\n\n```c\ngtk_string_list_take (self, g_strdup_print (\"%d dollars\", lots));\n```"
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkstringlist.c",
+      "line": 492,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.14"
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 504,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.14"
+    },
+    "strings": {
+      "brief": "The strings in the model.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 516,
+      "md": "The strings in the model.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

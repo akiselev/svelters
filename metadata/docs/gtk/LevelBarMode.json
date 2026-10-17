@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes how [`LevelBar`](xref:gtk:LevelBar) contents should be rendered.",
+    "file": "gtk/gtkenums.h",
+    "line": 907,
+    "md": "Describes how [`LevelBar`](xref:gtk:LevelBar) contents should be rendered.\n\nNote that this enumeration could be extended with additional modes\nin the future."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:LevelBarMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "continuous": {
+      "brief": "the bar has a continuous mode",
+      "file": "gtk/gtkenums.h",
+      "line": 909,
+      "md": "the bar has a continuous mode"
+    },
+    "discrete": {
+      "brief": "the bar has a discrete mode",
+      "file": "gtk/gtkenums.h",
+      "line": 910,
+      "md": "the bar has a discrete mode"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

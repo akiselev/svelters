@@ -1,0 +1,105 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFrame`, with optional label `label`.",
+      "file": "gtk/gtkframe.c",
+      "line": 327,
+      "md": "Creates a new `GtkFrame`, with optional label `label`.\n\nIf `label` is `NULL`, the label is omitted."
+    }
+  },
+  "doc": {
+    "brief": "Surrounds its child with a decorative frame and an optional label.",
+    "file": "gtk/gtkframe.c",
+    "line": 36,
+    "md": "Surrounds its child with a decorative frame and an optional label.\n\nIf present, the label is drawn inside the top edge of the frame.\nThe horizontal position of the label can be controlled with\n[`Frame.set_label_align()`](xref:gtk:Gtk.Frame#method:set_label_align).\n\n`GtkFrame` clips its child. You can use this to add rounded corners\nto widgets, but be aware that it also cuts off shadows.\n\n# GtkFrame as GtkBuildable\n\nAn example of a UI definition fragment with GtkFrame:\n\n```xml\n<object class=\"GtkFrame\">\n  <property name=\"label-widget\">\n    <object class=\"GtkLabel\" id=\"frame_label\"/>\n  </property>\n  <property name=\"child\">\n    <object class=\"GtkEntry\" id=\"frame_content\"/>\n  </property>\n</object>\n```\n\n# CSS nodes\n\n```\nframe\n├── <label widget>\n╰── <child>\n```\n\n`GtkFrame` has a main CSS node with name “frame”, which is used to draw the\nvisible border. You can set the appearance of the border using CSS properties\nlike “border-style” on this node.\n\n# Accessibility\n\n`GtkFrame` uses the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Frame",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child widget of `frame`.",
+      "file": "gtk/gtkframe.c",
+      "line": 701,
+      "md": "Gets the child widget of `frame`."
+    },
+    "get_label": {
+      "brief": "Returns the frame labels text.",
+      "file": "gtk/gtkframe.c",
+      "line": 363,
+      "md": "Returns the frame labels text.\n\nIf the frame's label widget is not a `GtkLabel`, `NULL`\nis returned."
+    },
+    "get_label_align": {
+      "brief": "Retrieves the X alignment of the frame’s label.",
+      "file": "gtk/gtkframe.c",
+      "line": 493,
+      "md": "Retrieves the X alignment of the frame’s label."
+    },
+    "get_label_widget": {
+      "brief": "Retrieves the label widget for the frame.",
+      "file": "gtk/gtkframe.c",
+      "line": 447,
+      "md": "Retrieves the label widget for the frame."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `frame`.",
+      "file": "gtk/gtkframe.c",
+      "line": 669,
+      "md": "Sets the child widget of `frame`."
+    },
+    "set_label": {
+      "brief": "Creates a new `GtkLabel` with the `label` and sets it as the frame's label widget.",
+      "file": "gtk/gtkframe.c",
+      "line": 343,
+      "md": "Creates a new `GtkLabel` with the `label` and sets it as the frame's\nlabel widget."
+    },
+    "set_label_align": {
+      "brief": "Sets the X alignment of the frame widget’s label.",
+      "file": "gtk/gtkframe.c",
+      "line": 465,
+      "md": "Sets the X alignment of the frame widget’s label.\n\nThe default value for a newly created frame is 0.0."
+    },
+    "set_label_widget": {
+      "brief": "Sets the label widget for the frame.",
+      "file": "gtk/gtkframe.c",
+      "line": 406,
+      "md": "Sets the label widget for the frame.\n\nThis is the widget that will appear embedded in the top edge\nof the frame as a title."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkframe.c",
+      "line": 196,
+      "md": "The child widget."
+    },
+    "label": {
+      "brief": "Text of the frame's label.",
+      "file": "gtk/gtkframe.c",
+      "line": 165,
+      "md": "Text of the frame's label."
+    },
+    "label-widget": {
+      "brief": "Widget to display in place of the usual frame label.",
+      "file": "gtk/gtkframe.c",
+      "line": 186,
+      "md": "Widget to display in place of the usual frame label."
+    },
+    "label-xalign": {
+      "brief": "The horizontal alignment of the label.",
+      "file": "gtk/gtkframe.c",
+      "line": 175,
+      "md": "The horizontal alignment of the label."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

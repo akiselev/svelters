@@ -33,7 +33,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -55,24 +55,31 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QHeaderView::ResizeMode",
       "members": [
         {
+          "cpp": "QHeaderView::Interactive",
           "name": "Interactive",
           "value": "0"
         },
         {
+          "cpp": "QHeaderView::Stretch",
           "name": "Stretch",
           "value": "1"
         },
         {
+          "cpp": "QHeaderView::Fixed",
           "name": "Fixed",
           "value": "2"
         },
         {
+          "cpp": "QHeaderView::ResizeToContents",
           "name": "ResizeToContents",
           "value": "3"
         },
         {
+          "cpp": "QHeaderView::Custom",
           "name": "Custom",
           "value": "Fixed"
         }
@@ -89,12 +96,23 @@
         "scoped": false
       },
       "name": "ResizeMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QHeaderView",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QHeaderView:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -214,7 +232,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment defaultAlignment() const",
       "since": null,
@@ -306,7 +324,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         },
         {
@@ -740,7 +758,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1131,7 +1149,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -1207,7 +1225,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1405,7 +1423,7 @@
             "native": "QHeaderView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QHeaderView::ResizeMode>"
           }
         }
       ],
@@ -1442,7 +1460,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -1476,7 +1494,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray saveState() const",
       "since": null,
@@ -1550,7 +1568,7 @@
         "native": "QHeaderView::ResizeMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QHeaderView::ResizeMode>"
       },
       "signature": "QHeaderView::ResizeMode sectionResizeMode(int logicalIndex) const",
       "since": null,
@@ -1624,7 +1642,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sectionSizeFromContents(int logicalIndex) const",
       "since": null,
@@ -1982,7 +2000,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -2425,7 +2443,7 @@
             "native": "QHeaderView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QHeaderView::ResizeMode>"
           }
         }
       ],
@@ -2472,7 +2490,7 @@
             "native": "QHeaderView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QHeaderView::ResizeMode>"
           }
         }
       ],
@@ -2583,7 +2601,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -2593,7 +2611,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -2640,7 +2658,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],
@@ -2859,7 +2877,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2885,7 +2903,7 @@
         "native": "Qt::SortOrder",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::SortOrder>"
       },
       "signature": "Qt::SortOrder sortIndicatorOrder() const",
       "since": null,
@@ -3175,6 +3193,7 @@
         "set": "setCascadingSectionResizes"
       },
       "brief": "Whether interactive resizing will be cascaded to the following sections once the section being resized by the user has reached its minimum size",
+      "default": null,
       "js_name": "cascadingSectionResizes",
       "metaobject": {
         "constant": false,
@@ -3195,6 +3214,7 @@
       "name": "cascadingSectionResizes",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3215,6 +3235,7 @@
         "set": "setDefaultAlignment"
       },
       "brief": "The default alignment of the text in each header section",
+      "default": null,
       "js_name": "defaultAlignment",
       "metaobject": {
         "constant": false,
@@ -3235,12 +3256,13 @@
       "name": "defaultAlignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -3255,6 +3277,7 @@
         "set": "setDefaultSectionSize"
       },
       "brief": "The default size of the header sections before resizing",
+      "default": null,
       "js_name": "defaultSectionSize",
       "metaobject": {
         "constant": false,
@@ -3275,6 +3298,7 @@
       "name": "defaultSectionSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3295,6 +3319,7 @@
         "set": "setFirstSectionMovable"
       },
       "brief": "Whether the first column can be moved by the user",
+      "default": null,
       "js_name": "firstSectionMovable",
       "metaobject": {
         "constant": false,
@@ -3315,6 +3340,7 @@
       "name": "firstSectionMovable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3335,6 +3361,7 @@
         "set": "setHighlightSections"
       },
       "brief": "Whether the sections containing selected items are highlighted",
+      "default": null,
       "js_name": "highlightSections",
       "metaobject": {
         "constant": false,
@@ -3355,6 +3382,7 @@
       "name": "highlightSections",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3375,6 +3403,7 @@
         "set": "setMaximumSectionSize"
       },
       "brief": "The maximum size of the header sections",
+      "default": null,
       "js_name": "maximumSectionSize",
       "metaobject": {
         "constant": false,
@@ -3395,6 +3424,7 @@
       "name": "maximumSectionSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3415,6 +3445,7 @@
         "set": "setMinimumSectionSize"
       },
       "brief": "The minimum size of the header sections",
+      "default": null,
       "js_name": "minimumSectionSize",
       "metaobject": {
         "constant": false,
@@ -3435,6 +3466,7 @@
       "name": "minimumSectionSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3455,6 +3487,7 @@
         "set": "setSectionsClickable"
       },
       "brief": null,
+      "default": null,
       "js_name": "sectionsClickable",
       "metaobject": {
         "constant": false,
@@ -3475,6 +3508,7 @@
       "name": "sectionsClickable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3495,6 +3529,7 @@
         "set": "setSectionsMovable"
       },
       "brief": null,
+      "default": null,
       "js_name": "sectionsMovable",
       "metaobject": {
         "constant": false,
@@ -3515,6 +3550,7 @@
       "name": "sectionsMovable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3535,6 +3571,7 @@
         "set": "setSortIndicatorShown"
       },
       "brief": "Whether the sort indicator is shown",
+      "default": null,
       "js_name": "showSortIndicator",
       "metaobject": {
         "constant": false,
@@ -3555,6 +3592,7 @@
       "name": "showSortIndicator",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3575,6 +3613,7 @@
         "set": "setSortIndicatorClearable"
       },
       "brief": "Whether the sort indicator can be cleared by clicking on a section multiple times",
+      "default": null,
       "js_name": "sortIndicatorClearable",
       "metaobject": {
         "constant": false,
@@ -3598,6 +3637,7 @@
         "signal": "sortIndicatorClearableChanged(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3618,6 +3658,7 @@
         "set": "setStretchLastSection"
       },
       "brief": "Whether the last visible section in the header takes up all the available space",
+      "default": null,
       "js_name": "stretchLastSection",
       "metaobject": {
         "constant": false,
@@ -3638,6 +3679,7 @@
       "name": "stretchLastSection",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4036,7 +4078,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],

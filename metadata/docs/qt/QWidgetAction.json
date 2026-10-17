@@ -1,0 +1,67 @@
+{
+  "doc": {
+    "brief": "The QWidgetAction class extends [QAction](xref:qt:QAction) by an interface for inserting custom widgets into action based containers, such as toolbars.",
+    "index_brief": "Extends QAction by an interface for inserting custom widgets into action based containers, such as toolbars",
+    "url": "https://doc.qt.io/qt-6/qwidgetaction.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QWidgetAction",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QList<QWidget *> createdWidgets() const": {
+      "brief": "Returns the list of widgets that have been using [createWidget](xref:qt:QWidgetAction)() and are currently in use by widgets the action has been added to.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#createdWidgets"
+    },
+    "QWidget * createWidget(QWidget *parent)": {
+      "brief": "This function is called whenever the action is added to a container widget that supports custom widgets.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#createWidget"
+    },
+    "QWidget * defaultWidget() const": {
+      "brief": "Returns the default widget.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#defaultWidget"
+    },
+    "QWidget * requestWidget(QWidget *parent)": {
+      "brief": "Returns a widget that represents the action, with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#requestWidget"
+    },
+    "QWidgetAction(QObject *parent)": {
+      "brief": "Constructs an action with *parent*.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#QWidgetAction"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAction::event](xref:qt:QAction)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#event"
+    },
+    "bool eventFilter(QObject *obj, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#eventFilter"
+    },
+    "void deleteWidget(QWidget *widget)": {
+      "brief": "This function is called whenever the action is removed from a container widget that displays the action using a custom *widget* previously created using [createWidget](xref:qt:QWidgetAction)().",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#deleteWidget"
+    },
+    "void releaseWidget(QWidget *widget)": {
+      "brief": "Releases the specified *widget*.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#releaseWidget"
+    },
+    "void setDefaultWidget(QWidget *widget)": {
+      "brief": "Sets *widget* to be the default widget.",
+      "url": "https://doc.qt.io/qt-6/qwidgetaction.html#setDefaultWidget"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

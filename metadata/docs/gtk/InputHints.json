@@ -1,0 +1,103 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes hints that might be taken into account by input methods or applications.",
+    "file": "gtk/gtkenums.h",
+    "line": 971,
+    "md": "Describes hints that might be taken into account by input methods\nor applications.\n\nNote that input methods may already tailor their behaviour according\nto the [`InputPurpose`](xref:gtk:InputPurpose) of the entry.\n\nSome common sense is expected when using these flags - mixing\n%GTK_INPUT_HINT_LOWERCASE with any of the uppercase hints makes no sense.\n\nThis enumeration may be extended in the future; input methods should\nignore unknown values."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:InputHints",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "emoji": {
+      "brief": "Suggest offering Emoji support",
+      "file": "gtk/gtkenums.h",
+      "line": 986,
+      "md": "Suggest offering Emoji support"
+    },
+    "inhibit_osk": {
+      "brief": "Suggest to not show an onscreen keyboard (e.g for a calculator that already has all the keys).",
+      "file": "gtk/gtkenums.h",
+      "line": 983,
+      "md": "Suggest to not show an onscreen keyboard\n  (e.g for a calculator that already has all the keys)."
+    },
+    "lowercase": {
+      "brief": "Suggest to convert all text to lowercase",
+      "file": "gtk/gtkenums.h",
+      "line": 977,
+      "md": "Suggest to convert all text to lowercase"
+    },
+    "no_emoji": {
+      "brief": "Suggest not offering Emoji support",
+      "file": "gtk/gtkenums.h",
+      "line": 987,
+      "md": "Suggest not offering Emoji support"
+    },
+    "no_spellcheck": {
+      "brief": "Suggest not checking for typos",
+      "file": "gtk/gtkenums.h",
+      "line": 975,
+      "md": "Suggest not checking for typos"
+    },
+    "none": {
+      "brief": "No special behaviour suggested",
+      "file": "gtk/gtkenums.h",
+      "line": 973,
+      "md": "No special behaviour suggested"
+    },
+    "private": {
+      "brief": "Request that the input method should not update personalized data (like typing history)",
+      "file": "gtk/gtkenums.h",
+      "line": 988,
+      "md": "Request that the input method should not\n   update personalized data (like typing history)"
+    },
+    "spellcheck": {
+      "brief": "Suggest checking for typos",
+      "file": "gtk/gtkenums.h",
+      "line": 974,
+      "md": "Suggest checking for typos"
+    },
+    "uppercase_chars": {
+      "brief": "Suggest to capitalize all text",
+      "file": "gtk/gtkenums.h",
+      "line": 978,
+      "md": "Suggest to capitalize all text"
+    },
+    "uppercase_sentences": {
+      "brief": "Suggest to capitalize the first word of each sentence",
+      "file": "gtk/gtkenums.h",
+      "line": 981,
+      "md": "Suggest to capitalize the\n  first word of each sentence"
+    },
+    "uppercase_words": {
+      "brief": "Suggest to capitalize the first character of each word",
+      "file": "gtk/gtkenums.h",
+      "line": 979,
+      "md": "Suggest to capitalize the first\n  character of each word"
+    },
+    "vertical_writing": {
+      "brief": "The text is vertical",
+      "file": "gtk/gtkenums.h",
+      "line": 985,
+      "md": "The text is vertical"
+    },
+    "word_completion": {
+      "brief": "Suggest word completion",
+      "file": "gtk/gtkenums.h",
+      "line": 976,
+      "md": "Suggest word completion"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

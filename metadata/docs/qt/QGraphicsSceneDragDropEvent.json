@@ -1,0 +1,75 @@
+{
+  "doc": {
+    "brief": "The QGraphicsSceneDragDropEvent class provides events for drag and drop in the graphics view framework.",
+    "index_brief": "Events for drag and drop in the graphics view framework",
+    "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneDragDropEvent",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QPoint screenPos() const": {
+      "brief": "Returns the position of the mouse relative to the screen.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#screenPos"
+    },
+    "QPointF pos() const": {
+      "brief": "Returns the mouse position of the event relative to the view that sent the event.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#pos"
+    },
+    "QPointF scenePos() const": {
+      "brief": "Returns the position of the mouse in scene coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#scenePos"
+    },
+    "QWidget * source() const": {
+      "brief": "This function returns the [QGraphicsView](xref:qt:QGraphicsView) that created the [QGraphicsSceneDragDropEvent](xref:qt:QGraphicsSceneDragDropEvent).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#source"
+    },
+    "Qt::DropAction dropAction() const": {
+      "brief": "Returns the action that was performed in this drag and drop.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#dropAction"
+    },
+    "Qt::DropAction proposedAction() const": {
+      "brief": "Returns the drop action that is proposed, i.e., preferred.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#proposedAction"
+    },
+    "Qt::DropActions possibleActions() const": {
+      "brief": "Returns the possible drop actions that the drag and drop can result in.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#possibleActions"
+    },
+    "Qt::KeyboardModifiers modifiers() const": {
+      "brief": "Returns the keyboard modifiers that were pressed when the drag and drop event was created.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#modifiers"
+    },
+    "Qt::MouseButtons buttons() const": {
+      "brief": "Returns a [Qt::MouseButtons](https://doc.qt.io/qt-6/qt.html#MouseButton-enum) value indicating which buttons were pressed on the mouse when this mouse event was generated.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#buttons"
+    },
+    "const QMimeData * mimeData() const": {
+      "brief": "This function returns the MIME data of the event.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#mimeData"
+    },
+    "void acceptProposedAction()": {
+      "brief": "Sets the proposed action as accepted, i.e, the drop action is set to the proposed action.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#acceptProposedAction"
+    },
+    "void setDropAction(Qt::DropAction action)": {
+      "brief": "This function lets the receiver of the drop set the drop action that was performed to *action*, which should be one of the [possible actions](xref:qt:QGraphicsSceneDragDropEvent).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenedragdropevent.html#setDropAction"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

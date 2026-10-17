@@ -1,0 +1,63 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the filtering to be performed by a [`FilterListModel`](xref:gtk:Gtk.FilterListModel).",
+    "file": "gtk/gtkfilter.c",
+    "line": 27,
+    "md": "Describes the filtering to be performed by a [`FilterListModel`](xref:gtk:Gtk.FilterListModel).\n\nThe model will use the filter to determine if it should include items\nor not by calling [`Filter.match()`](xref:gtk:Gtk.Filter#method:match) for each item and only\nkeeping the ones that the function returns true for.\n\nFilters may change what items they match through their lifetime. In that\ncase, they will emit the [`Filter::changed`](xref:gtk:Gtk.Filter#event:changed) signal to notify\nthat previous filter results are no longer valid and that items should\nbe checked again via [`Filter.match()`](xref:gtk:Gtk.Filter#method:match).\n\nGTK provides various pre-made filter implementations for common filtering\noperations. These filters often include properties that can be linked to\nvarious widgets to easily allow searches.\n\nHowever, in particular for large lists or complex search methods, it is\nalso possible to subclass `GtkFilter` and provide one's own filter."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Filter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "changed": {
+      "brief": "Notifies all users of the filter that it has changed.",
+      "file": "gtk/gtkfilter.c",
+      "line": 227,
+      "md": "Notifies all users of the filter that it has changed.\n\nThis emits the [`Filter::changed`](xref:gtk:Gtk.Filter#event:changed) signal. Users\nof the filter should then check items again via\n[`Filter.match()`](xref:gtk:Gtk.Filter#method:match).\n\nDepending on the `change` parameter, not all items need to\nbe changed, but only some. Refer to the [`FilterChange`](xref:gtk:Gtk.FilterChange)\ndocumentation for details.\n\nThis function is intended for implementers of `GtkFilter`\nsubclasses and should not be called from other functions."
+    },
+    "get_strictness": {
+      "brief": "Gets the known strictness of a filter.",
+      "file": "gtk/gtkfilter.c",
+      "line": 203,
+      "md": "Gets the known strictness of a filter.\n\nIf the strictness is not known, [`FilterMatch.some`](xref:gtk:Gtk.FilterMatch#value:some) is returned.\n\nThis value may change after emission of the [`Filter::changed`](xref:gtk:Gtk.Filter#event:changed)\nsignal.\n\nThis function is meant purely for optimization purposes. Filters can\nchoose to omit implementing it, but `GtkFilterListModel` uses it."
+    },
+    "match": {
+      "brief": "Checks if the given `item` is matched by the filter or not.",
+      "file": "gtk/gtkfilter.c",
+      "line": 184,
+      "md": "Checks if the given `item` is matched by the filter or not."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "Emitted whenever the filter changed.",
+      "file": "gtk/gtkfilter.c",
+      "line": 149,
+      "md": "Emitted whenever the filter changed.\n\nUsers of the filter should then check items again via\n[`Filter.match()`](xref:gtk:Gtk.Filter#method:match).\n\n`GtkFilterListModel` handles this signal automatically.\n\nDepending on the `change` parameter, not all items need\nto be checked, but only some. Refer to the [`FilterChange`](xref:gtk:Gtk.FilterChange)\ndocumentation for details."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_strictness": {
+      "brief": "Gets the known strictness of a filter.",
+      "file": "gtk/gtkfilter.c",
+      "line": 203,
+      "md": "Gets the known strictness of a filter.\n\nIf the strictness is not known, [`FilterMatch.some`](xref:gtk:Gtk.FilterMatch#value:some) is returned.\n\nThis value may change after emission of the [`Filter::changed`](xref:gtk:Gtk.Filter#event:changed)\nsignal.\n\nThis function is meant purely for optimization purposes. Filters can\nchoose to omit implementing it, but `GtkFilterListModel` uses it."
+    },
+    "match": {
+      "brief": "Checks if the given `item` is matched by the filter or not.",
+      "file": "gtk/gtkfilter.c",
+      "line": 184,
+      "md": "Checks if the given `item` is matched by the filter or not."
+    }
+  }
+}

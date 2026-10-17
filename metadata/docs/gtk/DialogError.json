@@ -1,0 +1,51 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Error codes in the `GTK_DIALOG_ERROR` domain that can be returned by async dialog functions.",
+    "file": "gtk/gtkdialogerror.h",
+    "line": 38,
+    "md": "Error codes in the `GTK_DIALOG_ERROR` domain that can be returned\nby async dialog functions.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DialogError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "cancelled": {
+      "brief": "The async function call was cancelled via its `GCancellable`",
+      "file": "gtk/gtkdialogerror.h",
+      "line": 42,
+      "md": "The async function call was cancelled\n  via its `GCancellable`"
+    },
+    "dismissed": {
+      "brief": "The operation was cancelled by the user (via a Cancel or Close button)",
+      "file": "gtk/gtkdialogerror.h",
+      "line": 44,
+      "md": "The operation was cancelled\n  by the user (via a Cancel or Close button)"
+    },
+    "failed": {
+      "brief": "Generic error condition for when an operation fails and no more specific code is applicable",
+      "file": "gtk/gtkdialogerror.h",
+      "line": 40,
+      "md": "Generic error condition for when\n  an operation fails and no more specific code is applicable"
+    }
+  },
+  "methods": {
+    "quark": {
+      "brief": "Registers an error quark for an operation that requires a dialog if necessary.",
+      "file": "gtk/gtkdialogerror.c",
+      "line": 23,
+      "md": "Registers an error quark for an operation that requires a dialog if\nnecessary."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

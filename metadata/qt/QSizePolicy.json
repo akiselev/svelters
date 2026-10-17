@@ -39,7 +39,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         },
         {
@@ -49,7 +49,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         },
         {
@@ -59,7 +59,7 @@
             "native": "QSizePolicy::ControlType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::ControlType>"
           }
         }
       ],
@@ -71,134 +71,176 @@
   ],
   "enums": [
     {
+      "flags_alias": "QSizePolicy::ControlTypes",
+      "fullname": "QSizePolicy::ControlType",
       "members": [
         {
+          "cpp": "QSizePolicy::DefaultType",
           "name": "DefaultType",
           "value": "0x00000001"
         },
         {
+          "cpp": "QSizePolicy::ButtonBox",
           "name": "ButtonBox",
           "value": "0x00000002"
         },
         {
+          "cpp": "QSizePolicy::CheckBox",
           "name": "CheckBox",
           "value": "0x00000004"
         },
         {
+          "cpp": "QSizePolicy::ComboBox",
           "name": "ComboBox",
           "value": "0x00000008"
         },
         {
+          "cpp": "QSizePolicy::Frame",
           "name": "Frame",
           "value": "0x00000010"
         },
         {
+          "cpp": "QSizePolicy::GroupBox",
           "name": "GroupBox",
           "value": "0x00000020"
         },
         {
+          "cpp": "QSizePolicy::Label",
           "name": "Label",
           "value": "0x00000040"
         },
         {
+          "cpp": "QSizePolicy::Line",
           "name": "Line",
           "value": "0x00000080"
         },
         {
+          "cpp": "QSizePolicy::LineEdit",
           "name": "LineEdit",
           "value": "0x00000100"
         },
         {
+          "cpp": "QSizePolicy::PushButton",
           "name": "PushButton",
           "value": "0x00000200"
         },
         {
+          "cpp": "QSizePolicy::RadioButton",
           "name": "RadioButton",
           "value": "0x00000400"
         },
         {
+          "cpp": "QSizePolicy::Slider",
           "name": "Slider",
           "value": "0x00000800"
         },
         {
+          "cpp": "QSizePolicy::SpinBox",
           "name": "SpinBox",
           "value": "0x00001000"
         },
         {
+          "cpp": "QSizePolicy::TabWidget",
           "name": "TabWidget",
           "value": "0x00002000"
         },
         {
+          "cpp": "QSizePolicy::ToolButton",
           "name": "ToolButton",
           "value": "0x00004000"
         }
       ],
       "metaobject": null,
       "name": "ControlType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QSizePolicy::Policy",
       "members": [
         {
+          "cpp": "QSizePolicy::Fixed",
           "name": "Fixed",
           "value": "0"
         },
         {
+          "cpp": "QSizePolicy::Minimum",
           "name": "Minimum",
           "value": "GrowFlag"
         },
         {
+          "cpp": "QSizePolicy::Maximum",
           "name": "Maximum",
           "value": "ShrinkFlag"
         },
         {
+          "cpp": "QSizePolicy::Preferred",
           "name": "Preferred",
           "value": "GrowFlag | ShrinkFlag"
         },
         {
+          "cpp": "QSizePolicy::MinimumExpanding",
           "name": "MinimumExpanding",
           "value": "GrowFlag | ExpandFlag"
         },
         {
+          "cpp": "QSizePolicy::Expanding",
           "name": "Expanding",
           "value": "GrowFlag | ShrinkFlag | ExpandFlag"
         },
         {
+          "cpp": "QSizePolicy::Ignored",
           "name": "Ignored",
           "value": "ShrinkFlag | GrowFlag | IgnoreFlag"
         }
       ],
       "metaobject": null,
       "name": "Policy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QSizePolicy::PolicyFlag",
       "members": [
         {
+          "cpp": "QSizePolicy::GrowFlag",
           "name": "GrowFlag",
           "value": "1"
         },
         {
+          "cpp": "QSizePolicy::ExpandFlag",
           "name": "ExpandFlag",
           "value": "2"
         },
         {
+          "cpp": "QSizePolicy::ShrinkFlag",
           "name": "ShrinkFlag",
           "value": "4"
         },
         {
+          "cpp": "QSizePolicy::IgnoreFlag",
           "name": "IgnoreFlag",
           "value": "8"
         }
       ],
       "metaobject": null,
       "name": "PolicyFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QSizePolicy",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSizePolicy:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -219,7 +261,7 @@
         "native": "QSizePolicy::ControlType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::ControlType>"
       },
       "signature": "QSizePolicy::ControlType controlType() const",
       "since": null,
@@ -245,7 +287,7 @@
         "native": "Qt::Orientations",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::Orientation>"
       },
       "signature": "Qt::Orientations expandingDirections() const",
       "since": null,
@@ -323,7 +365,7 @@
         "native": "QSizePolicy::Policy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::Policy>"
       },
       "signature": "QSizePolicy::Policy horizontalPolicy() const",
       "since": null,
@@ -404,7 +446,7 @@
             "native": "const QSizePolicy &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QSizePolicy>"
           }
         }
       ],
@@ -451,7 +493,7 @@
             "native": "const QSizePolicy &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QSizePolicy>"
           }
         }
       ],
@@ -488,7 +530,7 @@
             "native": "const QSizePolicy &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QSizePolicy>"
           }
         }
       ],
@@ -535,7 +577,7 @@
             "native": "QSizePolicy &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QSizePolicy>"
           }
         }
       ],
@@ -572,7 +614,7 @@
             "native": "QSizePolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QSizePolicy>"
           }
         },
         {
@@ -645,7 +687,7 @@
             "native": "QSizePolicy::ControlType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::ControlType>"
           }
         }
       ],
@@ -719,7 +761,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         }
       ],
@@ -830,7 +872,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         }
       ],
@@ -964,7 +1006,7 @@
         "native": "QSizePolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QSizePolicy>"
       },
       "signature": "QSizePolicy transposed() const",
       "since": null,
@@ -990,7 +1032,7 @@
         "native": "QSizePolicy::Policy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::Policy>"
       },
       "signature": "QSizePolicy::Policy verticalPolicy() const",
       "since": null,

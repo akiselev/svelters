@@ -1,0 +1,138 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new box.",
+      "file": "gtk/gtkbox.c",
+      "line": 345,
+      "md": "Creates a new box."
+    }
+  },
+  "doc": {
+    "brief": "Arranges child widgets into a single row or column.",
+    "file": "gtk/gtkbox.c",
+    "line": 25,
+    "md": "Arranges child widgets into a single row or column.\n\nWhether it is a row or column depends on the value of its\n[`Orientable:orientation`](xref:gtk:Gtk.Orientable#property:orientation) property. Within the other\ndimension, all children are allocated the same size. The\n[`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and [`Widget:valign`](xref:gtk:Gtk.Widget#property:valign)\nproperties can be used on the children to influence their allocation.\n\nUse repeated calls to [`Box.append()`](xref:gtk:Gtk.Box#method:append) to pack widgets into a\n`GtkBox` from start to end. Use [`Box.remove()`](xref:gtk:Gtk.Box#method:remove) to remove widgets\nfrom the `GtkBox`. [`Box.insert_child_after()`](xref:gtk:Gtk.Box#method:insert_child_after) can be used to add\na child at a particular position.\n\nUse [`Box.set_homogeneous()`](xref:gtk:Gtk.Box#method:set_homogeneous) to specify whether or not all children\nof the `GtkBox` are forced to get the same amount of space.\n\nUse [`Box.set_spacing()`](xref:gtk:Gtk.Box#method:set_spacing) to determine how much space will be minimally\nplaced between all children in the `GtkBox`. Note that spacing is added\n*between* the children.\n\nUse [`Box.reorder_child_after()`](xref:gtk:Gtk.Box#method:reorder_child_after) to move a child to a different\nplace in the box.\n\n# CSS nodes\n\n`GtkBox` uses a single CSS node with name box.\n\n# Accessibility\n\nUntil GTK 4.10, `GtkBox` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nStarting from GTK 4.12, `GtkBox` uses the [`AccessibleRole.generic`](xref:gtk:Gtk.AccessibleRole#value:generic) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Box",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Adds a child at the end.",
+      "file": "gtk/gtkbox.c",
+      "line": 631,
+      "md": "Adds a child at the end."
+    },
+    "get_baseline_child": {
+      "brief": "Gets the value set by [`Box.set_baseline_child()`](xref:gtk:Gtk.Box#method:set_baseline_child).",
+      "file": "gtk/gtkbox.c",
+      "line": 485,
+      "md": "Gets the value set by [`Box.set_baseline_child()`](xref:gtk:Gtk.Box#method:set_baseline_child).",
+      "since": "4.12"
+    },
+    "get_baseline_position": {
+      "brief": "Gets the value set by [`Box.set_baseline_position()`](xref:gtk:Gtk.Box#method:set_baseline_position).",
+      "file": "gtk/gtkbox.c",
+      "line": 536,
+      "md": "Gets the value set by [`Box.set_baseline_position()`](xref:gtk:Gtk.Box#method:set_baseline_position)."
+    },
+    "get_homogeneous": {
+      "brief": "Returns whether the box is homogeneous.",
+      "file": "gtk/gtkbox.c",
+      "line": 391,
+      "md": "Returns whether the box is homogeneous.\n\nIn a homogeneous box all children are the same size."
+    },
+    "get_spacing": {
+      "brief": "Gets the value set by [`Box.set_spacing()`](xref:gtk:Gtk.Box#method:set_spacing).",
+      "file": "gtk/gtkbox.c",
+      "line": 436,
+      "md": "Gets the value set by [`Box.set_spacing()`](xref:gtk:Gtk.Box#method:set_spacing)."
+    },
+    "insert_child_after": {
+      "brief": "Inserts a child at a specific position.",
+      "file": "gtk/gtkbox.c",
+      "line": 556,
+      "md": "Inserts a child at a specific position.\n\nThe child is added after `sibling` in the list of `box` children.\n\nIf `sibling` is `NULL`, the `child` is placed at the beginning."
+    },
+    "prepend": {
+      "brief": "Adds a child at the beginning.",
+      "file": "gtk/gtkbox.c",
+      "line": 649,
+      "md": "Adds a child at the beginning."
+    },
+    "remove": {
+      "brief": "Removes a child widget from the box.",
+      "file": "gtk/gtkbox.c",
+      "line": 667,
+      "md": "Removes a child widget from the box.\n\nThe child must have been added before with\n[`Box.append()`](xref:gtk:Gtk.Box#method:append), [`Box.prepend()`](xref:gtk:Gtk.Box#method:prepend), or\n[`Box.insert_child_after()`](xref:gtk:Gtk.Box#method:insert_child_after)."
+    },
+    "reorder_child_after": {
+      "brief": "Moves a child to a different position.",
+      "file": "gtk/gtkbox.c",
+      "line": 593,
+      "md": "Moves a child to a different position.\n\nThe child is moved to the position after `sibling` in the list\nof `box` children.\n\nIf `sibling` is `NULL`, the child is placed at the beginning."
+    },
+    "set_baseline_child": {
+      "brief": "Sets the baseline child of a box.",
+      "file": "gtk/gtkbox.c",
+      "line": 456,
+      "md": "Sets the baseline child of a box.\n\nThis affects only vertical boxes.",
+      "since": "4.12"
+    },
+    "set_baseline_position": {
+      "brief": "Sets the baseline position of a box.",
+      "file": "gtk/gtkbox.c",
+      "line": 507,
+      "md": "Sets the baseline position of a box.\n\nThis affects only horizontal boxes with at least one baseline\naligned child. If there is more vertical space available than\nrequested, and the baseline is not allocated by the parent then\n`position` is used to allocate the baseline with respect to the\nextra space available."
+    },
+    "set_homogeneous": {
+      "brief": "Sets whether or not all children are given equal space in the box.",
+      "file": "gtk/gtkbox.c",
+      "line": 364,
+      "md": "Sets whether or not all children are given equal space\nin the box."
+    },
+    "set_spacing": {
+      "brief": "Sets the number of pixels to place between children.",
+      "file": "gtk/gtkbox.c",
+      "line": 413,
+      "md": "Sets the number of pixels to place between children."
+    }
+  },
+  "properties": {
+    "baseline-child": {
+      "brief": "The position of the child that determines the baseline.",
+      "file": "gtk/gtkbox.c",
+      "line": 285,
+      "md": "The position of the child that determines the baseline.\n\nThis is only relevant if the box is in vertical orientation.",
+      "since": "4.12"
+    },
+    "baseline-position": {
+      "brief": "How to position baseline-aligned widgets if extra space is available.",
+      "file": "gtk/gtkbox.c",
+      "line": 299,
+      "md": "How to position baseline-aligned widgets if extra space is available."
+    },
+    "homogeneous": {
+      "brief": "Whether the children should all be the same size.",
+      "file": "gtk/gtkbox.c",
+      "line": 275,
+      "md": "Whether the children should all be the same size."
+    },
+    "spacing": {
+      "brief": "The amount of space between children.",
+      "file": "gtk/gtkbox.c",
+      "line": 265,
+      "md": "The amount of space between children."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

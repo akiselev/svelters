@@ -1,0 +1,153 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new constraint representing a relation between a layout attribute on a source and a layout attribute on a target.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 309,
+      "md": "Creates a new constraint representing a relation between a layout\nattribute on a source and a layout attribute on a target."
+    },
+    "new_constant": {
+      "brief": "Creates a new constraint representing a relation between a layout attribute on a target and a constant value.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 350,
+      "md": "Creates a new constraint representing a relation between a layout\nattribute on a target and a constant value."
+    }
+  },
+  "doc": {
+    "brief": "Describes a constraint between attributes of two widgets, expressed as a linear equation.",
+    "file": "gtk/gtkconstraint.c",
+    "line": 20,
+    "md": "Describes a constraint between attributes of two widgets,\n expressed as a linear equation.\n\nThe typical equation for a constraint is:\n\n```\n  target.target_attr = source.source_attr × multiplier + constant\n```\n\nEach `GtkConstraint` is part of a system that will be solved by a\n[`ConstraintLayout`](xref:gtk:Gtk.ConstraintLayout) in order to allocate and position each\nchild widget or guide.\n\nThe source and target, as well as their attributes, of a `GtkConstraint`\ninstance are immutable after creation."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Constraint",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_constant": {
+      "brief": "Retrieves the constant factor added to the source attributes' value.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 487,
+      "md": "Retrieves the constant factor added to the source attributes' value."
+    },
+    "get_multiplier": {
+      "brief": "Retrieves the multiplication factor applied to the source attribute's value.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 470,
+      "md": "Retrieves the multiplication factor applied to the source\nattribute's value."
+    },
+    "get_relation": {
+      "brief": "The order relation between the terms of the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 454,
+      "md": "The order relation between the terms of the constraint."
+    },
+    "get_source": {
+      "brief": "Retrieves the [`ConstraintTarget`](xref:gtk:Gtk.ConstraintTarget) used as the source for the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 418,
+      "md": "Retrieves the [`ConstraintTarget`](xref:gtk:Gtk.ConstraintTarget) used as the source for the\nconstraint.\n\nIf the source is set to `NULL` at creation, the constraint will use\nthe widget using the [`ConstraintLayout`](xref:gtk:Gtk.ConstraintLayout) as the source."
+    },
+    "get_source_attribute": {
+      "brief": "Retrieves the attribute of the source to be read by the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 438,
+      "md": "Retrieves the attribute of the source to be read by the constraint."
+    },
+    "get_strength": {
+      "brief": "Retrieves the strength of the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 503,
+      "md": "Retrieves the strength of the constraint."
+    },
+    "get_target": {
+      "brief": "Retrieves the [`ConstraintTarget`](xref:gtk:Gtk.ConstraintTarget) used as the target for the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 382,
+      "md": "Retrieves the [`ConstraintTarget`](xref:gtk:Gtk.ConstraintTarget) used as the target for\nthe constraint.\n\nIf the targe is set to `NULL` at creation, the constraint will use\nthe widget using the [`ConstraintLayout`](xref:gtk:Gtk.ConstraintLayout) as the target."
+    },
+    "get_target_attribute": {
+      "brief": "Retrieves the attribute of the target to be set by the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 402,
+      "md": "Retrieves the attribute of the target to be set by the constraint."
+    },
+    "is_attached": {
+      "brief": "Checks whether the constraint is attached to a [`ConstraintLayout`](xref:gtk:Gtk.ConstraintLayout), and it is contributing to the layout.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 536,
+      "md": "Checks whether the constraint is attached to a [`ConstraintLayout`](xref:gtk:Gtk.ConstraintLayout),\nand it is contributing to the layout."
+    },
+    "is_constant": {
+      "brief": "Checks whether the constraint describes a relation between an attribute on the [`Constraint:target`](xref:gtk:Gtk.Constraint#property:target) and a constant value.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 553,
+      "md": "Checks whether the constraint describes a relation between an attribute\non the [`Constraint:target`](xref:gtk:Gtk.Constraint#property:target) and a constant value."
+    },
+    "is_required": {
+      "brief": "Checks whether the constraint is a required relation for solving the constraint layout.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 519,
+      "md": "Checks whether the constraint is a required relation for solving the\nconstraint layout."
+    }
+  },
+  "properties": {
+    "constant": {
+      "brief": "The constant value to be added to the [`Constraint:source-attribute`](xref:gtk:Gtk.Constraint#property:source-attribute).",
+      "file": "gtk/gtkconstraint.c",
+      "line": 265,
+      "md": "The constant value to be added to the [`Constraint:source-attribute`](xref:gtk:Gtk.Constraint#property:source-attribute)."
+    },
+    "multiplier": {
+      "brief": "The multiplication factor to be applied to the [`Constraint:source-attribute`](xref:gtk:Gtk.Constraint#property:source-attribute).",
+      "file": "gtk/gtkconstraint.c",
+      "line": 252,
+      "md": "The multiplication factor to be applied to\nthe [`Constraint:source-attribute`](xref:gtk:Gtk.Constraint#property:source-attribute)."
+    },
+    "relation": {
+      "brief": "The order relation between the terms of the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 210,
+      "md": "The order relation between the terms of the constraint."
+    },
+    "source": {
+      "brief": "The source of the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 223,
+      "md": "The source of the constraint.\n\nThe constraint will set the [`Constraint:target-attribute`](xref:gtk:Gtk.Constraint#property:target-attribute)\nproperty of the target using the [`Constraint:source-attribute`](xref:gtk:Gtk.Constraint#property:source-attribute)\nproperty of the source."
+    },
+    "source-attribute": {
+      "brief": "The attribute of the [`Constraint:source`](xref:gtk:Gtk.Constraint#property:source) read by the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 238,
+      "md": "The attribute of the [`Constraint:source`](xref:gtk:Gtk.Constraint#property:source) read by the\nconstraint."
+    },
+    "strength": {
+      "brief": "The strength of the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 277,
+      "md": "The strength of the constraint.\n\nThe strength can be expressed either using one of the symbolic values\nof the [`ConstraintStrength`](xref:gtk:Gtk.ConstraintStrength) enumeration, or any positive integer\nvalue."
+    },
+    "target": {
+      "brief": "The target of the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 179,
+      "md": "The target of the constraint.\n\nThe constraint will set the [`Constraint:target-attribute`](xref:gtk:Gtk.Constraint#property:target-attribute)\nproperty of the target using the [`Constraint:source-attribute`](xref:gtk:Gtk.Constraint#property:source-attribute)\nproperty of the source widget."
+    },
+    "target-attribute": {
+      "brief": "The attribute of the [`Constraint:target`](xref:gtk:Gtk.Constraint#property:target) set by the constraint.",
+      "file": "gtk/gtkconstraint.c",
+      "line": 197,
+      "md": "The attribute of the [`Constraint:target`](xref:gtk:Gtk.Constraint#property:target) set by the constraint."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

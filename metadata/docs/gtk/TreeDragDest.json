@@ -1,0 +1,60 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Interface for Drag-and-Drop destinations in `GtkTreeView`.",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You can use [`DropTarget`](xref:gtk:Gtk.DropTarget) to implement a drop destination",
+    "file": "gtk/deprecated/gtktreednd.c",
+    "line": 48,
+    "md": "Interface for Drag-and-Drop destinations in `GtkTreeView`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeDragDest",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "drag_data_received": {
+      "brief": "Asks the `GtkTreeDragDest` to insert a row before the path `dest`, deriving the contents of the row from `value`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 205,
+      "md": "Asks the `GtkTreeDragDest` to insert a row before the path `dest`,\nderiving the contents of the row from `value`. If `dest` is\noutside the tree so that inserting before it is impossible, `FALSE`\nwill be returned. Also, `FALSE` may be returned if the new row is\nnot created for some model-specific reason.  Should robustly handle\na `dest` no longer found in the model!"
+    },
+    "row_drop_possible": {
+      "brief": "Determines whether a drop is possible before the given `dest_path`, at the same depth as `dest_path`. i.e., can we drop the data in `value` at that location.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 237,
+      "md": "Determines whether a drop is possible before the given `dest_path`,\nat the same depth as `dest_path`. i.e., can we drop the data in\n`value` at that location. `dest_path` does not have to\nexist; the return value will almost certainly be `FALSE` if the\nparent of `dest_path` doesn’t exist, though."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "drag_data_received": {
+      "brief": "Asks the `GtkTreeDragDest` to insert a row before the path `dest`, deriving the contents of the row from `value`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 205,
+      "md": "Asks the `GtkTreeDragDest` to insert a row before the path `dest`,\nderiving the contents of the row from `value`. If `dest` is\noutside the tree so that inserting before it is impossible, `FALSE`\nwill be returned. Also, `FALSE` may be returned if the new row is\nnot created for some model-specific reason.  Should robustly handle\na `dest` no longer found in the model!"
+    },
+    "row_drop_possible": {
+      "brief": "Determines whether a drop is possible before the given `dest_path`, at the same depth as `dest_path`. i.e., can we drop the data in `value` at that location.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models instead",
+      "file": "gtk/deprecated/gtktreednd.c",
+      "line": 237,
+      "md": "Determines whether a drop is possible before the given `dest_path`,\nat the same depth as `dest_path`. i.e., can we drop the data in\n`value` at that location. `dest_path` does not have to\nexist; the return value will almost certainly be `FALSE` if the\nparent of `dest_path` doesn’t exist, though."
+    }
+  }
+}

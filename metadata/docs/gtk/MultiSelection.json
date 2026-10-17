@@ -1,0 +1,65 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new selection to handle `model`.",
+      "file": "gtk/gtkmultiselection.c",
+      "line": 434,
+      "md": "Creates a new selection to handle `model`."
+    }
+  },
+  "doc": {
+    "brief": "A selection model that allows selecting multiple elements.",
+    "file": "gtk/gtkmultiselection.c",
+    "line": 28,
+    "md": "A selection model that allows selecting multiple elements."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MultiSelection",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_model": {
+      "brief": "Returns the underlying model of `self`.",
+      "file": "gtk/gtkmultiselection.c",
+      "line": 459,
+      "md": "Returns the underlying model of `self`."
+    },
+    "set_model": {
+      "brief": "Sets the model that `self` should wrap.",
+      "file": "gtk/gtkmultiselection.c",
+      "line": 475,
+      "md": "Sets the model that `self` should wrap.\n\nIf `model` is `NULL`, `self` will be empty."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkmultiselection.c",
+      "line": 390,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The list managed by this selection.",
+      "file": "gtk/gtkmultiselection.c",
+      "line": 402,
+      "md": "The list managed by this selection."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkmultiselection.c",
+      "line": 412,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

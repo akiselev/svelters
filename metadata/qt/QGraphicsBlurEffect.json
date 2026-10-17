@@ -41,16 +41,21 @@
   ],
   "enums": [
     {
+      "flags_alias": "QGraphicsBlurEffect::BlurHints",
+      "fullname": "QGraphicsBlurEffect::BlurHint",
       "members": [
         {
+          "cpp": "QGraphicsBlurEffect::PerformanceHint",
           "name": "PerformanceHint",
           "value": "0x00"
         },
         {
+          "cpp": "QGraphicsBlurEffect::QualityHint",
           "name": "QualityHint",
           "value": "0x01"
         },
         {
+          "cpp": "QGraphicsBlurEffect::AnimationHint",
           "name": "AnimationHint",
           "value": "0x02"
         }
@@ -65,12 +70,23 @@
         "scoped": false
       },
       "name": "BlurHint",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsBlurEffect",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsBlurEffect:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -91,7 +107,7 @@
         "native": "QGraphicsBlurEffect::BlurHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsBlurEffect::BlurHint>"
       },
       "signature": "QGraphicsBlurEffect::BlurHints blurHints() const",
       "since": null,
@@ -146,7 +162,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -154,7 +170,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRectFor(const QRectF &rect) const override",
       "since": null,
@@ -220,7 +236,7 @@
             "native": "QGraphicsBlurEffect::BlurHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsBlurEffect::BlurHint>"
           }
         }
       ],
@@ -293,6 +309,8 @@
         "set": "setBlurHints"
       },
       "brief": "The blur hint of the effect",
+      "default": "PerformanceHint",
+      "default_origin": "runtime",
       "js_name": "blurHints",
       "metaobject": {
         "constant": false,
@@ -316,12 +334,13 @@
         "signal": "blurHintsChanged(BlurHints)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "BlurHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsBlurEffect::BlurHint>"
       }
     },
     {
@@ -336,6 +355,8 @@
         "set": "setBlurRadius"
       },
       "brief": "The blur radius of the effect",
+      "default": 5.0,
+      "default_origin": "runtime",
       "js_name": "blurRadius",
       "metaobject": {
         "constant": false,
@@ -359,6 +380,7 @@
         "signal": "blurRadiusChanged(double)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -393,7 +415,7 @@
             "native": "QGraphicsBlurEffect::BlurHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsBlurEffect::BlurHint>"
           }
         }
       ],

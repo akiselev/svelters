@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -55,6 +55,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QToolBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QToolBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -135,7 +145,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -391,7 +401,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -540,7 +550,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon itemIcon(int index) const",
       "since": null,
@@ -885,7 +895,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -1128,6 +1138,8 @@
         "set": null
       },
       "brief": "Number of items contained in the toolbox",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "count",
       "metaobject": {
         "constant": false,
@@ -1148,6 +1160,7 @@
       "name": "count",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1168,6 +1181,8 @@
         "set": "setCurrentIndex"
       },
       "brief": "The index of the current item",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentIndex",
       "metaobject": {
         "constant": false,
@@ -1191,6 +1206,7 @@
         "signal": "currentChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

@@ -1,0 +1,212 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new tree store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 303,
+      "md": "Creates a new tree store.\n\nThe tree store will have `n_columns`, with each column using the\ncorresponding type passed to this function.\n\nNote that only types derived from standard GObject fundamental types\nare supported.\n\nAs an example:\n\n```c\ngtk_tree_store_new (3, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_TEXTURE);\n```\n\nwill create a new `GtkTreeStore` with three columns of type\n`int`, `gchararray`, and `GdkTexture` respectively."
+    },
+    "newv": {
+      "brief": "Creates a new tree store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 360,
+      "md": "Creates a new tree store.\n\nThis constructor is meant for language bindings."
+    }
+  },
+  "doc": {
+    "brief": "A tree-like data structure that can be used with the [`TreeView`](xref:gtk:Gtk.TreeView).",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+    "file": "gtk/deprecated/gtktreestore.c",
+    "line": 31,
+    "md": "A tree-like data structure that can be used with the [`TreeView`](xref:gtk:Gtk.TreeView).\n\nThe `GtkTreeStore` object is a list model for use with a `GtkTreeView`\nwidget. It implements the [`TreeModel`](xref:gtk:Gtk.TreeModel) interface, and consequently,\ncan use all of the methods available there. It also implements the\n[`TreeSortable`](xref:gtk:Gtk.TreeSortable) interface so it can be sorted by the view.\nFinally, it also implements the tree [drag][`TreeDragSource`](xref:gtk:Gtk.TreeDragSource)\nand [drop][`TreeDragDest`](xref:gtk:Gtk.TreeDragDest) interfaces.\n\n`GtkTreeStore` is deprecated since GTK 4.10, and should not be used in newly\nwritten code. You should use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) for a tree-like model\nobject.\n\n## GtkTreeStore as GtkBuildable\n\nThe GtkTreeStore implementation of the `GtkBuildable` interface allows\nto specify the model columns with a `<columns>` element that may contain\nmultiple `<column>` elements, each specifying one model column. The “type”\nattribute specifies the data type for the column.\n\nAn example of a UI Definition fragment for a tree store:\n\n```xml\n<object class=\"GtkTreeStore\">\n  <columns>\n    <column type=\"gchararray\"/>\n    <column type=\"gchararray\"/>\n    <column type=\"gint\"/>\n  </columns>\n</object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeStore",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Appends a new row to `tree_store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1803,
+      "md": "Appends a new row to `tree_store`.\n\nIf `parent` is non-`NULL`, then it will append the new row after the last\nchild of `parent`, otherwise it will append a row to the top level.\n\nThe `iter` parameter will be changed to point to this new row. The row will\nbe empty after this function is called. To fill in values, you need to call\ngtk_tree_store_set() or gtk_tree_store_set_value()."
+    },
+    "clear": {
+      "brief": "Removes all rows from `tree_store`",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1969,
+      "md": "Removes all rows from `tree_store`"
+    },
+    "insert": {
+      "brief": "Creates a new row at `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1321,
+      "md": "Creates a new row at `position`.\n\nIf parent is non-`NULL`, then the row will be made a child of `parent`.\nOtherwise, the row will be created at the toplevel.\n\nIf `position` is `-1` or is larger than the number of rows at that level,\nthen the new row will be inserted to the end of the list.\n\nThe `iter` parameter will be changed to point to this new row. The row\nwill be empty after this function is called. To fill in values, you\nneed to call gtk_tree_store_set() or gtk_tree_store_set_value()."
+    },
+    "insert_after": {
+      "brief": "Inserts a new row after `sibling`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1474,
+      "md": "Inserts a new row after `sibling`.\n\nIf `sibling` is `NULL`, then the row will be prepended to `parent`’s children.\n\nIf `parent` and `sibling` are `NULL`, then the row will be prepended to the\ntoplevel.\n\nIf both `sibling` and `parent` are set, then `parent` must be the parent\nof `sibling`. When `sibling` is set, `parent` is optional.\n\nThe `iter` parameter will be changed to point to this new row. The row will\nbe empty after this function is called. To fill in values, you need to call\ngtk_tree_store_set() or gtk_tree_store_set_value()."
+    },
+    "insert_before": {
+      "brief": "Inserts a new row before `sibling`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1388,
+      "md": "Inserts a new row before `sibling`.\n\nIf `sibling` is `NULL`, then the row will be appended to `parent`’s children.\n\nIf `parent` and `sibling` are `NULL`, then the row will be appended to the\ntoplevel.\n\nIf both `sibling` and `parent` are set, then `parent` must be the parent\nof `sibling`. When `sibling` is set, `parent` is optional.\n\nThe `iter` parameter will be changed to point to this new row. The row will\nbe empty after this function is called. To fill in values, you need to call\ngtk_tree_store_set() or gtk_tree_store_set_value()."
+    },
+    "insert_with_values": {
+      "brief": "Creates a new row at the given `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1561,
+      "md": "Creates a new row at the given `position`.\n\nThe `iter` parameter will be changed to point to this  new row.\n\nIf `position` is -1, or larger than the number of rows on the list, then\nthe new row will be appended to the list. The row will be filled with\nthe values given to this function.\n\nCalling\n\n    gtk_tree_store_insert_with_values (tree_store, iter, position, ...)\n\nhas the same effect as calling\n\n```c\ngtk_tree_store_insert (tree_store, iter, position);\ngtk_tree_store_set (tree_store, iter, ...);\n```\n\nwith the different that the former will only emit a row_inserted signal,\nwhile the latter will emit row_inserted, row_changed and if the tree store\nis sorted, rows_reordered.\n\nSince emitting the rows_reordered signal repeatedly can affect the\nperformance of the program, gtk_tree_store_insert_with_values() should\ngenerally be preferred when inserting rows in a sorted tree store."
+    },
+    "insert_with_valuesv": {
+      "brief": "A variant of gtk_tree_store_insert_with_values() which takes the columns and values as two arrays, instead of varargs.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1661,
+      "md": "A variant of gtk_tree_store_insert_with_values() which takes\nthe columns and values as two arrays, instead of varargs.\n\nThis function is mainly intended for language bindings."
+    },
+    "is_ancestor": {
+      "brief": "Checks if `iter` is an ancestor of `descendant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1867,
+      "md": "Checks if `iter` is an ancestor of `descendant`."
+    },
+    "iter_depth": {
+      "brief": "Returns the depth of the position pointed by the iterator",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1893,
+      "md": "Returns the depth of the position pointed by the iterator\n\nThe depth will be 0 for anything on the root level, 1 for anything down\na level, etc."
+    },
+    "iter_is_valid": {
+      "brief": "Checks if the given iter is a valid iter for this `GtkTreeStore`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 2010,
+      "md": "Checks if the given iter is a valid iter for this `GtkTreeStore`.\n\nThis function is slow. Only use it for debugging and/or testing\npurposes."
+    },
+    "move_after": {
+      "brief": "Moves `iter` in `tree_store` to the position after `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 2918,
+      "md": "Moves `iter` in `tree_store` to the position after `position`.\n\n`iter` and `position` should be in the same level.\n\nNote that this function only works with unsorted stores.\n\nIf `position` is `NULL`, `iter` will be moved to the start of the level."
+    },
+    "move_before": {
+      "brief": "Moves `iter` in `tree_store` to the position before `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 2894,
+      "md": "Moves `iter` in `tree_store` to the position before `position`.\n\n`iter` and `position` should be in the same level.\n\nNote that this function only works with unsorted stores.\n\nIf `position` is `NULL`, `iter` will be moved to the end of the level."
+    },
+    "prepend": {
+      "brief": "Prepends a new row to `tree_store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1740,
+      "md": "Prepends a new row to `tree_store`.\n\nIf `parent` is non-`NULL`, then it will prepend the new row before the first\nchild of `parent`, otherwise it will prepend a row to the top level. The\n`iter` parameter will be changed to point to this new row.  The row will\nbe empty after this function is called. To fill in values, you need to\ncall gtk_tree_store_set() or gtk_tree_store_set_value()."
+    },
+    "remove": {
+      "brief": "Removes `iter` from `tree_store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1250,
+      "md": "Removes `iter` from `tree_store`.\n\nAfter being removed, `iter` is set to the next valid row at that level, or\ninvalidated if it previously pointed to the last one."
+    },
+    "reorder": {
+      "brief": "Reorders the children of `parent` in `tree_store` to follow the order indicated by `new_order`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 2339,
+      "md": "Reorders the children of `parent` in `tree_store` to follow the order\nindicated by `new_order`.\n\nNote that this function only works with unsorted stores."
+    },
+    "set": {
+      "brief": "Sets the value of one or more cells in the row referenced by `iter`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1213,
+      "md": "Sets the value of one or more cells in the row referenced by `iter`.\n\nThe variable argument list should contain integer column numbers,\neach column number followed by the value to be set.\n\nThe list is terminated by a value of `-1`.\n\nFor example, to set column 0 with type `G_TYPE_STRING` to “Foo”, you would\nwrite\n\n```c\ngtk_tree_store_set (store, iter, 0, \"Foo\", -1);\n```\n\nThe value will be referenced by the store if it is a `G_TYPE_OBJECT`, and it\nwill be copied if it is a `G_TYPE_STRING` or `G_TYPE_BOXED`."
+    },
+    "set_column_types": {
+      "brief": "Sets the type of the columns in a tree store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 400,
+      "md": "Sets the type of the columns in a tree store.\n\nThis function is meant primarily for types that inherit from\n`GtkTreeStore`, and should only be used when constructing a new\n`GtkTreeStore`.\n\nThis functions cannot be called after a row has been added,\nor a method on the `GtkTreeModel` interface is called on the\ntree store."
+    },
+    "set_valist": {
+      "brief": "A version of gtk_tree_store_set() using `va_list`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1173,
+      "md": "A version of gtk_tree_store_set() using `va_list`."
+    },
+    "set_value": {
+      "brief": "Sets the data in the cell specified by `iter` and `column`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 977,
+      "md": "Sets the data in the cell specified by `iter` and `column`.\n\nThe type of `value` must be convertible to the type of the\ncolumn."
+    },
+    "set_valuesv": {
+      "brief": "A variant of gtk_tree_store_set_valist() which takes the columns and values as two arrays, instead of using variadic arguments.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 1124,
+      "md": "A variant of gtk_tree_store_set_valist() which takes\nthe columns and values as two arrays, instead of using variadic\narguments.\n\nThis function is mainly intended for language bindings or in case\nthe number of columns to change is not known until run-time."
+    },
+    "swap": {
+      "brief": "Swaps `a` and `b` in the same level of `tree_store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`TreeListModel`](xref:gtk:Gtk.TreeListModel) instead",
+      "file": "gtk/deprecated/gtktreestore.c",
+      "line": 2427,
+      "md": "Swaps `a` and `b` in the same level of `tree_store`.\n\nNote that this function only works with unsorted stores."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -76,20 +76,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsTextItem::anonymous",
       "members": [
         {
+          "cpp": "QGraphicsTextItem::Type",
           "name": "Type",
           "value": "8"
         }
       ],
       "metaobject": null,
       "name": "anonymous",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsTextItem",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsTextItem:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -136,7 +150,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const override",
       "since": null,
@@ -165,7 +179,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -236,7 +250,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor defaultTextColor() const",
       "since": null,
@@ -510,7 +524,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font() const",
       "since": null,
@@ -687,7 +701,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -980,7 +994,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath opaqueArea() const override",
       "since": null,
@@ -1129,7 +1143,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -1203,7 +1217,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -1388,7 +1402,7 @@
             "native": "const QTextCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTextCursor>"
           }
         }
       ],
@@ -1425,7 +1439,7 @@
             "native": "Qt::TextInteractionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::TextInteractionFlag>"
           }
         }
       ],
@@ -1496,7 +1510,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath shape() const override",
       "since": null,
@@ -1548,7 +1562,7 @@
         "native": "QTextCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCursor>"
       },
       "signature": "QTextCursor textCursor() const",
       "since": null,
@@ -1574,7 +1588,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       },
       "signature": "Qt::TextInteractionFlags textInteractionFlags() const",
       "since": null,
@@ -1715,9 +1729,11 @@
         "set": "setOpenExternalLinks"
       },
       "brief": null,
+      "default": null,
       "js_name": "openExternalLinks",
       "name": "openExternalLinks",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1738,15 +1754,17 @@
         "set": "setTextCursor"
       },
       "brief": null,
+      "default": null,
       "js_name": "textCursor",
       "name": "textCursor",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTextCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTextCursor>"
       }
     }
   ],

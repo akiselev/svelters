@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -85,7 +85,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -99,6 +99,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QLabel",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QLabel:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -119,7 +129,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -597,7 +607,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -823,7 +833,7 @@
         "native": "QPicture",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPicture>"
       },
       "signature": "QPicture picture() const",
       "since": "6.0",
@@ -852,7 +862,7 @@
             "native": "Qt::ReturnByValueConstant",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ReturnByValueConstant>"
           }
         }
       ],
@@ -860,7 +870,7 @@
         "native": "QPicture",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPicture>"
       },
       "signature": "QPicture picture(Qt::ReturnByValueConstant) const",
       "since": null,
@@ -886,7 +896,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap() const",
       "since": null,
@@ -915,7 +925,7 @@
             "native": "Qt::ReturnByValueConstant",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ReturnByValueConstant>"
           }
         }
       ],
@@ -923,7 +933,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap(Qt::ReturnByValueConstant) const",
       "since": null,
@@ -1030,7 +1040,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1326,7 +1336,7 @@
             "native": "const QPicture &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPicture>"
           }
         }
       ],
@@ -1363,7 +1373,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -1558,7 +1568,7 @@
             "native": "Qt::TextFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextFormat>"
           }
         }
       ],
@@ -1595,7 +1605,7 @@
             "native": "Qt::TextInteractionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::TextInteractionFlag>"
           }
         }
       ],
@@ -1666,7 +1676,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1718,7 +1728,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       },
       "signature": "Qt::TextFormat textFormat() const",
       "since": null,
@@ -1744,7 +1754,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       },
       "signature": "Qt::TextInteractionFlags textInteractionFlags() const",
       "since": null,
@@ -1827,6 +1837,8 @@
         "set": "setAlignment"
       },
       "brief": "The alignment of the label's contents",
+      "default": "AlignLeading|AlignVCenter",
+      "default_origin": "runtime",
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -1847,12 +1859,13 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -1867,6 +1880,8 @@
         "set": null
       },
       "brief": "Whether there is any text selected",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "hasSelectedText",
       "metaobject": {
         "constant": false,
@@ -1887,6 +1902,7 @@
       "name": "hasSelectedText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1907,6 +1923,8 @@
         "set": "setIndent"
       },
       "brief": "The label's text indent in pixels",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "indent",
       "metaobject": {
         "constant": false,
@@ -1927,6 +1945,7 @@
       "name": "indent",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1947,6 +1966,8 @@
         "set": "setMargin"
       },
       "brief": "The width of the margin",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "margin",
       "metaobject": {
         "constant": false,
@@ -1967,6 +1988,7 @@
       "name": "margin",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1987,6 +2009,8 @@
         "set": "setOpenExternalLinks"
       },
       "brief": null,
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "openExternalLinks",
       "metaobject": {
         "constant": false,
@@ -2007,6 +2031,7 @@
       "name": "openExternalLinks",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2027,6 +2052,7 @@
         "set": "setPixmap"
       },
       "brief": "The label's pixmap",
+      "default": null,
       "js_name": "pixmap",
       "metaobject": {
         "constant": false,
@@ -2047,12 +2073,13 @@
       "name": "pixmap",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       }
     },
     {
@@ -2067,6 +2094,8 @@
         "set": "setScaledContents"
       },
       "brief": "Whether the label will scale its contents to fill all available space",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "scaledContents",
       "metaobject": {
         "constant": false,
@@ -2087,6 +2116,7 @@
       "name": "scaledContents",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2107,6 +2137,8 @@
         "set": null
       },
       "brief": "The selected text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "selectedText",
       "metaobject": {
         "constant": false,
@@ -2127,6 +2159,7 @@
       "name": "selectedText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2147,6 +2180,8 @@
         "set": "setText"
       },
       "brief": "The label's text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -2167,6 +2202,7 @@
       "name": "text",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2187,6 +2223,8 @@
         "set": "setTextFormat"
       },
       "brief": "The label's text format",
+      "default": "AutoText",
+      "default_origin": "runtime",
       "js_name": "textFormat",
       "metaobject": {
         "constant": false,
@@ -2207,12 +2245,13 @@
       "name": "textFormat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       }
     },
     {
@@ -2227,6 +2266,8 @@
         "set": "setTextInteractionFlags"
       },
       "brief": null,
+      "default": "LinksAccessibleByMouse",
+      "default_origin": "runtime",
       "js_name": "textInteractionFlags",
       "metaobject": {
         "constant": false,
@@ -2247,12 +2288,13 @@
       "name": "textInteractionFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       }
     },
     {
@@ -2267,6 +2309,8 @@
         "set": "setWordWrap"
       },
       "brief": "The label's word-wrapping policy",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "wordWrap",
       "metaobject": {
         "constant": false,
@@ -2287,6 +2331,7 @@
       "name": "wordWrap",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

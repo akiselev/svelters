@@ -78,6 +78,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QToolBar",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QToolBar:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -101,7 +111,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -282,7 +292,7 @@
         "native": "Qt::ToolBarAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::ToolBarArea>"
       },
       "signature": "Qt::ToolBarAreas allowedAreas() const",
       "since": null,
@@ -408,7 +418,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -521,7 +531,7 @@
             "native": "Qt::ToolBarArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolBarArea>"
           }
         }
       ],
@@ -633,7 +643,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -699,7 +709,7 @@
             "native": "Qt::ToolBarAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::ToolBarArea>"
           }
         }
       ],
@@ -773,7 +783,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -847,7 +857,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -884,7 +894,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],
@@ -944,7 +954,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       },
       "signature": "Qt::ToolButtonStyle toolButtonStyle() const",
       "since": null,
@@ -1064,6 +1074,8 @@
         "set": "setAllowedAreas"
       },
       "brief": "Areas where the toolbar may be placed",
+      "default": "ToolBarArea_Mask|AllToolBarAreas",
+      "default_origin": "runtime",
       "js_name": "allowedAreas",
       "metaobject": {
         "constant": false,
@@ -1087,12 +1099,13 @@
         "signal": "allowedAreasChanged(Qt::ToolBarAreas)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ToolBarAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::ToolBarArea>"
       }
     },
     {
@@ -1107,6 +1120,8 @@
         "set": "setFloatable"
       },
       "brief": "Whether the toolbar can be dragged and dropped as an independent window",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "floatable",
       "metaobject": {
         "constant": false,
@@ -1127,6 +1142,7 @@
       "name": "floatable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1147,6 +1163,8 @@
         "set": null
       },
       "brief": "Whether the toolbar is an independent window",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "floating",
       "metaobject": {
         "constant": false,
@@ -1167,6 +1185,7 @@
       "name": "floating",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1187,6 +1206,7 @@
         "set": "setIconSize"
       },
       "brief": "Size of icons in the toolbar",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -1210,12 +1230,13 @@
         "signal": "iconSizeChanged(QSize)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -1230,6 +1251,8 @@
         "set": "setMovable"
       },
       "brief": "Whether the user can move the toolbar within the toolbar area, or between toolbar areas",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "movable",
       "metaobject": {
         "constant": false,
@@ -1253,6 +1276,7 @@
         "signal": "movableChanged(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1273,6 +1297,8 @@
         "set": "setOrientation"
       },
       "brief": "Of the toolbar",
+      "default": "Horizontal",
+      "default_origin": "runtime",
       "js_name": "orientation",
       "metaobject": {
         "constant": false,
@@ -1296,12 +1322,13 @@
         "signal": "orientationChanged(Qt::Orientation)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       }
     },
     {
@@ -1316,6 +1343,8 @@
         "set": "setToolButtonStyle"
       },
       "brief": "The style of toolbar buttons",
+      "default": "ToolButtonIconOnly",
+      "default_origin": "runtime",
       "js_name": "toolButtonStyle",
       "metaobject": {
         "constant": false,
@@ -1339,12 +1368,13 @@
         "signal": "toolButtonStyleChanged(Qt::ToolButtonStyle)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       }
     }
   ],
@@ -1408,7 +1438,7 @@
             "native": "Qt::ToolBarAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::ToolBarArea>"
           }
         }
       ],
@@ -1443,7 +1473,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1513,7 +1543,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -1548,7 +1578,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],

@@ -1,0 +1,195 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new grid widget.",
+      "file": "gtk/gtkgrid.c",
+      "line": 527,
+      "md": "Creates a new grid widget."
+    }
+  },
+  "doc": {
+    "brief": "Arranges its child widgets in rows and columns.",
+    "file": "gtk/gtkgrid.c",
+    "line": 35,
+    "md": "Arranges its child widgets in rows and columns.\n\nIt supports arbitrary positions and horizontal/vertical spans.\n\nChildren are added using [`Grid.attach()`](xref:gtk:Gtk.Grid#method:attach). They can span multiple\nrows or columns. It is also possible to add a child next to an existing\nchild, using [`Grid.attach_next_to()`](xref:gtk:Gtk.Grid#method:attach_next_to). To remove a child from the\ngrid, use [`Grid.remove()`](xref:gtk:Gtk.Grid#method:remove).\n\nThe behaviour of `GtkGrid` when several children occupy the same grid\ncell is undefined.\n\n# GtkGrid as GtkBuildable\n\nEvery child in a `GtkGrid` has access to a custom [`Buildable`](xref:gtk:Gtk.Buildable)\nelement, called `<layout>`. It can by used to specify a position in the\ngrid and optionally spans. All properties that can be used in the `<layout>`\nelement are implemented by [`GridLayoutChild`](xref:gtk:Gtk.GridLayoutChild).\n\nIt is implemented by `GtkWidget` using [`LayoutManager`](xref:gtk:Gtk.LayoutManager).\n\nTo showcase it, here is a simple example:\n\n```xml\n<object class=\"GtkGrid\" id=\"my_grid\">\n  <child>\n    <object class=\"GtkButton\" id=\"button1\">\n      <property name=\"label\">Button 1</property>\n      <layout>\n        <property name=\"column\">0</property>\n        <property name=\"row\">0</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkButton\" id=\"button2\">\n      <property name=\"label\">Button 2</property>\n      <layout>\n        <property name=\"column\">1</property>\n        <property name=\"row\">0</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkButton\" id=\"button3\">\n      <property name=\"label\">Button 3</property>\n      <layout>\n        <property name=\"column\">2</property>\n        <property name=\"row\">0</property>\n        <property name=\"row-span\">2</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkButton\" id=\"button4\">\n      <property name=\"label\">Button 4</property>\n      <layout>\n        <property name=\"column\">0</property>\n        <property name=\"row\">1</property>\n        <property name=\"column-span\">2</property>\n      </layout>\n    </object>\n  </child>\n</object>\n```\n\nIt organizes the first two buttons side-by-side in one cell each.\nThe third button is in the last column but spans across two rows.\nThis is defined by the `row-span` property. The last button is\nlocated in the second row and spans across two columns, which is\ndefined by the `column-span` property.\n\n# CSS nodes\n\n`GtkGrid` uses a single CSS node with name `grid`.\n\n# Accessibility\n\nUntil GTK 4.10, `GtkGrid` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nStarting from GTK 4.12, `GtkGrid` uses the [`AccessibleRole.generic`](xref:gtk:Gtk.AccessibleRole#value:generic) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Grid",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "attach": {
+      "brief": "Adds a widget to the grid.",
+      "file": "gtk/gtkgrid.c",
+      "line": 540,
+      "md": "Adds a widget to the grid.\n\nThe position of `child` is determined by `column` and `row`.\nThe number of “cells” that `child` will occupy is determined\nby `width` and `height`."
+    },
+    "attach_next_to": {
+      "brief": "Adds a widget to the grid.",
+      "file": "gtk/gtkgrid.c",
+      "line": 572,
+      "md": "Adds a widget to the grid.\n\nThe widget is placed next to `sibling`, on the side determined by\n`side`. When `sibling` is `NULL`, the widget is placed in row (for\nleft or right placement) or column 0 (for top or bottom placement),\nat the end indicated by `side`.\n\nAttaching widgets labeled `[1]`, `[2]`, `[3]` with `@sibling == `NULL`` and\n`@side == %GTK_POS_LEFT` yields a layout of `[3][2][1]`."
+    },
+    "get_baseline_row": {
+      "brief": "Returns which row defines the global baseline of `grid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1211,
+      "md": "Returns which row defines the global baseline of `grid`."
+    },
+    "get_child_at": {
+      "brief": "Gets the child of `grid` whose area covers the grid cell at `column`, `row`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 669,
+      "md": "Gets the child of `grid` whose area covers the grid\ncell at `column`, `row`."
+    },
+    "get_column_homogeneous": {
+      "brief": "Returns whether all columns of `grid` have the same width.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1032,
+      "md": "Returns whether all columns of `grid` have the same width."
+    },
+    "get_column_spacing": {
+      "brief": "Returns the amount of space between the columns of `grid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1118,
+      "md": "Returns the amount of space between the columns of `grid`."
+    },
+    "get_row_baseline_position": {
+      "brief": "Returns the baseline position of `row`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1161,
+      "md": "Returns the baseline position of `row`.\n\nSee [`Grid.set_row_baseline_position()`](xref:gtk:Gtk.Grid#method:set_row_baseline_position)."
+    },
+    "get_row_homogeneous": {
+      "brief": "Returns whether all rows of `grid` have the same height.",
+      "file": "gtk/gtkgrid.c",
+      "line": 990,
+      "md": "Returns whether all rows of `grid` have the same height."
+    },
+    "get_row_spacing": {
+      "brief": "Returns the amount of space between the rows of `grid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1075,
+      "md": "Returns the amount of space between the rows of `grid`."
+    },
+    "insert_column": {
+      "brief": "Inserts a column at the specified position.",
+      "file": "gtk/gtkgrid.c",
+      "line": 821,
+      "md": "Inserts a column at the specified position.\n\nChildren which are attached at or to the right of this position\nare moved one column to the right. Children which span across this\nposition are grown to span the new column."
+    },
+    "insert_next_to": {
+      "brief": "Inserts a row or column at the specified position.",
+      "file": "gtk/gtkgrid.c",
+      "line": 911,
+      "md": "Inserts a row or column at the specified position.\n\nThe new row or column is placed next to `sibling`, on the side\ndetermined by `side`. If `side` is %GTK_POS_TOP or %GTK_POS_BOTTOM,\na row is inserted. If `side` is %GTK_POS_LEFT of %GTK_POS_RIGHT,\na column is inserted."
+    },
+    "insert_row": {
+      "brief": "Inserts a row at the specified position.",
+      "file": "gtk/gtkgrid.c",
+      "line": 732,
+      "md": "Inserts a row at the specified position.\n\nChildren which are attached at or below this position\nare moved one row down. Children which span across this\nposition are grown to span the new row."
+    },
+    "query_child": {
+      "brief": "Queries the attach points and spans of `child` inside the given `GtkGrid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1229,
+      "md": "Queries the attach points and spans of `child` inside the given `GtkGrid`."
+    },
+    "remove": {
+      "brief": "Removes a child from `grid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 711,
+      "md": "Removes a child from `grid`.\n\nThe child must have been added with\n[`Grid.attach()`](xref:gtk:Gtk.Grid#method:attach) or [`Grid.attach_next_to()`](xref:gtk:Gtk.Grid#method:attach_next_to)."
+    },
+    "remove_column": {
+      "brief": "Removes a column from the grid.",
+      "file": "gtk/gtkgrid.c",
+      "line": 859,
+      "md": "Removes a column from the grid.\n\nChildren that are placed in this column are removed,\nspanning children that overlap this column have their\nwidth reduced by one, and children after the column\nare moved to the left."
+    },
+    "remove_row": {
+      "brief": "Removes a row from the grid.",
+      "file": "gtk/gtkgrid.c",
+      "line": 770,
+      "md": "Removes a row from the grid.\n\nChildren that are placed in this row are removed,\nspanning children that overlap this row have their\nheight reduced by one, and children below the row\nare moved up."
+    },
+    "set_baseline_row": {
+      "brief": "Sets which row defines the global baseline for the entire grid.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1183,
+      "md": "Sets which row defines the global baseline for the entire grid.\n\nEach row in the grid can have its own local baseline, but only\none of those is global, meaning it will be the baseline in the\nparent of the `grid`."
+    },
+    "set_column_homogeneous": {
+      "brief": "Sets whether all columns of `grid` will have the same width.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1008,
+      "md": "Sets whether all columns of `grid` will have the same width."
+    },
+    "set_column_spacing": {
+      "brief": "Sets the amount of space between columns of `grid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1093,
+      "md": "Sets the amount of space between columns of `grid`."
+    },
+    "set_row_baseline_position": {
+      "brief": "Sets how the baseline should be positioned on `row` of the grid, in case that row is assigned more space than is requested.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1136,
+      "md": "Sets how the baseline should be positioned on `row` of the\ngrid, in case that row is assigned more space than is requested.\n\nThe default baseline position is %GTK_BASELINE_POSITION_CENTER."
+    },
+    "set_row_homogeneous": {
+      "brief": "Sets whether all rows of `grid` will have the same height.",
+      "file": "gtk/gtkgrid.c",
+      "line": 966,
+      "md": "Sets whether all rows of `grid` will have the same height."
+    },
+    "set_row_spacing": {
+      "brief": "Sets the amount of space between rows of `grid`.",
+      "file": "gtk/gtkgrid.c",
+      "line": 1050,
+      "md": "Sets the amount of space between rows of `grid`."
+    }
+  },
+  "properties": {
+    "baseline-row": {
+      "brief": "The row to align to the baseline when valign is using baseline alignment.",
+      "file": "gtk/gtkgrid.c",
+      "line": 470,
+      "md": "The row to align to the baseline when valign is using baseline alignment."
+    },
+    "column-homogeneous": {
+      "brief": "If `TRUE`, the columns are all the same width.",
+      "file": "gtk/gtkgrid.c",
+      "line": 460,
+      "md": "If `TRUE`, the columns are all the same width."
+    },
+    "column-spacing": {
+      "brief": "The amount of space between two consecutive columns.",
+      "file": "gtk/gtkgrid.c",
+      "line": 440,
+      "md": "The amount of space between two consecutive columns."
+    },
+    "row-homogeneous": {
+      "brief": "If `TRUE`, the rows are all the same height.",
+      "file": "gtk/gtkgrid.c",
+      "line": 450,
+      "md": "If `TRUE`, the rows are all the same height."
+    },
+    "row-spacing": {
+      "brief": "The amount of space between two consecutive rows.",
+      "file": "gtk/gtkgrid.c",
+      "line": 430,
+      "md": "The amount of space between two consecutive rows."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

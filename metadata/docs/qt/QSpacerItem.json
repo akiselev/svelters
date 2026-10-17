@@ -1,0 +1,71 @@
+{
+  "doc": {
+    "brief": "The QSpacerItem class provides blank space in a layout.",
+    "index_brief": "Blank space in a layout",
+    "url": "https://doc.qt.io/qt-6/qspaceritem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSpacerItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QRect geometry() const override": {
+      "brief": "Reimplements: [QLayoutItem::geometry](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#geometry"
+    },
+    "QSize maximumSize() const override": {
+      "brief": "Reimplements: [QLayoutItem::maximumSize](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#maximumSize"
+    },
+    "QSize minimumSize() const override": {
+      "brief": "Reimplements: [QLayoutItem::minimumSize](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#minimumSize"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QLayoutItem::sizeHint](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#sizeHint"
+    },
+    "QSizePolicy sizePolicy() const": {
+      "brief": "Returns the size policy of this item.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#sizePolicy"
+    },
+    "QSpacerItem * spacerItem() override": {
+      "brief": "Reimplements: [QLayoutItem::spacerItem](xref:qt:QLayoutItem)().",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#spacerItem"
+    },
+    "QSpacerItem(int w, int h, QSizePolicy::Policy hPolicy, QSizePolicy::Policy vPolicy)": {
+      "brief": "Constructs a spacer item with preferred width *w*, preferred height *h*, horizontal size policy *hPolicy* and vertical size policy *vPolicy*.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#QSpacerItem"
+    },
+    "Qt::Orientations expandingDirections() const override": {
+      "brief": "Reimplements: [QLayoutItem::expandingDirections](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#expandingDirections"
+    },
+    "bool isEmpty() const override": {
+      "brief": "Reimplements: [QLayoutItem::isEmpty](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#isEmpty"
+    },
+    "void changeSize(int w, int h, QSizePolicy::Policy hPolicy, QSizePolicy::Policy vPolicy)": {
+      "brief": "Changes this spacer item to have preferred width *w*, preferred height *h*, horizontal size policy *hPolicy* and vertical size policy *vPolicy*.",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#changeSize"
+    },
+    "void setGeometry(const QRect &r) override": {
+      "brief": "Reimplements: [QLayoutItem::setGeometry](xref:qt:QLayoutItem)(const QRect &r).",
+      "url": "https://doc.qt.io/qt-6/qspaceritem.html#setGeometry"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

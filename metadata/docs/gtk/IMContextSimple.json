@@ -1,0 +1,46 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkIMContextSimple`.",
+      "file": "gtk/gtkimcontextsimple.c",
+      "line": 395,
+      "md": "Creates a new `GtkIMContextSimple`."
+    }
+  },
+  "doc": {
+    "brief": "Supports compose sequences, dead keys and numeric Unicode input.",
+    "file": "gtk/gtkimcontextsimple.c",
+    "line": 39,
+    "md": "Supports compose sequences, dead keys and numeric Unicode input.\n\n## Compose sequences\n\n`GtkIMContextSimple` reads compose sequences from the first of the\nfollowing files that is found: ~/.config/gtk-4.0/Compose, ~/.XCompose,\n/usr/share/X11/locale/$locale/Compose (for locales that have a nontrivial\nCompose file). A subset of the file syntax described in the Compose(5)\nmanual page is supported. Additionally, `include \"%L\"` loads GTK’s built-in\ntable of compose sequences rather than the locale-specific one from X11.\n\nIf none of these files is found, `GtkIMContextSimple` uses a built-in table\nof compose sequences that is derived from the X11 Compose files.\n\nNote that compose sequences typically start with the Compose_key, which is\noften not available as a dedicated key on keyboards. Keyboard layouts may\nmap this keysym to other keys, such as the right Control key.\n\n## Unicode characters\n\n`GtkIMContextSimple` also supports numeric entry of Unicode characters\nby typing <kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>u</kbd>, followed by a\nhexadecimal Unicode codepoint.\n\nFor example,\n\n    Ctrl-Shift-u 1 2 3 Enter\n\nyields U+0123 LATIN SMALL LETTER G WITH CEDILLA, i.e. ģ.\n\n## Dead keys\n\n`GtkIMContextSimple` supports dead keys. For example, typing\n\n    dead_acute a\n\n yields U+00E! LATIN SMALL LETTER_A WITH ACUTE, i.e. á. Note that this\n depends on the keyboard layout including dead keys."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IMContextSimple",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_compose_file": {
+      "brief": "Adds an additional table from the X11 compose file.",
+      "file": "gtk/gtkimcontextsimple.c",
+      "line": 1408,
+      "md": "Adds an additional table from the X11 compose file."
+    },
+    "add_table": {
+      "brief": "Adds an additional table to search to the input context.",
+      "deprecated": "4.4",
+      "deprecated_md": "Use gtk_im_context_simple_add_compose_file()",
+      "file": "gtk/gtkimcontextsimple.c",
+      "line": 1378,
+      "md": "Adds an additional table to search to the input context.\nEach row of the table consists of `max_seq_len` key symbols\nfollowed by two #guint16 interpreted as the high and low\nwords of a #gunicode value. Tables are searched starting\nfrom the last added.\n\nThe table must be sorted in dictionary order on the\nnumeric value of the key symbol fields. (Values beyond\nthe length of the sequence should be zero.)"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

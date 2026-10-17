@@ -86,7 +86,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         },
         {
@@ -108,16 +108,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QCompleter::CompletionMode",
       "members": [
         {
+          "cpp": "QCompleter::PopupCompletion",
           "name": "PopupCompletion",
           "value": "0"
         },
         {
+          "cpp": "QCompleter::UnfilteredPopupCompletion",
           "name": "UnfilteredPopupCompletion",
           "value": "1"
         },
         {
+          "cpp": "QCompleter::InlineCompletion",
           "name": "InlineCompletion",
           "value": "2"
         }
@@ -132,19 +137,25 @@
         "scoped": false
       },
       "name": "CompletionMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QCompleter::ModelSorting",
       "members": [
         {
+          "cpp": "QCompleter::UnsortedModel",
           "name": "UnsortedModel",
           "value": "0"
         },
         {
+          "cpp": "QCompleter::CaseSensitivelySortedModel",
           "name": "CaseSensitivelySortedModel",
           "value": "1"
         },
         {
+          "cpp": "QCompleter::CaseInsensitivelySortedModel",
           "name": "CaseInsensitivelySortedModel",
           "value": "2"
         }
@@ -159,12 +170,23 @@
         "scoped": false
       },
       "name": "ModelSorting",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -185,7 +207,7 @@
         "native": "Qt::CaseSensitivity",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CaseSensitivity>"
       },
       "signature": "Qt::CaseSensitivity caseSensitivity() const",
       "since": null,
@@ -214,7 +236,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -300,7 +322,7 @@
         "native": "QCompleter::CompletionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCompleter::CompletionMode>"
       },
       "signature": "QCompleter::CompletionMode completionMode() const",
       "since": null,
@@ -566,7 +588,7 @@
         "native": "Qt::MatchFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MatchFlag>"
       },
       "signature": "Qt::MatchFlags filterMode() const",
       "since": null,
@@ -644,7 +666,7 @@
         "native": "QCompleter::ModelSorting",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QCompleter::ModelSorting>"
       },
       "signature": "QCompleter::ModelSorting modelSorting() const",
       "since": null,
@@ -736,7 +758,7 @@
             "native": "Qt::CaseSensitivity",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CaseSensitivity>"
           }
         }
       ],
@@ -810,7 +832,7 @@
             "native": "QCompleter::CompletionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCompleter::CompletionMode>"
           }
         }
       ],
@@ -958,7 +980,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -1069,7 +1091,7 @@
             "native": "QCompleter::ModelSorting",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QCompleter::ModelSorting>"
           }
         }
       ],
@@ -1225,7 +1247,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList splitPath(const QString &path) const",
       "since": null,
@@ -1330,6 +1352,8 @@
         "set": "setCaseSensitivity"
       },
       "brief": "The case sensitivity of the matching",
+      "default": "CaseSensitive",
+      "default_origin": "runtime",
       "js_name": "caseSensitivity",
       "metaobject": {
         "constant": false,
@@ -1350,12 +1374,13 @@
       "name": "caseSensitivity",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::CaseSensitivity",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CaseSensitivity>"
       }
     },
     {
@@ -1370,6 +1395,8 @@
         "set": "setCompletionColumn"
       },
       "brief": "The column in the model in which completions are searched for",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "completionColumn",
       "metaobject": {
         "constant": false,
@@ -1390,6 +1417,7 @@
       "name": "completionColumn",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1410,6 +1438,8 @@
         "set": "setCompletionMode"
       },
       "brief": "How the completions are provided to the user",
+      "default": "PopupCompletion",
+      "default_origin": "runtime",
       "js_name": "completionMode",
       "metaobject": {
         "constant": false,
@@ -1430,12 +1460,13 @@
       "name": "completionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "CompletionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<CompletionMode>"
+        "ref": "enum<QCompleter::CompletionMode>"
       }
     },
     {
@@ -1450,6 +1481,8 @@
         "set": "setCompletionPrefix"
       },
       "brief": "The completion prefix used to provide completions",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "completionPrefix",
       "metaobject": {
         "constant": false,
@@ -1470,6 +1503,7 @@
       "name": "completionPrefix",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1490,6 +1524,8 @@
         "set": "setCompletionRole"
       },
       "brief": "The item role to be used to query the contents of items for matching",
+      "default": 2,
+      "default_origin": "runtime",
       "js_name": "completionRole",
       "metaobject": {
         "constant": false,
@@ -1510,6 +1546,7 @@
       "name": "completionRole",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1530,6 +1567,8 @@
         "set": "setFilterMode"
       },
       "brief": "This property controls how filtering is performed",
+      "default": "MatchStartsWith",
+      "default_origin": "runtime",
       "js_name": "filterMode",
       "metaobject": {
         "constant": false,
@@ -1550,12 +1589,13 @@
       "name": "filterMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::MatchFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MatchFlag>"
       }
     },
     {
@@ -1570,6 +1610,8 @@
         "set": "setMaxVisibleItems"
       },
       "brief": "The maximum allowed size on screen of the completer, measured in items",
+      "default": 7,
+      "default_origin": "runtime",
       "js_name": "maxVisibleItems",
       "metaobject": {
         "constant": false,
@@ -1590,6 +1632,7 @@
       "name": "maxVisibleItems",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1610,6 +1653,8 @@
         "set": "setModelSorting"
       },
       "brief": "The way the model is sorted",
+      "default": "UnsortedModel",
+      "default_origin": "runtime",
       "js_name": "modelSorting",
       "metaobject": {
         "constant": false,
@@ -1630,12 +1675,13 @@
       "name": "modelSorting",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ModelSorting",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ModelSorting>"
+        "ref": "enum<QCompleter::ModelSorting>"
       }
     },
     {
@@ -1650,6 +1696,8 @@
         "set": "setWrapAround"
       },
       "brief": "The completions wrap around when navigating through items",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "wrapAround",
       "metaobject": {
         "constant": false,
@@ -1670,6 +1718,7 @@
       "name": "wrapAround",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

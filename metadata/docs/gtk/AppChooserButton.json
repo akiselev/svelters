@@ -1,0 +1,169 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAppChooserButton` for applications that can handle content of the given type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 887,
+      "md": "Creates a new `GtkAppChooserButton` for applications\nthat can handle content of the given type."
+    }
+  },
+  "doc": {
+    "brief": "The `GtkAppChooserButton` lets the user select an application.",
+    "deprecated": "4.10",
+    "deprecated_md": "The application selection widgets should be\n  implemented according to the design of each platform and/or\n  application requiring them.",
+    "file": "gtk/deprecated/gtkappchooserbutton.c",
+    "line": 21,
+    "md": "The `GtkAppChooserButton` lets the user select an application.\n\nInitially, a `GtkAppChooserButton` selects the first application\nin its list, which will either be the most-recently used application\nor, if [`AppChooserButton:show-default-item`](xref:gtk:Gtk.AppChooserButton#property:show-default-item) is `TRUE`, the\ndefault application.\n\nThe list of applications shown in a `GtkAppChooserButton` includes\nthe recommended applications for the given content type. When\n[`AppChooserButton:show-default-item`](xref:gtk:Gtk.AppChooserButton#property:show-default-item) is set, the default\napplication is also included. To let the user chooser other applications,\nyou can set the [`AppChooserButton:show-dialog-item`](xref:gtk:Gtk.AppChooserButton#property:show-dialog-item) property,\nwhich allows to open a full [`AppChooserDialog`](xref:gtk:Gtk.AppChooserDialog).\n\nIt is possible to add custom items to the list, using\n[`AppChooserButton.append_custom_item()`](xref:gtk:Gtk.AppChooserButton#method:append_custom_item). These items cause\nthe [`AppChooserButton::custom-item-activated`](xref:gtk:Gtk.AppChooserButton#event:custom-item-activated) signal to be\nemitted when they are selected.\n\nTo track changes in the selected application, use the\n[`AppChooserButton::changed`](xref:gtk:Gtk.AppChooserButton#event:changed) signal.\n\n## CSS nodes\n\n`GtkAppChooserButton` has a single CSS node with the name “appchooserbutton”."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AppChooserButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append_custom_item": {
+      "brief": "Appends a custom item to the list of applications that is shown in the popup.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 928,
+      "md": "Appends a custom item to the list of applications that is shown\nin the popup.\n\nThe item name must be unique per-widget. Clients can use the\nprovided name as a detail for the\n[`AppChooserButton::custom-item-activated`](xref:gtk:Gtk.AppChooserButton#event:custom-item-activated) signal, to add a\ncallback for the activation of a particular custom item in the list.\n\nSee also [`AppChooserButton.append_separator()`](xref:gtk:Gtk.AppChooserButton#method:append_separator)."
+    },
+    "append_separator": {
+      "brief": "Appends a separator to the list of applications that is shown in the popup.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 908,
+      "md": "Appends a separator to the list of applications that is shown\nin the popup."
+    },
+    "get_heading": {
+      "brief": "Returns the text to display at the top of the dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1106,
+      "md": "Returns the text to display at the top of the dialog."
+    },
+    "get_modal": {
+      "brief": "Gets whether the dialog is modal.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1148,
+      "md": "Gets whether the dialog is modal."
+    },
+    "get_show_default_item": {
+      "brief": "Returns whether the dropdown menu should show the default application at the top.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1038,
+      "md": "Returns whether the dropdown menu should show the default\napplication at the top."
+    },
+    "get_show_dialog_item": {
+      "brief": "Returns whether the dropdown menu shows an item for a `GtkAppChooserDialog`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 995,
+      "md": "Returns whether the dropdown menu shows an item\nfor a `GtkAppChooserDialog`."
+    },
+    "set_active_custom_item": {
+      "brief": "Selects a custom item.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 962,
+      "md": "Selects a custom item.\n\nSee [`AppChooserButton.append_custom_item()`](xref:gtk:Gtk.AppChooserButton#method:append_custom_item).\n\nUse [`AppChooser.refresh()`](xref:gtk:Gtk.AppChooser#method:refresh) to bring the selection\nto its initial state."
+    },
+    "set_heading": {
+      "brief": "Sets the text to display at the top of the dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1083,
+      "md": "Sets the text to display at the top of the dialog.\n\nIf the heading is not set, the dialog displays a default text."
+    },
+    "set_modal": {
+      "brief": "Sets whether the dialog should be modal.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1125,
+      "md": "Sets whether the dialog should be modal."
+    },
+    "set_show_default_item": {
+      "brief": "Sets whether the dropdown menu of this button should show the default application for the given content type at top.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1057,
+      "md": "Sets whether the dropdown menu of this button should show the\ndefault application for the given content type at top."
+    },
+    "set_show_dialog_item": {
+      "brief": "Sets whether the dropdown menu of this button should show an entry to trigger a `GtkAppChooserDialog`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 1014,
+      "md": "Sets whether the dropdown menu of this button should show an\nentry to trigger a `GtkAppChooserDialog`."
+    }
+  },
+  "properties": {
+    "heading": {
+      "brief": "The text to show at the top of the dialog that can be opened from the button.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 710,
+      "md": "The text to show at the top of the dialog that can be\nopened from the button.\n\nThe string may contain Pango markup."
+    },
+    "modal": {
+      "brief": "Whether the app chooser dialog should be modal.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 723,
+      "md": "Whether the app chooser dialog should be modal."
+    },
+    "show-default-item": {
+      "brief": "Determines whether the dropdown menu shows the default application on top for the provided content type.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 699,
+      "md": "Determines whether the dropdown menu shows the default application\non top for the provided content type."
+    },
+    "show-dialog-item": {
+      "brief": "Determines whether the dropdown menu shows an item to open a `GtkAppChooserDialog`.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 688,
+      "md": "Determines whether the dropdown menu shows an item to open\na `GtkAppChooserDialog`."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the button is activated.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 770,
+      "md": "Emitted to when the button is activated.\n\nThe `::activate` signal on `GtkAppChooserButton` is an action signal and\nemitting it causes the button to pop up its dialog.",
+      "since": "4.4"
+    },
+    "changed": {
+      "brief": "Emitted when the active application changes.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 734,
+      "md": "Emitted when the active application changes."
+    },
+    "custom-item-activated": {
+      "brief": "Emitted when a custom item is activated.",
+      "file": "gtk/deprecated/gtkappchooserbutton.c",
+      "line": 750,
+      "md": "Emitted when a custom item is activated.\n\nUse [`AppChooserButton.append_custom_item()`](xref:gtk:Gtk.AppChooserButton#method:append_custom_item),\nto add custom items."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

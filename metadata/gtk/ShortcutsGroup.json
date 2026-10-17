@@ -35,6 +35,30 @@
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsGroup",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "orientation",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Box:prop:spacing",
+        "from": "svelters-api:v1:type:gtk:Gtk:Box",
+        "name": "spacing",
+        "origin": "manual"
+      }
+    ],
+    "slots": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Box:slot:children",
+        "from": "svelters-api:v1:type:gtk:Gtk:Box",
+        "name": "children",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -42,6 +66,16 @@
     "Gtk.Orientable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsGroup:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"
+  },
   "methods": [
     {
       "deprecated": true,

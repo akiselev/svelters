@@ -1,0 +1,94 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCssSection` referring to the section in the given `file` from the `start` location to the `end` location.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 36,
+      "md": "Creates a new `GtkCssSection` referring to the section\nin the given `file` from the `start` location to the\n`end` location."
+    },
+    "new_with_bytes": {
+      "brief": "Creates a new `GtkCssSection` referring to the section in the given `file` or the given `bytes` from the `start` location to the `end` location.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 56,
+      "md": "Creates a new `GtkCssSection` referring to the section\nin the given `file` or the given `bytes` from the `start` location to the\n`end` location.",
+      "since": "4.16"
+    }
+  },
+  "doc": {
+    "brief": "Defines a part of a CSS document.",
+    "file": "gtk/css/gtkcsssection.h",
+    "line": 32,
+    "md": "Defines a part of a CSS document.\n\nBecause sections are nested into one another, you can use\n[`CssSection.get_parent()`](xref:gtk:CssSection#method:get_parent) to get the containing region."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CssSection",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_bytes": {
+      "brief": "Gets the bytes that `section` was parsed from.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 183,
+      "md": "Gets the bytes that `section` was parsed from.",
+      "since": "4.16"
+    },
+    "get_end_location": {
+      "brief": "Returns the location in the CSS document where this section ends.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 219,
+      "md": "Returns the location in the CSS document where this section ends."
+    },
+    "get_file": {
+      "brief": "Gets the file that `section` was parsed from.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 163,
+      "md": "Gets the file that `section` was parsed from.\n\nIf no such file exists, for example because the CSS was loaded via\n[`CssProvider.load_from_data()`](xref:gtk:Gtk.CssProvider#method:load_from_data), then `NULL` is returned."
+    },
+    "get_parent": {
+      "brief": "Gets the parent section for the given `section`.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 140,
+      "md": "Gets the parent section for the given `section`.\n\nThe parent section is the section that contains this `section`. A special\ncase are sections of  type `GTK_CSS_SECTION_DOCUMENT`. Their parent will\neither be `NULL` if they are the original CSS document that was loaded by\n[`CssProvider.load_from_file()`](xref:gtk:Gtk.CssProvider#method:load_from_file) or a section of type\n`GTK_CSS_SECTION_IMPORT` if it was loaded with an `@import` rule from\na different file."
+    },
+    "get_start_location": {
+      "brief": "Returns the location in the CSS document where this section starts.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 202,
+      "md": "Returns the location in the CSS document where this section starts."
+    },
+    "print": {
+      "brief": "Prints the `section` into `string` in a human-readable form.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 236,
+      "md": "Prints the `section` into `string` in a human-readable form.\n\nThis is a form like `gtk.css:32:1-23` to denote line 32, characters\n1 to 23 in the file `gtk.css`."
+    },
+    "ref": {
+      "brief": "Increments the reference count on `section`.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 96,
+      "md": "Increments the reference count on `section`."
+    },
+    "to_string": {
+      "brief": "Prints the section into a human-readable text form using [`CssSection.print()`](xref:gtk:Gtk.CssSection#method:print).",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 284,
+      "md": "Prints the section into a human-readable text form using\n[`CssSection.print()`](xref:gtk:Gtk.CssSection#method:print)."
+    },
+    "unref": {
+      "brief": "Decrements the reference count on `section`, freeing the structure if the reference count reaches 0.",
+      "file": "gtk/css/gtkcsssection.c",
+      "line": 114,
+      "md": "Decrements the reference count on `section`, freeing the\nstructure if the reference count reaches 0."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

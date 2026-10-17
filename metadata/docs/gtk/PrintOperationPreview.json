@@ -1,0 +1,75 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The interface that is used to implement print preview.",
+    "file": "gtk/print/gtkprintoperationpreview.c",
+    "line": 28,
+    "md": "The interface that is used to implement print preview.\n\nA `GtkPrintOperationPreview` object is passed to the\n[`PrintOperation::preview`](xref:gtk:Gtk.PrintOperation#event:preview) signal by\n[`PrintOperation`](xref:gtk:Gtk.PrintOperation)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintOperationPreview",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "end_preview": {
+      "brief": "Ends a preview.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 154,
+      "md": "Ends a preview.\n\nThis function must be called to finish a custom print preview."
+    },
+    "is_selected": {
+      "brief": "Returns whether the given page is included in the set of pages that have been selected for printing.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 170,
+      "md": "Returns whether the given page is included in the set of pages that\nhave been selected for printing."
+    },
+    "render_page": {
+      "brief": "Renders a page to the preview.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 127,
+      "md": "Renders a page to the preview.\n\nThis is using the print context that was passed to the\n[`PrintOperation::preview`](xref:gtk:Gtk.PrintOperation#event:preview) handler together\nwith `preview`.\n\nA custom print preview should use this function to render\nthe currently selected page.\n\nNote that this function requires a suitable cairo context to\nbe associated with the print context."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "got-page-size": {
+      "brief": "Emitted once for each page that gets rendered to the preview.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 98,
+      "md": "Emitted once for each page that gets rendered to the preview.\n\nA handler for this signal should update the `context`\naccording to `page_setup` and set up a suitable cairo\ncontext, using [`PrintContext.set_cairo_context()`](xref:gtk:Gtk.PrintContext#method:set_cairo_context)."
+    },
+    "ready": {
+      "brief": "The ::ready signal gets emitted once per preview operation, before the first page is rendered.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 79,
+      "md": "The ::ready signal gets emitted once per preview operation,\nbefore the first page is rendered.\n\nA handler for this signal can be used for setup tasks."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "end_preview": {
+      "brief": "Ends a preview.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 154,
+      "md": "Ends a preview.\n\nThis function must be called to finish a custom print preview."
+    },
+    "is_selected": {
+      "brief": "Returns whether the given page is included in the set of pages that have been selected for printing.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 170,
+      "md": "Returns whether the given page is included in the set of pages that\nhave been selected for printing."
+    },
+    "render_page": {
+      "brief": "Renders a page to the preview.",
+      "file": "gtk/print/gtkprintoperationpreview.c",
+      "line": 127,
+      "md": "Renders a page to the preview.\n\nThis is using the print context that was passed to the\n[`PrintOperation::preview`](xref:gtk:Gtk.PrintOperation#event:preview) handler together\nwith `preview`.\n\nA custom print preview should use this function to render\nthe currently selected page.\n\nNote that this function requires a suitable cairo context to\nbe associated with the print context."
+    }
+  }
+}

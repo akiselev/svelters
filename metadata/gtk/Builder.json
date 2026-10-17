@@ -125,6 +125,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:Builder",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:Builder:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:Builder:method:add_from_file",

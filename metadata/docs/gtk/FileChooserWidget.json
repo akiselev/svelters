@@ -1,0 +1,128 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFileChooserWidget`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Direct use of `GtkFileChooserWidget` is deprecated",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 7576,
+      "md": "Creates a new `GtkFileChooserWidget`.\n\nThis is a file chooser widget that can be embedded in custom\nwindows, and it is the same widget that is used by\n`GtkFileChooserDialog`."
+    }
+  },
+  "doc": {
+    "brief": "`GtkFileChooserWidget` is a widget for choosing files.",
+    "deprecated": "4.10",
+    "deprecated_md": "Direct use of `GtkFileChooserWidget` is deprecated",
+    "file": "gtk/gtkfilechooserwidget.c",
+    "line": 113,
+    "md": "`GtkFileChooserWidget` is a widget for choosing files.\n\nIt exposes the [`FileChooser`](xref:gtk:Gtk.FileChooser) interface, and you should\nuse the methods of this interface to interact with the\nwidget.\n\n# Shortcuts and Gestures\n\n`GtkFileChooserWidget` supports the following keyboard shortcuts:\n\n- <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> opens the context menu.\n\nThe following signals have default keybindings:\n\n- [`FileChooserWidget::desktop-folder`](xref:gtk:Gtk.FileChooserWidget#event:desktop-folder)\n- [`FileChooserWidget::down-folder`](xref:gtk:Gtk.FileChooserWidget#event:down-folder)\n- [`FileChooserWidget::home-folder`](xref:gtk:Gtk.FileChooserWidget#event:home-folder)\n- [`FileChooserWidget::location-popup`](xref:gtk:Gtk.FileChooserWidget#event:location-popup)\n- [`FileChooserWidget::location-popup-on-paste`](xref:gtk:Gtk.FileChooserWidget#event:location-popup-on-paste)\n- [`FileChooserWidget::location-toggle-popup`](xref:gtk:Gtk.FileChooserWidget#event:location-toggle-popup)\n- [`FileChooserWidget::places-shortcut`](xref:gtk:Gtk.FileChooserWidget#event:places-shortcut)\n- [`FileChooserWidget::quick-bookmark`](xref:gtk:Gtk.FileChooserWidget#event:quick-bookmark)\n- [`FileChooserWidget::recent-shortcut`](xref:gtk:Gtk.FileChooserWidget#event:recent-shortcut)\n- [`FileChooserWidget::search-shortcut`](xref:gtk:Gtk.FileChooserWidget#event:search-shortcut)\n- [`FileChooserWidget::show-hidden`](xref:gtk:Gtk.FileChooserWidget#event:show-hidden)\n- [`FileChooserWidget::up-folder`](xref:gtk:Gtk.FileChooserWidget#event:up-folder)\n\n# CSS nodes\n\n`GtkFileChooserWidget` has a single CSS node with name filechooser."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileChooserWidget",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "search-mode": {
+      "brief": "Whether search mode is enabled.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6752,
+      "md": "Whether search mode is enabled."
+    },
+    "show-time": {
+      "brief": "Whether to show the time.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6772,
+      "md": "Whether to show the time.",
+      "since": "4.10"
+    },
+    "subtitle": {
+      "brief": "The subtitle of the file chooser widget.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6762,
+      "md": "The subtitle of the file chooser widget."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "desktop-folder": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6534,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser show the user's Desktop\nfolder in the file list.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>D</kbd>."
+    },
+    "down-folder": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6486,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser go to a child of the\ncurrent folder in the file hierarchy. The subfolder that will\nbe used is displayed in the path bar widget of the file chooser.\nFor example, if the path bar is showing \"/foo/bar/baz\", with bar\ncurrently displayed, then this will cause the file chooser to\nswitch to the \"baz\" subfolder.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>Down</kbd>."
+    },
+    "home-folder": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6512,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser show the user's home\nfolder in the file list.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>Home</kbd>."
+    },
+    "location-popup": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6391,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser show a \"Location\" prompt which\nthe user can use to manually type the name of the file he wishes to select.\n\nThe default bindings for this signal are <kbd>Control</kbd>-<kbd>L</kbd>\nwith a `path` string of \"\" (the empty string). It is also bound to\n<kbd>/</kbd> with a `path` string of \"`/`\" (a slash):  this lets you\ntype `/` and immediately type a path name. On Unix systems, this is\nbound to <kbd>~</kbd> (tilde) with a `path` string of \"~\" itself for\naccess to home directories."
+    },
+    "location-popup-on-paste": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6419,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser show a \"Location\" prompt\nwhen the user pastes into a `GtkFileChooserWidget`.\n\nThe default binding for this signal is <kbd>Control</kbd>-<kbd>V</kbd>."
+    },
+    "location-toggle-popup": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6441,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to toggle the visibility of a \"Location\" prompt\nwhich the user can use to manually type the name of the file\nhe wishes to select.\n\nThe default binding for this signal is <kbd>Control</kbd>-<kbd>L</kbd>."
+    },
+    "places-shortcut": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6648,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to move the focus to the places sidebar.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>P</kbd>."
+    },
+    "quick-bookmark": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6556,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser switch to the bookmark\nspecified in the `bookmark_index` parameter. For example, if\nyou have three bookmarks, you can pass 0, 1, 2 to this signal\nto switch to each of them, respectively.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>1</kbd>,\n<kbd>Alt</kbd>-<kbd>2</kbd>, etc. until <kbd>Alt</kbd>-<kbd>0</kbd>.\nNote that in the default binding, that <kbd>Alt</kbd>-<kbd>1</kbd> is\nactually defined to switch to the bookmark at index 0, and so on\nsuccessively."
+    },
+    "recent-shortcut": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6627,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser show the Recent location.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>R</kbd>."
+    },
+    "search-shortcut": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6606,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser show the search entry.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>S</kbd>."
+    },
+    "show-hidden": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6585,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser display hidden files.\n\nThe default binding for this signal is <kbd>Control</kbd>-<kbd>H</kbd>."
+    },
+    "up-folder": {
+      "brief": "Emitted when the user asks for it.",
+      "file": "gtk/gtkfilechooserwidget.c",
+      "line": 6464,
+      "md": "Emitted when the user asks for it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThis is used to make the file chooser go to the parent\nof the current folder in the file hierarchy.\n\nThe default binding for this signal is <kbd>Alt</kbd>-<kbd>Up</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,207 @@
+{
+ "facts": [
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Box:slot:children",
+   "fingerprint": "e056f754c37013cf",
+   "kind": "Box",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_box_children"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:end",
+   "fingerprint": "66a0966464afaf7c",
+   "kind": "HeaderBar",
+   "name": "end",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_headerbar_end"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:start",
+   "fingerprint": "1347cea50567263f",
+   "kind": "HeaderBar",
+   "name": "start",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_headerbar_start"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:title",
+   "fingerprint": "143b234460110fb2",
+   "kind": "HeaderBar",
+   "name": "title",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_headerbar_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:slot:child",
+   "fingerprint": "b9d6357bfda0e1a9",
+   "kind": "ScrolledWindow",
+   "name": "child",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_scrolledwindow_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child",
+   "fingerprint": "7d9b09269591c309",
+   "kind": "Window",
+   "name": "child",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_window_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar",
+   "fingerprint": "b07557021d29c57c",
+   "kind": "Window",
+   "name": "titlebar",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_window_titlebar"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Box:prop:spacing",
+   "fingerprint": "07e95a5cde874007",
+   "kind": "Box",
+   "name": "spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_box_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked",
+   "fingerprint": "69ecf22f7506854f",
+   "kind": "Button",
+   "name": "clicked",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_button_clicked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:label",
+   "fingerprint": "773013b38c87f8f4",
+   "kind": "Button",
+   "name": "label",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_button_label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:changed",
+   "fingerprint": "2d098ebc0e5e9d2b",
+   "kind": "Editable",
+   "name": "changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_editable_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:notify::text",
+   "fingerprint": "3136d888ea897ce9",
+   "kind": "Editable",
+   "name": "notify::text",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_editable_notify_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:text",
+   "fingerprint": "09b537c3a23910e5",
+   "kind": "Editable",
+   "name": "text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editable_text",
+    "generated::verify::echo_editable_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:placeholder-text",
+   "fingerprint": "6ef454b5626fe171",
+   "kind": "Entry",
+   "name": "placeholder-text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:binding:text",
+   "fingerprint": "3df4ac2501ba7e82",
+   "kind": "Entry",
+   "name": "text",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_entry_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title",
+   "fingerprint": "1d52bf0b599f7886",
+   "kind": "HeaderBar",
+   "name": "title",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_headerbar_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:label",
+   "fingerprint": "148cc637bc63e985",
+   "kind": "Label",
+   "name": "label",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
+   "fingerprint": "63d313dbd2010718",
+   "kind": "Orientable",
+   "name": "orientation",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_orientable_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:title",
+   "fingerprint": "69ad40a290a938fe",
+   "kind": "Window",
+   "name": "title",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_window_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:present",
+   "fingerprint": "a154546dac56aeba",
+   "kind": "Window",
+   "name": "present",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_present"
+   ]
+  }
+ ],
+ "toolkit": "gtk",
+ "version": "4.22.4"
+}

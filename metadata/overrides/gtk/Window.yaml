@@ -6,6 +6,7 @@ methods:
   - name: present
     js_name: present
     dispatch: zero_arg
+    expect: "w.is_visible()"
     provenance: "gtk_window_present docs; JS host op: call #h present []"
 children:
   policy: named_slots

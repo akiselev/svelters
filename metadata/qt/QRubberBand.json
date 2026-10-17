@@ -30,7 +30,7 @@
             "native": "QRubberBand::Shape",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QRubberBand::Shape>"
           }
         },
         {
@@ -52,24 +52,39 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QRubberBand::Shape",
       "members": [
         {
+          "cpp": "QRubberBand::Line",
           "name": "Line",
           "value": "0"
         },
         {
+          "cpp": "QRubberBand::Rectangle",
           "name": "Rectangle",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "Shape",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QRubberBand",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QRubberBand:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -204,7 +219,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -362,7 +377,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -483,7 +498,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -584,7 +599,7 @@
         "native": "QRubberBand::Shape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QRubberBand::Shape>"
       },
       "signature": "QRubberBand::Shape shape() const",
       "since": null,

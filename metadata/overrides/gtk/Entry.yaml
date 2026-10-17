@@ -2,3 +2,19 @@ properties:
   - name: placeholder-text
     js_name: placeholder
     provenance: "GtkEntry:placeholder-text (Gtk 4 docs); P prop, JS name 'placeholder'"
+# Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6): what
+# `bind:text` on <entry> means natively. Consumed by tools/metadata/common/gen_bindings.py.
+bindings:
+  - name: text
+    direction: two_way
+    property: text                  # GtkEditable:text (interface-owned), written through set_text
+    type: { ref: string, nullable: false }
+    change: { signal: changed, role: any_change }
+    write: { natively_normalizes: false }
+    echo:
+      strategy: host_suppressed     # the backend blocks `changed` and `notify::text` during a programmatic set (Editable.yaml echo_suppress)
+      compare_before_set: true      # GtkEntry re-notifies on identical text and moves the cursor
+      read_back: false
+      sync_signals_on_set: [changed, "notify::text"]
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "docs/notes/signals-and-slots-semantics.md 1.6 (gtk_sync_probe.py: set_text re-emits notify::text on identical text); renderer compares before set, the backend suppresses"
