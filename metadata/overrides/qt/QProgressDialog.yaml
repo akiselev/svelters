@@ -1,0 +1,16 @@
+elements:
+  - tag: progressdialog
+    construct: { class: QProgressDialog }
+    props:
+      - { js: value, native: value, provenance: "QProgressDialog::value (qdoc)" }
+      - { js: minimum, native: minimum, provenance: "QProgressDialog::minimum (qdoc)" }
+      - { js: maximum, native: maximum, provenance: "QProgressDialog::maximum (qdoc)" }
+      - { js: labelText, native: labelText, provenance: "QProgressDialog::labelText (qdoc)" }
+      - { js: minimumDuration, native: minimumDuration, provenance: "QProgressDialog::minimumDuration (qdoc)" }
+      - { js: autoClose, native: autoClose, provenance: "QProgressDialog::autoClose (qdoc)" }
+      - { js: autoReset, native: autoReset, provenance: "QProgressDialog::autoReset (qdoc)" }
+    signals:
+      - { js: canceled, native: canceled, connect: "canceled()", args: [], trigger: "$w->findChild<QPushButton*>()->click()", expect_args: [], provenance: "QProgressDialog::canceled() (qdoc)" }
+    methods:
+      - { js: reset, native: reset, provenance: "QProgressDialog::reset() slot (qdoc)" }
+      - { js: cancel, native: cancel, provenance: "QProgressDialog::cancel() slot (qdoc)" }

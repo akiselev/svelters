@@ -285,15 +285,15 @@
   "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   3,
+   3
   ]
  },
  {
@@ -498,33 +498,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
+  "element": "dialog",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 9,
   "kind": "QDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   4,
    19
   ],
   "native": "QDialog",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    3
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
@@ -630,13 +630,13 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "errormessage",
   "gallery": null,
   "inherited": 0,
   "kind": "QErrorMessage",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   1,
    4
   ],
   "native": "QErrorMessage",
@@ -655,30 +655,30 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
+  "element": "filedialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QFileDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   1,
    62
   ],
   "native": "QFileDialog",
   "ownership": false,
   "props": [
-   0,
+   4,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -688,8 +688,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -762,7 +762,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "fontdialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QFontDialog",
@@ -774,10 +774,10 @@
   "native": "QFontDialog",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -787,8 +787,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -1026,7 +1026,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "inputdialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QInputDialog",
@@ -1038,21 +1038,21 @@
   "native": "QInputDialog",
   "ownership": false,
   "props": [
-   0,
+   8,
    18
   ],
-  "props_annotated": 0,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    6
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -1455,7 +1455,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 7,
-  "element": null,
+  "element": "messagebox",
   "gallery": null,
   "inherited": 0,
   "kind": "QMessageBox",
@@ -1467,10 +1467,10 @@
   "native": "QMessageBox",
   "ownership": false,
   "props": [
-   0,
+   6,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
@@ -1480,8 +1480,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -1554,33 +1554,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 8,
-  "element": null,
+  "element": "progressdialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QProgressDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   2,
    29
   ],
   "native": "QProgressDialog",
   "ownership": false,
   "props": [
-   0,
+   7,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -2577,7 +2577,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": null,
+  "element": "wizard",
   "gallery": null,
   "inherited": 0,
   "kind": "QWizard",
@@ -2589,28 +2589,28 @@
   "native": "QWizard",
   "ownership": false,
   "props": [
-   0,
+   2,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    5
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
+  "element": "wizardpage",
   "gallery": null,
   "inherited": 0,
   "kind": "QWizardPage",
@@ -2622,10 +2622,10 @@
   "native": "QWizardPage",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -2635,8 +2635,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  }
 ]

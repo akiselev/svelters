@@ -92,3 +92,4 @@ gallery_page!(gtk_00_overview, "gtk", "00-overview", ["GtkEntry", "GtkButton", "
 
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
 gallery_page!(qt_00_overview, "qt", "00-overview", ["QLineEdit", "QPushButton", "QLabel"]);
+gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);

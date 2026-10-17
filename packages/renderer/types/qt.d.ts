@@ -47,10 +47,19 @@ export interface QtElementDescriptors {
     props: {
       currentColor?: Color | string;
       options?: Array<"dont-use-native-dialog" | "no-buttons" | "no-eye-dropper-button" | "show-alpha-channel">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
     };
     events: {
+      currentColorChanged: (color: Color | string) => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
     };
     methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
     };
     slots: never;
   };
@@ -88,6 +97,25 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  dialog: {
+    props: {
+      title?: string;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+    };
+    slots: "children";
+  };
   doublespinbox: {
     props: {
       value?: number;
@@ -115,6 +143,92 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  errormessage: {
+    props: {
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      showMessage(message: string): void;
+      open(): void;
+      accept(): void;
+      reject(): void;
+    };
+    slots: never;
+  };
+  filedialog: {
+    props: {
+      fileMode?: "any-file" | "directory" | "existing-file" | "existing-files";
+      acceptMode?: "open" | "save";
+      viewMode?: "detail" | "list";
+      defaultSuffix?: string;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      setDirectory(directory: string): void;
+      open(): void;
+      reject(): void;
+    };
+    slots: never;
+  };
+  fontdialog: {
+    props: {
+      currentFont?: Boxed<"QFont"> | string;
+      options?: Array<"dont-use-native-dialog" | "monospaced-fonts" | "no-buttons" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+    };
+    slots: never;
+  };
+  inputdialog: {
+    props: {
+      labelText?: string;
+      textValue?: string;
+      intValue?: number;
+      intMinimum?: number;
+      intMaximum?: number;
+      inputMode?: "double-input" | "int-input" | "text-input";
+      okButtonText?: string;
+      cancelButtonText?: string;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      textValueChanged: (text: string) => void;
+      intValueChanged: (value: number) => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(result: number): void;
+    };
+    slots: never;
+  };
   label: {
     props: {
       label?: string;
@@ -137,6 +251,58 @@ export interface QtElementDescriptors {
     events: {
     };
     methods: {
+    };
+    slots: never;
+  };
+  messagebox: {
+    props: {
+      text?: string;
+      informativeText?: string;
+      detailedText?: string;
+      icon?: "critical" | "information" | "no-icon" | "question" | "warning";
+      textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
+      standardButtons?: Array<"abort" | "apply" | "button-mask" | "cancel" | "close" | "default" | "discard" | "escape" | "first-button" | "flag-mask" | "help" | "ignore" | "last-button" | "no" | "no-all" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-all" | "yes-to-all">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+    };
+    slots: never;
+  };
+  progressdialog: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      labelText?: string;
+      minimumDuration?: number;
+      autoClose?: boolean;
+      autoReset?: boolean;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      canceled: () => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      reset(): void;
+      cancel(): void;
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
     };
     slots: never;
   };
@@ -196,6 +362,37 @@ export interface QtElementDescriptors {
       resize(w: number, h: number): void;
     };
     slots: "central" | "menubar" | "statusbar";
+  };
+  wizard: {
+    props: {
+      wizardStyle?: "aero-style" | "classic-style" | "mac-style" | "modern-style" | "nstyles";
+      options?: Array<"cancel-button-on-left" | "disabled-back-button-on-last-page" | "extended-watermark-pixmap" | "have-custom-button1" | "have-custom-button2" | "have-custom-button3" | "have-finish-button-on-early-pages" | "have-help-button" | "have-next-button-on-last-page" | "help-button-on-right" | "ignore-sub-titles" | "independent-pages" | "no-back-button-on-last-page" | "no-back-button-on-start-page" | "no-cancel-button" | "no-cancel-button-on-last-page" | "no-default-button" | "stretch-banner">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+    };
+    events: {
+      currentIdChanged: (id: number) => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+    };
+    slots: never;
+  };
+  wizardpage: {
+    props: {
+      title?: string;
+      subTitle?: string;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
   };
 }
 
