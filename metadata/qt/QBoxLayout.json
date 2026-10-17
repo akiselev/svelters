@@ -1,0 +1,1446 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QLayout",
+    "QLayoutItem",
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:ctor:QBoxLayout(QBoxLayout::Direction dir, QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QBoxLayout(QBoxLayout::Direction dir, QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "dir",
+          "type": {
+            "native": "QBoxLayout::Direction",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "LeftToRight",
+          "value": "0"
+        },
+        {
+          "name": "RightToLeft",
+          "value": "1"
+        },
+        {
+          "name": "TopToBottom",
+          "value": "2"
+        },
+        {
+          "name": "BottomToTop",
+          "value": "3"
+        },
+        {
+          "name": "Down",
+          "value": "TopToBottom"
+        },
+        {
+          "name": "Up",
+          "value": "BottomToTop"
+        }
+      ],
+      "metaobject": null,
+      "name": "Direction",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addItem(QLayoutItem *item) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addItem",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "item",
+          "type": {
+            "native": "QLayoutItem *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addItem(QLayoutItem *item) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addLayout(QLayout *layout, int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addLayout",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "layout",
+          "type": {
+            "native": "QLayout *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QLayout>"
+          }
+        },
+        {
+          "default": "0",
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addLayout(QLayout *layout, int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addSpacerItem(QSpacerItem *spacerItem)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addSpacerItem",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "spacerItem",
+          "type": {
+            "native": "QSpacerItem *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addSpacerItem(QSpacerItem *spacerItem)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addSpacing(int size)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addSpacing",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "size",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addSpacing(int size)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addStretch(int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addStretch",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": "0",
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addStretch(int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addStrut(int size)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addStrut",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "size",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addStrut(int size)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void addWidget(QWidget *widget, int stretch, Qt::Alignment alignment)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": "0",
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": "Qt::Alignment()",
+          "name": "alignment",
+          "type": {
+            "native": "Qt::Alignment",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addWidget(QWidget *widget, int stretch, Qt::Alignment alignment)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:int count() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "count",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int count() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:QBoxLayout::Direction direction() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "direction",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QBoxLayout::Direction",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QBoxLayout::Direction direction() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:Qt::Orientations expandingDirections() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "expandingDirections",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "Qt::Orientations",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "Qt::Orientations expandingDirections() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:bool hasHeightForWidth() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "hasHeightForWidth",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool hasHeightForWidth() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:int heightForWidth(int w) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "heightForWidth",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "w",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int heightForWidth(int w) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void insertItem(int index, QLayoutItem *item)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertItem",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "item",
+          "type": {
+            "native": "QLayoutItem *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void insertItem(int index, QLayoutItem *item)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void insertLayout(int index, QLayout *layout, int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertLayout",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "layout",
+          "type": {
+            "native": "QLayout *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QLayout>"
+          }
+        },
+        {
+          "default": "0",
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void insertLayout(int index, QLayout *layout, int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void insertSpacerItem(int index, QSpacerItem *spacerItem)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertSpacerItem",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "spacerItem",
+          "type": {
+            "native": "QSpacerItem *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void insertSpacerItem(int index, QSpacerItem *spacerItem)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void insertSpacing(int index, int size)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertSpacing",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "size",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void insertSpacing(int index, int size)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void insertStretch(int index, int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertStretch",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": "0",
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void insertStretch(int index, int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void insertWidget(int index, QWidget *widget, int stretch, Qt::Alignment alignment)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": "0",
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": "Qt::Alignment()",
+          "name": "alignment",
+          "type": {
+            "native": "Qt::Alignment",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void insertWidget(int index, QWidget *widget, int stretch, Qt::Alignment alignment)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void invalidate() override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "invalidate",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void invalidate() override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:QLayoutItem * itemAt(int index) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "itemAt",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QLayoutItem *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QLayoutItem * itemAt(int index) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:QSize maximumSize() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "maximumSize",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize maximumSize() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:int minimumHeightForWidth(int w) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "minimumHeightForWidth",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "w",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int minimumHeightForWidth(int w) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:QSize minimumSize() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "minimumSize",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize minimumSize() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void setDirection(QBoxLayout::Direction direction)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDirection",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "direction",
+          "type": {
+            "native": "QBoxLayout::Direction",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDirection(QBoxLayout::Direction direction)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void setGeometry(const QRect &r) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setGeometry",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "r",
+          "type": {
+            "native": "const QRect &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setGeometry(const QRect &r) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void setSpacing(int spacing) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setSpacing",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "spacing",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setSpacing(int spacing) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:void setStretch(int index, int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setStretch",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setStretch(int index, int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:bool setStretchFactor(QLayout *layout, int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setStretchFactor",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "layout",
+          "type": {
+            "native": "QLayout *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QLayout>"
+          }
+        },
+        {
+          "default": null,
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool setStretchFactor(QLayout *layout, int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:bool setStretchFactor(QWidget *widget, int stretch)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setStretchFactor",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": null,
+          "name": "stretch",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool setStretchFactor(QWidget *widget, int stretch)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:QSize sizeHint() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sizeHint",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize sizeHint() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:int spacing() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "spacing",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int spacing() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:int stretch(int index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "stretch",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int stretch(int index) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QBoxLayout:method:QLayoutItem * takeAt(int index) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "takeAt",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QLayoutItem *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QLayoutItem * takeAt(int index) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    }
+  ],
+  "native": {
+    "brief": "Lines up child widgets horizontally or vertically",
+    "header": "qboxlayout.h",
+    "module": "QtWidgets",
+    "name": "QBoxLayout"
+  },
+  "ownership": [
+    {
+      "fact": "snippet",
+      "method": "addLayout(QLayout*,int)",
+      "origin": "typesystem",
+      "snippet": "addownership-1"
+    },
+    {
+      "fact": "snippet",
+      "method": "addSpacerItem(QSpacerItem*)",
+      "origin": "typesystem",
+      "snippet": "addownership-1"
+    },
+    {
+      "fact": "snippet",
+      "method": "addWidget(QWidget*,int,QFlags<Qt::AlignmentFlag>)",
+      "origin": "typesystem",
+      "snippet": "addownership-1"
+    },
+    {
+      "fact": "snippet",
+      "method": "insertItem(int,QLayoutItem*)",
+      "origin": "typesystem",
+      "snippet": "addownership-2"
+    },
+    {
+      "fact": "snippet",
+      "method": "insertLayout(int,QLayout*,int)",
+      "origin": "typesystem",
+      "snippet": "addownership-2"
+    },
+    {
+      "fact": "snippet",
+      "method": "insertSpacerItem(int,QSpacerItem*)",
+      "origin": "typesystem",
+      "snippet": "addownership-2"
+    },
+    {
+      "fact": "snippet",
+      "method": "insertWidget(int,QWidget*,int,QFlags<Qt::AlignmentFlag>)",
+      "origin": "typesystem",
+      "snippet": "addownership-2"
+    }
+  ],
+  "properties": [],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,1036 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QStyle",
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:ctor:QCommonStyle()",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QCommonStyle()",
+      "origin": "qdoc",
+      "params": [],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void drawComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QPainter *p, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "drawComplexControl",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "cc",
+          "type": {
+            "native": "QStyle::ComplexControl",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOptionComplex *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "p",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void drawComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QPainter *p, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void drawControl(QStyle::ControlElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "drawControl",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "element",
+          "type": {
+            "native": "QStyle::ControlElement",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "p",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void drawControl(QStyle::ControlElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "drawPrimitive",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "pe",
+          "type": {
+            "native": "QStyle::PrimitiveElement",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "p",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *opt) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "generatedIconPixmap",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "iconMode",
+          "type": {
+            "native": "QIcon::Mode",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "pixmap",
+          "type": {
+            "native": "const QPixmap &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QPixmap",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *opt) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, const QPoint &pt, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "hitTestComplexControl",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "cc",
+          "type": {
+            "native": "QStyle::ComplexControl",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOptionComplex *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "pt",
+          "type": {
+            "native": "const QPoint &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QStyle::SubControl",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, const QPoint &pt, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:int layoutSpacing(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "layoutSpacing",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "control1",
+          "type": {
+            "native": "QSizePolicy::ControlType",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "control2",
+          "type": {
+            "native": "QSizePolicy::ControlType",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "orientation",
+          "type": {
+            "native": "Qt::Orientation",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "option",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int layoutSpacing(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:int pixelMetric(QStyle::PixelMetric m, const QStyleOption *opt, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "pixelMetric",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "m",
+          "type": {
+            "native": "QStyle::PixelMetric",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int pixelMetric(QStyle::PixelMetric m, const QStyleOption *opt, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void polish(QApplication *app) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "polish",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "app",
+          "type": {
+            "native": "QApplication *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QApplication>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void polish(QApplication *app) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void polish(QPalette &pal) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "polish",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "pal",
+          "type": {
+            "native": "QPalette &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void polish(QPalette &pal) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void polish(QWidget *widget) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "polish",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void polish(QWidget *widget) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:QSize sizeFromContents(QStyle::ContentsType contentsType, const QStyleOption *opt, const QSize &contentsSize, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sizeFromContents",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "contentsType",
+          "type": {
+            "native": "QStyle::ContentsType",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "contentsSize",
+          "type": {
+            "native": "const QSize &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize sizeFromContents(QStyle::ContentsType contentsType, const QStyleOption *opt, const QSize &contentsSize, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:QPixmap standardPixmap(QStyle::StandardPixmap sp, const QStyleOption *option, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "standardPixmap",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "sp",
+          "type": {
+            "native": "QStyle::StandardPixmap",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "option",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QPixmap",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QPixmap standardPixmap(QStyle::StandardPixmap sp, const QStyleOption *option, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:int styleHint(QStyle::StyleHint sh, const QStyleOption *opt, const QWidget *widget, QStyleHintReturn *hret) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "styleHint",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "sh",
+          "type": {
+            "native": "QStyle::StyleHint",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "hret",
+          "type": {
+            "native": "QStyleHintReturn *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int styleHint(QStyle::StyleHint sh, const QStyleOption *opt, const QWidget *widget, QStyleHintReturn *hret) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:QRect subControlRect(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QStyle::SubControl sc, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "subControlRect",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "cc",
+          "type": {
+            "native": "QStyle::ComplexControl",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOptionComplex *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "sc",
+          "type": {
+            "native": "QStyle::SubControl",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QRect",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QRect subControlRect(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QStyle::SubControl sc, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:QRect subElementRect(QStyle::SubElement sr, const QStyleOption *opt, const QWidget *widget) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "subElementRect",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "sr",
+          "type": {
+            "native": "QStyle::SubElement",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "opt",
+          "type": {
+            "native": "const QStyleOption *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QRect",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QRect subElementRect(QStyle::SubElement sr, const QStyleOption *opt, const QWidget *widget) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void unpolish(QApplication *application) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "unpolish",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "application",
+          "type": {
+            "native": "QApplication *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QApplication>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void unpolish(QApplication *application) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCommonStyle:method:void unpolish(QWidget *widget) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "unpolish",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void unpolish(QWidget *widget) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    }
+  ],
+  "native": {
+    "brief": "Encapsulates the common Look and Feel of a GUI",
+    "header": "qcommonstyle.h",
+    "module": "QtWidgets",
+    "name": "QCommonStyle"
+  },
+  "ownership": [],
+  "properties": [],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

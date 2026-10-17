@@ -1,0 +1,799 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:ctor:QAbstractItemDelegate(QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QAbstractItemDelegate(QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "NoHint",
+          "value": "0"
+        },
+        {
+          "name": "EditNextItem",
+          "value": "1"
+        },
+        {
+          "name": "EditPreviousItem",
+          "value": "2"
+        },
+        {
+          "name": "SubmitModelCache",
+          "value": "3"
+        },
+        {
+          "name": "RevertModelCache",
+          "value": "4"
+        }
+      ],
+      "metaobject": null,
+      "name": "EndEditHint",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "createEditor",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOptionViewItem &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QWidget *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QWidget>"
+      },
+      "signature": "QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:void destroyEditor(QWidget *editor, const QModelIndex &index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "destroyEditor",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void destroyEditor(QWidget *editor, const QModelIndex &index) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "editorEvent",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "model",
+          "type": {
+            "native": "QAbstractItemModel *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractItemModel>"
+          }
+        },
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOptionViewItem &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:bool handleEditorEvent(QObject *editor, QEvent *event)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "handleEditorEvent",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        },
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool handleEditorEvent(QObject *editor, QEvent *event)",
+      "since": "6.10",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "helpEvent",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QHelpEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "view",
+          "type": {
+            "native": "QAbstractItemView *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractItemView>"
+          }
+        },
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOptionViewItem &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const = 0",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "paint",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "painter",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOptionViewItem &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const = 0",
+      "since": null,
+      "static": false,
+      "virtual": "pure"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:void setEditorData(QWidget *editor, const QModelIndex &index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setEditorData",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setEditorData(QWidget *editor, const QModelIndex &index) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setModelData",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": null,
+          "name": "model",
+          "type": {
+            "native": "QAbstractItemModel *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractItemModel>"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const = 0",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sizeHint",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOptionViewItem &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const = 0",
+      "since": null,
+      "static": false,
+      "virtual": "pure"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:method:void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "updateEditorGeometry",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QStyleOptionViewItem &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    }
+  ],
+  "native": {
+    "brief": "Used to display and edit data items from a model",
+    "header": "qabstractitemdelegate.h",
+    "module": "QtWidgets",
+    "name": "QAbstractItemDelegate"
+  },
+  "ownership": [
+    {
+      "arg": "1",
+      "class": null,
+      "fact": "define_ownership",
+      "method": "createEditor(QWidget*,QStyleOptionViewItem,QModelIndex)const",
+      "origin": "typesystem",
+      "owner": "c++"
+    },
+    {
+      "arg": "return",
+      "class": "native",
+      "fact": "define_ownership",
+      "method": "createEditor(QWidget*,QStyleOptionViewItem,QModelIndex)const",
+      "origin": "typesystem",
+      "owner": "c++"
+    }
+  ],
+  "properties": [],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:signal:void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)",
+      "js_event": "closeEditor",
+      "metaobject_signatures": [
+        "closeEditor(QWidget*)",
+        "closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)"
+      ],
+      "name": "closeEditor",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        },
+        {
+          "default": "NoHint",
+          "name": "hint",
+          "type": {
+            "native": "QAbstractItemDelegate::EndEditHint",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:signal:void commitData(QWidget *editor)",
+      "js_event": "commitData",
+      "metaobject_signatures": [
+        "commitData(QWidget*)"
+      ],
+      "name": "commitData",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "editor",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void commitData(QWidget *editor)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate:signal:void sizeHintChanged(const QModelIndex &index)",
+      "js_event": "sizeHintChanged",
+      "metaobject_signatures": [
+        "sizeHintChanged(QModelIndex)"
+      ],
+      "name": "sizeHintChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void sizeHintChanged(const QModelIndex &index)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

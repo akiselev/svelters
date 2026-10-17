@@ -1,0 +1,336 @@
+{
+  "abstract": true,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer:ctor:QGestureRecognizer()",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QGestureRecognizer()",
+      "origin": "qdoc",
+      "params": [],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "Ignore",
+          "value": "0x0001"
+        },
+        {
+          "name": "MayBeGesture",
+          "value": "0x0002"
+        },
+        {
+          "name": "TriggerGesture",
+          "value": "0x0004"
+        },
+        {
+          "name": "FinishGesture",
+          "value": "0x0008"
+        },
+        {
+          "name": "CancelGesture",
+          "value": "0x0010"
+        },
+        {
+          "name": "ResultState_Mask",
+          "value": "0x00ff"
+        },
+        {
+          "name": "ConsumeEventHint",
+          "value": "0x0100"
+        },
+        {
+          "name": "ResultHint_Mask",
+          "value": "0xff00"
+        }
+      ],
+      "metaobject": null,
+      "name": "ResultFlag",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer:method:QGesture * create(QObject *target)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "create",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "target",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QGesture *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QGesture>"
+      },
+      "signature": "QGesture * create(QObject *target)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer:method:QGestureRecognizer::Result recognize(QGesture *gesture, QObject *watched, QEvent *event) = 0",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "recognize",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "gesture",
+          "type": {
+            "native": "QGesture *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QGesture>"
+          }
+        },
+        {
+          "default": null,
+          "name": "watched",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        },
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QGestureRecognizer::Result",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QGestureRecognizer::Result recognize(QGesture *gesture, QObject *watched, QEvent *event) = 0",
+      "since": null,
+      "static": false,
+      "virtual": "pure"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer:method:Qt::GestureType registerRecognizer(QGestureRecognizer *recognizer)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "registerRecognizer",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "recognizer",
+          "type": {
+            "native": "QGestureRecognizer *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Qt::GestureType",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "Qt::GestureType registerRecognizer(QGestureRecognizer *recognizer)",
+      "since": null,
+      "static": true,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer:method:void reset(QGesture *gesture)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "reset",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "gesture",
+          "type": {
+            "native": "QGesture *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QGesture>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void reset(QGesture *gesture)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer:method:void unregisterRecognizer(Qt::GestureType type)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "unregisterRecognizer",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "type",
+          "type": {
+            "native": "Qt::GestureType",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void unregisterRecognizer(Qt::GestureType type)",
+      "since": null,
+      "static": true,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "The infrastructure for gesture recognition",
+    "header": "qgesturerecognizer.h",
+    "module": "QtWidgets",
+    "name": "QGestureRecognizer"
+  },
+  "ownership": [
+    {
+      "arg": "return",
+      "class": null,
+      "fact": "define_ownership",
+      "method": "create(QObject*)",
+      "origin": "typesystem",
+      "owner": "c++"
+    },
+    {
+      "arg": "1",
+      "class": null,
+      "fact": "define_ownership",
+      "method": "registerRecognizer(QGestureRecognizer*)",
+      "origin": "typesystem",
+      "owner": "c++"
+    }
+  ],
+  "properties": [],
+  "qobject": false,
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

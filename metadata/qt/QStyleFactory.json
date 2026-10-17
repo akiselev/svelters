@@ -1,0 +1,132 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyleFactory",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStyleFactory:method:QStyle * create(const QString &key)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "create",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "key",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QStyle *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QStyle>"
+      },
+      "signature": "QStyle * create(const QString &key)",
+      "since": null,
+      "static": true,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStyleFactory:method:QStringList keys()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "keys",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QStringList",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "list"
+      },
+      "signature": "QStringList keys()",
+      "since": null,
+      "static": true,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Creates QStyle objects",
+    "header": "qstylefactory.h",
+    "module": "QtWidgets",
+    "name": "QStyleFactory"
+  },
+  "ownership": [
+    {
+      "arg": "return",
+      "class": null,
+      "fact": "define_ownership",
+      "method": "create(const QString&)",
+      "origin": "typesystem",
+      "owner": "target"
+    }
+  ],
+  "properties": [],
+  "qobject": false,
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,409 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QGraphicsEffect",
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:ctor:QGraphicsOpacityEffect(QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QGraphicsOpacityEffect(QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:method:void draw(QPainter *painter) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "draw",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "painter",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void draw(QPainter *painter) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "opacity",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:method:qreal opacity() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "opacity",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal opacity() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "opacityMask",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:method:QBrush opacityMask() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "opacityMask",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QBrush",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QBrush opacityMask() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "opacity",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:method:void setOpacity(qreal opacity)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setOpacity",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "opacity",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setOpacity(qreal opacity)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "opacityMask",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:method:void setOpacityMask(const QBrush &mask)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setOpacityMask",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "mask",
+          "type": {
+            "native": "const QBrush &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setOpacityMask(const QBrush &mask)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Opacity effect",
+    "header": "qgraphicseffect.h",
+    "module": "QtWidgets",
+    "name": "QGraphicsOpacityEffect"
+  },
+  "ownership": [],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "opacity",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setOpacity"
+      },
+      "brief": "The opacity of the effect",
+      "js_name": "opacity",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "opacityChanged(double)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "opacity",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "opacityChanged(double)"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "opacityMask",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setOpacityMask"
+      },
+      "brief": "The opacity mask of the effect",
+      "js_name": "opacityMask",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "opacityMaskChanged(QBrush)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QBrush",
+        "user": false,
+        "writable": true
+      },
+      "name": "opacityMask",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "opacityMaskChanged(QBrush)"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QBrush",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": "opacity",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:signal:void opacityChanged(qreal opacity)",
+      "js_event": "opacityChanged",
+      "metaobject_signatures": [
+        "opacityChanged(double)"
+      ],
+      "name": "opacityChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "opacity",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void opacityChanged(qreal opacity)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "opacityMask",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect:signal:void opacityMaskChanged(const QBrush &mask)",
+      "js_event": "opacityMaskChanged",
+      "metaobject_signatures": [
+        "opacityMaskChanged(QBrush)"
+      ],
+      "name": "opacityMaskChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "mask",
+          "type": {
+            "native": "const QBrush &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void opacityMaskChanged(const QBrush &mask)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

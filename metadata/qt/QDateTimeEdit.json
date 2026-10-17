@@ -1,0 +1,3165 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QAbstractSpinBox",
+    "QWidget",
+    "QObject",
+    "QPaintDevice"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:ctor:QDateTimeEdit(QDate date, QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QDateTimeEdit(QDate date, QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "date",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    },
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:ctor:QDateTimeEdit(QTime time, QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QDateTimeEdit(QTime time, QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "time",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    },
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:ctor:QDateTimeEdit(QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QDateTimeEdit(QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    },
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:ctor:QDateTimeEdit(const QDateTime &datetime, QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QDateTimeEdit(const QDateTime &datetime, QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "datetime",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "NoSection",
+          "value": "0x0000"
+        },
+        {
+          "name": "AmPmSection",
+          "value": "0x0001"
+        },
+        {
+          "name": "MSecSection",
+          "value": "0x0002"
+        },
+        {
+          "name": "SecondSection",
+          "value": "0x0004"
+        },
+        {
+          "name": "MinuteSection",
+          "value": "0x0008"
+        },
+        {
+          "name": "HourSection",
+          "value": "0x0010"
+        },
+        {
+          "name": "DaySection",
+          "value": "0x0100"
+        },
+        {
+          "name": "MonthSection",
+          "value": "0x0200"
+        },
+        {
+          "name": "YearSection",
+          "value": "0x0400"
+        },
+        {
+          "name": "TimeSections_Mask",
+          "value": "AmPmSection|MSecSection|SecondSection|MinuteSection|HourSection"
+        },
+        {
+          "name": "DateSections_Mask",
+          "value": "DaySection|MonthSection|YearSection"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "AmPmSection": 1,
+          "DateSections_Mask": 1792,
+          "DaySection": 256,
+          "HourSection": 16,
+          "MSecSection": 2,
+          "MinuteSection": 8,
+          "MonthSection": 512,
+          "NoSection": 0,
+          "SecondSection": 4,
+          "TimeSections_Mask": 31,
+          "YearSection": 1024
+        },
+        "scoped": false
+      },
+      "name": "Section",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QCalendar calendar() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "calendar",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QCalendar",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QCalendar calendar() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "calendarPopup",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:bool calendarPopup() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "calendarPopup",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool calendarPopup() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QCalendarWidget * calendarWidget() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "calendarWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QCalendarWidget *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QCalendarWidget>"
+      },
+      "signature": "QCalendarWidget * calendarWidget() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clear() override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clear",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clear() override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumDate",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clearMaximumDate()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearMaximumDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearMaximumDate()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumDateTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clearMaximumDateTime()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearMaximumDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearMaximumDateTime()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clearMaximumTime()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearMaximumTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearMaximumTime()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumDate",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clearMinimumDate()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearMinimumDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearMinimumDate()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumDateTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clearMinimumDateTime()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearMinimumDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearMinimumDateTime()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void clearMinimumTime()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearMinimumTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearMinimumTime()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "currentSection",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTimeEdit::Section currentSection() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentSection",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDateTimeEdit::Section",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTimeEdit::Section currentSection() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "currentSectionIndex",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:int currentSectionIndex() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentSectionIndex",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int currentSectionIndex() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "date",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDate date() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "date",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDate",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDate date() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "dateTime",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTime dateTime() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "dateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTime dateTime() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTime dateTimeFromText(const QString &text) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "dateTimeFromText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "text",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTime dateTimeFromText(const QString &text) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "displayFormat",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QString displayFormat() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "displayFormat",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString displayFormat() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "displayedSections",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTimeEdit::Sections displayedSections() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "displayedSections",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDateTimeEdit::Sections",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTimeEdit::Sections displayedSections() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:bool event(QEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "event",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool event(QEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void fixup(QString &input) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "fixup",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "input",
+          "type": {
+            "native": "QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void fixup(QString &input) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void focusInEvent(QFocusEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "focusInEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QFocusEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void focusInEvent(QFocusEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:bool focusNextPrevChild(bool next) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "focusNextPrevChild",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "next",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool focusNextPrevChild(bool next) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void initStyleOption(QStyleOptionSpinBox *option) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "initStyleOption",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "QStyleOptionSpinBox *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void initStyleOption(QStyleOptionSpinBox *option) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void keyPressEvent(QKeyEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "keyPressEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QKeyEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void keyPressEvent(QKeyEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumDate",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDate maximumDate() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "maximumDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDate",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDate maximumDate() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumDateTime",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTime maximumDateTime() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "maximumDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTime maximumDateTime() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumTime",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QTime maximumTime() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "maximumTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTime maximumTime() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumDate",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDate minimumDate() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "minimumDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDate",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDate minimumDate() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumDateTime",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTime minimumDateTime() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "minimumDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTime minimumDateTime() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumTime",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QTime minimumTime() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "minimumTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTime minimumTime() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void mousePressEvent(QMouseEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "mousePressEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QMouseEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void mousePressEvent(QMouseEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void paintEvent(QPaintEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "paintEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QPaintEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void paintEvent(QPaintEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QDateTimeEdit::Section sectionAt(int index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sectionAt",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QDateTimeEdit::Section",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QDateTimeEdit::Section sectionAt(int index) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "sectionCount",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:int sectionCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sectionCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int sectionCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QString sectionText(QDateTimeEdit::Section section) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sectionText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "section",
+          "type": {
+            "native": "QDateTimeEdit::Section",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString sectionText(QDateTimeEdit::Section section) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setCalendar(QCalendar calendar)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCalendar",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "calendar",
+          "type": {
+            "native": "QCalendar",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCalendar(QCalendar calendar)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "calendarPopup",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setCalendarPopup(bool enable)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCalendarPopup",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "enable",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCalendarPopup(bool enable)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setCalendarWidget(QCalendarWidget *calendarWidget)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCalendarWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "calendarWidget",
+          "type": {
+            "native": "QCalendarWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QCalendarWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCalendarWidget(QCalendarWidget *calendarWidget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "currentSection",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setCurrentSection(QDateTimeEdit::Section section)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCurrentSection",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "section",
+          "type": {
+            "native": "QDateTimeEdit::Section",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCurrentSection(QDateTimeEdit::Section section)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "currentSectionIndex",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setCurrentSectionIndex(int index)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCurrentSectionIndex",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCurrentSectionIndex(int index)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "date",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setDate(QDate date)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "date",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDate(QDate date)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setDateRange(QDate min, QDate max)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDateRange",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "min",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "max",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDateRange(QDate min, QDate max)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "dateTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setDateTime(const QDateTime &dateTime)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "dateTime",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDateTime(const QDateTime &dateTime)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setDateTimeRange(const QDateTime &min, const QDateTime &max)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDateTimeRange",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "min",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "max",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDateTimeRange(const QDateTime &min, const QDateTime &max)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "displayFormat",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setDisplayFormat(const QString &format)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDisplayFormat",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "format",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDisplayFormat(const QString &format)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumDate",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setMaximumDate(QDate max)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMaximumDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "max",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMaximumDate(QDate max)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumDateTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setMaximumDateTime(const QDateTime &dt)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMaximumDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "dt",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMaximumDateTime(const QDateTime &dt)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setMaximumTime(QTime max)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMaximumTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "max",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMaximumTime(QTime max)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumDate",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setMinimumDate(QDate min)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMinimumDate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "min",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMinimumDate(QDate min)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumDateTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setMinimumDateTime(const QDateTime &dt)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMinimumDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "dt",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMinimumDateTime(const QDateTime &dt)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "minimumTime",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setMinimumTime(QTime min)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMinimumTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "min",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMinimumTime(QTime min)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setSelectedSection(QDateTimeEdit::Section section)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setSelectedSection",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "section",
+          "type": {
+            "native": "QDateTimeEdit::Section",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setSelectedSection(QDateTimeEdit::Section section)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "time",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setTime(QTime time)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "time",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setTime(QTime time)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setTimeRange(QTime min, QTime max)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setTimeRange",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "min",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "max",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setTimeRange(QTime min, QTime max)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "timeSpec",
+      "const": false,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setTimeSpec(Qt::TimeSpec spec)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setTimeSpec",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "spec",
+          "type": {
+            "native": "Qt::TimeSpec",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setTimeSpec(Qt::TimeSpec spec)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "timeZone",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void setTimeZone(const QTimeZone &zone)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setTimeZone",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "zone",
+          "type": {
+            "native": "const QTimeZone &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setTimeZone(const QTimeZone &zone)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QSize sizeHint() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sizeHint",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize sizeHint() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void stepBy(int steps) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "stepBy",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "steps",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void stepBy(int steps) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QAbstractSpinBox::StepEnabled stepEnabled() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "stepEnabled",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QAbstractSpinBox::StepEnabled",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QAbstractSpinBox::StepEnabled stepEnabled() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QString textFromDateTime(const QDateTime &dateTime) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "textFromDateTime",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "dateTime",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString textFromDateTime(const QDateTime &dateTime) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "time",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QTime time() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "time",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTime time() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "timeSpec",
+      "const": true,
+      "deprecated": true,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:Qt::TimeSpec timeSpec() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "timeSpec",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "Qt::TimeSpec",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "Qt::TimeSpec timeSpec() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "timeZone",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QTimeZone timeZone() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "timeZone",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTimeZone",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTimeZone timeZone() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:QValidator::State validate(QString &text, int &pos) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "validate",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "text",
+          "type": {
+            "native": "QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        },
+        {
+          "default": null,
+          "name": "pos",
+          "type": {
+            "native": "int &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QValidator::State",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QValidator::State validate(QString &text, int &pos) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:method:void wheelEvent(QWheelEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "wheelEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QWheelEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void wheelEvent(QWheelEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    }
+  ],
+  "native": {
+    "brief": "Widget for editing dates and times",
+    "header": "qdatetimeedit.h",
+    "module": "QtWidgets",
+    "name": "QDateTimeEdit"
+  },
+  "ownership": [
+    {
+      "action": "add",
+      "arg": "1",
+      "fact": "parent",
+      "method": "setCalendarWidget(QCalendarWidget*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    }
+  ],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "calendarPopup",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCalendarPopup"
+      },
+      "brief": "Current calendar pop-up show mode",
+      "js_name": "calendarPopup",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "calendarPopup",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "currentSection",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCurrentSection"
+      },
+      "brief": "Current section of the spinbox",
+      "js_name": "currentSection",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QDateTimeEdit::Section",
+        "user": false,
+        "writable": true
+      },
+      "name": "currentSection",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "Section",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "enum<Section>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "currentSectionIndex",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCurrentSectionIndex"
+      },
+      "brief": "Current section index of the spinbox",
+      "js_name": "currentSectionIndex",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "currentSectionIndex",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "date",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDate"
+      },
+      "brief": "QDate that is set in the widget",
+      "js_name": "date",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "dateChanged(QDate)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QDate",
+        "user": false,
+        "writable": true
+      },
+      "name": "date",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "dateChanged(QDate)"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QDate",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "dateTime",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDateTime"
+      },
+      "brief": "QDateTime that is set in the QDateTimeEdit",
+      "js_name": "dateTime",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "dateTimeChanged(QDateTime)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QDateTime",
+        "user": true,
+        "writable": true
+      },
+      "name": "dateTime",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "dateTimeChanged(QDateTime)"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "displayFormat",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDisplayFormat"
+      },
+      "brief": "Format used to display the time/date of the date time edit",
+      "js_name": "displayFormat",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QString",
+        "user": false,
+        "writable": true
+      },
+      "name": "displayFormat",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "displayedSections",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "Currently displayed fields of the date time edit",
+      "js_name": "displayedSections",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": true,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QFlags<QDateTimeEdit::Section>",
+        "user": false,
+        "writable": false
+      },
+      "name": "displayedSections",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "Sections",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clearMaximumDate",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMaximumDate"
+      },
+      "brief": "Maximum date of the date time edit",
+      "js_name": "maximumDate",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": true,
+        "stored": true,
+        "type": "QDate",
+        "user": false,
+        "writable": true
+      },
+      "name": "maximumDate",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QDate",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clearMaximumDateTime",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMaximumDateTime"
+      },
+      "brief": "Maximum datetime of the date time edit",
+      "js_name": "maximumDateTime",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": true,
+        "stored": true,
+        "type": "QDateTime",
+        "user": false,
+        "writable": true
+      },
+      "name": "maximumDateTime",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clearMaximumTime",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMaximumTime"
+      },
+      "brief": "Maximum time of the date time edit",
+      "js_name": "maximumTime",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": true,
+        "stored": true,
+        "type": "QTime",
+        "user": false,
+        "writable": true
+      },
+      "name": "maximumTime",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clearMinimumDate",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMinimumDate"
+      },
+      "brief": "Minimum date of the date time edit",
+      "js_name": "minimumDate",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": true,
+        "stored": true,
+        "type": "QDate",
+        "user": false,
+        "writable": true
+      },
+      "name": "minimumDate",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QDate",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clearMinimumDateTime",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMinimumDateTime"
+      },
+      "brief": "Minimum datetime of the date time edit",
+      "js_name": "minimumDateTime",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": true,
+        "stored": true,
+        "type": "QDateTime",
+        "user": false,
+        "writable": true
+      },
+      "name": "minimumDateTime",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QDateTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clearMinimumTime",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMinimumTime"
+      },
+      "brief": "Minimum time of the date time edit",
+      "js_name": "minimumTime",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": true,
+        "stored": true,
+        "type": "QTime",
+        "user": false,
+        "writable": true
+      },
+      "name": "minimumTime",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "sectionCount",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "Number of sections displayed. If the format is 'yyyy/yy/yyyy', sectionCount returns 3",
+      "js_name": "sectionCount",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": false
+      },
+      "name": "sectionCount",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "time",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setTime"
+      },
+      "brief": "QTime that is set in the widget",
+      "js_name": "time",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "timeChanged(QTime)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QTime",
+        "user": false,
+        "writable": true
+      },
+      "name": "time",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "timeChanged(QTime)"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QTime",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "timeSpec",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setTimeSpec"
+      },
+      "brief": "Current timespec used by the date time edit",
+      "js_name": "timeSpec",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "Qt::TimeSpec",
+        "user": false,
+        "writable": true
+      },
+      "name": "timeSpec",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "Qt::TimeSpec",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "timeZone",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setTimeZone"
+      },
+      "brief": "Current timezone used by the datetime editing widget",
+      "js_name": "timeZone",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QTimeZone",
+        "user": false,
+        "writable": true
+      },
+      "name": "timeZone",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QTimeZone",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": "date",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:signal:void dateChanged(QDate date)",
+      "js_event": "dateChanged",
+      "metaobject_signatures": [
+        "dateChanged(QDate)"
+      ],
+      "name": "dateChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "date",
+          "type": {
+            "native": "QDate",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void dateChanged(QDate date)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "dateTime",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:signal:void dateTimeChanged(const QDateTime &datetime)",
+      "js_event": "dateTimeChanged",
+      "metaobject_signatures": [
+        "dateTimeChanged(QDateTime)"
+      ],
+      "name": "dateTimeChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "datetime",
+          "type": {
+            "native": "const QDateTime &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void dateTimeChanged(const QDateTime &datetime)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "time",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit:signal:void timeChanged(QTime time)",
+      "js_event": "timeChanged",
+      "metaobject_signatures": [
+        "timeChanged(QTime)"
+      ],
+      "name": "timeChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "time",
+          "type": {
+            "native": "QTime",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void timeChanged(QTime time)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

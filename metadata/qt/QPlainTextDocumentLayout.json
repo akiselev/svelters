@@ -1,0 +1,532 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QAbstractTextDocumentLayout",
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:ctor:QPlainTextDocumentLayout(QTextDocument *document)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QPlainTextDocumentLayout(QTextDocument *document)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "document",
+          "type": {
+            "native": "QTextDocument *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QTextDocument>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:QRectF blockBoundingRect(const QTextBlock &block) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "blockBoundingRect",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "block",
+          "type": {
+            "native": "const QTextBlock &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QRectF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QRectF blockBoundingRect(const QTextBlock &block) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "cursorWidth",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:int cursorWidth() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "cursorWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int cursorWidth() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:void documentChanged(int from, int charsRemoved, int charsAdded) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "documentChanged",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "from",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "charsRemoved",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "charsAdded",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void documentChanged(int from, int charsRemoved, int charsAdded) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:QSizeF documentSize() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "documentSize",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSizeF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSizeF documentSize() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:void draw(QPainter *, const QAbstractTextDocumentLayout::PaintContext &) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "draw",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "const QAbstractTextDocumentLayout::PaintContext &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void draw(QPainter *, const QAbstractTextDocumentLayout::PaintContext &) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:void ensureBlockLayout(const QTextBlock &block) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "ensureBlockLayout",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "block",
+          "type": {
+            "native": "const QTextBlock &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void ensureBlockLayout(const QTextBlock &block) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:QRectF frameBoundingRect(QTextFrame *) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "frameBoundingRect",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "QTextFrame *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QTextFrame>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QRectF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QRectF frameBoundingRect(QTextFrame *) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:int hitTest(const QPointF &, Qt::HitTestAccuracy) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "hitTest",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "const QPointF &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "Qt::HitTestAccuracy",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int hitTest(const QPointF &, Qt::HitTestAccuracy) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:int pageCount() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "pageCount",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int pageCount() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:void requestUpdate()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "requestUpdate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void requestUpdate()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "cursorWidth",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextDocumentLayout:method:void setCursorWidth(int width)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCursorWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "width",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCursorWidth(int width)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Implements a plain text layout for QTextDocument",
+    "header": "qplaintextedit.h",
+    "module": "QtWidgets",
+    "name": "QPlainTextDocumentLayout"
+  },
+  "ownership": [],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "cursorWidth",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCursorWidth"
+      },
+      "brief": null,
+      "js_name": "cursorWidth",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "cursorWidth",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

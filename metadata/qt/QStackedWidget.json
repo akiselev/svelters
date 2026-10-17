@@ -1,0 +1,697 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QFrame",
+    "QWidget",
+    "QObject",
+    "QPaintDevice"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:ctor:QStackedWidget(QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QStackedWidget(QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:int addWidget(QWidget *widget)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int addWidget(QWidget *widget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "count",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:int count() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "count",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int count() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "currentIndex",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:int currentIndex() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentIndex",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int currentIndex() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:QWidget * currentWidget() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QWidget *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QWidget>"
+      },
+      "signature": "QWidget * currentWidget() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:bool event(QEvent *e) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "event",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "e",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool event(QEvent *e) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:int indexOf(const QWidget *widget) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "indexOf",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "const QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int indexOf(const QWidget *widget) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:int insertWidget(int index, QWidget *widget)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "insertWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int insertWidget(int index, QWidget *widget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:void removeWidget(QWidget *widget)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "removeWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void removeWidget(QWidget *widget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "currentIndex",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:void setCurrentIndex(int index)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setCurrentIndex",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCurrentIndex(int index)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:void setCurrentWidget(QWidget *widget)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setCurrentWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCurrentWidget(QWidget *widget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:method:QWidget * widget(int index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "widget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QWidget *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QWidget>"
+      },
+      "signature": "QWidget * widget(int index) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Stack of widgets where only one widget is visible at a time",
+    "header": "qstackedwidget.h",
+    "module": "QtWidgets",
+    "name": "QStackedWidget"
+  },
+  "ownership": [
+    {
+      "action": "add",
+      "arg": "1",
+      "fact": "parent",
+      "method": "addWidget(QWidget*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    },
+    {
+      "action": "add",
+      "arg": "2",
+      "fact": "parent",
+      "method": "insertWidget(int,QWidget*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    },
+    {
+      "action": "remove",
+      "arg": "1",
+      "fact": "parent",
+      "method": "removeWidget(QWidget*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    },
+    {
+      "action": "add",
+      "arg": "1",
+      "fact": "parent",
+      "method": "setCurrentWidget(QWidget*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    }
+  ],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "count",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The number of widgets contained by this stacked widget",
+      "js_name": "count",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": false
+      },
+      "name": "count",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "currentIndex",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCurrentIndex"
+      },
+      "brief": "The index position of the widget that is visible",
+      "js_name": "currentIndex",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "currentChanged(int)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "currentIndex",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "currentChanged(int)"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": "currentIndex",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:signal:void currentChanged(int index)",
+      "js_event": "currentChanged",
+      "metaobject_signatures": [
+        "currentChanged(int)"
+      ],
+      "name": "currentChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void currentChanged(int index)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:signal:void widgetAdded(int index)",
+      "js_event": "widgetAdded",
+      "metaobject_signatures": [
+        "widgetAdded(int)"
+      ],
+      "name": "widgetAdded",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void widgetAdded(int index)",
+      "since": "6.9",
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QStackedWidget:signal:void widgetRemoved(int index)",
+      "js_event": "widgetRemoved",
+      "metaobject_signatures": [
+        "widgetRemoved(int)"
+      ],
+      "name": "widgetRemoved",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void widgetRemoved(int index)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

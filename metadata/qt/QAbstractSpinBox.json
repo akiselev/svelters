@@ -1,0 +1,2523 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QWidget",
+    "QObject",
+    "QPaintDevice"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:ctor:QAbstractSpinBox(QWidget *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QAbstractSpinBox(QWidget *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "UpDownArrows",
+          "value": "0"
+        },
+        {
+          "name": "PlusMinus",
+          "value": "1"
+        },
+        {
+          "name": "NoButtons",
+          "value": "2"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "NoButtons": 2,
+          "PlusMinus": 1,
+          "UpDownArrows": 0
+        },
+        "scoped": false
+      },
+      "name": "ButtonSymbols",
+      "origin": "qdoc"
+    },
+    {
+      "members": [
+        {
+          "name": "CorrectToPreviousValue",
+          "value": "0"
+        },
+        {
+          "name": "CorrectToNearestValue",
+          "value": "1"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "CorrectToNearestValue": 1,
+          "CorrectToPreviousValue": 0
+        },
+        "scoped": false
+      },
+      "name": "CorrectionMode",
+      "origin": "qdoc"
+    },
+    {
+      "members": [
+        {
+          "name": "StepNone",
+          "value": "0x00"
+        },
+        {
+          "name": "StepUpEnabled",
+          "value": "0x01"
+        },
+        {
+          "name": "StepDownEnabled",
+          "value": "0x02"
+        }
+      ],
+      "metaobject": null,
+      "name": "StepEnabledFlag",
+      "origin": "qdoc"
+    },
+    {
+      "members": [
+        {
+          "name": "DefaultStepType",
+          "value": "0"
+        },
+        {
+          "name": "AdaptiveDecimalStepType",
+          "value": "1"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "AdaptiveDecimalStepType": 1,
+          "DefaultStepType": 0
+        },
+        "scoped": false
+      },
+      "name": "StepType",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": "alignment",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:Qt::Alignment alignment() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "alignment",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "Qt::Alignment",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "Qt::Alignment alignment() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "buttonSymbols",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QAbstractSpinBox::ButtonSymbols buttonSymbols() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "buttonSymbols",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractSpinBox::ButtonSymbols",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QAbstractSpinBox::ButtonSymbols buttonSymbols() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void changeEvent(QEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "changeEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void changeEvent(QEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void clear()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "clear",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clear()",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void closeEvent(QCloseEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "closeEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QCloseEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void closeEvent(QCloseEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void contextMenuEvent(QContextMenuEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "contextMenuEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QContextMenuEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void contextMenuEvent(QContextMenuEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "correctionMode",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QAbstractSpinBox::CorrectionMode correctionMode() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "correctionMode",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractSpinBox::CorrectionMode",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QAbstractSpinBox::CorrectionMode correctionMode() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool event(QEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "event",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool event(QEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void fixup(QString &input) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "fixup",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "input",
+          "type": {
+            "native": "QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void fixup(QString &input) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void focusInEvent(QFocusEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "focusInEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QFocusEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void focusInEvent(QFocusEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void focusOutEvent(QFocusEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "focusOutEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QFocusEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void focusOutEvent(QFocusEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "acceptableInput",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool hasAcceptableInput() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "hasAcceptableInput",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool hasAcceptableInput() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "frame",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool hasFrame() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "hasFrame",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool hasFrame() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void hideEvent(QHideEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "hideEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QHideEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void hideEvent(QHideEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void initStyleOption(QStyleOptionSpinBox *option) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "initStyleOption",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "QStyleOptionSpinBox *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void initStyleOption(QStyleOptionSpinBox *option) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QVariant inputMethodQuery(Qt::InputMethodQuery query) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "inputMethodQuery",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "query",
+          "type": {
+            "native": "Qt::InputMethodQuery",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QVariant",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "variant"
+      },
+      "signature": "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void interpretText()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "interpretText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void interpretText()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "accelerated",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool isAccelerated() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isAccelerated",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isAccelerated() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "showGroupSeparator",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool isGroupSeparatorShown() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isGroupSeparatorShown",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isGroupSeparatorShown() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "readOnly",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool isReadOnly() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isReadOnly",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isReadOnly() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void keyPressEvent(QKeyEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "keyPressEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QKeyEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void keyPressEvent(QKeyEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void keyReleaseEvent(QKeyEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "keyReleaseEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QKeyEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void keyReleaseEvent(QKeyEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "keyboardTracking",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool keyboardTracking() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "keyboardTracking",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool keyboardTracking() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QLineEdit * lineEdit() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "lineEdit",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QLineEdit *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QLineEdit>"
+      },
+      "signature": "QLineEdit * lineEdit() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QSize minimumSizeHint() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "minimumSizeHint",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize minimumSizeHint() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void mouseMoveEvent(QMouseEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "mouseMoveEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QMouseEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void mouseMoveEvent(QMouseEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void mousePressEvent(QMouseEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "mousePressEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QMouseEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void mousePressEvent(QMouseEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void mouseReleaseEvent(QMouseEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "mouseReleaseEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QMouseEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void mouseReleaseEvent(QMouseEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void paintEvent(QPaintEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "paintEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QPaintEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void paintEvent(QPaintEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void resizeEvent(QResizeEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "resizeEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QResizeEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void resizeEvent(QResizeEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void selectAll()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "selectAll",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void selectAll()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "accelerated",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setAccelerated(bool on)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setAccelerated",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "on",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setAccelerated(bool on)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "alignment",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setAlignment(Qt::Alignment flag)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setAlignment",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "flag",
+          "type": {
+            "native": "Qt::Alignment",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setAlignment(Qt::Alignment flag)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "buttonSymbols",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setButtonSymbols(QAbstractSpinBox::ButtonSymbols bs)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setButtonSymbols",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "bs",
+          "type": {
+            "native": "QAbstractSpinBox::ButtonSymbols",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setButtonSymbols(QAbstractSpinBox::ButtonSymbols bs)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "correctionMode",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setCorrectionMode(QAbstractSpinBox::CorrectionMode cm)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCorrectionMode",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "cm",
+          "type": {
+            "native": "QAbstractSpinBox::CorrectionMode",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCorrectionMode(QAbstractSpinBox::CorrectionMode cm)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "frame",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setFrame(bool)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setFrame",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setFrame(bool)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "showGroupSeparator",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setGroupSeparatorShown(bool shown)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setGroupSeparatorShown",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "shown",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setGroupSeparatorShown(bool shown)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "keyboardTracking",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setKeyboardTracking(bool kt)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setKeyboardTracking",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "kt",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setKeyboardTracking(bool kt)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setLineEdit(QLineEdit *lineEdit)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setLineEdit",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "lineEdit",
+          "type": {
+            "native": "QLineEdit *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QLineEdit>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setLineEdit(QLineEdit *lineEdit)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "readOnly",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setReadOnly(bool r)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setReadOnly",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "r",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setReadOnly(bool r)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "specialValueText",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setSpecialValueText(const QString &txt)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setSpecialValueText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "txt",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setSpecialValueText(const QString &txt)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "wrapping",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void setWrapping(bool w)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setWrapping",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "w",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setWrapping(bool w)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void showEvent(QShowEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "showEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QShowEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void showEvent(QShowEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QSize sizeHint() const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "sizeHint",
+      "origin": "qdoc",
+      "override": true,
+      "params": [],
+      "returns": {
+        "native": "QSize",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QSize sizeHint() const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "specialValueText",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QString specialValueText() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "specialValueText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString specialValueText() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void stepBy(int steps)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "stepBy",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "steps",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void stepBy(int steps)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void stepDown()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "stepDown",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void stepDown()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QAbstractSpinBox::StepEnabled stepEnabled() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "stepEnabled",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractSpinBox::StepEnabled",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QAbstractSpinBox::StepEnabled stepEnabled() const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void stepUp()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "stepUp",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void stepUp()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "text",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QString text() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "text",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString text() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void timerEvent(QTimerEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "timerEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QTimerEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void timerEvent(QTimerEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:QValidator::State validate(QString &input, int &pos) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "validate",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "input",
+          "type": {
+            "native": "QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        },
+        {
+          "default": null,
+          "name": "pos",
+          "type": {
+            "native": "int &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QValidator::State",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QValidator::State validate(QString &input, int &pos) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:void wheelEvent(QWheelEvent *event) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "wheelEvent",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "event",
+          "type": {
+            "native": "QWheelEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void wheelEvent(QWheelEvent *event) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "wrapping",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:method:bool wrapping() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "wrapping",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool wrapping() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Spinbox and a line edit to display values",
+    "header": "qabstractspinbox.h",
+    "module": "QtWidgets",
+    "name": "QAbstractSpinBox"
+  },
+  "ownership": [
+    {
+      "child_type": null,
+      "fact": "return_QString_native",
+      "get_old": null,
+      "method": "fixup(QString &)const",
+      "origin": "typesystem"
+    },
+    {
+      "fact": "snippet",
+      "method": "fixup(QString &)const",
+      "origin": "typesystem",
+      "snippet": "qstring-return"
+    },
+    {
+      "action": "add",
+      "arg": "1",
+      "fact": "parent",
+      "method": "setLineEdit(QLineEdit*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    },
+    {
+      "child_type": null,
+      "fact": "return_tuple_QValidator_QString_int",
+      "get_old": null,
+      "method": "validate(QString &,int &)const",
+      "origin": "typesystem"
+    },
+    {
+      "child_type": null,
+      "fact": "validator_conversionrule",
+      "get_old": null,
+      "method": "validate(QString &,int &)const",
+      "origin": "typesystem"
+    }
+  ],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAccelerated",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setAccelerated"
+      },
+      "brief": "Whether the spin box will accelerate the frequency of the steps when pressing the step Up/Down buttons",
+      "js_name": "accelerated",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "accelerated",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasAcceptableInput",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "Whether the input satisfies the current validation",
+      "js_name": "acceptableInput",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": false
+      },
+      "name": "acceptableInput",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alignment",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setAlignment"
+      },
+      "brief": "The alignment of the spin box",
+      "js_name": "alignment",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": true,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QFlags<Qt::AlignmentFlag>",
+        "user": false,
+        "writable": true
+      },
+      "name": "alignment",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "Qt::Alignment",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "buttonSymbols",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setButtonSymbols"
+      },
+      "brief": "The current button symbol mode",
+      "js_name": "buttonSymbols",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QAbstractSpinBox::ButtonSymbols",
+        "user": false,
+        "writable": true
+      },
+      "name": "buttonSymbols",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "ButtonSymbols",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "enum<ButtonSymbols>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "correctionMode",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCorrectionMode"
+      },
+      "brief": "The mode to correct an Intermediate value if editing finishes",
+      "js_name": "correctionMode",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QAbstractSpinBox::CorrectionMode",
+        "user": false,
+        "writable": true
+      },
+      "name": "correctionMode",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "CorrectionMode",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "enum<CorrectionMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasFrame",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setFrame"
+      },
+      "brief": "Whether the spin box draws itself with a frame",
+      "js_name": "frame",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "frame",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "keyboardTracking",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setKeyboardTracking"
+      },
+      "brief": "Whether keyboard tracking is enabled for the spinbox",
+      "js_name": "keyboardTracking",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "keyboardTracking",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isReadOnly",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setReadOnly"
+      },
+      "brief": "Whether the spin box is read only",
+      "js_name": "readOnly",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "readOnly",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isGroupSeparatorShown",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setGroupSeparatorShown"
+      },
+      "brief": "Whether a thousands separator is enabled. By default this property is false",
+      "js_name": "showGroupSeparator",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "showGroupSeparator",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "specialValueText",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setSpecialValueText"
+      },
+      "brief": "The special-value text",
+      "js_name": "specialValueText",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QString",
+        "user": false,
+        "writable": true
+      },
+      "name": "specialValueText",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "text",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The spin box's text, including any prefix and suffix",
+      "js_name": "text",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QString",
+        "user": false,
+        "writable": false
+      },
+      "name": "text",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "wrapping",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setWrapping"
+      },
+      "brief": "Whether the spin box is circular",
+      "js_name": "wrapping",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "wrapping",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:signal:void editingFinished()",
+      "js_event": "editingFinished",
+      "metaobject_signatures": [
+        "editingFinished()"
+      ],
+      "name": "editingFinished",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void editingFinished()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:signal:void returnPressed()",
+      "js_event": "returnPressed",
+      "metaobject_signatures": [
+        "returnPressed()"
+      ],
+      "name": "returnPressed",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void returnPressed()",
+      "since": "6.10",
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

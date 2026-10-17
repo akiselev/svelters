@@ -1,0 +1,1859 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:ctor:QCompleter(QAbstractItemModel *model, QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QCompleter(QAbstractItemModel *model, QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "model",
+          "type": {
+            "native": "QAbstractItemModel *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractItemModel>"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    },
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:ctor:QCompleter(QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QCompleter(QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    },
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:ctor:QCompleter(const QStringList &list, QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QCompleter(const QStringList &list, QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "list",
+          "type": {
+            "native": "const QStringList &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "list"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "members": [
+        {
+          "name": "PopupCompletion",
+          "value": "0"
+        },
+        {
+          "name": "UnfilteredPopupCompletion",
+          "value": "1"
+        },
+        {
+          "name": "InlineCompletion",
+          "value": "2"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "InlineCompletion": 2,
+          "PopupCompletion": 0,
+          "UnfilteredPopupCompletion": 1
+        },
+        "scoped": false
+      },
+      "name": "CompletionMode",
+      "origin": "qdoc"
+    },
+    {
+      "members": [
+        {
+          "name": "UnsortedModel",
+          "value": "0"
+        },
+        {
+          "name": "CaseSensitivelySortedModel",
+          "value": "1"
+        },
+        {
+          "name": "CaseInsensitivelySortedModel",
+          "value": "2"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "CaseInsensitivelySortedModel": 2,
+          "CaseSensitivelySortedModel": 1,
+          "UnsortedModel": 0
+        },
+        "scoped": false
+      },
+      "name": "ModelSorting",
+      "origin": "qdoc"
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": "caseSensitivity",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:Qt::CaseSensitivity caseSensitivity() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "caseSensitivity",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "Qt::CaseSensitivity",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "Qt::CaseSensitivity caseSensitivity() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void complete(const QRect &rect)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "complete",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": "QRect()",
+          "name": "rect",
+          "type": {
+            "native": "const QRect &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void complete(const QRect &rect)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionColumn",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:int completionColumn() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "completionColumn",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int completionColumn() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:int completionCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "completionCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int completionCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionMode",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QCompleter::CompletionMode completionMode() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "completionMode",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QCompleter::CompletionMode",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QCompleter::CompletionMode completionMode() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QAbstractItemModel * completionModel() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "completionModel",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractItemModel *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QAbstractItemModel>"
+      },
+      "signature": "QAbstractItemModel * completionModel() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionPrefix",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QString completionPrefix() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "completionPrefix",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString completionPrefix() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionRole",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:int completionRole() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "completionRole",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int completionRole() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QString currentCompletion() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentCompletion",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString currentCompletion() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QModelIndex currentIndex() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentIndex",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QModelIndex",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QModelIndex currentIndex() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:int currentRow() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "currentRow",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int currentRow() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:bool event(QEvent *ev) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "event",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "ev",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool event(QEvent *ev) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:bool eventFilter(QObject *o, QEvent *e) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "eventFilter",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "o",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        },
+        {
+          "default": null,
+          "name": "e",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool eventFilter(QObject *o, QEvent *e) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "filterMode",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:Qt::MatchFlags filterMode() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "filterMode",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "Qt::MatchFlags",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "Qt::MatchFlags filterMode() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maxVisibleItems",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:int maxVisibleItems() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "maxVisibleItems",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int maxVisibleItems() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QAbstractItemModel * model() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "model",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractItemModel *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QAbstractItemModel>"
+      },
+      "signature": "QAbstractItemModel * model() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "modelSorting",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QCompleter::ModelSorting modelSorting() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "modelSorting",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QCompleter::ModelSorting",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QCompleter::ModelSorting modelSorting() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QString pathFromIndex(const QModelIndex &index) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "pathFromIndex",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString pathFromIndex(const QModelIndex &index) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QAbstractItemView * popup() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "popup",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractItemView *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QAbstractItemView>"
+      },
+      "signature": "QAbstractItemView * popup() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "caseSensitivity",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCaseSensitivity",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "caseSensitivity",
+          "type": {
+            "native": "Qt::CaseSensitivity",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionColumn",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setCompletionColumn(int column)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCompletionColumn",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "column",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCompletionColumn(int column)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionMode",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setCompletionMode(QCompleter::CompletionMode mode)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCompletionMode",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "mode",
+          "type": {
+            "native": "QCompleter::CompletionMode",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCompletionMode(QCompleter::CompletionMode mode)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionPrefix",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setCompletionPrefix(const QString &prefix)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setCompletionPrefix",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "prefix",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCompletionPrefix(const QString &prefix)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "completionRole",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setCompletionRole(int role)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCompletionRole",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "role",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setCompletionRole(int role)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:bool setCurrentRow(int row)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setCurrentRow",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "row",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool setCurrentRow(int row)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "filterMode",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setFilterMode(Qt::MatchFlags filterMode)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setFilterMode",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "filterMode",
+          "type": {
+            "native": "Qt::MatchFlags",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setFilterMode(Qt::MatchFlags filterMode)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maxVisibleItems",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setMaxVisibleItems(int maxItems)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMaxVisibleItems",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "maxItems",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMaxVisibleItems(int maxItems)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setModel(QAbstractItemModel *model)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setModel",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "model",
+          "type": {
+            "native": "QAbstractItemModel *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractItemModel>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setModel(QAbstractItemModel *model)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "modelSorting",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setModelSorting(QCompleter::ModelSorting sorting)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setModelSorting",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "sorting",
+          "type": {
+            "native": "QCompleter::ModelSorting",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setModelSorting(QCompleter::ModelSorting sorting)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setPopup(QAbstractItemView *popup)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setPopup",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "popup",
+          "type": {
+            "native": "QAbstractItemView *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractItemView>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setPopup(QAbstractItemView *popup)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setWidget(QWidget *widget)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setWidget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "widget",
+          "type": {
+            "native": "QWidget *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QWidget>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setWidget(QWidget *widget)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "wrapAround",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:void setWrapAround(bool wrap)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setWrapAround",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "wrap",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setWrapAround(bool wrap)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QStringList splitPath(const QString &path) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "splitPath",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "path",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QStringList",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "list"
+      },
+      "signature": "QStringList splitPath(const QString &path) const",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:QWidget * widget() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "widget",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QWidget *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QWidget>"
+      },
+      "signature": "QWidget * widget() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "wrapAround",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:method:bool wrapAround() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "wrapAround",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool wrapAround() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Completions based on an item model",
+    "header": "qcompleter.h",
+    "module": "QtWidgets",
+    "name": "QCompleter"
+  },
+  "ownership": [
+    {
+      "action": "set",
+      "arg": "1",
+      "fact": "reference_count",
+      "method": "setModel(QAbstractItemModel*)",
+      "origin": "typesystem",
+      "variable": null
+    },
+    {
+      "action": "add",
+      "arg": "1",
+      "fact": "parent",
+      "method": "setPopup(QAbstractItemView*)",
+      "origin": "typesystem",
+      "parent_index": "this"
+    },
+    {
+      "action": "add",
+      "arg": "this",
+      "fact": "parent",
+      "method": "setWidget(QWidget*)",
+      "origin": "typesystem",
+      "parent_index": "1"
+    }
+  ],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "caseSensitivity",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCaseSensitivity"
+      },
+      "brief": "The case sensitivity of the matching",
+      "js_name": "caseSensitivity",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "Qt::CaseSensitivity",
+        "user": false,
+        "writable": true
+      },
+      "name": "caseSensitivity",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "Qt::CaseSensitivity",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "completionColumn",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCompletionColumn"
+      },
+      "brief": "The column in the model in which completions are searched for",
+      "js_name": "completionColumn",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "completionColumn",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "completionMode",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCompletionMode"
+      },
+      "brief": "How the completions are provided to the user",
+      "js_name": "completionMode",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QCompleter::CompletionMode",
+        "user": false,
+        "writable": true
+      },
+      "name": "completionMode",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "CompletionMode",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "enum<CompletionMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "completionPrefix",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCompletionPrefix"
+      },
+      "brief": "The completion prefix used to provide completions",
+      "js_name": "completionPrefix",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QString",
+        "user": false,
+        "writable": true
+      },
+      "name": "completionPrefix",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "completionRole",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setCompletionRole"
+      },
+      "brief": "The item role to be used to query the contents of items for matching",
+      "js_name": "completionRole",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "completionRole",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "filterMode",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setFilterMode"
+      },
+      "brief": "This property controls how filtering is performed",
+      "js_name": "filterMode",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": true,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QFlags<Qt::MatchFlag>",
+        "user": false,
+        "writable": true
+      },
+      "name": "filterMode",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "Qt::MatchFlags",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxVisibleItems",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMaxVisibleItems"
+      },
+      "brief": "The maximum allowed size on screen of the completer, measured in items",
+      "js_name": "maxVisibleItems",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "maxVisibleItems",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "modelSorting",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setModelSorting"
+      },
+      "brief": "The way the model is sorted",
+      "js_name": "modelSorting",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": true,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QCompleter::ModelSorting",
+        "user": false,
+        "writable": true
+      },
+      "name": "modelSorting",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "ModelSorting",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "enum<ModelSorting>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "wrapAround",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setWrapAround"
+      },
+      "brief": "The completions wrap around when navigating through items",
+      "js_name": "wrapAround",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "wrapAround",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:signal:void activated(const QModelIndex &index)",
+      "js_event": "activated",
+      "metaobject_signatures": [
+        "activated(QModelIndex)",
+        "activated(QString)"
+      ],
+      "name": "activated",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void activated(const QModelIndex &index)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:signal:void activated(const QString &text)",
+      "js_event": "activated",
+      "metaobject_signatures": [
+        "activated(QModelIndex)",
+        "activated(QString)"
+      ],
+      "name": "activated",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "text",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void activated(const QString &text)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:signal:void highlighted(const QModelIndex &index)",
+      "js_event": "highlighted",
+      "metaobject_signatures": [
+        "highlighted(QModelIndex)",
+        "highlighted(QString)"
+      ],
+      "name": "highlighted",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "index",
+          "type": {
+            "native": "const QModelIndex &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void highlighted(const QModelIndex &index)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QCompleter:signal:void highlighted(const QString &text)",
+      "js_event": "highlighted",
+      "metaobject_signatures": [
+        "highlighted(QModelIndex)",
+        "highlighted(QString)"
+      ],
+      "name": "highlighted",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "text",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void highlighted(const QString &text)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

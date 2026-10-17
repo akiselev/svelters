@@ -1,0 +1,554 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QGraphicsTransform",
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:ctor:QGraphicsRotation(QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QGraphicsRotation(QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": "angle",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:qreal angle() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "angle",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal angle() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:void applyTo(QMatrix4x4 *matrix) const override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "applyTo",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "matrix",
+          "type": {
+            "native": "QMatrix4x4 *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void applyTo(QMatrix4x4 *matrix) const override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": "axis",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:QVector3D axis() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "axis",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QVector3D",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QVector3D axis() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "origin",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:QVector3D origin() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "origin",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QVector3D",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QVector3D origin() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "angle",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:void setAngle(qreal)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setAngle",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setAngle(qreal)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "axis",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:void setAxis(Qt::Axis axis)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setAxis",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "axis",
+          "type": {
+            "native": "Qt::Axis",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setAxis(Qt::Axis axis)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "axis",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:void setAxis(const QVector3D &axis)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setAxis",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "axis",
+          "type": {
+            "native": "const QVector3D &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setAxis(const QVector3D &axis)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "origin",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:method:void setOrigin(const QVector3D &point)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setOrigin",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "point",
+          "type": {
+            "native": "const QVector3D &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setOrigin(const QVector3D &point)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Rotation transformation around a given axis",
+    "header": "qgraphicstransform.h",
+    "module": "QtWidgets",
+    "name": "QGraphicsRotation"
+  },
+  "ownership": [],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "angle",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setAngle"
+      },
+      "brief": "The angle for clockwise rotation, in degrees",
+      "js_name": "angle",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "angleChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "angle",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "angleChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "axis",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setAxis"
+      },
+      "brief": "Rotation axis, specified by a vector in 3D space",
+      "js_name": "axis",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "axisChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QVector3D",
+        "user": false,
+        "writable": true
+      },
+      "name": "axis",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "axisChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QVector3D",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "origin",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setOrigin"
+      },
+      "brief": "The origin of the rotation in 3D space",
+      "js_name": "origin",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "originChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QVector3D",
+        "user": false,
+        "writable": true
+      },
+      "name": "origin",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "originChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QVector3D",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": "angle",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:signal:void angleChanged()",
+      "js_event": "angleChanged",
+      "metaobject_signatures": [
+        "angleChanged()"
+      ],
+      "name": "angleChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void angleChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "axis",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:signal:void axisChanged()",
+      "js_event": "axisChanged",
+      "metaobject_signatures": [
+        "axisChanged()"
+      ],
+      "name": "axisChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void axisChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "origin",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation:signal:void originChanged()",
+      "js_event": "originChanged",
+      "metaobject_signatures": [
+        "originChanged()"
+      ],
+      "name": "originChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void originChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

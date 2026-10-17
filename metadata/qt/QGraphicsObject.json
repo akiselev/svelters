@@ -1,0 +1,960 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QGraphicsItem",
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:ctor:QGraphicsObject(QGraphicsItem *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QGraphicsObject(QGraphicsItem *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QGraphicsItem *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject",
+  "interfaces": [],
+  "kind": "object",
+  "methods": [
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:method:bool event(QEvent *ev) override",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "event",
+      "origin": "qdoc",
+      "override": true,
+      "params": [
+        {
+          "default": null,
+          "name": "ev",
+          "type": {
+            "native": "QEvent *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool event(QEvent *ev) override",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:method:void grabGesture(Qt::GestureType gesture, Qt::GestureFlags flags)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "grabGesture",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "gesture",
+          "type": {
+            "native": "Qt::GestureType",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "Qt::GestureFlags()",
+          "name": "flags",
+          "type": {
+            "native": "Qt::GestureFlags",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void grabGesture(Qt::GestureType gesture, Qt::GestureFlags flags)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:method:void ungrabGesture(Qt::GestureType gesture)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "ungrabGesture",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "gesture",
+          "type": {
+            "native": "Qt::GestureType",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void ungrabGesture(Qt::GestureType gesture)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:method:void updateMicroFocus()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "updateMicroFocus",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void updateMicroFocus()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Base class for all graphics items that require signals, slots and properties",
+    "header": "qgraphicsitem.h",
+    "module": "QtWidgets",
+    "name": "QGraphicsObject"
+  },
+  "ownership": [],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The effect attached to this item",
+      "js_name": "effect",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QGraphicsEffect*",
+        "user": false,
+        "writable": true
+      },
+      "name": "effect",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QGraphicsEffect*",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QGraphicsEffect>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "Whether the item is enabled or not",
+      "js_name": "enabled",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "enabledChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "enabled",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "enabledChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The opacity of the item",
+      "js_name": "opacity",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": true,
+        "flag": false,
+        "notify": "opacityChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "opacity",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "opacityChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The parent of the item",
+      "js_name": "parent",
+      "metaobject": {
+        "constant": false,
+        "designable": false,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "parentChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QGraphicsObject*",
+        "user": false,
+        "writable": true
+      },
+      "name": "parent",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "parentChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QGraphicsObject*",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QGraphicsObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The position of the item",
+      "js_name": "pos",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": true,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QPointF",
+        "user": false,
+        "writable": true
+      },
+      "name": "pos",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QPointF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The rotation of the item in degrees",
+      "js_name": "rotation",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "rotationChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "rotation",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "rotationChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The scale of the item",
+      "js_name": "scale",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "scaleChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "scale",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "scaleChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The transformation origin",
+      "js_name": "transformOriginPoint",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QPointF",
+        "user": false,
+        "writable": true
+      },
+      "name": "transformOriginPoint",
+      "notify": null,
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "QPointF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "Whether the item is visible or not",
+      "js_name": "visible",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": true,
+        "flag": false,
+        "notify": "visibleChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "visible",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "visibleChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The x position of the item",
+      "js_name": "x",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": true,
+        "flag": false,
+        "notify": "xChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "x",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "xChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The y position of the item",
+      "js_name": "y",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": true,
+        "flag": false,
+        "notify": "yChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "y",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "yChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The z value of the item",
+      "js_name": "z",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": true,
+        "flag": false,
+        "notify": "zChanged()",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "z",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "zChanged()"
+      },
+      "origin": "qdoc",
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": "enabled",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void enabledChanged()",
+      "js_event": "enabledChanged",
+      "metaobject_signatures": [
+        "enabledChanged()"
+      ],
+      "name": "enabledChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void enabledChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "opacity",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void opacityChanged()",
+      "js_event": "opacityChanged",
+      "metaobject_signatures": [
+        "opacityChanged()"
+      ],
+      "name": "opacityChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void opacityChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "parent",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void parentChanged()",
+      "js_event": "parentChanged",
+      "metaobject_signatures": [
+        "parentChanged()"
+      ],
+      "name": "parentChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void parentChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "rotation",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void rotationChanged()",
+      "js_event": "rotationChanged",
+      "metaobject_signatures": [
+        "rotationChanged()"
+      ],
+      "name": "rotationChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void rotationChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "scale",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void scaleChanged()",
+      "js_event": "scaleChanged",
+      "metaobject_signatures": [
+        "scaleChanged()"
+      ],
+      "name": "scaleChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void scaleChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "visible",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void visibleChanged()",
+      "js_event": "visibleChanged",
+      "metaobject_signatures": [
+        "visibleChanged()"
+      ],
+      "name": "visibleChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void visibleChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "x",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void xChanged()",
+      "js_event": "xChanged",
+      "metaobject_signatures": [
+        "xChanged()"
+      ],
+      "name": "xChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void xChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "y",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void yChanged()",
+      "js_event": "yChanged",
+      "metaobject_signatures": [
+        "yChanged()"
+      ],
+      "name": "yChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void yChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "z",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:signal:void zChanged()",
+      "js_event": "zChanged",
+      "metaobject_signatures": [
+        "zChanged()"
+      ],
+      "name": "zChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void zChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}
