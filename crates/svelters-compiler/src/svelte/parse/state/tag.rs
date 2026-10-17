@@ -844,14 +844,14 @@ fn special(parser: &mut Parser) -> PResult<()> {
 /// where the whole expression ends by its operand. Returns the operand's end and the type's start.
 /// (Only nodes ending at `root_end` can contain it, so the search follows the last child.)
 fn unwrap_trailing_ts_as(e: &mut Expression, root_end: u32) -> Option<(u32, u32)> {
-    if let Expression::TSAsExpression(n) = e {
-        if n.end == root_end {
-            let end = n.expression.span().end;
-            let type_start = n.type_annotation.span().start;
-            let inner = std::mem::replace(&mut *n.expression, Expression::ThisExpression(ThisExpression { start: 0, end: 0 }));
-            *e = inner;
-            return Some((end, type_start));
-        }
+    if let Expression::TSAsExpression(n) = e
+        && n.end == root_end
+    {
+        let end = n.expression.span().end;
+        let type_start = n.type_annotation.span().start;
+        let inner = std::mem::replace(&mut *n.expression, Expression::ThisExpression(ThisExpression { start: 0, end: 0 }));
+        *e = inner;
+        return Some((end, type_start));
     }
     let child: Option<&mut Expression> = match e {
         Expression::BinaryExpression(n) => Some(&mut n.right),

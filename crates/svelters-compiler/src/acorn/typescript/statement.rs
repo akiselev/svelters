@@ -1573,7 +1573,7 @@ impl<'a> Parser<'a> {
             specifiers = Vec::new();
         } else {
             declaration = None;
-            specifiers = self.parse_export_specifiers_ts(exports.as_deref_mut())?;
+            specifiers = self.parse_export_specifiers_ts(exports)?;
             if self.eat_contextual("from")? {
                 if self.type_ != T::String {
                     return self.unexpected(None);

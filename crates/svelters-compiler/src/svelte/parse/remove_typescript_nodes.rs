@@ -72,10 +72,10 @@ impl<'s> Rt<'s> {
     // --- strip ranges
 
     fn cut(&mut self, start: u32, end: u32) {
-        if let Some(s) = self.strip.as_deref_mut() {
-            if end > start {
-                s.ranges.push((start, end));
-            }
+        if let Some(s) = self.strip.as_deref_mut()
+            && end > start
+        {
+            s.ranges.push((start, end));
         }
     }
 
@@ -529,16 +529,15 @@ impl<'s> Rt<'s> {
     fn var_decl(&mut self, d: &mut VariableDeclaration) -> R<()> {
         d.ts = None;
         for decl in &mut d.declarations {
-            if decl.ts.take().is_some_and(|t| t.definite) {
-                // `let x!: T`: `pattern_extra` cuts from the name's end
-                if let Pattern::Identifier(id) = &decl.id {
-                    if id.ts.as_ref().is_none_or(|t| t.type_annotation.is_none()) {
-                        let ne = self.name_end(id);
-                        let p = self.ws_fwd(ne);
-                        if self.bytes().get(p as usize) == Some(&b'!') {
-                            self.cut(p, p + 1);
-                        }
-                    }
+            // `let x!: T`: `pattern_extra` cuts from the name's end; `let x!;` cuts the `!`
+            if decl.ts.take().is_some_and(|t| t.definite)
+                && let Pattern::Identifier(id) = &decl.id
+                && id.ts.as_ref().is_none_or(|t| t.type_annotation.is_none())
+            {
+                let ne = self.name_end(id);
+                let p = self.ws_fwd(ne);
+                if self.bytes().get(p as usize) == Some(&b'!') {
+                    self.cut(p, p + 1);
                 }
             }
             self.pattern(&mut decl.id)?;
@@ -688,11 +687,11 @@ impl<'s> Rt<'s> {
             if let Some(tp) = &ts.super_type_parameters {
                 self.cut(tp.start, tp.end);
             }
-            if let Some(list) = &ts.implements {
-                if let (Some(first), Some(last)) = (list.first(), list.last()) {
-                    let a = self.word_before(first.start, "implements").unwrap_or(first.start);
-                    self.cut(self.ws_back(a), last.end);
-                }
+            if let Some(list) = &ts.implements
+                && let (Some(first), Some(last)) = (list.first(), list.last())
+            {
+                let a = self.word_before(first.start, "implements").unwrap_or(first.start);
+                self.cut(self.ws_back(a), last.end);
             }
         }
         if let Some(s) = &mut c.super_class {
@@ -742,13 +741,14 @@ impl<'s> Rt<'s> {
                 let is_constructor = m.kind == MethodKind::Constructor;
                 if let FunctionNode::FunctionExpression(f) = &mut m.value {
                     for p in &mut f.params {
-                        if let Pattern::TSParameterProperty(pp) = p {
-                            if (pp.readonly || pp.accessibility.is_some()) && is_constructor {
-                                return Err(e::typescript_invalid_feature(
-                                    pp.span(),
-                                    "accessibility modifiers on constructor parameters",
-                                ));
-                            }
+                        if let Pattern::TSParameterProperty(pp) = p
+                            && (pp.readonly || pp.accessibility.is_some())
+                            && is_constructor
+                        {
+                            return Err(e::typescript_invalid_feature(
+                                pp.span(),
+                                "accessibility modifiers on constructor parameters",
+                            ));
                         }
                     }
                     self.function(f)?;

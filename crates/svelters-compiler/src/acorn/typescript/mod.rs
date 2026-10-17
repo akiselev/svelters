@@ -653,7 +653,7 @@ impl<'a> Parser<'a> {
 
     /// The UTF-16 column of `pos` (`loc.column`; the plugin raises at `startLoc.column`).
     pub(crate) fn column_of(&self, pos: u32) -> u32 {
-        super::locutil::get_line_info(self.input, pos as usize).column as u32
+        super::locutil::get_line_info(self.input, pos as usize).column
     }
 
     // --- tokenizer overrides

@@ -88,6 +88,7 @@ impl Modified {
 /// The `errorTemplate` of `tsParseModifiers`. The plugin passes the template *function* to
 /// `raise`, so the message is the function's source text.
 #[derive(Clone, Copy)]
+#[allow(clippy::enum_variant_names)]
 pub enum ModifierError {
     OnTypeMember,
     OnTypeParameter,

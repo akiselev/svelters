@@ -39,6 +39,7 @@ fn expr_list_to_params(expr_list: Vec<Option<ArrayElement>>) -> Vec<ParamItem> {
 
 /// An expression in assignment-target position whose `toAssignable` was skipped (compound
 /// assignment): the same node as a `Pattern`.
+#[allow(clippy::result_large_err)]
 fn simple_target_pattern(e: Expression) -> Result<Pattern, Expression> {
     match e {
         Expression::Identifier(i) => Ok(Pattern::Identifier(i)),
@@ -54,6 +55,7 @@ fn simple_target_pattern(e: Expression) -> Result<Pattern, Expression> {
     }
 }
 
+#[allow(clippy::result_large_err)]
 fn wrap(
     start: u32,
     end: u32,
@@ -187,7 +189,7 @@ impl<'a> Parser<'a> {
             TryParse::Thrown(e, events) => Some((e, events)),
         };
         let type_cast = self.try_parse(|p| {
-            p.parse_maybe_assign_origin(for_init, ref_expression_errors.as_deref_mut(), after_left_parse).map(Some)
+            p.parse_maybe_assign_origin(for_init, ref_expression_errors, after_left_parse).map(Some)
         })?;
         let type_cast_thrown = match type_cast {
             TryParse::Ok(n) => return Ok(n),
