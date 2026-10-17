@@ -1,6 +1,36 @@
 {
  "facts": [
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:slot:center",
+   "fingerprint": "bac2000619eaf8c8",
+   "kind": "ActionBar",
+   "name": "center",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_actionbar_center"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:slot:end",
+   "fingerprint": "3f95977fbe11635f",
+   "kind": "ActionBar",
+   "name": "end",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_actionbar_end"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:slot:start",
+   "fingerprint": "9a03015eb75c4ea3",
+   "kind": "ActionBar",
+   "name": "start",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_actionbar_start"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:slot:child",
    "fingerprint": "446c2652b188b5bd",
    "kind": "AspectFrame",
@@ -71,6 +101,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:slot:children",
+   "fingerprint": "6c32cb0d570043fc",
+   "kind": "FlowBox",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_flowbox_children"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:slot:child",
    "fingerprint": "9f7203337a1d5c0a",
    "kind": "Frame",
@@ -128,6 +168,16 @@
    "section": "slots",
    "tests": [
     "generated::verify::slot_menubutton_popover"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages",
+   "fingerprint": "617557e190e05d28",
+   "kind": "Notebook",
+   "name": "pages",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_notebook_pages"
    ]
   },
   {
@@ -201,6 +251,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:children",
+   "fingerprint": "a125e9fc9541e9dc",
+   "kind": "Stack",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_stack_children"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Viewport:slot:child",
    "fingerprint": "f93ca3b440d5468a",
    "kind": "Viewport",
@@ -238,6 +298,16 @@
    "section": "slots",
    "tests": [
     "generated::verify::slot_windowhandle_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ActionBar:prop:revealed",
+   "fingerprint": "0a4d48385271a568",
+   "kind": "ActionBar",
+   "name": "revealed",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_actionbar_revealed"
    ]
   },
   {
@@ -976,6 +1046,86 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:signal:child-activated",
+   "fingerprint": "ba8bb29b2df69141",
+   "kind": "FlowBox",
+   "name": "child-activated",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_flowbox_child_activated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:signal:selected-children-changed",
+   "fingerprint": "e656e24a6096c15a",
+   "kind": "FlowBox",
+   "name": "selected-children-changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_flowbox_selected_children_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:column-spacing",
+   "fingerprint": "35a648c8d51905e6",
+   "kind": "FlowBox",
+   "name": "column-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:homogeneous",
+   "fingerprint": "57090fff2843d639",
+   "kind": "FlowBox",
+   "name": "homogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_homogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:max-children-per-line",
+   "fingerprint": "f6f9b1b9e10fd956",
+   "kind": "FlowBox",
+   "name": "max-children-per-line",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_max_children_per_line"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:min-children-per-line",
+   "fingerprint": "59411304829ba586",
+   "kind": "FlowBox",
+   "name": "min-children-per-line",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_min_children_per_line"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:row-spacing",
+   "fingerprint": "881c2981cf4b0164",
+   "kind": "FlowBox",
+   "name": "row-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_row_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:selection-mode",
+   "fingerprint": "02aca84f06dc5b6e",
+   "kind": "FlowBox",
+   "name": "selection-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_flowbox_selection_mode"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:prop:label",
    "fingerprint": "3ad0a4fb8a44d8b1",
    "kind": "Frame",
@@ -1013,6 +1163,46 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_graphicsoffload_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-homogeneous",
+   "fingerprint": "6dc10b33d5e7920d",
+   "kind": "Grid",
+   "name": "column-homogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_column_homogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-spacing",
+   "fingerprint": "37f8b2ca92f61933",
+   "kind": "Grid",
+   "name": "column-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-homogeneous",
+   "fingerprint": "db17a4fce250abcc",
+   "kind": "Grid",
+   "name": "row-homogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_row_homogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-spacing",
+   "fingerprint": "3b538d5f70d9d40c",
+   "kind": "Grid",
+   "name": "row-spacing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_grid_row_spacing"
    ]
   },
   {
@@ -1326,6 +1516,56 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-activated",
+   "fingerprint": "87b648fbafc2540a",
+   "kind": "ListBox",
+   "name": "row-activated",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_listbox_row_activated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-selected",
+   "fingerprint": "e8c3ac484f599821",
+   "kind": "ListBox",
+   "name": "row-selected",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_listbox_row_selected"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:activate-on-single-click",
+   "fingerprint": "41fadf2545fa6953",
+   "kind": "ListBox",
+   "name": "activate-on-single-click",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_listbox_activate_on_single_click"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:selection-mode",
+   "fingerprint": "71f4726f1d8a81f3",
+   "kind": "ListBox",
+   "name": "selection-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_listbox_selection_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:show-separators",
+   "fingerprint": "c974a0afa81f0dbb",
+   "kind": "ListBox",
+   "name": "show-separators",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_listbox_show_separators"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock",
    "fingerprint": "a204a609db80f9d2",
    "kind": "LockButton",
@@ -1493,6 +1733,87 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_menubutton_set_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:signal:switch-page",
+   "fingerprint": "231c32d3ce7878ac",
+   "kind": "Notebook",
+   "name": "switch-page",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_notebook_switch_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:signal:notify::page",
+   "fingerprint": "252f9d9739796a5c",
+   "kind": "Notebook",
+   "name": "notify::page",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_notebook_notify_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:page",
+   "fingerprint": "2d6bb3d7e327a3f3",
+   "kind": "Notebook",
+   "name": "page",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_page",
+    "generated::verify::echo_notebook_page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:scrollable",
+   "fingerprint": "48c950a7ca27ecaa",
+   "kind": "Notebook",
+   "name": "scrollable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_scrollable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-border",
+   "fingerprint": "27334f4300908391",
+   "kind": "Notebook",
+   "name": "show-border",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_show_border"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-tabs",
+   "fingerprint": "a965a9da15e90bf6",
+   "kind": "Notebook",
+   "name": "show-tabs",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_show_tabs"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:tab-pos",
+   "fingerprint": "dc619d932c0b93f9",
+   "kind": "Notebook",
+   "name": "tab-pos",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_notebook_tab_pos"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:binding:page",
+   "fingerprint": "64e7c32b22c98061",
+   "kind": "Notebook",
+   "name": "page",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_notebook_page"
    ]
   },
   {
@@ -2004,6 +2325,86 @@
    "section": "bindings",
    "tests": [
     "generated::verify::binding_spinner_spinning"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:hhomogeneous",
+   "fingerprint": "ab399d14d3f60cf0",
+   "kind": "Stack",
+   "name": "hhomogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_hhomogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:interpolate-size",
+   "fingerprint": "277a6239a7efb84d",
+   "kind": "Stack",
+   "name": "interpolate-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_interpolate_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-duration",
+   "fingerprint": "3bbd26258ba86556",
+   "kind": "Stack",
+   "name": "transition-duration",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_transition_duration"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-type",
+   "fingerprint": "cbb7cffbc760b45a",
+   "kind": "Stack",
+   "name": "transition-type",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_transition_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:vhomogeneous",
+   "fingerprint": "c31c8d084a2a57f8",
+   "kind": "Stack",
+   "name": "vhomogeneous",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_vhomogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child",
+   "fingerprint": "816d0e79a8f3739c",
+   "kind": "Stack",
+   "name": "visible-child",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_visible_child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StackSidebar:prop:stack",
+   "fingerprint": "1c55615d74d5e4ab",
+   "kind": "StackSidebar",
+   "name": "stack",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stacksidebar_stack"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:prop:stack",
+   "fingerprint": "3b04b3c685d503ba",
+   "kind": "StackSwitcher",
+   "name": "stack",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stackswitcher_stack"
    ]
   },
   {

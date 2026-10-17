@@ -1144,6 +1144,7 @@ export interface GtkNotebookProps extends GtkWidgetProps {
   "oncreate-window"?: SvlHandler;
   "onfocus-tab"?: SvlHandler;
   "onmove-focus-out"?: SvlHandler;
+  "onnotify::page"?: SvlHandler;
   "onpage-added"?: SvlHandler;
   "onpage-removed"?: SvlHandler;
   "onpage-reordered"?: SvlHandler;

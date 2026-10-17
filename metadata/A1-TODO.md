@@ -140,7 +140,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   ListBox/FlowBox sort/filter (G8).
 - Gallery: `06-layout.svelte`.
 - Tests `<re>`: `_(stack|stackswitcher|stacksidebar|notebook|flowbox|flowboxchild|listbox|listboxrow|actionbar|grid|fixed)_`.
-- Status: todo
+- Status: done (dropped: ListBox.children, generator gap: GtkListBox::remove needs the wrapper row and no op arg yields it; blocked: gap:G1 for Grid/Fixed children, Notebook tab labels, Stack names/titles; gap:G8 sort/filter; Fixed has no props/signals to annotate)
 
 ### gtk-bars: header bars, window controls, status
 

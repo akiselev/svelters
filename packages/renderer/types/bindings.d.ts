@@ -16,6 +16,9 @@ export interface BindableProps {
   expander: {
     expanded: boolean; // gtk
   };
+  notebook: {
+    page: number; // gtk
+  };
   passwordentry: {
     text: string; // gtk
   };

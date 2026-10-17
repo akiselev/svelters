@@ -931,6 +931,11 @@
         "get": "gtk_grid_get_column_homogeneous",
         "set": "gtk_grid_set_column_homogeneous"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkGrid:column-homogeneous (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-homogeneous",
       "invocation": "reflected",
@@ -970,6 +975,11 @@
       "accessors": {
         "get": "gtk_grid_get_column_spacing",
         "set": "gtk_grid_set_column_spacing"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkGrid:column-spacing (Gtk 4 docs); P prop"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-spacing",
@@ -1014,6 +1024,11 @@
         "get": "gtk_grid_get_row_homogeneous",
         "set": "gtk_grid_set_row_homogeneous"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkGrid:row-homogeneous (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-homogeneous",
       "invocation": "reflected",
@@ -1053,6 +1068,11 @@
       "accessors": {
         "get": "gtk_grid_get_row_spacing",
         "set": "gtk_grid_set_row_spacing"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkGrid:row-spacing (Gtk 4 docs); P prop"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-spacing",
@@ -1095,7 +1115,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Grid.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
