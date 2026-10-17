@@ -13,6 +13,12 @@
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QWheelEvent>
+#include <QtGui/QEnterEvent>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QFocusEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMenu>
@@ -82,6 +88,8 @@ struct SyncCall {
   size_t n;
   int64_t key;
   std::string text;
+  std::vector<int> tags;      // value tag of each argument
+  std::vector<int64_t> ints;  // integer value of each argument (0 for others)
 };
 std::vector<SyncCall> sync_calls;
 int h_call_sync(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n, svl_value *out) {
@@ -91,6 +99,10 @@ int h_call_sync(void *, svl_handle h, svl_id sig, const svl_value *args, size_t 
   }
   SyncCall c{h, sig, n, n > 0 && args[0].tag == SVL_I64 ? args[0].u.i : 0,
              n > 1 && args[1].tag == SVL_STR ? std::string(static_cast<const char *>(args[1].u.s.ptr), args[1].u.s.len) : std::string()};
+  for (size_t i = 0; i < n; ++i) {
+    c.tags.push_back(args[i].tag);
+    c.ints.push_back(args[i].tag == SVL_I64 ? args[i].u.i : 0);
+  }
   sync_calls.push_back(c);
   switch (reply) {
     case Reply::Failed: return SVL_SYNC_FAILED;
@@ -361,6 +373,103 @@ bool t_runtime_key_press_handler_consumes_the_key(std::string &why) {
   return true;
 }
 
+// ---- event families (X8) -------------------------------------------------------------------------
+
+bool t_runtime_mouse_press_handler_consumes_and_reports_a_point(std::string &why) {
+  svl_handle e = mk("entry");
+  svl_id sig = G("entry", "mouse-press");
+  CHECK(sig != 0);
+  auto *edit = qobject_cast<QLineEdit *>(O(e));
+  edit->setText("hello");
+  edit->setCursorPosition(5);
+  auto press = [&]() {
+    QMouseEvent ev(QEvent::MouseButtonPress, QPointF(0, 5), edit->mapToGlobal(QPointF(0, 5)), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QCoreApplication::sendEvent(edit, &ev);
+  };
+  CHECK(B->listen(B->self, e, sig, true) == 0);
+  CHECK(B->listen(B->self, e, sig, true) == 0);  // idempotent
+  reply = Reply::Stop;
+  press();
+  CHECK(edit->cursorPosition() == 5);  // consumed: the line edit never moved its cursor
+  CHECK(sync_calls.size() == 1 && sync_calls[0].h == e && sync_calls[0].sig == sig && sync_calls[0].n == 4);
+  CHECK(sync_calls[0].tags[0] == SVL_RECORD && sync_calls[0].ints[1] == Qt::LeftButton && sync_calls[0].ints[2] == Qt::LeftButton);
+  reply = Reply::Continue;
+  press();
+  CHECK(edit->cursorPosition() == 0);  // propagated: default handling ran
+  CHECK(B->listen(B->self, e, sig, false) == 0);
+  sync_calls.clear();
+  press();
+  CHECK(sync_calls.empty());
+  B->destroy(B->self, e);
+  return true;
+}
+
+bool t_runtime_other_event_families_deliver_their_payloads(std::string &why) {
+  svl_handle e = mk("entry");
+  auto *edit = qobject_cast<QLineEdit *>(O(e));
+  // Consumable families: call_sync with the payload.
+  reply = Reply::Continue;
+  CHECK(B->listen(B->self, e, G("entry", "key-release"), true) == 0);
+  QKeyEvent kr(QEvent::KeyRelease, Qt::Key_Q, Qt::ShiftModifier, QStringLiteral("Q"));
+  QCoreApplication::sendEvent(edit, &kr);
+  CHECK(sync_calls.size() == 1 && sync_calls[0].n == 3 && sync_calls[0].key == Qt::Key_Q && sync_calls[0].text == "Q");
+  CHECK(B->listen(B->self, e, G("entry", "wheel"), true) == 0);
+  QWheelEvent wh(QPointF(1, 2), QPointF(3, 4), QPoint(), QPoint(0, 120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+  QCoreApplication::sendEvent(edit, &wh);
+  CHECK(sync_calls.size() == 2 && sync_calls[1].n == 4 && sync_calls[1].tags[0] == SVL_RECORD && sync_calls[1].tags[1] == SVL_RECORD);
+  CHECK(B->listen(B->self, e, G("entry", "context-menu"), true) == 0);
+  QContextMenuEvent cm(QContextMenuEvent::Mouse, QPoint(3, 4), QPoint(13, 14));
+  QCoreApplication::sendEvent(edit, &cm);
+  CHECK(sync_calls.size() == 3 && sync_calls[2].n == 3);
+  // Informational families are posted and never consume.
+  CHECK(B->listen(B->self, e, G("entry", "resize"), true) == 0);
+  CHECK(B->listen(B->self, e, G("entry", "focus-in"), true) == 0);
+  CHECK(B->listen(B->self, e, G("entry", "enter"), true) == 0);
+  CHECK(B->listen(B->self, e, G("entry", "leave"), true) == 0);
+  rec.events.clear();
+  QResizeEvent rs(QSize(5, 6), QSize(1, 2));
+  QCoreApplication::sendEvent(edit, &rs);
+  QFocusEvent fi(QEvent::FocusIn, Qt::TabFocusReason);
+  QCoreApplication::sendEvent(edit, &fi);
+  QEnterEvent en(QPointF(1, 1), QPointF(1, 1), QPointF(1, 1));
+  QCoreApplication::sendEvent(edit, &en);
+  QEvent lv(QEvent::Leave);
+  QCoreApplication::sendEvent(edit, &lv);
+  CHECK(rec.events.size() == 4);
+  CHECK(rec.events[0].sig == G("entry", "resize") && rec.events[0].n == 2);
+  CHECK(rec.events[1].sig == G("entry", "focus-in") && rec.events[1].n == 1 && rec.events[1].strs[0] == std::to_string(Qt::TabFocusReason));
+  CHECK(rec.events[2].sig == G("entry", "enter") && rec.events[2].n == 1);
+  CHECK(rec.events[3].sig == G("entry", "leave") && rec.events[3].n == 0);
+  B->destroy(B->self, e);
+  return true;
+}
+
+bool t_runtime_capture_reaches_descendant_mouse_press_first(std::string &why) {
+  svl_handle box = mk("box");
+  svl_handle e = mk("entry");
+  CHECK(B->insert(B->self, box, e, 0, 0) == 0);
+  auto *edit = qobject_cast<QLineEdit *>(O(e));
+  edit->setText("hello");
+  edit->setCursorPosition(5);
+  svl_id bsig = G("box", "mouse-press");
+  CHECK(B->listen_ex(B->self, box, bsig, true, SVL_LISTEN_CAPTURE) == 0);
+  CHECK(B->listen_ex(B->self, box, bsig, true, SVL_LISTEN_AFTER) != 0);  // no after phase
+  auto press = [&]() {
+    QMouseEvent ev(QEvent::MouseButtonPress, QPointF(0, 5), edit->mapToGlobal(QPointF(0, 5)), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QCoreApplication::sendEvent(edit, &ev);
+  };
+  reply = Reply::Stop;
+  press();
+  CHECK(sync_calls.size() == 1 && sync_calls[0].h == box && sync_calls[0].sig == (bsig | (SVL_LISTEN_CAPTURE << SVL_SIGNAL_FLAGS_SHIFT)));
+  CHECK(edit->cursorPosition() == 5);  // consumed in the capture phase
+  CHECK(B->listen_ex(B->self, box, bsig, false, SVL_LISTEN_CAPTURE) == 0);
+  sync_calls.clear();
+  press();
+  CHECK(sync_calls.empty());
+  B->destroy(B->self, box);
+  return true;
+}
+
 // ---- listener phases (ABI v2.2 listen_ex) ----------------------------------------------------
 
 constexpr svl_id wire_id(svl_id sig, uint32_t flags) { return sig | (flags << SVL_SIGNAL_FLAGS_SHIFT); }
@@ -528,6 +637,9 @@ const TestCase kTests[] = {
     {"runtime/controlled_close_is_vetoed", t_runtime_controlled_close_is_vetoed},
     {"runtime/close_handler_decides_through_call_sync", t_runtime_close_handler_decides_through_call_sync},
     {"runtime/key_press_handler_consumes_the_key", t_runtime_key_press_handler_consumes_the_key},
+    {"runtime/mouse_press_handler_consumes_and_reports_a_point", t_runtime_mouse_press_handler_consumes_and_reports_a_point},
+    {"runtime/other_event_families_deliver_their_payloads", t_runtime_other_event_families_deliver_their_payloads},
+    {"runtime/capture_reaches_descendant_mouse_press_first", t_runtime_capture_reaches_descendant_mouse_press_first},
     {"runtime/listen_after_runs_behind_plain", t_runtime_listen_after_runs_behind_plain},
     {"runtime/listen_phase_refusals", t_runtime_listen_phase_refusals},
     {"runtime/capture_reaches_descendant_key_before_its_own_listener", t_runtime_capture_reaches_descendant_key_before_its_own_listener},

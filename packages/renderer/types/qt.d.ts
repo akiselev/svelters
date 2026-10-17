@@ -52,6 +52,18 @@ export interface QtElementDescriptors {
     };
     events: {
       "key-press": () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       saveGeometry(): Uint8Array;
@@ -94,6 +106,18 @@ export interface QtElementDescriptors {
       pressed: () => void;
       released: () => void;
       toggled: (checked: boolean) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       click(): void;
@@ -136,6 +160,18 @@ export interface QtElementDescriptors {
       "page-changed": (year: number, month: number) => void;
       clicked: (date: DateParts) => void;
       activated: (date: DateParts) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       showToday(): void;
@@ -180,6 +216,18 @@ export interface QtElementDescriptors {
       released: () => void;
       stateChanged: (state: number) => void;
       clicked: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       click(): void;
@@ -215,6 +263,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       open(options?: { signal?: AbortSignal }): Promise<number>;
@@ -256,6 +316,18 @@ export interface QtElementDescriptors {
       changed: (index: number) => void;
       "text-changed": (text: string) => void;
       activated: (index: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       addItem(text: string, userData: Variant): void;
@@ -296,6 +368,18 @@ export interface QtElementDescriptors {
       released: () => void;
       toggled: (checked: boolean) => void;
       clicked: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       click(): void;
@@ -324,6 +408,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       popup(p: Point, atAction: number): void;
@@ -363,6 +459,18 @@ export interface QtElementDescriptors {
     events: {
       "date-changed": (date: DateParts) => void;
       editingFinished: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -404,6 +512,18 @@ export interface QtElementDescriptors {
     events: {
       "date-time-changed": (datetime: Date) => void;
       editingFinished: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -442,6 +562,18 @@ export interface QtElementDescriptors {
       valueChanged: (value: number) => void;
       sliderMoved: (value: number) => void;
       rangeChanged: (min: number, max: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -472,6 +604,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       open(): void;
@@ -507,6 +651,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       "help-requested": () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       clear(): void;
@@ -540,6 +696,18 @@ export interface QtElementDescriptors {
       "visibility-changed": (visible: boolean) => void;
       "features-changed": (features: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">) => void;
       "allowed-areas-changed": (allowedAreas: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -577,6 +745,18 @@ export interface QtElementDescriptors {
     events: {
       valueChanged: (d: number) => void;
       editingFinished: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -618,6 +798,18 @@ export interface QtElementDescriptors {
       editingFinished: () => void;
       textEdited: (text: string) => void;
       selectionChanged: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       clear(): void;
@@ -653,6 +845,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       showMessage(message: string): void;
@@ -692,6 +896,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       setDirectory(directory: string): void;
@@ -725,6 +941,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -756,6 +984,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       open(): void;
@@ -790,6 +1030,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -814,6 +1066,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -846,6 +1110,18 @@ export interface QtElementDescriptors {
     events: {
       toggled: (on: boolean) => void;
       clicked: (checked: boolean) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -886,6 +1162,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       open(): void;
@@ -918,6 +1206,18 @@ export interface QtElementDescriptors {
     };
     events: {
       editingFinished: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       clear(): void;
@@ -959,6 +1259,18 @@ export interface QtElementDescriptors {
     events: {
       linkActivated: (link: string) => void;
       linkHovered: (link: string) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       setBuddy(buddy: number): void;
@@ -995,6 +1307,18 @@ export interface QtElementDescriptors {
     };
     events: {
       overflow: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       display(num: number): void;
@@ -1031,6 +1355,18 @@ export interface QtElementDescriptors {
     events: {
       "row-changed": (currentRow: number) => void;
       "selection-changed": () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       addItem(label: string): void;
@@ -1069,6 +1405,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       cascadeSubWindows(): void;
@@ -1101,6 +1449,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       addItem(text: string, functor: (checked: boolean) => void, shortcut: Boxed<"QKeySequence"> | string): void;
@@ -1127,6 +1487,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       clear(): void;
@@ -1173,6 +1545,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       open(): void;
@@ -1224,6 +1608,18 @@ export interface QtElementDescriptors {
       selectionChanged: () => void;
       cursorPositionChanged: () => void;
       blockCountChanged: (newBlockCount: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       appendPlainText(text: string): void;
@@ -1267,6 +1663,18 @@ export interface QtElementDescriptors {
     };
     events: {
       valueChanged: (value: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       reset(): void;
@@ -1305,6 +1713,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       reset(): void;
@@ -1346,6 +1766,18 @@ export interface QtElementDescriptors {
       released: () => void;
       toggled: (checked: boolean) => void;
       clicked: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       click(): void;
@@ -1384,6 +1816,18 @@ export interface QtElementDescriptors {
       valueChanged: (value: number) => void;
       sliderMoved: (value: number) => void;
       rangeChanged: (min: number, max: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1415,6 +1859,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1452,6 +1908,18 @@ export interface QtElementDescriptors {
       valueChanged: (value: number) => void;
       sliderMoved: (value: number) => void;
       rangeChanged: (min: number, max: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1492,6 +1960,18 @@ export interface QtElementDescriptors {
       valueChanged: (i: number) => void;
       textChanged: (text: string) => void;
       editingFinished: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       validate(input: string, pos: number): { ret: "acceptable" | "intermediate" | "invalid"; input: string; pos: number };
@@ -1527,6 +2007,18 @@ export interface QtElementDescriptors {
     };
     events: {
       "splitter-moved": (pos: number, index: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1557,6 +2049,18 @@ export interface QtElementDescriptors {
     };
     events: {
       changed: (index: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1583,6 +2087,18 @@ export interface QtElementDescriptors {
     };
     events: {
       messageChanged: (message: string) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       showMessage(message: string, timeout: number): void;
@@ -1625,6 +2141,18 @@ export interface QtElementDescriptors {
       "tab-bar-clicked": (index: number) => void;
       "tab-bar-double-clicked": (index: number) => void;
       "tab-moved": (from: number, to: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       addTab(text: string): number;
@@ -1663,6 +2191,18 @@ export interface QtElementDescriptors {
       changed: (index: number) => void;
       "tab-close-requested": (index: number) => void;
       "tab-bar-clicked": (index: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1697,6 +2237,18 @@ export interface QtElementDescriptors {
     events: {
       historyChanged: () => void;
       backwardAvailable: (available: boolean) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       home(): void;
@@ -1780,6 +2332,18 @@ export interface QtElementDescriptors {
       changed: () => void;
       selectionChanged: () => void;
       cursorPositionChanged: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       append(text: string): void;
@@ -1827,6 +2391,18 @@ export interface QtElementDescriptors {
     events: {
       "time-changed": (time: TimeParts) => void;
       editingFinished: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1858,6 +2434,18 @@ export interface QtElementDescriptors {
     events: {
       "movable-changed": (movable: boolean) => void;
       "orientation-changed": (orientation: "horizontal" | "vertical") => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       clear(): void;
@@ -1889,6 +2477,18 @@ export interface QtElementDescriptors {
     };
     events: {
       changed: (index: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1926,6 +2526,18 @@ export interface QtElementDescriptors {
       released: () => void;
       toggled: (checked: boolean) => void;
       clicked: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       setMenu(menu: number): void;
@@ -1961,6 +2573,18 @@ export interface QtElementDescriptors {
     };
     events: {
       "close-request": () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;
@@ -1996,6 +2620,18 @@ export interface QtElementDescriptors {
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       open(): void;
@@ -2027,6 +2663,18 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
       show(): void;

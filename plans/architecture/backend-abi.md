@@ -305,6 +305,23 @@ No vtable change.
 
 `GtkSpinButton::input`: `ret` 1 = converted, 0 = not handled (GTK parses the text), -1 = GTK_INPUT_ERROR; out `newValue`. `output` is `bool_stop`: the handler displays the value with `text` and calls `e.preventDefault()`.
 
+**Event families.** Qt widgets (every `QWidget` element) have synthetic signals raised by an event filter, besides `key-press`: `key-release`, `mouse-press`, `mouse-release`, `mouse-move`, `double-click`, `wheel`, `context-menu` (sync: `e.preventDefault()` consumes the event before the widget sees it) and `focus-in`, `focus-out`, `enter`, `leave`, `resize` (posted, never consumed). Payloads (listeners get `(event, ...args)` for sync ones, `(...args)` for posted ones):
+
+| signal | args |
+|---|---|
+| `key-release` | `key`, `text`, `modifiers` |
+| `mouse-press`, `mouse-release`, `mouse-move`, `double-click` | `position` (Point), `button`, `buttons`, `modifiers` (Qt enum masks as integers) |
+| `wheel` | `position` (Point), `angleDelta` (Point), `buttons`, `modifiers` |
+| `context-menu` | `position` (Point), `globalPosition` (Point), `reason` |
+| `focus-in`, `focus-out` | `reason` |
+| `enter` | `position` (Point) |
+| `leave` | none |
+| `resize` | `size` (Size), `oldSize` (Size) |
+
+`listen_ex` with `SVL_LISTEN_CAPTURE` works for every family (an application-level filter calls the listeners of proper ancestors first, outermost first, then the target's own); `SVL_LISTEN_AFTER` is refused. Listening to `mouse-move` turns on mouse tracking for the widget.
+
+GTK: the same events are signals of declarative controller elements, not of widgets: `keycontroller` (`key-pressed`, `key-released`, `modifiers`), `clickgesture` (`pressed`, `released`, `stopped`), `motioncontroller` (`enter`, `motion`, `leave`), `scrollcontroller` (`scroll`, `scroll-begin`, `scroll-end`; prop `flags` must include `vertical` or `horizontal` to receive scrolls), `focuscontroller` (`enter`, `leave`). A controller element is a child of the widget it controls (inserted with `add_controller`, X2); `bind:this` and props work as for any element. `on<signal>capture` on a controller puts it in the capture phase (X3).
+
 ### Model-view protocol (M5)
 
 No vtable change. A backend may provide the portable composite widget kind `virtuallist` (an "extra" kind resolved by name, like `gio-file`). It wraps the toolkit's native model-view widget and speaks one protocol. The model lives in JS: the native side holds only an integer *row id* per item.

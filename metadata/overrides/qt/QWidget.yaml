@@ -10,6 +10,25 @@ inherit:
     - { js: maximumHeight, native: maximumHeight, provenance: "QWidget::maximumHeight (qdoc)" }
     - { js: styleSheet, native: styleSheet, provenance: "QWidget::styleSheet (qdoc)" }
     - { js: accessibleName, native: accessibleName, provenance: "QWidget::accessibleName (qdoc)" }
+  # X8 event families: synthetic signals raised by an event filter (backend.cpp.in, "event families"). Payloads are v3
+  # values: position/size records ({x, y}, {width, height}), integer masks for buttons and modifiers (Qt enum values).
+  # key-release, mouse-*, wheel and context-menu are sync signals: `e.preventDefault()` consumes the event before the
+  # widget sees it. focus-*, enter, leave and resize are posted (never consumed). All accept the capture flag
+  # (`onmouse-presscapture`: ancestors see the event first, outermost first). mouse-move needs no pressed button:
+  # listening turns on mouse tracking for the widget.
+  signals:
+    - { js: key-release, synthetic: key_release, args: [{ name: key, type: int }, { name: text, type: string }, { name: modifiers, type: int }], provenance: "X8: QKeyEvent (KeyRelease) via event filter" }
+    - { js: mouse-press, synthetic: mouse_press, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonPress) via event filter" }
+    - { js: mouse-release, synthetic: mouse_release, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonRelease) via event filter" }
+    - { js: mouse-move, synthetic: mouse_move, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseMove) via event filter" }
+    - { js: double-click, synthetic: mouse_double_click, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonDblClick) via event filter" }
+    - { js: wheel, synthetic: wheel, args: [{ name: position, type: Point }, { name: angleDelta, type: Point }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QWheelEvent via event filter" }
+    - { js: focus-in, synthetic: focus_in, args: [{ name: reason, type: int }], provenance: "X8: QFocusEvent (FocusIn) via event filter" }
+    - { js: focus-out, synthetic: focus_out, args: [{ name: reason, type: int }], provenance: "X8: QFocusEvent (FocusOut) via event filter" }
+    - { js: enter, synthetic: enter, args: [{ name: position, type: Point }], provenance: "X8: QEnterEvent via event filter" }
+    - { js: leave, synthetic: leave, args: [], provenance: "X8: QEvent::Leave via event filter" }
+    - { js: resize, synthetic: resize, args: [{ name: size, type: Size }, { name: oldSize, type: Size }], provenance: "X8: QResizeEvent via event filter" }
+    - { js: context-menu, synthetic: context_menu, args: [{ name: position, type: Point }, { name: globalPosition, type: Point }, { name: reason, type: int }], provenance: "X8: QContextMenuEvent via event filter" }
   methods:
     - { js: show, native: show, provenance: "QWidget::show() slot (qdoc)" }
     - { js: hide, native: hide, provenance: "QWidget::hide() slot (qdoc)" }
