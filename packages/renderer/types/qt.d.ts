@@ -1904,7 +1904,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   wizardpage: {
     props: {

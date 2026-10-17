@@ -587,6 +587,10 @@ class Model:
             ops["append"] = self._op(where + ".insert", host_cls, ins)
             if s["append_only"]:
                 ops["remove"] = self._op(where + ".remove", host_cls, raw["remove"])
+                if s.get("id_of"):
+                    _, lm, _ = self.parse_native(where + ".id_of.list", s["id_of"]["list"])
+                    _, im, _ = self.parse_native(where + ".id_of.item", s["id_of"]["item"])
+                    s["id_of"] = {**s["id_of"], "list_method": lm, "item_method": im}
                 rc = raw["remove"].get("effects", {}).get("child")
                 s["remove_effect"] = {"unparented": "released"}.get(rc)
                 if s["remove_effect"] is None:
@@ -1072,6 +1076,8 @@ def op_call(host: str, op: dict, child: str | None = None, extra: dict | None = 
                 args.append("nullptr")
             elif a == "index":
                 args.append((extra or {})["index"])
+            elif a == "id":
+                args.append((extra or {})["id"])
             elif isinstance(a, str) and a.startswith("const:"):
                 args.append(a[6:])
             else:
@@ -1152,7 +1158,12 @@ def emit_remove(m: Model) -> str:
                 out.append("          return 0;\n        }")
             elif s.get("append_only"):
                 out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch)) {{")
-                out.append(f"          {op_call('h', ops['remove'], 'ch')};")
+                if s.get("id_of"):
+                    # Removal by an id the child does not carry (QWizard::removePage): find it (A1-GAPS G18).
+                    lst, item = s["id_of"]["list_method"], s["id_of"]["item_method"]
+                    out.append(f"          int id = -1; for (int k : h->{lst}()) if (h->{item}(k) == ch) id = k;")
+                    out.append("          if (id < 0) return fail(\"remove: child has no id in this slot\");")
+                out.append(f"          {op_call('h', ops['remove'], 'ch', {'id': 'id'})};")
                 out.append("          return 0;\n        }")
             else:
                 out.append(f"        if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{")

@@ -2587,7 +2587,7 @@
    48
   ],
   "native": "QWizard",
-  "ownership": false,
+  "ownership": true,
   "props": [
    2,
    6
@@ -2598,12 +2598,12 @@
    1,
    5
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   4,
+   4
   ]
  },
  {

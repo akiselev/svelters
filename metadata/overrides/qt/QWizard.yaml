@@ -12,3 +12,29 @@ elements:
         trigger: 'if ($w->pageIds().isEmpty()) { $w->setPage(1, new QWizardPage); $w->setPage(2, new QWizardPage); $w->setPage(3, new QWizardPage); } if ($i == 0) $w->restart(); else $w->next()'
         expect_args: ["1"]
         provenance: "QWizard::currentIdChanged(int) (qdoc)"
+    children:
+      policy: pages
+      default_slot: pages
+      slots:
+        - name: pages
+          content: widget
+          accepts: [QWizardPage]
+          cardinality: many
+          order: append_only
+          host: self
+          nested: true
+          default: { kind: none }
+          on_remove: empty
+          id_of: { list: "QWizard::pageIds() const", item: "QWizard::page(int) const" }
+          ops:
+            insert:
+              native: "QWizard::addPage(QWizardPage*)"
+              args: [child]
+              effects: { child: parented }
+            remove:
+              native: "QWizard::removePage(int)"
+              args: [id]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QWizard::addPage returns the id; removePage(int id): the page is not deleted" }, { origin: manual, ref: "A1-GAPS G18: the id is looked up through pageIds()/page(id)" }]

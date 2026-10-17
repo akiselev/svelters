@@ -1559,6 +1559,9 @@
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QWizard:element:wizard:prop:options", "fingerprint": "a1b8e0a0e8f561ee", "result": "pass", "test": "prop/wizard.options/round_trip", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QWizard:element:wizard:prop:wizardStyle", "fingerprint": "267ebcb0620f570d", "result": "pass", "test": "prop/wizard.wizardStyle", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QWizard:element:wizard:signal:currentIdChanged", "fingerprint": "b2caba2dc09859c0", "result": "pass", "test": "signal/wizard.currentIdChanged/delivered_once", "version": "6.11.0"},
+{"fact": "svelters-api:v1:type:qt:QtWidgets:QWizard:element:wizard:slot:pages", "fingerprint": "3ae114c595f813be", "result": "pass", "test": "ownership/wizard.pages/parent_destroy_deletes_children", "version": "6.11.0"},
+{"fact": "svelters-api:v1:type:qt:QtWidgets:QWizard:element:wizard:slot:pages", "fingerprint": "3ae114c595f813be", "result": "pass", "test": "ownership/wizard.pages/remove_released", "version": "6.11.0"},
+{"fact": "svelters-api:v1:type:qt:QtWidgets:QWizard:element:wizard:slot:pages", "fingerprint": "3ae114c595f813be", "result": "pass", "test": "slot/wizard.pages/append", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QWizardPage:element:wizardpage:prop:subTitle", "fingerprint": "16048956d6ce9fe2", "result": "pass", "test": "prop/wizardpage.subTitle", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QWizardPage:element:wizardpage:prop:title", "fingerprint": "ecd52bbe8b97b3e5", "result": "pass", "test": "prop/wizardpage.title", "version": "6.11.0"}
 ]}

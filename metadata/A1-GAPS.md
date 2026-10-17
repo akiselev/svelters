@@ -28,7 +28,7 @@ some blocked facts are not worth exposing anyway.
 | G15 | Qt one-slots whose setter keeps the old child parented (QDockWidget::setWidget): **closed by the A1 lead** (a clearing `remove` with `then:` steps also runs on replace; `receiver: child` works in take/clear) | QDockWidget `widget` | qt-followups |
 | G16 | Qt no-echo test for non-scalar props (dates, records): the generated test needs a scalar sample | `bind:date`/`bind:time`/`bind:dateTime` | qt-display |
 | G17 | Qt ingest took `clearMinimumDate()` as the getter: **closed by the A1 lead** (getters must return a value; name match preferred) | min/max date and time props | qt-followups |
-| G18 | Qt slot removal by an id the child does not carry (QWizard::removePage(int id); ids from pageIds()/page(id)) | QWizard `pages` | qt-followups |
+| G18 | Qt slot removal by an id the child does not carry: **closed by the A1 lead** (slot `id_of`, op arg `id`; QWizard `pages` verified) | QWizard `pages` | qt-followups |
 
 ## G1: child attributes
 
