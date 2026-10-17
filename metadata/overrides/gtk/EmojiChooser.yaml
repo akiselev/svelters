@@ -1,0 +1,6 @@
+signals:
+  - name: emoji-picked
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("emoji-picked", &[&"x"]);', values: [1, 2, 3]}
+    provenance: "GtkEmojiChooser::emoji-picked, run-last, string arg (Gtk 4 docs)"

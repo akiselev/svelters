@@ -399,6 +399,14 @@
         "get": "gtk_window_controls_get_decoration_layout",
         "set": "gtk_window_controls_set_decoration_layout"
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindowControls:decoration-layout (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:decoration-layout",
       "invocation": "reflected",
@@ -421,6 +429,7 @@
         "origin": "runtime",
         "owner": "GtkWindowControls"
       },
+      "sample": "menu:close",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -478,6 +487,13 @@
         "get": "gtk_window_controls_get_side",
         "set": "gtk_window_controls_set_side"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindowControls:side (Gtk 4 docs); PackType nick"
+      },
       "default": "start",
       "id": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:side",
       "invocation": "reflected",
@@ -518,6 +534,13 @@
         "get": "gtk_window_controls_get_use_native_controls",
         "set": "gtk_window_controls_set_use_native_controls"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindowControls:use-native-controls (Gtk 4.18 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:use-native-controls",
       "invocation": "reflected",
@@ -557,7 +580,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/WindowControls.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

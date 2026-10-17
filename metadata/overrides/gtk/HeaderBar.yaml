@@ -14,6 +14,16 @@ properties:
     # title-widget and sets its text; a widget placed through the 'title' slot replaces it.
     virtual: {op: managed_title_label, property: title-widget}
     provenance: "GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'"
+  - name: show-title-buttons
+    js_name: showTitleButtons
+    provenance: "GtkHeaderBar:show-title-buttons (Gtk 4 docs)"
+  - name: decoration-layout
+    js_name: decorationLayout
+    sample: "menu:close"
+    provenance: "GtkHeaderBar:decoration-layout (Gtk 4 docs)"
+  - name: use-native-controls
+    js_name: useNativeControls
+    provenance: "GtkHeaderBar:use-native-controls (Gtk 4.18 docs)"
 children:
   policy: named_slots
   default_slot: start

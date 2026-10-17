@@ -56,9 +56,33 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:close",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "close",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:fullscreen",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "fullscreen",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:maximize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "maximize",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:minimize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "minimize",
         "origin": "manual"
       },
       {
@@ -84,6 +108,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Window",
         "name": "set_default_size",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unfullscreen",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "unfullscreen",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unmaximize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "unmaximize",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unminimize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "unminimize",
+        "origin": "manual"
       }
     ],
     "properties": [
@@ -100,9 +142,39 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:decorated",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "decorated",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "default-height",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "default-width",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:deletable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "deletable",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:fullscreened",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "fullscreened",
         "origin": "manual"
       },
       {
@@ -121,6 +193,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:hide-on-close",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "hide-on-close",
         "origin": "manual"
       },
       {
@@ -148,6 +226,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:maximized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "maximized",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:modal",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "modal",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "name",
@@ -157,6 +247,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:resizable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "resizable",
         "origin": "manual"
       },
       {
@@ -1099,6 +1195,13 @@
         "get": "gtk_about_dialog_get_comments",
         "set": "gtk_about_dialog_set_comments"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:comments (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:comments",
       "invocation": "reflected",
@@ -1138,6 +1241,13 @@
       "accessors": {
         "get": "gtk_about_dialog_get_copyright",
         "set": "gtk_about_dialog_set_copyright"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:copyright (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:copyright",
@@ -1259,6 +1369,13 @@
         "get": "gtk_about_dialog_get_license_type",
         "set": "gtk_about_dialog_set_license_type"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:license-type (Gtk 4 docs)"
+      },
       "default": "unknown",
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license-type",
       "invocation": "reflected",
@@ -1378,6 +1495,13 @@
       "accessors": {
         "get": "gtk_about_dialog_get_program_name",
         "set": "gtk_about_dialog_set_program_name"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:program-name (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:program-name",
@@ -1499,6 +1623,13 @@
         "get": "gtk_about_dialog_get_version",
         "set": "gtk_about_dialog_set_version"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:version (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:version",
       "invocation": "reflected",
@@ -1538,6 +1669,13 @@
       "accessors": {
         "get": "gtk_about_dialog_get_website",
         "set": "gtk_about_dialog_set_website"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:website (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:website",
@@ -1619,6 +1757,13 @@
         "get": "gtk_about_dialog_get_wrap_license",
         "set": "gtk_about_dialog_set_wrap_license"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAboutDialog:wrap-license (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:wrap-license",
       "invocation": "reflected",
@@ -1688,7 +1833,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/AboutDialog.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
