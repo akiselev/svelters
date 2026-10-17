@@ -73,11 +73,27 @@ pub enum V {
     Handle(u64),
 }
 
+/// What the harness host answers to `call_sync`.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub enum SyncReply {
+    /// Busy: the call is recorded as an ordinary event (what a real host does with a deferred one).
+    #[default]
+    Busy,
+    /// Failed (`-1`): the backend uses the default.
+    Failed,
+    /// Ok with this handler result.
+    Value(V),
+}
+
 #[derive(Default)]
 struct Recorder {
+    reply: RefCell<SyncReply>,
+    /// `call_sync` calls that were answered with a value or failure, with their arguments.
+    sync_calls: RefCell<Vec<(u64, u32, Vec<V>)>>,
     events: RefCell<Vec<(u64, u32, Vec<V>)>>,
     destroyed: RefCell<Vec<(u64, u32)>>,
     checkpoints: std::cell::Cell<u32>,
+    frames: std::cell::Cell<u32>,
 }
 
 unsafe fn to_v(v: &svl_value) -> V {
@@ -102,8 +118,35 @@ unsafe extern "C" fn h_checkpoint(p: *mut c_void) {
     let r = unsafe { &*(p as *const Recorder) };
     r.checkpoints.set(r.checkpoints.get() + 1);
 }
-unsafe extern "C" fn h_call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> std::ffi::c_int {
-    -1
+unsafe extern "C" fn h_call_sync(p: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> std::ffi::c_int {
+    let r = unsafe { &*(p as *const Recorder) };
+    let args: Vec<V> = (0..n).map(|i| unsafe { to_v(&*args.add(i)) }).collect();
+    let reply = r.reply.borrow().clone();
+    match reply {
+        SyncReply::Busy => {
+            r.events.borrow_mut().push((h, sig, args));
+            SVL_SYNC_BUSY
+        }
+        SyncReply::Failed => {
+            r.sync_calls.borrow_mut().push((h, sig, args));
+            SVL_SYNC_FAILED
+        }
+        SyncReply::Value(v) => {
+            r.sync_calls.borrow_mut().push((h, sig, args));
+            unsafe {
+                *out = match v {
+                    V::Bool(b) => svl_value { tag: SVL_BOOL, u: svl_value_u { b } },
+                    V::I64(i) => svl_value { tag: SVL_I64, u: svl_value_u { i } },
+                    _ => svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } },
+                };
+            }
+            SVL_SYNC_OK
+        }
+    }
+}
+unsafe extern "C" fn h_frame(p: *mut c_void) {
+    let r = unsafe { &*(p as *const Recorder) };
+    r.frames.set(r.frames.get() + 1);
 }
 unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
@@ -128,6 +171,7 @@ impl Harness {
             checkpoint: h_checkpoint,
             call_sync: h_call_sync,
             on_destroyed: h_destroyed,
+            frame: h_frame,
         });
         unsafe { backend.attach_host(&*host) };
         Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()) }
@@ -248,6 +292,28 @@ impl Harness {
         }
         let vt = self.vt();
         self.check(unsafe { (vt.listen)(vt.self_, h, id, on) })
+    }
+
+    /// Chooses what the harness host answers to `call_sync` (default: busy).
+    pub fn set_sync_reply(&self, r: SyncReply) {
+        *self.rec.reply.borrow_mut() = r;
+    }
+
+    /// `call_sync` calls answered with a value or a failure since the last take.
+    pub fn take_sync_calls(&self) -> Vec<(u64, String, Vec<V>)> {
+        let calls: Vec<_> = self.rec.sync_calls.borrow_mut().drain(..).collect();
+        calls.into_iter().map(|(h, sig, a)| (h, crate::generated::tables::SIGNALS[sig as usize - 1].name.to_string(), a)).collect()
+    }
+
+    /// `host.frame` calls received since the last take.
+    pub fn take_frames(&self) -> u32 {
+        self.rec.frames.replace(0)
+    }
+
+    /// Asks the backend for a frame (`request_frame`).
+    pub fn request_frame(&self) {
+        let vt = self.vt();
+        unsafe { (vt.request_frame)(vt.self_) }
     }
 
     /// Events posted since the last call: (handle, signal name).

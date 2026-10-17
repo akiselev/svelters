@@ -11,7 +11,7 @@ use crate::generated::{slots, tables::*};
 use crate::lookup;
 use gtk::glib;
 use gtk::prelude::*;
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::ffi::{c_char, c_int, c_void, CStr, CString};
 use std::panic::{catch_unwind, AssertUnwindSafe};
@@ -47,7 +47,22 @@ pub(crate) struct Inner {
     out: RefCell<StrBuf>,
     /// The pending `schedule_wake` source, if any. Cleared by the source's own callback.
     wake_timer: RefCell<Option<glib::SourceId>>,
+    /// `request_frame` was called and `host.frame` has not been delivered yet.
+    frame_pending: Cell<bool>,
+    /// The frame clock the `update` handler is connected to.
+    frame_clock: RefCell<Option<(gtk::gdk::FrameClock, glib::SignalHandlerId)>>,
+    /// Fallback for a frame the clock does not deliver (no mapped toplevel, or a hidden one).
+    frame_timer: RefCell<Option<glib::SourceId>>,
+    /// Frames delivered by the frame clock (the rest came from the fallback timer).
+    frames_by_clock: Cell<u32>,
 }
+
+/// Slot value recorded for an event controller attached to a widget (it is not in `SLOTS`).
+const CONTROLLER_SLOT: u32 = u32::MAX;
+/// Frame delay used when there is no mapped toplevel to tick on.
+const FRAME_FALLBACK_MS: u64 = 16;
+/// A mapped toplevel whose clock stalls (hidden, minimised) still gets a frame after this long.
+const FRAME_WATCHDOG_MS: u64 = 250;
 
 type Res<T> = Result<T, String>;
 
@@ -189,7 +204,25 @@ impl Inner {
         Ok(())
     }
 
+    /// Event controllers are not widgets: they attach to a widget with `add_controller`.
+    fn insert_controller(&self, parent: u64, child: u64, ctrl: &gtk::EventController) -> Res<()> {
+        let (pw, _) = self.widget_of(parent)?;
+        if ctrl.widget().is_some() {
+            return Err("controller is already attached".into());
+        }
+        pw.add_controller(ctrl.clone());
+        if let Some(e) = self.state.borrow_mut().entries.get_mut(&child) {
+            e.slot = Some((parent, CONTROLLER_SLOT));
+        }
+        Ok(())
+    }
+
     fn insert(&self, parent: u64, child: u64, before: u64, slot: u32) -> Res<()> {
+        if let Ok((co, _)) = self.obj_of(child) {
+            if let Some(ctrl) = co.downcast_ref::<gtk::EventController>() {
+                return self.insert_controller(parent, child, ctrl);
+            }
+        }
         let (pw, pk) = self.widget_of(parent)?;
         let (cw, _) = self.widget_of(child)?;
         let slot = if slot == 0 { lookup::default_slot(pk) } else { slot };
@@ -230,6 +263,19 @@ impl Inner {
 
     fn remove(&self, parent: u64, child: u64) -> Res<()> {
         let (pw, _) = self.widget_of(parent)?;
+        if let Ok((co, _)) = self.obj_of(child) {
+            if let Some(ctrl) = co.downcast_ref::<gtk::EventController>() {
+                let attached = self.state.borrow().entries.get(&child).and_then(|e| e.slot) == Some((parent, CONTROLLER_SLOT));
+                if !attached {
+                    return Err(format!("handle {child} is not inserted in {parent}"));
+                }
+                pw.remove_controller(ctrl);
+                if let Some(e) = self.state.borrow_mut().entries.get_mut(&child) {
+                    e.slot = None;
+                }
+                return Ok(());
+            }
+        }
         let (cw, _) = self.widget_of(child)?;
         let slot = {
             let st = self.state.borrow();
@@ -346,10 +392,20 @@ impl Inner {
         Ok(())
     }
 
-    /// Native signal -> `host.post_event`. Returns the value the signal's accumulator expects.
+    /// Native signal -> the host. Returns the value the signal's accumulator expects.
+    ///
+    /// A signal with a handler result (`handler_result != none` or `sync_required` in the generated
+    /// table) goes through `host.call_sync`: the JS listeners run now and decide the result
+    /// (`true` = stop, e.g. veto the close or mark the key handled). Other signals are posted and
+    /// delivered at the next checkpoint. When the host answers busy (JS is running; it queued the
+    /// event itself) or fails, the signal gets its deferred default: do not stop, except
+    /// `close-request`, which vetoes so that the late handler can still decide (ABI v2 behaviour).
     fn deliver(&self, h: u64, signal: u32, vals: &[glib::Value]) -> Option<glib::Value> {
         let sig = &SIGNALS[signal as usize - 1];
+        let sync = sig.handler_result != 0 || sig.sync_required;
         let host = self.host.load(Ordering::Acquire);
+        let mut sync_result: Option<svl_value> = None;
+        let mut deferred = false;
         if !host.is_null() {
             let mut buf = StrBuf::default();
             let mut args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, &|o| self.handle_of(o), &mut buf)).collect();
@@ -359,16 +415,103 @@ impl Inner {
                     args.push(buf.str_value(&e.text()));
                 }
             }
-            unsafe { ((*host).post_event)((*host).self_, h, signal, args.as_ptr(), args.len()) };
+            if sync {
+                let mut out = convert::null_value();
+                let rc = unsafe { ((*host).call_sync)((*host).self_, h, signal, args.as_ptr(), args.len(), &mut out) };
+                match rc {
+                    SVL_SYNC_OK => sync_result = Some(out),
+                    SVL_SYNC_BUSY => deferred = true,
+                    _ => {}
+                }
+            } else {
+                unsafe { ((*host).post_event)((*host).self_, h, signal, args.as_ptr(), args.len()) };
+            }
         }
-        // onRequestClose: a JS listener on close-request owns the decision, so veto the native
-        // close; the app destroys the window when its state says so.
-        if sig.name == "close-request" {
-            return Some(true.to_value());
+        if !sync {
+            return None;
         }
-        match sig.handler_result {
-            1 => Some(false.to_value()),
+        match sig.result {
+            "bool" => {
+                let stop = match &sync_result {
+                    Some(v) => match v.tag {
+                        SVL_BOOL => unsafe { v.u.b },
+                        SVL_I64 => unsafe { v.u.i != 0 },
+                        _ => false,
+                    },
+                    None => deferred && sig.name == "close-request",
+                };
+                Some(stop.to_value())
+            }
+            "i32" => match &sync_result {
+                Some(v) if v.tag == SVL_I64 => Some((unsafe { v.u.i } as i32).to_value()),
+                _ => None,
+            },
+            "string" => match &sync_result {
+                Some(v) if v.tag == SVL_STR => unsafe { convert::as_str(v) }.map(|s| s.to_value()),
+                _ => None,
+            },
             _ => None,
+        }
+    }
+
+    // ---- frame clock ----
+
+    /// The frame clock of the lowest-handle mapped toplevel, if there is one.
+    fn tick_clock(&self) -> Option<gtk::gdk::FrameClock> {
+        let wins: Vec<(u64, gtk::Window)> = {
+            let st = self.state.borrow();
+            st.entries.iter().filter_map(|(h, e)| e.obj.upgrade().and_then(|o| o.downcast::<gtk::Window>().ok()).map(|w| (*h, w))).collect()
+        };
+        wins.into_iter().filter(|(_, w)| w.is_mapped()).min_by_key(|(h, _)| *h).and_then(|(_, w)| w.frame_clock())
+    }
+
+    fn request_frame(self: &Rc<Self>) {
+        if self.frame_pending.replace(true) {
+            return;
+        }
+        let weak = Rc::downgrade(self);
+        let mut delay = FRAME_FALLBACK_MS;
+        if let Some(clock) = self.tick_clock() {
+            let same = self.frame_clock.borrow().as_ref().is_some_and(|(c, _)| c == &clock);
+            if !same {
+                if let Some((old, id)) = self.frame_clock.borrow_mut().take() {
+                    old.disconnect(id);
+                }
+                let w = weak.clone();
+                let id = clock.connect_update(move |_| {
+                    if let Some(i) = w.upgrade() {
+                        i.frame_due(true);
+                    }
+                });
+                *self.frame_clock.borrow_mut() = Some((clock.clone(), id));
+            }
+            clock.request_phase(gtk::gdk::FrameClockPhase::UPDATE);
+            delay = FRAME_WATCHDOG_MS;
+        }
+        let id = glib::timeout_add_local_once(std::time::Duration::from_millis(delay), move || {
+            if let Some(i) = weak.upgrade() {
+                // The source is finished once this runs: forget its id before anything removes it.
+                i.frame_timer.borrow_mut().take();
+                i.frame_due(false);
+            }
+        });
+        *self.frame_timer.borrow_mut() = Some(id);
+    }
+
+    /// The clock ticked (or the fallback timer fired): hand the frame to the host.
+    fn frame_due(&self, from_clock: bool) {
+        if !self.frame_pending.replace(false) {
+            return;
+        }
+        if from_clock {
+            self.frames_by_clock.set(self.frames_by_clock.get() + 1);
+        }
+        if let Some(id) = self.frame_timer.borrow_mut().take() {
+            id.remove();
+        }
+        let host = self.host.load(Ordering::Acquire);
+        if !host.is_null() {
+            unsafe { ((*host).frame)((*host).self_) };
         }
     }
 }
@@ -415,6 +558,10 @@ impl GtkBackend {
             error: RefCell::new(CString::default()),
             out: RefCell::new(StrBuf::default()),
             wake_timer: RefCell::new(None),
+            frame_pending: Cell::new(false),
+            frame_clock: RefCell::new(None),
+            frame_timer: RefCell::new(None),
+            frames_by_clock: Cell::new(0),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -435,6 +582,7 @@ impl GtkBackend {
             schedule_wake: b_schedule_wake,
             quit: b_quit,
             last_error: b_last_error,
+            request_frame: b_request_frame,
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -450,6 +598,11 @@ impl GtkBackend {
     /// `host` must outlive every later backend call.
     pub unsafe fn attach_host(&self, host: *const svl_host) {
         self.ctl.host.store(host as *mut svl_host, Ordering::Release);
+    }
+
+    /// Frames delivered by the GDK frame clock so far (the others came from the fallback timer).
+    pub fn frames_by_clock(&self) -> u32 {
+        self.ctl.local.frames_by_clock.get()
     }
 
     /// Diagnostic access to the object behind a handle.
@@ -561,6 +714,12 @@ unsafe extern "C" fn b_schedule_wake(p: *mut c_void, ms: i64) {
         }
     });
     *inner.wake_timer.borrow_mut() = Some(id);
+}
+
+/// ABI v2.1: one `host.frame` on the next frame of a mapped toplevel's frame clock.
+unsafe extern "C" fn b_request_frame(p: *mut c_void) {
+    let c = unsafe { ctl(p) };
+    c.local.request_frame();
 }
 
 unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {

@@ -133,6 +133,13 @@ fn replay_all_fixtures() {
     names.sort_by_key(|e| e.file_name());
     assert!(!names.is_empty(), "no fixtures found");
     for e in names {
-        replay(&e.file_name().to_string_lossy(), std::fs::read_to_string(e.path().join("expected.oplog")).unwrap());
+        let log = std::fs::read_to_string(e.path().join("expected.oplog")).unwrap();
+        if log.lines().any(|l| l.starts_with("sync ")) {
+            // Sync results (close vetoes, handled keys) change what the toolkit does next, which a
+            // flat replay cannot follow; `tests/sync.rs` and `tests/host_sync.rs` cover them natively.
+            eprintln!("{}: skipped (sync handlers)", e.file_name().to_string_lossy());
+            continue;
+        }
+        replay(&e.file_name().to_string_lossy(), log);
     }
 }
