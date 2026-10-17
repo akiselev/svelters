@@ -6,10 +6,10 @@
   "scripts": {
     "gen": "node scripts/gen-pages.mjs",
     "dev": "node scripts/gen-pages.mjs && astro dev",
-    "build": "node scripts/gen-pages.mjs && astro build",
+    "build": "node scripts/gen-pages.mjs && node scripts/run-limited.mjs astro build",
     "preview": "astro preview",
     "check-links": "node scripts/check-links.mjs",
-    "test": "node --test test/"
+    "test": "node --test test/golden.test.mjs test/smoke.test.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.6",

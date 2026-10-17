@@ -380,7 +380,8 @@ class Frontend:
         e: dict = {
             "id": f"{TK}:{stem}", "kind": "class", "name": cname, "qualified": cname, "native_name": cname,
             "abstract": bool(m.get("abstract")), "tags": tags,
-            "status": {"tier": "annotated" if annotated else "ingested", "tested": annotated, "metadata_file": f"metadata/qt/{stem}.json"},
+            "status": {"tier": "annotated" if annotated else "ingested", "tested": annotated, "metadata_file": f"metadata/qt/{stem}.json",
+                       "note": "" if annotated else "Raw: ingested from qdoc and the QMetaObject only. This class has no element tag and no generated backend code yet, so it cannot be used from Svelte until it is annotated."},
             "upstream": {"url": url, "label": f"Qt 6 reference: {cname}"},
             "bases": [f"{TK}:{b}" for b in m.get("bases", [])],
             "interfaces": [], "properties": [], "events": [], "methods": [], "constructors": [], "values": [],

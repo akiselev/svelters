@@ -361,6 +361,7 @@ class Frontend:
                 "tier": "annotated" if annotated else "ingested",
                 "tested": annotated,
                 "metadata_file": f"metadata/gtk/{stem}.json",
+                "note": "" if annotated else "Raw: GTK properties and signals of this kind are reachable through the generated tables (dynamic GObject access), but its child slots, ownership and signal semantics are neither annotated nor tested.",
             },
             "upstream": {"url": page, "label": f"GTK 4 reference: GTK {name}"},
             "bases": [f"{TK}:{b}" for b in m.get("bases", [])],

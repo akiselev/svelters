@@ -1,0 +1,107 @@
+---
+// Starlight's theme (dark mode) selector, plus the toolkit and version switchers.
+import Default from '@astrojs/starlight/components/ThemeSelect.astro';
+---
+
+<div class="svl-switcher" data-base={import.meta.env.BASE_URL}>
+  <label>
+    <span class="sr-only">Toolkit</span>
+    <select id="svl-toolkit" aria-label="Toolkit">
+      <option value="gtk">GTK</option>
+      <option value="qt">Qt</option>
+    </select>
+  </label>
+  <label>
+    <span class="sr-only">Version</span>
+    <select id="svl-version" aria-label="Documentation version">
+      <option value="/">main</option>
+    </select>
+  </label>
+</div>
+<Default {...Astro.props}><slot /></Default>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.svl-switcher');
+  const tkSel = document.querySelector<HTMLSelectElement>('#svl-toolkit');
+  const verSel = document.querySelector<HTMLSelectElement>('#svl-version');
+  if (root && tkSel && verSel) {
+    const base = (root.dataset.base ?? '/').replace(/\/$/, '');
+    const rel = () => location.pathname.slice(base.length) || '/';
+    const store = (k: string, v?: string) => {
+      try {
+        if (v === undefined) return localStorage.getItem(k);
+        localStorage.setItem(k, v);
+      } catch {
+        return null;
+      }
+      return null;
+    };
+    const m = rel().match(/^\/api\/([a-z0-9_-]+)\//);
+    const saved = store('svl-toolkit');
+    fetch(`${base}/toolkits.json`)
+      .then((r) => r.json())
+      .then((list: { id: string; name: string; version: string }[]) => {
+        tkSel.innerHTML = list.map((t) => `<option value="${t.id}">${t.name} ${t.version}</option>`).join('');
+        const cur = m?.[1] ?? saved ?? list[0]?.id;
+        if (cur) tkSel.value = cur;
+      })
+      .catch(() => {});
+    if (m) tkSel.value = m[1];
+    else if (saved) tkSel.value = saved;
+    tkSel.addEventListener('change', async () => {
+      const next = tkSel.value;
+      store('svl-toolkit', next);
+      const mm = rel().match(/^\/api\/([a-z0-9_-]+)\/(.*)$/);
+      if (!mm) {
+        location.href = `${base}/api/${next}/`;
+        return;
+      }
+      try {
+        const routes: Record<string, string> = await (await fetch(`${base}/routes.json`)).json();
+        const wanted = `/api/${next}/${mm[2]}`;
+        const known = new Set(Object.values(routes));
+        location.href = base + (known.has(wanted) ? wanted : `/api/${next}/`);
+      } catch {
+        location.href = `${base}/api/${next}/`;
+      }
+    });
+    fetch(`${base}/versions.json`)
+      .then((r) => r.json())
+      .then((vs: { label: string; path: string }[]) => {
+        verSel.innerHTML = vs.map((v) => `<option value="${v.path}">${v.label}</option>`).join('');
+        verSel.disabled = vs.length < 2;
+      })
+      .catch(() => {});
+    verSel.addEventListener('change', () => {
+      location.href = verSel.value.replace(/\/$/, '') + rel();
+    });
+  }
+</script>
+
+<style>
+  .svl-switcher {
+    display: flex;
+    gap: 0.4rem;
+    margin-inline-end: 0.5rem;
+  }
+  .svl-switcher select {
+    color: var(--sl-color-gray-1);
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.4rem;
+    padding: 0.2rem 0.4rem;
+    font-size: var(--sl-text-sm);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  @media (max-width: 50rem) {
+    .svl-switcher {
+      display: none;
+    }
+  }
+</style>
