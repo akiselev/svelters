@@ -172,3 +172,7 @@ From `docs/notes/node-deno-integration.md`. To let stock Node (N-API addon) or D
 - the rule that nested toolkit loops (modal dialogs, DnD) may re-enter `checkpoint`.
 
 Priority after QuickJS: (1) stock Node via N-API on Linux, (2) embedded deno_core as a cargo feature, (3) stock Deno via FFI. Bun is not supported (no libuv, no async FFI).
+
+## Note from P2: nested loops and blocking calls
+
+The host defers a `checkpoint` that arrives while JS is running, and turns it into a later `wake`. This happens when a backend op spins a nested toolkit loop. It's safe, but JS is frozen until the outer call returns. So JS-facing APIs must not expose blocking modal calls (`QDialog::exec`, the deprecated `gtk_dialog_run`). Expose dialogs as present + response signal instead, and let generated metadata mark blocking methods as `unsupported_reason: blocking_nested_loop`.
