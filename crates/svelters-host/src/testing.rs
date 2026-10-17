@@ -104,9 +104,10 @@ pub enum FixtureOutcome {
 
 /// Runs one fixture directory and compares the op log byte for byte with `expected.oplog`.
 pub fn run_fixture(dir: &Path) -> FixtureOutcome {
-    if let Some(tk) = fixture_toolkit(dir) {
+    let tk = fixture_toolkit(dir);
+    if tk != "gtk" && tk != "qt" {
         return FixtureOutcome::Skipped(format!(
-            "a {tk} fixture (package.json svelters.toolkit): its op log names {tk} members, the log backend is GTK-shaped"
+            "a {tk} fixture (package.json svelters.toolkit): the log backend models GTK and Qt only"
         ));
     }
     let bundle = dir.join("dist/app.js");
@@ -129,7 +130,7 @@ pub fn run_fixture(dir: &Path) -> FixtureOutcome {
         Err(e) => return FixtureOutcome::Fail(e.to_string()),
     };
     let (cfg, opts) = fixture_config();
-    let report = match backend_for(&fixture_toolkit(dir), steps, opts).and_then(|log| run_on(log, &bundle, cfg)) {
+    let report = match backend_for(&tk, steps, opts).and_then(|log| run_on(log, &bundle, cfg)) {
         Ok(r) => r,
         Err(e) => return FixtureOutcome::Fail(e),
     };
@@ -159,14 +160,6 @@ pub fn run_fixture(dir: &Path) -> FixtureOutcome {
 }
 
 /// Fixture directories under `root` (each child directory), sorted by name.
-/// The toolkit a fixture models (`"svelters": { "toolkit": "appkit" }` in its package.json; the
-/// TestHost then resolves names like that toolkit), or None for the GTK-shaped default.
-pub fn fixture_toolkit(dir: &Path) -> Option<String> {
-    let text = std::fs::read_to_string(dir.join("package.json")).ok()?;
-    let v: serde_json::Value = serde_json::from_str(&text).ok()?;
-    v.get("svelters")?.get("toolkit")?.as_str().map(str::to_string)
-}
-
 pub fn find_fixtures(root: &Path) -> Vec<PathBuf> {
     let mut dirs: Vec<PathBuf> = std::fs::read_dir(root)
         .map(|rd| {
