@@ -13,7 +13,6 @@ fn main() {
 mod mac {
     use svelters_abi::Value as V;
     use svelters_abi::*;
-    use objc2::DefinedClass;
     use svelters_appkit::testing::Harness;
 
     /// Each case runs under `Harness::case_guard`: a case that panics has its handles destroyed,
@@ -31,7 +30,6 @@ mod mac {
     }
 
     guarded![
-        frame_path_probe,
         handles_are_never_reused,
         unknown_names_resolve_to_zero,
         stale_handle_is_an_error,
@@ -50,156 +48,6 @@ mod mac {
         run_returns_after_quit,
         no_leaked_handles,
     ];
-
-    mod probe {
-        use std::ffi::c_void;
-        use std::sync::atomic::{AtomicU32, Ordering};
-        pub static CV_TICKS: AtomicU32 = AtomicU32::new(0);
-        type Cb = unsafe extern "C" fn(*mut c_void, *const c_void, *const c_void, u64, *mut u64, *mut c_void) -> i32;
-        #[link(name = "CoreVideo", kind = "framework")]
-        unsafe extern "C" {
-            fn CVDisplayLinkCreateWithActiveCGDisplays(out: *mut *mut c_void) -> i32;
-            fn CVDisplayLinkSetOutputCallback(l: *mut c_void, cb: Cb, ctx: *mut c_void) -> i32;
-            fn CVDisplayLinkStart(l: *mut c_void) -> i32;
-            fn CVDisplayLinkStop(l: *mut c_void) -> i32;
-        }
-        #[link(name = "CoreGraphics", kind = "framework")]
-        unsafe extern "C" {
-            fn CGMainDisplayID() -> u32;
-            fn CGDisplayCopyDisplayMode(d: u32) -> *mut c_void;
-            fn CGDisplayModeGetRefreshRate(m: *mut c_void) -> f64;
-            fn CGDisplayPixelsWide(d: u32) -> usize;
-        }
-        unsafe extern "C" fn cb(_: *mut c_void, _: *const c_void, _: *const c_void, _: u64, _: *mut u64, _: *mut c_void) -> i32 {
-            CV_TICKS.fetch_add(1, Ordering::Relaxed);
-            0
-        }
-        /// (main display id, width, refresh rate, CVDisplayLink ticks in `ms`)
-        pub fn cv(ms: u64) -> (u32, usize, f64, i32, u32) {
-            unsafe {
-                let d = CGMainDisplayID();
-                let m = CGDisplayCopyDisplayMode(d);
-                let hz = if m.is_null() { -1.0 } else { CGDisplayModeGetRefreshRate(m) };
-                let mut l = std::ptr::null_mut();
-                let rc = CVDisplayLinkCreateWithActiveCGDisplays(&mut l);
-                if rc != 0 || l.is_null() {
-                    return (d, CGDisplayPixelsWide(d), hz, rc, 0);
-                }
-                CVDisplayLinkSetOutputCallback(l, cb, std::ptr::null_mut());
-                CVDisplayLinkStart(l);
-                std::thread::sleep(std::time::Duration::from_millis(ms));
-                CVDisplayLinkStop(l);
-                (d, CGDisplayPixelsWide(d), hz, rc, CV_TICKS.load(Ordering::Relaxed))
-            }
-        }
-    }
-
-    pub struct TickIvars {
-        pub n: std::cell::Cell<u32>,
-    }
-
-    objc2::define_class!(
-        #[unsafe(super(objc2::runtime::NSObject))]
-        #[thread_kind = objc2::MainThreadOnly]
-        #[name = "FA1TickCounter"]
-        #[ivars = TickIvars]
-        pub struct TickCounter;
-
-        impl TickCounter {
-            #[unsafe(method(tick:))]
-            fn tick(&self, _l: Option<&objc2::runtime::AnyObject>) {
-                self.ivars().n.set(self.ivars().n.get() + 1);
-            }
-        }
-    );
-
-    /// Diagnostics for CI (only with SVELTERS_APPKIT_TRACE_FRAMES): which display-link setups tick
-    /// on this machine, and how late run-loop timers are.
-    fn frame_path_probe() {
-        use objc2::rc::Retained;
-        use objc2::runtime::{AnyObject, Sel};
-        use objc2::{MainThreadMarker, MainThreadOnly, class, msg_send, sel};
-        if std::env::var_os("SVELTERS_APPKIT_TRACE_FRAMES").is_none() {
-            return;
-        }
-        let h = Harness::shared();
-        let mtm = MainThreadMarker::new().unwrap();
-        eprintln!("[probe] CVDisplayLink (display, width, Hz, rc, ticks/300ms): {:?}", probe::cv(300));
-        // Timers before any window exists: request_frame takes the 16 ms timer path.
-        for _ in 0..3 {
-            let before = h.frames();
-            let t = std::time::Instant::now();
-            h.backend_trait().request_frame();
-            while h.frames() == before && t.elapsed().as_millis() < 1000 {
-                h.pump(2);
-            }
-            eprintln!("[probe] no window: 16 ms frame timer fired after {:?}", t.elapsed());
-            let c = h.checkpoints();
-            let t = std::time::Instant::now();
-            h.backend_trait().schedule_wake(16);
-            while h.checkpoints() == c && t.elapsed().as_millis() < 1000 {
-                h.pump(2);
-            }
-            eprintln!("[probe] no window: 16 ms schedule_wake fired after {:?}", t.elapsed());
-        }
-        let w = h.create("window");
-        h.call(w, "make-key-and-order-front", vec![]).unwrap();
-        h.pump(100);
-        let win = h.backend.object(w).unwrap();
-        let view: Retained<AnyObject> = unsafe { msg_send![&*win, contentView] };
-        let screen: Option<Retained<AnyObject>> = unsafe { msg_send![&*win, screen] };
-        let counter = || {
-            let c = TickCounter::alloc(mtm).set_ivars(TickIvars { n: std::cell::Cell::new(0) });
-            let c: Retained<TickCounter> = unsafe { msg_send![super(c), init] };
-            c
-        };
-        let add = |link: &AnyObject, mode: &str| unsafe {
-            let rl: Retained<AnyObject> = msg_send![class!(NSRunLoop), mainRunLoop];
-            let m = objc2_foundation::NSString::from_str(mode);
-            let _: () = msg_send![link, addToRunLoop: &*rl, forMode: &*m];
-        };
-        let run = |label: &str, src: &AnyObject, mode: &str, pump: &dyn Fn()| {
-            let c = counter();
-            let tick: Sel = sel!(tick:);
-            let link: Option<Retained<AnyObject>> = unsafe { msg_send![src, displayLinkWithTarget: &*c, selector: tick] };
-            let Some(link) = link else {
-                eprintln!("[probe] {label}: no link");
-                return;
-            };
-            add(&link, mode);
-            let paused: bool = unsafe { msg_send![&*link, isPaused] };
-            pump();
-            let _: () = unsafe { msg_send![&*link, invalidate] };
-            eprintln!("[probe] {label} ({mode}, paused at start={paused}): {} ticks", c.ivars().n.get());
-        };
-        let next_event = || h.pump(300);
-        let cf_run = || {
-            unsafe extern "C" {
-                fn CFRunLoopRunInMode(mode: *const std::ffi::c_void, secs: f64, ret: u8) -> i32;
-                static kCFRunLoopDefaultMode: *const std::ffi::c_void;
-            }
-            unsafe { CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.3, 0) };
-        };
-        run("view link, nextEvent", &view, "kCFRunLoopCommonModes", &next_event);
-        run("view link, nextEvent", &view, "kCFRunLoopDefaultMode", &next_event);
-        run("view link, CFRunLoopRunInMode", &view, "kCFRunLoopDefaultMode", &cf_run);
-        run("window link", &win, "kCFRunLoopDefaultMode", &next_event);
-        if let Some(s) = &screen {
-            run("screen link", s, "kCFRunLoopDefaultMode", &next_event);
-        }
-        let _: () = unsafe { msg_send![&*view, setWantsLayer: true] };
-        h.pump(50);
-        run("layer-backed view link", &view, "kCFRunLoopDefaultMode", &next_event);
-        unsafe {
-            let app: Retained<AnyObject> = msg_send![class!(NSApplication), sharedApplication];
-            let _: () = msg_send![&*app, finishLaunching];
-            let _: () = msg_send![&*app, activateIgnoringOtherApps: true];
-        }
-        h.pump(100);
-        run("after finishLaunching, view link", &view, "kCFRunLoopDefaultMode", &next_event);
-        run("after finishLaunching, window link", &win, "kCFRunLoopDefaultMode", &next_event);
-        h.destroy(w);
-    }
 
     fn handles_are_never_reused() {
         let h = Harness::shared();
@@ -395,29 +243,39 @@ mod mac {
         assert_eq!(h.checkpoints(), before + 1);
     }
 
+    /// Pumps until `frames` reaches `want` or 1 s passes (CI runners fire CF timers tens of ms
+    /// late), then a little longer to catch a second, unwanted frame.
+    fn pump_frames(h: &Harness, want: u32) -> u32 {
+        let t = std::time::Instant::now();
+        while h.frames() < want && t.elapsed() < std::time::Duration::from_secs(1) {
+            h.pump(5);
+        }
+        h.pump(120);
+        h.frames()
+    }
+
     fn request_frame_delivers_one_frame() {
         let h = Harness::shared();
         let w = h.create("window");
         h.call(w, "make-key-and-order-front", vec![]).unwrap();
         let before = h.frames();
+        let (link0, _) = h.backend.frame_sources();
         h.backend_trait().request_frame();
         h.backend_trait().request_frame(); // idempotent while pending
-        h.pump(150);
-        assert_eq!(h.frames(), before + 1);
+        assert_eq!(pump_frames(h, before + 1), before + 1);
         h.backend_trait().request_frame();
-        h.pump(150);
-        assert_eq!(h.frames(), before + 2);
-        // Off screen the display link does not tick: the watchdog still delivers exactly one.
+        assert_eq!(pump_frames(h, before + 2), before + 2);
+        // A visible window's display link really ticks (it was added to the run loop with a
+        // look-alike mode string once, and never fired).
+        assert_eq!(h.backend.frame_sources().0, link0 + 2, "both frames came from CADisplayLink");
+        // Off screen the link does not tick: the watchdog timer still delivers exactly one.
         h.call(w, "order-out", vec![V::Null]).unwrap();
         h.backend_trait().request_frame();
-        h.pump(150);
-        assert_eq!(h.frames(), before + 3);
-        h.pump(100);
-        assert_eq!(h.frames(), before + 3, "nothing after the frame without a new request");
+        assert_eq!(pump_frames(h, before + 3), before + 3);
         h.destroy(w);
+        // No window at all: the plain timer.
         h.backend_trait().request_frame();
-        h.pump(150);
-        assert_eq!(h.frames(), before + 4, "no window at all: the 16 ms timer");
+        assert_eq!(pump_frames(h, before + 4), before + 4);
     }
 
     fn run_returns_after_quit() {

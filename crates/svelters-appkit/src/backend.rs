@@ -109,6 +109,8 @@ pub(crate) struct Inner {
     dyn_methods: RefCell<Vec<(u32, String, Sel)>>,
     graveyard: RefCell<Vec<Box<dyn std::any::Any>>>,
     frame_pending: Cell<bool>,
+    /// Frames delivered by (display-link tick, timer), for tests.
+    frame_sources: Cell<(u32, u32)>,
     /// (window handle, CADisplayLink)
     display_link: RefCell<Option<(u64, Retained<AnyObject>)>>,
     frame_target: Retained<SveltersTarget>,
@@ -184,6 +186,11 @@ impl LoopEvents for Events {
     }
 }
 
+#[link(name = "Foundation", kind = "framework")]
+unsafe extern "C" {
+    static NSRunLoopCommonModes: &'static NSString;
+}
+
 /// How long a requested frame waits for a display-link tick before the timer delivers it
 /// (about four frames at 60 Hz, two at the slowest common refresh rates).
 const FRAME_WATCHDOG_MS: u64 = 64;
@@ -222,6 +229,7 @@ impl AppKitBackend {
             dyn_methods: RefCell::new(Vec::new()),
             graveyard: RefCell::new(Vec::new()),
             frame_pending: Cell::new(false),
+            frame_sources: Cell::new((0, 0)),
             display_link: RefCell::new(None),
             frame_target: SveltersTarget::new(mtm, 0),
             cur_owner: Cell::new(0),
@@ -263,6 +271,11 @@ impl AppKitBackend {
     /// Live handles (leak checks in tests).
     pub fn live_handles(&self) -> usize {
         self.inner.table.borrow().len()
+    }
+
+    /// Frames delivered so far by (display-link tick, timer) (tests: the link must really tick).
+    pub fn frame_sources(&self) -> (u32, u32) {
+        self.inner.frame_sources.get()
     }
 
     /// Every live handle (test cleanup).
@@ -868,8 +881,9 @@ impl Inner {
             if let Some(link) = link {
                 unsafe {
                     let rl: Retained<AnyObject> = msg_send![class!(NSRunLoop), mainRunLoop];
-                    let mode = NSString::from_str("kCFRunLoopCommonModes");
-                    let _: () = msg_send![&*link, addToRunLoop: &*rl, forMode: &*mode];
+                    // The real constant: CADisplayLink does not treat an equal string as the
+                    // common-modes pseudo-mode (an NSString "kCFRunLoopCommonModes" never ticks).
+                    let _: () = msg_send![&*link, addToRunLoop: &*rl, forMode: NSRunLoopCommonModes];
                     let _: () = msg_send![&*link, setPaused: true];
                 }
                 *self.display_link.borrow_mut() = Some((h, link));
@@ -889,6 +903,8 @@ impl Inner {
         if let Some((_, link)) = self.display_link.borrow().as_ref() {
             let _: () = unsafe { msg_send![&**link, setPaused: true] };
         }
+        let (link, timer) = self.frame_sources.get();
+        self.frame_sources.set(if from == "link tick" { (link + 1, timer) } else { (link, timer + 1) });
         if let Some(h) = self.host() {
             unsafe { (h.frame)(h.self_) };
         }
