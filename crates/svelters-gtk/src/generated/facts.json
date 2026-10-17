@@ -4366,6 +4366,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:cursor",
+   "fingerprint": "accac54bb9c50e2d",
+   "kind": "Widget",
+   "name": "cursor",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_cursor"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
    "fingerprint": "f0a82d5912493967",
    "kind": "Widget",

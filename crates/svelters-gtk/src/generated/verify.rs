@@ -8868,6 +8868,19 @@ fn prop_widget_css_classes() {
     });
 }
 
+/// property Widget.cursor (JS cursor, round trip): GtkWidget:cursor, GdkCursor (G11, X8): a CSS cursor name string ("pointer", "text", ...) converts to a GdkCursor; round trip, name checked by tests/gdk_kinds.rs; inherited, tested through GtkLabel
+#[test]
+fn prop_widget_cursor() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let before = h.get_value(o, "cursor");
+        h.set_value(o, "cursor", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "cursor")), crate::testing::shape(&before));
+    });
+}
+
 /// property Widget.focusable (JS focusable): GtkWidget:focusable (Gtk 4 docs); P prop; inherited, tested through GtkLabel
 #[test]
 fn prop_widget_focusable() {

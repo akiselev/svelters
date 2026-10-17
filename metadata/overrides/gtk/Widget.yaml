@@ -6,6 +6,8 @@ properties:
     provenance: "GtkWidget:visible (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
   - name: sensitive
     provenance: "GtkWidget:sensitive (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+  - name: cursor
+    provenance: "GtkWidget:cursor, GdkCursor (G11, X8): a CSS cursor name string (\"pointer\", \"text\", ...) converts to a GdkCursor; round trip, name checked by tests/gdk_kinds.rs; inherited, tested through GtkLabel"
   - name: tooltip-text
     provenance: "GtkWidget:tooltip-text (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
   - name: tooltip-markup

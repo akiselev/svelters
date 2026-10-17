@@ -7,7 +7,7 @@ publish.workspace = true
 
 [dependencies]
 svelters-abi.workspace = true
-gtk.workspace = true
+gtk = { workspace = true, features = ["v4_6"] }
 serde_json.workspace = true
 
 [dev-dependencies]
