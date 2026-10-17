@@ -964,7 +964,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 156, name: "max-value", js_name: "maxValue", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &[] },
     PropInfo { kind: 156, name: "min-value", js_name: "minValue", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &[] },
     PropInfo { kind: 156, name: "mode", js_name: "mode", ty: ValueTy::Enum, gtype: "GtkLevelBarMode", flags: 19, echo: &[] },
-    PropInfo { kind: 156, name: "value", js_name: "value", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &[] },
+    PropInfo { kind: 156, name: "value", js_name: "value", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &["notify::value"] },
     PropInfo { kind: 157, name: "uri", js_name: "uri", ty: ValueTy::Str, gtype: "gchararray", flags: 3, echo: &[] },
     PropInfo { kind: 157, name: "visited", js_name: "visited", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 158, name: "orientation", js_name: "orientation", ty: ValueTy::Enum, gtype: "GtkOrientation", flags: 19, echo: &[] },
@@ -1348,7 +1348,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 249, name: "numeric", js_name: "numeric", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 249, name: "snap-to-ticks", js_name: "snapToTicks", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 249, name: "update-policy", js_name: "updatePolicy", ty: ValueTy::Enum, gtype: "GtkSpinButtonUpdatePolicy", flags: 19, echo: &[] },
-    PropInfo { kind: 249, name: "value", js_name: "value", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &[] },
+    PropInfo { kind: 249, name: "value", js_name: "value", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &["value-changed", "notify::value"] },
     PropInfo { kind: 249, name: "wrap", js_name: "wrap", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 250, name: "spinning", js_name: "spinning", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &["notify::spinning"] },
     PropInfo { kind: 251, name: "hhomogeneous", js_name: "hhomogeneous", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
@@ -1662,7 +1662,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 298, name: "child", js_name: "child", ty: ValueTy::Object, gtype: "GtkWidget", flags: 19, echo: &[] },
 ];
 
-pub static SIGNALS: [SignalInfo; 356] = [
+pub static SIGNALS: [SignalInfo; 358] = [
     SignalInfo { kind: 1, name: "state-change", js_event: "state-change", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 2, name: "activate-link", js_event: "activate-link", params: &["string"], result: "bool", handler_result: 1, sync_required: false },
     SignalInfo { kind: 11, name: "changed", js_event: "changed", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -1841,6 +1841,7 @@ pub static SIGNALS: [SignalInfo; 356] = [
     SignalInfo { kind: 153, name: "activate-link", js_event: "activate-link", params: &["string"], result: "bool", handler_result: 1, sync_required: true },
     SignalInfo { kind: 153, name: "copy-clipboard", js_event: "copy-clipboard", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 153, name: "move-cursor", js_event: "move-cursor", params: &["enum<svelters-api:v1:type:gtk:Gtk:MovementStep>", "i32", "bool"], result: "void", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 156, name: "notify::value", js_event: "notify::value", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 156, name: "offset-changed", js_event: "offset-changed", params: &["string"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 157, name: "activate-link", js_event: "activate-link", params: &[], result: "bool", handler_result: 1, sync_required: true },
     SignalInfo { kind: 159, name: "activate-cursor-row", js_event: "activate-cursor-row", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -1921,6 +1922,7 @@ pub static SIGNALS: [SignalInfo; 356] = [
     SignalInfo { kind: 249, name: "activate", js_event: "activate", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 249, name: "change-value", js_event: "change-value", params: &["enum<svelters-api:v1:type:gtk:Gtk:ScrollType>"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 249, name: "input", js_event: "input", params: &["pointer"], result: "i32", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 249, name: "notify::value", js_event: "notify::value", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 249, name: "output", js_event: "output", params: &[], result: "bool", handler_result: 1, sync_required: false },
     SignalInfo { kind: 249, name: "value-changed", js_event: "value-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 249, name: "wrapped", js_event: "wrapped", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -2021,9 +2023,10 @@ pub static SIGNALS: [SignalInfo; 356] = [
     SignalInfo { kind: 295, name: "keys-changed", js_event: "keys-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
 ];
 
-pub static METHODS: [MethodInfo; 7] = [
+pub static METHODS: [MethodInfo; 8] = [
     MethodInfo { kind: 171, name: "popdown" },
     MethodInfo { kind: 171, name: "popup" },
+    MethodInfo { kind: 213, name: "pulse" },
     MethodInfo { kind: 250, name: "start" },
     MethodInfo { kind: 250, name: "stop" },
     MethodInfo { kind: 293, name: "queueDraw" },

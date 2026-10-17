@@ -338,11 +338,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_progress_bar_pulse (Gtk 4 docs); no readable state, postcondition only checks the call succeeds"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:method:pulse",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "pulse",
       "name": "pulse",
       "native": "gtk_progress_bar_pulse",
       "origin": "gir",
@@ -531,6 +543,11 @@
         "get": "gtk_progress_bar_get_ellipsize",
         "set": "gtk_progress_bar_set_ellipsize"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkProgressBar:ellipsize, PangoEllipsizeMode (Gtk 4 docs)"
+      },
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:ellipsize",
       "invocation": "reflected",
@@ -577,6 +594,11 @@
         "get": "gtk_progress_bar_get_fraction",
         "set": "gtk_progress_bar_set_fraction"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkProgressBar:fraction, 0..1 (Gtk 4 docs)"
+      },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:fraction",
       "invocation": "reflected",
@@ -620,6 +642,11 @@
         "get": "gtk_progress_bar_get_inverted",
         "set": "gtk_progress_bar_set_inverted"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkProgressBar:inverted (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:inverted",
       "invocation": "reflected",
@@ -659,6 +686,11 @@
       "accessors": {
         "get": "gtk_progress_bar_get_pulse_step",
         "set": "gtk_progress_bar_set_pulse_step"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkProgressBar:pulse-step, 0..1 (Gtk 4 docs)"
       },
       "default": 0.1,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:pulse-step",
@@ -703,6 +735,11 @@
         "get": "gtk_progress_bar_get_show_text",
         "set": "gtk_progress_bar_set_show_text"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkProgressBar:show-text (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:show-text",
       "invocation": "reflected",
@@ -743,6 +780,11 @@
         "get": "gtk_progress_bar_get_text",
         "set": "gtk_progress_bar_set_text"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkProgressBar:text (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:text",
       "invocation": "reflected",
@@ -780,7 +822,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/ProgressBar.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

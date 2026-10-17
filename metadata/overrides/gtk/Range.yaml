@@ -1,0 +1,46 @@
+verify_subject: {tag: scale}
+properties:
+  - name: inverted
+    provenance: "GtkRange:inverted (Gtk 4 docs)"
+  - name: show-fill-level
+    provenance: "GtkRange:show-fill-level (Gtk 4 docs)"
+  - name: restrict-to-fill-level
+    provenance: "GtkRange:restrict-to-fill-level (Gtk 4 docs)"
+  - name: fill-level
+    sample: 50.0
+    setup: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();'
+    provenance: "GtkRange:fill-level (Gtk 4 docs); needs a non-empty adjustment range"
+signals:
+  - name: value-changed
+    js_event: value-changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let r = o.downcast_ref::<gtk::Range>().unwrap(); r.set_range(0.0, 100.0); r.set_value(10.0 + i as f64);', values: [a, b, c]}
+    provenance: "GtkRange::value-changed, run-last, void (Gtk 4 docs)"
+methods:
+  - name: set_range
+    js_name: set_range
+    dispatch: dynamic
+    args: [10.0, 100.0]
+    expect: 'h.call_args(o, "get_value", &[]).unwrap() == V::F64(10.0)'
+    provenance: "gtk_range_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)"
+  - name: set_value
+    js_name: set_value
+    dispatch: dynamic
+    setup: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();'
+    args: [42.0]
+    expect: 'h.call_args(o, "get_value", &[]).unwrap() == V::F64(42.0)'
+    provenance: "gtk_range_set_value (Gtk 4 docs); called through GIRepository (X1)"
+  - name: get_value
+    js_name: get_value
+    dispatch: dynamic
+    setup: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, "set_value", &[V::F64(7.0)]).unwrap();'
+    args: []
+    expect: 'r == V::F64(7.0)'
+    provenance: "gtk_range_get_value (Gtk 4 docs); f64 return through GIRepository (X1)"
+  - name: set_increments
+    js_name: set_increments
+    dispatch: dynamic
+    args: [2.0, 20.0]
+    expect: 'w.downcast_ref::<gtk::Range>().unwrap().adjustment().step_increment() == 2.0 && w.downcast_ref::<gtk::Range>().unwrap().adjustment().page_increment() == 20.0'
+    provenance: "gtk_range_set_increments writes the adjustment's step and page increments (Gtk 4 docs)"

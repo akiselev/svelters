@@ -16,11 +16,17 @@ export interface BindableProps {
   expander: {
     expanded: boolean; // gtk
   };
+  levelbar: {
+    value: number; // gtk
+  };
   passwordentry: {
     text: string; // gtk
   };
   searchentry: {
     text: string; // gtk
+  };
+  spinbutton: {
+    value: number; // gtk
   };
   spinner: {
     spinning: boolean; // gtk

@@ -415,11 +415,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_range_get_value (Gtk 4 docs); f64 return through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::F64(7.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Range:method:get_value",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_value",
       "name": "get_value",
       "native": "gtk_range_get_value",
       "origin": "gir",
@@ -430,6 +445,7 @@
         "ownership": "borrowed",
         "type": "f64"
       },
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, \"set_value\", &[V::F64(7.0)]).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -511,11 +527,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_range_set_increments writes the adjustment's step and page increments (Gtk 4 docs)"
+      },
+      "args": [
+        2.0,
+        20.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "w.downcast_ref::<gtk::Range>().unwrap().adjustment().step_increment() == 2.0 && w.downcast_ref::<gtk::Range>().unwrap().adjustment().page_increment() == 20.0",
       "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_increments",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_increments",
       "name": "set_increments",
       "native": "gtk_range_set_increments",
       "origin": "gir",
@@ -570,11 +603,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_range_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        10.0,
+        100.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.call_args(o, \"get_value\", &[]).unwrap() == V::F64(10.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_range",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_range",
       "name": "set_range",
       "native": "gtk_range_set_range",
       "origin": "gir",
@@ -707,11 +757,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_range_set_value (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        42.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.call_args(o, \"get_value\", &[]).unwrap() == V::F64(42.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Range:method:set_value",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_value",
       "name": "set_value",
       "native": "gtk_range_set_value",
       "origin": "gir",
@@ -730,6 +797,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap();",
       "unsupported_reason": null
     }
   ],
@@ -793,6 +861,14 @@
         "get": "gtk_range_get_fill_level",
         "set": "gtk_range_set_fill_level"
       },
+      "annotated": {
+        "fields": [
+          "sample",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkRange:fill-level (Gtk 4 docs); needs a non-empty adjustment range"
+      },
       "default": 1.7976931348623157e+308,
       "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:fill-level",
       "invocation": "reflected",
@@ -818,6 +894,8 @@
         "origin": "runtime",
         "owner": "GtkRange"
       },
+      "sample": 50.0,
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap();",
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -835,6 +913,11 @@
       "accessors": {
         "get": "gtk_range_get_inverted",
         "set": "gtk_range_set_inverted"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkRange:inverted (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:inverted",
@@ -875,6 +958,11 @@
       "accessors": {
         "get": "gtk_range_get_restrict_to_fill_level",
         "set": "gtk_range_set_restrict_to_fill_level"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkRange:restrict-to-fill-level (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:restrict-to-fill-level",
@@ -958,6 +1046,11 @@
       "accessors": {
         "get": "gtk_range_get_show_fill_level",
         "set": "gtk_range_set_show_fill_level"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkRange:show-fill-level (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Range:prop:show-fill-level",
@@ -1089,6 +1182,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkRange::value-changed, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1110,7 +1213,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let r = o.downcast_ref::<gtk::Range>().unwrap(); r.set_range(0.0, 100.0); r.set_value(10.0 + i as f64);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -1119,11 +1231,14 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Range.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "verify_subject": {
+    "tag": "scale"
+  }
 }

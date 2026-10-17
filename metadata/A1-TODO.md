@@ -102,7 +102,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   `set_range` needs G2); SpinButton `input`/`output` (G5).
 - Gallery: `04-ranges.svelte`.
 - Tests `<re>`: `_(progressbar|levelbar|scale|spinbutton|scrollbar|range)_`.
-- Status: todo
+- Status: done (44 facts, 47 tests: 27 P (ProgressBar 6, LevelBar 5, Scale 4, SpinButton 7, Range 4, Scrollbar 1), 6 S incl. 2 notify::value, 9 M, 2 B; dropped: none; blocked: gap:G5 for SpinButton input/output, gap:G12 for adjustment object facts, Scale bind:value (no value prop))
 
 ### gtk-containers-a: single-child and two-pane containers
 

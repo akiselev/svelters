@@ -2613,6 +2613,208 @@ fn method_label_set_text() {
     });
 }
 
+/// signal LevelBar.offset-changed: GtkLevelBar::offset-changed, run-first, detailed by offset name (Gtk 4 docs)
+#[test]
+fn signal_levelbar_offset_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("levelbar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::LevelBar>().unwrap().add_offset_value("svl-offset", 0.25 + i as f64 * 0.1);
+        };
+        assert_ne!(h.resolve_signal("levelbar", "offset-changed"), 0);
+        assert_eq!(h.resolve_signal("levelbar", "offset-changed"), h.resolve_signal("levelbar", "offset-changed"));
+        h.listen(e, "offset-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "offset-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "offset-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "offset-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "offset-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal LevelBar.notify::value: GObject::notify for GtkLevelBar:value
+#[test]
+fn signal_levelbar_notify_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("levelbar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 0.5f64),
+                1 => o.set_property("value", 0.25f64),
+                2 => o.set_property("value", 0.75f64),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("levelbar", "notify::value"), 0);
+        assert_eq!(h.resolve_signal("levelbar", "notify::value"), h.resolve_signal("levelbar", "notify::value"));
+        h.listen(e, "notify::value", true).unwrap();
+        fire(&h.obj(e), "0.5", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::value".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::value", false).unwrap();
+        fire(&h.obj(e), "0.25", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::value", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "0.75", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::value", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property LevelBar.inverted (JS inverted): GtkLevelBar:inverted (Gtk 4 docs)
+#[test]
+fn prop_levelbar_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "inverted");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "inverted"));
+        h.set_bool(o, "inverted", true).unwrap();
+        assert_eq!(h.get(o, "inverted"), V::Bool(true));
+    });
+}
+
+/// property LevelBar.max-value (JS maxValue): GtkLevelBar:max-value (Gtk 4 docs)
+#[test]
+fn prop_levelbar_max_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "maxValue");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "max-value"));
+        h.set_f64(o, "maxValue", 0.5).unwrap();
+        assert_eq!(h.get(o, "maxValue"), V::F64(0.5));
+    });
+}
+
+/// property LevelBar.min-value (JS minValue): GtkLevelBar:min-value (Gtk 4 docs)
+#[test]
+fn prop_levelbar_min_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "minValue");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "min-value"));
+        h.set_f64(o, "minValue", 0.5).unwrap();
+        assert_eq!(h.get(o, "minValue"), V::F64(0.5));
+    });
+}
+
+/// property LevelBar.mode (JS mode): GtkLevelBar:mode, GtkLevelBarMode (Gtk 4 docs)
+#[test]
+fn prop_levelbar_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "mode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "mode"));
+        h.set_str(o, "mode", "discrete").unwrap();
+        assert_eq!(h.get(o, "mode"), V::Str("discrete".into()));
+    });
+}
+
+/// property LevelBar.value (JS value): GtkLevelBar:value (Gtk 4 docs)
+#[test]
+fn prop_levelbar_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "value");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "value"));
+        h.set_f64(o, "value", 0.5).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(0.5));
+    });
+}
+
+/// echo suppression for LevelBar.value: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_levelbar_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 0.5f64),
+                1 => o.set_property("value", 0.25f64),
+                2 => o.set_property("value", 0.75f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::value", true).unwrap();
+        h.set_f64(o, "value", 0.5).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "0.25", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::value"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_f64(o, "value", 0.5).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// bind:value on LevelBar: gtk_level_bar_set_value notifies only on change (Gtk 4 docs)
+#[test]
+fn binding_levelbar_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 0.5f64),
+                1 => o.set_property("value", 0.25f64),
+                2 => o.set_property("value", 0.75f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::value", true).unwrap();
+        fire(&h.obj(o), "0.5", 0);
+        fire(&h.obj(o), "0.25", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "value"), V::Null, "the property reads the new value");
+    });
+}
+
 /// signal LinkButton.activate-link: GtkLinkButton::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler
 #[test]
 fn signal_linkbutton_activate_link() {
@@ -3247,6 +3449,257 @@ fn prop_picture_keep_aspect_ratio() {
     });
 }
 
+/// property ProgressBar.ellipsize (JS ellipsize): GtkProgressBar:ellipsize, PangoEllipsizeMode (Gtk 4 docs)
+#[test]
+fn prop_progressbar_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "ellipsize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "ellipsize"));
+        h.set_str(o, "ellipsize", "start").unwrap();
+        assert_eq!(h.get(o, "ellipsize"), V::Str("start".into()));
+    });
+}
+
+/// property ProgressBar.fraction (JS fraction): GtkProgressBar:fraction, 0..1 (Gtk 4 docs)
+#[test]
+fn prop_progressbar_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "fraction");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "fraction"));
+        h.set_f64(o, "fraction", 0.5).unwrap();
+        assert_eq!(h.get(o, "fraction"), V::F64(0.5));
+    });
+}
+
+/// property ProgressBar.inverted (JS inverted): GtkProgressBar:inverted (Gtk 4 docs)
+#[test]
+fn prop_progressbar_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "inverted");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "inverted"));
+        h.set_bool(o, "inverted", true).unwrap();
+        assert_eq!(h.get(o, "inverted"), V::Bool(true));
+    });
+}
+
+/// property ProgressBar.pulse-step (JS pulseStep): GtkProgressBar:pulse-step, 0..1 (Gtk 4 docs)
+#[test]
+fn prop_progressbar_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "pulseStep");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "pulse-step"));
+        h.set_f64(o, "pulseStep", 0.5).unwrap();
+        assert_eq!(h.get(o, "pulseStep"), V::F64(0.5));
+    });
+}
+
+/// property ProgressBar.show-text (JS showText): GtkProgressBar:show-text (Gtk 4 docs)
+#[test]
+fn prop_progressbar_show_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "showText");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "show-text"));
+        h.set_bool(o, "showText", true).unwrap();
+        assert_eq!(h.get(o, "showText"), V::Bool(true));
+    });
+}
+
+/// property ProgressBar.text (JS text): GtkProgressBar:text (Gtk 4 docs)
+#[test]
+fn prop_progressbar_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "text"));
+        h.set_str(o, "text", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("p3-sample".into()));
+    });
+}
+
+/// method ProgressBar.pulse: gtk_progress_bar_pulse (Gtk 4 docs); no readable state, postcondition only checks the call succeeds
+#[test]
+fn method_progressbar_pulse() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        h.call(o, "pulse").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// signal Range.value-changed: GtkRange::value-changed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_range_value_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("range");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let r = o.downcast_ref::<gtk::Range>().unwrap(); r.set_range(0.0, 100.0); r.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("range", "value-changed"), 0);
+        assert_eq!(h.resolve_signal("range", "value-changed"), h.resolve_signal("range", "value-changed"));
+        h.listen(e, "value-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "value-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "value-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "value-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Range.fill-level (JS fillLevel): GtkRange:fill-level (Gtk 4 docs); needs a non-empty adjustment range
+#[test]
+fn prop_range_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let id = h.resolve_prop("range", "fillLevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "fill-level"));
+        h.set_f64(o, "fillLevel", 50.0).unwrap();
+        assert_eq!(h.get(o, "fillLevel"), V::F64(50.0));
+    });
+}
+
+/// property Range.inverted (JS inverted): GtkRange:inverted (Gtk 4 docs)
+#[test]
+fn prop_range_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "inverted");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "inverted"));
+        h.set_bool(o, "inverted", true).unwrap();
+        assert_eq!(h.get(o, "inverted"), V::Bool(true));
+    });
+}
+
+/// property Range.restrict-to-fill-level (JS restrictToFillLevel): GtkRange:restrict-to-fill-level (Gtk 4 docs)
+#[test]
+fn prop_range_restrict_to_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "restrictToFillLevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "restrict-to-fill-level"));
+        h.set_bool(o, "restrictToFillLevel", false).unwrap();
+        assert_eq!(h.get(o, "restrictToFillLevel"), V::Bool(false));
+    });
+}
+
+/// property Range.show-fill-level (JS showFillLevel): GtkRange:show-fill-level (Gtk 4 docs)
+#[test]
+fn prop_range_show_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "showFillLevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "show-fill-level"));
+        h.set_bool(o, "showFillLevel", true).unwrap();
+        assert_eq!(h.get(o, "showFillLevel"), V::Bool(true));
+    });
+}
+
+/// method Range.get_value (dynamic GI call): gtk_range_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
+#[test]
+fn method_range_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, "set_value", &[V::F64(7.0)]).unwrap();
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::F64(7.0), "postcondition: r == V::F64(7.0)");
+    });
+}
+
+/// method Range.set_increments (dynamic GI call): gtk_range_set_increments writes the adjustment's step and page increments (Gtk 4 docs)
+#[test]
+fn method_range_set_increments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_increments", &[V::F64(2.0), V::F64(20.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(w.downcast_ref::<gtk::Range>().unwrap().adjustment().step_increment() == 2.0 && w.downcast_ref::<gtk::Range>().unwrap().adjustment().page_increment() == 20.0, "postcondition: w.downcast_ref::<gtk::Range>().unwrap().adjustment().step_increment() == 2.0 && w.downcast_ref::<gtk::Range>().unwrap().adjustment().page_increment() == 20.0");
+    });
+}
+
+/// method Range.set_range (dynamic GI call): gtk_range_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_range_set_range() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_range", &[V::F64(10.0), V::F64(100.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.call_args(o, "get_value", &[]).unwrap() == V::F64(10.0), "postcondition: h.call_args(o, 'get_value', &[]).unwrap() == V::F64(10.0)");
+    });
+}
+
+/// method Range.set_value (dynamic GI call): gtk_range_set_value (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_range_set_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let r = h.call_args(o, "set_value", &[V::F64(42.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.call_args(o, "get_value", &[]).unwrap() == V::F64(42.0), "postcondition: h.call_args(o, 'get_value', &[]).unwrap() == V::F64(42.0)");
+    });
+}
+
 /// property Revealer.reveal-child (JS revealChild): GtkRevealer:reveal-child (Gtk 4 docs); P prop
 #[test]
 fn prop_revealer_reveal_child() {
@@ -3289,6 +3742,66 @@ fn prop_revealer_transition_type() {
         assert_eq!(id, h.resolve_prop("revealer", "transition-type"));
         h.set_str(o, "transitionType", "none").unwrap();
         assert_eq!(h.get(o, "transitionType"), V::Str("none".into()));
+    });
+}
+
+/// property Scale.digits (JS digits): GtkScale:digits, -1..64 (Gtk 4 docs)
+#[test]
+fn prop_scale_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "digits");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "digits"));
+        h.set_i64(o, "digits", 7).unwrap();
+        assert_eq!(h.get(o, "digits"), V::I64(7));
+    });
+}
+
+/// property Scale.draw-value (JS drawValue): GtkScale:draw-value (Gtk 4 docs)
+#[test]
+fn prop_scale_draw_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "drawValue");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "draw-value"));
+        h.set_bool(o, "drawValue", true).unwrap();
+        assert_eq!(h.get(o, "drawValue"), V::Bool(true));
+    });
+}
+
+/// property Scale.has-origin (JS hasOrigin): GtkScale:has-origin (Gtk 4 docs)
+#[test]
+fn prop_scale_has_origin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "hasOrigin");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "has-origin"));
+        h.set_bool(o, "hasOrigin", false).unwrap();
+        assert_eq!(h.get(o, "hasOrigin"), V::Bool(false));
+    });
+}
+
+/// property Scale.value-pos (JS valuePos): GtkScale:value-pos, GtkPositionType (Gtk 4 docs)
+#[test]
+fn prop_scale_value_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "valuePos");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "value-pos"));
+        h.set_str(o, "valuePos", "left").unwrap();
+        assert_eq!(h.get(o, "valuePos"), V::Str("left".into()));
     });
 }
 
@@ -3350,6 +3863,19 @@ fn prop_scalebutton_value() {
         assert_eq!(id, h.resolve_prop("scalebutton", "value"));
         h.set_f64(o, "value", 42.5).unwrap();
         assert_eq!(h.get(o, "value"), V::F64(42.5));
+    });
+}
+
+/// property Scrollbar.adjustment (JS adjustment, round trip): GtkScrollbar:adjustment (Gtk 4 docs); object property, handle round-trip
+#[test]
+fn prop_scrollbar_adjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrollbar");
+        
+        let before = h.get_value(o, "adjustment");
+        h.set_value(o, "adjustment", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "adjustment")), format!("{:?}", before));
     });
 }
 
@@ -3750,6 +4276,308 @@ fn prop_shortcutlabel_accelerator() {
         assert_eq!(id, h.resolve_prop("shortcutlabel", "accelerator"));
         h.set_str(o, "accelerator", "p3-sample").unwrap();
         assert_eq!(h.get(o, "accelerator"), V::Str("p3-sample".into()));
+    });
+}
+
+/// signal SpinButton.value-changed: GtkSpinButton::value-changed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_spinbutton_value_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinbutton");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("spinbutton", "value-changed"), 0);
+        assert_eq!(h.resolve_signal("spinbutton", "value-changed"), h.resolve_signal("spinbutton", "value-changed"));
+        h.listen(e, "value-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "value-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "value-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "value-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SpinButton.wrapped: GtkSpinButton::wrapped, run-last, void (Gtk 4 docs); emitted when a wrapping spin goes past the end
+#[test]
+fn signal_spinbutton_wrapped() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinbutton");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_wrap(true); s.set_range(0.0, 10.0); s.set_value(10.0); s.spin(gtk::SpinType::StepForward, 1.0);
+        };
+        assert_ne!(h.resolve_signal("spinbutton", "wrapped"), 0);
+        assert_eq!(h.resolve_signal("spinbutton", "wrapped"), h.resolve_signal("spinbutton", "wrapped"));
+        h.listen(e, "wrapped", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "wrapped".to_string())), "delivered: {ev:?}");
+        h.listen(e, "wrapped", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "wrapped", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "wrapped", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SpinButton.notify::value: GObject::notify for GtkSpinButton:value
+#[test]
+fn signal_spinbutton_notify_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinbutton");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("spinbutton", "notify::value"), 0);
+        assert_eq!(h.resolve_signal("spinbutton", "notify::value"), h.resolve_signal("spinbutton", "notify::value"));
+        h.listen(e, "notify::value", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::value".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::value", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::value", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::value", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property SpinButton.climb-rate (JS climbRate): GtkSpinButton:climb-rate (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_climb_rate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "climbRate");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "climb-rate"));
+        h.set_f64(o, "climbRate", 0.5).unwrap();
+        assert_eq!(h.get(o, "climbRate"), V::F64(0.5));
+    });
+}
+
+/// property SpinButton.digits (JS digits): GtkSpinButton:digits, 0..20 (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "digits");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "digits"));
+        h.set_i64(o, "digits", 7).unwrap();
+        assert_eq!(h.get(o, "digits"), V::I64(7));
+    });
+}
+
+/// property SpinButton.numeric (JS numeric): GtkSpinButton:numeric (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_numeric() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "numeric");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "numeric"));
+        h.set_bool(o, "numeric", true).unwrap();
+        assert_eq!(h.get(o, "numeric"), V::Bool(true));
+    });
+}
+
+/// property SpinButton.snap-to-ticks (JS snapToTicks): GtkSpinButton:snap-to-ticks (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_snap_to_ticks() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "snapToTicks");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "snap-to-ticks"));
+        h.set_bool(o, "snapToTicks", true).unwrap();
+        assert_eq!(h.get(o, "snapToTicks"), V::Bool(true));
+    });
+}
+
+/// property SpinButton.update-policy (JS updatePolicy): GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_update_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "updatePolicy");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "update-policy"));
+        h.set_str(o, "updatePolicy", "if-valid").unwrap();
+        assert_eq!(h.get(o, "updatePolicy"), V::Str("if-valid".into()));
+    });
+}
+
+/// property SpinButton.value (JS value): GtkSpinButton:value (Gtk 4 docs); needs a non-empty adjustment range
+#[test]
+fn prop_spinbutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let id = h.resolve_prop("spinbutton", "value");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "value"));
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(42.0));
+    });
+}
+
+/// echo suppression for SpinButton.value: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_spinbutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        h.listen(o, "value-changed", true).unwrap();
+        h.listen(o, "notify::value", true).unwrap();
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "b", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["value-changed", "notify::value"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// property SpinButton.wrap (JS wrap): GtkSpinButton:wrap (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "wrap");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "wrap"));
+        h.set_bool(o, "wrap", true).unwrap();
+        assert_eq!(h.get(o, "wrap"), V::Bool(true));
+    });
+}
+
+/// method SpinButton.get_value (dynamic GI call): gtk_spin_button_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
+#[test]
+fn method_spinbutton_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, "set_value", &[V::F64(7.0)]).unwrap();
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::F64(7.0), "postcondition: r == V::F64(7.0)");
+    });
+}
+
+/// method SpinButton.set_increments (dynamic GI call): gtk_spin_button_set_increments (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_spinbutton_set_increments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let r = h.call_args(o, "set_increments", &[V::F64(2.0), V::F64(20.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(w.downcast_ref::<gtk::SpinButton>().unwrap().increments() == (2.0, 20.0), "postcondition: w.downcast_ref::<gtk::SpinButton>().unwrap().increments() == (2.0, 20.0)");
+    });
+}
+
+/// method SpinButton.set_range (dynamic GI call): gtk_spin_button_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_spinbutton_set_range() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let r = h.call_args(o, "set_range", &[V::F64(10.0), V::F64(100.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(10.0), "postcondition: h.get(o, 'value') == V::F64(10.0)");
+    });
+}
+
+/// method SpinButton.set_value (dynamic GI call): gtk_spin_button_set_value (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_spinbutton_set_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let r = h.call_args(o, "set_value", &[V::F64(42.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(42.0), "postcondition: h.get(o, 'value') == V::F64(42.0)");
+    });
+}
+
+/// bind:value on SpinButton: gtk_spin_button_set_value emits value-changed only on change; the spin button rounds to digits (Gtk 4 docs)
+#[test]
+fn binding_spinbutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        h.listen(o, "value-changed", true).unwrap();
+        fire(&h.obj(o), "a", 0);
+        fire(&h.obj(o), "b", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "value"), V::Null, "the property reads the new value");
     });
 }
 

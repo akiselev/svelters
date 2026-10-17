@@ -474,22 +474,26 @@ pub fn call_method(method: u32, obj: &glib::Object) -> Result<(), String> {
             Ok(())
         }
         3 => {
-            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.start();
+            obj.downcast_ref::<gtk::ProgressBar>().ok_or("receiver is not a gtk::ProgressBar")?.pulse();
             Ok(())
         }
         4 => {
-            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.stop();
+            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.start();
             Ok(())
         }
         5 => {
-            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_draw();
+            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.stop();
             Ok(())
         }
         6 => {
-            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_resize();
+            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_draw();
             Ok(())
         }
         7 => {
+            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_resize();
+            Ok(())
+        }
+        8 => {
             obj.downcast_ref::<gtk::Window>().ok_or("receiver is not a gtk::Window")?.present();
             Ok(())
         }
