@@ -1,0 +1,5 @@
+elements:
+  - tag: dateedit
+    construct: { class: QDateEdit }
+    props:
+      - { js: date, native: date }

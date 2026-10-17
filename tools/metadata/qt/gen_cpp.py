@@ -303,7 +303,10 @@ class Model:
         p["getter"], p["setter"] = acc.get("get"), acc.get("set")
         p["qprop"] = prop.get("metaobject") is not None
         cat, _ = classify(p["ref"])
-        direct = cat != "unsupported" and p["getter"] and (p["setter"] or not prop["access"]["write"])
+        scalar = cat in ("bool", "int", "float", "string")
+        # Without a direct setter a scalar can still be written through its QMetaProperty; any other
+        # category is read-only.
+        direct = cat != "unsupported" and p["getter"] and (p["setter"] or not prop["access"]["write"] or not scalar)
         if direct:
             self.use(p["ref"], f"{tag}.{p['js']}")
             self._need_method(tag, tcls, p["getter"], 0)

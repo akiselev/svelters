@@ -7,16 +7,33 @@ export interface QtElementDescriptors {
     props: {
       orientation?: "horizontal" | "vertical";
       spacing?: number;
+      geometry?: Rect;
+      minimumSize?: Size;
+      maximumSize?: Size;
+      sizeIncrement?: Size;
+      readonly pos?: Point;
+      readonly size?: Size;
+      contentsMargins?: Insets;
+      focusPolicy?: "click-focus" | "no-focus" | "strong-focus" | "tab-focus" | "wheel-focus";
+      toolTip?: string;
+      enabled?: boolean;
     };
     events: {
     };
     methods: {
+      saveGeometry(): Uint8Array;
+      restoreGeometry(geometry: Uint8Array): boolean;
+      resizeTo(arg0: Size): void;
     };
     slots: "children";
   };
   button: {
     props: {
       label?: string;
+      icon?: Boxed<"QIcon"> | string;
+      iconSize?: Size;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      checkable?: boolean;
     };
     events: {
       clicked: () => void;
@@ -26,10 +43,56 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  colordialog: {
+    props: {
+      currentColor?: Color | string;
+      options?: Array<"dont-use-native-dialog" | "no-buttons" | "no-eye-dropper-button" | "show-alpha-channel">;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
+  dateedit: {
+    props: {
+      date?: DateParts;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
+  datetimeedit: {
+    props: {
+      dateTime?: Date;
+      displayFormat?: string;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
+  doublespinbox: {
+    props: {
+      value?: number;
+      decimals?: number;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
   entry: {
     props: {
       text?: string;
       placeholder?: string;
+      echoMode?: "no-echo" | "normal" | "password" | "password-echo-on-edit";
+      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
+      maxLength?: number;
     };
     events: {
       changed: (text: string) => void;
@@ -41,10 +104,16 @@ export interface QtElementDescriptors {
   label: {
     props: {
       label?: string;
+      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
+      textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
+      pixmap?: Boxed<"QPixmap">;
+      indent?: number;
     };
     events: {
     };
     methods: {
+      setBuddy(buddy: number): void;
+      buddy(): number;
     };
     slots: never;
   };
@@ -66,8 +135,32 @@ export interface QtElementDescriptors {
     };
     slots: "child";
   };
+  spinbox: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      prefix?: string;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
   statusbar: {
     props: {
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
+  timeedit: {
+    props: {
+      time?: TimeParts;
     };
     events: {
     };

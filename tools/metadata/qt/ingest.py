@@ -325,14 +325,23 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     }
 
 
-def build_namespace(name, node, src):
-    """The `Qt` namespace: only its enums (and flags typedefs) matter to the backend generators."""
+def build_enum_table(name, node, enums, kinds, src):
+    """`Qt.json`: member tables for every enum and flags type that a slot type in the metadata mentions,
+    whichever class (QtCore, QtGui or QtWidgets) declares it. The Qt backend generator reads member
+    names and C++ expressions from here; the Qt namespace record itself carries no members of its own."""
+    import json
+    blob = json.dumps(kinds, sort_keys=True)
+    used = sorted(set(re.findall(r"(?:enum|flags)<([A-Za-z0-9_:]+)>", blob)))
     recs = []
-    for e in node.findall("enum"):
-        full = e.get("fullname") or f"{name}::{e.get('name')}"
-        recs.append({"name": e.get("name"), "fullname": full, "flags_alias": e.get("typedef"), "scoped": False,
-                     "members": [{"name": v.get("name"), "value": v.get("value"), "cpp": f"{name}::{v.get('name')}"}
-                                 for v in e.findall("value")],
+    for full in used:
+        e = enums.enums.get(full)
+        if e is None:
+            continue
+        owner = e["owner"]
+        recs.append({"name": e["name"], "fullname": full, "owner": owner, "scoped": False,
+                     "flags_alias": next((a for a, t in sorted(enums.alias.items()) if t == full), None),
+                     "members": [{"name": v["name"], "value": v["value"], "cpp": f"{owner}::{v['name']}"}
+                                 for v in e["members"]],
                      "origin": "qdoc", "metaobject": None})
     return {
         "schema": svmeta.SCHEMA, "toolkit": "qt", "id": f"{src['id_prefix']}:{name}",
@@ -340,7 +349,7 @@ def build_namespace(name, node, src):
         "kind": "namespace", "abstract": False, "qobject": False, "bases": [], "interfaces": [],
         "availability": {"since": None, "deprecated": False},
         "constructors": [], "properties": [], "signals": [], "methods": [],
-        "enums": sorted(recs, key=lambda r: r["fullname"]), "ownership": [],
+        "enums": recs, "ownership": [],
         "children": {"policy": "none", "default_slot": None, "slots": []}, "source": src["source"],
     }
 
@@ -371,14 +380,16 @@ def main() -> int:
     src = {"id_prefix": "svelters-api:v1:type:qt:QtWidgets", "source": source}
     out = Path(a.out)
     wrote = 0
+    built = []
     for n in widget_classes:
         kind = build_kind(n, classes[n][1], classes, qobjects, enums, meta, tsys, src)
         errs = svmeta.validate(kind)
         if errs:
             print(f"{n}: {errs}", file=sys.stderr)
             return 1
+        built.append(kind)
         wrote += svmeta.write_json(out / f"{n}.json", kind)
-    wrote += svmeta.write_json(out / "Qt.json", build_namespace("Qt", namespaces["Qt"][1], src))
+    wrote += svmeta.write_json(out / "Qt.json", build_enum_table("Qt", namespaces["Qt"][1], enums, [{k: v for k, v in b.items() if k in ("properties", "methods", "signals")} for b in built], src))
     print(f"{len(widget_classes)} classes ({len(meta)} QObject with metaobject); {wrote} files changed")
     return 0
 

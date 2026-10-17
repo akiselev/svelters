@@ -4,6 +4,9 @@ elements:
     props:
       - { js: text, native: text, suppress_signals: true }
       - { js: placeholder, native: placeholderText }
+      - { js: echoMode, native: echoMode }
+      - { js: alignment, native: alignment }
+      - { js: maxLength, native: maxLength }
     signals:
       - js: changed
         native: textChanged

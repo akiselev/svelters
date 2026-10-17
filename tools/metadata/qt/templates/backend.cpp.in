@@ -8,6 +8,7 @@
 
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
 #include <QtCore/QEvent>
 #include <QtCore/QMetaObject>
 #include <QtCore/QObject>
@@ -445,6 +446,22 @@ void dump_widget(QWidget *w, int depth, std::string &out) {
 std::string dump_buf;
 
 }  // namespace
+
+// Reads a Q_PROPERTY of the object behind `h` (or of its layout) as text, for tests that check what the
+// toolkit really holds. Valid until the next call. Empty when the object or property does not exist.
+extern "C" const char *svl_qt_native_prop(svl_handle h, const char *name, int on_layout) {
+  static std::string buf;
+  buf.clear();
+  QObject *o = debug_obj(h);
+  if (o && on_layout) o = qobject_cast<QWidget *>(o) ? qobject_cast<QWidget *>(o)->layout() : nullptr;
+  if (!o) return buf.c_str();
+  QVariant v = o->property(name);
+  if (!v.isValid()) return buf.c_str();
+  QString text;
+  QDebug(&text).nospace() << v;
+  buf = text.toStdString();
+  return buf.c_str();
+}
 
 // The widget tree below `h` in layout order as a JSON array of {d, class, text}. Valid until the next call.
 extern "C" const char *svl_qt_dump(svl_handle h) {

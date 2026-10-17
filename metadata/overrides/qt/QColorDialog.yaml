@@ -1,0 +1,6 @@
+elements:
+  - tag: colordialog
+    construct: { class: QColorDialog }
+    props:
+      - { js: currentColor, native: currentColor }
+      - { js: options, native: options }

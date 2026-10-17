@@ -11,6 +11,7 @@ unsafe extern "C" {
     fn svl_qt_backend() -> *const svl_backend;
     fn svl_qt_set_host(host: *const svl_host);
     fn svl_qt_dump(h: u64) -> *const std::ffi::c_char;
+    fn svl_qt_native_prop(h: u64, name: *const std::ffi::c_char, on_layout: i32) -> *const std::ffi::c_char;
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_close(h: u64) -> i32;
@@ -44,6 +45,16 @@ pub mod hooks {
     pub fn dump(h: u64) -> String {
         // SAFETY: the returned pointer is a NUL-terminated buffer valid until the next call; it is copied here.
         unsafe { std::ffi::CStr::from_ptr(svl_qt_dump(h)) }.to_string_lossy().into_owned()
+    }
+
+    /// A Q_PROPERTY of the object behind `h` (or of its layout) as `QDebug` text, for tests that check
+    /// what the toolkit really holds.
+    pub fn native_prop(h: u64, name: &str, on_layout: bool) -> String {
+        let n = CString::new(name).expect("property name");
+        // SAFETY: NUL-terminated buffer valid until the next call; copied here.
+        unsafe { std::ffi::CStr::from_ptr(svl_qt_native_prop(h, n.as_ptr(), on_layout as i32)) }
+            .to_string_lossy()
+            .into_owned()
     }
 
     /// Grabs the widget behind `h`; saves a PNG when `path` is given (otherwise it only forces
@@ -110,7 +121,39 @@ pub mod hooks {
 
 /// Minimal libtest command line for `harness = false` tests that must run on the main thread
 /// (Qt), so `cargo nextest` can list and run them: `--list [--format terse] [--ignored]` prints
-/// `<name>: test`, and a run executes `body` when no filter is given or `name` matches one.
+/// `<name>: test` per case, and a run executes the cases selected by the filters (all when none).
+pub fn run_cases(cases: &[(&str, fn())]) {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--list") {
+        if !args.iter().any(|a| a == "--ignored") {
+            for (name, _) in cases {
+                println!("{name}: test");
+            }
+        }
+        return;
+    }
+    let mut filters = Vec::new();
+    let mut exact = false;
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        match a.as_str() {
+            "--exact" => exact = true,
+            "--test-threads" | "--format" | "--color" | "--skip" | "--logfile" => {
+                it.next();
+            }
+            f if !f.starts_with('-') => filters.push(f),
+            _ => {}
+        }
+    }
+    for (name, body) in cases {
+        let selected = filters.is_empty() || filters.iter().any(|f| *name == *f || (!exact && name.contains(*f)));
+        if selected {
+            body();
+        }
+    }
+}
+
+/// A single case; see [`run_cases`].
 pub fn run_as_test(name: &str, body: impl FnOnce()) {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--list") {
