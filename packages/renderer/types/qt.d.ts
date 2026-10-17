@@ -220,6 +220,7 @@ export interface QtElementDescriptors {
       open(options?: { signal?: AbortSignal }): Promise<number>;
       accept(): void;
       reject(): void;
+      present(): void;
       done(r: number): void;
       show(): void;
       hide(): void;
@@ -474,6 +475,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -655,6 +657,7 @@ export interface QtElementDescriptors {
     methods: {
       showMessage(message: string): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -693,6 +696,7 @@ export interface QtElementDescriptors {
     methods: {
       setDirectory(directory: string): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -755,6 +759,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -884,6 +889,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(result: number): void;
@@ -1170,6 +1176,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1303,6 +1310,7 @@ export interface QtElementDescriptors {
       reset(): void;
       cancel(): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1704,6 +1712,36 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  textdocument: {
+    props: {
+      undoRedoEnabled?: boolean;
+      modified?: boolean;
+      maximumBlockCount?: number;
+      documentMargin?: number;
+      indentWidth?: number;
+      textWidth?: number;
+      useDesignMetrics?: boolean;
+      defaultStyleSheet?: string;
+      readonly blockCount?: number;
+    };
+    events: {
+      contentsChanged: () => void;
+      blockCountChanged: (newBlockCount: number) => void;
+      modificationChanged: (changed: boolean) => void;
+    };
+    methods: {
+      setPlainText(text: string): void;
+      toPlainText(): string;
+      setHtml(html: string): void;
+      clear(): void;
+      isEmpty(): boolean;
+      characterCount(): number;
+      lineCount(): number;
+      undo(): void;
+      redo(): void;
+    };
+    slots: never;
+  };
   textedit: {
     props: {
       plainText?: string;
@@ -1934,7 +1972,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: "central" | "menubar" | "statusbar";
+    slots: "central" | "menubar" | "statusbar" | "toolbars" | "docks";
   };
   wizard: {
     props: {
@@ -1961,6 +1999,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -2005,6 +2044,8 @@ export type QtElementTag = keyof QtElementDescriptors;
 /** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
 export interface QtChildAttrs {
   'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:area'?: ("bottom" | "left" | "right" | "top");
+  'parent:breakBefore'?: boolean;
   'parent:column'?: number;
   'parent:columnSpan'?: number;
   'parent:row'?: number;

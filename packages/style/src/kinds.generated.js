@@ -599,6 +599,9 @@ export const KINDS = {
  "textbrowser": {
   "qt": "QTextBrowser"
  },
+ "textdocument": {
+  "qt": "QTextDocument"
+ },
  "textedit": {
   "qt": "QTextEdit"
  },

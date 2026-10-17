@@ -1,0 +1,4322 @@
+{
+  "abstract": false,
+  "availability": {
+    "deprecated": false,
+    "since": null
+  },
+  "bases": [
+    "QObject"
+  ],
+  "children": {
+    "default_slot": null,
+    "policy": "none",
+    "slots": []
+  },
+  "constructors": [
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:ctor:QTextDocument(QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QTextDocument(QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    },
+    {
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:ctor:QTextDocument(const QString &text, QObject *parent)",
+      "invocation": {
+        "dev": "generated_thunk"
+      },
+      "native": "QTextDocument(const QString &text, QObject *parent)",
+      "origin": "qdoc",
+      "params": [
+        {
+          "default": null,
+          "name": "text",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        },
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "ownership": "parent_owned",
+        "type": "self"
+      }
+    }
+  ],
+  "enums": [
+    {
+      "flags_alias": "QTextDocument::FindFlags",
+      "fullname": "QTextDocument::FindFlag",
+      "members": [
+        {
+          "cpp": "QTextDocument::FindBackward",
+          "name": "FindBackward",
+          "value": "0x00001"
+        },
+        {
+          "cpp": "QTextDocument::FindCaseSensitively",
+          "name": "FindCaseSensitively",
+          "value": "0x00002"
+        },
+        {
+          "cpp": "QTextDocument::FindWholeWords",
+          "name": "FindWholeWords",
+          "value": "0x00004"
+        }
+      ],
+      "metaobject": null,
+      "name": "FindFlag",
+      "origin": "qdoc",
+      "scoped": false
+    },
+    {
+      "flags_alias": "QTextDocument::MarkdownFeatures",
+      "fullname": "QTextDocument::MarkdownFeature",
+      "members": [
+        {
+          "cpp": "QTextDocument::MarkdownNoHTML",
+          "name": "MarkdownNoHTML",
+          "value": "0x0020 | 0x0040"
+        },
+        {
+          "cpp": "QTextDocument::MarkdownDialectCommonMark",
+          "name": "MarkdownDialectCommonMark",
+          "value": "0"
+        },
+        {
+          "cpp": "QTextDocument::MarkdownDialectGitHub",
+          "name": "MarkdownDialectGitHub",
+          "value": "0x0004 | 0x0008 | 0x0400 | 0x0100 | 0x0200 | 0x0800 | 0x4000 | 0x100000"
+        }
+      ],
+      "metaobject": null,
+      "name": "MarkdownFeature",
+      "origin": "qdoc",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QTextDocument::MetaInformation",
+      "members": [
+        {
+          "cpp": "QTextDocument::DocumentTitle",
+          "name": "DocumentTitle",
+          "value": "0"
+        },
+        {
+          "cpp": "QTextDocument::DocumentUrl",
+          "name": "DocumentUrl",
+          "value": "1"
+        },
+        {
+          "cpp": "QTextDocument::CssMedia",
+          "name": "CssMedia",
+          "value": "2"
+        },
+        {
+          "cpp": "QTextDocument::FrontMatter",
+          "name": "FrontMatter",
+          "value": "3"
+        }
+      ],
+      "metaobject": null,
+      "name": "MetaInformation",
+      "origin": "qdoc",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QTextDocument::ResourceType",
+      "members": [
+        {
+          "cpp": "QTextDocument::UnknownResource",
+          "name": "UnknownResource",
+          "value": "0"
+        },
+        {
+          "cpp": "QTextDocument::HtmlResource",
+          "name": "HtmlResource",
+          "value": "1"
+        },
+        {
+          "cpp": "QTextDocument::ImageResource",
+          "name": "ImageResource",
+          "value": "2"
+        },
+        {
+          "cpp": "QTextDocument::StyleSheetResource",
+          "name": "StyleSheetResource",
+          "value": "3"
+        },
+        {
+          "cpp": "QTextDocument::MarkdownResource",
+          "name": "MarkdownResource",
+          "value": "4"
+        },
+        {
+          "cpp": "QTextDocument::UserResource",
+          "name": "UserResource",
+          "value": "100"
+        }
+      ],
+      "metaobject": {
+        "flag": false,
+        "keys": {
+          "HtmlResource": 1,
+          "ImageResource": 2,
+          "MarkdownResource": 4,
+          "StyleSheetResource": 3,
+          "UnknownResource": 0,
+          "UserResource": 100
+        },
+        "scoped": false
+      },
+      "name": "ResourceType",
+      "origin": "qdoc",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QTextDocument::Stacks",
+      "members": [
+        {
+          "cpp": "QTextDocument::UndoStack",
+          "name": "UndoStack",
+          "value": "0x01"
+        },
+        {
+          "cpp": "QTextDocument::RedoStack",
+          "name": "RedoStack",
+          "value": "0x02"
+        },
+        {
+          "cpp": "QTextDocument::UndoAndRedoStacks",
+          "name": "UndoAndRedoStacks",
+          "value": "UndoStack | RedoStack"
+        }
+      ],
+      "metaobject": null,
+      "name": "Stacks",
+      "origin": "qdoc",
+      "scoped": false
+    }
+  ],
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument",
+  "interfaces": [],
+  "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
+  "methods": [
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void addResource(int type, const QUrl &name, const QVariant &resource)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "addResource",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "type",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "name",
+          "type": {
+            "native": "const QUrl &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QUrl>"
+          }
+        },
+        {
+          "default": null,
+          "name": "resource",
+          "type": {
+            "native": "const QVariant &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "variant"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void addResource(int type, const QUrl &name, const QVariant &resource)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void adjustSize()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "adjustSize",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void adjustSize()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QList<QTextFormat> allFormats() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "allFormats",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QList<QTextFormat>",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "list<boxed<QTextFormat>>"
+      },
+      "signature": "QList<QTextFormat> allFormats() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int availableRedoSteps() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "availableRedoSteps",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int availableRedoSteps() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int availableUndoSteps() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "availableUndoSteps",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int availableUndoSteps() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "baseUrl",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QUrl baseUrl() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "baseUrl",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QUrl",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QUrl>"
+      },
+      "signature": "QUrl baseUrl() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal baselineOffset() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "baselineOffset",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal baselineOffset() const",
+      "since": "6.0",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock begin() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "begin",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock begin() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "blockCount",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int blockCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "blockCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int blockCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QChar characterAt(int pos) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "characterAt",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "pos",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QChar",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QChar characterAt(int pos) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int characterCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "characterCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int characterCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void clear()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clear",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clear()",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void clearUndoRedoStacks(QTextDocument::Stacks stacksToClear)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clearUndoRedoStacks",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": "UndoAndRedoStacks",
+          "name": "stacksToClear",
+          "type": {
+            "native": "QTextDocument::Stacks",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "enum<QTextDocument::Stacks>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void clearUndoRedoStacks(QTextDocument::Stacks stacksToClear)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextDocument * clone(QObject *parent) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "clone",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": "nullptr",
+          "name": "parent",
+          "type": {
+            "native": "QObject *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QObject>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextDocument *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QTextDocument>"
+      },
+      "signature": "QTextDocument * clone(QObject *parent) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextObject * createObject(const QTextFormat &format)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "createObject",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "format",
+          "type": {
+            "native": "const QTextFormat &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QTextFormat>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextObject *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QTextObject>"
+      },
+      "signature": "QTextObject * createObject(const QTextFormat &format)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:Qt::CursorMoveStyle defaultCursorMoveStyle() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "defaultCursorMoveStyle",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "Qt::CursorMoveStyle",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "enum<Qt::CursorMoveStyle>"
+      },
+      "signature": "Qt::CursorMoveStyle defaultCursorMoveStyle() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "defaultFont",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QFont defaultFont() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "defaultFont",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QFont",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QFont>"
+      },
+      "signature": "QFont defaultFont() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextDocument::ResourceProvider defaultResourceProvider()",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "defaultResourceProvider",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextDocument::ResourceProvider",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextDocument::ResourceProvider defaultResourceProvider()",
+      "since": "6.1",
+      "static": true,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "defaultStyleSheet",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QString defaultStyleSheet() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "defaultStyleSheet",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString defaultStyleSheet() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "defaultTextOption",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextOption defaultTextOption() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "defaultTextOption",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextOption",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QTextOption>"
+      },
+      "signature": "QTextOption defaultTextOption() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QAbstractTextDocumentLayout * documentLayout() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "documentLayout",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QAbstractTextDocumentLayout *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QAbstractTextDocumentLayout>"
+      },
+      "signature": "QAbstractTextDocumentLayout * documentLayout() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "documentMargin",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal documentMargin() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "documentMargin",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal documentMargin() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void drawContents(QPainter *p, const QRectF &rect)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "drawContents",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "p",
+          "type": {
+            "native": "QPainter *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "QRectF()",
+          "name": "rect",
+          "type": {
+            "native": "const QRectF &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "record<Rect>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void drawContents(QPainter *p, const QRectF &rect)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock end() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "end",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock end() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextCursor find(const QRegularExpression &expr, const QTextCursor &cursor, QTextDocument::FindFlags options) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "find",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "expr",
+          "type": {
+            "native": "const QRegularExpression &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": null,
+          "name": "cursor",
+          "type": {
+            "native": "const QTextCursor &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QTextCursor>"
+          }
+        },
+        {
+          "default": "FindFlags()",
+          "name": "options",
+          "type": {
+            "native": "QTextDocument::FindFlags",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "flags<QTextDocument::FindFlag>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextCursor",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QTextCursor>"
+      },
+      "signature": "QTextCursor find(const QRegularExpression &expr, const QTextCursor &cursor, QTextDocument::FindFlags options) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextCursor find(const QRegularExpression &expr, int from, QTextDocument::FindFlags options) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "find",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "expr",
+          "type": {
+            "native": "const QRegularExpression &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        },
+        {
+          "default": "0",
+          "name": "from",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": "FindFlags()",
+          "name": "options",
+          "type": {
+            "native": "QTextDocument::FindFlags",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "flags<QTextDocument::FindFlag>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextCursor",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QTextCursor>"
+      },
+      "signature": "QTextCursor find(const QRegularExpression &expr, int from, QTextDocument::FindFlags options) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextCursor find(const QString &subString, const QTextCursor &cursor, QTextDocument::FindFlags options) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "find",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "subString",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        },
+        {
+          "default": null,
+          "name": "cursor",
+          "type": {
+            "native": "const QTextCursor &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QTextCursor>"
+          }
+        },
+        {
+          "default": "FindFlags()",
+          "name": "options",
+          "type": {
+            "native": "QTextDocument::FindFlags",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "flags<QTextDocument::FindFlag>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextCursor",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QTextCursor>"
+      },
+      "signature": "QTextCursor find(const QString &subString, const QTextCursor &cursor, QTextDocument::FindFlags options) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextCursor find(const QString &subString, int position, QTextDocument::FindFlags options) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "find",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "subString",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        },
+        {
+          "default": "0",
+          "name": "position",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": "FindFlags()",
+          "name": "options",
+          "type": {
+            "native": "QTextDocument::FindFlags",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "flags<QTextDocument::FindFlag>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextCursor",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QTextCursor>"
+      },
+      "signature": "QTextCursor find(const QString &subString, int position, QTextDocument::FindFlags options) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock findBlock(int pos) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "findBlock",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "pos",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock findBlock(int pos) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock findBlockByLineNumber(int lineNumber) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "findBlockByLineNumber",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "lineNumber",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock findBlockByLineNumber(int lineNumber) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock findBlockByNumber(int blockNumber) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "findBlockByNumber",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "blockNumber",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock findBlockByNumber(int blockNumber) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock firstBlock() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "firstBlock",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock firstBlock() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal idealWidth() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "idealWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal idealWidth() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "indentWidth",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal indentWidth() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "indentWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal indentWidth() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool isEmpty() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isEmpty",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isEmpty() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "layoutEnabled",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool isLayoutEnabled() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isLayoutEnabled",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isLayoutEnabled() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "modified",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool isModified() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isModified",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isModified() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool isRedoAvailable() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isRedoAvailable",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isRedoAvailable() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool isUndoAvailable() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isUndoAvailable",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isUndoAvailable() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "undoRedoEnabled",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool isUndoRedoEnabled() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "isUndoRedoEnabled",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool isUndoRedoEnabled() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextBlock lastBlock() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "lastBlock",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextBlock",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextBlock lastBlock() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int lineCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "lineCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int lineCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "protected",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QVariant loadResource(int type, const QUrl &name)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "plain",
+      "name": "loadResource",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "type",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "name",
+          "type": {
+            "native": "const QUrl &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QUrl>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QVariant",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "variant"
+      },
+      "signature": "QVariant loadResource(int type, const QUrl &name)",
+      "since": null,
+      "static": false,
+      "virtual": "virtual"
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void markContentsDirty(int position, int length)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "markContentsDirty",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "position",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "length",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void markContentsDirty(int position, int length)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumBlockCount",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int maximumBlockCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "maximumBlockCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int maximumBlockCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QString metaInformation(QTextDocument::MetaInformation info) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "metaInformation",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "info",
+          "type": {
+            "native": "QTextDocument::MetaInformation",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "enum<QTextDocument::MetaInformation>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString metaInformation(QTextDocument::MetaInformation info) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextObject * object(int objectIndex) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "object",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "objectIndex",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextObject *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QTextObject>"
+      },
+      "signature": "QTextObject * object(int objectIndex) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextObject * objectForFormat(const QTextFormat &f) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "objectForFormat",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "f",
+          "type": {
+            "native": "const QTextFormat &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QTextFormat>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QTextObject *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QTextObject>"
+      },
+      "signature": "QTextObject * objectForFormat(const QTextFormat &f) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int pageCount() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "pageCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int pageCount() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "pageSize",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QSizeF pageSize() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "pageSize",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QSizeF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "record<Size>"
+      },
+      "signature": "QSizeF pageSize() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void print(QPagedPaintDevice *printer) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "print",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "printer",
+          "type": {
+            "native": "QPagedPaintDevice *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void print(QPagedPaintDevice *printer) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void redo()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "redo",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void redo()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void redo(QTextCursor *cursor)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "plain",
+      "name": "redo",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "cursor",
+          "type": {
+            "native": "QTextCursor *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void redo(QTextCursor *cursor)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QVariant resource(int type, const QUrl &name) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "resource",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "type",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "name",
+          "type": {
+            "native": "const QUrl &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QUrl>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QVariant",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "variant"
+      },
+      "signature": "QVariant resource(int type, const QUrl &name) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextDocument::ResourceProvider resourceProvider() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "resourceProvider",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextDocument::ResourceProvider",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "opaque"
+      },
+      "signature": "QTextDocument::ResourceProvider resourceProvider() const",
+      "since": "6.1",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:int revision() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "revision",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      },
+      "signature": "int revision() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QTextFrame * rootFrame() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "rootFrame",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QTextFrame *",
+        "nullable": true,
+        "origin": "qdoc",
+        "ref": "object<QTextFrame>"
+      },
+      "signature": "QTextFrame * rootFrame() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "baseUrl",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setBaseUrl(const QUrl &url)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setBaseUrl",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "url",
+          "type": {
+            "native": "const QUrl &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QUrl>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setBaseUrl(const QUrl &url)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setBaselineOffset(qreal baseline)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setBaselineOffset",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "baseline",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setBaselineOffset(qreal baseline)",
+      "since": "6.0",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDefaultCursorMoveStyle(Qt::CursorMoveStyle style)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDefaultCursorMoveStyle",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "style",
+          "type": {
+            "native": "Qt::CursorMoveStyle",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "enum<Qt::CursorMoveStyle>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDefaultCursorMoveStyle(Qt::CursorMoveStyle style)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "defaultFont",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDefaultFont(const QFont &font)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDefaultFont",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "font",
+          "type": {
+            "native": "const QFont &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QFont>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDefaultFont(const QFont &font)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDefaultResourceProvider(const QTextDocument::ResourceProvider &provider)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDefaultResourceProvider",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "provider",
+          "type": {
+            "native": "const QTextDocument::ResourceProvider &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDefaultResourceProvider(const QTextDocument::ResourceProvider &provider)",
+      "since": "6.1",
+      "static": true,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "defaultStyleSheet",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDefaultStyleSheet(const QString &sheet)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDefaultStyleSheet",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "sheet",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDefaultStyleSheet(const QString &sheet)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "defaultTextOption",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDefaultTextOption(const QTextOption &option)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDefaultTextOption",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "option",
+          "type": {
+            "native": "const QTextOption &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QTextOption>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDefaultTextOption(const QTextOption &option)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDocumentLayout(QAbstractTextDocumentLayout *layout)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDocumentLayout",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "layout",
+          "type": {
+            "native": "QAbstractTextDocumentLayout *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "object<QAbstractTextDocumentLayout>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDocumentLayout(QAbstractTextDocumentLayout *layout)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "documentMargin",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setDocumentMargin(qreal margin)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setDocumentMargin",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "margin",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setDocumentMargin(qreal margin)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setHtml(const QString &html)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setHtml",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "html",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setHtml(const QString &html)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "indentWidth",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setIndentWidth(qreal width)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setIndentWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "width",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setIndentWidth(qreal width)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "layoutEnabled",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setLayoutEnabled(bool b)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setLayoutEnabled",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "b",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setLayoutEnabled(bool b)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setMarkdown(const QString &markdown, QTextDocument::MarkdownFeatures features)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMarkdown",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "markdown",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        },
+        {
+          "default": "MarkdownDialectGitHub",
+          "name": "features",
+          "type": {
+            "native": "QTextDocument::MarkdownFeatures",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "flags<QTextDocument::MarkdownFeature>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMarkdown(const QString &markdown, QTextDocument::MarkdownFeatures features)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "maximumBlockCount",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setMaximumBlockCount(int maximum)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMaximumBlockCount",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "maximum",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMaximumBlockCount(int maximum)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setMetaInformation(QTextDocument::MetaInformation info, const QString &string)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setMetaInformation",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "info",
+          "type": {
+            "native": "QTextDocument::MetaInformation",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "enum<QTextDocument::MetaInformation>"
+          }
+        },
+        {
+          "default": null,
+          "name": "string",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setMetaInformation(QTextDocument::MetaInformation info, const QString &string)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "modified",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setModified(bool m)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "setModified",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": "true",
+          "name": "m",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setModified(bool m)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "pageSize",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setPageSize(const QSizeF &size)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setPageSize",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "size",
+          "type": {
+            "native": "const QSizeF &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "record<Size>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setPageSize(const QSizeF &size)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setPlainText(const QString &text)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setPlainText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "text",
+          "type": {
+            "native": "const QString &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setPlainText(const QString &text)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setResourceProvider(const QTextDocument::ResourceProvider &provider)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setResourceProvider",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "provider",
+          "type": {
+            "native": "const QTextDocument::ResourceProvider &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setResourceProvider(const QTextDocument::ResourceProvider &provider)",
+      "since": "6.1",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setSubScriptBaseline(qreal baseline)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setSubScriptBaseline",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "baseline",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setSubScriptBaseline(qreal baseline)",
+      "since": "6.0",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setSuperScriptBaseline(qreal baseline)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setSuperScriptBaseline",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "baseline",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setSuperScriptBaseline(qreal baseline)",
+      "since": "6.0",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "textWidth",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setTextWidth(qreal width)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setTextWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "width",
+          "type": {
+            "native": "qreal",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setTextWidth(qreal width)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "undoRedoEnabled",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setUndoRedoEnabled(bool enable)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setUndoRedoEnabled",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "enable",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setUndoRedoEnabled(bool enable)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "useDesignMetrics",
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void setUseDesignMetrics(bool b)",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "setUseDesignMetrics",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "b",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void setUseDesignMetrics(bool b)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "size",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QSizeF size() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "size",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QSizeF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "record<Size>"
+      },
+      "signature": "QSizeF size() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal subScriptBaseline() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "subScriptBaseline",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal subScriptBaseline() const",
+      "since": "6.0",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal superScriptBaseline() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "superScriptBaseline",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal superScriptBaseline() const",
+      "since": "6.0",
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "textWidth",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:qreal textWidth() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "textWidth",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      },
+      "signature": "qreal textWidth() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QString toHtml() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "toHtml",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString toHtml() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QString toMarkdown(QTextDocument::MarkdownFeatures features) const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "toMarkdown",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": "MarkdownDialectGitHub",
+          "name": "features",
+          "type": {
+            "native": "QTextDocument::MarkdownFeatures",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "flags<QTextDocument::MarkdownFeature>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString toMarkdown(QTextDocument::MarkdownFeatures features) const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QString toPlainText() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "toPlainText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString toPlainText() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:QString toRawText() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "toRawText",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      },
+      "signature": "QString toRawText() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void undo()",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "slot",
+      "name": "undo",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void undo()",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:void undo(QTextCursor *cursor)",
+      "invocation": {
+        "dev": "reflected",
+        "origin": "metaobject"
+      },
+      "meta": "plain",
+      "name": "undo",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "cursor",
+          "type": {
+            "native": "QTextCursor *",
+            "nullable": true,
+            "origin": "qdoc",
+            "ref": "opaque"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "void"
+      },
+      "signature": "void undo(QTextCursor *cursor)",
+      "since": null,
+      "static": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": "useDesignMetrics",
+      "const": true,
+      "deprecated": false,
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:method:bool useDesignMetrics() const",
+      "invocation": {
+        "dev": "generated_thunk",
+        "origin": "qdoc"
+      },
+      "meta": "plain",
+      "name": "useDesignMetrics",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      },
+      "signature": "bool useDesignMetrics() const",
+      "since": null,
+      "static": false,
+      "virtual": null
+    }
+  ],
+  "native": {
+    "brief": "Holds formatted text",
+    "header": "qtextdocument.h",
+    "module": "QtGui",
+    "name": "QTextDocument"
+  },
+  "ownership": [],
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "baseUrl",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setBaseUrl"
+      },
+      "brief": "The base URL used to resolve relative resource URLs within the document",
+      "default": null,
+      "js_name": "baseUrl",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": "baseUrlChanged(QUrl)",
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QUrl",
+        "user": false,
+        "writable": true
+      },
+      "name": "baseUrl",
+      "notify": {
+        "origin": "metaobject",
+        "signal": "baseUrlChanged(QUrl)"
+      },
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "QUrl",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QUrl>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "blockCount",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The number of text blocks in the document",
+      "default": 1,
+      "default_origin": "runtime",
+      "js_name": "blockCount",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": false
+      },
+      "name": "blockCount",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "defaultFont",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDefaultFont"
+      },
+      "brief": "The default font used to display the document's text",
+      "default": null,
+      "js_name": "defaultFont",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QFont",
+        "user": false,
+        "writable": true
+      },
+      "name": "defaultFont",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "QFont",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QFont>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "defaultStyleSheet",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDefaultStyleSheet"
+      },
+      "brief": null,
+      "default": "",
+      "default_origin": "runtime",
+      "js_name": "defaultStyleSheet",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QString",
+        "user": false,
+        "writable": true
+      },
+      "name": "defaultStyleSheet",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "QString",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "defaultTextOption",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDefaultTextOption"
+      },
+      "brief": "The default text option will be set on all QTextLayouts in the document",
+      "default": null,
+      "js_name": "defaultTextOption",
+      "name": "defaultTextOption",
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "QTextOption",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "boxed<QTextOption>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "documentMargin",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setDocumentMargin"
+      },
+      "brief": null,
+      "default": 4.0,
+      "default_origin": "runtime",
+      "js_name": "documentMargin",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "documentMargin",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "indentWidth",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setIndentWidth"
+      },
+      "brief": null,
+      "default": 40.0,
+      "default_origin": "runtime",
+      "js_name": "indentWidth",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "indentWidth",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isLayoutEnabled",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setLayoutEnabled"
+      },
+      "brief": "Whether QTextDocument should recalculate the layout after every change",
+      "default": true,
+      "default_origin": "runtime",
+      "js_name": "layoutEnabled",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "layoutEnabled",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maximumBlockCount",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setMaximumBlockCount"
+      },
+      "brief": "Specifies the limit for blocks in the document",
+      "default": 0,
+      "default_origin": "runtime",
+      "js_name": "maximumBlockCount",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "int",
+        "user": false,
+        "writable": true
+      },
+      "name": "maximumBlockCount",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "int",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isModified",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setModified"
+      },
+      "brief": "Whether the document has been modified by the user",
+      "default": false,
+      "default_origin": "runtime",
+      "js_name": "modified",
+      "metaobject": {
+        "constant": false,
+        "designable": false,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "modified",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pageSize",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setPageSize"
+      },
+      "brief": "The page size that should be used for laying out the document",
+      "default": null,
+      "js_name": "pageSize",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QSizeF",
+        "user": false,
+        "writable": true
+      },
+      "name": "pageSize",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "QSizeF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "record<Size>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "size",
+        "origin": "qdoc",
+        "reset": null,
+        "set": null
+      },
+      "brief": "The actual size of the document. This is equivalent to documentLayout()->documentSize();",
+      "default": null,
+      "js_name": "size",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "QSizeF",
+        "user": false,
+        "writable": false
+      },
+      "name": "size",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "QSizeF",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "record<Size>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textWidth",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setTextWidth"
+      },
+      "brief": null,
+      "default": -1.0,
+      "default_origin": "runtime",
+      "js_name": "textWidth",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "double",
+        "user": false,
+        "writable": true
+      },
+      "name": "textWidth",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "qreal",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isUndoRedoEnabled",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setUndoRedoEnabled"
+      },
+      "brief": "Whether undo/redo are enabled for this document",
+      "default": true,
+      "default_origin": "runtime",
+      "js_name": "undoRedoEnabled",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "undoRedoEnabled",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "useDesignMetrics",
+        "origin": "qdoc",
+        "reset": null,
+        "set": "setUseDesignMetrics"
+      },
+      "brief": "Whether the document uses design metrics of fonts to improve the accuracy of text layout",
+      "default": false,
+      "default_origin": "runtime",
+      "js_name": "useDesignMetrics",
+      "metaobject": {
+        "constant": false,
+        "designable": true,
+        "enum": false,
+        "final": false,
+        "flag": false,
+        "notify": null,
+        "origin": "metaobject",
+        "readable": true,
+        "required": false,
+        "resettable": false,
+        "stored": true,
+        "type": "bool",
+        "user": false,
+        "writable": true
+      },
+      "name": "useDesignMetrics",
+      "notify": null,
+      "origin": "qdoc",
+      "range": null,
+      "role": "value",
+      "type": {
+        "native": "bool",
+        "nullable": false,
+        "origin": "qdoc",
+        "ref": "bool"
+      }
+    }
+  ],
+  "qobject": true,
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "access": "public",
+      "associated_property": "baseUrl",
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void baseUrlChanged(const QUrl &url)",
+      "js_event": "baseUrlChanged",
+      "metaobject_signatures": [
+        "baseUrlChanged(QUrl)"
+      ],
+      "name": "baseUrlChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "url",
+          "type": {
+            "native": "const QUrl &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QUrl>"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void baseUrlChanged(const QUrl &url)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void blockCountChanged(int newBlockCount)",
+      "js_event": "blockCountChanged",
+      "metaobject_signatures": [
+        "blockCountChanged(int)"
+      ],
+      "name": "blockCountChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "newBlockCount",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void blockCountChanged(int newBlockCount)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void contentsChange(int position, int charsRemoved, int charsAdded)",
+      "js_event": "contentsChange",
+      "metaobject_signatures": [
+        "contentsChange(int,int,int)"
+      ],
+      "name": "contentsChange",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "position",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "charsRemoved",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        },
+        {
+          "default": null,
+          "name": "charsAdded",
+          "type": {
+            "native": "int",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void contentsChange(int position, int charsRemoved, int charsAdded)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void contentsChanged()",
+      "js_event": "contentsChanged",
+      "metaobject_signatures": [
+        "contentsChanged()"
+      ],
+      "name": "contentsChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void contentsChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void cursorPositionChanged(const QTextCursor &cursor)",
+      "js_event": "cursorPositionChanged",
+      "metaobject_signatures": [
+        "cursorPositionChanged(QTextCursor)"
+      ],
+      "name": "cursorPositionChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "cursor",
+          "type": {
+            "native": "const QTextCursor &",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "boxed<QTextCursor>"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void cursorPositionChanged(const QTextCursor &cursor)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void documentLayoutChanged()",
+      "js_event": "documentLayoutChanged",
+      "metaobject_signatures": [
+        "documentLayoutChanged()"
+      ],
+      "name": "documentLayoutChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void documentLayoutChanged()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void modificationChanged(bool changed)",
+      "js_event": "modificationChanged",
+      "metaobject_signatures": [
+        "modificationChanged(bool)"
+      ],
+      "name": "modificationChanged",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "changed",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void modificationChanged(bool changed)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void redoAvailable(bool available)",
+      "js_event": "redoAvailable",
+      "metaobject_signatures": [
+        "redoAvailable(bool)"
+      ],
+      "name": "redoAvailable",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "available",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void redoAvailable(bool available)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void undoAvailable(bool available)",
+      "js_event": "undoAvailable",
+      "metaobject_signatures": [
+        "undoAvailable(bool)"
+      ],
+      "name": "undoAvailable",
+      "origin": "qdoc",
+      "override": false,
+      "params": [
+        {
+          "default": null,
+          "name": "available",
+          "type": {
+            "native": "bool",
+            "nullable": false,
+            "origin": "qdoc",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void undoAvailable(bool available)",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    },
+    {
+      "access": "public",
+      "associated_property": null,
+      "const": false,
+      "deprecated": false,
+      "handler_result": "none",
+      "id": "svelters-api:v1:type:qt:QtWidgets:QTextDocument:signal:void undoCommandAdded()",
+      "js_event": "undoCommandAdded",
+      "metaobject_signatures": [
+        "undoCommandAdded()"
+      ],
+      "name": "undoCommandAdded",
+      "origin": "qdoc",
+      "override": false,
+      "params": [],
+      "returns": {
+        "type": "void"
+      },
+      "signature": "void undoCommandAdded()",
+      "since": null,
+      "static": false,
+      "sync_required": false,
+      "virtual": null
+    }
+  ],
+  "source": {
+    "metaobject": {
+      "origin": "metaobject",
+      "pyside6": "6.11.0",
+      "qt": "6.11.0"
+    },
+    "qdoc": {
+      "files": {
+        "qtcore": {
+          "file": "qtcore.index",
+          "sha256": "5abfe86251df3b899306bca90bf40aee31d4194e005c5084f6da3db75f5b4bda"
+        },
+        "qtgui": {
+          "file": "qtgui.index",
+          "sha256": "d6ec240ced7affb542acd4d2cc58e75d372d3d6e23db12139978865f4a95b1a8"
+        },
+        "qtwidgets": {
+          "file": "qtwidgets.index",
+          "sha256": "2990b713d2806fd58d7b4792799cb1e16b7cd1a883c26b464c016534e16559b2"
+        }
+      },
+      "version": "6.11.0"
+    },
+    "typesystem": {
+      "file": "typesystem_widgets_common.xml",
+      "sha256": "8273e59c716c5f5cde6f742ce3da03b2b0bff686f05761e7ca180ab34928b3a6"
+    }
+  },
+  "toolkit": "qt"
+}

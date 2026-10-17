@@ -70,7 +70,13 @@ fn dump_widget(w: &gtk::Widget, depth: u32, out: &mut Vec<Json>) {
         leaf = false;
         String::new()
     };
-    out.push(json!({"d": depth, "class": w.type_().name(), "text": text}));
+    let mut node = json!({"d": depth, "class": w.type_().name(), "text": text});
+    if let Some(win) = w.downcast_ref::<gtk::Window>() {
+        node["modal"] = json!(win.is_modal());
+        node["transient"] = json!(win.transient_for().is_some());
+        node["visible"] = json!(win.is_visible());
+    }
+    out.push(node);
     if leaf {
         return;
     }

@@ -102,11 +102,29 @@
   },
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_adjustment_clamp_page moves value so [lower, upper] is inside the page: 40 - page-size 20 (Gtk 4 docs)"
+      },
+      "args": [
+        30.0,
+        40.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"value\") == V::F64(20.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:clamp_page",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "clamp_page",
       "name": "clamp_page",
       "native": "gtk_adjustment_clamp_page",
       "origin": "gir",
@@ -132,14 +150,36 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.call_args(o, \"configure\", &[V::F64(0.0), V::F64(0.0), V::F64(100.0), V::F64(1.0), V::F64(10.0), V::F64(20.0)]).unwrap();",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_adjustment_configure (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        7.0,
+        0.0,
+        50.0,
+        2.0,
+        10.0,
+        5.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"value\") == V::F64(7.0) && h.get(o, \"upper\") == V::F64(50.0) && h.get(o, \"pageSize\") == V::F64(5.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:configure",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "configure",
       "name": "configure",
       "native": "gtk_adjustment_configure",
       "origin": "gir",
@@ -214,11 +254,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_adjustment_get_minimum_increment is the smaller of step and page increment (Gtk 4 docs)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::F64(2.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:get_minimum_increment",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_minimum_increment",
       "name": "get_minimum_increment",
       "native": "gtk_adjustment_get_minimum_increment",
       "origin": "gir",
@@ -229,6 +284,7 @@
         "ownership": "borrowed",
         "type": "f64"
       },
+      "setup": "h.set_f64(o, \"stepIncrement\", 4.0).unwrap(); h.set_f64(o, \"pageIncrement\", 2.0).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -304,11 +360,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_adjustment_get_value (Gtk 4 docs); f64 return through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::F64(9.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:get_value",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_value",
       "name": "get_value",
       "native": "gtk_adjustment_get_value",
       "origin": "gir",
@@ -319,6 +390,7 @@
         "ownership": "borrowed",
         "type": "f64"
       },
+      "setup": "h.set_f64(o, \"upper\", 100.0).unwrap(); h.set_f64(o, \"value\", 9.0).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -497,6 +569,14 @@
         "get": "gtk_adjustment_get_lower",
         "set": "gtk_adjustment_set_lower"
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:lower (Gtk 4 docs)"
+      },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:lower",
       "invocation": "reflected",
@@ -521,6 +601,7 @@
         "origin": "runtime",
         "owner": "GtkAdjustment"
       },
+      "sample": 5.0,
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -538,6 +619,14 @@
       "accessors": {
         "get": "gtk_adjustment_get_page_increment",
         "set": "gtk_adjustment_set_page_increment"
+      },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:page-increment (Gtk 4 docs)"
       },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:page-increment",
@@ -563,6 +652,7 @@
         "origin": "runtime",
         "owner": "GtkAdjustment"
       },
+      "sample": 25.0,
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -580,6 +670,15 @@
       "accessors": {
         "get": "gtk_adjustment_get_page_size",
         "set": "gtk_adjustment_set_page_size"
+      },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:page-size (Gtk 4 docs)"
       },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:page-size",
@@ -605,6 +704,8 @@
         "origin": "runtime",
         "owner": "GtkAdjustment"
       },
+      "sample": 10.0,
+      "setup": "h.set_f64(o, \"upper\", 100.0).unwrap();",
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -622,6 +723,14 @@
       "accessors": {
         "get": "gtk_adjustment_get_step_increment",
         "set": "gtk_adjustment_set_step_increment"
+      },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:step-increment (Gtk 4 docs)"
       },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:step-increment",
@@ -647,6 +756,7 @@
         "origin": "runtime",
         "owner": "GtkAdjustment"
       },
+      "sample": 3.0,
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -664,6 +774,14 @@
       "accessors": {
         "get": "gtk_adjustment_get_upper",
         "set": "gtk_adjustment_set_upper"
+      },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:upper (Gtk 4 docs)"
       },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:upper",
@@ -689,6 +807,7 @@
         "origin": "runtime",
         "owner": "GtkAdjustment"
       },
+      "sample": 80.0,
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -706,6 +825,15 @@
       "accessors": {
         "get": "gtk_adjustment_get_value",
         "set": "gtk_adjustment_set_value"
+      },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:value (Gtk 4 docs); clamped into [lower, upper - page-size]"
       },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:value",
@@ -731,6 +859,8 @@
         "origin": "runtime",
         "owner": "GtkAdjustment"
       },
+      "sample": 42.0,
+      "setup": "h.set_f64(o, \"upper\", 100.0).unwrap();",
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -742,6 +872,16 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment::changed, run-first, void (Gtk 4 docs); emitted by configure() and when range properties change"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -765,9 +905,28 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let a = o.downcast_ref::<gtk::Adjustment>().unwrap(); a.set_upper(100.0 + i as f64); a.emit_by_name::<()>(\"changed\", &[]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment::value-changed, run-first, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -791,7 +950,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let a = o.downcast_ref::<gtk::Adjustment>().unwrap(); a.set_upper(100.0); a.set_value(10.0 + i as f64);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -800,11 +968,17 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Adjustment.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "verify_subject": {
+    "borrowed": {
+      "getter": "get_adjustment",
+      "tag": "scale"
+    }
+  }
 }

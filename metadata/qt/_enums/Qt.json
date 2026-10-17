@@ -8626,6 +8626,37 @@
     },
     {
       "flags_alias": null,
+      "fullname": "QTextDocument::MetaInformation",
+      "members": [
+        {
+          "cpp": "QTextDocument::DocumentTitle",
+          "name": "DocumentTitle",
+          "value": "0"
+        },
+        {
+          "cpp": "QTextDocument::DocumentUrl",
+          "name": "DocumentUrl",
+          "value": "1"
+        },
+        {
+          "cpp": "QTextDocument::CssMedia",
+          "name": "CssMedia",
+          "value": "2"
+        },
+        {
+          "cpp": "QTextDocument::FrontMatter",
+          "name": "FrontMatter",
+          "value": "3"
+        }
+      ],
+      "metaobject": null,
+      "name": "MetaInformation",
+      "origin": "qdoc",
+      "owner": "QTextDocument",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
       "fullname": "QTextDocument::ResourceType",
       "members": [
         {
@@ -8661,6 +8692,32 @@
       ],
       "metaobject": null,
       "name": "ResourceType",
+      "origin": "qdoc",
+      "owner": "QTextDocument",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QTextDocument::Stacks",
+      "members": [
+        {
+          "cpp": "QTextDocument::UndoStack",
+          "name": "UndoStack",
+          "value": "0x01"
+        },
+        {
+          "cpp": "QTextDocument::RedoStack",
+          "name": "RedoStack",
+          "value": "0x02"
+        },
+        {
+          "cpp": "QTextDocument::UndoAndRedoStacks",
+          "name": "UndoAndRedoStacks",
+          "value": "UndoStack | RedoStack"
+        }
+      ],
+      "metaobject": null,
+      "name": "Stacks",
       "origin": "qdoc",
       "owner": "QTextDocument",
       "scoped": false

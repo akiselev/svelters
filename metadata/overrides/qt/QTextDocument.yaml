@@ -1,0 +1,47 @@
+# A QObject, not a widget: the model behind QTextEdit / QPlainTextEdit / QTextBrowser, reached as a
+# borrowed handle (`edit.call('document')`). Constructible on its own, which the generated tests use.
+elements:
+  - tag: textdocument
+    construct: { class: QTextDocument }
+    props:
+      - { js: undoRedoEnabled, native: undoRedoEnabled, provenance: "QTextDocument::undoRedoEnabled (qdoc)" }
+      - { js: modified, native: modified, provenance: "QTextDocument::modified (qdoc)" }
+      - { js: maximumBlockCount, native: maximumBlockCount, provenance: "QTextDocument::maximumBlockCount (qdoc)" }
+      - { js: documentMargin, native: documentMargin, provenance: "QTextDocument::documentMargin (qdoc)" }
+      - { js: indentWidth, native: indentWidth, provenance: "QTextDocument::indentWidth (qdoc)" }
+      - { js: textWidth, native: textWidth, provenance: "QTextDocument::textWidth (qdoc)" }
+      - { js: useDesignMetrics, native: useDesignMetrics, provenance: "QTextDocument::useDesignMetrics (qdoc)" }
+      - { js: defaultStyleSheet, native: defaultStyleSheet, provenance: "QTextDocument::defaultStyleSheet (qdoc)" }
+      - { js: blockCount, native: blockCount, provenance: "QTextDocument::blockCount (qdoc); read-only" }
+    methods:
+      - { js: setPlainText, native: setPlainText, params: [string], args: ["abc"], expect: '$w->toPlainText() == QStringLiteral("abc")', provenance: "QTextDocument::setPlainText (qdoc)" }
+      - { js: toPlainText, native: toPlainText, params: [], expect: "true", provenance: "QTextDocument::toPlainText (qdoc); string return" }
+      - { js: setHtml, native: setHtml, params: [string], args: ["<b>x</b>"], expect: '$w->toPlainText() == QStringLiteral("x")', provenance: "QTextDocument::setHtml (qdoc)" }
+      - { js: clear, native: clear, params: [], expect: "$w->isEmpty()", provenance: "QTextDocument::clear (qdoc)" }
+      - { js: isEmpty, native: isEmpty, params: [], expect: "true", provenance: "QTextDocument::isEmpty (qdoc); bool return" }
+      - { js: characterCount, native: characterCount, params: [], expect: "true", provenance: "QTextDocument::characterCount (qdoc); int return" }
+      - { js: lineCount, native: lineCount, params: [], expect: "true", provenance: "QTextDocument::lineCount (qdoc); int return" }
+      - { js: undo, native: undo, params: [], provenance: "QTextDocument::undo() (qdoc)" }
+      - { js: redo, native: redo, params: [], provenance: "QTextDocument::redo() (qdoc)" }
+    signals:
+      - js: contentsChanged
+        native: contentsChanged
+        connect: "contentsChanged()"
+        args: []
+        trigger: '$w->setPlainText(QStringLiteral("t") + QString::number($i))'
+        expect_args: []
+        provenance: "QTextDocument::contentsChanged() (qdoc)"
+      - js: blockCountChanged
+        native: blockCountChanged
+        connect: "blockCountChanged(int)"
+        args: [{ name: newBlockCount, type: i32 }]
+        trigger: '$w->setPlainText(QStringLiteral("a\n").repeated($i + 1))'
+        expect_args: ["2"]
+        provenance: "QTextDocument::blockCountChanged(int) (qdoc)"
+      - js: modificationChanged
+        native: modificationChanged
+        connect: "modificationChanged(bool)"
+        args: [{ name: changed, type: bool }]
+        trigger: '$w->setModified(($i % 2) == 0)'
+        expect_args: ["true"]
+        provenance: "QTextDocument::modificationChanged(bool) (qdoc)"

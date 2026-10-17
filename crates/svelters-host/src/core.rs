@@ -899,6 +899,13 @@ impl Core {
         self.busy.get() > 0
     }
 
+    /// Live handles of the TOPLEVEL lifetime class (windows and dialogs, transient or not), in creation order.
+    pub(crate) fn toplevel_handles(&self) -> Vec<svl_handle> {
+        let mut v: Vec<svl_handle> = self.st.borrow().toplevels.iter().copied().collect();
+        v.sort_unstable();
+        v
+    }
+
     /// Live handles that are not inserted under another handle, in creation order.
     pub(crate) fn roots(&self) -> Vec<svl_handle> {
         let st = self.st.borrow();

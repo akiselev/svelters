@@ -2529,7 +2529,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "range",
   "gallery": "04-ranges",
   "inherited": 25,
@@ -2542,10 +2542,10 @@
   "native": "GtkRange",
   "ownership": false,
   "props": [
-   6,
-   6
+   12,
+   12
   ],
-  "props_annotated": 4,
+  "props_annotated": 10,
   "signal_results": 1,
   "signals": [
    4,
@@ -2555,8 +2555,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   16,
+   16
   ]
  },
  {
@@ -2593,10 +2593,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "scale",
   "gallery": "04-ranges",
-  "inherited": 34,
+  "inherited": 41,
   "kind": "Scale",
   "lifetime": "owned",
   "methods": [
@@ -3022,10 +3022,10 @@
   "native": "GtkSpinButton",
   "ownership": false,
   "props": [
-   9,
-   9
+   13,
+   13
   ],
-  "props_annotated": 7,
+  "props_annotated": 11,
   "signal_results": 3,
   "signals": [
    7,
@@ -3035,8 +3035,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   15,
-   15
+   19,
+   19
   ]
  },
  {
@@ -3265,7 +3265,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "textview",
   "gallery": "03-text",
   "inherited": 24,
@@ -3278,21 +3278,21 @@
   "native": "GtkTextView",
   "ownership": false,
   "props": [
-   20,
-   21
+   21,
+   22
   ],
-  "props_annotated": 7,
-  "signal_results": 0,
+  "props_annotated": 8,
+  "signal_results": 1,
   "signals": [
-   15,
-   15
+   16,
+   16
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   12,
+   12
   ]
  },
  {

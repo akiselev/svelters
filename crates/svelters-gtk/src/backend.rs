@@ -61,6 +61,8 @@ struct State {
     entries: HashMap<u64, Entry>,
     /// Opaque boxed values handed to JS as `BOXED` handles.
     boxed: HashMap<u64, glib::Value>,
+    /// The object a `via` signal (GtkTextView `changed`) is connected on, by (handle, wire id).
+    via_targets: HashMap<(u64, u32), glib::Object>,
 }
 
 /// Data of the weak-ref notify that reports the native death of a borrowed object.
@@ -120,6 +122,9 @@ pub(crate) struct Inner {
 
 /// Slot value recorded for an event controller attached to a widget (it is not in `SLOTS`).
 const CONTROLLER_SLOT: u32 = u32::MAX;
+/// Slot value recorded for a toplevel inserted under a parent: it is transient for the parent's
+/// window (`gtk_window_set_transient_for`), see "Toplevels in the tree" in backend-abi.md.
+const TRANSIENT_SLOT: u32 = u32::MAX - 1;
 /// Frame delay used when there is no mapped toplevel to tick on.
 const FRAME_FALLBACK_MS: u64 = 16;
 /// A mapped toplevel whose clock stalls (hidden, minimised) still gets a frame after this long.
@@ -266,8 +271,11 @@ impl Inner {
     /// Detach everything an entry attached to its object: signal handlers, identity, weak notify.
     fn release_entry(&self, h: u64, e: &mut Entry, obj: Option<&glib::Object>) {
         if let Some(obj) = obj {
-            for (_, id) in e.signals.drain() {
-                obj.disconnect(id);
+            for (key, id) in e.signals.drain() {
+                match self.state.borrow_mut().via_targets.remove(&(h, key)) {
+                    Some(t) => t.disconnect(id),
+                    None => obj.disconnect(id),
+                }
             }
             self.untag_object(obj, h);
             if !e.note.is_null() {
@@ -401,6 +409,14 @@ impl Inner {
             if k != h {
                 let obj = e.obj.upgrade();
                 self.release_entry(k, &mut e, obj.as_ref());
+                // GTK leaves a transient window alive when its parent goes; the tree says it belongs to the parent.
+                if e.slot.is_some_and(|(_, s)| s == TRANSIENT_SLOT) {
+                    if let Some(w) = obj.as_ref().and_then(|o| o.downcast_ref::<gtk::Window>()) {
+                        w.set_visible(false);
+                        let w = w.clone();
+                        glib::idle_add_local_once(move || w.destroy());
+                    }
+                }
             } else {
                 self.untag_object(win.upcast_ref(), k);
             }
@@ -467,6 +483,25 @@ impl Inner {
         Ok(())
     }
 
+    /// A toplevel child makes the window of `parent` its transient parent (dialogs, secondary windows).
+    fn insert_transient(&self, parent: u64, child: u64, pw: &gtk::Widget, win: &gtk::Window) -> Res<()> {
+        let owner = match pw.downcast_ref::<gtk::Window>() {
+            Some(w) => w.clone(),
+            None => pw.root().and_then(|r| r.downcast::<gtk::Window>().ok()).ok_or("insert: the parent is not inside a window")?,
+        };
+        if owner == *win {
+            return Err("insert: a window cannot be transient for itself".into());
+        }
+        if self.state.borrow().entries.get(&child).and_then(|e| e.slot).is_some() {
+            return Err("insert: the toplevel is already inserted".into());
+        }
+        win.set_transient_for(Some(&owner));
+        if let Some(e) = self.state.borrow_mut().entries.get_mut(&child) {
+            e.slot = Some((parent, TRANSIENT_SLOT));
+        }
+        Ok(())
+    }
+
     fn not_borrowed(&self, h: u64, what: &str) -> Res<()> {
         match self.state.borrow().entries.get(&h) {
             Some(e) if e.class == SVL_LIFE_BORROWED => Err(format!("handle {h} is a borrowed native object and cannot be {what} through the tree")),
@@ -487,6 +522,9 @@ impl Inner {
         let (cw, _) = self.widget_of(child)?;
         self.not_borrowed(child, "inserted")?;
         self.not_borrowed(parent, "inserted into")?;
+        if let Some(win) = cw.downcast_ref::<gtk::Window>() {
+            return self.insert_transient(parent, child, &pw, win);
+        }
         let slot = if slot == 0 { lookup::default_slot(pk) } else { slot };
         if slot == 0 {
             return Err("parent has no default slot".into());
@@ -545,6 +583,16 @@ impl Inner {
         let (cw, _) = self.widget_of(child)?;
         self.not_borrowed(child, "removed")?;
         self.not_borrowed(parent, "removed from")?;
+        if let Some(win) = cw.downcast_ref::<gtk::Window>() {
+            if self.state.borrow().entries.get(&child).and_then(|e| e.slot) != Some((parent, TRANSIENT_SLOT)) {
+                return Err(format!("handle {child} is not inserted in {parent}"));
+            }
+            win.set_transient_for(None::<&gtk::Window>);
+            if let Some(e) = self.state.borrow_mut().entries.get_mut(&child) {
+                e.slot = None;
+            }
+            return Ok(());
+        }
         let slot = {
             let st = self.state.borrow();
             match st.entries.get(&child).and_then(|e| e.slot) {
@@ -564,7 +612,7 @@ impl Inner {
         let (pw, pk) = self.widget_of(parent)?;
         let (cw, _) = self.widget_of(child)?;
         let slot = match self.state.borrow().entries.get(&child).and_then(|e| e.slot) {
-            Some((p, s)) if p == parent && s != CONTROLLER_SLOT => s,
+            Some((p, s)) if p == parent && s != CONTROLLER_SLOT && s != TRANSIENT_SLOT => s,
             _ => return Err(format!("handle {child} is not inserted in {parent}: child attributes need an inserted child")),
         };
         let a = ATTRS.get((attr as usize).wrapping_sub(1)).ok_or("unknown child attribute")?;
@@ -652,27 +700,31 @@ impl Inner {
             };
             return slots::virtual_set(prop, &obj, text.as_deref());
         }
-        let pspec = obj.find_property(p.name).ok_or_else(|| format!("{} has no property {}", obj.type_().name(), p.name))?;
+        // A forwarded property (GtkRange `value` is the adjustment's) is written on the object behind `via`.
+        let elem = obj;
+        let (obj, pname) = if p.flags & F_VIA != 0 { (via_object(&elem, p.via, p.name)?, p.target) } else { (elem.clone(), p.name) };
+        let pspec = obj.find_property(pname).ok_or_else(|| format!("{} has no property {}", obj.type_().name(), pname))?;
         let value = unsafe { convert::to_value(pspec.value_type(), v, &**self) }.map_err(|e| format!("{}: {e}", p.name))?;
         // Echo suppression: handlers for the signals this property would raise are blocked while JS writes it.
         let st = self.state.borrow();
-        let blocked: Vec<&glib::SignalHandlerId> = st
+        // A `via` signal is connected on the forwarded-to object, not on the element.
+        let blocked: Vec<(glib::Object, &glib::SignalHandlerId)> = st
             .entries
             .get(&h)
             .map(|e| {
                 e.signals
                     .iter()
                     .filter(|(sid, _)| p.echo.contains(&SIGNALS[(**sid & SVL_SIGNAL_ID_MASK) as usize - 1].name))
-                    .map(|(_, id)| id)
+                    .map(|(sid, id)| (st.via_targets.get(&(h, *sid)).cloned().unwrap_or_else(|| elem.clone()), id))
                     .collect()
             })
             .unwrap_or_default();
-        for id in &blocked {
-            obj.block_signal(id);
+        for (o, id) in &blocked {
+            o.block_signal(id);
         }
-        obj.set_property_from_value(p.name, &value);
-        for id in &blocked {
-            obj.unblock_signal(id);
+        obj.set_property_from_value(pname, &value);
+        for (o, id) in &blocked {
+            o.unblock_signal(id);
         }
         Ok(())
     }
@@ -707,10 +759,11 @@ impl Inner {
             };
             return Ok(());
         }
-        if obj.find_property(p.name).is_none() {
-            return Err(format!("{} has no property {}", obj.type_().name(), p.name));
+        let (obj, pname) = if p.flags & F_VIA != 0 { (via_object(&obj, p.via, p.name)?, p.target) } else { (obj, p.name) };
+        if obj.find_property(pname).is_none() {
+            return Err(format!("{} has no property {}", obj.type_().name(), pname));
         }
-        let value = obj.property_value(p.name);
+        let value = obj.property_value(pname);
         // Objects we did not create get a borrowed handle, minted by `Env::borrow_object`.
         self.cur_owner.set(h);
         *out = convert::from_value(&value, self, &mut buf);
@@ -816,11 +869,19 @@ impl Inner {
             }
             let weak = Rc::downgrade(self);
             let closure = glib::RustClosure::new_local(move |vals| weak.upgrade().and_then(|i| i.deliver(h, signal, flags, vals)));
-            let id = obj.connect_closure(sig.name, flags & SVL_LISTEN_AFTER != 0, closure);
-            self.state.borrow_mut().entries.get_mut(&h).unwrap().signals.insert(key, id);
+            let target = if sig.via.is_empty() { obj.clone() } else { via_object(&obj, sig.via, sig.name)? };
+            let id = target.connect_closure(sig.name, flags & SVL_LISTEN_AFTER != 0, closure);
+            let mut st = self.state.borrow_mut();
+            if !sig.via.is_empty() {
+                st.via_targets.insert((h, key), target);
+            }
+            st.entries.get_mut(&h).unwrap().signals.insert(key, id);
         } else if !on && connected {
             let id = self.state.borrow_mut().entries.get_mut(&h).unwrap().signals.remove(&key).unwrap();
-            obj.disconnect(id);
+            match self.state.borrow_mut().via_targets.remove(&(h, key)) {
+                Some(t) => t.disconnect(id),
+                None => obj.disconnect(id),
+            }
             if flags & SVL_LISTEN_CAPTURE != 0 && !self.state.borrow().entries[&h].signals.keys().any(is_capture) {
                 let prev = self.state.borrow_mut().entries.get_mut(&h).unwrap().capture_prev.take();
                 if let (Some(prev), Some(ctrl)) = (prev, obj.downcast_ref::<gtk::EventController>()) {
@@ -851,8 +912,12 @@ impl Inner {
             let mut args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, self, &mut buf)).collect();
             // GtkEditable::changed has no arguments; the JS contract (and the Qt backend) delivers `[text]`.
             if sig.name == "changed" && args.is_empty() {
-                if let Some(e) = vals.first().and_then(|v| v.get::<glib::Object>().ok()).and_then(|o| o.downcast::<gtk::Editable>().ok()) {
+                let emitter = vals.first().and_then(|v| v.get::<glib::Object>().ok());
+                if let Some(e) = emitter.clone().and_then(|o| o.downcast::<gtk::Editable>().ok()) {
                     args.push(buf.str_value(&e.text()));
+                } else if let Some(b) = emitter.and_then(|o| o.downcast::<gtk::TextBuffer>().ok()) {
+                    // GtkTextView `changed` is its buffer's; like an entry it carries the new text.
+                    args.push(buf.str_value(&b.text(&b.start_iter(), &b.end_iter(), false)));
                 }
             }
             if sync {
@@ -1447,4 +1512,16 @@ unsafe extern "C" fn b_describe_type(p: *mut c_void, ty: svl_id) -> *const svl_t
     let c = unsafe { ctl(p) };
     let i = &c.local;
     i.descs.type_desc(ty, || catch_unwind(AssertUnwindSafe(|| i.describe_type(ty))).ok().flatten())
+}
+
+/// The object property `via` of `obj` returns (a text view's buffer, a range's adjustment), for a
+/// property or signal `what` that is forwarded to it.
+fn via_object(obj: &glib::Object, via: &str, what: &str) -> Res<glib::Object> {
+    if obj.find_property(via).is_none() {
+        return Err(format!("{} has no property {via}, which {what} is forwarded to", obj.type_().name()));
+    }
+    obj.property_value(via)
+        .get::<Option<glib::Object>>()
+        .map_err(|e| format!("{via}: {e}"))?
+        .ok_or_else(|| format!("{} has no {via} to forward {what} to", obj.type_().name()))
 }

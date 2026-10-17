@@ -575,6 +575,19 @@ int b_insert(void *, svl_handle parent, svl_handle child, svl_handle before, svl
     if (!be) return fail("insert: stale or unknown `before` handle");
     b = be->obj.data();
   }
+  if (c->toplevel) {
+    // A toplevel child is transient for the window of `parent` (backend-abi.md, "Toplevels in the tree"):
+    // Qt's form of that is the parent widget, which keeps the window type through the explicit flags.
+    auto *cw = qobject_cast<QWidget *>(c->obj.data());
+    auto *pw = qobject_cast<QWidget *>(p->obj.data());
+    if (!cw || !pw) return fail("insert: a toplevel needs a widget parent");
+    if (c->placed) return fail("insert: the toplevel is already inserted");
+    if (pw->window() == cw) return fail("insert: a window cannot be transient for itself");
+    cw->setParent(pw->window(), cw->windowFlags());
+    c->placed = parent;
+    c->slot = 0;
+    return 0;
+  }
   svl_id used = slot;
   int rc = gen_is_context(c->kind) ? ctx_attach(p->obj.data(), c->obj.data()) : gen_insert(*p, c->obj.data(), b, used);
   if (rc == 0) {
@@ -592,6 +605,13 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
   if (!c) return fail("remove: stale or unknown child handle");
   if (p->life == SVL_LIFE_BORROWED || c->life == SVL_LIFE_BORROWED)
     return fail("remove: a borrowed native object cannot be inserted or removed through the tree");
+  if (c->toplevel) {
+    auto *cw = qobject_cast<QWidget *>(c->obj.data());
+    if (!cw || c->placed != parent) return fail("remove: child is not in this parent");
+    cw->setParent(nullptr, cw->windowFlags());
+    c->placed = 0;
+    return 0;
+  }
   int rc = gen_is_context(c->kind) ? ctx_detach(p->obj.data(), c->obj.data()) : gen_remove(*p, c->obj.data());
   if (rc == 0) {
     c->placed = 0;
@@ -1086,6 +1106,10 @@ void dump_widget(QWidget *w, int depth, std::string &out) {
   json_str(out, QString::fromLatin1(w->metaObject()->className()));
   out += ",\"text\":";
   json_str(out, text);
+  if (w->isWindow()) {
+    out += std::string(",\"modal\":") + (w->isModal() ? "true" : "false") + ",\"transient\":" + (w->parentWidget() ? "true" : "false") +
+           ",\"visible\":" + (w->isVisible() ? "true" : "false");
+  }
   out += '}';
   if (auto *mw = qobject_cast<QMainWindow *>(w)) {
     if (mw->centralWidget()) dump_widget(mw->centralWidget(), depth + 1, out);
@@ -1095,7 +1119,7 @@ void dump_widget(QWidget *w, int depth, std::string &out) {
     dump_layout(w->layout(), depth + 1, out);
   } else {
     for (QObject *c : w->children())
-      if (auto *cw = qobject_cast<QWidget *>(c)) dump_widget(cw, depth + 1, out);
+      if (auto *cw = qobject_cast<QWidget *>(c); cw && !cw->isWindow()) dump_widget(cw, depth + 1, out);
   }
 }
 

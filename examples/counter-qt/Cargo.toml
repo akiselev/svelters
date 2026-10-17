@@ -57,6 +57,10 @@ name = "lists_e2e"
 harness = false
 
 [[test]]
+name = "toplevels"
+harness = false
+
+[[test]]
 name = "style"
 harness = false
 

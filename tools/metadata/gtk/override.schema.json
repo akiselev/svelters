@@ -40,15 +40,28 @@
       }
     },
     "verify_subject": {
-      "description": "Element tag used to test facts annotated on an abstract kind or interface.",
+      "description": "Element tag used to test facts annotated on an abstract kind or interface; or `borrowed`: facts on a kind that is not an element are tested on the object the getter of an element returns (a BORROWED handle, e.g. GtkTextBuffer through GtkTextView.get_buffer).",
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "tag"
-      ],
       "properties": {
         "tag": {
           "type": "string"
+        },
+        "borrowed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "getter"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string"
+            },
+            "getter": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -246,6 +259,10 @@
             },
             "property": {
               "type": "string"
+            },
+            "via": {
+              "type": "string",
+              "description": "op via_object: the property is forwarded to the object this property of the same instance returns, under the name in `property`."
             }
           }
         },
@@ -349,6 +366,10 @@
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "via": {
+          "type": "string",
+          "description": "The signal is emitted by the object this property returns (GtkTextView `changed` comes from its buffer)."
         }
       }
     },
