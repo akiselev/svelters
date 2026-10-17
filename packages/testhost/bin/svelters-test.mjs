@@ -15,7 +15,7 @@ const expectedPath = path.join(dir, 'expected.oplog');
 
 const code = fs.readFileSync(bundlePath, 'utf8');
 const forbidden = [
-  [/\bnode:/, 'node: specifier'],
+  [/['"]node:[a-z]/, 'node: specifier'],
   [/\brequire\s*\(/, 'require()'],
   [/\bprocess\s*\./, 'process.*'],
   [/\bBuffer\b/, 'Buffer'],

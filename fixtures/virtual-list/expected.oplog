@@ -1,0 +1,120 @@
+create window #1
+set #1 title "Virtual list"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 6
+create box #3
+set #3 orientation "horizontal"
+set #3 spacing 6
+create button #4
+listen #4 clicked on
+set #4 label "Add"
+insert #3 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "Prepend"
+insert #3 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "Remove"
+insert #3 #6 before=end slot=default
+create button #7
+listen #7 clicked on
+set #7 label "Reverse"
+insert #3 #7 before=end slot=default
+create button #8
+listen #8 clicked on
+set #8 label "Rename"
+insert #3 #8 before=end slot=default
+create label #9
+set #9 label "-1"
+insert #3 #9 before=end slot=default
+insert #2 #3 before=end slot=default
+create virtuallist #10
+set #10 layout "list"
+set #10 selection "single"
+set #10 rowHeight 32
+listen #10 setup on
+listen #10 bind on
+listen #10 unbind on
+listen #10 teardown on
+listen #10 activate on
+listen #10 select on
+insert #2 #10 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+call #10 splice [0,0,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]]
+sync #10 setup [1]
+create box #11
+call #10 setRow [1,11]
+result #10 null
+sync #10 setup [2]
+create box #12
+call #10 setRow [2,12]
+result #10 null
+sync #10 setup [3]
+create box #13
+call #10 setRow [3,13]
+result #10 null
+sync #10 bind [1,0,1,1]
+create box #14
+set #14 orientation "horizontal"
+set #14 spacing 6
+create label #15
+set #15 label "0"
+insert #14 #15 before=end slot=default
+create label #16
+set #16 label "Row 0"
+insert #14 #16 before=end slot=default
+insert #11 #14 before=end slot=default
+result #10 null
+sync #10 bind [2,1,2,1]
+create box #17
+set #17 orientation "horizontal"
+set #17 spacing 6
+create label #18
+set #18 label "1"
+insert #17 #18 before=end slot=default
+create label #19
+set #19 label "Row 1"
+insert #17 #19 before=end slot=default
+insert #12 #17 before=end slot=default
+result #10 null
+sync #10 bind [3,2,3,1]
+create box #20
+set #20 orientation "horizontal"
+set #20 spacing 6
+create label #21
+set #21 label "2"
+insert #20 #21 before=end slot=default
+create label #22
+set #22 label "Row 2"
+insert #20 #22 before=end slot=default
+insert #13 #20 before=end slot=default
+result #10 null
+event #10 select [1]
+set #9 label "1"
+event #4 clicked []
+call #10 splice [20,0,[21]]
+event #5 clicked []
+call #10 splice [0,0,[22]]
+set #15 label "1"
+set #18 label "2"
+set #21 label "3"
+event #6 clicked []
+call #10 splice [1,1,[]]
+set #18 label "1"
+set #21 label "2"
+event #7 clicked []
+call #10 splice [0,20,[]]
+call #10 splice [1,0,[20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,22]]
+event #8 clicked []
+sync #10 unbind [1,1]
+result #10 null
+sync #10 teardown [1]
+remove #11 #14
+destroy #11
+result #10 null
+destroy #15
+destroy #16
+destroy #14

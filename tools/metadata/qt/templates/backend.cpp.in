@@ -22,6 +22,13 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QWindow>
+#include <QtCore/QAbstractListModel>
+#include <QtCore/QItemSelectionModel>
+#include <QtCore/QPersistentModelIndex>
+#include <QtWidgets/QListView>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QStyledItemDelegate>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
@@ -378,6 +385,8 @@ void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
 
 //@@SERDES@@
 
+//@@VLIST@@
+
 // ---- name tables -----------------------------------------------------------------------------
 
 struct NameId {
@@ -418,8 +427,10 @@ struct Table {
 // ---- vtable ----------------------------------------------------------------------------------
 
 svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t len) {
-  Table t = table_for(what, kind);
   std::string_view n(name, len);
+  if (what == SVL_KIND && n == "virtuallist") return kVListKind;
+  if (kind == kVListKind) return vl_resolve(what, n);
+  Table t = table_for(what, kind);
   for (size_t i = 0; i < t.n; ++i)
     if (t.items[i].name == n) return t.items[i].id;
   // Object getters (parentWidget, viewport, lineEdit, ...) apply to any kind, annotated or not.
@@ -432,7 +443,7 @@ svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t le
 svl_handle b_create(void *, svl_id kind) {
   TimeScope timing_;
   ensure_app();
-  QObject *o = gen_create(kind);
+  QObject *o = kind == kVListKind ? vl_create() : gen_create(kind);
   if (!o) {
     fail("create: unknown kind id " + std::to_string(kind));
     return 0;
@@ -442,6 +453,7 @@ svl_handle b_create(void *, svl_id kind) {
   e.obj = o;
   e.kind = kind;
   g.by_obj[o] = h;
+  if (kind == kVListKind) vl_after_create(o, h);
   e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *obj) { native_destroyed(h, obj); });
   if (auto *w = qobject_cast<QWidget *>(o); w && gen_is_toplevel(kind)) {
     e.toplevel = true;
@@ -511,6 +523,7 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
   if (!v) return fail("set_prop: null value");
   g_in.clear();
   try {
+    if (e->kind == kVListKind) return vl_set_prop(*e, prop, v);
     return gen_set_prop(*e, prop, v);
   } catch (const std::exception &x) {
     return fail(std::string("set_prop: C++ exception: ") + x.what());
@@ -526,6 +539,7 @@ int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
   g_out.clear();
   g_owner = e->obj.data();
   try {
+    if (e->kind == kVListKind) return vl_get_prop(*e, prop, out);
     return gen_get_prop(*e, prop, out);
   } catch (const std::exception &x) {
     out_error(out, "c++", x.what());
@@ -549,6 +563,7 @@ int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n,
       g_test_throw = false;
       throw std::runtime_error("test exception");
     }
+    if (e->kind == kVListKind) return vl_call(*e, method, args, n, out);
     if (method >= kGetterBase) {
       if (n != 0) return fail("call: object getters take no arguments");
       QObject *r = nullptr;
@@ -578,6 +593,7 @@ int b_listen(void *, svl_handle h, svl_id sig, bool on) {
   TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("listen: stale or unknown handle");
+  if (e->kind == kVListKind) return vl_listen(*e, sig, on);
   return gen_listen(h, *e, sig, on);
 }
 
@@ -844,6 +860,106 @@ extern "C" int svl_qt_close(svl_handle h) {
 
 // Number of top-level widgets that still exist (pending deleteLater included until the loop runs).
 extern "C" int svl_qt_toplevel_count(void) { return QApplication::topLevelWidgets().size(); }
+
+// ---- virtuallist test hooks (M5; not part of the backend ABI) --------------------------------------
+// The tests find widgets by what they show, not by handle: the Svelte app decides creation order.
+namespace {
+SvVirtualList *vl_find() {
+  for (QWidget *w : QApplication::allWidgets())
+    if (auto *v = dynamic_cast<SvVirtualList *>(w)) return v;
+  return nullptr;
+}
+std::string g_vl_str;
+std::string g_vl_changes;
+}  // namespace
+
+// Clicks the QPushButton whose text is `label`. 0 when found.
+extern "C" int svl_qt_click_button(const char *label) {
+  for (QWidget *w : QApplication::allWidgets())
+    if (auto *b = qobject_cast<QPushButton *>(w); b && b->text() == QString::fromUtf8(label)) {
+      b->click();
+      return 0;
+    }
+  return -1;
+}
+
+// Text of the first QLabel whose text starts with `prefix`, or "".
+extern "C" const char *svl_qt_label_starting(const char *prefix) {
+  g_vl_str.clear();
+  for (QWidget *w : QApplication::allWidgets())
+    if (auto *l = qobject_cast<QLabel *>(w); l && l->text().startsWith(QString::fromUtf8(prefix))) {
+      g_vl_str = l->text().toStdString();
+      break;
+    }
+  return g_vl_str.c_str();
+}
+
+// One line per visible row widget: the texts of its labels joined by a space.
+extern "C" const char *svl_qt_vlist_rows(void) {
+  g_vl_str.clear();
+  SvVirtualList *v = vl_find();
+  if (!v) return "";
+  for (QObject *c : v->viewport()->children()) {
+    auto *w = qobject_cast<QWidget *>(c);
+    if (!w || !w->isVisibleTo(v->viewport())) continue;
+    QStringList parts;
+    for (QLabel *l : w->findChildren<QLabel *>()) parts << l->text();
+    g_vl_str += parts.join(' ').toStdString() + "\n";
+  }
+  return g_vl_str.c_str();
+}
+
+extern "C" long svl_qt_vlist_count(void) {
+  SvVirtualList *v = vl_find();
+  return v ? v->mdl->rowCount() : -1;
+}
+
+extern "C" int svl_qt_vlist_pool(void) {
+  SvVirtualList *v = vl_find();
+  return v ? static_cast<int>(v->pool.size()) : -1;
+}
+
+extern "C" int svl_qt_vlist_present(void) { return vl_find() != nullptr; }
+
+// Starts recording the model's change notifications ("I first count;", "R first count;", "C first count;").
+extern "C" void svl_qt_vlist_watch(void) {
+  SvVirtualList *v = vl_find();
+  if (!v) return;
+  QObject::connect(v->mdl, &QAbstractItemModel::rowsInserted, v, [](const QModelIndex &, int a, int b) {
+    g_vl_changes += "I " + std::to_string(a) + " " + std::to_string(b - a + 1) + ";";
+  });
+  QObject::connect(v->mdl, &QAbstractItemModel::rowsRemoved, v, [](const QModelIndex &, int a, int b) {
+    g_vl_changes += "R " + std::to_string(a) + " " + std::to_string(b - a + 1) + ";";
+  });
+  QObject::connect(v->mdl, &QAbstractItemModel::dataChanged, v, [](const QModelIndex &a, const QModelIndex &b) {
+    g_vl_changes += "C " + std::to_string(a.row()) + " " + std::to_string(b.row() - a.row() + 1) + ";";
+  });
+  QObject::connect(v->mdl, &QAbstractItemModel::modelReset, v, [] { g_vl_changes += "reset;"; });
+}
+
+extern "C" const char *svl_qt_vlist_changes(int clear) {
+  g_vl_str = g_vl_changes;
+  if (clear) g_vl_changes.clear();
+  return g_vl_str.c_str();
+}
+
+// The user selects / activates an item (as a click or Enter would).
+extern "C" int svl_qt_vlist_select(int pos) {
+  SvVirtualList *v = vl_find();
+  if (!v || pos < 0 || pos >= v->mdl->rowCount()) return -1;
+  v->setCurrentIndex(v->mdl->index(pos));
+  return 0;
+}
+
+extern "C" int svl_qt_vlist_activate(int pos) {
+  SvVirtualList *v = vl_find();
+  if (!v || pos < 0 || pos >= v->mdl->rowCount()) return -1;
+  emit v->activated(v->mdl->index(pos));
+  return 0;
+}
+
+// Handles in the table (owned, toplevel and borrowed): the leak check of the tests.
+extern "C" size_t svl_qt_live_handles(void) { return g.table.size(); }
 
 // Run `cb(ud)` on the Qt loop thread after `ms` milliseconds. Creates the QApplication if needed.
 extern "C" void svl_qt_run_later(void (*cb)(void *), void *ud, int ms) {
