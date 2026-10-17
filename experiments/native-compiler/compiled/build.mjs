@@ -4,6 +4,7 @@
 // checks those expectations.
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { build } from 'vite';
 import { nativeConfig, svelteNative } from '@svelters/native-runtime/vite';
 import { TARGETS, cases, targetsOf } from './cases.mjs';
@@ -28,6 +29,12 @@ for (const t of TARGETS) {
   fs.writeFileSync(t.spec, JSON.stringify(merge(base, JSON.parse(fs.readFileSync(t.overlay, 'utf8')))));
 }
 
+// Cases with extra scripts are compared live against the JS pipeline's bundle: build it first.
+for (const c of cases()) {
+  if ((only.length && !only.includes(c.name)) || !c.extraScripts?.length) continue;
+  execFileSync('pnpm', ['run', '--silent', 'build'], { cwd: path.dirname(c.jsExpected), stdio: ['ignore', 'ignore', 'inherit'] });
+  console.log(`built JS pipeline ${c.name}`);
+}
 for (const c of cases()) {
   if (only.length && !only.includes(c.name)) continue;
   for (const t of targetsOf(c)) {

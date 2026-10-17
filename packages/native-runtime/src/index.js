@@ -911,7 +911,8 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
   globalThis.__svelters_dispatch = dispatch;
   globalThis.__svelters_dispatch_sync = dispatch_sync;
   globalThis.__svelters_gone = gone;
-  const root = target == null ? new Root() : slot(new Native('#target', target, null), null);
+  // a runtime node (a list row's outlet, lists.js) or a bare host handle
+  const root = target == null ? new Root() : slot(target instanceof Native ? target : new Native('#target', target, null), null);
   const s = new Scope(null);
   const prev = scope;
   scope = s;

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Compares two op logs (plans/architecture/backend-abi.md "Op-log format") by the native state
 // they produce, not by their text: each log is replayed into a tree, and the states are compared
-// before every `event` / `sync` / `gone` line and at the end. A state is: live handles with kind,
-// props, children per slot (in order), child attributes (ABI v2.2 `attr`, cleared when the child
-// is removed), listened signals with their phase word, the methods called on them, and the
-// results of sync calls (`result` lines) so far.
+// before every `event` / `sync` / `deferred` / `gone` line and at the end. A state is: live handles
+// with kind, props, children per slot (in order), child attributes (ABI v2.2 `attr`, cleared when
+// the child is removed), listened signals with their phase word, the methods called on them, and
+// the values JS returned for `sync` lines so far (`result` lines).
 //
 // Usage: node tools/oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]...
 //   --default label=""   a prop set to this value counts as never set (e.g. a label written "")
@@ -57,7 +57,8 @@ function parseLine(line) {
       return { op, h: h(n), signal: flags ? `${signal} ${flags}` : signal, on: on === 'on' };
     }
     case 'event':
-    case 'sync': {
+    case 'sync':
+    case 'deferred': {
       // `event #h sig [args] [flags word]`
       const [, n, signal, rest] = sp(line, 4);
       const m = /^(.*\])(?: (\S+))?$/.exec(rest);
@@ -86,7 +87,6 @@ const camel = (name) => name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 /** Replays `text` (`camelProps`: compare prop names in camelCase); returns { boundaries: [{ line, state }], final, ops } (state = canonical JSON). */
 export function replay(text, { defaults = {}, camelProps = false } = {}) {
   const nodes = new Map(); // h -> { kind, props, parent, slots: Map, listening: Set, calls: [], attrs: Map }
-  const results = []; // `#h value` of each sync result so far
   const get = (h, line) => {
     const n = nodes.get(h);
     if (!n) throw new Error(`op on unknown or dead handle #${h}: ${line}`);
@@ -121,10 +121,12 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
       if (n.attrs.size) node.attrs = Object.fromEntries([...n.attrs].sort(([a], [b]) => (a < b ? -1 : 1)));
       return node;
     });
-    return JSON.stringify(results.length ? [...out, { results }] : out);
+    if (results.length) out.push({ h: 'results', results });
+    return JSON.stringify(out);
   };
 
   const boundaries = [];
+  const results = []; // sync results, in order
   const lines = text.split('\n').filter(Boolean);
   for (const line of lines) {
     const o = parseLine(line);
@@ -177,17 +179,19 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
         break;
       }
       case 'result':
-        results.push(`#${o.h} ${JSON.stringify(o.value)}`);
+        // the value JS returned to the toolkit for the preceding `sync`: part of the next state
+        results.push(`${o.h} ${JSON.stringify(o.value)}`);
         break;
       case 'event':
       case 'sync':
+      case 'deferred':
       case 'gone':
         boundaries.push({ line, state: snapshot() });
         if (o.op === 'gone') kill(o.h);
         break;
     }
   }
-  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|result|gone) /.test(l)).length };
+  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|deferred|result|gone) /.test(l)).length };
 }
 
 function firstDiff(a, b) {

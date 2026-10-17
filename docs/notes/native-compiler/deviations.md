@@ -167,6 +167,13 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   declaration site (Svelte's CSS pruning considers render sites).
 - **Text-content `{#if}`**: only `{#if}` (no `{#each}`/`{#key}`) folds into a text prop; branch
   edges are trimmed.
+- **`<ListView>` from `@svelters/lists`** (runtime-contract.md "Virtualized lists") is the
+  native runtime's own implementation (`src/lists.js`), not the package's `ListView.svelte`
+  compiled (that one needs `@svelters/renderer` and a spread on a native element). Same props,
+  exports and op log as the JS pipeline except the destroy order inside a teardown (content, then
+  outlet; the JS pipeline destroys the outlet first). Each row is a separate root mounted into its
+  outlet, with the list's contexts copied in (Svelte's `mount(RowHost, { context })` in the JS
+  pipeline). Rest props reach the native `virtuallist` unchecked (it is not in the specs).
 - `transform.rs` hook: `BindingKind::Template` reads as `$.get(x)` (read-only), `BindingKind::Snippet`
   as a thunk `x()` (`constant_assignment` on writes).
 

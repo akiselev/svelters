@@ -29,6 +29,13 @@ test('a differing prop, child order or listened signal is reported at its bounda
   assert.equal(compare(base, base.replace('listen #3 clicked on\n', '')).equal, false);
 });
 
+test('sync / deferred lines are boundaries and sync results are part of the state', () => {
+  const s = base.concat('sync #1 close-request []\nresult #1 true\ndeferred #3 clicked []\n');
+  assert.equal(compare(s, s).equal, true);
+  assert.equal(compare(s, s.replace('result #1 true', 'result #1 null')).equal, false);
+  assert.equal(compare(s, s.replace('deferred #3', 'sync #3')).equal, false);
+});
+
 test('defaults: a prop written with its default value counts as unset', () => {
   const extra = base.replace('create button #3\n', 'create button #3\nset #3 label ""\n');
   assert.equal(compare(base, extra).equal, false);
