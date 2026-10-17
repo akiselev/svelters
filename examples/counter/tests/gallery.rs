@@ -32,7 +32,7 @@ fn pages(tk: &str) -> Vec<String> {
     v
 }
 
-fn run_page(tk: &str, page: &str, classes: &[&str]) {
+fn run_page(tk: &str, page: &str, classes: &[&str], colors: &[(&str, f64)]) {
     let idx = pages(tk).iter().position(|p| p == page).unwrap_or_else(|| panic!("no page {page} in gallery-{tk}"));
     let dir = root().join("target/gallery");
     std::fs::create_dir_all(&dir).unwrap();
@@ -76,13 +76,38 @@ fn run_page(tk: &str, page: &str, classes: &[&str]) {
         }
     }
     assert!(png.is_file() && std::fs::metadata(&png).unwrap().len() > 500, "screenshot {} missing or empty", png.display());
+    if !colors.is_empty() {
+        check_colors(&png, colors);
+    }
+}
+
+/// Styling pages: the screenshot must contain each colour (exact pixels) in at least the given
+/// fraction of the image. Needs python3 with PIL; skipped with a note when they are missing.
+fn check_colors(png: &Path, colors: &[(&str, f64)]) {
+    let out = Command::new("python3").arg(root().join("tools/dev/png_colors.py")).arg(png).args(colors.iter().map(|c| c.0)).output();
+    let Ok(out) = out else {
+        eprintln!("skipped colour check: python3 not available");
+        return;
+    };
+    if !out.status.success() {
+        eprintln!("skipped colour check: {}", String::from_utf8_lossy(&out.stderr));
+        return;
+    }
+    let found: Value = serde_json::from_slice(&out.stdout).expect("png_colors.py prints JSON");
+    for (hex, min) in colors {
+        let got = found[hex].as_f64().unwrap_or(0.0);
+        assert!(got >= *min, "{}: only {:.4} of the pixels are #{hex}, expected at least {min} ({found})", png.display(), got);
+    }
 }
 
 macro_rules! gallery_page {
     ($name:ident, $tk:literal, $page:literal, [$($class:literal),* $(,)?]) => {
+        gallery_page!($name, $tk, $page, [$($class),*], []);
+    };
+    ($name:ident, $tk:literal, $page:literal, [$($class:literal),* $(,)?], [$(($hex:literal, $min:expr)),* $(,)?]) => {
         #[test]
         fn $name() {
-            run_page($tk, $page, &[$($class),*]);
+            run_page($tk, $page, &[$($class),*], &[$(($hex, $min)),*]);
         }
     };
 }
@@ -99,6 +124,11 @@ gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButto
 gallery_page!(gtk_07_bars, "gtk", "07-bars", ["GtkHeaderBar", "GtkWindowControls"]);
 gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover", "GtkEmojiChooser"]);
 
+// Styling pages (X6): the light page paints the card (--sv-surface) and the accent button; the dark
+// variant switches the scheme and overrides the accent token, so its pixels are the dark palette.
+gallery_page!(gtk_10_styling, "gtk", "10-styling", ["GtkBox", "GtkLabel", "GtkButton", "GtkEntry"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
+gallery_page!(gtk_11_styling_dark, "gtk", "11-styling-dark", ["GtkBox", "GtkLabel", "GtkButton", "GtkEntry"], [("242424", 0.05), ("303030", 0.02), ("e5a50a", 0.005)]);
+
 gallery_page!(gtk_04_ranges, "gtk", "04-ranges", ["GtkProgressBar", "GtkLevelBar", "GtkScale", "GtkSpinButton", "GtkScrollbar"]);
 
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
@@ -112,4 +142,6 @@ gallery_page!(qt_07_selection, "qt", "07-selection", ["QComboBox", "QFontComboBo
 gallery_page!(qt_08_bars, "qt", "08-bars", ["QTabBar", "QDialogButtonBox", "QStatusBar", "QMenuBar", "QToolBar"]);
 gallery_page!(qt_10_display, "qt", "10-display", ["QCalendarWidget", "QDateEdit", "QTimeEdit", "QDateTimeEdit"]);
 gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);
+gallery_page!(qt_11_styling, "qt", "11-styling", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
+gallery_page!(qt_12_styling_dark, "qt", "12-styling-dark", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("242424", 0.05), ("303030", 0.02), ("e5a50a", 0.005)]);
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);
