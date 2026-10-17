@@ -71,4 +71,35 @@ Decision: **sort/filter in JS, push the result.** The app sorts or filters its a
 
 ## Completion record
 
-(filled in at the end)
+Branch `worktree-agent-a8dce564007788244` (not merged). Notes: `docs/notes/m5-lists.md`.
+
+- **Commits:** 6321590 lists package + renderer outlets + virtual-list fixture; 28a8e17 GTK `virtuallist` + protocol text; d6defe9 lists-stress fixture and range-replace collapse; fb33e06 GTK end-to-end test; abd7024 Qt `virtuallist` + Qt end-to-end test.
+- **Delivered:** `virtuallist` on GTK (`crates/svelters-gtk/src/backend/vlist.rs`: `GListModel` of ids, `GtkSignalListItemFactory`, ScrolledWindow > ListView/GridView) and Qt (`tools/metadata/qt/templates/vlist.hpp.in`: `QAbstractListModel` of ids + viewport-pooled row widgets over a `QListView`); `@svelters/lists` (`ListView`, keyed diff, row pool); renderer `outlet()`/`releaseOutlet()`/`WNode.setProp`.
+- **Svelte API:** `<ListView items key row layout selection bind:selected rowHeight minHeight onactivate>` with `{#snippet row(item, index)}`, `bind:this` for `scrollTo(i)`. Rows are ordinary component instances that are reused, so `bind:` and `bind:this` inside rows work. Use `$state.raw` for big arrays.
+- **Tests:** `packages/lists` diff tests 9; fixtures `virtual-list` (scripted bind/unbind, 120 ops) and `lists-stress` (125 ops) on the TestHost; GTK `tests/vlist.rs` (native protocol, 10k) and `tests/lists_e2e.rs` (Svelte list, 10k and 100k, 35 steps); Qt `tests/lists_e2e.rs` (same 35 steps). Asserted: exact notifications (`append` is one `items-changed(10000,0,1)`, `removeMiddle` `(5,3,0)`, a move is remove + insert, rename of same keys raises none, a reverse or sort at most 4, a scattered filter collapses to one), pool size O(visible) for 10k/100k items, scroll to end/middle on 100k, selection and activation both ways, and handle accounting (hide list: `start - 1` handles; show again: exactly `start`; 3 fill/scroll/clear cycles do not grow the table).
+- **Benchmarks** (debug test profile, QuickJS at -O2, shared machine at load ~35, so read them as ratios; click to condition, includes 15 ms polling; `lists_e2e -- --nocapture`):
+
+| step | GTK ms | Qt ms |
+|---|---|---|
+| fill 10k (first) | 1359 | 175 |
+| fill 100k | 3229 | 2002 |
+| append / prepend / removeFirst (10k) | 271 / 306 / 307 | 105 / 102 / 86 |
+| moveFirst | 818 | 278 |
+| reverse / sortDesc (10k) | 1581 / 1049 | 198 / 341 |
+| odd filter | 1819 | 203 |
+| scroll to end / start (10k) | 268 / 166 | 16 / 16 |
+| scroll to end / mid (100k) | 186 / 169 | 16 / 16 |
+| clear | 166 | 112 |
+
+  For comparison P5's 1000-row `{#each}` list was 1.5-1.9 s fill, 0.32 s update and 1.7-1.8 s reverse in JS alone, plus toolkit time. A 10k `ListView` fills in about the time of that 1k list and a 100k one is a few seconds; what remains is Svelte reading every item for the key (O(n) per update). Scrolling costs only the rebinds of the rows that enter. GTK numbers are higher than Qt because they include GTK layout of the whole `GtkListView` under cairo.
+- **Gaps:** G6 and the model-view part of G8 recorded in `metadata/A1-GAPS.md`.
+- **Open issues:**
+  1. `update()` is O(n) per change (keys of all items are read). An append to a 100k list costs one pass in JS. A `push`-aware fast path (compare lengths and the last key) would make it O(1).
+  2. Qt `beginMoveRows` is not used; a move is remove + insert.
+  3. ColumnView/TableView/TreeView and combo/dropdown models are not covered; `virtuallist` is a single-column list/grid.
+  4. Qt rows need a uniform `rowHeight`. Qt grid cells are square (`rowHeight`).
+  5. A row widget keeps its stale content while unbound; hidden on Qt, off-screen on GTK.
+  6. When the whole `virtuallist` dies natively, JS learns of the row outlets only through `ListController.detach` (component destroy); the outlets are not in the native tree so the death cascade does not reach them.
+  7. GTK may create an oversized first pool (205 slots for a 300px view) because the first layout runs before the window has its size and while JS is still busy; GTK trims it later. A 32px placeholder per slot (`rowHeight`) limits it.
+  8. `GtkListBox`/`GtkFlowBox` sort/filter/header funcs (G8) not done.
+  9. Merge note: root `Cargo.toml` gains `[profile.dev.package.rquickjs-sys] opt-level = 2`; `packages/testhost/bin/svelters-test.mjs` forbids quoted `node:` specifiers instead of any `node:` text (Svelte's JSDoc contains it).

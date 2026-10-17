@@ -16,9 +16,9 @@ some blocked facts are not worth exposing anyway.
 | G3 | Object-returning getters (borrowed handles) | GTK: 154 methods; Qt: ~60 | gtk-text-b, qt-text-b, qt-selection |
 | G4 | Boxed/value types: **mostly closed by S1 (ABI v3, master 8071bb2)**; open: out params, GTK time-only/date-only records, model data | re-check per kind | gtk-display, qt-display |
 | G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; open: typed `value` results, listen phases, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
-| G6 | Model-backed views (GListModel, QAbstractItemModel) | 12 GTK kinds, 11 Qt kinds | gtk-lists-b, qt-lists-b (M5) |
+| G6 | Model-backed views (GListModel, QAbstractItemModel): **closed by X5 (branch worktree-agent-a8dce564007788244, 28a8e17 GTK, abd7024 Qt)** through the portable `virtuallist` kind (`packages/lists`, `plans/milestones/M5-lists.md`). Open: ColumnView/TableView/TreeView columns, `GtkDropDown`/`GtkComboBox`/`QComboBox` models, `GtkTreeView`/`QTreeView` hierarchies | the 12 GTK / 11 Qt view kinds map to `virtuallist` (list, grid); the rest stay as listed | gtk-lists-b, qt-lists-b (re-run) |
 | G7 | Non-widget child objects (QAction, GMenuModel) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
-| G8 | Native-to-JS callbacks (draw functions, sort/filter funcs) | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
+| G8 | Native-to-JS callbacks (draw functions, sort/filter funcs): **sort/filter for model-backed views closed by X5 by design** (JS sorts and filters, the keyed diff pushes minimal splices; no `GtkSortListModel`/`QSortFilterProxyModel` with JS funcs, see M5-lists.md). Open: DrawingArea draw func, `GtkListBox`/`GtkFlowBox` sort/filter/header funcs (they have widget children, not a model; use the same JS-side approach or a CALLBACK-based func), `scale_format_value_func` | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
 
 ## G1: child attributes
 
