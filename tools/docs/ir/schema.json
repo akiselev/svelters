@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://svelters.dev/schemas/svelters-docs-ir/v0.json",
+  "title": "svelters-docs-ir/v0",
+  "description": "Toolkit-neutral documentation IR. One document per toolkit, emitted by that toolkit's frontend (tools/docs/<toolkit>/). The site generator consumes only this. Toolkit-specific facts go in `extensions.<toolkit>` (typed by `extension_schemas`, rendered generically as key/value panels).",
+  "type": "object",
+  "required": ["schema", "toolkit", "entities", "coverage"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "svelters-docs-ir/v0" },
+    "toolkit": { "$ref": "#/$defs/toolkit" },
+    "entities": { "type": "array", "items": { "$ref": "#/$defs/entity" } },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "extension_schemas": {
+      "description": "Declares the fields of each extensions.<toolkit> block so the output can render it with no toolkit code.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["title", "fields"],
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["key", "label"],
+              "additionalProperties": false,
+              "properties": {
+                "key": { "type": "string" },
+                "label": { "type": "string" },
+                "format": { "enum": ["text", "code", "list", "markdown"] },
+                "scope": { "enum": ["entity", "property", "event", "method"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9_-]+:[^\\s#]+$", "description": "Entity id: <toolkit>:<qualified name>, e.g. gtk:Gtk.Button, qt:QPushButton. Member refs append #<kind>:<name>." },
+    "license": {
+      "type": "object",
+      "required": ["spdx", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "spdx": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "attribution": { "type": "string" },
+        "redistribution": { "enum": ["full", "brief_only", "link_only"], "description": "How much text of this license the output may include (the safe default is decided per frontend and configurable)." }
+      }
+    },
+    "toolkit": {
+      "type": "object",
+      "required": ["id", "name", "version", "language", "doc_license"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "language": { "type": "string" },
+        "status": { "enum": ["working", "prototype", "planned", "research"] },
+        "doc_license": { "$ref": "#/$defs/license" },
+        "upstream_docs": { "type": "string", "description": "Base URL of the upstream documentation." },
+        "text_policy": { "enum": ["full", "brief_only", "link_only"], "description": "Text policy actually applied to this IR." },
+        "sources": {
+          "type": "array",
+          "items": { "type": "object", "required": ["name"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "sha256": { "type": "string" } } }
+        },
+        "notices": { "type": "array", "items": { "type": "string" }, "description": "Attribution / licence notices the output must render on every page that includes upstream text." }
+      }
+    },
+    "text": {
+      "description": "A block of documentation text with provenance and licence. `md` uses CommonMark; cross-references are links with an `xref:<id>` target, e.g. [Button](xref:gtk:Gtk.Button) or [label](xref:gtk:Gtk.Button#property:label).",
+      "type": "object",
+      "required": ["md", "license"],
+      "additionalProperties": false,
+      "properties": {
+        "md": { "type": "string" },
+        "license": { "type": "string", "description": "SPDX id; must match toolkit.doc_license.spdx or be MIT/project." },
+        "origin": { "enum": ["gir", "qdoc", "qdoc-html", "manual", "generated"] },
+        "truncated": { "type": "boolean", "description": "True when only a brief of the upstream text is included." },
+        "upstream_url": { "type": "string" }
+      }
+    },
+    "typeref": {
+      "type": "object",
+      "required": ["display"],
+      "additionalProperties": false,
+      "properties": {
+        "display": { "type": "string", "description": "TypeScript-facing type as shown in docs." },
+        "native": { "type": "string", "description": "Native spelling (C / C++)." },
+        "ref": { "type": "string", "description": "Entity id when the type is a documented entity." },
+        "nullable": { "type": "boolean" },
+        "neutral": { "type": "string", "description": "Neutral vocabulary ref from the element-kind metadata." }
+      }
+    },
+    "param": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "$ref": "#/$defs/typeref" },
+        "default": { "type": ["string", "null"] },
+        "doc": { "type": "string" }
+      }
+    },
+    "availability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "since": { "type": ["string", "null"] },
+        "deprecated": { "type": ["boolean", "string", "null"], "description": "true, a version string, or null/false." },
+        "deprecated_note": { "type": "string" }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9_-]+$" },
+      "additionalProperties": { "type": "object" }
+    },
+    "origin": { "enum": ["gir", "runtime", "qdoc", "metaobject", "typesystem", "apiextractor", "manual", "derived"] },
+    "member_common": {
+      "type": "object",
+      "required": ["name", "origin"],
+      "properties": {
+        "name": { "type": "string" },
+        "origin": { "$ref": "#/$defs/origin" },
+        "origins": { "type": "array", "items": { "$ref": "#/$defs/origin" }, "description": "Every source that contributed facts." },
+        "annotated": { "type": "boolean", "description": "Carries hand/agent annotation (override file)." },
+        "availability": { "$ref": "#/$defs/availability" },
+        "doc": { "$ref": "#/$defs/text" },
+        "extensions": { "$ref": "#/$defs/extensions" },
+        "native_id": { "type": "string" }
+      }
+    },
+    "property": {
+      "allOf": [{ "$ref": "#/$defs/member_common" }],
+      "type": "object",
+      "required": ["name", "origin", "js_name", "type", "access"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "js_name": { "type": "string" },
+        "type": { "$ref": "#/$defs/typeref" },
+        "default": { "type": ["string", "null"], "description": "Display string; null = unknown." },
+        "range": { "type": ["object", "null"], "properties": { "min": {}, "max": {} } },
+        "access": { "type": "object", "required": ["read", "write"], "additionalProperties": false, "properties": { "read": { "type": "boolean" }, "write": { "type": "boolean" }, "construct_only": { "type": "boolean" } } },
+        "notify": { "type": ["string", "null"], "description": "Change notification (GTK notify::x, Qt xChanged())." },
+        "bindable": { "type": "boolean", "description": "bind:<prop> is possible (needs a notify source). F1 binding support is in progress." },
+        "role": { "enum": ["value", "child_slot", "reference"] },
+        "accessors": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+        "name": {}, "origin": {}, "origins": {}, "annotated": {}, "availability": {}, "doc": {}, "extensions": {}, "native_id": {}
+      }
+    },
+    "event": {
+      "allOf": [{ "$ref": "#/$defs/member_common" }],
+      "type": "object",
+      "required": ["name", "origin", "js_event", "params"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "js_event": { "type": "string" },
+        "handler_prop": { "type": "string", "description": "Svelte attribute that attaches a handler, e.g. onclicked." },
+        "params": { "type": "array", "items": { "$ref": "#/$defs/param" } },
+        "returns": { "$ref": "#/$defs/typeref" },
+        "handler_result": { "enum": ["none", "bool_stop", "value"] },
+        "sync_required": { "type": "boolean" },
+        "phase": { "type": ["string", "null"] },
+        "flags": { "type": "array", "items": { "type": "string" } },
+        "name": {}, "origin": {}, "origins": {}, "annotated": {}, "availability": {}, "doc": {}, "extensions": {}, "native_id": {}
+      }
+    },
+    "method": {
+      "allOf": [{ "$ref": "#/$defs/member_common" }],
+      "type": "object",
+      "required": ["name", "origin", "signature", "params"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "signature": { "type": "string" },
+        "params": { "type": "array", "items": { "$ref": "#/$defs/param" } },
+        "returns": { "$ref": "#/$defs/typeref" },
+        "static": { "type": "boolean" },
+        "virtual": { "type": "boolean" },
+        "access": { "type": "string" },
+        "kind": { "enum": ["method", "constructor", "slot", "invokable"] },
+        "unsupported_reason": { "type": ["string", "null"] },
+        "name": {}, "origin": {}, "origins": {}, "annotated": {}, "availability": {}, "doc": {}, "extensions": {}, "native_id": {}
+      }
+    },
+    "value": {
+      "type": "object",
+      "required": ["name", "value"],
+      "additionalProperties": false,
+      "properties": { "name": { "type": "string" }, "nick": { "type": "string" }, "value": { "type": ["integer", "string"] }, "native": { "type": "string" }, "doc": { "$ref": "#/$defs/text" } }
+    },
+    "slot": {
+      "type": "object",
+      "required": ["name", "cardinality"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "cardinality": { "enum": ["one", "many"] },
+        "accepts": { "type": "array", "items": { "type": "string" } },
+        "default": { "type": "boolean" },
+        "order": { "type": ["string", "null"] },
+        "ops": { "type": "object", "description": "op name -> native call display string" },
+        "ownership": { "type": "object", "description": "effect name -> value, e.g. {set: 'child parented, old unparented', remove: 'child unparented'}", "additionalProperties": { "type": "string" } },
+        "on_remove": { "type": ["string", "null"] },
+        "attrs": { "type": "array", "items": { "type": "string" } },
+        "annotated": { "type": "boolean" },
+        "provenance": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "example": {
+      "type": "object",
+      "required": ["title", "lang", "code"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "lang": { "enum": ["svelte", "ts", "rust", "cpp", "css", "qss", "sh"] },
+        "code": { "type": "string" },
+        "generated": { "type": "boolean", "description": "Generated from metadata; illustrative." },
+        "tested": { "type": "boolean" }
+      }
+    },
+    "lifetime": {
+      "type": "object",
+      "required": ["class", "origin"],
+      "additionalProperties": false,
+      "properties": {
+        "class": { "enum": ["owned", "toplevel", "borrowed", "value", "unknown"] },
+        "origin": { "enum": ["derived", "manual"] },
+        "note": { "type": "string" }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "required": ["id", "kind", "name", "native_name", "status", "members"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["class", "interface", "enum", "flags", "struct", "boxed"] },
+        "name": { "type": "string" },
+        "qualified": { "type": "string" },
+        "native_name": { "type": "string" },
+        "abstract": { "type": "boolean" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Svelte element tags this entity is exposed as (empty for non-elements). Elements with the same tag in several toolkits are the 'portable' elements." },
+        "status": {
+          "type": "object",
+          "required": ["tier"],
+          "additionalProperties": false,
+          "properties": {
+            "tier": { "enum": ["annotated", "ingested"], "description": "annotated = hand/agent-annotated with generated tests (P kinds); ingested = raw upstream facts only." },
+            "tested": { "type": "boolean" },
+            "test_note": { "type": "string" },
+            "annotation_files": { "type": "array", "items": { "type": "string" }, "description": "Repo-relative override files (edit-this-annotation links)." },
+            "metadata_file": { "type": "string", "description": "Repo-relative generated metadata JSON." }
+          }
+        },
+        "summary": { "$ref": "#/$defs/text" },
+        "description": { "$ref": "#/$defs/text" },
+        "upstream": { "type": "object", "required": ["url", "label"], "additionalProperties": false, "properties": { "url": { "type": "string" }, "label": { "type": "string" } } },
+        "bases": { "type": "array", "items": { "type": "string" }, "description": "Inheritance chain, nearest first, as entity ids (documented or not)." },
+        "interfaces": { "type": "array", "items": { "type": "string" } },
+        "availability": { "$ref": "#/$defs/availability" },
+        "lifetime": { "$ref": "#/$defs/lifetime" },
+        "properties": { "type": "array", "items": { "$ref": "#/$defs/property" } },
+        "events": { "type": "array", "items": { "$ref": "#/$defs/event" } },
+        "methods": { "type": "array", "items": { "$ref": "#/$defs/method" } },
+        "constructors": { "type": "array", "items": { "$ref": "#/$defs/method" } },
+        "values": { "type": "array", "items": { "$ref": "#/$defs/value" } },
+        "children": {
+          "type": "object",
+          "required": ["policy"],
+          "additionalProperties": false,
+          "properties": { "policy": { "type": "string" }, "default_slot": { "type": ["string", "null"] }, "slots": { "type": "array", "items": { "$ref": "#/$defs/slot" } }, "candidates": { "type": "array", "items": { "type": "string" } } }
+        },
+        "examples": { "type": "array", "items": { "$ref": "#/$defs/example" } },
+        "screenshot": { "type": "string", "description": "Screenshot key '<toolkit>/<slug>'; the file is a build artifact listed in the screenshot manifest." },
+        "serdes": { "type": "object", "required": ["status"], "additionalProperties": false, "properties": { "status": { "enum": ["unknown", "none", "partial", "full"] }, "note": { "type": "string" } } },
+        "see_also": { "type": "array", "items": { "type": "string" }, "description": "Entity ids (e.g. the same element in another toolkit is NOT listed here; the output derives that from tags)." },
+        "abi_symbols": { "type": "array", "items": { "type": "string" }, "description": "ABI symbols or concepts this entity touches (names from backend-abi.md), for cross-references." },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      }
+    },
+    "count_set": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["kinds", "annotated_kinds", "tested_kinds", "elements", "properties", "events", "methods", "serdes"],
+      "additionalProperties": false,
+      "properties": {
+        "kinds": { "type": "integer", "description": "All ingested kinds (entities)." },
+        "kinds_by_type": { "$ref": "#/$defs/count_set" },
+        "elements": { "type": "integer" },
+        "annotated_kinds": { "type": "integer" },
+        "tested_kinds": { "type": "integer" },
+        "properties": { "type": "integer" },
+        "events": { "type": "integer" },
+        "methods": { "type": "integer" },
+        "annotated_properties": { "type": "integer" },
+        "annotated_events": { "type": "integer" },
+        "properties_by_origin": { "$ref": "#/$defs/count_set" },
+        "docs": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "serdes": { "type": "object", "required": ["status"], "additionalProperties": false, "properties": { "status": { "enum": ["unknown", "known"] }, "supported_types": { "type": ["integer", "null"] }, "total_types": { "type": ["integer", "null"] } } }
+      }
+    }
+  }
+}

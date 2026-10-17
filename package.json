@@ -5,6 +5,11 @@
   "packageManager": "pnpm@10.33.0",
   "engines": { "node": ">=22" },
   "scripts": {
-    "test": "pnpm -r --workspace-concurrency=4 test"
+    "test": "pnpm -r --workspace-concurrency=4 --filter '!@svelters/docs' test",
+    "docs:ir": "python3 tools/docs/build_ir.py",
+    "docs:build": "python3 tools/docs/build_ir.py && pnpm --filter @svelters/docs build && pnpm --filter @svelters/docs check-links",
+    "docs:dev": "python3 tools/docs/build_ir.py && pnpm --filter @svelters/docs dev",
+    "docs:screenshots": "python3 tools/docs/screenshots/run.py",
+    "docs:test": "python3 -m unittest discover -s tools/docs -p 'test_*.py' && pnpm --filter @svelters/docs test"
   }
 }
