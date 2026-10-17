@@ -4,6 +4,7 @@ packages:
   - "bench/*"
   - "tests/*"
   - "experiments/native-compiler/handwritten"
+  - "experiments/native-compiler/compiled"
 
 # Every package resolves svelte to the vendored custom-renderer fork (see vendor/svelte/PIN).
 overrides:
