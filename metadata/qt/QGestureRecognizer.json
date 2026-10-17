@@ -27,43 +27,54 @@
   ],
   "enums": [
     {
+      "flags_alias": "QGestureRecognizer::Result",
+      "fullname": "QGestureRecognizer::ResultFlag",
       "members": [
         {
+          "cpp": "QGestureRecognizer::Ignore",
           "name": "Ignore",
           "value": "0x0001"
         },
         {
+          "cpp": "QGestureRecognizer::MayBeGesture",
           "name": "MayBeGesture",
           "value": "0x0002"
         },
         {
+          "cpp": "QGestureRecognizer::TriggerGesture",
           "name": "TriggerGesture",
           "value": "0x0004"
         },
         {
+          "cpp": "QGestureRecognizer::FinishGesture",
           "name": "FinishGesture",
           "value": "0x0008"
         },
         {
+          "cpp": "QGestureRecognizer::CancelGesture",
           "name": "CancelGesture",
           "value": "0x0010"
         },
         {
+          "cpp": "QGestureRecognizer::ResultState_Mask",
           "name": "ResultState_Mask",
           "value": "0x00ff"
         },
         {
+          "cpp": "QGestureRecognizer::ConsumeEventHint",
           "name": "ConsumeEventHint",
           "value": "0x0100"
         },
         {
+          "cpp": "QGestureRecognizer::ResultHint_Mask",
           "name": "ResultHint_Mask",
           "value": "0xff00"
         }
       ],
       "metaobject": null,
       "name": "ResultFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGestureRecognizer",
@@ -157,7 +168,7 @@
         "native": "QGestureRecognizer::Result",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGestureRecognizer::ResultFlag>"
       },
       "signature": "QGestureRecognizer::Result recognize(QGesture *gesture, QObject *watched, QEvent *event) = 0",
       "since": null,
@@ -194,7 +205,7 @@
         "native": "Qt::GestureType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureType>"
       },
       "signature": "Qt::GestureType registerRecognizer(QGestureRecognizer *recognizer)",
       "since": null,
@@ -260,7 +271,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],

@@ -31,7 +31,7 @@
             "native": "QMessageBox::Icon",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::Icon>"
           }
         },
         {
@@ -61,7 +61,7 @@
             "native": "QMessageBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::StandardButton>"
           }
         },
         {
@@ -81,7 +81,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -149,7 +149,7 @@
             "native": "QMessageBox::Icon",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::Icon>"
           }
         },
         {
@@ -199,7 +199,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -211,48 +211,61 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QMessageBox::ButtonRole",
       "members": [
         {
+          "cpp": "QMessageBox::InvalidRole",
           "name": "InvalidRole",
           "value": "-1"
         },
         {
+          "cpp": "QMessageBox::AcceptRole",
           "name": "AcceptRole",
           "value": "0"
         },
         {
+          "cpp": "QMessageBox::RejectRole",
           "name": "RejectRole",
           "value": "1"
         },
         {
+          "cpp": "QMessageBox::DestructiveRole",
           "name": "DestructiveRole",
           "value": "2"
         },
         {
+          "cpp": "QMessageBox::ActionRole",
           "name": "ActionRole",
           "value": "3"
         },
         {
+          "cpp": "QMessageBox::HelpRole",
           "name": "HelpRole",
           "value": "4"
         },
         {
+          "cpp": "QMessageBox::YesRole",
           "name": "YesRole",
           "value": "5"
         },
         {
+          "cpp": "QMessageBox::NoRole",
           "name": "NoRole",
           "value": "6"
         },
         {
+          "cpp": "QMessageBox::ResetRole",
           "name": "ResetRole",
           "value": "7"
         },
         {
+          "cpp": "QMessageBox::ApplyRole",
           "name": "ApplyRole",
           "value": "8"
         },
         {
+          "cpp": "QMessageBox::NRoles",
           "name": "NRoles",
           "value": "9"
         }
@@ -275,27 +288,35 @@
         "scoped": false
       },
       "name": "ButtonRole",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QMessageBox::Icon",
       "members": [
         {
+          "cpp": "QMessageBox::NoIcon",
           "name": "NoIcon",
           "value": "0"
         },
         {
+          "cpp": "QMessageBox::Information",
           "name": "Information",
           "value": "1"
         },
         {
+          "cpp": "QMessageBox::Warning",
           "name": "Warning",
           "value": "2"
         },
         {
+          "cpp": "QMessageBox::Critical",
           "name": "Critical",
           "value": "3"
         },
         {
+          "cpp": "QMessageBox::Question",
           "name": "Question",
           "value": "4"
         }
@@ -312,11 +333,15 @@
         "scoped": false
       },
       "name": "Icon",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QMessageBox::Options",
+      "fullname": "QMessageBox::Option",
       "members": [
         {
+          "cpp": "QMessageBox::Option::DontUseNativeDialog",
           "name": "DontUseNativeDialog",
           "value": "0x00000001"
         }
@@ -329,115 +354,145 @@
         "scoped": true
       },
       "name": "Option",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": true
     },
     {
+      "flags_alias": "QMessageBox::StandardButtons",
+      "fullname": "QMessageBox::StandardButton",
       "members": [
         {
+          "cpp": "QMessageBox::NoButton",
           "name": "NoButton",
           "value": "0x00000000"
         },
         {
+          "cpp": "QMessageBox::Ok",
           "name": "Ok",
           "value": "0x00000400"
         },
         {
+          "cpp": "QMessageBox::Save",
           "name": "Save",
           "value": "0x00000800"
         },
         {
+          "cpp": "QMessageBox::SaveAll",
           "name": "SaveAll",
           "value": "0x00001000"
         },
         {
+          "cpp": "QMessageBox::Open",
           "name": "Open",
           "value": "0x00002000"
         },
         {
+          "cpp": "QMessageBox::Yes",
           "name": "Yes",
           "value": "0x00004000"
         },
         {
+          "cpp": "QMessageBox::YesToAll",
           "name": "YesToAll",
           "value": "0x00008000"
         },
         {
+          "cpp": "QMessageBox::No",
           "name": "No",
           "value": "0x00010000"
         },
         {
+          "cpp": "QMessageBox::NoToAll",
           "name": "NoToAll",
           "value": "0x00020000"
         },
         {
+          "cpp": "QMessageBox::Abort",
           "name": "Abort",
           "value": "0x00040000"
         },
         {
+          "cpp": "QMessageBox::Retry",
           "name": "Retry",
           "value": "0x00080000"
         },
         {
+          "cpp": "QMessageBox::Ignore",
           "name": "Ignore",
           "value": "0x00100000"
         },
         {
+          "cpp": "QMessageBox::Close",
           "name": "Close",
           "value": "0x00200000"
         },
         {
+          "cpp": "QMessageBox::Cancel",
           "name": "Cancel",
           "value": "0x00400000"
         },
         {
+          "cpp": "QMessageBox::Discard",
           "name": "Discard",
           "value": "0x00800000"
         },
         {
+          "cpp": "QMessageBox::Help",
           "name": "Help",
           "value": "0x01000000"
         },
         {
+          "cpp": "QMessageBox::Apply",
           "name": "Apply",
           "value": "0x02000000"
         },
         {
+          "cpp": "QMessageBox::Reset",
           "name": "Reset",
           "value": "0x04000000"
         },
         {
+          "cpp": "QMessageBox::RestoreDefaults",
           "name": "RestoreDefaults",
           "value": "0x08000000"
         },
         {
+          "cpp": "QMessageBox::FirstButton",
           "name": "FirstButton",
           "value": "Ok"
         },
         {
+          "cpp": "QMessageBox::LastButton",
           "name": "LastButton",
           "value": "RestoreDefaults"
         },
         {
+          "cpp": "QMessageBox::YesAll",
           "name": "YesAll",
           "value": "YesToAll"
         },
         {
+          "cpp": "QMessageBox::NoAll",
           "name": "NoAll",
           "value": "NoToAll"
         },
         {
+          "cpp": "QMessageBox::Default",
           "name": "Default",
           "value": "0x00000100"
         },
         {
+          "cpp": "QMessageBox::Escape",
           "name": "Escape",
           "value": "0x00000200"
         },
         {
+          "cpp": "QMessageBox::FlagMask",
           "name": "FlagMask",
           "value": "0x00000300"
         },
         {
+          "cpp": "QMessageBox::ButtonMask",
           "name": "ButtonMask",
           "value": "~FlagMask"
         }
@@ -476,7 +531,8 @@
         "scoped": false
       },
       "name": "StandardButton",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QMessageBox",
@@ -609,7 +665,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -656,7 +712,7 @@
             "native": "QMessageBox::ButtonRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::ButtonRole>"
           }
         }
       ],
@@ -703,7 +759,7 @@
             "native": "QMessageBox::ButtonRole",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::ButtonRole>"
           }
         }
       ],
@@ -740,7 +796,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -785,7 +841,7 @@
         "native": "QMessageBox::ButtonRole",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::ButtonRole>"
       },
       "signature": "QMessageBox::ButtonRole buttonRole(QAbstractButton *button) const",
       "since": null,
@@ -848,7 +904,7 @@
         "native": "QList<QAbstractButton *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QAbstractButton>>"
       },
       "signature": "QList<QAbstractButton *> buttons() const",
       "since": null,
@@ -1033,7 +1089,7 @@
             "native": "QMessageBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::StandardButton>"
           }
         },
         {
@@ -1043,7 +1099,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -1051,7 +1107,7 @@
         "native": "QMessageBox::StandardButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::StandardButton>"
       },
       "signature": "QMessageBox::StandardButton critical(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)",
       "since": null,
@@ -1412,7 +1468,7 @@
         "native": "QMessageBox::Icon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::Icon>"
       },
       "signature": "QMessageBox::Icon icon() const",
       "since": null,
@@ -1438,7 +1494,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap iconPixmap() const",
       "since": null,
@@ -1497,7 +1553,7 @@
             "native": "QMessageBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::StandardButton>"
           }
         },
         {
@@ -1507,7 +1563,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -1515,7 +1571,7 @@
         "native": "QMessageBox::StandardButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::StandardButton>"
       },
       "signature": "QMessageBox::StandardButton information(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)",
       "since": null,
@@ -1845,7 +1901,7 @@
         "native": "QMessageBox::Options",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QMessageBox::Option>"
       },
       "signature": "QMessageBox::Options options() const",
       "since": null,
@@ -1904,7 +1960,7 @@
             "native": "QMessageBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::StandardButton>"
           }
         },
         {
@@ -1914,7 +1970,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -1922,7 +1978,7 @@
         "native": "QMessageBox::StandardButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::StandardButton>"
       },
       "signature": "QMessageBox::StandardButton question(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)",
       "since": null,
@@ -2303,7 +2359,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -2451,7 +2507,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -2488,7 +2544,7 @@
             "native": "QMessageBox::Icon",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::Icon>"
           }
         }
       ],
@@ -2525,7 +2581,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -2599,7 +2655,7 @@
             "native": "QMessageBox::Option",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::Option>"
           }
         },
         {
@@ -2646,7 +2702,7 @@
             "native": "QMessageBox::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::Option>"
           }
         }
       ],
@@ -2683,7 +2739,7 @@
             "native": "QMessageBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -2757,7 +2813,7 @@
             "native": "Qt::TextFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextFormat>"
           }
         }
       ],
@@ -2794,7 +2850,7 @@
             "native": "Qt::TextInteractionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::TextInteractionFlag>"
           }
         }
       ],
@@ -2831,7 +2887,7 @@
             "native": "Qt::WindowModality",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WindowModality>"
           }
         }
       ],
@@ -2950,7 +3006,7 @@
         "native": "QMessageBox::StandardButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::StandardButton>"
       },
       "signature": "QMessageBox::StandardButton standardButton(QAbstractButton *button) const",
       "since": null,
@@ -2976,7 +3032,7 @@
         "native": "QMessageBox::StandardButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QMessageBox::StandardButton>"
       },
       "signature": "QMessageBox::StandardButtons standardButtons() const",
       "since": null,
@@ -3005,7 +3061,7 @@
             "native": "QMessageBox::Icon",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::Icon>"
           }
         }
       ],
@@ -3013,7 +3069,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap standardIcon(QMessageBox::Icon icon)",
       "since": null,
@@ -3042,7 +3098,7 @@
             "native": "QMessageBox::Option",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::Option>"
           }
         }
       ],
@@ -3102,7 +3158,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       },
       "signature": "Qt::TextFormat textFormat() const",
       "since": null,
@@ -3128,7 +3184,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       },
       "signature": "Qt::TextInteractionFlags textInteractionFlags() const",
       "since": null,
@@ -3187,7 +3243,7 @@
             "native": "QMessageBox::StandardButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMessageBox::StandardButton>"
           }
         },
         {
@@ -3197,7 +3253,7 @@
             "native": "QMessageBox::StandardButton",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMessageBox::StandardButton>"
           }
         }
       ],
@@ -3205,7 +3261,7 @@
         "native": "QMessageBox::StandardButton",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QMessageBox::StandardButton>"
       },
       "signature": "QMessageBox::StandardButton warning(QWidget *parent, const QString &title, const QString &text, QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)",
       "since": null,
@@ -3555,7 +3611,7 @@
         "native": "Icon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Icon>"
+        "ref": "enum<QMessageBox::Icon>"
       }
     },
     {
@@ -3595,7 +3651,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       }
     },
     {
@@ -3675,7 +3731,7 @@
         "native": "Options",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QMessageBox::Option>"
       }
     },
     {
@@ -3715,7 +3771,7 @@
         "native": "StandardButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QMessageBox::StandardButton>"
       }
     },
     {
@@ -3795,7 +3851,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       }
     },
     {
@@ -3835,7 +3891,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       }
     }
   ],

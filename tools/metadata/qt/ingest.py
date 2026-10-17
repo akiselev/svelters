@@ -36,19 +36,82 @@ def sha(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def neutral_type(native, qobjects, enums) -> dict:
-    """Map a C++ type spelling onto the neutral vocabulary; `native` keeps the original."""
+# Value classes that map onto the neutral record vocabulary (portable field names, see
+# docs/notes/js-native-serdes.md section 2.2) and the opaque value classes JS holds as boxed handles.
+RECORDS = {"QRect": "Rect", "QRectF": "Rect", "QSize": "Size", "QSizeF": "Size", "QPoint": "Point",
+           "QPointF": "Point", "QMargins": "Insets", "QMarginsF": "Insets", "QColor": "Color"}
+BOXED = {"QIcon", "QFont", "QPixmap", "QImage", "QBrush", "QPalette", "QCursor", "QKeySequence", "QUrl",
+         "QLocale", "QPainterPath", "QRegion", "QPicture", "QSizePolicy", "QTextCharFormat", "QTextFormat",
+         "QTextCursor", "QTextOption", "QPen", "QTransform", "QBitmap"}
+DATES = {"QDate": "date", "QTime": "time", "QDateTime": "datetime"}
+
+
+class EnumIndex:
+    """Enums and flags typedefs from the qdoc indexes, by fully qualified name.
+
+    Resolves the spellings qdoc uses for a property or parameter type: `Qt::TextFormat`,
+    `EchoMode` (relative to the class being documented), `Qt::Alignment` / `StandardButtons`
+    (a QFlags typedef) and `QFlags<Qt::AlignmentFlag>`.
+    """
+
+    def __init__(self, owners):
+        self.enums: dict = {}
+        self.alias: dict = {}
+        for owner, node in owners:
+            for e in node.findall("enum"):
+                full = e.get("fullname") or f"{owner}::{e.get('name')}"
+                self.enums[full] = {"owner": owner, "name": e.get("name"),
+                                    "members": [{"name": v.get("name"), "value": v.get("value")}
+                                                for v in e.findall("value")]}
+                if e.get("typedef"):
+                    self.alias[e.get("typedef")] = full
+            for t in node.findall("typedef"):
+                if t.get("enum"):
+                    self.alias[t.get("fullname") or f"{owner}::{t.get('name')}"] = t.get("enum")
+
+    def resolve(self, spelling: str, ctx):
+        m = re.match(r"^QFlags<(.+)>$", spelling)
+        if m:
+            r = self.resolve(m.group(1).strip(), ctx)
+            return ("flags", r[1]) if r else None
+        for cand in [spelling] + [f"{c}::{spelling}" for c in ctx]:
+            if cand in self.alias:
+                return ("flags", self.alias[cand])
+            if cand in self.enums:
+                return ("enum", cand)
+        return None
+
+
+def neutral_type(native, qobjects, enums, ctx=()) -> dict:
+    """Map a C++ type spelling onto the neutral vocabulary; `native` keeps the original.
+
+    `ctx` is the class being documented followed by its bases: it scopes unqualified enum names.
+    """
     n = (native or "void").strip()
     core = re.sub(r"\bconst\b", "", n).replace("&", "").strip()
     ptr = core.endswith("*")
     core = core.rstrip("*").strip()
     out: dict = {"native": n, "origin": "qdoc"}
+    en = None if ptr else enums.resolve(core, ctx)
     if ptr and core in qobjects:
         out.update(ref=f"object<{core}>", nullable=True)
     elif core in PRIM and not ptr:
         out.update(ref=PRIM[core], nullable=False)
-    elif core in enums and not ptr:
-        out.update(ref=f"enum<{core}>", nullable=False)
+    elif en and not ptr:
+        out.update(ref=f"{en[0]}<{en[1]}>", nullable=False)
+    elif core in RECORDS and not ptr:
+        out.update(ref=f"record<{RECORDS[core]}>", nullable=False)
+    elif core in DATES and not ptr:
+        out.update(ref=DATES[core], nullable=False)
+    elif core == "QByteArray" and not ptr:
+        out.update(ref="bytes", nullable=False)
+    elif core == "QStringList" and not ptr:
+        out.update(ref="list<string>", nullable=False)
+    elif core in BOXED and not ptr:
+        out.update(ref=f"boxed<{core}>", nullable=False)
+    elif core.startswith("QList<") and core.endswith(">") and not ptr:
+        inner = neutral_type(core[6:-1], qobjects, enums, ctx)
+        out.update(ref=f"list<{inner['ref']}>" if inner["ref"] != "opaque" else "list", nullable=False)
     elif core.startswith("QList<") or core.startswith("QStringList"):
         out.update(ref="list", nullable=False)
     else:
@@ -57,14 +120,17 @@ def neutral_type(native, qobjects, enums) -> dict:
 
 
 def parse_qdoc(docdir: Path):
-    classes, files = {}, {}
+    classes, files, namespaces = {}, {}, {}
     for mod in ("qtcore", "qtgui", "qtwidgets"):
         p = docdir / mod / f"{mod}.index"
         files[mod] = p
         root = ET.parse(p).getroot()
         for c in root.iter("class"):
             classes.setdefault(c.get("name"), (mod, c))
-    return classes, files
+        for ns in root.iter("namespace"):
+            if ns.get("name") == "Qt":
+                namespaces.setdefault("Qt", (mod, ns))
+    return classes, files, namespaces
 
 
 def direct_bases(name, classes):
@@ -164,6 +230,7 @@ def metaobject_dump(names):
 
 def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     prefix = src["id_prefix"]
+    ctx = [name] + base_chain(name, classes)
     ctors, methods, signals, props = [], [], [], []
     func_prop: dict = {}
     for f in c.findall("function"):
@@ -173,7 +240,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
             continue
         if acc not in ("public", "protected") or f.get("status") == "obsolete":
             continue
-        params = [{"name": p.get("name") or "", "type": neutral_type(p.get("type"), qobjects, enums),
+        params = [{"name": p.get("name") or "", "type": neutral_type(p.get("type"), qobjects, enums, ctx),
                    "default": p.get("default") or None} for p in f.findall("parameter")]
         sig = f.get("signature") or f.get("name")
         rec = {"name": f.get("name"), "signature": sig, "params": params, "access": acc, "origin": "qdoc",
@@ -183,7 +250,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
                           "returns": {"type": "self", "ownership": "parent_owned"},
                           "invocation": {"dev": "generated_thunk"}, "origin": "qdoc"})
             continue
-        rec["returns"] = neutral_type(f.get("type"), qobjects, enums)
+        rec["returns"] = neutral_type(f.get("type"), qobjects, enums, ctx)
         rec["virtual"] = f.get("virtual")
         rec["static"] = f.get("static") == "true"
         rec["const"] = f.get("const") == "true"
@@ -204,7 +271,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
         getter = next((a["name"] for a in accs if not a["params"]), None)
         setter = next((a["name"] for a in accs if len(a["params"]) == 1 and a["name"].startswith("set")), None)
         reset = next((a["name"] for a in accs if a["name"].startswith("reset")), None)
-        rec = {"name": pn, "js_name": pn, "type": neutral_type(p.get("dataType"), qobjects, enums),
+        rec = {"name": pn, "js_name": pn, "type": neutral_type(p.get("dataType"), qobjects, enums, ctx),
                "access": {"read": True, "write": p.get("writable") != "false"},
                "accessors": {"get": getter, "set": setter, "reset": reset, "origin": "qdoc"},
                "brief": p.get("brief"), "role": "value", "origin": "qdoc"}
@@ -228,9 +295,15 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
         m["invocation"] = {"dev": "reflected" if refl else "generated_thunk", "origin": "metaobject" if refl else "qdoc"}
     enum_recs = []
     for e in c.findall("enum"):
-        enum_recs.append({"name": e.get("name"),
-                          "members": [{"name": v.get("name"), "value": v.get("value")} for v in e.findall("value")],
-                          "origin": "qdoc", "metaobject": (md or {}).get("enums", {}).get(e.get("name"))})
+        mo = (md or {}).get("enums", {}).get(e.get("name"))
+        scoped = bool(mo and mo.get("scoped"))
+        full = e.get("fullname") or f"{name}::{e.get('name')}"
+        enum_recs.append({"name": e.get("name"), "fullname": full, "flags_alias": e.get("typedef"),
+                          "scoped": scoped,
+                          "members": [{"name": v.get("name"), "value": v.get("value"),
+                                       "cpp": f"{full}::{v.get('name')}" if scoped else f"{name}::{v.get('name')}"}
+                                      for v in e.findall("value")],
+                          "origin": "qdoc", "metaobject": mo})
 
     def order(r):
         return (str(r.get("name") or r.get("id")), str(r.get("signature") or r.get("native") or ""))
@@ -252,6 +325,26 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     }
 
 
+def build_namespace(name, node, src):
+    """The `Qt` namespace: only its enums (and flags typedefs) matter to the backend generators."""
+    recs = []
+    for e in node.findall("enum"):
+        full = e.get("fullname") or f"{name}::{e.get('name')}"
+        recs.append({"name": e.get("name"), "fullname": full, "flags_alias": e.get("typedef"), "scoped": False,
+                     "members": [{"name": v.get("name"), "value": v.get("value"), "cpp": f"{name}::{v.get('name')}"}
+                                 for v in e.findall("value")],
+                     "origin": "qdoc", "metaobject": None})
+    return {
+        "schema": svmeta.SCHEMA, "toolkit": "qt", "id": f"{src['id_prefix']}:{name}",
+        "native": {"name": name, "header": node.get("location"), "module": "QtCore", "brief": node.get("brief")},
+        "kind": "namespace", "abstract": False, "qobject": False, "bases": [], "interfaces": [],
+        "availability": {"since": None, "deprecated": False},
+        "constructors": [], "properties": [], "signals": [], "methods": [],
+        "enums": sorted(recs, key=lambda r: r["fullname"]), "ownership": [],
+        "children": {"policy": "none", "default_slot": None, "slots": []}, "source": src["source"],
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--docdir", default="/usr/share/doc/qt6")
@@ -259,13 +352,14 @@ def main() -> int:
     ap.add_argument("--out", default=str(HERE.parents[2] / "metadata" / "qt"))
     a = ap.parse_args()
     docdir = Path(a.docdir)
-    classes, files = parse_qdoc(docdir)
+    classes, files, namespaces = parse_qdoc(docdir)
     widget_classes = sorted(
         n for n, (m, c) in classes.items()
         if m == "qtwidgets" and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
         and c.get("location") and "::" not in n and "<" not in n)
     qobjects = {n for n in classes if n == "QObject" or "QObject" in base_chain(n, classes)}
-    enums = {e.get("name") for _, c in classes.values() for e in c.findall("enum")}
+    owners = [(n, c) for n, (_, c) in sorted(classes.items())] + [(n, c) for n, (_, c) in sorted(namespaces.items())]
+    enums = EnumIndex(owners)
     meta, vers = metaobject_dump(widget_classes)
     tsys = parse_typesystem(Path(a.typesystem))
     source = {
@@ -284,6 +378,7 @@ def main() -> int:
             print(f"{n}: {errs}", file=sys.stderr)
             return 1
         wrote += svmeta.write_json(out / f"{n}.json", kind)
+    wrote += svmeta.write_json(out / "Qt.json", build_namespace("Qt", namespaces["Qt"][1], src))
     print(f"{len(widget_classes)} classes ({len(meta)} QObject with metaobject); {wrote} files changed")
     return 0
 

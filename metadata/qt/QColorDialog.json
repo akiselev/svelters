@@ -55,7 +55,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         },
         {
@@ -77,20 +77,26 @@
   ],
   "enums": [
     {
+      "flags_alias": "QColorDialog::ColorDialogOptions",
+      "fullname": "QColorDialog::ColorDialogOption",
       "members": [
         {
+          "cpp": "QColorDialog::ShowAlphaChannel",
           "name": "ShowAlphaChannel",
           "value": "0x00000001"
         },
         {
+          "cpp": "QColorDialog::NoButtons",
           "name": "NoButtons",
           "value": "0x00000002"
         },
         {
+          "cpp": "QColorDialog::DontUseNativeDialog",
           "name": "DontUseNativeDialog",
           "value": "0x00000004"
         },
         {
+          "cpp": "QColorDialog::NoEyeDropperButton",
           "name": "NoEyeDropperButton",
           "value": "0x00000008"
         }
@@ -106,7 +112,8 @@
         "scoped": false
       },
       "name": "ColorDialogOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QColorDialog",
@@ -169,7 +176,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor currentColor() const",
       "since": null,
@@ -206,7 +213,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor customColor(int index)",
       "since": null,
@@ -298,7 +305,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         },
         {
@@ -328,7 +335,7 @@
             "native": "QColorDialog::ColorDialogOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QColorDialog::ColorDialogOption>"
           }
         }
       ],
@@ -336,7 +343,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor getColor(const QColor &initial, QWidget *parent, const QString &title, QColorDialog::ColorDialogOptions options)",
       "since": null,
@@ -409,7 +416,7 @@
         "native": "QColorDialog::ColorDialogOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QColorDialog::ColorDialogOption>"
       },
       "signature": "QColorDialog::ColorDialogOptions options() const",
       "since": null,
@@ -435,7 +442,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor selectedColor() const",
       "since": null,
@@ -464,7 +471,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -511,7 +518,7 @@
             "native": "QColor",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -548,7 +555,7 @@
             "native": "QColorDialog::ColorDialogOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QColorDialog::ColorDialogOption>"
           }
         },
         {
@@ -595,7 +602,7 @@
             "native": "QColorDialog::ColorDialogOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QColorDialog::ColorDialogOption>"
           }
         }
       ],
@@ -642,7 +649,7 @@
             "native": "QColor",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -724,7 +731,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor standardColor(int index)",
       "since": null,
@@ -753,7 +760,7 @@
             "native": "QColorDialog::ColorDialogOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QColorDialog::ColorDialogOption>"
           }
         }
       ],
@@ -817,7 +824,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       }
     },
     {
@@ -857,7 +864,7 @@
         "native": "ColorDialogOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QColorDialog::ColorDialogOption>"
       }
     }
   ],
@@ -886,7 +893,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -921,7 +928,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],

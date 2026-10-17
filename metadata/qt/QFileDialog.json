@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -107,12 +107,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QFileDialog::AcceptMode",
       "members": [
         {
+          "cpp": "QFileDialog::AcceptOpen",
           "name": "AcceptOpen",
           "value": "0"
         },
         {
+          "cpp": "QFileDialog::AcceptSave",
           "name": "AcceptSave",
           "value": "1"
         }
@@ -126,50 +130,65 @@
         "scoped": false
       },
       "name": "AcceptMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFileDialog::DialogLabel",
       "members": [
         {
+          "cpp": "QFileDialog::LookIn",
           "name": "LookIn",
           "value": "0"
         },
         {
+          "cpp": "QFileDialog::FileName",
           "name": "FileName",
           "value": "1"
         },
         {
+          "cpp": "QFileDialog::FileType",
           "name": "FileType",
           "value": "2"
         },
         {
+          "cpp": "QFileDialog::Accept",
           "name": "Accept",
           "value": "3"
         },
         {
+          "cpp": "QFileDialog::Reject",
           "name": "Reject",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "DialogLabel",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFileDialog::FileMode",
       "members": [
         {
+          "cpp": "QFileDialog::AnyFile",
           "name": "AnyFile",
           "value": "0"
         },
         {
+          "cpp": "QFileDialog::ExistingFile",
           "name": "ExistingFile",
           "value": "1"
         },
         {
+          "cpp": "QFileDialog::Directory",
           "name": "Directory",
           "value": "2"
         },
         {
+          "cpp": "QFileDialog::ExistingFiles",
           "name": "ExistingFiles",
           "value": "3"
         }
@@ -185,35 +204,45 @@
         "scoped": false
       },
       "name": "FileMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QFileDialog::Options",
+      "fullname": "QFileDialog::Option",
       "members": [
         {
+          "cpp": "QFileDialog::ShowDirsOnly",
           "name": "ShowDirsOnly",
           "value": "0x00000001"
         },
         {
+          "cpp": "QFileDialog::DontResolveSymlinks",
           "name": "DontResolveSymlinks",
           "value": "0x00000002"
         },
         {
+          "cpp": "QFileDialog::DontConfirmOverwrite",
           "name": "DontConfirmOverwrite",
           "value": "0x00000004"
         },
         {
+          "cpp": "QFileDialog::DontUseNativeDialog",
           "name": "DontUseNativeDialog",
           "value": "0x00000008"
         },
         {
+          "cpp": "QFileDialog::ReadOnly",
           "name": "ReadOnly",
           "value": "0x00000010"
         },
         {
+          "cpp": "QFileDialog::HideNameFilterDetails",
           "name": "HideNameFilterDetails",
           "value": "0x00000020"
         },
         {
+          "cpp": "QFileDialog::DontUseCustomDirectoryIcons",
           "name": "DontUseCustomDirectoryIcons",
           "value": "0x00000040"
         }
@@ -232,15 +261,20 @@
         "scoped": false
       },
       "name": "Option",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QFileDialog::ViewMode",
       "members": [
         {
+          "cpp": "QFileDialog::Detail",
           "name": "Detail",
           "value": "0"
         },
         {
+          "cpp": "QFileDialog::List",
           "name": "List",
           "value": "1"
         }
@@ -254,7 +288,8 @@
         "scoped": false
       },
       "name": "ViewMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QFileDialog",
@@ -306,7 +341,7 @@
         "native": "QFileDialog::AcceptMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFileDialog::AcceptMode>"
       },
       "signature": "QFileDialog::AcceptMode acceptMode() const",
       "since": null,
@@ -421,7 +456,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl directoryUrl() const",
       "since": null,
@@ -484,7 +519,7 @@
         "native": "QFileDialog::FileMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFileDialog::FileMode>"
       },
       "signature": "QFileDialog::FileMode fileMode() const",
       "since": null,
@@ -510,7 +545,7 @@
         "native": "QDir::Filters",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDir::Filter>"
       },
       "signature": "QDir::Filters filter() const",
       "since": null,
@@ -569,7 +604,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         }
       ],
@@ -626,7 +661,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -636,7 +671,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         },
         {
@@ -646,7 +681,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -654,7 +689,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl getExistingDirectoryUrl(QWidget *parent, const QString &caption, const QUrl &dir, QFileDialog::Options options, const QStringList &supportedSchemes)",
       "since": null,
@@ -790,7 +825,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         }
       ],
@@ -877,7 +912,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         }
       ],
@@ -885,7 +920,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList getOpenFileNames(QWidget *parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options)",
       "since": null,
@@ -934,7 +969,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -964,7 +999,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         },
         {
@@ -974,7 +1009,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -982,7 +1017,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl getOpenFileUrl(QWidget *parent, const QString &caption, const QUrl &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options, const QStringList &supportedSchemes)",
       "since": null,
@@ -1031,7 +1066,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -1061,7 +1096,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         },
         {
@@ -1071,7 +1106,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -1079,7 +1114,7 @@
         "native": "QList<QUrl>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<boxed<QUrl>>"
       },
       "signature": "QList<QUrl> getOpenFileUrls(QWidget *parent, const QString &caption, const QUrl &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options, const QStringList &supportedSchemes)",
       "since": null,
@@ -1158,7 +1193,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         }
       ],
@@ -1215,7 +1250,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -1245,7 +1280,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         },
         {
@@ -1255,7 +1290,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -1263,7 +1298,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl getSaveFileUrl(QWidget *parent, const QString &caption, const QUrl &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options, const QStringList &supportedSchemes)",
       "since": null,
@@ -1289,7 +1324,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList history() const",
       "since": null,
@@ -1370,7 +1405,7 @@
             "native": "QFileDialog::DialogLabel",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::DialogLabel>"
           }
         }
       ],
@@ -1404,7 +1439,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList mimeTypeFilters() const",
       "since": null,
@@ -1430,7 +1465,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList nameFilters() const",
       "since": null,
@@ -1503,7 +1538,7 @@
         "native": "QFileDialog::Options",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QFileDialog::Option>"
       },
       "signature": "QFileDialog::Options options() const",
       "since": null,
@@ -1558,7 +1593,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         }
       ],
@@ -1595,7 +1630,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         },
         {
@@ -1649,7 +1684,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray saveState() const",
       "since": null,
@@ -1789,7 +1824,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1823,7 +1858,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList selectedFiles() const",
       "since": null,
@@ -1901,7 +1936,7 @@
         "native": "QList<QUrl>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<boxed<QUrl>>"
       },
       "signature": "QList<QUrl> selectedUrls() const",
       "since": null,
@@ -1930,7 +1965,7 @@
             "native": "QFileDialog::AcceptMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::AcceptMode>"
           }
         }
       ],
@@ -2078,7 +2113,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -2115,7 +2150,7 @@
             "native": "QFileDialog::FileMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::FileMode>"
           }
         }
       ],
@@ -2152,7 +2187,7 @@
             "native": "QDir::Filters",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDir::Filter>"
           }
         }
       ],
@@ -2189,7 +2224,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -2300,7 +2335,7 @@
             "native": "QFileDialog::DialogLabel",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::DialogLabel>"
           }
         },
         {
@@ -2347,7 +2382,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -2421,7 +2456,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -2458,7 +2493,7 @@
             "native": "QFileDialog::Option",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::Option>"
           }
         },
         {
@@ -2505,7 +2540,7 @@
             "native": "QFileDialog::Options",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFileDialog::Option>"
           }
         }
       ],
@@ -2579,7 +2614,7 @@
             "native": "const QList<QUrl> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<boxed<QUrl>>"
           }
         }
       ],
@@ -2616,7 +2651,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -2653,7 +2688,7 @@
             "native": "QFileDialog::ViewMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::ViewMode>"
           }
         }
       ],
@@ -2724,7 +2759,7 @@
         "native": "QList<QUrl>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<boxed<QUrl>>"
       },
       "signature": "QList<QUrl> sidebarUrls() const",
       "since": null,
@@ -2750,7 +2785,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList supportedSchemes() const",
       "since": null,
@@ -2779,7 +2814,7 @@
             "native": "QFileDialog::Option",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFileDialog::Option>"
           }
         }
       ],
@@ -2813,7 +2848,7 @@
         "native": "QFileDialog::ViewMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QFileDialog::ViewMode>"
       },
       "signature": "QFileDialog::ViewMode viewMode() const",
       "since": null,
@@ -2919,7 +2954,7 @@
         "native": "AcceptMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<AcceptMode>"
+        "ref": "enum<QFileDialog::AcceptMode>"
       }
     },
     {
@@ -2999,7 +3034,7 @@
         "native": "FileMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<FileMode>"
+        "ref": "enum<QFileDialog::FileMode>"
       }
     },
     {
@@ -3039,7 +3074,7 @@
         "native": "Options",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QFileDialog::Option>"
       }
     },
     {
@@ -3079,7 +3114,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       }
     },
     {
@@ -3119,7 +3154,7 @@
         "native": "ViewMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ViewMode>"
+        "ref": "enum<QFileDialog::ViewMode>"
       }
     }
   ],
@@ -3183,7 +3218,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -3253,7 +3288,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -3323,7 +3358,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -3393,7 +3428,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -3428,7 +3463,7 @@
             "native": "const QList<QUrl> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<boxed<QUrl>>"
           }
         }
       ],

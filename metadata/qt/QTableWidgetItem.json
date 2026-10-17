@@ -26,7 +26,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -116,19 +116,24 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QTableWidgetItem::ItemType",
       "members": [
         {
+          "cpp": "QTableWidgetItem::Type",
           "name": "Type",
           "value": "0"
         },
         {
+          "cpp": "QTableWidgetItem::UserType",
           "name": "UserType",
           "value": "1000"
         }
       ],
       "metaobject": null,
       "name": "ItemType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidgetItem",
@@ -154,7 +159,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush background() const",
       "since": null,
@@ -180,7 +185,7 @@
         "native": "Qt::CheckState",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CheckState>"
       },
       "signature": "Qt::CheckState checkState() const",
       "since": null,
@@ -295,7 +300,7 @@
         "native": "Qt::ItemFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::ItemFlag>"
       },
       "signature": "Qt::ItemFlags flags() const",
       "since": null,
@@ -321,7 +326,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font() const",
       "since": null,
@@ -347,7 +352,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush foreground() const",
       "since": null,
@@ -373,7 +378,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon icon() const",
       "since": null,
@@ -622,7 +627,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -659,7 +664,7 @@
             "native": "Qt::CheckState",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CheckState>"
           }
         }
       ],
@@ -743,7 +748,7 @@
             "native": "Qt::ItemFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::ItemFlag>"
           }
         }
       ],
@@ -780,7 +785,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -817,7 +822,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -854,7 +859,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -928,7 +933,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1039,7 +1044,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1184,7 +1189,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const",
       "since": null,

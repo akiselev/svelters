@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -52,27 +52,34 @@
   ],
   "enums": [
     {
+      "flags_alias": "QMdiSubWindow::SubWindowOptions",
+      "fullname": "QMdiSubWindow::SubWindowOption",
       "members": [
         {
+          "cpp": "QMdiSubWindow::AllowOutsideAreaHorizontally",
           "name": "AllowOutsideAreaHorizontally",
           "value": "0x1"
         },
         {
+          "cpp": "QMdiSubWindow::AllowOutsideAreaVertically",
           "name": "AllowOutsideAreaVertically",
           "value": "0x2"
         },
         {
+          "cpp": "QMdiSubWindow::RubberBandResize",
           "name": "RubberBandResize",
           "value": "0x4"
         },
         {
+          "cpp": "QMdiSubWindow::RubberBandMove",
           "name": "RubberBandMove",
           "value": "0x8"
         }
       ],
       "metaobject": null,
       "name": "SubWindowOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QMdiSubWindow",
@@ -619,7 +626,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -981,7 +988,7 @@
             "native": "QMdiSubWindow::SubWindowOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiSubWindow::SubWindowOption>"
           }
         },
         {
@@ -1188,7 +1195,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1243,7 +1250,7 @@
             "native": "QMdiSubWindow::SubWindowOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QMdiSubWindow::SubWindowOption>"
           }
         }
       ],
@@ -1477,7 +1484,7 @@
             "native": "Qt::WindowStates",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowState>"
           }
         },
         {
@@ -1487,7 +1494,7 @@
             "native": "Qt::WindowStates",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowState>"
           }
         }
       ],

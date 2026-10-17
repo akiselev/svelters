@@ -79,12 +79,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStackedLayout::StackingMode",
       "members": [
         {
+          "cpp": "QStackedLayout::StackOne",
           "name": "StackOne",
           "value": "0"
         },
         {
+          "cpp": "QStackedLayout::StackAll",
           "name": "StackAll",
           "value": "1"
         }
@@ -98,7 +102,8 @@
         "scoped": false
       },
       "name": "StackingMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStackedLayout",
@@ -423,7 +428,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const override",
       "since": null,
@@ -526,7 +531,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -563,7 +568,7 @@
             "native": "QStackedLayout::StackingMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QStackedLayout::StackingMode>"
           }
         }
       ],
@@ -597,7 +602,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -623,7 +628,7 @@
         "native": "QStackedLayout::StackingMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QStackedLayout::StackingMode>"
       },
       "signature": "QStackedLayout::StackingMode stackingMode() const",
       "since": null,
@@ -829,7 +834,7 @@
         "native": "StackingMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<StackingMode>"
+        "ref": "enum<QStackedLayout::StackingMode>"
       }
     }
   ],

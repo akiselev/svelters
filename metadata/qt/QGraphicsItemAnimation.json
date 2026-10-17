@@ -273,7 +273,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF posAt(qreal step) const",
       "since": null,
@@ -464,7 +464,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -853,7 +853,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform transformAt(qreal step) const",
       "since": null,

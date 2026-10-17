@@ -55,7 +55,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         },
         {
@@ -77,28 +77,36 @@
   ],
   "enums": [
     {
+      "flags_alias": "QFontDialog::FontDialogOptions",
+      "fullname": "QFontDialog::FontDialogOption",
       "members": [
         {
+          "cpp": "QFontDialog::NoButtons",
           "name": "NoButtons",
           "value": "0x00000001"
         },
         {
+          "cpp": "QFontDialog::DontUseNativeDialog",
           "name": "DontUseNativeDialog",
           "value": "0x00000002"
         },
         {
+          "cpp": "QFontDialog::ScalableFonts",
           "name": "ScalableFonts",
           "value": "0x00000004"
         },
         {
+          "cpp": "QFontDialog::NonScalableFonts",
           "name": "NonScalableFonts",
           "value": "0x00000008"
         },
         {
+          "cpp": "QFontDialog::MonospacedFonts",
           "name": "MonospacedFonts",
           "value": "0x00000010"
         },
         {
+          "cpp": "QFontDialog::ProportionalFonts",
           "name": "ProportionalFonts",
           "value": "0x00000020"
         }
@@ -116,7 +124,8 @@
         "scoped": false
       },
       "name": "FontDialogOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QFontDialog",
@@ -179,7 +188,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont currentFont() const",
       "since": null,
@@ -263,7 +272,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont getFont(bool *ok, QWidget *parent)",
       "since": null,
@@ -302,7 +311,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         },
         {
@@ -332,7 +341,7 @@
             "native": "QFontDialog::FontDialogOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFontDialog::FontDialogOption>"
           }
         }
       ],
@@ -340,7 +349,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont getFont(bool *ok, const QFont &initial, QWidget *parent, const QString &title, QFontDialog::FontDialogOptions options)",
       "since": null,
@@ -413,7 +422,7 @@
         "native": "QFontDialog::FontDialogOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QFontDialog::FontDialogOption>"
       },
       "signature": "QFontDialog::FontDialogOptions options() const",
       "since": null,
@@ -439,7 +448,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont selectedFont() const",
       "since": null,
@@ -468,7 +477,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -505,7 +514,7 @@
             "native": "QFontDialog::FontDialogOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFontDialog::FontDialogOption>"
           }
         },
         {
@@ -552,7 +561,7 @@
             "native": "QFontDialog::FontDialogOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QFontDialog::FontDialogOption>"
           }
         }
       ],
@@ -626,7 +635,7 @@
             "native": "QFontDialog::FontDialogOption",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QFontDialog::FontDialogOption>"
           }
         }
       ],
@@ -705,7 +714,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       }
     },
     {
@@ -745,7 +754,7 @@
         "native": "FontDialogOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QFontDialog::FontDialogOption>"
       }
     }
   ],
@@ -774,7 +783,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -809,7 +818,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],

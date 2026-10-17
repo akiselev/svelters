@@ -148,7 +148,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -158,7 +158,7 @@
             "native": "QTextDocument::ResourceType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextDocument::ResourceType>"
           }
         }
       ],
@@ -403,7 +403,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl historyUrl(int i) const",
       "since": null,
@@ -557,7 +557,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -817,7 +817,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList searchPaths() const",
       "since": null,
@@ -920,7 +920,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -957,7 +957,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -967,7 +967,7 @@
             "native": "QTextDocument::ResourceType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextDocument::ResourceType>"
           }
         }
       ],
@@ -1001,7 +1001,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl source() const",
       "since": null,
@@ -1027,7 +1027,7 @@
         "native": "QTextDocument::ResourceType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextDocument::ResourceType>"
       },
       "signature": "QTextDocument::ResourceType sourceType() const",
       "since": null,
@@ -1206,7 +1206,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       }
     },
     {
@@ -1246,7 +1246,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       }
     },
     {
@@ -1286,7 +1286,7 @@
         "native": "QTextDocument::ResourceType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextDocument::ResourceType>"
       }
     },
     {
@@ -1338,7 +1338,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1443,7 +1443,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1502,7 +1502,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],

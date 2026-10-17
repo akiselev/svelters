@@ -53,7 +53,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -75,15 +75,19 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsPathItem::anonymous",
       "members": [
         {
+          "cpp": "QGraphicsPathItem::Type",
           "name": "Type",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "anonymous",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsPathItem",
@@ -109,7 +113,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const override",
       "since": null,
@@ -138,7 +142,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -209,7 +213,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath opaqueArea() const override",
       "since": null,
@@ -292,7 +296,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath path() const",
       "since": null,
@@ -321,7 +325,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -355,7 +359,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath shape() const override",
       "since": null,

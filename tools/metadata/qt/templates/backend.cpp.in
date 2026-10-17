@@ -16,6 +16,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTimer>
 #include <QtCore/QVariant>
+#include <exception>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPixmap>
 #include <QtWidgets/QAbstractButton>
@@ -52,6 +53,8 @@ struct Entry {
 struct Core {
   const svl_host *host = nullptr;
   std::unordered_map<svl_handle, Entry> table;
+  std::unordered_map<QObject *, svl_handle> by_obj;  // reverse of `table`, for returning QObject* values
+  std::unordered_map<svl_handle, QVariant> boxed;    // BOXED values (implicitly shared Qt value classes)
   std::map<std::pair<svl_handle, svl_id>, QMetaObject::Connection> listeners;
   svl_handle next = 1;
   std::string err;
@@ -123,6 +126,7 @@ void drop_listeners(svl_handle h) {
 void native_destroyed(svl_handle h) {
   auto it = g.table.find(h);
   if (it == g.table.end()) return;
+  g.by_obj.erase(it->second.obj.data());
   g.table.erase(it);
   drop_listeners(h);
   if (g.host && g.host->on_destroyed) g.host->on_destroyed(g.host->self, h);
@@ -132,80 +136,7 @@ void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
   if (g.host && g.host->post_event) g.host->post_event(g.host->self, h, sig, args, n);
 }
 
-// ---- svl_value conversions -------------------------------------------------------------------
-
-bool to_qstring(const svl_value *v, QString &out) {
-  if (v->tag == SVL_NULL) {
-    out.clear();
-    return true;
-  }
-  if (v->tag != SVL_STR) return false;
-  out = QString::fromUtf8(v->u.s.ptr, static_cast<qsizetype>(v->u.s.len));
-  return true;
-}
-[[maybe_unused]] bool to_bool(const svl_value *v, bool &out) {
-  if (v->tag == SVL_BOOL) { out = v->u.b; return true; }
-  if (v->tag == SVL_I64) { out = v->u.i != 0; return true; }
-  return false;
-}
-bool to_i64(const svl_value *v, qint64 &out) {
-  if (v->tag == SVL_I64) { out = v->u.i; return true; }
-  if (v->tag == SVL_F64) { out = static_cast<qint64>(v->u.f); return true; }
-  return false;
-}
-bool to_i32(const svl_value *v, int &out) {
-  qint64 x;
-  if (!to_i64(v, x)) return false;
-  out = static_cast<int>(x);
-  return true;
-}
-[[maybe_unused]] bool to_f64(const svl_value *v, double &out) {
-  if (v->tag == SVL_F64) { out = v->u.f; return true; }
-  if (v->tag == SVL_I64) { out = static_cast<double>(v->u.i); return true; }
-  return false;
-}
-[[maybe_unused]] QVariant to_variant(const svl_value *v) {
-  switch (v->tag) {
-    case SVL_BOOL: return QVariant(v->u.b);
-    case SVL_I64: return QVariant(static_cast<qlonglong>(v->u.i));
-    case SVL_F64: return QVariant(v->u.f);
-    case SVL_STR: return QVariant(QString::fromUtf8(v->u.s.ptr, static_cast<qsizetype>(v->u.s.len)));
-    default: return QVariant();
-  }
-}
-void out_null(svl_value *out) {
-  if (out) { out->tag = SVL_NULL; out->u.i = 0; }
-}
-void out_bool(svl_value *out, bool b) {
-  if (out) { out->tag = SVL_BOOL; out->u.b = b; }
-}
-void out_i64(svl_value *out, qint64 i) {
-  if (out) { out->tag = SVL_I64; out->u.i = i; }
-}
-void out_f64(svl_value *out, double f) {
-  if (out) { out->tag = SVL_F64; out->u.f = f; }
-}
-void out_str(svl_value *out, const QString &s) {
-  if (!out) return;
-  QByteArray u = s.toUtf8();
-  g.strbuf.assign(u.constData(), static_cast<size_t>(u.size()));
-  out->tag = SVL_STR;
-  out->u.s.ptr = g.strbuf.data();
-  out->u.s.len = g.strbuf.size();
-}
-[[maybe_unused]] void out_variant(svl_value *out, const QVariant &v) {
-  switch (v.typeId()) {
-    case QMetaType::Bool: out_bool(out, v.toBool()); break;
-    case QMetaType::Int: case QMetaType::UInt: case QMetaType::LongLong: case QMetaType::ULongLong:
-      out_i64(out, v.toLongLong()); break;
-    case QMetaType::Double: case QMetaType::Float: out_f64(out, v.toDouble()); break;
-    case QMetaType::QString: out_str(out, v.toString()); break;
-    default: out_null(out);
-  }
-}
-int bad_type(const char *what, const char *want) {
-  return fail(std::string(what) + ": expected " + want);
-}
+//@@SERDES@@
 
 // ---- name tables -----------------------------------------------------------------------------
 
@@ -222,6 +153,8 @@ struct Table {
 
 // ---- generated dispatch ----------------------------------------------------------------------
 
+//@@ENUMS@@
+
 //@@CREATE@@
 
 //@@SET_PROP@@
@@ -235,6 +168,8 @@ struct Table {
 //@@REMOVE@@
 
 //@@LISTEN@@
+
+//@@DESCRIBE@@
 
 // ---- vtable ----------------------------------------------------------------------------------
 
@@ -260,6 +195,7 @@ svl_handle b_create(void *, svl_id kind) {
   e.kind = kind;
   e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *) { native_destroyed(h); });
   g.table.emplace(h, std::move(e));
+  g.by_obj[o] = h;
   return h;
 }
 
@@ -289,10 +225,12 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
 
 void b_destroy(void *, svl_handle h) {
   TimeScope timing_;
+  if (g.boxed.erase(h)) return;  // a boxed value: drop the held copy (idempotent)
   auto it = g.table.find(h);
   if (it == g.table.end()) return;
   QObject *o = it->second.obj.data();
   QObject::disconnect(it->second.destroyed);
+  g.by_obj.erase(o);
   g.table.erase(it);
   drop_listeners(h);
   if (o) o->deleteLater();
@@ -303,23 +241,49 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
   Entry *e = find(h);
   if (!e) return fail("set_prop: stale or unknown handle");
   if (!v) return fail("set_prop: null value");
-  return gen_set_prop(*e, prop, v);
+  try {
+    return gen_set_prop(*e, prop, v);
+  } catch (const std::exception &x) {
+    return fail(std::string("set_prop: C++ exception: ") + x.what());
+  } catch (...) {
+    return fail("set_prop: unknown C++ exception");
+  }
 }
 
 int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
   TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("get_prop: stale or unknown handle");
-  return gen_get_prop(*e, prop, out);
+  g_out.clear();
+  try {
+    return gen_get_prop(*e, prop, out);
+  } catch (const std::exception &x) {
+    return fail(std::string("get_prop: C++ exception: ") + x.what());
+  } catch (...) {
+    return fail("get_prop: unknown C++ exception");
+  }
 }
 
 int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n, svl_value *out) {
   TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("call: stale or unknown handle");
+  g_out.clear();
   out_null(out);
-  return gen_call(*e, method, args, n, out);
+  try {
+    return gen_call(*e, method, args, n, out);
+  } catch (const std::exception &x) {
+    return fail(std::string("call: C++ exception: ") + x.what());
+  } catch (...) {
+    return fail("call: unknown C++ exception");
+  }
 }
+
+const svl_member_desc *b_describe(void *, uint32_t what, svl_id kind, svl_id member) {
+  return gen_describe(what, kind, member);
+}
+
+const svl_type_desc *b_describe_type(void *, svl_id type) { return type_desc_for(type); }
 
 int b_listen(void *, svl_handle h, svl_id sig, bool on) {
   TimeScope timing_;
@@ -359,8 +323,10 @@ void b_quit(void *) {
 
 const char *b_last_error(void *) { return g.err.c_str(); }
 
+// Fields after `last_error`: the reserved v2 slots (schedule_wake, handle_info), then the v3 value model.
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
-                              b_set_prop, b_get_prop, b_call, b_listen, b_run, b_wake, b_quit, b_last_error};
+                              b_set_prop, b_get_prop, b_call, b_listen, b_run, b_wake, b_quit, b_last_error,
+                              nullptr, nullptr, SVL_CAP_UTF16_IN, b_describe, b_describe_type, nullptr};
 
 }  // namespace
 

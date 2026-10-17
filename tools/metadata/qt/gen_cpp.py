@@ -41,6 +41,117 @@ class GenError(Exception):
     pass
 
 
+
+# --------------------------------------------------------------------------------------------
+# value model: classification of metadata type refs, enum member naming, C++ spellings
+
+INT_REFS = {"i32", "u32", "i64", "u64"}
+UNSUPPORTED_REFS = {"opaque", "variant", "list", "void"}
+GUI_HEADERS = {"QIcon": "QtGui/QIcon", "QFont": "QtGui/QFont", "QPixmap": "QtGui/QPixmap", "QImage": "QtGui/QImage",
+               "QBrush": "QtGui/QBrush", "QPalette": "QtGui/QPalette", "QCursor": "QtGui/QCursor",
+               "QKeySequence": "QtGui/QKeySequence", "QRegion": "QtGui/QRegion", "QPicture": "QtGui/QPicture",
+               "QPainterPath": "QtGui/QPainterPath", "QTextCharFormat": "QtGui/QTextCharFormat",
+               "QTextFormat": "QtGui/QTextFormat", "QTextCursor": "QtGui/QTextCursor", "QTextOption": "QtGui/QTextOption",
+               "QPen": "QtGui/QPen", "QTransform": "QtGui/QTransform", "QBitmap": "QtGui/QBitmap",
+               "QUrl": "QtCore/QUrl", "QLocale": "QtCore/QLocale", "QSizePolicy": "QtWidgets/QSizePolicy",
+               "Qt": "QtCore/Qt"}
+
+
+def classify(ref: str):
+    """(category, payload) for a neutral type ref; category 'unsupported' has no converter yet."""
+    if ref == "bool":
+        return ("bool", None)
+    if ref in INT_REFS:
+        return ("int", ref)
+    if ref in ("f32", "f64"):
+        return ("float", ref)
+    if ref in ("string", "bytes", "date", "time", "datetime"):
+        return (ref, None)
+    head, _, rest = ref.partition("<")
+    inner = rest[:-1] if rest.endswith(">") else rest
+    if head in ("enum", "flags", "record", "boxed", "object"):
+        return (head, inner)
+    if head == "list":
+        if inner == "string":
+            return ("list", "string")
+        sub = classify(inner)
+        return ("list", inner) if sub[0] != "unsupported" else ("unsupported", ref)
+    return ("unsupported", ref)
+
+
+def kebab_words(name: str) -> list[str]:
+    spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name.replace("_", " "))
+    parts = spaced.split()
+    out, i = [], 0
+    while i < len(parts):
+        w = parts[i]
+        if len(w) == 1 and i + 1 < len(parts):  # AlignHCenter -> hcenter, not h-center
+            w += parts[i + 1]
+            i += 1
+        out.append(w.lower())
+        i += 1
+    return out
+
+
+def enum_member_names(members: list[dict]) -> dict[str, str]:
+    """JS member name -> C++ expression: kebab-case, with the common leading words stripped only when
+    every name stays unique and non-empty (QLineEdit::PasswordEchoOnEdit -> password-echo-on-edit,
+    Qt::ScrollBarAsNeeded -> as-needed). Aliases that collide keep the first member."""
+    words = [kebab_words(m["name"]) for m in members]
+    names = ["-".join(w) for w in words]
+    pre = 0
+    if len(members) > 1:
+        while all(len(w) > pre + 1 and w[pre] == words[0][pre] for w in words):
+            pre += 1
+    if pre:
+        stripped = ["-".join(w[pre:]) for w in words]
+        if all(stripped) and len(set(stripped)) == len(stripped):
+            names = stripped
+    out: dict[str, str] = {}
+    for n, m in zip(names, members):
+        out.setdefault(n, m["cpp"])
+    return out
+
+
+def strip_cv(native: str) -> str:
+    return re.sub(r"\bconst\b", "", native).replace("&", "").strip()
+
+
+def ts_leaf(cat: str, payload, m) -> str:
+    """The TypeScript type for a classified ref (see packages/renderer/types/values.d.ts)."""
+    if cat == "bool":
+        return "boolean"
+    if cat in ("int", "float"):
+        return "number"
+    if cat == "string":
+        return "string"
+    if cat == "bytes":
+        return "Uint8Array"
+    if cat == "date":
+        return "DateParts"
+    if cat == "time":
+        return "TimeParts"
+    if cat == "datetime":
+        return "Date"
+    if cat == "record":
+        return payload + (" | string" if payload == "Color" else "")
+    if cat == "enum":
+        names = sorted(m.enums_used[payload]) if payload in m.enums_used else []
+        return " | ".join(f'"{n}"' for n in names) or "string"
+    if cat == "flags":
+        names = sorted(m.enums_used[payload]) if payload in m.enums_used else []
+        return "Array<" + (" | ".join(f'"{n}"' for n in names) or "string") + ">"
+    if cat == "boxed":
+        return f"Boxed<\"{payload}\">" + (" | string" if payload in ("QIcon", "QKeySequence", "QUrl", "QFont") else "")
+    if cat == "object":
+        return "number"
+    if cat == "list":
+        inner = classify(payload)
+        leaf = ts_leaf(inner[0], inner[1], m) if payload != "string" else "string"
+        return f"Array<{leaf}>"
+    return "unknown"
+
+
 # --------------------------------------------------------------------------------------------
 # model
 
@@ -67,6 +178,15 @@ class Model:
         if len(set(tags)) != len(tags):
             raise GenError("duplicate element tags")
         self.by_tag = {e["tag"]: e for e in self.elements}
+        # Enum definitions (every enum a slot type mentions) live in the `Qt` namespace record.
+        self.enum_defs = {}
+        qt = self.kind("Qt")
+        if qt:
+            self.enum_defs = {e["fullname"]: e for e in qt["enums"]}
+        self.enums_used: dict[str, dict[str, str]] = {}  # enum full name -> JS name -> C++ expression
+        self.enum_override: set[str] = set()
+        self.boxed_used: set[str] = set()
+        self.owners_used: set[str] = set()
         for e in self.elements:
             self._resolve(e)
         self._assign_ids()
@@ -98,6 +218,39 @@ class Model:
                     return c, r
         return None, None
 
+
+    # value types ---------------------------------------------------------------------------
+    def use(self, ref: str, where: str, table: dict | None = None) -> tuple:
+        """Registers what a slot of type `ref` needs (enum tables, boxed converters) and classifies it."""
+        cat, pay = classify(ref)
+        if cat == "unsupported":
+            raise GenError(f"{where}: type {ref} has no converter yet")
+        if cat in ("enum", "flags"):
+            if table is not None:
+                self.enums_used[pay] = dict(table)
+                self.enum_override.add(pay)
+            elif pay not in self.enum_override and pay not in self.enums_used:
+                d = self.enum_defs.get(pay)
+                if not d:
+                    raise GenError(f"{where}: enum {pay} is not in the enum table (rerun the ingest)")
+                self.enums_used[pay] = enum_member_names(d["members"])
+            self.owners_used.add(pay.split("::")[0])
+        elif cat == "boxed":
+            self.boxed_used.add(pay)
+            self.owners_used.add(pay)
+        elif cat == "list" and pay != "string":
+            self.use(pay, where)
+        return cat, pay
+
+    def cpp_type(self, ref: str, native: str) -> str:
+        """The C++ spelling of a parameter, return or signal-argument type (cv/ref stripped)."""
+        cat, pay = classify(ref)
+        if cat == "enum":
+            return pay
+        if cat == "flags":
+            return f"QFlags<{pay}>"
+        return strip_cv(native)
+
     # resolution --------------------------------------------------------------------------
     def _resolve(self, el: dict) -> None:
         tag, cls = el["tag"], el["cls"]
@@ -126,10 +279,19 @@ class Model:
     def _resolve_prop(self, el: dict, p: dict) -> None:
         tag = el["tag"]
         tcls = self.target_cls(el, p.get("target"))
+        p["readonly"] = False
         if p.get("type") == "enum":
+            # An override that narrows or renames an enum's members (QBoxLayout::Direction -> orientation).
             for key in ("getter", "setter"):
                 self._need_method(tag, tcls, p[key], None)
-            p["decl_ref"] = "enum"
+            _, g = self._need_method(tag, tcls, p["getter"], 0)
+            ref = g["returns"]["ref"]
+            cat, pay = classify(ref)
+            if cat != "enum":
+                raise GenError(f"{tag}: enum prop {p['js']} getter returns {ref}")
+            self.use(ref, f"{tag}.{p['js']}", p["values"])
+            p["decl_ref"], p["ref"], p["cat"] = "enum", ref, "enum"
+            p["direct"] = True
             return
         dcls, prop = self.find(tcls, "properties", lambda r: r["name"] == p["native"])
         if not prop:
@@ -137,14 +299,21 @@ class Model:
         acc = prop["accessors"]
         p["decl_cls"], p["prop"] = dcls, prop
         p["decl_ref"] = prop["type"]["ref"]
+        p["ref"] = prop["type"]["ref"]
         p["getter"], p["setter"] = acc.get("get"), acc.get("set")
         p["qprop"] = prop.get("metaobject") is not None
-        direct = p["decl_ref"] in ("string", "bool", "i32", "u32", "i64", "f32", "f64") and p["getter"] and p["setter"]
+        cat, _ = classify(p["ref"])
+        direct = cat != "unsupported" and p["getter"] and (p["setter"] or not prop["access"]["write"])
         if direct:
+            self.use(p["ref"], f"{tag}.{p['js']}")
             self._need_method(tag, tcls, p["getter"], 0)
-            self._need_method(tag, tcls, p["setter"], 1)
+            if p["setter"]:
+                self._need_method(tag, tcls, p["setter"], 1)
+            else:
+                p["readonly"] = True
         elif not p["qprop"]:
             raise GenError(f"{tag}: property {p['native']} has no direct accessors and no QMetaProperty")
+        p["cat"] = cat
         p["direct"] = bool(direct)
 
     def _need_method(self, tag: str, cls: str, name: str, nparams):
@@ -168,9 +337,15 @@ class Model:
             raise GenError(f"{tag}: method {m['native']}{want or ''} not found on {cls}")
         m["rec"], m["decl_cls"] = rec, c
         m["ret"] = rec["returns"]["ref"]
+        m["ret_native"] = rec["returns"]["native"]
         m["argrefs"] = want or []
-        if m["ret"] not in ("void", "bool", "i32", "u32", "i64", "string", "f64"):
-            raise GenError(f"{tag}: method {m['native']} returns unsupported {m['ret']}")
+        m["argtypes"] = []
+        for i, q in enumerate(rec["params"][:len(m["argrefs"])]):
+            self.use(q["type"]["ref"], f"{tag}.{m['js']} arg {i}")
+            m["argtypes"].append(self.cpp_type(q["type"]["ref"], q["type"]["native"]))
+        m["argnames"] = [q["name"] or f"arg{i}" for i, q in enumerate(rec["params"][:len(m["argrefs"])])]
+        if m["ret"] != "void":
+            self.use(m["ret"], f"{tag}.{m['js']} return")
 
     def _resolve_signal(self, el: dict, s: dict) -> None:
         tag, cls = el["tag"], el["cls"]
@@ -188,9 +363,13 @@ class Model:
         s["decl_cls"], s["rec"] = c, rec
         s["qparams"] = [(q["name"], q["type"]["native"]) for q in rec["params"]]
         names = [n for n, _ in s["qparams"]]
+        s["argrefs"] = {}
         for a in s["args"]:
             if a["name"] not in names:
                 raise GenError(f"{tag}: signal arg {a['name']} not a parameter of {rec['signature']}")
+            q = rec["params"][names.index(a["name"])]
+            self.use(q["type"]["ref"], f"{tag}.{s['js']}.{a['name']}")
+            a["ref"] = q["type"]["ref"]
 
     _NATIVE = re.compile(r"^(\w+)::([\w<>*:, ]+?)\((.*)\)(?:\s+const)?$")
 
@@ -329,25 +508,10 @@ def target_expr(el: dict, p: dict, obj: str = "o") -> str:
     return host_expr(el, "layout" if p.get("target") == "layout" else "self", obj)
 
 
-def conv_in(ref: str, src: str, var: str, what: str) -> tuple[str, str]:
-    """(declaration+check, expression) converting svl_value* `src` to a C++ value."""
-    if ref == "string":
-        return f"QString {var}; if (!to_qstring({src}, {var})) return bad_type(\"{what}\", \"string\");", var
-    if ref == "bool":
-        return f"bool {var}; if (!to_bool({src}, {var})) return bad_type(\"{what}\", \"bool\");", var
-    if ref in ("i32", "u32"):
-        return f"int {var}; if (!to_i32({src}, {var})) return bad_type(\"{what}\", \"number\");", var
-    if ref == "i64":
-        return f"qint64 {var}; if (!to_i64({src}, {var})) return bad_type(\"{what}\", \"number\");", var
-    if ref in ("f64", "f32"):
-        return f"double {var}; if (!to_f64({src}, {var})) return bad_type(\"{what}\", \"number\");", var
-    raise GenError(f"no input conversion for {ref}")
 
 
-def conv_out(ref: str, expr: str, out: str = "out") -> str:
-    return {"string": f"out_str({out}, {expr});", "bool": f"out_bool({out}, {expr});",
-            "i32": f"out_i64({out}, {expr});", "u32": f"out_i64({out}, {expr});", "i64": f"out_i64({out}, {expr});",
-            "f64": f"out_f64({out}, {expr});", "f32": f"out_f64({out}, {expr});"}[ref]
+
+
 
 
 # --------------------------------------------------------------------------------------------
