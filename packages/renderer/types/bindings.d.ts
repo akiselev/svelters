@@ -16,6 +16,9 @@ export interface BindableProps {
   dateedit: {
     date: { year: number; month: number; day: number }; // qt
   };
+  datetimeedit: {
+    dateTime: Date; // qt
+  };
   dial: {
     value: number; // qt
   };
@@ -87,6 +90,9 @@ export interface BindableProps {
   };
   textedit: {
     plainText: string; // qt
+  };
+  timeedit: {
+    time: { hour: number; minute: number; second: number; ms: number }; // qt
   };
   togglebutton: {
     active: boolean; // gtk

@@ -2,10 +2,20 @@ elements:
   - tag: timeedit
     construct: { class: QTimeEdit }
     props:
-      - { js: time, native: time, provenance: "QTimeEdit::time (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: time, native: time, suppress_signals: true, provenance: "QTimeEdit::time (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: displayFormat, native: displayFormat, sample: "HH:mm", provenance: "QTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: minimumTime, native: minimumTime, provenance: "QTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: maximumTime, native: maximumTime, provenance: "QTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
+    bindings:
+      - name: time
+        direction: two_way
+        property: time
+        type: { ref: time, nullable: false }
+        change: { signal: time-changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: true }    # clamped to the minimum..maximum range
+        echo: { strategy: host_suppressed, compare_before_set: false, read_back: false, sync_signals_on_set: ["timeChanged(QTime)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QTimeEdit::setTime emits timeChanged only on change (qdoc); no-echo test for non-scalar props (A1-GAPS G16)"
     signals:
       - js: time-changed
         native: timeChanged

@@ -16,6 +16,9 @@ export const BINDINGS = {
   dateedit: {
     date: { prop: "date", signal: "date-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  datetimeedit: {
+    dateTime: { prop: "dateTime", signal: "date-time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   dial: {
     value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
@@ -87,6 +90,9 @@ export const BINDINGS = {
   },
   textedit: {
     plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  },
+  timeedit: {
+    time: { prop: "time", signal: "time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   togglebutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },

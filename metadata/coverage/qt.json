@@ -430,7 +430,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 7,
   "element": "datetimeedit",
   "gallery": "10-display",
@@ -457,8 +457,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   10,
-   10
+   11,
+   11
   ]
  },
  {
@@ -2278,7 +2278,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
   "element": "timeedit",
   "gallery": "10-display",
@@ -2305,8 +2305,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   5,
-   5
+   6,
+   6
   ]
  },
  {
