@@ -56,3 +56,14 @@ Branched from master at ff0fcb4. Written as the work goes.
 - `experiments/native-compiler/compiled`: targets `appkit`/`winui`; cases `counter-mac`/`counter-win` compile with
   the Rust compiler and are state-compared with the JS pipeline on the toolkit TestHost (both pass; counter-win is
   identical).
+
+## Item 2: text children (lead, compiler side)
+
+- The compiler reads `kinds.<k>.text_content` (now from `text_prop`). Lowering of a kind with a text prop:
+  text / `{expr}` / text-only `{#if}` children fold into the prop (as before); children with no text at all (elements,
+  blocks of elements) stay native children (new: e.g. WinUI `<button><text-block/></button>`; GTK's button still has
+  no child slot in its spec, so it reports the slot error); text mixed with elements is `text_content_children`:
+  "<button> mixes text and elements: on gtk its text children set `label`, so it cannot also hold child elements",
+  with help naming the attribute alternative. Other non-text children keep the "holds text only" wording.
+- Tests: `crates/svelters-compiler/tests/fx1_text.rs` (per-toolkit prop for static and `{expr}` text on all four
+  toolkits, mixed error, element-only children). Renderer side: fx1-gen's section above.

@@ -49,6 +49,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a 
         in_block: false,
         matched: HashSet::new(),
         forced_slot: None,
+        text_prop: None,
         const_ok: false,
         snippet_roots,
         script: ScriptFacts::collect([root.instance.as_ref(), root.module.as_ref()]),
@@ -108,6 +109,8 @@ struct Lower<'a, 's, 'd> {
     matched: HashSet<(u32, u32)>,
     /// Inside `<sv-slot name>`: the slot its content goes to.
     forced_slot: Option<String>,
+    /// The text prop being folded (for the mixed-children diagnostic).
+    text_prop: Option<String>,
     /// The fragment being lowered may hold `{@const}` (set by the caller, consumed by `fragment`).
     const_ok: bool,
     /// Snippets declared in this component by name: their root elements (None: the name is
@@ -850,7 +853,10 @@ impl<'a> Lower<'a, '_, '_> {
         // children: text content or native children (an element's children are not in its
         // parent's <sv-slot>)
         let forced = self.forced_slot.take();
-        let children = if let Some(tc) = self.sem.text_content(&er).cloned() {
+        // A kind with a text prop folds text children into it; only element children (no text)
+        // stay native children; text mixed with elements is an error (text_content).
+        let text_prop = self.sem.text_content(&er).cloned().filter(|_| !only_element_children(&el.fragment));
+        let children = if let Some(tc) = text_prop {
             self.text_content(el, &tc.js, &mut ops);
             Fragment::default()
         } else {
@@ -874,7 +880,9 @@ impl<'a> Lower<'a, '_, '_> {
     /// runs collapse to one space; the fragment's leading/trailing whitespace is trimmed, as is
     /// each block branch's). `{#if}` blocks holding only text/expressions become conditional parts.
     fn text_content(&mut self, el: &'a AstElement, prop: &str, ops: &mut Vec<Op<'a>>) {
+        self.text_prop = Some(prop.to_string());
         let parts = trim_parts(self.text_parts(el, &el.fragment));
+        self.text_prop = None;
         let span = el.fragment.nodes.first().map(|n| n.span()).unwrap_or(el.span());
         match parts.as_slice() {
             [] => {}
@@ -896,9 +904,20 @@ impl<'a> Lower<'a, '_, '_> {
                     parts.push(TemplatePart::If { test: &b.test, consequent, alternate });
                 }
                 other => {
+                    let prop = self.text_prop.clone().unwrap_or_default();
+                    let element = matches!(
+                        other,
+                        FragmentNode::RegularElement(_) | FragmentNode::Component(_) | FragmentNode::SvelteComponent(_) | FragmentNode::SvelteElement(_) | FragmentNode::SvelteSelf(_) | FragmentNode::RenderTag(_)
+                    );
+                    let backend = self.sem.backend();
+                    let msg = if element {
+                        format!("<{}> mixes text and elements: on {backend} its text children set `{prop}`, so it cannot also hold child elements", el.name)
+                    } else {
+                        format!("<{}> holds text only on {backend} (its text children set `{prop}`); it cannot contain this", el.name)
+                    };
                     self.diags
-                        .native_error("text_content_children", sp(other.span()), format!("<{}> holds text only on {}; it cannot contain this", el.name, self.sem.backend()))
-                        .help("only text, {expressions} and {#if} blocks of those can be folded into its text");
+                        .native_error("text_content_children", sp(other.span()), msg)
+                        .help(format!("give it either text (text, {{expressions}} and {{#if}} blocks of those, folded into `{prop}`) or child elements, not both; the text can also go in the `{prop}` attribute"));
                 }
             }
         }
@@ -1252,6 +1271,25 @@ struct TagParts<'a> {
 }
 
 /// Trims a branch's leading and trailing whitespace and drops empty text parts.
+/// Whether a fragment has child nodes and no text at all (whitespace and comments aside; block
+/// bodies count, element children do not): such children of a text-prop kind stay native children.
+fn only_element_children(f: &AstFragment) -> bool {
+    f.nodes.iter().any(|n| !matches!(n, FragmentNode::Comment(_)) && !matches!(n, FragmentNode::Text(t) if t.data.trim().is_empty())) && !has_text(f)
+}
+
+/// Text or `{expressions}` in a fragment or the bodies of its blocks (not inside elements).
+fn has_text(f: &AstFragment) -> bool {
+    f.nodes.iter().any(|n| match n {
+        FragmentNode::Text(t) => !t.data.trim().is_empty(),
+        FragmentNode::ExpressionTag(_) | FragmentNode::HtmlTag(_) => true,
+        FragmentNode::IfBlock(b) => has_text(&b.consequent) || b.alternate.as_ref().is_some_and(has_text),
+        FragmentNode::EachBlock(b) => has_text(&b.body) || b.fallback.as_ref().is_some_and(has_text),
+        FragmentNode::KeyBlock(b) => has_text(&b.fragment),
+        FragmentNode::AwaitBlock(b) => [&b.pending, &b.then, &b.catch].into_iter().flatten().any(has_text),
+        _ => false,
+    })
+}
+
 fn trim_parts(mut parts: Vec<TemplatePart<'_>>) -> Vec<TemplatePart<'_>> {
     if let Some(TemplatePart::Text(t)) = parts.first_mut() {
         *t = t.trim_start().to_string();
