@@ -1473,9 +1473,217 @@ fn method_actionable_set_detailed_action_name() {
         let o = h.create("button");
         
         let r = h.call_args(o, "setDetailedActionName", &[V::Str("win.close".into())]).unwrap();
-        let w = h.widget(o);
+        let w = h.obj(o);
         let _ = (&w, &r);
         assert!(h.get(o, "action-name") == V::Str("win.close".into()), "postcondition: h.get(o, 'action-name') == V::Str('win.close'.into())");
+    });
+}
+
+/// signal Adjustment.changed: GtkAdjustment::changed, run-first, void (Gtk 4 docs); emitted by configure() and when range properties change
+#[test]
+fn signal_adjustment_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.borrow_from("scale", "get_adjustment");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let a = o.downcast_ref::<gtk::Adjustment>().unwrap(); a.set_upper(100.0 + i as f64); a.emit_by_name::<()>("changed", &[]);
+        };
+        assert_ne!(h.resolve_signal("GtkAdjustment", "changed"), 0);
+        assert_eq!(h.resolve_signal("GtkAdjustment", "changed"), h.resolve_signal("GtkAdjustment", "changed"));
+        h.listen(e, "changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Adjustment.value-changed: GtkAdjustment::value-changed, run-first, void (Gtk 4 docs)
+#[test]
+fn signal_adjustment_value_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.borrow_from("scale", "get_adjustment");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let a = o.downcast_ref::<gtk::Adjustment>().unwrap(); a.set_upper(100.0); a.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("GtkAdjustment", "value-changed"), 0);
+        assert_eq!(h.resolve_signal("GtkAdjustment", "value-changed"), h.resolve_signal("GtkAdjustment", "value-changed"));
+        h.listen(e, "value-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "value-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "value-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "value-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Adjustment.lower (JS lower): GtkAdjustment:lower (Gtk 4 docs)
+#[test]
+fn prop_adjustment_lower() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        
+        let id = h.resolve_prop("GtkAdjustment", "lower");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkAdjustment", "lower"));
+        h.set_f64(o, "lower", 5.0).unwrap();
+        assert_eq!(h.get(o, "lower"), V::F64(5.0));
+    });
+}
+
+/// property Adjustment.page-increment (JS pageIncrement): GtkAdjustment:page-increment (Gtk 4 docs)
+#[test]
+fn prop_adjustment_page_increment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        
+        let id = h.resolve_prop("GtkAdjustment", "pageIncrement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkAdjustment", "page-increment"));
+        h.set_f64(o, "pageIncrement", 25.0).unwrap();
+        assert_eq!(h.get(o, "pageIncrement"), V::F64(25.0));
+    });
+}
+
+/// property Adjustment.page-size (JS pageSize): GtkAdjustment:page-size (Gtk 4 docs)
+#[test]
+fn prop_adjustment_page_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        h.set_f64(o, "upper", 100.0).unwrap();
+        let id = h.resolve_prop("GtkAdjustment", "pageSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkAdjustment", "page-size"));
+        h.set_f64(o, "pageSize", 10.0).unwrap();
+        assert_eq!(h.get(o, "pageSize"), V::F64(10.0));
+    });
+}
+
+/// property Adjustment.step-increment (JS stepIncrement): GtkAdjustment:step-increment (Gtk 4 docs)
+#[test]
+fn prop_adjustment_step_increment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        
+        let id = h.resolve_prop("GtkAdjustment", "stepIncrement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkAdjustment", "step-increment"));
+        h.set_f64(o, "stepIncrement", 3.0).unwrap();
+        assert_eq!(h.get(o, "stepIncrement"), V::F64(3.0));
+    });
+}
+
+/// property Adjustment.upper (JS upper): GtkAdjustment:upper (Gtk 4 docs)
+#[test]
+fn prop_adjustment_upper() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        
+        let id = h.resolve_prop("GtkAdjustment", "upper");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkAdjustment", "upper"));
+        h.set_f64(o, "upper", 80.0).unwrap();
+        assert_eq!(h.get(o, "upper"), V::F64(80.0));
+    });
+}
+
+/// property Adjustment.value (JS value): GtkAdjustment:value (Gtk 4 docs); clamped into [lower, upper - page-size]
+#[test]
+fn prop_adjustment_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        h.set_f64(o, "upper", 100.0).unwrap();
+        let id = h.resolve_prop("GtkAdjustment", "value");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkAdjustment", "value"));
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(42.0));
+    });
+}
+
+/// method Adjustment.clamp_page (dynamic GI call): gtk_adjustment_clamp_page moves value so [lower, upper] is inside the page: 40 - page-size 20 (Gtk 4 docs)
+#[test]
+fn method_adjustment_clamp_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        h.call_args(o, "configure", &[V::F64(0.0), V::F64(0.0), V::F64(100.0), V::F64(1.0), V::F64(10.0), V::F64(20.0)]).unwrap();
+        let r = h.call_args(o, "clamp_page", &[V::F64(30.0), V::F64(40.0)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(20.0), "postcondition: h.get(o, 'value') == V::F64(20.0)");
+    });
+}
+
+/// method Adjustment.configure (dynamic GI call): gtk_adjustment_configure (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_adjustment_configure() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        
+        let r = h.call_args(o, "configure", &[V::F64(7.0), V::F64(0.0), V::F64(50.0), V::F64(2.0), V::F64(10.0), V::F64(5.0)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(7.0) && h.get(o, "upper") == V::F64(50.0) && h.get(o, "pageSize") == V::F64(5.0), "postcondition: h.get(o, 'value') == V::F64(7.0) && h.get(o, 'upper') == V::F64(50.0) && h.get(o, 'pageSize') == V::F64(5.0)");
+    });
+}
+
+/// method Adjustment.get_minimum_increment (dynamic GI call): gtk_adjustment_get_minimum_increment is the smaller of step and page increment (Gtk 4 docs)
+#[test]
+fn method_adjustment_get_minimum_increment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        h.set_f64(o, "stepIncrement", 4.0).unwrap(); h.set_f64(o, "pageIncrement", 2.0).unwrap();
+        let r = h.call_args(o, "get_minimum_increment", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == V::F64(2.0), "postcondition: r == V::F64(2.0)");
+    });
+}
+
+/// method Adjustment.get_value (dynamic GI call): gtk_adjustment_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
+#[test]
+fn method_adjustment_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("scale", "get_adjustment");
+        h.set_f64(o, "upper", 100.0).unwrap(); h.set_f64(o, "value", 9.0).unwrap();
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == V::F64(9.0), "postcondition: r == V::F64(9.0)");
     });
 }
 
@@ -2653,7 +2861,7 @@ fn method_editable_select_region() {
         let o = h.create("entry");
         h.set_str(o, "text", "hello").unwrap();
         let r = h.call_args(o, "selectRegion", &[V::I64(1), V::I64(3)]).unwrap();
-        let w = h.widget(o);
+        let w = h.obj(o);
         let _ = (&w, &r);
         assert!(h.get(o, "cursor-position") == V::I64(1) && h.get(o, "selection-bound") == V::I64(3), "postcondition: h.get(o, 'cursor-position') == V::I64(1) && h.get(o, 'selection-bound') == V::I64(3)");
     });
@@ -5517,6 +5725,57 @@ fn prop_range_inverted() {
     });
 }
 
+/// property Range.lower (JS lower): GtkAdjustment:lower through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_range_lower() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "lower");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "lower"));
+        h.set_f64(o, "lower", 5.0).unwrap();
+        assert_eq!(h.get(o, "lower"), V::F64(5.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("lower")), V::F64(5.0), "the object behind `adjustment` holds the value");
+    });
+}
+
+/// property Range.pageIncrement (JS pageIncrement): GtkAdjustment:page-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_range_pageincrement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "pageIncrement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "pageIncrement"));
+        h.set_f64(o, "pageIncrement", 25.0).unwrap();
+        assert_eq!(h.get(o, "pageIncrement"), V::F64(25.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("page-increment")), V::F64(25.0), "the object behind `adjustment` holds the value");
+    });
+}
+
+/// property Range.pageSize (JS pageSize): GtkAdjustment:page-size through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_range_pagesize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let id = h.resolve_prop("range", "pageSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "pageSize"));
+        h.set_f64(o, "pageSize", 10.0).unwrap();
+        assert_eq!(h.get(o, "pageSize"), V::F64(10.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("page-size")), V::F64(10.0), "the object behind `adjustment` holds the value");
+    });
+}
+
 /// property Range.restrict-to-fill-level (JS restrictToFillLevel): GtkRange:restrict-to-fill-level (Gtk 4 docs)
 #[test]
 fn prop_range_restrict_to_fill_level() {
@@ -5544,6 +5803,84 @@ fn prop_range_show_fill_level() {
         assert_eq!(id, h.resolve_prop("range", "show-fill-level"));
         h.set_bool(o, "showFillLevel", true).unwrap();
         assert_eq!(h.get(o, "showFillLevel"), V::Bool(true));
+    });
+}
+
+/// property Range.stepIncrement (JS stepIncrement): GtkAdjustment:step-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_range_stepincrement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "stepIncrement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "stepIncrement"));
+        h.set_f64(o, "stepIncrement", 3.0).unwrap();
+        assert_eq!(h.get(o, "stepIncrement"), V::F64(3.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("step-increment")), V::F64(3.0), "the object behind `adjustment` holds the value");
+    });
+}
+
+/// property Range.upper (JS upper): GtkAdjustment:upper through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_range_upper() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "upper");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "upper"));
+        h.set_f64(o, "upper", 80.0).unwrap();
+        assert_eq!(h.get(o, "upper"), V::F64(80.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("upper")), V::F64(80.0), "the object behind `adjustment` holds the value");
+    });
+}
+
+/// property Range.value (JS value): GtkAdjustment:value through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_range_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let id = h.resolve_prop("range", "value");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "value"));
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(42.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("value")), V::F64(42.0), "the object behind `adjustment` holds the value");
+    });
+}
+
+/// echo suppression for Range.value: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_range_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let r = o.downcast_ref::<gtk::Range>().unwrap(); r.set_range(0.0, 100.0); r.set_value(10.0 + i as f64);
+        };
+        h.listen(o, "value-changed", true).unwrap();
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "b", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["value-changed"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
     });
 }
 
@@ -5600,6 +5937,26 @@ fn method_range_set_value() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.call_args(o, "get_value", &[]).unwrap() == V::F64(42.0), "postcondition: h.call_args(o, 'get_value', &[]).unwrap() == V::F64(42.0)");
+    });
+}
+
+/// bind:value on Range: GtkAdjustment:value through GtkRange:adjustment; value-changed fires only on change and the adjustment clamps (Gtk 4 docs)
+#[test]
+fn binding_range_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let r = o.downcast_ref::<gtk::Range>().unwrap(); r.set_range(0.0, 100.0); r.set_value(10.0 + i as f64);
+        };
+        h.listen(o, "value-changed", true).unwrap();
+        fire(&h.obj(o), "a", 0);
+        fire(&h.obj(o), "b", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "value"), V::Null, "the property reads the new value");
     });
 }
 
@@ -6318,6 +6675,23 @@ fn prop_spinbutton_digits() {
     });
 }
 
+/// property SpinButton.lower (JS lower): GtkAdjustment:lower through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_spinbutton_lower() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "lower");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "lower"));
+        h.set_f64(o, "lower", 5.0).unwrap();
+        assert_eq!(h.get(o, "lower"), V::F64(5.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("lower")), V::F64(5.0), "the object behind `adjustment` holds the value");
+    });
+}
+
 /// property SpinButton.numeric (JS numeric): GtkSpinButton:numeric (Gtk 4 docs)
 #[test]
 fn prop_spinbutton_numeric() {
@@ -6330,6 +6704,23 @@ fn prop_spinbutton_numeric() {
         assert_eq!(id, h.resolve_prop("spinbutton", "numeric"));
         h.set_bool(o, "numeric", true).unwrap();
         assert_eq!(h.get(o, "numeric"), V::Bool(true));
+    });
+}
+
+/// property SpinButton.pageIncrement (JS pageIncrement): GtkAdjustment:page-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_spinbutton_pageincrement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "pageIncrement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "pageIncrement"));
+        h.set_f64(o, "pageIncrement", 25.0).unwrap();
+        assert_eq!(h.get(o, "pageIncrement"), V::F64(25.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("page-increment")), V::F64(25.0), "the object behind `adjustment` holds the value");
     });
 }
 
@@ -6348,6 +6739,23 @@ fn prop_spinbutton_snap_to_ticks() {
     });
 }
 
+/// property SpinButton.stepIncrement (JS stepIncrement): GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_spinbutton_stepincrement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "stepIncrement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "stepIncrement"));
+        h.set_f64(o, "stepIncrement", 3.0).unwrap();
+        assert_eq!(h.get(o, "stepIncrement"), V::F64(3.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("step-increment")), V::F64(3.0), "the object behind `adjustment` holds the value");
+    });
+}
+
 /// property SpinButton.update-policy (JS updatePolicy): GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)
 #[test]
 fn prop_spinbutton_update_policy() {
@@ -6360,6 +6768,23 @@ fn prop_spinbutton_update_policy() {
         assert_eq!(id, h.resolve_prop("spinbutton", "update-policy"));
         h.set_str(o, "updatePolicy", "if-valid").unwrap();
         assert_eq!(h.get(o, "updatePolicy"), V::Str("if-valid".into()));
+    });
+}
+
+/// property SpinButton.upper (JS upper): GtkAdjustment:upper through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_spinbutton_upper() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "upper");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "upper"));
+        h.set_f64(o, "upper", 80.0).unwrap();
+        assert_eq!(h.get(o, "upper"), V::F64(80.0));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
+        assert_eq!(V::F64(tgt.property("upper")), V::F64(80.0), "the object behind `adjustment` holds the value");
     });
 }
 
@@ -7068,6 +7493,261 @@ fn binding_text_text() {
     });
 }
 
+/// signal TextBuffer.begin-user-action: GtkTextBuffer::begin-user-action, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_textbuffer_begin_user_action() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.borrow_from("textview", "get_buffer");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::TextBuffer>().unwrap().begin_user_action();
+        };
+        assert_ne!(h.resolve_signal("GtkTextBuffer", "begin-user-action"), 0);
+        assert_eq!(h.resolve_signal("GtkTextBuffer", "begin-user-action"), h.resolve_signal("GtkTextBuffer", "begin-user-action"));
+        h.listen(e, "begin-user-action", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "begin-user-action".to_string())), "delivered: {ev:?}");
+        h.listen(e, "begin-user-action", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "begin-user-action", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "begin-user-action", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextBuffer.changed: GtkTextBuffer::changed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_textbuffer_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.borrow_from("textview", "get_buffer");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::TextBuffer>().unwrap().set_text(&format!("text {i}"));
+        };
+        assert_ne!(h.resolve_signal("GtkTextBuffer", "changed"), 0);
+        assert_eq!(h.resolve_signal("GtkTextBuffer", "changed"), h.resolve_signal("GtkTextBuffer", "changed"));
+        h.listen(e, "changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextBuffer.end-user-action: GtkTextBuffer::end-user-action, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_textbuffer_end_user_action() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.borrow_from("textview", "get_buffer");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.end_user_action();
+        };
+        assert_ne!(h.resolve_signal("GtkTextBuffer", "end-user-action"), 0);
+        assert_eq!(h.resolve_signal("GtkTextBuffer", "end-user-action"), h.resolve_signal("GtkTextBuffer", "end-user-action"));
+        h.listen(e, "end-user-action", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "end-user-action".to_string())), "delivered: {ev:?}");
+        h.listen(e, "end-user-action", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "end-user-action", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "end-user-action", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextBuffer.modified-changed: GtkTextBuffer::modified-changed, run-last, void (Gtk 4 docs); emitted when the flag flips
+#[test]
+fn signal_textbuffer_modified_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.borrow_from("textview", "get_buffer");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::TextBuffer>().unwrap().set_modified(i % 2 == 0);
+        };
+        assert_ne!(h.resolve_signal("GtkTextBuffer", "modified-changed"), 0);
+        assert_eq!(h.resolve_signal("GtkTextBuffer", "modified-changed"), h.resolve_signal("GtkTextBuffer", "modified-changed"));
+        h.listen(e, "modified-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "modified-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "modified-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "modified-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "modified-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property TextBuffer.enable-undo (JS enableUndo): GtkTextBuffer:enable-undo (Gtk 4 docs)
+#[test]
+fn prop_textbuffer_enable_undo() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        
+        let id = h.resolve_prop("GtkTextBuffer", "enableUndo");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkTextBuffer", "enable-undo"));
+        h.set_bool(o, "enableUndo", false).unwrap();
+        assert_eq!(h.get(o, "enableUndo"), V::Bool(false));
+    });
+}
+
+/// property TextBuffer.text (JS text): GtkTextBuffer:text (Gtk 4 docs)
+#[test]
+fn prop_textbuffer_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        
+        let id = h.resolve_prop("GtkTextBuffer", "text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkTextBuffer", "text"));
+        h.set_str(o, "text", "buffer text").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("buffer text".into()));
+    });
+}
+
+/// method TextBuffer.get_char_count (dynamic GI call): gtk_text_buffer_get_char_count counts characters, not bytes (Gtk 4 docs)
+#[test]
+fn method_textbuffer_get_char_count() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        h.set_str(o, "text", "h\u{e9}llo").unwrap();
+        let r = h.call_args(o, "get_char_count", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(5), "postcondition: r == V::I64(5)");
+    });
+}
+
+/// method TextBuffer.get_line_count (dynamic GI call): gtk_text_buffer_get_line_count (Gtk 4 docs)
+#[test]
+fn method_textbuffer_get_line_count() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        h.set_str(o, "text", "a\nb\nc").unwrap();
+        let r = h.call_args(o, "get_line_count", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(3), "postcondition: r == V::I64(3)");
+    });
+}
+
+/// method TextBuffer.insert_at_cursor (dynamic GI call): gtk_text_buffer_insert_at_cursor inserts at the insert mark (Gtk 4 docs)
+#[test]
+fn method_textbuffer_insert_at_cursor() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        h.set_str(o, "text", "ab").unwrap();
+        let r = h.call_args(o, "insert_at_cursor", &[V::Str("X".into()), V::I64(-1)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(matches!(h.get(o, "text"), V::Str(s) if s.contains("X") && s.len() == 3), "postcondition: matches!(h.get(o, 'text'), V::Str(s) if s.contains('X') && s.len() == 3)");
+    });
+}
+
+/// method TextBuffer.set_text (dynamic GI call): gtk_text_buffer_set_text (Gtk 4 docs); string + int arguments through GIRepository (X1)
+#[test]
+fn method_textbuffer_set_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        
+        let r = h.call_args(o, "set_text", &[V::Str("hello".into()), V::I64(-1)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text") == V::Str("hello".into()), "postcondition: h.get(o, 'text') == V::Str('hello'.into())");
+    });
+}
+
+/// method TextBuffer.undo (dynamic GI call): gtk_text_buffer_undo reverts the last user action when enable-undo is set (Gtk 4 docs)
+#[test]
+fn method_textbuffer_undo() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.borrow_from("textview", "get_buffer");
+        h.set_bool(o, "enableUndo", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor("typed"); b.end_user_action();
+        let r = h.call_args(o, "undo", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text") == V::Str("".into()), "postcondition: h.get(o, 'text') == V::Str(''.into())");
+    });
+}
+
+/// signal TextView.changed: GtkTextBuffer::changed through GtkTextView:buffer (Gtk 4 docs); the text view has no such signal, the backend connects it on the buffer (X7, G12)
+#[test]
+fn signal_textview_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("textview");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::TextView>().unwrap().buffer().set_text(&format!("text {i}"));
+        };
+        assert_ne!(h.resolve_signal("textview", "changed"), 0);
+        assert_eq!(h.resolve_signal("textview", "changed"), h.resolve_signal("textview", "changed"));
+        h.listen(e, "changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "changed", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// property TextView.cursor-visible (JS cursorVisible): GtkTextView:cursor-visible (Gtk 4 docs)
 #[test]
 fn prop_textview_cursor_visible() {
@@ -7143,6 +7823,50 @@ fn prop_textview_monospace() {
     });
 }
 
+/// property TextView.text (JS text): GtkTextBuffer:text through GtkTextView:buffer (Gtk 4 docs); forwarded by the backend (X7, G12)
+#[test]
+fn prop_textview_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let id = h.resolve_prop("textview", "text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("textview", "text"));
+        h.set_str(o, "text", "p3 text").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("p3 text".into()));
+        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("buffer").unwrap();
+        assert_eq!(V::Str(tgt.property("text")), V::Str("p3 text".into()), "the object behind `buffer` holds the value");
+    });
+}
+
+/// echo suppression for TextView.text: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_textview_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            o.downcast_ref::<gtk::TextView>().unwrap().buffer().set_text(&format!("text {i}"));
+        };
+        h.listen(o, "changed", true).unwrap();
+        h.set_str(o, "text", "p3 text").unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "b", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["changed"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_str(o, "text", "p3 text").unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
 /// property TextView.top-margin (JS topMargin): GtkTextView:top-margin (Gtk 4 docs)
 #[test]
 fn prop_textview_top_margin() {
@@ -7198,6 +7922,27 @@ fn method_textview_place_cursor_onscreen() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(matches!(r, V::Bool(_)), "postcondition: matches!(r, V::Bool(_))");
+    });
+}
+
+/// bind:text on TextView: GtkTextBuffer:text set through the buffer emits changed only for real edits (Gtk 4 docs)
+#[test]
+fn binding_textview_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("textview");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            o.downcast_ref::<gtk::TextView>().unwrap().buffer().set_text(&format!("text {i}"));
+        };
+        h.listen(o, "changed", true).unwrap();
+        fire(&h.obj(o), "a", 0);
+        fire(&h.obj(o), "b", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        let arg = ev.last().unwrap().2.first().cloned().unwrap_or(V::Null);
+        assert_eq!(arg, h.get(o, "text"), "the change signal's first argument is the new value");
     });
 }
 

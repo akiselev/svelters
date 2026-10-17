@@ -151,3 +151,10 @@ fn qt_09_dialogs_all_kinds() {
     }
 }
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);
+
+/// G12: the page edits a QTextDocument through a borrowed handle (`browser.call('document')`).
+#[test]
+fn qt_03_text_document_is_reached_through_a_borrowed_handle() {
+    let dump = run_page_clicks("qt", "03-text", &["QTextBrowser"], &[], "-document");
+    assert!(dump.iter().any(|n| n["text"] == "document blocks: 2"), "the borrowed QTextDocument counted two blocks");
+}

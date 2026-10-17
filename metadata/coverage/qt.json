@@ -1311,12 +1311,12 @@
    0,
    3
   ],
-  "slots": 3,
-  "slots_own": 3,
+  "slots": 5,
+  "slots_own": 5,
   "unexposed": null,
   "verified": [
    14,
-   14
+   19
   ]
  },
  {

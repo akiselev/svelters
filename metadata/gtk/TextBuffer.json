@@ -756,11 +756,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_buffer_get_char_count counts characters, not bytes (Gtk 4 docs)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(5)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_char_count",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_char_count",
       "name": "get_char_count",
       "native": "gtk_text_buffer_get_char_count",
       "origin": "gir",
@@ -771,6 +786,7 @@
         "ownership": "borrowed",
         "type": "i32"
       },
+      "setup": "h.set_str(o, \"text\", \"h\\u{e9}llo\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -1066,11 +1082,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_buffer_get_line_count (Gtk 4 docs)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(3)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:get_line_count",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_line_count",
       "name": "get_line_count",
       "native": "gtk_text_buffer_get_line_count",
       "origin": "gir",
@@ -1081,6 +1112,7 @@
         "ownership": "borrowed",
         "type": "i32"
       },
+      "setup": "h.set_str(o, \"text\", \"a\\nb\\nc\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -1379,11 +1411,29 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_buffer_insert_at_cursor inserts at the insert mark (Gtk 4 docs)"
+      },
+      "args": [
+        "X",
+        -1
+      ],
+      "dispatch": "dynamic",
+      "expect": "matches!(h.get(o, \"text\"), V::Str(s) if s.contains(\"X\") && s.len() == 3)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:insert_at_cursor",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "insert_at_cursor",
       "name": "insert_at_cursor",
       "native": "gtk_text_buffer_insert_at_cursor",
       "origin": "gir",
@@ -1409,6 +1459,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_str(o, \"text\", \"ab\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -2226,11 +2277,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_buffer_set_text (Gtk 4 docs); string + int arguments through GIRepository (X1)"
+      },
+      "args": [
+        "hello",
+        -1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"text\") == V::Str(\"hello\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:set_text",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_text",
       "name": "set_text",
       "native": "gtk_text_buffer_set_text",
       "origin": "gir",
@@ -2259,11 +2327,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_text_buffer_undo reverts the last user action when enable-undo is set (Gtk 4 docs)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"text\") == V::Str(\"\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:undo",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "undo",
       "name": "undo",
       "native": "gtk_text_buffer_undo",
       "origin": "gir",
@@ -2274,6 +2357,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_bool(o, \"enableUndo\", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor(\"typed\"); b.end_user_action();",
       "unsupported_reason": null
     }
   ],
@@ -2413,6 +2497,13 @@
         "get": "gtk_text_buffer_get_enable_undo",
         "set": "gtk_text_buffer_set_enable_undo"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer:enable-undo (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:enable-undo",
       "invocation": "reflected",
@@ -2531,6 +2622,14 @@
         "get": "gtk_text_buffer_get_text",
         "set": "gtk_text_buffer_set_text"
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer:text (Gtk 4 docs)"
+      },
       "default": "",
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:text",
       "invocation": "reflected",
@@ -2552,6 +2651,7 @@
         "origin": "runtime",
         "owner": "GtkTextBuffer"
       },
+      "sample": "buffer text",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -2603,6 +2703,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer::begin-user-action, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2624,9 +2734,28 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::TextBuffer>().unwrap().begin_user_action();",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer::changed, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2648,7 +2777,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::TextBuffer>().unwrap().set_text(&format!(\"text {i}\"));",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -2686,6 +2824,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer::end-user-action, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2707,7 +2855,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.end_user_action();",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -2885,6 +3042,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkTextBuffer::modified-changed, run-last, void (Gtk 4 docs); emitted when the flag flips"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2906,7 +3073,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::TextBuffer>().unwrap().set_modified(i % 2 == 0);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -3033,11 +3209,17 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/TextBuffer.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "verify_subject": {
+    "borrowed": {
+      "getter": "get_buffer",
+      "tag": "textview"
+    }
+  }
 }

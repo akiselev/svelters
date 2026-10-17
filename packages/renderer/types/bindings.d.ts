@@ -55,6 +55,12 @@ export interface BindableProps {
   radiobutton: {
     checked: boolean; // qt
   };
+  range: {
+    value: number; // gtk
+  };
+  scale: {
+    value: number; // gtk
+  };
   scrollbar: {
     value: number; // qt
   };
@@ -90,6 +96,9 @@ export interface BindableProps {
   };
   textedit: {
     plainText: string; // qt
+  };
+  textview: {
+    text: string; // gtk
   };
   timeedit: {
     time: { hour: number; minute: number; second: number; ms: number }; // qt

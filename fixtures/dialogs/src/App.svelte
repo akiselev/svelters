@@ -1,24 +1,19 @@
 <script>
+  // Toplevel kinds are declared where they belong: a second window in an `if` block is transient
+  // for the window around it; an about dialog created with show="none" is opened by the app.
   let open = $state(true);
-  let result = $state('waiting');
   let about = $state();
-
-  function finished(code) {
-    result = `finished ${code}`;
-    open = false;
-  }
-  function showAbout() {
-    about.call('present');
-  }
 </script>
 
 <window title="Main">
   <box orientation="vertical" spacing="8">
-    <label>{result}</label>
-    <button onclick={() => (open = true)}>Open</button>
-    <button onclick={showAbout}>About</button>
+    <label>{open ? 'settings open' : 'settings closed'}</label>
+    <button onclick={() => (open = !open)}>Toggle</button>
+    <button onclick={() => about.call('present')}>About</button>
     {#if open}
-      <messagebox text="Save changes?" onfinished={finished} />
+      <window title="Settings">
+        <label>Settings body</label>
+      </window>
     {/if}
   </box>
 </window>

@@ -1526,6 +1526,250 @@
         "nullable": false,
         "ref": "bool"
       }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:lower through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:lower",
+      "invocation": "virtual",
+      "js_name": "lower",
+      "name": "lower",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 5.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "lower",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:upper through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:upper",
+      "invocation": "virtual",
+      "js_name": "upper",
+      "name": "upper",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 80.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "upper",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:stepIncrement",
+      "invocation": "virtual",
+      "js_name": "stepIncrement",
+      "name": "stepIncrement",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 3.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "step-increment",
+        "via": "adjustment"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "new",
+          "notify",
+          "range",
+          "role",
+          "sample",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GtkAdjustment:page-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
+      },
+      "default": 0,
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:pageIncrement",
+      "invocation": "virtual",
+      "js_name": "pageIncrement",
+      "name": "pageIncrement",
+      "new": true,
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "sample": 25.0,
+      "type": {
+        "gtype": "gdouble",
+        "native": "gdouble",
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "virtual": {
+        "op": "via_object",
+        "origin": "manual",
+        "property": "page-increment",
+        "via": "adjustment"
+      }
     }
   ],
   "schema": "svelters-element-kind/v0",

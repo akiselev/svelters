@@ -1646,6 +1646,36 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  textdocument: {
+    props: {
+      undoRedoEnabled?: boolean;
+      modified?: boolean;
+      maximumBlockCount?: number;
+      documentMargin?: number;
+      indentWidth?: number;
+      textWidth?: number;
+      useDesignMetrics?: boolean;
+      defaultStyleSheet?: string;
+      readonly blockCount?: number;
+    };
+    events: {
+      contentsChanged: () => void;
+      blockCountChanged: (newBlockCount: number) => void;
+      modificationChanged: (changed: boolean) => void;
+    };
+    methods: {
+      setPlainText(text: string): void;
+      toPlainText(): string;
+      setHtml(html: string): void;
+      clear(): void;
+      isEmpty(): boolean;
+      characterCount(): number;
+      lineCount(): number;
+      undo(): void;
+      redo(): void;
+    };
+    slots: never;
+  };
   textedit: {
     props: {
       plainText?: string;
@@ -1876,7 +1906,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: "central" | "menubar" | "statusbar";
+    slots: "central" | "menubar" | "statusbar" | "toolbars" | "docks";
   };
   wizard: {
     props: {
@@ -1948,12 +1978,15 @@ export type QtElementTag = keyof QtElementDescriptors;
 /** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
 export interface QtChildAttrs {
   'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:area'?: ("bottom" | "left" | "right" | "top");
+  'parent:breakBefore'?: boolean;
   'parent:column'?: number;
   'parent:columnSpan'?: number;
   'parent:row'?: number;
   'parent:rowSpan'?: number;
   'parent:stretch'?: number;
   'parent:tabEnabled'?: boolean;
+  'parent:tabIcon'?: string;
   'parent:tabLabel'?: string;
   'parent:tabToolTip'?: string;
 }

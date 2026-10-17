@@ -215,6 +215,44 @@ fn close_dialog() {
     assert!(info(t.win).is_ok() && info(t.bx).is_ok(), "the parent lives on");
 }
 
+fn attr_str(parent: svl_handle, child: svl_handle, name: &str) -> String {
+    let a = id(SVL_ATTR, info(parent).unwrap().kind, name);
+    assert_ne!(a, 0, "unknown attribute {name}");
+    let mut out = svl_value::null();
+    assert_eq!(unsafe { (be().get_child_attr.unwrap())(be().self_, parent, child, a, &mut out) }, 0, "{}", err());
+    assert_eq!(out.tag, SVL_STR);
+    let units = unsafe { std::slice::from_raw_parts(out.u.s.ptr.cast::<u16>(), out.u.s.len) };
+    String::from_utf16(units).unwrap()
+}
+
+fn set_attr_str(parent: svl_handle, child: svl_handle, name: &str, v: &str) {
+    let a = id(SVL_ATTR, info(parent).unwrap().kind, name);
+    let val = svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: v.as_ptr().cast(), len: v.len() } });
+    assert_eq!(unsafe { (be().set_child_attr.unwrap())(be().self_, parent, child, a, &val) }, 0, "{}", err());
+}
+
+/// X7: toolbars and dock widgets inserted into a window without naming a slot are routed by kind;
+/// their area is a child attribute.
+fn areas_route_by_kind() {
+    let t = t();
+    let central = create("label");
+    let tb = create("toolbar");
+    let dock = create("dockwidget");
+    insert(t.win, central).unwrap();
+    insert(t.win, tb).unwrap();
+    insert(t.win, dock).unwrap();
+    assert_eq!(getter(t.win, "centralWidget").unwrap(), Some(central), "the label is still the central widget");
+    assert_eq!(attr_str(t.win, tb, "area"), "top");
+    assert_eq!(attr_str(t.win, dock, "area"), "left");
+    set_attr_str(t.win, tb, "area", "bottom");
+    set_attr_str(t.win, dock, "area", "right");
+    assert_eq!(attr_str(t.win, tb, "area"), "bottom");
+    assert_eq!(attr_str(t.win, dock, "area"), "right");
+    remove(t.win, tb).unwrap();
+    remove(t.win, dock).unwrap();
+    assert_eq!(getter(tb, "parentWidget").unwrap(), None, "removed means unparented");
+}
+
 fn scenario(steps: Vec<fn()>) {
     let mut all: Vec<Step> = vec![Box::new(build)];
     all.extend(steps.into_iter().map(|f| Box::new(f) as Step));
@@ -225,5 +263,6 @@ fn main() {
     counter_qt::run_as_test("transient_open_remove", || scenario(vec![transient_open_remove]));
     counter_qt::run_as_test("modeless_show", || scenario(vec![modeless_show]));
     counter_qt::run_as_test("close_parent", || scenario(vec![close_parent]));
+    counter_qt::run_as_test("areas_route_by_kind", || scenario(vec![areas_route_by_kind]));
     counter_qt::run_as_test("close_dialog", || scenario(vec![close_dialog]));
 }

@@ -1,0 +1,70 @@
+# Not an element: reached through GtkRange:adjustment / GtkSpinButton:adjustment (a borrowed handle).
+verify_subject: {borrowed: {tag: scale, getter: get_adjustment}}
+properties:
+  - name: lower
+    js_name: lower
+    sample: 5.0
+    provenance: "GtkAdjustment:lower (Gtk 4 docs)"
+  - name: upper
+    js_name: upper
+    sample: 80.0
+    provenance: "GtkAdjustment:upper (Gtk 4 docs)"
+  - name: value
+    js_name: value
+    sample: 42.0
+    setup: 'h.set_f64(o, "upper", 100.0).unwrap();'
+    provenance: "GtkAdjustment:value (Gtk 4 docs); clamped into [lower, upper - page-size]"
+  - name: step-increment
+    js_name: stepIncrement
+    sample: 3.0
+    provenance: "GtkAdjustment:step-increment (Gtk 4 docs)"
+  - name: page-increment
+    js_name: pageIncrement
+    sample: 25.0
+    provenance: "GtkAdjustment:page-increment (Gtk 4 docs)"
+  - name: page-size
+    js_name: pageSize
+    sample: 10.0
+    setup: 'h.set_f64(o, "upper", 100.0).unwrap();'
+    provenance: "GtkAdjustment:page-size (Gtk 4 docs)"
+signals:
+  - name: value-changed
+    js_event: value-changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let a = o.downcast_ref::<gtk::Adjustment>().unwrap(); a.set_upper(100.0); a.set_value(10.0 + i as f64);', values: [a, b, c]}
+    provenance: "GtkAdjustment::value-changed, run-first, void (Gtk 4 docs)"
+  - name: changed
+    js_event: changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let a = o.downcast_ref::<gtk::Adjustment>().unwrap(); a.set_upper(100.0 + i as f64); a.emit_by_name::<()>("changed", &[]);', values: [a, b, c]}
+    provenance: "GtkAdjustment::changed, run-first, void (Gtk 4 docs); emitted by configure() and when range properties change"
+methods:
+  - name: configure
+    js_name: configure
+    dispatch: dynamic
+    args: [7.0, 0.0, 50.0, 2.0, 10.0, 5.0]
+    expect: 'h.get(o, "value") == V::F64(7.0) && h.get(o, "upper") == V::F64(50.0) && h.get(o, "pageSize") == V::F64(5.0)'
+    provenance: "gtk_adjustment_configure (Gtk 4 docs); called through GIRepository (X1)"
+  - name: clamp_page
+    js_name: clamp_page
+    dispatch: dynamic
+    setup: 'h.call_args(o, "configure", &[V::F64(0.0), V::F64(0.0), V::F64(100.0), V::F64(1.0), V::F64(10.0), V::F64(20.0)]).unwrap();'
+    args: [30.0, 40.0]
+    expect: 'h.get(o, "value") == V::F64(20.0)'
+    provenance: "gtk_adjustment_clamp_page moves value so [lower, upper] is inside the page: 40 - page-size 20 (Gtk 4 docs)"
+  - name: get_value
+    js_name: get_value
+    dispatch: dynamic
+    setup: 'h.set_f64(o, "upper", 100.0).unwrap(); h.set_f64(o, "value", 9.0).unwrap();'
+    args: []
+    expect: 'r == V::F64(9.0)'
+    provenance: "gtk_adjustment_get_value (Gtk 4 docs); f64 return through GIRepository (X1)"
+  - name: get_minimum_increment
+    js_name: get_minimum_increment
+    dispatch: dynamic
+    setup: 'h.set_f64(o, "stepIncrement", 4.0).unwrap(); h.set_f64(o, "pageIncrement", 2.0).unwrap();'
+    args: []
+    expect: 'r == V::F64(2.0)'
+    provenance: "gtk_adjustment_get_minimum_increment is the smaller of step and page increment (Gtk 4 docs)"

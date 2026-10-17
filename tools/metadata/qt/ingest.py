@@ -231,9 +231,15 @@ def instance_defaults(cls, mo, QtCore) -> dict:
     return out
 
 
+# Non-widget classes the framework reaches as borrowed handles (QTextEdit::document(), a view's
+# selectionModel()): ingested next to the QtWidgets classes so their props, signals and methods can be
+# annotated and verified (X7, G12). Class -> the Python module that has it.
+EXTRA_CLASSES = {"QTextDocument": "QtGui"}
+
+
 def metaobject_dump(names):
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from PySide6 import QtCore, QtWidgets, __version__ as pyside
+    from PySide6 import QtCore, QtGui, QtWidgets, __version__ as pyside
 
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841 - widgets need one
 
@@ -244,7 +250,7 @@ def metaobject_dump(names):
 
     dumps = {}
     for n in names:
-        cls = getattr(QtWidgets, n, None)
+        cls = getattr({"QtGui": QtGui, "QtCore": QtCore}.get(EXTRA_CLASSES.get(n), QtWidgets), n, None)
         if not (isinstance(cls, type) and issubclass(cls, QtCore.QObject)):
             continue
         mo = cls.staticMetaObject
@@ -397,7 +403,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     return {
         "schema": svmeta.SCHEMA, "toolkit": "qt",
         "id": f"{prefix}:{name}",
-        "native": {"name": name, "header": c.get("location"), "module": "QtWidgets", "brief": c.get("brief")},
+        "native": {"name": name, "header": c.get("location"), "module": EXTRA_CLASSES.get(name, "QtWidgets"), "brief": c.get("brief")},
         "kind": "object", "abstract": any(f.get("virtual") == "pure" for f in c.findall("function")),
         "qobject": md is not None,
         "bases": base_chain(name, classes), "interfaces": [],
@@ -451,7 +457,7 @@ def main() -> int:
     classes, files, namespaces = parse_qdoc(docdir)
     widget_classes = sorted(
         n for n, (m, c) in classes.items()
-        if m == "qtwidgets" and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
+        if (m == "qtwidgets" or n in EXTRA_CLASSES) and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
         and c.get("location") and "::" not in n and "<" not in n)
     qobjects = {n for n in classes if n == "QObject" or "QObject" in base_chain(n, classes)}
     owners = [(n, c) for n, (_, c) in sorted(classes.items())] + [(n, c) for n, (_, c) in sorted(namespaces.items())]

@@ -5,6 +5,8 @@
   let search = $state('find');
   let text = $state('text');
   let editing = $state(false);
+  let view = $state('text view');
+  let eView = $state(0);
   let eEntry = $state(0);
   let ePass = $state(0);
   let eSearch = $state(0);
@@ -21,6 +23,7 @@
     search = 'find 2';
     text = 'text 2';
     editing = true;
+    view = 'text view 2';
   });
 </script>
 
@@ -47,6 +50,7 @@
   <label label="echo editing: {eEditing}" />
   <inscription text="inscription" minLines={1} natChars={20} />
   <shortcutlabel accelerator="<Control>q" />
-  <textview editable={true} wrapMode="word" monospace={true} cursorVisible={true}
+  <textview bind:text={() => view, (v) => { view = v; eView++; }} editable={true} wrapMode="word" monospace={true} cursorVisible={true}
     leftMargin={4} topMargin={4} justification="left" vexpand={true} />
+  <label label="echo text view: {eView}" />
 </box>

@@ -763,7 +763,6 @@
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "native",
             "args"
           ],
           "properties": {
@@ -780,6 +779,10 @@
             "readd": {
               "type": "boolean",
               "description": "Remove the child from the host (the slot's remove call, without its `then` steps) before the call; the argument values are read first. For positions fixed at add time."
+            },
+            "expr": {
+              "type": "string",
+              "description": "Instead of `native`: a C++ statement over `$h` (the slot host), `$c` (the child as the slot's accepted class) and `$v` (the value)."
             }
           }
         },
@@ -789,7 +792,7 @@
           "properties": {
             "expr": {
               "type": "string",
-              "description": "Instead of `native`: a C++ expression over `h` (the slot host), `ch` (the child widget) and `ci` (its index)."
+              "description": "Instead of `native`: a C++ expression over `h` (the slot host), `ch` (the child widget) and `ci` (its index). `$h` and `$c` (the child as the slot's accepted class) are also available."
             },
             "native": {
               "type": "string"
@@ -822,6 +825,10 @@
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "setup": {
+          "type": "string",
+          "description": "C++ statements the generated test runs after the first insert (`pw` the parent, `w` the child widget): state the attribute needs to be observable."
         }
       }
     }

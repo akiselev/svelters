@@ -597,6 +597,8 @@ class Model:
                     raise GenError(f"{where}: remove.effects.child must be unparented")
                 s["replace"] = None
                 s["ops"] = ops
+                for a in s.get("attrs", []):
+                    self._resolve_attr(el, s, a, f"{where}.{a['name']}", host_cls)
                 return
             var = [v for v in ins.get("variants", []) if v.get("when") == "before != null"]
             if s.get("order") == "unordered":
@@ -655,9 +657,9 @@ class Model:
         a["vcpp"] = self.VALUE_CPP[a["type"]]
         for key in ("set", "get"):
             op = a[key]
-            if key == "get" and "expr" in op:
+            if "expr" in op:
                 if "native" in op:
-                    raise GenError(f"{where}.get: give `native` or `expr`, not both")
+                    raise GenError(f"{where}.{key}: give `native` or `expr`, not both")
                 op.update({"args": [], "ptypes": [], "out_params": []})
                 continue
             if "native" not in op:
@@ -675,7 +677,8 @@ class Model:
                 if not rec or not self.kind(rcls):
                     raise GenError(f"{where}.{key}: cannot resolve the class of the value `member` is called on")
                 self._need_method(where, rcls, op["member"], 0)
-            ptr = [i for i, t in enumerate(types) if t.endswith("*") and t != "QWidget*"] if key == "get" else []
+            # pointer parameters the caller does not supply are out parameters; one the args name (the child) is not
+            ptr = [i for i, t in enumerate(types) if t.endswith("*") and t != "QWidget*"] if key == "get" and len(op["args"]) < len(types) else []
             op["out_params"] = ptr
             if key == "get":
                 if ptr and op.get("out") not in ptr:
@@ -689,7 +692,8 @@ class Model:
                 raise GenError(f"{where}.set: args must contain `value`")
             elif len(op["args"]) > len(types):
                 raise GenError(f"{where}.{key}: {len(op['args'])} args for {len(types)} parameters")
-        a["value_ptype"] = a["set"]["ptypes"][a["set"]["args"].index("value")]
+        a["value_ptype"] = a["set"]["ptypes"][a["set"]["args"].index("value")] if "expr" not in a["set"] else a["vcpp"]
+        a["child_cls"] = s["accepts"][0]
 
     def accepted_child_tag(self, el: dict, s: dict) -> str:
         for e in self.elements:
@@ -744,10 +748,13 @@ def cident(s: str) -> str:
 
 
 def inc(model: Model, classes) -> str:
-    seen = {f"QtWidgets/{model.kind(c)['native']['header']}" for c in classes if model.kind(c)}
+    def header(k: dict) -> str:
+        return f"{k['native'].get('module', 'QtWidgets')}/{k['native']['header']}"
+
+    seen = {header(model.kind(c)) for c in classes if model.kind(c)}
     for o in model.owners_used:
         if model.kind(o) and o != "Qt":
-            seen.add(f"QtWidgets/{model.kind(o)['native']['header']}")
+            seen.add(header(model.kind(o)))
         elif o in GUI_HEADERS:
             seen.add(GUI_HEADERS[o])
     return "\n".join(f"#include <{h}>" for h in sorted(seen))
@@ -1095,7 +1102,9 @@ def emit_insert(m: Model) -> str:
         if not ch:
             continue
         t = cident(e["tag"])
-        out.append(f"    case K_{t}:\n      if (slot == 0) slot = S_{t}_{cident(ch['default_slot'])};\n      switch (slot) {{")
+        routes = "".join(f"      if (slot == 0 && qobject_cast<{x['accepts'][0]} *>(child)) slot = S_{t}_{cident(x['name'])};\n"
+                         for x in ch["slots"] if x.get("route_by_kind"))
+        out.append(f"    case K_{t}:\n{routes}      if (slot == 0) slot = S_{t}_{cident(ch['default_slot'])};\n      switch (slot) {{")
         for s in ch["slots"]:
             ops = s["ops"]
             ctype = s["accepts"][0]
@@ -1204,7 +1213,7 @@ def attr_default_cpp(a: dict) -> str:
 
 def attr_arg(e: dict, s: dict, a: dict, arg: str, ptype: str) -> str:
     if arg == "child":
-        return "ch"
+        return "ch" if ptype.replace(" ", "") == "QWidget*" else f"static_cast<{ptype.replace('*', ' *').replace('  ', ' ')}>(ch)"
     if arg == "value":
         return f"from_int<{ptype}>(x)" if a["type"] == "enum" else "x"
     if arg == "child_index":
@@ -1226,7 +1235,7 @@ def emit_attr_helpers(m: Model) -> list[str]:
                 continue
             ops = s["ops"]
             hostt = e["layout_cls"] if s["host"] == "layout" else e["cls"]
-            idx = op_call("h", ops["index_of"], "ch")
+            idx = "0" if s.get("append_only") else op_call("h", ops["index_of"], "ch")
             for a in s.get("attrs", []):
                 fn = attr_fn(e, s, a)
                 vt = a["vcpp"]
@@ -1241,7 +1250,7 @@ def emit_attr_helpers(m: Model) -> list[str]:
                 body = [f"{vt} a_get_{fn}({hostt} *h, QWidget *ch) {{", f"  int ci = {idx};", "  (void)ci; (void)h;"]
                 for i in g["out_params"]:
                     body.append(f"  {g['ptypes'][i][:-1].strip()} o{i} = 0;")
-                call = g["expr"] if "expr" in g else f"h->{g['method']}({', '.join(call_args)})"
+                call = g["expr"].replace("$h", "h").replace("$c", f"static_cast<{a['child_cls']} *>(ch)") if "expr" in g else f"h->{g['method']}({', '.join(call_args)})"
                 if g.get("member"):
                     call += f"->{g['member']}()"
                 if g["out_params"]:
@@ -1259,7 +1268,11 @@ def emit_attr_helpers(m: Model) -> list[str]:
                         body.append(f"  auto r{i} = {x};")
                     body.append(f"  {op_call('h', {**ops['remove'], 'then': []}, 'ch', {'index': 'ci'})};")
                     sargs = [f"r{i}" for i in range(len(sargs))]
-                body += [f"  h->{st['method']}({', '.join(sargs)});", "}"]
+                if "expr" in st:
+                    expr = st["expr"].replace("$h", "h").replace("$v", "x").replace("$c", f"static_cast<{a['child_cls']} *>(ch)")
+                    body += [f"  {expr};", "}"]
+                else:
+                    body += [f"  h->{st['method']}({', '.join(sargs)});", "}"]
                 dset.append("\n".join(body))
     return tabs + dget + dset
 
@@ -1287,7 +1300,7 @@ def emit_attrs(m: Model) -> str:
                     out += [f"            case S_{t}_{cident(s['name'])}: {{",
                             f"              auto *h = {host_expr(e, s['host'])};",
                             "              auto *ch = qobject_cast<QWidget *>(co);",
-                            f"              if (!ch || {op_call('h', s['ops']['index_of'], 'ch')} < 0) return fail(\"{w}: child attributes need an inserted child\");"]
+                            f"              if (!ch || !({'static_cast<QWidget *>(o)->isAncestorOf(ch)' if s.get('append_only') else op_call('h', s['ops']['index_of'], 'ch') + ' >= 0'})) return fail(\"{w}: child attributes need an inserted child\");"]
                     if setter:
                         out += [f"              {a['vcpp']} x{{}};", f"              if (v->tag == SVL_NULL) x = {attr_default_cpp(a)};", "              else {"]
                         if a["type"] == "enum":
@@ -1900,8 +1913,11 @@ class Tests:
         getc = lambda who: f"B->get_child_attr(B->self, p, {who}, {aid}, &out)"
         lines = [f'  svl_handle p = mk("{t}"); svl_handle c = mk("{child}"); svl_handle stray = mk("{child}");',
                  f"  CHECK({aid} != 0);", f"  {d1}", f"  {d2}", f"  {dd}", "  svl_value out{}; svl_value nul{};  // nul: SVL_NULL",
-                 f"  CHECK(B->insert(B->self, p, c, 0, {sid}) == 0);",
-                 f"  CHECK({setc('stray', 'v1')} < 0);  // a child that is not inserted has no attributes",
+                 f"  CHECK(B->insert(B->self, p, c, 0, {sid}) == 0);"]
+        if a.get("setup"):
+            # state the attribute needs to be observable (a toolbar break needs a toolbar before it)
+            lines.append(f"  {{ auto *pw = static_cast<{e['cls']} *>(O(p)); auto *w = static_cast<QWidget *>(O(c)); (void)pw; (void)w; {a['setup']} }}")
+        lines += [f"  CHECK({setc('stray', 'v1')} < 0);  // a child that is not inserted has no attributes",
                  '  CHECK(std::strstr(B->last_error(B->self), "inserted child") != nullptr);',
                  f"  CHECK({getc('stray')} < 0);",
                  f"  CHECK({setc('c', 'v1')} == 0);",

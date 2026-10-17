@@ -55,6 +55,12 @@ export const BINDINGS = {
   radiobutton: {
     checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  range: {
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
+  scale: {
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
   scrollbar: {
     value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
@@ -90,6 +96,9 @@ export const BINDINGS = {
   },
   textedit: {
     plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  },
+  textview: {
+    text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
   timeedit: {
     time: { prop: "time", signal: "time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },

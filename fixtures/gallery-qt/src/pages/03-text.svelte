@@ -1,4 +1,4 @@
-<!-- kinds: QLineEdit QLabel QPlainTextEdit QTextEdit QTextBrowser QKeySequenceEdit -->
+<!-- kinds: QLineEdit QLabel QPlainTextEdit QTextEdit QTextDocument QTextBrowser QKeySequenceEdit -->
 <script>
   // Text: line edit, label, plain/rich text edits, text browser, key sequence edit.
   let plain = $state('plain');
@@ -7,10 +7,19 @@
   let echoRich = $state(0);
   let returns = $state(0);
   let links = $state(0);
+  let rich_edit = $state();
+  let blocks = $state(0);
   $effect(() => {
     // programmatic writes after mount: must not come back as change events
     plain = 'plain text';
     rich = 'rich text';
+    // The document behind a text edit is a borrowed handle of its own kind (textdocument).
+    const doc = rich_edit.call('document');
+    if (doc) {
+      doc.setProp('undoRedoEnabled', true);
+      doc.call('setPlainText', 'one\ntwo');
+      blocks = doc.getProp('blockCount');
+    }
   });
 </script>
 
@@ -22,6 +31,7 @@
   <label label="echo plainText: {echoPlain}" />
   <textedit bind:plainText={rich} acceptRichText={true} placeholderText="Rich" maximumHeight={50} onchanged={() => echoRich++} />
   <label label="echo plainText (rich): {echoRich}" />
-  <textbrowser openLinks={false} maximumHeight={40} />
+  <label label="document blocks: {blocks}" />
+  <textbrowser bind:this={rich_edit} openLinks={false} maximumHeight={40} />
   <keysequenceedit keySequence="Ctrl+K" clearButtonEnabled={true} />
 </box>
