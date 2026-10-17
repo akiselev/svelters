@@ -21,7 +21,11 @@ use std::sync::Arc;
 use svelters_abi::*;
 
 struct Entry {
-    obj: glib::Object,
+    /// Weak: toplevels are kept alive by GTK itself, so natively closing one really destroys it.
+    obj: glib::WeakRef<glib::Object>,
+    /// Strong reference for everything but toplevels; released only by `destroy`.
+    hold: Option<glib::Object>,
+    ptr: usize,
     kind: u32,
     signals: HashMap<u32, glib::SignalHandlerId>,
     /// (parent handle, slot id) while inserted through a slot.
@@ -49,7 +53,7 @@ impl Inner {
     fn obj_of(&self, h: u64) -> Res<(glib::Object, u32)> {
         let st = self.state.borrow();
         let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        Ok((e.obj.clone(), e.kind))
+        Ok((e.obj.upgrade().ok_or_else(|| format!("handle {h} was destroyed"))?, e.kind))
     }
 
     fn widget_of(&self, h: u64) -> Res<(gtk::Widget, u32)> {
@@ -87,7 +91,8 @@ impl Inner {
             st.next += 1;
             let h = st.next;
             st.by_obj.insert(obj.as_ptr() as usize, h);
-            st.entries.insert(h, Entry { obj: obj.clone(), kind, signals: HashMap::new(), slot: None });
+            let hold = if obj.is::<gtk::Window>() { None } else { Some(obj.clone()) };
+            st.entries.insert(h, Entry { obj: obj.downgrade(), hold, ptr: obj.as_ptr() as usize, kind, signals: HashMap::new(), slot: None });
             h
         };
         if let Some(win) = obj.downcast_ref::<gtk::Window>() {
@@ -107,13 +112,13 @@ impl Inner {
             let mut st = self.state.borrow_mut();
             let e = st.entries.remove(&h);
             if let Some(e) = &e {
-                st.by_obj.remove(&(e.obj.as_ptr() as usize));
+                st.by_obj.remove(&e.ptr);
             }
             e
         };
-        let Some(entry) = entry else { return };
-        for (_, id) in entry.signals {
-            entry.obj.disconnect(id);
+        // The object is being disposed: its handlers go with it.
+        if entry.is_none() {
+            return;
         }
         let host = self.host.load(Ordering::Acquire);
         if !host.is_null() {
@@ -125,15 +130,18 @@ impl Inner {
         let entry = {
             let mut st = self.state.borrow_mut();
             let e = st.entries.remove(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-            st.by_obj.remove(&(e.obj.as_ptr() as usize));
+            st.by_obj.remove(&e.ptr);
             e
         };
-        for (_, id) in entry.signals {
-            entry.obj.disconnect(id);
+        if let Some(obj) = entry.obj.upgrade() {
+            for (_, id) in entry.signals {
+                obj.disconnect(id);
+            }
+            if let Some(win) = obj.downcast_ref::<gtk::Window>() {
+                win.destroy();
+            }
         }
-        if let Some(win) = entry.obj.downcast_ref::<gtk::Window>() {
-            win.destroy();
-        }
+        drop(entry.hold);
         Ok(())
     }
 
