@@ -1059,19 +1059,41 @@ impl Backend for AppKitBackend {
             return None;
         }
         let p = lookup::prop_info(member)?;
-        let tag = match p.ty {
-            Ty::Bool => SVL_BOOL,
-            Ty::I32 | Ty::I64 | Ty::U32 | Ty::U64 => SVL_I64,
-            Ty::F32 | Ty::F64 => SVL_F64,
-            Ty::Str => SVL_STR,
+        let slot = match p.ty {
+            Ty::Bool => SlotDesc::new(SVL_BOOL),
+            Ty::I32 | Ty::I64 | Ty::U32 | Ty::U64 => SlotDesc::new(SVL_I64),
+            Ty::F32 | Ty::F64 => SlotDesc::new(SVL_F64),
+            Ty::Str => SlotDesc::new(SVL_STR),
+            // Well-known records: the host turns `{x, y, width, height}` objects into RECORDs.
+            Ty::Rect => SlotDesc::new(SVL_RECORD).typed(SVL_T_RECT),
+            Ty::Size => SlotDesc::new(SVL_RECORD).typed(SVL_T_SIZE),
+            Ty::Point => SlotDesc::new(SVL_RECORD).typed(SVL_T_POINT),
+            Ty::Insets => SlotDesc::new(SVL_RECORD).typed(SVL_T_INSETS),
             _ => return None,
         };
-        let slot = SlotDesc::new(tag);
         Some(MemberDesc {
             name: p.name.to_string(),
             params: if p.writable { vec![slot.clone()] } else { Vec::new() },
             ret: if p.setter.is_empty() { slot } else { SlotDesc::new(SVL_NULL) },
             flags: 0,
+        })
+    }
+
+    fn describe_type(&self, ty: svl_id) -> Option<TypeDesc> {
+        let (name, fields): (&str, &[&str]) = match ty {
+            SVL_T_RECT => ("Rect", &["x", "y", "width", "height"]),
+            SVL_T_SIZE => ("Size", &["width", "height"]),
+            SVL_T_POINT => ("Point", &["x", "y"]),
+            SVL_T_INSETS => ("Insets", &["top", "right", "bottom", "left"]),
+            _ => return None,
+        };
+        Some(TypeDesc {
+            name: name.to_string(),
+            kind: SVL_RECORD,
+            scope: 0,
+            members: Vec::new(),
+            fields: fields.iter().map(|f| SlotDesc::new(SVL_F64).named(f)).collect(),
+            ret: SlotDesc::new(SVL_NULL),
         })
     }
 }

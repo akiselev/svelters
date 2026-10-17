@@ -212,6 +212,11 @@ fn replay_all_fixtures() {
     assert!(!names.is_empty(), "no fixtures found");
     for e in names {
         let log = std::fs::read_to_string(e.path().join("expected.oplog")).unwrap();
+        if e.file_name().to_string_lossy().ends_with("-mac") {
+            // AppKit fixtures use AppKit tags (stack-view, text-field); examples/counter-mac runs them.
+            eprintln!("{}: skipped (AppKit fixture)", e.file_name().to_string_lossy());
+            continue;
+        }
         if log.lines().any(|l| l.starts_with("sync ")) {
             // Sync results (close vetoes, handled keys) change what the toolkit does next, which a
             // flat replay cannot follow; `tests/sync.rs` and `tests/host_sync.rs` cover them natively.
