@@ -299,7 +299,8 @@ fn variants_dates_and_string_forms() {
         h.set_value(sc, "trigger", &Value::Str("<Control>s".into())).unwrap();
         let trig = h.obj(sc).property::<Option<gtk::ShortcutTrigger>>("trigger").unwrap();
         assert!(trig.to_str().contains("s"), "{}", trig.to_str());
-        assert!(h.set_value(sc, "trigger", &Value::Str("<<nonsense".into())).unwrap_err().contains("cannot parse shortcut"));
+        // An unknown key name (GTK 4.14 accepts "<<nonsense" as an empty trigger; 4.22 refuses it).
+        assert!(h.set_value(sc, "trigger", &Value::Str("<Control>nosuchkey".into())).unwrap_err().contains("cannot parse shortcut"));
         let fl = h.create("FileLauncher");
         h.set_value(fl, "file", &Value::Str("/tmp/some file.txt".into())).unwrap();
         let file = h.obj(fl).property::<Option<gtk::gio::File>>("file").unwrap();

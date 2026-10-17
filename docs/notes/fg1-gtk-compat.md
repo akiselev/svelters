@@ -76,3 +76,6 @@ loads SVG through gdk-pixbuf; 4.22 has its own loader), otherwise `prop_image_fi
 - Run 1 (3776232): links and runs on 4.14.5. 606 passed, 8 failed: Calendar:date (no GIR
   version), image SVG loader, 2 gallery pages and 3 style tests (newer GTK features), serdes date.
   `ledger check` needed a refresh for the facts whose tests gained a skip.
+- Run 2 (ed44830): Arch green; 4.14: 613 passed, 1 failed: `serdes` expected "<<nonsense" to be
+  refused as a shortcut trigger, but GTK 4.14 parses it to an empty trigger (checked with PyGObject
+  in an ubuntu:24.04 container). The test now uses `<Control>nosuchkey`, refused by both.
