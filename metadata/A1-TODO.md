@@ -300,7 +300,6 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QTabWidget/QStackedWidget/QToolBox `bind:currentIndex` (currentChanged(int), arg0).
 - Blocked: tab/item titles and icons (G1), QSplitter stretch factors (G1).
 - Gallery: `05-containers.svelte`.
-- Status: todo
 - Status: done (QFrame 6 facts incl. children slot, QGroupBox 4 props + 2 signals + children, QSplitter 4 props + 1 signal + children, QStackedWidget currentIndex + changed + bind + pages, QTabWidget 6 props + 3 signals, QToolBox changed, QScrollArea 3 props; dropped: QGroupBox checked (ignored unless checkable), QTabWidget/QToolBox pages + currentIndex + bind (parent-is-host test assumption, new gap in docs/notes/a1-qt-containers-a.md); blocked: gap:G1 for tab/item titles, icons, stretch factors)
 ### qt-containers-b: layouts and MDI
 
