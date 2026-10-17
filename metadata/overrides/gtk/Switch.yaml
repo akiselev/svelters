@@ -1,0 +1,50 @@
+properties:
+  - name: active
+    js_name: active
+    echo_suppress: ["notify::active"]
+    provenance: "GtkSwitch:active (Gtk 4 docs)"
+  - name: state
+    provenance: "GtkSwitch:state (Gtk 4 docs)"
+signals:
+  - name: "notify::active"
+    derived_from: {property: active}
+    js_event: "notify::active"
+    trigger: {property: active, values: [true, false, true]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkSwitch:active"
+  - name: state-set
+    js_event: state-set
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {property: active, values: [true, false, true]}
+    provenance: "GtkSwitch::state-set, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+bindings:
+  - name: active
+    direction: two_way
+    property: active
+    type: {ref: bool, nullable: false}
+    change: {signal: "notify::active", role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["notify::active"]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "gtk_switch_set_active notifies only on change (Gtk 4 docs)"
+methods:
+  - name: set_state
+    js_name: set_state
+    dispatch: dynamic
+    args: [true]
+    expect: 'h.get(o, "state") == V::Bool(true)'
+    provenance: "gtk_switch_set_state (Gtk 4 docs); called through GIRepository (X1)"
+  - name: get_active
+    js_name: get_active
+    dispatch: dynamic
+    setup: 'h.set_bool(o, "active", true).unwrap();'
+    args: []
+    expect: 'r == V::Bool(true)'
+    provenance: "gtk_switch_get_active (Gtk 4 docs); bool return through GIRepository (X1)"

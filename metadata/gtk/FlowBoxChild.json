@@ -54,6 +54,158 @@
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:FlowBoxChild",
+  "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_draw",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_resize",
+        "origin": "manual"
+      }
+    ],
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "halign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "height-request",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-bottom",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-end",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-start",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-top",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "name",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-markup",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-text",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "visible",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "width-request",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hide",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "show",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",

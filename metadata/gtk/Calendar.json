@@ -9,6 +9,47 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::day",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::day",
+          "day-selected"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Calendar:binding:day",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "day",
+      "origin": "manual",
+      "property": "day",
+      "provenance": "gtk_calendar_set_day notifies day (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -50,6 +91,158 @@
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:Calendar",
+  "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_draw",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_resize",
+        "origin": "manual"
+      }
+    ],
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "halign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "height-request",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-bottom",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-end",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-start",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-top",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "name",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-markup",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-text",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "visible",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "width-request",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hide",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "show",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -264,12 +457,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_calendar_select_day (Gtk 4 docs)"
+      },
+      "args": [
+        1905508800000
+      ],
       "deprecated": true,
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"day\") == V::I64(20)",
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:method:select_day",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "selectDay",
       "name": "select_day",
       "native": "gtk_calendar_select_day",
       "origin": "gir",
@@ -518,6 +727,11 @@
         "get": "gtk_calendar_get_date",
         "set": "gtk_calendar_set_date"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",
       "invocation": "reflected",
@@ -558,8 +772,21 @@
         "get": "gtk_calendar_get_day",
         "set": "gtk_calendar_set_day"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress",
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar:day (Gtk 4 docs)"
+      },
       "default": 1,
       "deprecated": true,
+      "echo_suppress": [
+        "notify::day",
+        "day-selected"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:day",
       "invocation": "reflected",
       "js_name": "day",
@@ -584,6 +811,7 @@
         "origin": "runtime",
         "owner": "GtkCalendar"
       },
+      "sample": 15,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -601,6 +829,14 @@
       "accessors": {
         "get": "gtk_calendar_get_month",
         "set": "gtk_calendar_set_month"
+      },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar:month, 0-based (Gtk 4 docs)"
       },
       "default": 0,
       "deprecated": true,
@@ -628,6 +864,7 @@
         "origin": "runtime",
         "owner": "GtkCalendar"
       },
+      "sample": 5,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -645,6 +882,13 @@
       "accessors": {
         "get": "gtk_calendar_get_show_day_names",
         "set": "gtk_calendar_set_show_day_names"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar:show-day-names (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-day-names",
@@ -686,6 +930,13 @@
         "get": "gtk_calendar_get_show_heading",
         "set": "gtk_calendar_set_show_heading"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar:show-heading (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-heading",
       "invocation": "reflected",
@@ -725,6 +976,13 @@
       "accessors": {
         "get": "gtk_calendar_get_show_week_numbers",
         "set": "gtk_calendar_set_show_week_numbers"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar:show-week-numbers (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-week-numbers",
@@ -766,6 +1024,14 @@
         "get": "gtk_calendar_get_year",
         "set": "gtk_calendar_set_year"
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar:year (Gtk 4 docs)"
+      },
       "default": 1,
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:year",
@@ -792,6 +1058,7 @@
         "origin": "runtime",
         "owner": "GtkCalendar"
       },
+      "sample": 2030,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -803,6 +1070,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkCalendar::day-selected (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -824,7 +1100,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "day",
+        "values": [
+          10,
+          11,
+          12
+        ]
+      }
     },
     {
       "connection": {
@@ -921,6 +1206,58 @@
         "return_gtype": "void"
       },
       "sync_required": false
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkCalendar:day"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "day"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::day",
+      "name": "notify::day",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "day",
+        "values": [
+          10,
+          11,
+          12
+        ]
+      }
     }
   ],
   "source": {
@@ -929,7 +1266,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Calendar.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

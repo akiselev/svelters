@@ -200,7 +200,8 @@ fn methods_of_interfaces_and_ancestors_resolve() {
         assert_eq!(h.resolve_method(entry, "no_such_method"), 0);
         // the annotated, generated method still wins for its own name
         let win = h.create("window");
-        assert!(h.resolve_method(win, "present") <= 1);
+        let generated = h.resolve_method(win, "present");
+        assert!(generated != 0 && generated < h.resolve_method(win, "get_visible"), "generated ids come before dynamic ones");
     });
 }
 

@@ -8,6 +8,12 @@ methods:
     dispatch: zero_arg
     expect: "w.is_visible()"
     provenance: "gtk_window_present docs; JS host op: call #h present []"
+  - name: set_default_size
+    js_name: set_default_size
+    dispatch: dynamic
+    args: [600, 400]
+    expect: 'h.get(o, "default-width") == V::I64(600) && h.get(o, "default-height") == V::I64(400)'
+    provenance: "gtk_window_set_default_size (Gtk 4 docs); called through GIRepository (X1)"
 children:
   policy: named_slots
   default_slot: child

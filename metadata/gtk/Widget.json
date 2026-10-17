@@ -1928,11 +1928,25 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_widget_grab_focus (Gtk 4 docs); returns FALSE for an unrealized, non-focusable label; called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "grabFocus",
       "name": "grab_focus",
       "native": "gtk_widget_grab_focus",
       "origin": "gir",
@@ -2521,11 +2535,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_widget_queue_draw (Gtk 4 docs); no observable state change, postcondition only checks the widget is intact"
+      },
+      "dispatch": "zero_arg",
+      "expect": "w.is_visible()",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "queueDraw",
       "name": "queue_draw",
       "native": "gtk_widget_queue_draw",
       "origin": "gir",
@@ -2539,11 +2565,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_widget_queue_resize (Gtk 4 docs); no observable state change, postcondition only checks the widget is intact"
+      },
+      "dispatch": "zero_arg",
+      "expect": "w.is_visible()",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "queueResize",
       "name": "queue_resize",
       "native": "gtk_widget_queue_resize",
       "origin": "gir",
@@ -3905,6 +3943,11 @@
         "get": "gtk_widget_get_can_focus",
         "set": "gtk_widget_set_can_focus"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:can-focus (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
       "invocation": "reflected",
@@ -3984,6 +4027,11 @@
       "accessors": {
         "get": "gtk_widget_get_css_classes",
         "set": "gtk_widget_set_css_classes"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:css-classes, GStrv (Gtk 4 docs); ABI v3 string list, round-trip test"
       },
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
@@ -4144,6 +4192,11 @@
         "get": "gtk_widget_get_focusable",
         "set": "gtk_widget_set_focusable"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:focusable (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
       "invocation": "reflected",
@@ -4183,6 +4236,11 @@
       "accessors": {
         "get": "gtk_widget_get_halign",
         "set": "gtk_widget_set_halign"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:halign (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": "fill",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
@@ -4342,6 +4400,11 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:height-request (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
       "invocation": "reflected",
@@ -4384,6 +4447,11 @@
       "accessors": {
         "get": "gtk_widget_get_hexpand",
         "set": "gtk_widget_set_hexpand"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:hexpand (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
@@ -4546,6 +4614,11 @@
         "get": "gtk_widget_get_margin_bottom",
         "set": "gtk_widget_set_margin_bottom"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:margin-bottom (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
       "invocation": "reflected",
@@ -4588,6 +4661,11 @@
       "accessors": {
         "get": "gtk_widget_get_margin_end",
         "set": "gtk_widget_set_margin_end"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:margin-end (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
@@ -4632,6 +4710,11 @@
         "get": "gtk_widget_get_margin_start",
         "set": "gtk_widget_set_margin_start"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:margin-start (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
       "invocation": "reflected",
@@ -4674,6 +4757,11 @@
       "accessors": {
         "get": "gtk_widget_get_margin_top",
         "set": "gtk_widget_set_margin_top"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:margin-top (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
@@ -4718,6 +4806,11 @@
         "get": "gtk_widget_get_name",
         "set": "gtk_widget_set_name"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:name (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
       "invocation": "reflected",
@@ -4757,6 +4850,13 @@
         "get": "gtk_widget_get_opacity",
         "set": "gtk_widget_set_opacity"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWidget:opacity (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": 1.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
       "invocation": "reflected",
@@ -4782,6 +4882,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 0.0,
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -4999,6 +5100,11 @@
         "get": "gtk_widget_get_sensitive",
         "set": "gtk_widget_set_sensitive"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:sensitive (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
       "invocation": "reflected",
@@ -5038,6 +5144,11 @@
       "accessors": {
         "get": "gtk_widget_get_tooltip_markup",
         "set": "gtk_widget_set_tooltip_markup"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:tooltip-markup (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
@@ -5079,6 +5190,11 @@
         "get": "gtk_widget_get_tooltip_text",
         "set": "gtk_widget_set_tooltip_text"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:tooltip-text (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
       "invocation": "reflected",
@@ -5119,6 +5235,11 @@
         "get": "gtk_widget_get_valign",
         "set": "gtk_widget_set_valign"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:valign (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": "fill",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
       "invocation": "reflected",
@@ -5158,6 +5279,11 @@
       "accessors": {
         "get": "gtk_widget_get_vexpand",
         "set": "gtk_widget_set_vexpand"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:vexpand (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
@@ -5239,6 +5365,11 @@
         "get": "gtk_widget_get_visible",
         "set": "gtk_widget_set_visible"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:visible (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
       "invocation": "reflected",
@@ -5278,6 +5409,11 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:width-request (Gtk 4 docs); P prop; inherited, tested through GtkLabel"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
@@ -5372,6 +5508,15 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWidget::hide, void, run-first (Gtk 4 docs); emitted when visible becomes false"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -5393,7 +5538,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "visible",
+        "values": [
+          false,
+          true,
+          false
+        ]
+      }
     },
     {
       "connection": {
@@ -5581,6 +5735,15 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWidget::show, void, run-first (Gtk 4 docs); emitted when visible becomes true"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -5602,7 +5765,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.set_property(\"visible\", false); o.set_property(\"visible\", true);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -5689,11 +5861,14 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Widget.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "verify_subject": {
+    "tag": "label"
+  }
 }

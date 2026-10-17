@@ -136,6 +136,158 @@
     "svelters-api:v1:type:gtk:Gtk:PolicyType"
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow",
+  "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_draw",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_resize",
+        "origin": "manual"
+      }
+    ],
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "halign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "height-request",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-bottom",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-end",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-start",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-top",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "name",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-markup",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-text",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "visible",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "width-request",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hide",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "show",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -946,6 +1098,11 @@
         "get": "gtk_scrolled_window_get_has_frame",
         "set": "gtk_scrolled_window_set_has_frame"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:has-frame (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:has-frame",
       "invocation": "reflected",
@@ -985,6 +1142,11 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:hscrollbar-policy (Gtk 4 docs); P prop"
       },
       "default": "automatic",
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:hscrollbar-policy",
@@ -1026,6 +1188,11 @@
         "get": "gtk_scrolled_window_get_kinetic_scrolling",
         "set": "gtk_scrolled_window_set_kinetic_scrolling"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:kinetic-scrolling (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:kinetic-scrolling",
       "invocation": "reflected",
@@ -1065,6 +1232,11 @@
       "accessors": {
         "get": "gtk_scrolled_window_get_max_content_height",
         "set": "gtk_scrolled_window_set_max_content_height"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:max-content-height (Gtk 4 docs); P prop"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:max-content-height",
@@ -1109,6 +1281,11 @@
         "get": "gtk_scrolled_window_get_max_content_width",
         "set": "gtk_scrolled_window_set_max_content_width"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:max-content-width (Gtk 4 docs); P prop"
+      },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:max-content-width",
       "invocation": "reflected",
@@ -1151,6 +1328,11 @@
       "accessors": {
         "get": "gtk_scrolled_window_get_min_content_height",
         "set": "gtk_scrolled_window_set_min_content_height"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:min-content-height (Gtk 4 docs); P prop"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:min-content-height",
@@ -1195,6 +1377,11 @@
         "get": "gtk_scrolled_window_get_min_content_width",
         "set": "gtk_scrolled_window_set_min_content_width"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:min-content-width (Gtk 4 docs); P prop"
+      },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:min-content-width",
       "invocation": "reflected",
@@ -1238,6 +1425,11 @@
         "get": "gtk_scrolled_window_get_overlay_scrolling",
         "set": "gtk_scrolled_window_set_overlay_scrolling"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:overlay-scrolling (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:overlay-scrolling",
       "invocation": "reflected",
@@ -1278,6 +1470,11 @@
         "get": "gtk_scrolled_window_get_propagate_natural_height",
         "set": "gtk_scrolled_window_set_propagate_natural_height"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:propagate-natural-height (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:propagate-natural-height",
       "invocation": "reflected",
@@ -1317,6 +1514,11 @@
       "accessors": {
         "get": "gtk_scrolled_window_get_propagate_natural_width",
         "set": "gtk_scrolled_window_set_propagate_natural_width"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:propagate-natural-width (Gtk 4 docs); P prop"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:propagate-natural-width",
@@ -1398,6 +1600,11 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow:vscrollbar-policy (Gtk 4 docs); P prop"
       },
       "default": "automatic",
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:vscrollbar-policy",
@@ -1502,6 +1709,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkScrolledWindow::edge-reached, run-last, void; delivery only, emitted by name (real emission needs scrolling with an allocation) (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1529,7 +1746,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<()>(\"edge-reached\", &[&gtk::PositionType::Bottom]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {

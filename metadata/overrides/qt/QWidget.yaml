@@ -1,3 +1,21 @@
+inherit:
+  props:
+    - { js: enabled, native: enabled, provenance: "QWidget::enabled (qdoc)" }
+    - { js: toolTip, native: toolTip, provenance: "QWidget::toolTip (qdoc)" }
+    - { js: statusTip, native: statusTip, provenance: "QWidget::statusTip (qdoc)" }
+    - { js: whatsThis, native: whatsThis, provenance: "QWidget::whatsThis (qdoc)" }
+    - { js: minimumWidth, native: minimumWidth, provenance: "QWidget::minimumWidth (qdoc)" }
+    - { js: minimumHeight, native: minimumHeight, provenance: "QWidget::minimumHeight (qdoc)" }
+    - { js: maximumWidth, native: maximumWidth, provenance: "QWidget::maximumWidth (qdoc)" }
+    - { js: maximumHeight, native: maximumHeight, provenance: "QWidget::maximumHeight (qdoc)" }
+    - { js: styleSheet, native: styleSheet, provenance: "QWidget::styleSheet (qdoc)" }
+    - { js: accessibleName, native: accessibleName, provenance: "QWidget::accessibleName (qdoc)" }
+  methods:
+    - { js: show, native: show, provenance: "QWidget::show() slot (qdoc)" }
+    - { js: hide, native: hide, provenance: "QWidget::hide() slot (qdoc)" }
+    - { js: setFocus, native: setFocus, provenance: "QWidget::setFocus() slot (qdoc)" }
+    - { js: update, native: update, provenance: "QWidget::update() slot (qdoc)" }
+    - { js: adjustSize, native: adjustSize, provenance: "QWidget::adjustSize() slot (qdoc)" }
 # Element `box`: a plain QWidget carrying a QBoxLayout. Children are layout-managed and ordered.
 # Slot annotations follow docs/notes/signals-and-slots-semantics.md section 2.5. Extensions used here:
 # `then` (extra steps after an op), `receiver: child` (receiver), `index_of`, and `list.item`.

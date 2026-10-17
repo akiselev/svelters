@@ -1,0 +1,34 @@
+properties:
+  - name: editing
+    echo_suppress: ["notify::editing"]
+    provenance: "GtkEditableLabel:editing (Gtk 4 docs)"
+bindings:
+  - name: editing
+    direction: two_way
+    property: editing
+    type: {ref: bool, nullable: false}
+    change: {signal: "notify::editing", role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["notify::editing"]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "GtkEditableLabel:editing, toggled by start and stop editing (Gtk 4 docs)"
+methods:
+  - name: start_editing
+    js_name: start_editing
+    dispatch: dynamic
+    args: []
+    expect: 'h.get(o, "editing") == V::Bool(true)'
+    provenance: "gtk_editable_label_start_editing (Gtk 4 docs); called through GIRepository (X1)"
+signals:
+  - name: "notify::editing"
+    derived_from: {property: editing}
+    js_event: "notify::editing"
+    trigger: {property: editing, values: [true, false, true]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkEditableLabel:editing"

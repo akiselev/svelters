@@ -1242,6 +1242,9 @@ class Tests:
         self._fact: tuple[str, dict] | None = None
 
     def add(self, name: str, body: str) -> None:
+        if getattr(self, "_setup", None):
+            mk, stmt = self._setup
+            body = body.replace(mk, mk + "\n" + stmt, 1)
         ident = "t_" + cident(name)
         src = f"bool {ident}(std::string &why) {{\n{body}\n  return true;\n}}\n"
         self.fns.append((name, ident))
@@ -1325,6 +1328,15 @@ class Tests:
         raise GenError(f"{p['js']}: no scalar sample for category {cat}")
 
     def prop(self, e, p):
+        """Prop tests; `setup` (C++, $w = widget) runs right after the element is created."""
+        if p.get("setup"):
+            self._setup = (f'  svl_handle h = mk("{e["tag"]}");', "  " + p["setup"].replace("$w", f"static_cast<{e['cls']} *>(O(h))") + ";")
+        try:
+            self._prop(e, p)
+        finally:
+            self._setup = None
+
+    def _prop(self, e, p):
         t = e["tag"]
         pn = p["js"]
         cat = p["cat"]
@@ -1544,7 +1556,8 @@ class Tests:
             f"  CHECK(B->insert(B->self, p, c1, c2, {sid}) == 0);  // before=c2",
             f"  CHECK({cnt('p')} == 3);",
             f"  CHECK({at('p', 0)} == O(c0) && {at('p', 1)} == O(c1) && {at('p', 2)} == O(c2));",
-            f"  CHECK(O(c1)->parent() == O(p));",
+            (f"  CHECK(static_cast<QWidget *>(O(p))->isAncestorOf(static_cast<QWidget *>(O(c1))));  // nested: reparented into an internal widget"
+             if s.get("nested") else "  CHECK(O(c1)->parent() == O(p));"),
             f"  CHECK(B->insert(B->self, p, c2, c0, {sid}) == 0);  // move existing child to the front",
             f"  CHECK({cnt('p')} == 3);",
             f"  CHECK({at('p', 0)} == O(c2) && {at('p', 1)} == O(c0) && {at('p', 2)} == O(c1));",

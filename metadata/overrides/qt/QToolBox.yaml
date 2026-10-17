@@ -1,0 +1,11 @@
+elements:
+  - tag: toolbox
+    construct: { class: QToolBox }
+    signals:
+      - js: changed
+        native: currentChanged
+        connect: "currentChanged(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: 'if ($i == 2) $w->setCurrentIndex(1); else $w->addItem(new QWidget(), QString())'
+        expect_args: ["0"]
+        provenance: "QToolBox::currentChanged(int) (qdoc)"

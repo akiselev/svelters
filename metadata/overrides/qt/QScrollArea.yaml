@@ -26,3 +26,7 @@ elements:
               native: "QScrollArea::takeWidget()"
               effects: { child: unparented }
           provenance: [{ origin: uic, ref: "WriteInitialization::acceptWidget" }, { origin: probe, ref: qt_slot_ownership_probe.py }]
+    props:
+      - { js: widgetResizable, native: widgetResizable, provenance: "QScrollArea::widgetResizable (qdoc)" }
+      - { js: horizontalScrollBarPolicy, native: horizontalScrollBarPolicy, provenance: "QAbstractScrollArea::horizontalScrollBarPolicy (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: verticalScrollBarPolicy, native: verticalScrollBarPolicy, provenance: "QAbstractScrollArea::verticalScrollBarPolicy (qdoc); typed by the S1 value model (ABI v3)" }

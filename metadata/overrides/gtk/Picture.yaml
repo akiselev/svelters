@@ -1,0 +1,13 @@
+properties:
+  - name: alternative-text
+    js_name: alternativeText
+    provenance: "GtkPicture:alternative-text (Gtk 4 docs)"
+  - name: can-shrink
+    js_name: canShrink
+    provenance: "GtkPicture:can-shrink (Gtk 4 docs)"
+  - name: content-fit
+    js_name: contentFit
+    provenance: "GtkPicture:content-fit (Gtk 4 docs)"
+  - name: keep-aspect-ratio
+    js_name: keepAspectRatio
+    provenance: "GtkPicture:keep-aspect-ratio (Gtk 4 docs)"

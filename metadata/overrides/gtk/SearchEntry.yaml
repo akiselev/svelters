@@ -1,0 +1,39 @@
+properties:
+  - name: placeholder-text
+    js_name: placeholder
+    provenance: "GtkSearchEntry:placeholder-text (Gtk 4 docs)"
+  - name: search-delay
+    provenance: "GtkSearchEntry:search-delay (Gtk 4 docs)"
+  - name: activates-default
+    provenance: "GtkSearchEntry:activates-default (Gtk 4 docs)"
+signals:
+  - name: activate
+    js_event: activate
+    handler_result: none
+    sync_required: false
+    provenance: "GtkSearchEntry::activate, action signal, void (Gtk 4 docs)"
+  - name: search-changed
+    js_event: search-changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("search-changed", &[]);', values: [a, b, c]}
+    provenance: "GtkSearchEntry::search-changed, run-last, void (Gtk 4 docs)"
+  - name: stop-search
+    js_event: stop-search
+    handler_result: none
+    sync_required: false
+    provenance: "GtkSearchEntry::stop-search, action signal, void (Gtk 4 docs)"
+bindings:
+  - name: text
+    direction: two_way
+    property: text                  # GtkEditable:text (interface-owned), written through set_text
+    type: { ref: string, nullable: false }
+    change: { signal: changed, role: any_change }
+    write: { natively_normalizes: false }
+    echo:
+      strategy: host_suppressed     # the backend blocks `changed` and `notify::text` during a programmatic set (Editable.yaml echo_suppress)
+      compare_before_set: true
+      read_back: false
+      sync_signals_on_set: [changed, "notify::text"]
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text"

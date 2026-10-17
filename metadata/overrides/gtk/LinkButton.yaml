@@ -1,0 +1,19 @@
+properties:
+  - name: uri
+    provenance: "GtkLinkButton:uri (Gtk 4 docs)"
+  - name: visited
+    provenance: "GtkLinkButton:visited (Gtk 4 docs)"
+signals:
+  - name: activate-link
+    js_event: activate-link
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {rust: 'o.downcast_ref::<gtk::Button>().unwrap().emit_clicked();', values: [a, b, c]}
+    provenance: "GtkLinkButton::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+methods:
+  - name: set_visited
+    js_name: set_visited
+    dispatch: dynamic
+    args: [true]
+    expect: 'h.get(o, "visited") == V::Bool(true)'
+    provenance: "gtk_link_button_set_visited (Gtk 4 docs); called through GIRepository (X1)"

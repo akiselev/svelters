@@ -1,0 +1,15 @@
+properties:
+  - name: text
+    provenance: "GtkInscription:text (Gtk 4 docs)"
+  - name: min-lines
+    provenance: "GtkInscription:min-lines (Gtk 4 docs)"
+  - name: nat-chars
+    provenance: "GtkInscription:nat-chars (Gtk 4 docs)"
+methods:
+  - name: get_text
+    js_name: get_text
+    dispatch: dynamic
+    args: []
+    setup: 'h.set_str(o, "text", "ins").unwrap();'
+    expect: 'r == V::Str("ins".into())'
+    provenance: "gtk_inscription_get_text (Gtk 4 docs); called through GIRepository (X1)"
