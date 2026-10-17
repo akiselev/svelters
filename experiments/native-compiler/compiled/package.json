@@ -1,0 +1,20 @@
+{
+  "name": "@svelters-experiments/compiled",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fixtures compiled by the experimental Rust compiler (NC1), per backend, compared with the JS pipeline",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node test.mjs",
+    "test:compiler": "(cd ../../.. && tools/dev/cargo-slot cargo build -p svelters-compiler --bin svelters-compile) && node build.mjs && node --experimental-vm-modules --no-warnings run.mjs"
+  },
+  "dependencies": {
+    "@svelters/native-runtime": "workspace:*",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/testhost": "workspace:*",
+    "vite": "8.3.4"
+  }
+}

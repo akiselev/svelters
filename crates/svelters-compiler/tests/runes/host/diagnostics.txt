@@ -1,0 +1,1 @@
+host_invalid_placement: `$host()` can only be used inside custom element component instances (custom elements are not supported by the native compiler) @3:5

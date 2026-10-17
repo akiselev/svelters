@@ -261,6 +261,9 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 globalThis.__svelters_dispatch(h, signal, args) synchronously.
  *   { sync: [h, signal, args] }  append `sync #h signal args`, call globalThis.__svelters_dispatch_sync(h, signal, args)
  *                                 synchronously (no checkpoint), append `result #h <json of the result>`.
+ *   { deferred: [h, signal, args] } a sync signal the toolkit could not deliver synchronously (JS was
+ *                                 busy) and queued instead: append `deferred #h signal args`, call
+ *                                 globalThis.__svelters_dispatch(h, signal, args, true) (result ignored).
  *   { gone: [h, reason] }         the native object behind h died: log `gone #h reason` for h and each
  *                                 descendant (pre-order, reason `parent`), then call
  *                                 globalThis.__svelters_gone(handle, reason) for each, synchronously.
@@ -268,8 +271,13 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
  */
-export async function runBundle({ bundlePath, script }) {
+export async function runBundle({ bundlePath, script, styleDialect }) {
   const th = createTestHost();
+  if (styleDialect === 'qss') {
+    // answer the Qt dialect (style target 2), so the bundle applies the Qt style table
+    const style = th.host.style;
+    th.host.style = (op, h, text) => (op === 0 ? 2 : style(op, h, text));
+  }
   const timers = createTimers();
   const errors = [];
   const onRejection = (e) => errors.push(e);
@@ -309,6 +317,10 @@ export async function runBundle({ bundlePath, script }) {
         th.lines.push(`sync #${h} ${signal} ${JSON.stringify(args)}${flagsSuffix(flags)}`);
         const r = ctx.__svelters_dispatch_sync(h, signal, args, flags);
         th.lines.push(`result #${h} ${JSON.stringify(r ?? null)}`);
+      } else if (step.deferred) {
+        const [h, signal, args] = step.deferred;
+        th.lines.push(`deferred #${h} ${signal} ${JSON.stringify(args)}`);
+        ctx.__svelters_dispatch(h, signal, args, true, 0);
       } else if (step.gone) {
         const [h, reason] = step.gone;
         for (const [x, why] of th.killNative(h, reason)) ctx.__svelters_gone?.(x, why);

@@ -102,6 +102,6 @@ info [qt] background needs a border in QSS to paint on buttons and inputs; added
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
-warning [qt] property 'opacity' is not supported on qt: QSS has no opacity: Qt honours it for style= / style: only (QGraphicsOpacityEffect)
+warning [qt] property 'opacity' is not supported in stylesheet rules on qt: QSS has no opacity: style= and style: only (QGraphicsOpacityEffect)
 warning [qt] <togglebutton> is not an element on qt; rule dropped
 error [qt] :not(...) of this form is not expressible on qt; rule dropped

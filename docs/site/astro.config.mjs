@@ -49,6 +49,8 @@ export default defineConfig({
             { label: 'GTK 4 types', slug: 'api/gtk/types' },
             { label: 'Qt 6 elements', slug: 'api/qt' },
             { label: 'Qt 6 types', slug: 'api/qt/types' },
+            { label: 'GTK 4 styling properties', slug: 'api/styling/gtk' },
+            { label: 'Qt 6 styling properties', slug: 'api/styling/qt' },
             guide('coverage', 'Coverage dashboard'),
           ],
         },

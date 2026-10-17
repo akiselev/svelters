@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderSite } from './lib/render.mjs';
+import { renderStylingPages } from './lib/styling.mjs';
 import { BASE, REPO, REPO_BRANCH, PLANNED_TOOLKITS, TOOLKIT_ORDER } from '../site.config.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -34,6 +35,8 @@ const manifest = path.join(shotDir, 'manifest.json');
 if (fs.existsSync(manifest)) for (const k of JSON.parse(fs.readFileSync(manifest, 'utf8')).keys ?? []) screens.add(k);
 
 const { pages, routes } = renderSite(irs, { base: BASE, repo: REPO, branch: REPO_BRANCH, planned: PLANNED_TOOLKITS, order: TOOLKIT_ORDER, screens });
+// per-toolkit styling reference, from the style table (metadata/style/<toolkit>.yaml)
+for (const [rel, text] of renderStylingPages()) pages.set(rel, text);
 
 function writeIfChanged(file, text) {
   fs.mkdirSync(path.dirname(file), { recursive: true });

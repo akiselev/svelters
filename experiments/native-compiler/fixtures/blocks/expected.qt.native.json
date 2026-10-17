@@ -1,0 +1,62 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Blocks"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLineEdit",
+  "d": 2,
+  "text": "fresh 4"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "late / 4"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "x: 30"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "y: 30"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "failed 4"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "sync 42"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Next"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Reload"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Instant"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Qty"
+ }
+]

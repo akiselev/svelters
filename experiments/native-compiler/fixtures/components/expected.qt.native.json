@@ -1,0 +1,37 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Components"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "1 left"
+ },
+ {
+  "class": "QWidget",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 3,
+  "text": "· Milk"
+ },
+ {
+  "class": "QPushButton",
+  "d": 3,
+  "text": "Toggle"
+ },
+ {
+  "class": "QPushButton",
+  "d": 3,
+  "text": "Remove"
+ }
+]

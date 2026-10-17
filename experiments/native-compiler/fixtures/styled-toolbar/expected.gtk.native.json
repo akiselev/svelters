@@ -1,0 +1,27 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Styled"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Save"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Toggle"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Plain"
+ }
+]

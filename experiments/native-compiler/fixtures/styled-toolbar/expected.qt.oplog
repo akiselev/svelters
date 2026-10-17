@@ -1,0 +1,37 @@
+style sheet "*" null
+style scheme "light" 0
+style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style sheet "experiments/native-compiler/fixtures/styled-toolbar/App.svelte" null
+create window #1
+set #1 title "Styled"
+create box #2
+set #2 spacing 8
+set #2 orientation "horizontal"
+create button #3
+set #3 minimumHeight 36
+set #3 label "Save"
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+set #4 minimumHeight 24
+set #4 label "Toggle"
+insert #2 #4 before=end slot=default
+create button #5
+set #5 minimumHeight 30
+set #5 label "Plain"
+insert #2 #5 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+style #1 classes "sv-k-window svelte-38269b8677"
+style #2 classes "sv-k-box toolbar svelte-38269b8677"
+style #3 classes "sv-k-button primary svelte-38269b8677"
+style #4 classes "sv-k-button svelte-38269b8677"
+style #5 classes "sv-k-button svelte-38269b8677"
+style #5 inline "font-weight: bold;"
+set #5 heightRequest 30
+event #4 clicked []
+set #4 minimumHeight 36
+style #4 classes "sv-k-button svelte-38269b8677 primary"
+event #4 clicked []
+set #4 minimumHeight 24
+style #4 classes "sv-k-button svelte-38269b8677"

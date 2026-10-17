@@ -1,0 +1,87 @@
+create window #1
+set #1 title "Keyed list"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 6
+create box #3
+set #3 orientation "horizontal"
+set #3 spacing 6
+create entry #4
+set #4 placeholder "New item"
+set #4 text ""
+listen #4 changed on
+insert #3 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "Add"
+insert #3 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "Reverse"
+insert #3 #6 before=end slot=default
+insert #2 #3 before=end slot=default
+create scrolledwindow #7
+create box #8
+set #8 orientation "vertical"
+set #8 spacing 2
+insert #7 #8 before=end slot=default
+insert #2 #7 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #4 changed ["alpha"]
+event #5 clicked []
+set #4 text ""
+create box #9
+set #9 orientation "horizontal"
+set #9 spacing 6
+create label #10
+set #10 label "alpha"
+insert #9 #10 before=end slot=default
+create button #11
+listen #11 clicked on
+set #11 label "Remove"
+insert #9 #11 before=end slot=default
+insert #8 #9 before=end slot=default
+event #4 changed ["beta"]
+event #5 clicked []
+set #4 text ""
+create box #12
+set #12 orientation "horizontal"
+set #12 spacing 6
+create label #13
+set #13 label "beta"
+insert #12 #13 before=end slot=default
+create button #14
+listen #14 clicked on
+set #14 label "Remove"
+insert #12 #14 before=end slot=default
+insert #8 #12 before=end slot=default
+event #4 changed ["gamma"]
+event #5 clicked []
+set #4 text ""
+create box #15
+set #15 orientation "horizontal"
+set #15 spacing 6
+create label #16
+set #16 label "gamma"
+insert #15 #16 before=end slot=default
+create button #17
+listen #17 clicked on
+set #17 label "Remove"
+insert #15 #17 before=end slot=default
+insert #8 #15 before=end slot=default
+event #6 clicked []
+remove #8 #12
+insert #8 #12 before=#9 slot=default
+remove #8 #15
+insert #8 #15 before=#12 slot=default
+event #14 clicked []
+remove #8 #12
+destroy #13
+destroy #14
+destroy #12
+event #17 clicked []
+remove #8 #15
+destroy #16
+destroy #17
+destroy #15

@@ -1,0 +1,37 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Components"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "1 left"
+ },
+ {
+  "class": "GtkBox",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 3,
+  "text": "· Milk"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "Toggle"
+ },
+ {
+  "class": "GtkButton",
+  "d": 3,
+  "text": "Remove"
+ }
+]

@@ -1,0 +1,73 @@
+# Style properties of the Qt 6 Widgets backend. Format: metadata/style/gtk.yaml.
+#   via: css        a QSS property (https://doc.qt.io/qt-6/stylesheet-reference.html).
+#   via: setter     a Q_PROPERTY (or annotated property) written with setProp; `prop` is its name.
+#   via: child-attr a layout attribute of the child in its parent's layout (setChildAttr).
+# `inline_only`: honoured in style= and style: only (no QSS equivalent).
+toolkit: qt
+dialect: qss
+setter_selectors: [type, class, id]
+units:
+  px: { scale: 1, provenance: "Qt 6 widget geometry is in device-independent pixels (high-DPI scaling is always on)" }
+
+properties:
+  # ---- QSS ----
+  color: { via: css }
+  background: { via: css, note: "colour only: gradients are not translated" }
+  background-color: { via: css }
+  border: { via: css }
+  border-width: { via: css }
+  border-style: { via: css }
+  border-color: { via: css }
+  border-radius: { via: css }
+  border-top: { via: css }
+  border-right: { via: css }
+  border-bottom: { via: css }
+  border-left: { via: css }
+  border-top-width: { via: css }
+  border-right-width: { via: css }
+  border-bottom-width: { via: css }
+  border-left-width: { via: css }
+  border-top-style: { via: css }
+  border-right-style: { via: css }
+  border-bottom-style: { via: css }
+  border-left-style: { via: css }
+  border-top-color: { via: css }
+  border-right-color: { via: css }
+  border-bottom-color: { via: css }
+  border-left-color: { via: css }
+  border-top-left-radius: { via: css }
+  border-top-right-radius: { via: css }
+  border-bottom-left-radius: { via: css }
+  border-bottom-right-radius: { via: css }
+  padding: { via: css }
+  padding-top: { via: css }
+  padding-right: { via: css }
+  padding-bottom: { via: css }
+  padding-left: { via: css }
+  margin: { via: css, note: "the QSS box margin; the layout margins are contents-margins" }
+  margin-top: { via: css }
+  margin-right: { via: css }
+  margin-bottom: { via: css }
+  margin-left: { via: css }
+  font-family: { via: css }
+  font-size: { via: css }
+  font-weight: { via: css }
+  font-style: { via: css }
+  opacity: { via: css, inline_only: true, note: "QSS has no opacity: style= and style: only (QGraphicsOpacityEffect)" }
+  min-width: { via: css, note: "the QSS minimum; minimum-width is the widget property" }
+  min-height: { via: css, note: "the QSS minimum; minimum-height is the widget property" }
+
+  # ---- QWidget properties ----
+  minimum-width: { via: setter, prop: minimumWidth, type: length, kinds: [QWidget] }
+  minimum-height: { via: setter, prop: minimumHeight, type: length, kinds: [QWidget] }
+  maximum-width: { via: setter, prop: maximumWidth, type: length, kinds: [QWidget] }
+  maximum-height: { via: setter, prop: maximumHeight, type: length, kinds: [QWidget] }
+  enabled: { via: setter, prop: enabled, type: bool, kinds: [QWidget] }
+
+  # ---- layouts (the box kind is a QWidget with a QBoxLayout) ----
+  orientation: { via: setter, prop: orientation, type: enum, kinds: [box] }
+  spacing: { via: setter, prop: spacing, type: length, kinds: [box] }
+  contents-margins: { via: setter, prop: contentsMargins, type: insets, kinds: [box] }
+  # QBoxLayout::setStretchFactor(widget, stretch) and QLayout::setAlignment(widget, alignment)
+  stretch: { via: child-attr, attr: stretch, type: int, parents: [box] }
+  align: { via: child-attr, attr: align, type: enum, parents: [box], note: "the alignment of the widget in its layout cell (parent:align)" }

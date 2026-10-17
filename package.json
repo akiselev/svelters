@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "pnpm -r --workspace-concurrency=4 --filter '!@svelters/docs' test && pnpm test:meta",
-    "test:meta": "python3 -m pytest -q tools/metadata && python3 tools/metadata/common/gen_bindings.py --check && python3 tools/metadata/ledger.py check && python3 tools/metadata/coverage.py --check",
+    "test:meta": "python3 -m pytest -q tools/metadata && python3 tools/metadata/common/gen_bindings.py --check && python3 tools/metadata/ledger.py check && python3 tools/metadata/coverage.py --check && python3 tools/metadata/semantics/gen_semantics.py --check && python3 tools/metadata/semantics/dom/gen_dom.py --check && python3 tools/metadata/style/gen_props.py --check",
     "build": "pnpm -r --filter '!@svelters/docs' build",
     "watch": "node packages/build/bin/svelters-build.mjs --watch",
     "docs:ir": "python3 tools/docs/build_ir.py",
