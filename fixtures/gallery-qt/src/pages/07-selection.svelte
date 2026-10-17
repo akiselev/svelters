@@ -1,4 +1,4 @@
-<!-- kinds: QComboBox QFontComboBox QListWidget QTreeWidget QTableWidget QButtonGroup -->
+<!-- kinds: QComboBox QFontComboBox QListWidget -->
 <script>
   // Selection: combobox, fontcombobox, listwidget. Items are added with call() after mount; the
   // bound indices are written once after that (echo suppression: the echo labels must stay 0).
