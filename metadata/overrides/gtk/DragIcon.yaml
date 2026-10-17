@@ -1,0 +1,2 @@
+unexposed:
+  reason: "internal drag-and-drop surface widget created by GTK during a drag; not mountable (gap G9 toplevel kinds) and drag-and-drop is out of scope"

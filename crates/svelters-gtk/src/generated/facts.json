@@ -973,6 +973,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:prop:rgba",
+   "fingerprint": "42c7932ff20eafa0",
+   "kind": "ColorDialogButton",
+   "name": "rgba",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_colordialogbutton_rgba"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-height",
    "fingerprint": "466dfd47e48fe8c8",
    "kind": "DrawingArea",
@@ -1423,6 +1433,36 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_flowbox_selection_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:level",
+   "fingerprint": "78b05ba676d8f6d9",
+   "kind": "FontDialogButton",
+   "name": "level",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_level"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-font",
+   "fingerprint": "9116168082df5f2c",
+   "kind": "FontDialogButton",
+   "name": "use-font",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_use_font"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-size",
+   "fingerprint": "31a5d8f1962a0329",
+   "kind": "FontDialogButton",
+   "name": "use-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_use_size"
    ]
   },
   {

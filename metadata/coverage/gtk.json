@@ -130,7 +130,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "appchooserbutton",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "AppChooserButton",
@@ -153,7 +153,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkAppChooser); no non-deprecated replacement widget",
   "verified": [
    0,
    0
@@ -194,7 +194,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "appchooserwidget",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "AppChooserWidget",
@@ -217,7 +217,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkAppChooser); no non-deprecated replacement widget",
   "verified": [
    0,
    0
@@ -450,7 +450,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "cellview",
+  "element": null,
   "gallery": null,
   "inherited": 25,
   "kind": "CellView",
@@ -473,7 +473,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (cell renderer display of a GtkTreeModel row); internal building block of ComboBox",
   "verified": [
    0,
    0
@@ -546,7 +546,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "colorbutton",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "ColorButton",
@@ -569,7 +569,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10; use ColorDialogButton",
   "verified": [
    0,
    0
@@ -642,7 +642,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "colorchooserwidget",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "ColorChooserWidget",
@@ -665,7 +665,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkColorChooser); use ColorDialogButton or a ColorDialog",
   "verified": [
    0,
    0
@@ -689,7 +689,7 @@
    1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    1,
@@ -699,14 +699,14 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
-  "element": "columnview",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "ColumnView",
@@ -729,7 +729,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "GtkColumnView is a GListModel table; flat lists map to virtuallist (X5); columns, sorters and factories are open under gap G6 (ColumnView columns)",
   "verified": [
    0,
    0
@@ -738,7 +738,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "combobox",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "ComboBox",
@@ -761,7 +761,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkComboBox, GtkTreeModel); DropDown model support is open under gap G6",
   "verified": [
    0,
    0
@@ -770,7 +770,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "comboboxtext",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "ComboBoxText",
@@ -793,7 +793,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10; DropDown model support is open under gap G6",
   "verified": [
    0,
    0
@@ -834,7 +834,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "dragicon",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "DragIcon",
@@ -857,7 +857,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "internal drag-and-drop surface widget created by GTK during a drag; not mountable (gap G9 toplevel kinds) and drag-and-drop is out of scope",
   "verified": [
    0,
    0
@@ -898,7 +898,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "dropdown",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "DropDown",
@@ -921,7 +921,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "GtkDropDown needs a GListModel and a list item factory; model-backed selection is open under gap G6 (DropDown/ComboBox models); until then use a button with a popover or a virtuallist",
   "verified": [
    0,
    0
@@ -1154,7 +1154,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "filechooserwidget",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "FileChooserWidget",
@@ -1177,7 +1177,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10; use the non-blocking FileDialog (async, not a widget)",
   "verified": [
    0,
    0
@@ -1282,7 +1282,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "fontbutton",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "FontButton",
@@ -1305,7 +1305,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10; use FontDialogButton",
   "verified": [
    0,
    0
@@ -1378,7 +1378,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "fontchooserwidget",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "FontChooserWidget",
@@ -1401,7 +1401,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkFontChooser); use FontDialogButton or a FontDialog",
   "verified": [
    0,
    0
@@ -1425,7 +1425,7 @@
    5,
    7
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    1,
@@ -1435,8 +1435,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -1474,7 +1474,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "glarea",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "GLArea",
@@ -1497,7 +1497,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "needs render/resize/create-context callbacks that run GL code in JS; native-to-JS draw callbacks are open under gap G8 (DrawingArea draw func)",
   "verified": [
    0,
    0
@@ -1570,7 +1570,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "gridview",
+  "element": null,
   "gallery": null,
   "inherited": 25,
   "kind": "GridView",
@@ -1593,7 +1593,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "GtkGridView is a GListModel view; model view: served by the portable virtuallist kind (X5, gap G6 closed that way; packages/lists ListView)",
   "verified": [
    0,
    0
@@ -1634,7 +1634,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "iconview",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "IconView",
@@ -1657,7 +1657,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkIconView, GtkTreeModel); use virtuallist in grid form (X5)",
   "verified": [
    0,
    0
@@ -1881,7 +1881,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "abstract base of ListView and GridView; GListModel views are served by the portable virtuallist kind (X5, G6)",
   "verified": [
    0,
    0
@@ -1954,7 +1954,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "listview",
+  "element": null,
   "gallery": null,
   "inherited": 25,
   "kind": "ListView",
@@ -1977,7 +1977,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "GtkListView is a GListModel view; model view: served by the portable virtuallist kind (X5, gap G6 closed that way; packages/lists ListView)",
   "verified": [
    0,
    0
@@ -2370,7 +2370,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "popoverbin",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "PopoverBin",
@@ -2393,7 +2393,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "new in GTK 4.22, newer than the supported GTK baseline; revisit with a child/popover slot pair when the baseline allows",
   "verified": [
    0,
    0
@@ -2882,7 +2882,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "shortcutsgroup",
+  "element": null,
   "gallery": null,
   "inherited": 27,
   "kind": "ShortcutsGroup",
@@ -2905,7 +2905,7 @@
   ],
   "slots": 1,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.18, part of the GtkShortcutsWindow builder tree; not worth separate elements",
   "verified": [
    0,
    0
@@ -2914,7 +2914,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "shortcutssection",
+  "element": null,
   "gallery": null,
   "inherited": 27,
   "kind": "ShortcutsSection",
@@ -2937,7 +2937,7 @@
   ],
   "slots": 1,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.18, part of the GtkShortcutsWindow builder tree; not worth separate elements",
   "verified": [
    0,
    0
@@ -2946,7 +2946,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "shortcutsshortcut",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "ShortcutsShortcut",
@@ -2969,7 +2969,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.18, part of the GtkShortcutsWindow builder tree; not worth separate elements",
   "verified": [
    0,
    0
@@ -3330,7 +3330,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "treeexpander",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "TreeExpander",
@@ -3353,7 +3353,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "needs a GtkTreeListRow from a GtkTreeListModel; only meaningful inside a model-backed list item, open under gap G6 (tree models)",
   "verified": [
    0,
    0
@@ -3362,7 +3362,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "treeview",
+  "element": null,
   "gallery": null,
   "inherited": 24,
   "kind": "TreeView",
@@ -3385,7 +3385,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (GtkTreeView, GtkTreeModel, cell renderers); hierarchies are open under gap G6 (tree models), use virtuallist",
   "verified": [
    0,
    0

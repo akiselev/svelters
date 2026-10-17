@@ -198,7 +198,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Work: add `unexposed: {reason}` overrides (or a short note pointing at the gap) so the coverage report says why.
   `ComboBoxText` (deprecated 4.10) stays unexposed; `DropDown` waits for G6/G4.
 - Gallery: none.
-- Status: todo
+- Status: done (4 facts verified: ColorDialogButton.rgba, FontDialogButton use-font/use-size/level; 23 kinds marked unexposed with reasons; dropped: FontDialogButton.font-desc (generated boxed round-trip compares handles, each read mints a new one); no gallery page)
 
 ## Qt
 

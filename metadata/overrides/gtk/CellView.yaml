@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10 (cell renderer display of a GtkTreeModel row); internal building block of ComboBox"
