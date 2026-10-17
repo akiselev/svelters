@@ -95,6 +95,9 @@ fn run_script(backend: &str, fixture: &str, script: &Path, extra: &[&str]) -> Ru
     let _ = std::fs::remove_file(&report_path);
     let png = dir.join(format!("{name}.png"));
     let out = Command::new(env!("CARGO_BIN_EXE_counter"))
+        // GDK's Vulkan path under Xvfb (lavapipe) can assert in gdk_vulkan_context_surface_detach
+        // when a window closes mid-present; cairo avoids the GPU path. An explicit GSK_RENDERER wins.
+        .env("GSK_RENDERER", std::env::var("GSK_RENDERER").unwrap_or_else(|_| "cairo".into()))
         .args(["--backend", backend, "--fixture", fixture, "--timeout", "30"])
         .arg("--script")
         .arg(script)
