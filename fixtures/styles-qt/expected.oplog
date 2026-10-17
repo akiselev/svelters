@@ -1,0 +1,46 @@
+style sheet "*" null
+style scheme "light" 9
+style sheet "src/App.svelte" ".app.svelte-1n46o8q {\n  background-color: #f6f5f4;\n  border: none;\n}\n.card.svelte-1n46o8q {\n  margin: 12px;\n  padding: 12px;\n  background-color: #ffffff;\n  border: 1px solid #cdc7c2;\n  border-radius: 6px;\n}\n.title.svelte-1n46o8q {\n  color: #2e3436;\n  font-size: 14pt;\n}\n.title.big.svelte-1n46o8q {\n  font-weight: bold;\n}\n.QPushButton.primary.svelte-1n46o8q {\n  background-color: #3584e4;\n  color: #ffffff;\n  border-radius: 6px;\n  padding: 6px 14px;\n  border: none;\n}\n.QPushButton.primary.svelte-1n46o8q:hover {\n  background-color: #1c71d8;\n  border: none;\n}\n.QPushButton.primary.active.svelte-1n46o8q {\n  border: 2px solid #c01c28;\n}\n.QLineEdit.field.svelte-1n46o8q {\n  color: #2e3436;\n}\n.QLineEdit.field.svelte-1n46o8q:focus {\n  border-color: #3584e4;\n}\n.QPushButton { min-height: 24px; }\n"
+create main-window #1
+set #1 window-title "Styles"
+style #1 classes "app svelte-1n46o8q"
+create box-layout #2
+set #2 direction "top-to-bottom"
+set #2 spacing 8
+style #2 classes "sv-k-box-layout card svelte-1n46o8q"
+create label #3
+style #3 classes "sv-k-label title svelte-1n46o8q"
+set #3 text "Styled"
+insert #2 #3 before=end slot=default
+create push-button #4
+listen #4 clicked on
+style #4 classes "primary svelte-1n46o8q"
+style #4 name "toggle"
+set #4 text "Toggle"
+insert #2 #4 before=end slot=default
+create line-edit #5
+set #5 placeholder-text "type here"
+style #5 classes "field svelte-1n46o8q"
+insert #2 #5 before=end slot=default
+create push-button #6
+listen #6 clicked on
+set #6 text "Theme"
+insert #2 #6 before=end slot=default
+create push-button #7
+listen #7 clicked on
+set #7 text "Accent"
+insert #2 #7 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #4 clicked []
+style #3 classes "sv-k-label title svelte-1n46o8q big"
+style #3 inline "color: #c01c28;"
+style #4 classes "primary svelte-1n46o8q active"
+event #6 clicked []
+event #7 clicked []
+style scheme "dark" 9
+style sheet "src/App.svelte" ".app.svelte-1n46o8q {\n  background-color: #242424;\n  border: none;\n}\n.card.svelte-1n46o8q {\n  margin: 12px;\n  padding: 12px;\n  background-color: #303030;\n  border: 1px solid #4a4a4a;\n  border-radius: 6px;\n}\n.title.svelte-1n46o8q {\n  color: #ffffff;\n  font-size: 14pt;\n}\n.title.big.svelte-1n46o8q {\n  font-weight: bold;\n}\n.QPushButton.primary.svelte-1n46o8q {\n  background-color: #26a269;\n  color: #ffffff;\n  border-radius: 6px;\n  padding: 6px 14px;\n  border: none;\n}\n.QPushButton.primary.svelte-1n46o8q:hover {\n  background-color: #4a90e8;\n  border: none;\n}\n.QPushButton.primary.active.svelte-1n46o8q {\n  border: 2px solid #ff7b63;\n}\n.QLineEdit.field.svelte-1n46o8q {\n  color: #ffffff;\n}\n.QLineEdit.field.svelte-1n46o8q:focus {\n  border-color: #26a269;\n}\n.QPushButton { min-height: 24px; }\n.card.svelte-1n46o8q {\n  border-color: #666;\n}\n"
+event #4 clicked []
+style #3 classes "sv-k-label title svelte-1n46o8q"
+style #3 inline null
+style #4 classes "primary svelte-1n46o8q"

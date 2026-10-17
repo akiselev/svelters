@@ -11,57 +11,58 @@ export interface BindableProps {
     day: number; // gtk
   };
   "check-box": {
+    checked: boolean; // qt
     "is-checked": boolean; // winui
   };
-  checkbox: {
-    checked: boolean; // qt
-  };
-  checkbutton: {
+  "check-button": {
     active: boolean; // gtk
   };
-  combobox: {
-    currentIndex: number; // qt
+  "combo-box": {
+    "current-index": number; // qt
   };
-  dateedit: {
+  "date-edit": {
     date: { year: number; month: number; day: number }; // qt
   };
-  datetimeedit: {
-    dateTime: Date; // qt
+  "date-time-edit": {
+    "date-time": Date; // qt
   };
   dial: {
     value: number; // qt
   };
-  doublespinbox: {
+  "double-spin-box": {
     value: number; // qt
   };
-  editablelabel: {
+  "editable-label": {
     editing: boolean; // gtk
   };
   entry: {
-    text: string; // gtk/qt
+    text: string; // gtk
   };
   expander: {
     expanded: boolean; // gtk
   };
-  groupbox: {
+  "group-box": {
     checked: boolean; // qt
   };
-  levelbar: {
+  "level-bar": {
     value: number; // gtk
   };
-  listwidget: {
-    currentRow: number; // qt
+  "line-edit": {
+    text: string; // qt
+  };
+  "list-widget": {
+    "current-row": number; // qt
   };
   notebook: {
     page: number; // gtk
   };
-  passwordentry: {
+  "password-entry": {
     text: string; // gtk
   };
-  plaintextedit: {
-    plainText: string; // qt
+  "plain-text-edit": {
+    "plain-text": string; // qt
   };
-  radiobutton: {
+  "radio-button": {
     checked: boolean; // qt
   };
   range: {
@@ -70,10 +71,10 @@ export interface BindableProps {
   scale: {
     value: number; // gtk
   };
-  scrollbar: {
+  "scroll-bar": {
     value: number; // qt
   };
-  searchentry: {
+  "search-entry": {
     text: string; // gtk
   };
   "secure-text-field": {
@@ -83,26 +84,26 @@ export interface BindableProps {
     "double-value": number; // appkit
     value: number; // qt/winui
   };
-  spinbox: {
+  "spin-box": {
     value: number; // qt
   };
-  spinbutton: {
+  "spin-button": {
     value: number; // gtk
   };
   spinner: {
     spinning: boolean; // gtk
   };
-  stackedwidget: {
-    currentIndex: number; // qt
+  "stacked-widget": {
+    "current-index": number; // qt
   };
   switch: {
     active: boolean; // gtk
   };
-  tabbar: {
-    currentIndex: number; // qt
+  "tab-bar": {
+    "current-index": number; // qt
   };
-  tabwidget: {
-    currentIndex: number; // qt
+  "tab-widget": {
+    "current-index": number; // qt
   };
   text: {
     text: string; // gtk
@@ -110,23 +111,23 @@ export interface BindableProps {
   "text-box": {
     text: string; // winui
   };
+  "text-edit": {
+    "plain-text": string; // qt
+  };
   "text-field": {
     "string-value": string; // appkit
   };
-  textedit: {
-    plainText: string; // qt
-  };
-  textview: {
+  "text-view": {
     text: string; // gtk
   };
-  timeedit: {
+  "time-edit": {
     time: { hour: number; minute: number; second: number; ms: number }; // qt
   };
-  togglebutton: {
+  "toggle-button": {
     active: boolean; // gtk
   };
-  toolbox: {
-    currentIndex: number; // qt
+  "tool-box": {
+    "current-index": number; // qt
   };
 }
 
@@ -136,4 +137,4 @@ export interface ToplevelAttrs {
   /** modal (dialogs: the default), modeless (windows: the default), or none (created hidden; open it through bind:this) */
   show?: ToplevelShow;
 }
-export type ToplevelTag = "aboutdialog" | "colordialog" | "dialog" | "errormessage" | "filedialog" | "fontdialog" | "inputdialog" | "messagebox" | "progressdialog" | "window" | "wizard";
+export type ToplevelTag = "about-dialog" | "application-window" | "color-dialog" | "dialog" | "error-message" | "file-dialog" | "font-dialog" | "input-dialog" | "main-window" | "message-box" | "progress-dialog" | "window" | "wizard";

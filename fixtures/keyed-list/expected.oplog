@@ -7,7 +7,7 @@ create box #3
 set #3 orientation "horizontal"
 set #3 spacing 6
 create entry #4
-set #4 placeholder "New item"
+set #4 placeholder-text "New item"
 set #4 text ""
 listen #4 changed on
 insert #3 #4 before=end slot=default
@@ -20,7 +20,7 @@ listen #6 clicked on
 set #6 label "Reverse"
 insert #3 #6 before=end slot=default
 insert #2 #3 before=end slot=default
-create scrolledwindow #7
+create scrolled-window #7
 create box #8
 set #8 orientation "vertical"
 set #8 spacing 2

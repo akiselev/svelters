@@ -9,10 +9,10 @@
 
 <box orientation="vertical" spacing={6}>
   <label>canvas: redraws {step}</label>
-  <button label="redraw" onclick={() => step++} />
+  <button label="redraw" onclicked={() => step++} />
   <canvas
-    contentWidth={240}
-    contentHeight={120}
+    content-width={240}
+    content-height={120}
     {@attach draw((ctx, { width, height }) => {
       ctx.fillStyle = '#e01b24';
       ctx.fillRect(10, 10, 80, 60);

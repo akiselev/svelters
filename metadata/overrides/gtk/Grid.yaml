@@ -9,7 +9,7 @@ properties:
     provenance: "GtkGrid:column-homogeneous (Gtk 4 docs); P prop"
 # GtkGrid: children are placed by per-child attributes (X3, ABI v2.2 `set_child_attr`). The attributes
 # live on the GtkGridLayoutChild of the child, so moving a child is a property write: no re-attach.
-# Svelte: <grid><label parent:column={1} parent:row={2} parent:columnSpan={2}>x</label></grid>
+# Svelte: <grid><label parent:column={1} parent:row={2} parent:column-span={2}>x</label></grid>
 children:
   policy: layout_managed
   default_slot: cells
@@ -39,7 +39,7 @@ children:
           property: row
           expect: 'pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).1 == 3'
           provenance: [{origin: gir, ref: "GtkGridLayoutChild:row"}, {origin: gir, ref: "gtk_grid_query_child"}]
-        - name: columnSpan
+        - name: column-span
           type: i32
           default: 1
           samples: [2, 3]
@@ -47,7 +47,7 @@ children:
           property: column-span
           expect: 'pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).2 == 2'
           provenance: [{origin: gir, ref: "GtkGridLayoutChild:column-span"}, {origin: gir, ref: "gtk_grid_query_child"}]
-        - name: rowSpan
+        - name: row-span
           type: i32
           default: 1
           samples: [2, 4]

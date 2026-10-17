@@ -1,6 +1,5 @@
 properties:
   - name: active
-    js_name: active
     echo_suppress: ["notify::active"]
     provenance: "GtkSwitch:active (Gtk 4 docs)"
   - name: state

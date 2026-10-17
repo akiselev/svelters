@@ -1,16 +1,16 @@
-// Native protocol test for `virtuallist` without Svelte: JS plays the list controller by hand.
-// Handles in creation order: window 1, box 2, status label 3, virtuallist 4.
+// Native protocol test for `virtual-list` without Svelte: JS plays the list controller by hand.
+// Handles in creation order: window 1, box 2, status label 3, virtual list 4.
 const h = globalThis.__svelters_host;
 const H = (x) => ({ svlHandle: x });
 
 const win = h.create('window');
 h.setProp(win, 'title', 'vlist');
-h.setProp(win, 'defaultWidth', 320);
-h.setProp(win, 'defaultHeight', 320);
+h.setProp(win, 'default-width', 320);
+h.setProp(win, 'default-height', 320);
 const box = h.create('box');
 h.setProp(box, 'orientation', 'vertical');
 const status = h.create('label');
-const list = h.create('virtuallist');
+const list = h.create('virtual-list');
 h.setProp(list, 'vexpand', true);
 h.insert(box, status, null);
 h.insert(box, list, null);

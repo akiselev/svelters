@@ -25,7 +25,6 @@ TK = "qt"
 HERE = Path(__file__).resolve().parent
 ID_PREFIX = "svelters-api:v1:type:qt:"
 UPSTREAM = "https://doc.qt.io/qt-6/"
-EVENT_ALIAS = {"clicked": "click", "changed": "change"}
 LICENSE = {
     "spdx": "GFDL-1.3-only",
     "name": "GNU Free Documentation License v1.3",
@@ -191,7 +190,7 @@ class Frontend:
         # annotated element props: the JS name and (for enum props) the value vocabulary come from the override
         for el in elements:
             for ap in el.get("props", []) or []:
-                native = ap.get("native") or ap.get("setter", "").removeprefix("set").lower() or ap["js"]
+                native = ap.get("native") or (lambda n: n[:1].lower() + n[1:])(ap.get("setter", "").removeprefix("set")) or ap["js"]
                 found = self.find_prop(stem, native)
                 rec = out.get(native)
                 if rec is None:
@@ -249,8 +248,6 @@ class Frontend:
                 "annotated": False, "native_id": s["id"],
                 "extensions": {TK: {"signature": s.get("signature", ""), "metaobject_signatures": s.get("metaobject_signatures", [])}},
             }
-            if je in EVENT_ALIAS:
-                rec["handler_aliases"] = [f"on{EVENT_ALIAS[je]}"]
             t = self.text(doc)
             if t:
                 rec["doc"] = t
@@ -282,8 +279,6 @@ class Frontend:
                     out[name] = rec
                 rec["js_event"] = a["js"]
                 rec["handler_prop"] = f"on{a['js']}"
-                if a["js"] in EVENT_ALIAS:
-                    rec["handler_aliases"] = [f"on{EVENT_ALIAS[a['js']]}"]
                 rec["annotated"] = True
                 rec["origins"] = sorted(set(rec["origins"]) | {"manual"})
                 if a.get("args") is not None and not rec["params"]:

@@ -7,17 +7,13 @@ properties:
   - name: paintable
     provenance: "GtkImage:paintable, object reference; round trip"
   - name: icon-name
-    js_name: iconName
     sample: "dialog-information"
     provenance: "GtkImage:icon-name (Gtk 4 docs)"
   - name: pixel-size
-    js_name: pixelSize
     provenance: "GtkImage:pixel-size (Gtk 4 docs)"
   - name: icon-size
-    js_name: iconSize
     provenance: "GtkImage:icon-size (Gtk 4 docs)"
   - name: use-fallback
-    js_name: useFallback
     provenance: "GtkImage:use-fallback (Gtk 4 docs)"
 methods:
   - name: set_from_icon_name

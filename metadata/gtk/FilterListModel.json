@@ -372,7 +372,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:item-type",
       "invocation": "reflected",
-      "js_name": "itemType",
+      "js_name": "item-type",
       "name": "item-type",
       "notify": {
         "explicit": false,
@@ -451,7 +451,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:n-items",
       "invocation": "reflected",
-      "js_name": "nItems",
+      "js_name": "n-items",
       "name": "n-items",
       "notify": {
         "explicit": false,
@@ -535,7 +535,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:watch-items",
       "invocation": "reflected",
-      "js_name": "watchItems",
+      "js_name": "watch-items",
       "name": "watch-items",
       "notify": {
         "explicit": true,

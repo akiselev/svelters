@@ -388,7 +388,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:icon-name",
       "invocation": "reflected",
-      "js_name": "iconName",
+      "js_name": "icon-name",
       "name": "icon-name",
       "notify": {
         "explicit": false,
@@ -466,7 +466,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:needs-attention",
       "invocation": "reflected",
-      "js_name": "needsAttention",
+      "js_name": "needs-attention",
       "name": "needs-attention",
       "notify": {
         "explicit": true,
@@ -545,7 +545,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:StackPage:prop:use-underline",
       "invocation": "reflected",
-      "js_name": "useUnderline",
+      "js_name": "use-underline",
       "name": "use-underline",
       "notify": {
         "explicit": true,

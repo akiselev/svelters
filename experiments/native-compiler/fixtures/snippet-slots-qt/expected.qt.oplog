@@ -1,33 +1,33 @@
-create window #1
-set #1 title "Main"
-create menubar #2
+create main-window #1
+set #1 window-title "Main"
+create menu-bar #2
 insert #1 #2 before=end slot=menubar
-create box #3
-set #3 orientation "vertical"
+create box-layout #3
+set #3 direction "top-to-bottom"
 create label #4
-set #4 label "Clicked 0 times"
+set #4 text "Clicked 0 times"
 insert #3 #4 before=end slot=default
-create button #5
+create push-button #5
 listen #5 clicked on
-set #5 label "Click"
+set #5 text "Click"
 insert #3 #5 before=end slot=default
-create button #6
+create push-button #6
 listen #6 clicked on
-set #6 label "Status"
+set #6 text "Status"
 insert #3 #6 before=end slot=default
 insert #1 #3 before=end slot=default
-create statusbar #7
+create status-bar #7
 insert #1 #7 before=end slot=statusbar
 call #1 present []
 event #5 clicked []
-set #4 label "Clicked 1 times"
+set #4 text "Clicked 1 times"
 event #6 clicked []
-create statusbar #8
+create status-bar #8
 insert #1 #8 before=end slot=statusbar
 remove #1 #7
 destroy #7
 event #6 clicked []
-create statusbar #9
+create status-bar #9
 insert #1 #9 before=end slot=statusbar
 remove #1 #8
 destroy #8

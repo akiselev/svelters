@@ -1,28 +1,28 @@
-create window #1
-set #1 title "Module"
-create box #2
-set #2 orientation "vertical"
+create main-window #1
+set #1 window-title "Module"
+create box-layout #2
+set #2 direction "top-to-bottom"
 set #2 spacing 4
 create label #3
-set #3 label "0 (last none, 0 steps) x0 mounted 1"
+set #3 text "0 (last none, 0 steps) x0 mounted 1"
 insert #2 #3 before=end slot=default
-create button #4
+create push-button #4
 listen #4 clicked on
-set #4 label "+1"
+set #4 text "+1"
 insert #2 #4 before=end slot=default
-create button #5
+create push-button #5
 listen #5 clicked on
-set #5 label "+5"
+set #5 text "+5"
 insert #2 #5 before=end slot=default
-create button #6
+create push-button #6
 listen #6 clicked on
-set #6 label "Factor"
+set #6 text "Factor"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #4 clicked []
-set #3 label "1 (last 1, 1 steps) x2 mounted 1"
+set #3 text "1 (last 1, 1 steps) x2 mounted 1"
 event #5 clicked []
-set #3 label "6 (last 6, 2 steps) x12 mounted 1"
+set #3 text "6 (last 6, 2 steps) x12 mounted 1"
 event #6 clicked []
-set #3 label "6 (last 6, 2 steps) x18 mounted 1"
+set #3 text "6 (last 6, 2 steps) x18 mounted 1"

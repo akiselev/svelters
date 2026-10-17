@@ -5,7 +5,8 @@
 //!
 //! Fixtures that need more than the Qt backend offers are skipped with the reason: a `sync` line
 //! (a result changes what the toolkit does next), `gone` lines, or a kind / prop / signal / slot /
-//! method the Qt element set does not have (the fixtures are written in the GTK vocabulary).
+//! method the Qt element set does not have (most fixtures are written in the GTK vocabulary; the
+//! `*-qt` twins are written in the Qt vocabulary).
 //! Needs a display (xvfb-run) and the main thread, so no libtest harness.
 
 use std::collections::HashMap;
@@ -141,7 +142,7 @@ fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
                     return Some(format!("no Qt child attribute {}", rest[3]));
                 }
             }
-            "event" if !matches!(parts[2], "clicked" | "activate" | "toggled") => return Some(format!("cannot produce {} natively", parts[2])),
+            "event" if !matches!(parts[2], "clicked" | "triggered" | "toggled") => return Some(format!("cannot produce {} natively", parts[2])),
             _ => {}
         }
     }
@@ -258,7 +259,7 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 if sig == "toggled" && parts[3] == "[false]" {
                     continue;
                 }
-                let click = b.resolve(NameKind::Method, kind(o), if matches!(sig, "activate" | "toggled") { "trigger" } else { "click" });
+                let click = b.resolve(NameKind::Method, kind(o), if matches!(sig, "triggered" | "toggled") { "trigger" } else { "click" });
                 b.call(o, click, &[]).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
                 let got = EVENTS.lock().unwrap().clone();
                 assert!(got.contains(&(o, sid)), "{ctx}: event not delivered, got {got:?}");
@@ -293,6 +294,8 @@ fn body() {
         replay(&b, &name, &log);
         replayed.push(name);
     }
-    assert!(replayed.iter().any(|n| n == "child-attrs"), "fixtures/child-attrs must replay on Qt, replayed {replayed:?}");
+    for must in ["child-attrs-qt", "counter-qt"] {
+        assert!(replayed.iter().any(|n| n == must), "fixtures/{must} must replay on Qt, replayed {replayed:?}");
+    }
     println!("oplog_replay ok: {replayed:?}");
 }

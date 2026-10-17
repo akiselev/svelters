@@ -1,4 +1,4 @@
-//! X3 end to end on Qt: the real host runs the `fixtures/child-attrs` Svelte bundle. Cells are
+//! X3 end to end on Qt: the real host runs the `fixtures/child-attrs-qt` Svelte bundle. Cells are
 //! placed by `parent:column`/`parent:row` attributes; a click reorders the keyed list and changes a
 //! span, and the QGridLayout follows reactively (each move is remove + insert, and the attributes
 //! are applied again after the insert). Needs a display (xvfb-run), the main thread (no libtest
@@ -32,7 +32,7 @@ fn main() {
 }
 
 fn body() {
-    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/child-attrs/dist/app.js");
+    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/child-attrs-qt/dist/app.js");
     if !bundle.exists() {
         eprintln!("skipped: {} is not built", bundle.display());
         return;
@@ -46,7 +46,7 @@ fn body() {
     let s = seen.clone();
     hooks::run_later(300, Box::new(move || {
         s.borrow_mut().push(cells());
-        let button_kind = raw.resolve(NameKind::Kind, 0, "button");
+        let button_kind = raw.resolve(NameKind::Kind, 0, "push-button");
         let click = raw.resolve(NameKind::Method, button_kind, "click");
         raw.call(BUTTON, click, &[]).unwrap();
     }));

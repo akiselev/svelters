@@ -1,13 +1,13 @@
 // X8 on Qt: event families and the canvas through the real host. Handles in creation order:
-// window 1, box 2, label 3, area 4 (event target), canvas 5.
+// main-window 1, box-layout 2, label 3, area 4 (a box-layout, the event target), canvas 5.
 const h = globalThis.__svelters_host;
-const win = h.create('window');
-const box = h.create('box');
+const win = h.create('main-window');
+const box = h.create('box-layout');
 const label = h.create('label');
-const area = h.create('box');
+const area = h.create('box-layout');
 const cv = h.create('canvas');
-h.setProp(cv, 'contentWidth', 80);
-h.setProp(cv, 'contentHeight', 40);
+h.setProp(cv, 'content-width', 80);
+h.setProp(cv, 'content-height', 40);
 h.setProp(cv, 'ops', JSON.stringify([['fillStyle', '#00ff00'], ['fillRect', 0, 0, 20, 20], ['fillStyle', '#ff00ff'], ['fillRect', 30, 0, 10, 10]]));
 h.insert(area, label, null);
 h.insert(box, area, null);
@@ -22,7 +22,7 @@ h.listen(cv, 'resize', true);
 const log = [];
 const note = (s) => {
   log.push(s);
-  h.setProp(label, 'label', log.join('|'));
+  h.setProp(label, 'text', log.join('|'));
 };
 globalThis.__svelters_dispatch_sync = (target, signal, args, flags) => {
   const [pos, button] = args;

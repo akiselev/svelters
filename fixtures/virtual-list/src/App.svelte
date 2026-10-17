@@ -15,11 +15,11 @@
 <window title="Virtual list">
   <box orientation="vertical" spacing="6">
     <box orientation="horizontal" spacing="6">
-      <button onclick={add}>Add</button>
-      <button onclick={prepend}>Prepend</button>
-      <button onclick={removeSecond}>Remove</button>
-      <button onclick={reverse}>Reverse</button>
-      <button onclick={rename}>Rename</button>
+      <button onclicked={add}>Add</button>
+      <button onclicked={prepend}>Prepend</button>
+      <button onclicked={removeSecond}>Remove</button>
+      <button onclicked={reverse}>Reverse</button>
+      <button onclicked={rename}>Rename</button>
       <label>{selected}</label>
     </box>
     <ListView {items} key={(it) => it.id} bind:selected>

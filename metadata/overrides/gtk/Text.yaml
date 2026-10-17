@@ -4,7 +4,6 @@ properties:
   - name: max-length
     provenance: "GtkText:max-length (Gtk 4 docs)"
   - name: placeholder-text
-    js_name: placeholder
     provenance: "GtkText:placeholder-text (Gtk 4 docs)"
   - name: overwrite-mode
     provenance: "GtkText:overwrite-mode (Gtk 4 docs)"

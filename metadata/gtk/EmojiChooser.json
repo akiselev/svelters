@@ -47,7 +47,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "emojichooser"
+    "tag": "emoji-chooser"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:EmojiChooser",

@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools/metadata/common"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import naming  # noqa: E402
 import svmeta  # noqa: E402
 import gir as G  # noqa: E402
 
@@ -38,11 +39,6 @@ LIVE_PRIM = {
 }
 TAG_PREFIX = {"class": "object", "interface": "object", "enumeration": "enum", "bitfield": "flags",
               "record": "boxed", "union": "value", "callback": "callback"}
-
-
-def camel(name: str) -> str:
-    head, *rest = name.split("-")
-    return head + "".join(p[:1].upper() + p[1:] for p in rest)
 
 
 def finite(v):
@@ -142,7 +138,7 @@ class Ingest:
         F = self.GObject.ParamFlags
         for name in sorted(set(gir) | set(live)):
             g, ps = gir.get(name), live.get(name)
-            rec = {"id": f"{tid}:prop:{name}", "name": name, "js_name": camel(name), "origin": "gir" if g is not None else "runtime"}
+            rec = {"id": f"{tid}:prop:{name}", "name": name, "js_name": name, "origin": "gir" if g is not None else "runtime"}
             if g is not None:
                 ref, native = self.repo.type_ref(g, ns)
                 rec["access"] = {"read": g.get("readable", "1") == "1", "write": g.get("writable") == "1",
@@ -306,7 +302,7 @@ class Ingest:
             "origin": "gir",
         }
         if is_widget and not abstract and tag == "class":
-            doc["element"] = {"tag": name.lower(), "origin": "gir"}
+            doc["element"] = {"tag": naming.tag_for("gtk", name), "origin": "gir"}
         return doc
 
     def enum_kind(self, tag, el):
@@ -398,6 +394,11 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
                 if not ann["provenance"]:
                     errors.append(f"{doc['id']}: slot {r.get('name')} lacks provenance")
                 r2["id"] = f"{doc['id']}:slot:{r['name']}"
+                for a in r.get("attrs", []):
+                    # Child attribute names are native: the layout-child property, else the kebab-cased name.
+                    want = a.get("property") or naming.kebab(a["name"])
+                    if a["name"] != want:
+                        errors.append(f"{doc['id']}: slot {r['name']} attr {a['name']!r} must be named {want!r}")
                 recs.append(r2)
                 marks.append((["children", "slots"], r["name"], ann))
             ch["slots"] = recs
@@ -424,6 +425,13 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
                 rec["annotated"] = ann
                 rec["origin"] = rec.get("origin") or "manual"
     if "element" in ov:
+        # Tags are derived (tools/metadata/common/naming.py); an override may restate the tag, or
+        # differ only with a `tag_reason`.
+        want = naming.tag_for("gtk", doc["id"].rsplit(":", 1)[-1])
+        tag = ov["element"].get("tag", want)
+        if tag != want and not ov["element"].get("tag_reason"):
+            errors.append(f"{doc['id']}: element tag {tag!r} breaks the naming rule ({want!r}) without tag_reason")
+        merged["element"]["tag"] = tag
         merged["element"]["origin"] = "manual"
     if "unexposed" in ov:
         merged.pop("element", None)
@@ -505,12 +513,6 @@ def main() -> int:
         if name not in kinds:
             errors.append(f"override for unknown kind {name}")
 
-    # Explicit element tags win over default tags of other kinds.
-    explicit = {ov["element"]["tag"] for ov in overrides.values() if "element" in ov}
-    for name, doc in kinds.items():
-        if "element" in doc and "element" not in overrides.get(name, {}) and doc["element"]["tag"] in explicit:
-            del doc["element"]
-
     for name, doc in sorted(kinds.items()):
         doc["source"] = ing.source(name, name in overrides)
         life = derived_lifetime(doc)
@@ -519,6 +521,10 @@ def main() -> int:
         if name in overrides:
             doc = apply_override(doc, overrides[name], errors)
             kinds[name] = doc
+        for p in doc.get("properties", []):
+            if naming.kebab(p["name"]) != p["name"]:
+                errors.append(f"{name}: property {p['name']!r} must be kebab-case ({naming.kebab(p['name'])!r})")
+            p["js_name"] = p["name"]  # GObject property names are already kebab-case (naming.py)
         refs = sorted({r for p in doc.get("properties", []) for r in [(p.get("type") or {}).get("ref", "")] if r.startswith(("enum<", "flags<"))})
         doc["enums"] = [r[r.index("<") + 1:-1] for r in refs]
         errs = svmeta.validate(doc)

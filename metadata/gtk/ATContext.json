@@ -169,7 +169,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:ATContext:prop:accessible-role",
       "invocation": "reflected",
-      "js_name": "accessibleRole",
+      "js_name": "accessible-role",
       "name": "accessible-role",
       "notify": {
         "explicit": false,

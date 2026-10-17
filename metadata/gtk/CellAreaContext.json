@@ -430,7 +430,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CellAreaContext:prop:minimum-height",
       "invocation": "reflected",
-      "js_name": "minimumHeight",
+      "js_name": "minimum-height",
       "name": "minimum-height",
       "notify": {
         "explicit": false,
@@ -472,7 +472,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CellAreaContext:prop:minimum-width",
       "invocation": "reflected",
-      "js_name": "minimumWidth",
+      "js_name": "minimum-width",
       "name": "minimum-width",
       "notify": {
         "explicit": false,
@@ -514,7 +514,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CellAreaContext:prop:natural-height",
       "invocation": "reflected",
-      "js_name": "naturalHeight",
+      "js_name": "natural-height",
       "name": "natural-height",
       "notify": {
         "explicit": false,
@@ -556,7 +556,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CellAreaContext:prop:natural-width",
       "invocation": "reflected",
-      "js_name": "naturalWidth",
+      "js_name": "natural-width",
       "name": "natural-width",
       "notify": {
         "explicit": false,

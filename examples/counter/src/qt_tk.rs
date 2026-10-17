@@ -12,10 +12,10 @@ pub struct QtToolkit {
 
 impl Toolkit for QtToolkit {
     fn click(&self, h: u64) -> Result<(), String> {
-        let kind = self.backend.resolve(NameKind::Kind, 0, "button");
+        let kind = self.backend.resolve(NameKind::Kind, 0, "push-button");
         let method = self.backend.resolve(NameKind::Method, kind, "click");
         if method == 0 {
-            return Err("button has no click method".into());
+            return Err("push-button has no click method".into());
         }
         self.backend.call(h, method, &[]).map(|_| ()).map_err(|e| e.message)
     }

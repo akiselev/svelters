@@ -7,7 +7,7 @@ export default function App($$anchor, $$props) {
   let show = $.state(false);
   const n1 = $n.element('window', 'present');
   $n.set(n1, 'title', 'If toggle');
-  const n2 = $n.element('headerbar');
+  const n2 = $n.element('header-bar');
   $n.set(n2, 'title', 'Toggle');
   $n.append($n.slot(n1, 'titlebar'), n2);
   const n3 = $n.element('box');

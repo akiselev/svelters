@@ -7,10 +7,10 @@
 
 <window title="buffer-bind">
   <box orientation="vertical" spacing="6">
-    <textview bind:text />
+    <text-view bind:text />
     <label>{`text=${text}`}</label>
-    <scale bind:value lower={0} upper={100} stepIncrement={1} />
+    <scale bind:value lower={0} upper={100} step-increment={1} />
     <label>{`value=${value}`}</label>
-    <button onclick={() => { text = 'from js'; value = 55; }}>Set</button>
+    <button onclicked={() => { text = 'from js'; value = 55; }}>Set</button>
   </box>
 </window>

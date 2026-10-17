@@ -1,7 +1,7 @@
 elements:
-  - tag: fontcombobox
+  - tag: font-combo-box
     construct: { class: QFontComboBox }
     props:
-      - { js: currentFont, native: currentFont, provenance: "QFontComboBox::currentFont (qdoc); QFont string form (S1)" }
-      - { js: writingSystem, native: writingSystem, provenance: "QFontComboBox::writingSystem (qdoc)" }
-      - { js: fontFilters, native: fontFilters, provenance: "QFontComboBox::fontFilters (qdoc)" }
+      - { js: current-font, native: currentFont, provenance: "QFontComboBox::currentFont (qdoc); QFont string form (S1)" }
+      - { js: writing-system, native: writingSystem, provenance: "QFontComboBox::writingSystem (qdoc)" }
+      - { js: font-filters, native: fontFilters, provenance: "QFontComboBox::fontFilters (qdoc)" }

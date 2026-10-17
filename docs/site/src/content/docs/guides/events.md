@@ -8,28 +8,26 @@ Native signals reach your component as ordinary `on*` attributes. This page sepa
 ## What works today
 
 ```svelte
-<button onclick={() => count++}>Increment</button>
 <button onclicked={() => count++}>Increment</button>
 <window onclose-request={(e) => { /* ... */ }}>
 ```
 
 | Source | Renderer call | Host listen |
 | --- | --- | --- |
-| `onclick={f}` | `addEventListener(el, 'click', handler, {})` | `listen(h, clicked, on)` |
 | `onclicked={f}` | `addEventListener(el, 'clicked', handler, {})` | `listen(h, clicked, on)` |
 | `onclose-request={f}` | type `close-request` | `listen(h, close-request, on)` |
-| `onclickcapture={f}` | type `click`, options `{capture: true}` | see [capture](#capture) |
+| `onclickedcapture={f}` | type `clicked`, options `{capture: true}` | see [capture](#capture) |
 
-- **Aliases.** `EVENT_TO_SIGNAL` in `packages/renderer/src/index.js` is `{ click: 'clicked', change: 'changed' }`. Any other name passes through unchanged.
+- **Native names only.** The event name is the native signal name in kebab case (`onclicked`, `ontext-changed` on a Qt `line-edit`, `onclose-request` on a GTK window). There are no DOM-style aliases: `onclick` and `onchange` listen to signals that do not exist.
 - **No delegation.** The renderer receives each handler directly. Svelte's own delegation does not apply.
 - **Raw arguments.** A handler gets the host's arguments spread: `changed` delivers the text (`onchanged={(text) => ...}`), `clicked` delivers none. Handler `this` is the node.
 - **Queued delivery.** Events are queued by the backend and delivered to JS at the next checkpoint. Effects and tree operations that follow happen in microtasks, so their ops appear at the next checkpoint, not inside the dispatch.
 - **Component callback props** (`onSave={...}`) are plain props and work.
 - **Exceptions** in a handler propagate out of dispatch and stop the remaining handlers of that dispatch.
 
-### Entry `changed`
+### Entry text changes
 
-Both backends deliver `[text]` for `changed`. Programmatic sets of `text` do not emit `changed` on Qt (the annotation uses `suppress_signals`, implemented with `QSignalBlocker`), and GTK emits it twice (delete plus insert), so tests accept repeats.
+GTK `entry` `changed` and Qt `line-edit` `text-changed` both deliver `[text]`. Programmatic sets of `text` do not emit `text-changed` on Qt (the annotation uses `suppress_signals`, implemented with `QSignalBlocker`), and GTK emits `changed` twice (delete plus insert), so tests accept repeats.
 
 ## Why `on:` does not compile
 
@@ -45,12 +43,12 @@ Svelte 5's own replacement for modifiers is a plain function wrapper written by 
 <script>
   const once = (fn) => { let ran = false; return (...a) => { if (!ran) { ran = true; return fn(...a); } }; };
 </script>
-<button onclick={once(() => count++)}>Increment once</button>
+<button onclicked={once(() => count++)}>Increment once</button>
 ```
 
 ### Capture
 
-`onclickcapture` and `onkey-pressedcapture` work: Svelte strips a trailing `capture` from the event name and passes `{capture: true}` to the renderer. Note that the strip applies to any event name, so a native signal whose name ends in `capture` cannot be listened to without a rename.
+`onclickedcapture` and `onkey-pressedcapture` work: Svelte strips a trailing `capture` from the event name and passes `{capture: true}` to the renderer. Note that the strip applies to any event name, so a native signal whose name ends in `capture` cannot be listened to without a rename.
 
 :::caution[Planned: native capture phase]
 Today `capture` reaches the renderer but does not select a native capture-phase connection. The renderer prototype maps `capture: true` to `flags.phase = 'capture'`, which needs the `listen` flags ABI change below. Until then, non-empty flags are not supported by the backends.
@@ -66,14 +64,14 @@ Some native signals expect an answer during emission: veto a window close, mark 
 
 | Event field | Meaning | GTK result | Qt result |
 | --- | --- | --- | --- |
-| `defaultPrevented` (`e.preventDefault()`) | keep the default from happening | `TRUE` from a `stop_on_true` signal (`close-request`, `activate-link`, `key-pressed`) | event filter ignores the event (`close`) or returns `true` |
+| `defaultPrevented` (`e.preventDefault()`) | keep the default from happening | `TRUE` from a `stop_on_true` signal (`close-request`, `activate-link`, `key-pressed`) | event filter ignores the event (`close` on `main-window`) or returns `true` |
 | `cancelBubble` (`e.stopPropagation()`) | stop propagation | same bool | `ev->accept(); return true` |
 | `returnValue` | explicit value for value-returning signals (`DragAction`, tooltip bool) | the value | `setDropAction(...)` and so on |
 
 An async handler works if it sets flags before its first `await`:
 
 ```svelte
-<Window onclose-request={async (e) => {
+<window onclose-request={async (e) => {
   if (!dirty) return;
   e.preventDefault();                          // window stays open
   if (await confirmDiscard()) win.destroy();   // runs at a later checkpoint

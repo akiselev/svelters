@@ -1,5 +1,5 @@
 elements:
-  - tag: radiobutton
+  - tag: radio-button
     construct: { class: QRadioButton }
     props:
       - { js: checked, native: checked, suppress_signals: true, provenance: "QAbstractButton::checked (qdoc); declared here because gen_bindings reads element props only" }

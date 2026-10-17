@@ -6,7 +6,7 @@
 use crate::{ConsoleLine, Host, HostConfig, JsError};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
-use svelters_backend_log::{LogBackend, LogOptions, Step, parse_schema, parse_script};
+use svelters_backend_log::{LogBackend, LogOptions, Schema, Step, parse_schema, parse_script};
 
 /// Everything observable after a bundle ran to completion on the log backend.
 pub struct RunReport {
@@ -26,7 +26,10 @@ pub fn run_bundle(
     cfg: HostConfig,
     opts: LogOptions,
 ) -> Result<RunReport, String> {
-    let log = LogBackend::with_options(script, opts);
+    run_on(LogBackend::with_options(script, opts), bundle, cfg)
+}
+
+fn run_on(log: LogBackend, bundle: &Path, cfg: HostConfig) -> Result<RunReport, String> {
     let vt = log.vtable();
     let host = Host::new(vt.backend_ref(), cfg).map_err(|e| e.to_string())?;
     host.load_bundle(bundle).map_err(|e| e.to_string())?;
@@ -65,6 +68,33 @@ pub fn fixture_config() -> (HostConfig, LogOptions) {
     )
 }
 
+/// The toolkit a fixture is written for: `"svelters": {"toolkit": ...}` in its package.json
+/// (`qt` for the `-qt` twins), else `gtk`.
+pub fn fixture_toolkit(dir: &Path) -> String {
+    std::fs::read_to_string(dir.join("package.json"))
+        .ok()
+        .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
+        .and_then(|v| v["svelters"]["toolkit"].as_str().map(str::to_string))
+        .unwrap_or_else(|| "gtk".to_string())
+}
+
+/// A log backend standing in for `toolkit`: the Qt twins get the Qt prop schema (the one the Node
+/// TestHost uses for them) and QSS style answers; GTK keeps the default schema and CSS.
+fn backend_for(toolkit: &str, script: Vec<Step>, opts: LogOptions) -> Result<LogBackend, String> {
+    static QT: std::sync::OnceLock<Result<std::sync::Arc<Schema>, String>> = std::sync::OnceLock::new();
+    let log = LogBackend::with_options(script, opts);
+    match toolkit {
+        "gtk" => Ok(log),
+        "qt" => {
+            let schema = QT
+                .get_or_init(|| parse_schema(include_str!("../../../packages/testhost/src/schema.qt.json")).map(std::sync::Arc::new))
+                .clone()?;
+            Ok(log.with_schema(schema).with_style_target(svelters_abi::SVL_STYLE_TARGET_QSS))
+        }
+        other => Err(format!("unknown fixture toolkit {other}")),
+    }
+}
+
 pub enum FixtureOutcome {
     /// A required file is missing (bundle not built, or no expected log yet).
     Skipped(String),
@@ -74,9 +104,10 @@ pub enum FixtureOutcome {
 
 /// Runs one fixture directory and compares the op log byte for byte with `expected.oplog`.
 pub fn run_fixture(dir: &Path) -> FixtureOutcome {
-    if let Some(tk) = fixture_toolkit(dir) {
+    let tk = fixture_toolkit(dir);
+    if tk != "gtk" && tk != "qt" {
         return FixtureOutcome::Skipped(format!(
-            "a {tk} fixture (package.json svelters.toolkit): its op log names {tk} members, the log backend is GTK-shaped"
+            "a {tk} fixture (package.json svelters.toolkit): the log backend models GTK and Qt only"
         ));
     }
     let bundle = dir.join("dist/app.js");
@@ -99,7 +130,7 @@ pub fn run_fixture(dir: &Path) -> FixtureOutcome {
         Err(e) => return FixtureOutcome::Fail(e.to_string()),
     };
     let (cfg, opts) = fixture_config();
-    let report = match run_bundle(&bundle, steps, cfg, opts) {
+    let report = match backend_for(&tk, steps, opts).and_then(|log| run_on(log, &bundle, cfg)) {
         Ok(r) => r,
         Err(e) => return FixtureOutcome::Fail(e),
     };
@@ -129,14 +160,6 @@ pub fn run_fixture(dir: &Path) -> FixtureOutcome {
 }
 
 /// Fixture directories under `root` (each child directory), sorted by name.
-/// The toolkit a fixture models (`"svelters": { "toolkit": "appkit" }` in its package.json; the
-/// TestHost then resolves names like that toolkit), or None for the GTK-shaped default.
-pub fn fixture_toolkit(dir: &Path) -> Option<String> {
-    let text = std::fs::read_to_string(dir.join("package.json")).ok()?;
-    let v: serde_json::Value = serde_json::from_str(&text).ok()?;
-    v.get("svelters")?.get("toolkit")?.as_str().map(str::to_string)
-}
-
 pub fn find_fixtures(root: &Path) -> Vec<PathBuf> {
     let mut dirs: Vec<PathBuf> = std::fs::read_dir(root)
         .map(|rd| {

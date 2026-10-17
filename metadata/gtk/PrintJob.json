@@ -793,7 +793,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:page-setup",
       "invocation": "reflected",
-      "js_name": "pageSetup",
+      "js_name": "page-setup",
       "name": "page-setup",
       "notify": {
         "explicit": false,
@@ -953,7 +953,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:track-print-status",
       "invocation": "reflected",
-      "js_name": "trackPrintStatus",
+      "js_name": "track-print-status",
       "name": "track-print-status",
       "notify": {
         "explicit": false,

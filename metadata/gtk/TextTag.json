@@ -169,7 +169,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:accumulative-margin",
       "invocation": "reflected",
-      "js_name": "accumulativeMargin",
+      "js_name": "accumulative-margin",
       "name": "accumulative-margin",
       "notify": {
         "explicit": false,
@@ -208,7 +208,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:allow-breaks",
       "invocation": "reflected",
-      "js_name": "allowBreaks",
+      "js_name": "allow-breaks",
       "name": "allow-breaks",
       "notify": {
         "explicit": false,
@@ -247,7 +247,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:allow-breaks-set",
       "invocation": "reflected",
-      "js_name": "allowBreaksSet",
+      "js_name": "allow-breaks-set",
       "name": "allow-breaks-set",
       "notify": {
         "explicit": false,
@@ -324,7 +324,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-full-height",
       "invocation": "reflected",
-      "js_name": "backgroundFullHeight",
+      "js_name": "background-full-height",
       "name": "background-full-height",
       "notify": {
         "explicit": false,
@@ -363,7 +363,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-full-height-set",
       "invocation": "reflected",
-      "js_name": "backgroundFullHeightSet",
+      "js_name": "background-full-height-set",
       "name": "background-full-height-set",
       "notify": {
         "explicit": false,
@@ -402,7 +402,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-rgba",
       "invocation": "reflected",
-      "js_name": "backgroundRgba",
+      "js_name": "background-rgba",
       "name": "background-rgba",
       "notify": {
         "explicit": false,
@@ -441,7 +441,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-set",
       "invocation": "reflected",
-      "js_name": "backgroundSet",
+      "js_name": "background-set",
       "name": "background-set",
       "notify": {
         "explicit": false,
@@ -558,7 +558,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:editable-set",
       "invocation": "reflected",
-      "js_name": "editableSet",
+      "js_name": "editable-set",
       "name": "editable-set",
       "notify": {
         "explicit": false,
@@ -636,7 +636,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:fallback-set",
       "invocation": "reflected",
-      "js_name": "fallbackSet",
+      "js_name": "fallback-set",
       "name": "fallback-set",
       "notify": {
         "explicit": false,
@@ -714,7 +714,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family-set",
       "invocation": "reflected",
-      "js_name": "familySet",
+      "js_name": "family-set",
       "name": "family-set",
       "notify": {
         "explicit": false,
@@ -792,7 +792,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-desc",
       "invocation": "reflected",
-      "js_name": "fontDesc",
+      "js_name": "font-desc",
       "name": "font-desc",
       "notify": {
         "explicit": false,
@@ -831,7 +831,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-features",
       "invocation": "reflected",
-      "js_name": "fontFeatures",
+      "js_name": "font-features",
       "name": "font-features",
       "notify": {
         "explicit": false,
@@ -870,7 +870,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-features-set",
       "invocation": "reflected",
-      "js_name": "fontFeaturesSet",
+      "js_name": "font-features-set",
       "name": "font-features-set",
       "notify": {
         "explicit": false,
@@ -947,7 +947,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:foreground-rgba",
       "invocation": "reflected",
-      "js_name": "foregroundRgba",
+      "js_name": "foreground-rgba",
       "name": "foreground-rgba",
       "notify": {
         "explicit": false,
@@ -986,7 +986,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:foreground-set",
       "invocation": "reflected",
-      "js_name": "foregroundSet",
+      "js_name": "foreground-set",
       "name": "foreground-set",
       "notify": {
         "explicit": false,
@@ -1067,7 +1067,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:indent-set",
       "invocation": "reflected",
-      "js_name": "indentSet",
+      "js_name": "indent-set",
       "name": "indent-set",
       "notify": {
         "explicit": false,
@@ -1106,7 +1106,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:insert-hyphens",
       "invocation": "reflected",
-      "js_name": "insertHyphens",
+      "js_name": "insert-hyphens",
       "name": "insert-hyphens",
       "notify": {
         "explicit": false,
@@ -1145,7 +1145,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:insert-hyphens-set",
       "invocation": "reflected",
-      "js_name": "insertHyphensSet",
+      "js_name": "insert-hyphens-set",
       "name": "insert-hyphens-set",
       "notify": {
         "explicit": false,
@@ -1223,7 +1223,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:invisible-set",
       "invocation": "reflected",
-      "js_name": "invisibleSet",
+      "js_name": "invisible-set",
       "name": "invisible-set",
       "notify": {
         "explicit": false,
@@ -1301,7 +1301,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:justification-set",
       "invocation": "reflected",
-      "js_name": "justificationSet",
+      "js_name": "justification-set",
       "name": "justification-set",
       "notify": {
         "explicit": false,
@@ -1379,7 +1379,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:language-set",
       "invocation": "reflected",
-      "js_name": "languageSet",
+      "js_name": "language-set",
       "name": "language-set",
       "notify": {
         "explicit": false,
@@ -1418,7 +1418,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:left-margin",
       "invocation": "reflected",
-      "js_name": "leftMargin",
+      "js_name": "left-margin",
       "name": "left-margin",
       "notify": {
         "explicit": false,
@@ -1460,7 +1460,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:left-margin-set",
       "invocation": "reflected",
-      "js_name": "leftMarginSet",
+      "js_name": "left-margin-set",
       "name": "left-margin-set",
       "notify": {
         "explicit": false,
@@ -1499,7 +1499,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:letter-spacing",
       "invocation": "reflected",
-      "js_name": "letterSpacing",
+      "js_name": "letter-spacing",
       "name": "letter-spacing",
       "notify": {
         "explicit": false,
@@ -1541,7 +1541,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:letter-spacing-set",
       "invocation": "reflected",
-      "js_name": "letterSpacingSet",
+      "js_name": "letter-spacing-set",
       "name": "letter-spacing-set",
       "notify": {
         "explicit": false,
@@ -1580,7 +1580,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:line-height",
       "invocation": "reflected",
-      "js_name": "lineHeight",
+      "js_name": "line-height",
       "name": "line-height",
       "notify": {
         "explicit": false,
@@ -1623,7 +1623,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:line-height-set",
       "invocation": "reflected",
-      "js_name": "lineHeightSet",
+      "js_name": "line-height-set",
       "name": "line-height-set",
       "notify": {
         "explicit": false,
@@ -1745,7 +1745,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-rgba",
       "invocation": "reflected",
-      "js_name": "overlineRgba",
+      "js_name": "overline-rgba",
       "name": "overline-rgba",
       "notify": {
         "explicit": false,
@@ -1784,7 +1784,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-rgba-set",
       "invocation": "reflected",
-      "js_name": "overlineRgbaSet",
+      "js_name": "overline-rgba-set",
       "name": "overline-rgba-set",
       "notify": {
         "explicit": false,
@@ -1823,7 +1823,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-set",
       "invocation": "reflected",
-      "js_name": "overlineSet",
+      "js_name": "overline-set",
       "name": "overline-set",
       "notify": {
         "explicit": false,
@@ -1862,7 +1862,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background",
       "invocation": "reflected",
-      "js_name": "paragraphBackground",
+      "js_name": "paragraph-background",
       "name": "paragraph-background",
       "notify": {
         "explicit": false,
@@ -1900,7 +1900,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background-rgba",
       "invocation": "reflected",
-      "js_name": "paragraphBackgroundRgba",
+      "js_name": "paragraph-background-rgba",
       "name": "paragraph-background-rgba",
       "notify": {
         "explicit": false,
@@ -1939,7 +1939,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background-set",
       "invocation": "reflected",
-      "js_name": "paragraphBackgroundSet",
+      "js_name": "paragraph-background-set",
       "name": "paragraph-background-set",
       "notify": {
         "explicit": false,
@@ -1978,7 +1978,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-above-lines",
       "invocation": "reflected",
-      "js_name": "pixelsAboveLines",
+      "js_name": "pixels-above-lines",
       "name": "pixels-above-lines",
       "notify": {
         "explicit": false,
@@ -2020,7 +2020,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-above-lines-set",
       "invocation": "reflected",
-      "js_name": "pixelsAboveLinesSet",
+      "js_name": "pixels-above-lines-set",
       "name": "pixels-above-lines-set",
       "notify": {
         "explicit": false,
@@ -2059,7 +2059,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-below-lines",
       "invocation": "reflected",
-      "js_name": "pixelsBelowLines",
+      "js_name": "pixels-below-lines",
       "name": "pixels-below-lines",
       "notify": {
         "explicit": false,
@@ -2101,7 +2101,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-below-lines-set",
       "invocation": "reflected",
-      "js_name": "pixelsBelowLinesSet",
+      "js_name": "pixels-below-lines-set",
       "name": "pixels-below-lines-set",
       "notify": {
         "explicit": false,
@@ -2140,7 +2140,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-inside-wrap",
       "invocation": "reflected",
-      "js_name": "pixelsInsideWrap",
+      "js_name": "pixels-inside-wrap",
       "name": "pixels-inside-wrap",
       "notify": {
         "explicit": false,
@@ -2182,7 +2182,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:pixels-inside-wrap-set",
       "invocation": "reflected",
-      "js_name": "pixelsInsideWrapSet",
+      "js_name": "pixels-inside-wrap-set",
       "name": "pixels-inside-wrap-set",
       "notify": {
         "explicit": false,
@@ -2221,7 +2221,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:right-margin",
       "invocation": "reflected",
-      "js_name": "rightMargin",
+      "js_name": "right-margin",
       "name": "right-margin",
       "notify": {
         "explicit": false,
@@ -2263,7 +2263,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:right-margin-set",
       "invocation": "reflected",
-      "js_name": "rightMarginSet",
+      "js_name": "right-margin-set",
       "name": "right-margin-set",
       "notify": {
         "explicit": false,
@@ -2344,7 +2344,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:rise-set",
       "invocation": "reflected",
-      "js_name": "riseSet",
+      "js_name": "rise-set",
       "name": "rise-set",
       "notify": {
         "explicit": false,
@@ -2425,7 +2425,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:scale-set",
       "invocation": "reflected",
-      "js_name": "scaleSet",
+      "js_name": "scale-set",
       "name": "scale-set",
       "notify": {
         "explicit": false,
@@ -2504,7 +2504,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:sentence-set",
       "invocation": "reflected",
-      "js_name": "sentenceSet",
+      "js_name": "sentence-set",
       "name": "sentence-set",
       "notify": {
         "explicit": false,
@@ -2543,7 +2543,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces",
       "invocation": "reflected",
-      "js_name": "showSpaces",
+      "js_name": "show-spaces",
       "name": "show-spaces",
       "notify": {
         "explicit": false,
@@ -2588,7 +2588,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces-set",
       "invocation": "reflected",
-      "js_name": "showSpacesSet",
+      "js_name": "show-spaces-set",
       "name": "show-spaces-set",
       "notify": {
         "explicit": false,
@@ -2669,7 +2669,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size-points",
       "invocation": "reflected",
-      "js_name": "sizePoints",
+      "js_name": "size-points",
       "name": "size-points",
       "notify": {
         "explicit": false,
@@ -2711,7 +2711,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size-set",
       "invocation": "reflected",
-      "js_name": "sizeSet",
+      "js_name": "size-set",
       "name": "size-set",
       "notify": {
         "explicit": false,
@@ -2800,7 +2800,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch-set",
       "invocation": "reflected",
-      "js_name": "stretchSet",
+      "js_name": "stretch-set",
       "name": "stretch-set",
       "notify": {
         "explicit": false,
@@ -2878,7 +2878,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-rgba",
       "invocation": "reflected",
-      "js_name": "strikethroughRgba",
+      "js_name": "strikethrough-rgba",
       "name": "strikethrough-rgba",
       "notify": {
         "explicit": false,
@@ -2917,7 +2917,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-rgba-set",
       "invocation": "reflected",
-      "js_name": "strikethroughRgbaSet",
+      "js_name": "strikethrough-rgba-set",
       "name": "strikethrough-rgba-set",
       "notify": {
         "explicit": false,
@@ -2956,7 +2956,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-set",
       "invocation": "reflected",
-      "js_name": "strikethroughSet",
+      "js_name": "strikethrough-set",
       "name": "strikethrough-set",
       "notify": {
         "explicit": false,
@@ -3039,7 +3039,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style-set",
       "invocation": "reflected",
-      "js_name": "styleSet",
+      "js_name": "style-set",
       "name": "style-set",
       "notify": {
         "explicit": false,
@@ -3117,7 +3117,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:tabs-set",
       "invocation": "reflected",
-      "js_name": "tabsSet",
+      "js_name": "tabs-set",
       "name": "tabs-set",
       "notify": {
         "explicit": false,
@@ -3156,7 +3156,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:text-transform",
       "invocation": "reflected",
-      "js_name": "textTransform",
+      "js_name": "text-transform",
       "name": "text-transform",
       "notify": {
         "explicit": false,
@@ -3202,7 +3202,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:text-transform-set",
       "invocation": "reflected",
-      "js_name": "textTransformSet",
+      "js_name": "text-transform-set",
       "name": "text-transform-set",
       "notify": {
         "explicit": false,
@@ -3290,7 +3290,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-rgba",
       "invocation": "reflected",
-      "js_name": "underlineRgba",
+      "js_name": "underline-rgba",
       "name": "underline-rgba",
       "notify": {
         "explicit": false,
@@ -3329,7 +3329,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-rgba-set",
       "invocation": "reflected",
-      "js_name": "underlineRgbaSet",
+      "js_name": "underline-rgba-set",
       "name": "underline-rgba-set",
       "notify": {
         "explicit": false,
@@ -3368,7 +3368,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-set",
       "invocation": "reflected",
-      "js_name": "underlineSet",
+      "js_name": "underline-set",
       "name": "underline-set",
       "notify": {
         "explicit": false,
@@ -3455,7 +3455,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant-set",
       "invocation": "reflected",
-      "js_name": "variantSet",
+      "js_name": "variant-set",
       "name": "variant-set",
       "notify": {
         "explicit": false,
@@ -3536,7 +3536,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight-set",
       "invocation": "reflected",
-      "js_name": "weightSet",
+      "js_name": "weight-set",
       "name": "weight-set",
       "notify": {
         "explicit": false,
@@ -3615,7 +3615,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:word-set",
       "invocation": "reflected",
-      "js_name": "wordSet",
+      "js_name": "word-set",
       "name": "word-set",
       "notify": {
         "explicit": false,
@@ -3654,7 +3654,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:wrap-mode",
       "invocation": "reflected",
-      "js_name": "wrapMode",
+      "js_name": "wrap-mode",
       "name": "wrap-mode",
       "notify": {
         "explicit": false,
@@ -3693,7 +3693,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:wrap-mode-set",
       "invocation": "reflected",
-      "js_name": "wrapModeSet",
+      "js_name": "wrap-mode-set",
       "name": "wrap-mode-set",
       "notify": {
         "explicit": false,

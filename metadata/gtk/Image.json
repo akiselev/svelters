@@ -853,7 +853,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -862,7 +861,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-name",
       "invocation": "reflected",
-      "js_name": "iconName",
+      "js_name": "icon-name",
       "name": "icon-name",
       "notify": {
         "explicit": false,
@@ -900,16 +899,14 @@
         "set": "gtk_image_set_icon_size"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkImage:icon-size (Gtk 4 docs)"
       },
       "default": "inherit",
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-size",
       "invocation": "reflected",
-      "js_name": "iconSize",
+      "js_name": "icon-size",
       "name": "icon-size",
       "notify": {
         "explicit": true,
@@ -991,16 +988,14 @@
         "set": "gtk_image_set_pixel_size"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkImage:pixel-size (Gtk 4 docs)"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:pixel-size",
       "invocation": "reflected",
-      "js_name": "pixelSize",
+      "js_name": "pixel-size",
       "name": "pixel-size",
       "notify": {
         "explicit": true,
@@ -1082,7 +1077,7 @@
       "default": "empty",
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:storage-type",
       "invocation": "reflected",
-      "js_name": "storageType",
+      "js_name": "storage-type",
       "name": "storage-type",
       "notify": {
         "explicit": false,
@@ -1118,16 +1113,14 @@
         "set": null
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkImage:use-fallback (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:use-fallback",
       "invocation": "reflected",
-      "js_name": "useFallback",
+      "js_name": "use-fallback",
       "name": "use-fallback",
       "notify": {
         "explicit": true,

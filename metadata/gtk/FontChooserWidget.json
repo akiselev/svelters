@@ -245,7 +245,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FontChooserWidget:prop:tweak-action",
       "invocation": "reflected",
-      "js_name": "tweakAction",
+      "js_name": "tweak-action",
       "name": "tweak-action",
       "notify": {
         "explicit": false,

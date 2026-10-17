@@ -8,8 +8,8 @@
 <window title="Main">
   <box orientation="vertical" spacing="8">
     <label>{open ? 'settings open' : 'settings closed'}</label>
-    <button onclick={() => (open = !open)}>Toggle</button>
-    <button onclick={() => about.call('present')}>About</button>
+    <button onclicked={() => (open = !open)}>Toggle</button>
+    <button onclicked={() => about.call('present')}>About</button>
     {#if open}
       <window title="Settings">
         <label>Settings body</label>
@@ -18,4 +18,4 @@
   </box>
 </window>
 
-<aboutdialog show="none" bind:this={about} programName="Dialogs" />
+<about-dialog show="none" bind:this={about} program-name="Dialogs" />

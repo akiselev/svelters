@@ -118,7 +118,7 @@ test('listen(): the renderer helper as an attachment, removed by its cleanup', (
   const seen = [];
   mountInWindow((c) => {
     const b = $n.element('button');
-    $.attach(b, () => ($.get(show) ? $n.listen('click', () => seen.push('after'), { after: true }) : null));
+    $.attach(b, () => ($.get(show) ? $n.listen('clicked', () => seen.push('after'), { after: true }) : null));
     $n.append(c, b);
   });
   $.flush();

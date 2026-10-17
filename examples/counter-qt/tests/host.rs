@@ -59,7 +59,7 @@ fn main() {
                 "accepted 1",
                 "rejected 0",
                 "abort true qt operation cancelled",
-                "arity TypeError <colordialog>.open: expected 0 argument(s), got 1",
+                "arity TypeError <color-dialog>.open: expected 0 argument(s), got 1",
                 "not a function TypeError <menu>.addItem(functor): expected function, got 42",
                 "ready",
                 "menu callbacks open:false",

@@ -1,9 +1,9 @@
 inherit:
   props:
-    - { js: frameShape, native: frameShape, provenance: "QFrame::frameShape (qdoc)" }
-    - { js: frameShadow, native: frameShadow, provenance: "QFrame::frameShadow (qdoc)" }
-    - { js: lineWidth, native: lineWidth, provenance: "QFrame::lineWidth (qdoc)" }
-    - { js: midLineWidth, native: midLineWidth, provenance: "QFrame::midLineWidth (qdoc)" }
+    - { js: frame-shape, native: frameShape, provenance: "QFrame::frameShape (qdoc)" }
+    - { js: frame-shadow, native: frameShadow, provenance: "QFrame::frameShadow (qdoc)" }
+    - { js: line-width, native: lineWidth, provenance: "QFrame::lineWidth (qdoc)" }
+    - { js: mid-line-width, native: midLineWidth, provenance: "QFrame::midLineWidth (qdoc)" }
 # Element `frame`: a QFrame carrying a QBoxLayout (like `box`). Children are layout-managed.
 elements:
   - tag: frame
@@ -12,15 +12,17 @@ elements:
       composite:
         layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
     props:
-      - js: orientation
+      - js: direction
         target: layout
         type: enum
         getter: direction
         setter: setDirection
         values:
-          horizontal: QBoxLayout::LeftToRight
-          vertical: QBoxLayout::TopToBottom
-        provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
+          left-to-right: QBoxLayout::LeftToRight
+          right-to-left: QBoxLayout::RightToLeft
+          top-to-bottom: QBoxLayout::TopToBottom
+          bottom-to-top: QBoxLayout::BottomToTop
+        provenance: "QBoxLayout::direction (qdoc)"
     children:
       policy: layout_managed
       default_slot: children

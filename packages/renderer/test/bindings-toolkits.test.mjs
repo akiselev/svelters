@@ -50,28 +50,18 @@ for (const [tag, name, prop, signal, native, expected] of CASES) {
   });
 }
 
-test('slider value has a variant per toolkit; the host decides', () => {
-  const variants = BINDINGS.slider.value;
-  assert.ok(Array.isArray(variants));
-  assert.deepEqual(variants.map((v) => v.signal), ['valueChanged', 'value-changed']);
+test('slider value: Qt and WinUI share one descriptor now that both use native kebab names', () => {
+  // valueChanged (Qt) and ValueChanged (WinUI) are both `value-changed` (docs/notes/n1-rename.md), so the
+  // toolkits no longer need per-toolkit variants here.
+  const d = BINDINGS.slider.value;
+  assert.ok(!Array.isArray(d));
+  assert.equal(d.signal, 'value-changed');
+  assert.deepEqual(d.toolkits, ['qt', 'winui']);
   const e = mount('slider');
-  // the TestHost has no signal ids: the first variant
-  const first = r.bind(e, 'value', () => 0, () => {});
-  assert.equal(take(), `listen #${e.handle} valueChanged on`);
-  first.destroy();
-  take();
-  // a host that only knows the WinUI name
-  const saved = th.host.signalId;
-  th.host.signalId = (kid, n) => (n === 'value-changed' ? 1 : null);
-  try {
-    const seen = [];
-    const b = r.bind(e, 'value', () => 0, (v) => seen.push(v));
-    assert.equal(take(), `listen #${e.handle} value-changed on`);
-    dispatch(e.handle, 'value-changed', [3]);
-    assert.deepEqual(seen, [3]);
-    b.destroy();
-  } finally {
-    if (saved === undefined) delete th.host.signalId;
-    else th.host.signalId = saved;
-  }
+  const seen = [];
+  const b = r.bind(e, 'value', () => 0, (v) => seen.push(v));
+  assert.equal(take(), `listen #${e.handle} value-changed on`);
+  dispatch(e.handle, 'value-changed', [3]);
+  assert.deepEqual(seen, [3]);
+  b.destroy();
 });

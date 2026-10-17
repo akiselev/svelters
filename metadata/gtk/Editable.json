@@ -640,7 +640,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:cursor-position",
       "invocation": "reflected",
-      "js_name": "cursorPosition",
+      "js_name": "cursor-position",
       "name": "cursor-position",
       "notify": {
         "explicit": false,
@@ -731,7 +731,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:enable-undo",
       "invocation": "reflected",
-      "js_name": "enableUndo",
+      "js_name": "enable-undo",
       "name": "enable-undo",
       "notify": {
         "explicit": true,
@@ -776,7 +776,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:max-width-chars",
       "invocation": "reflected",
-      "js_name": "maxWidthChars",
+      "js_name": "max-width-chars",
       "name": "max-width-chars",
       "notify": {
         "explicit": true,
@@ -819,7 +819,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:selection-bound",
       "invocation": "reflected",
-      "js_name": "selectionBound",
+      "js_name": "selection-bound",
       "name": "selection-bound",
       "notify": {
         "explicit": false,
@@ -859,8 +859,7 @@
       },
       "annotated": {
         "fields": [
-          "echo_suppress",
-          "js_name"
+          "echo_suppress"
         ],
         "origin": "manual",
         "provenance": "GtkEditable:text (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
@@ -917,7 +916,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:width-chars",
       "invocation": "reflected",
-      "js_name": "widthChars",
+      "js_name": "width-chars",
       "name": "width-chars",
       "notify": {
         "explicit": true,

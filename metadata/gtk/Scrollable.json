@@ -287,7 +287,7 @@
       "default": "minimum",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hscroll-policy",
       "invocation": "reflected",
-      "js_name": "hscrollPolicy",
+      "js_name": "hscroll-policy",
       "name": "hscroll-policy",
       "notify": {
         "explicit": true,
@@ -367,7 +367,7 @@
       "default": "minimum",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vscroll-policy",
       "invocation": "reflected",
-      "js_name": "vscrollPolicy",
+      "js_name": "vscroll-policy",
       "name": "vscroll-policy",
       "notify": {
         "explicit": true,

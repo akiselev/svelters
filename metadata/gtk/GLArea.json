@@ -668,7 +668,7 @@
       "default": 3,
       "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:allowed-apis",
       "invocation": "reflected",
-      "js_name": "allowedApis",
+      "js_name": "allowed-apis",
       "name": "allowed-apis",
       "notify": {
         "explicit": true,
@@ -757,7 +757,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:auto-render",
       "invocation": "reflected",
-      "js_name": "autoRender",
+      "js_name": "auto-render",
       "name": "auto-render",
       "notify": {
         "explicit": true,
@@ -835,7 +835,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:has-depth-buffer",
       "invocation": "reflected",
-      "js_name": "hasDepthBuffer",
+      "js_name": "has-depth-buffer",
       "name": "has-depth-buffer",
       "notify": {
         "explicit": true,
@@ -875,7 +875,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:has-stencil-buffer",
       "invocation": "reflected",
-      "js_name": "hasStencilBuffer",
+      "js_name": "has-stencil-buffer",
       "name": "has-stencil-buffer",
       "notify": {
         "explicit": true,
@@ -916,7 +916,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:use-es",
       "invocation": "reflected",
-      "js_name": "useEs",
+      "js_name": "use-es",
       "name": "use-es",
       "notify": {
         "explicit": true,

@@ -1,4 +1,4 @@
-//! The `virtuallist` kind: a JS-backed model behind `GtkListView`/`GtkGridView`
+//! The `virtual-list` kind: a JS-backed model behind `GtkListView`/`GtkGridView`
 //! (plans/architecture/backend-abi.md, "Model-view protocol (M5)").
 //!
 //! The widget is a `GtkScrolledWindow` around the view. The model is a `GListModel` of ids
@@ -43,8 +43,8 @@ pub fn find_member(what: u32, name: &str) -> u32 {
         (SVL_PROP, "selected") => P_SELECTED,
         (SVL_PROP, "selection") => P_SELECTION,
         (SVL_PROP, "layout") => P_LAYOUT,
-        (SVL_PROP, "rowHeight" | "row-height") => P_ROW_HEIGHT,
-        (SVL_PROP, "minHeight") => P_MIN_HEIGHT,
+        (SVL_PROP, "row-height") => P_ROW_HEIGHT,
+        (SVL_PROP, "min-height") => P_MIN_HEIGHT,
         (SVL_METHOD, "splice") => M_SPLICE,
         (SVL_METHOD, "count") => M_COUNT,
         (SVL_METHOD, "scrollTo") => M_SCROLL_TO,
@@ -192,7 +192,7 @@ fn i64_arg(args: &[svl_value], i: usize, what: &str) -> Result<i64, String> {
     match v.tag {
         SVL_I64 => Ok(unsafe { v.u.i }),
         SVL_F64 => Ok(unsafe { v.u.f } as i64),
-        // A static attribute (`minHeight="300"`) arrives as text: the kind has no descriptors to coerce it.
+        // A static attribute (`min-height="300"`) arrives as text: the kind has no descriptors to coerce it.
         SVL_STR => unsafe { convert::as_str(v) }.and_then(|s| s.trim().parse().ok()).ok_or_else(|| format!("`{what}` must be a number")),
         _ => Err(format!("`{what}` must be a number")),
     }
@@ -445,11 +445,11 @@ impl Inner {
                 Ok(())
             }
             P_ROW_HEIGHT => {
-                vl.row_height.set(i64_arg(std::slice::from_ref(v), 0, "rowHeight")?);
+                vl.row_height.set(i64_arg(std::slice::from_ref(v), 0, "row-height")?);
                 Ok(())
             }
             P_MIN_HEIGHT => {
-                vl.sw.set_min_content_height(i64_arg(std::slice::from_ref(v), 0, "minHeight")?.max(0) as i32);
+                vl.sw.set_min_content_height(i64_arg(std::slice::from_ref(v), 0, "min-height")?.max(0) as i32);
                 Ok(())
             }
             _ => Err("unknown property".into()),

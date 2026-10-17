@@ -3,9 +3,9 @@
 const h = globalThis.__svelters_host;
 const win = h.create('window');
 h.setProp(win, 'title', 'Typed sync');
-const spin = h.create('spinbutton');
+const spin = h.create('spin-button');
 h.call(spin, 'set_range', [0, 255]);
-h.setProp(spin, 'updatePolicy', 'if-valid');
+h.setProp(spin, 'update-policy', 'if-valid');
 h.insert(win, spin, null);
 h.listen(spin, 'output', true);
 h.listen(spin, 'input', true);

@@ -3,7 +3,7 @@
 
 Owns the GTK quirks: GIR / gi-docgen text (already converted to xref links by the docs pass),
 GObject properties/signals, `notify::` bindability, CSS-node / accessibility / shortcut sections
-of class docs, since/deprecated versions, LGPL notices, DOM-alias handler names (onclick), and the
+of class docs, since/deprecated versions, LGPL notices, and the
 floating-reference lifetime model. Emits only the neutral IR (plus an `extensions.gtk` block).
 
     python3 tools/docs/gtk/frontend.py [--out docs/site/.generated/ir/gtk.json]
@@ -34,7 +34,6 @@ LICENSE = {
 }
 UPSTREAM = "https://docs.gtk.org/gtk4/"
 ID_PREFIX = "svelters-api:v1:type:gtk:"
-DOM_EVENT = {"clicked": "click", "changed": "change"}  # mirrors tools/metadata/gtk/gen_backend.py and the renderer
 KIND_MAP = {"object": "class", "interface": "interface", "enum": "enum", "flags": "flags", "boxed": "boxed"}
 UPSTREAM_PAGE = {"class": "class", "interface": "iface", "enum": "enum", "flags": "flags", "boxed": "struct"}
 SECTION_KEYS = {
@@ -204,7 +203,6 @@ class Frontend:
             doc = d.get("signals", {}).get(s["name"])
             je = s["js_event"]
             attr = f"on{je}"
-            alias = f"on{DOM_EVENT[je]}" if je in DOM_EVENT else None
             rec = {
                 "name": s["name"],
                 "js_event": je,
@@ -222,8 +220,6 @@ class Frontend:
                 "native_id": s.get("id", m["id"] + ":signal:" + s["name"]),
                 "extensions": {TK: {"when": s.get("phase") or "", "signal_flags": s.get("flags", [])}},
             }
-            if alias:
-                rec["handler_aliases"] = [alias]
             av = self.avail(doc)
             if av:
                 rec["availability"] = av

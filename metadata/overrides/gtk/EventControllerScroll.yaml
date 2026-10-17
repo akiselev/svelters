@@ -1,4 +1,4 @@
-element: {tag: scrollcontroller}
+element: {}
 properties:
   - name: flags
     provenance: "GtkEventControllerScroll:flags, GtkEventControllerScrollFlags (Gtk 4 docs); NONE (default) delivers no scroll events"

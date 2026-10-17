@@ -1,20 +1,20 @@
 elements:
-  - tag: plaintextedit
+  - tag: plain-text-edit
     construct: { class: QPlainTextEdit }
     props:
-      - { js: plainText, native: plainText, suppress_signals: true, provenance: "QPlainTextEdit::plainText (qdoc)" }
-      - { js: readOnly, native: readOnly, provenance: "QPlainTextEdit::readOnly (qdoc)" }
-      - { js: placeholderText, native: placeholderText, provenance: "QPlainTextEdit::placeholderText (qdoc)" }
-      - { js: lineWrapMode, native: lineWrapMode, provenance: "QPlainTextEdit::lineWrapMode (qdoc)" }
-      - { js: tabChangesFocus, native: tabChangesFocus, provenance: "QPlainTextEdit::tabChangesFocus (qdoc)" }
-      - { js: overwriteMode, native: overwriteMode, provenance: "QPlainTextEdit::overwriteMode (qdoc)" }
-      - { js: wordWrapMode, native: wordWrapMode, provenance: "QPlainTextEdit::wordWrapMode (qdoc)" }
-      - { js: undoRedoEnabled, native: undoRedoEnabled, provenance: "QPlainTextEdit::undoRedoEnabled (qdoc)" }
-      - { js: maximumBlockCount, native: maximumBlockCount, provenance: "QPlainTextEdit::maximumBlockCount (qdoc)" }
-      - { js: cursorWidth, native: cursorWidth, provenance: "QPlainTextEdit::cursorWidth (qdoc)" }
-      - { js: tabStopDistance, native: tabStopDistance, provenance: "QPlainTextEdit::tabStopDistance (qdoc)" }
-      - { js: textInteractionFlags, native: textInteractionFlags, provenance: "QPlainTextEdit::textInteractionFlags (qdoc)" }
-      - { js: documentTitle, native: documentTitle, provenance: "QPlainTextEdit::documentTitle (qdoc)" }
+      - { js: plain-text, native: plainText, suppress_signals: true, provenance: "QPlainTextEdit::plainText (qdoc)" }
+      - { js: read-only, native: readOnly, provenance: "QPlainTextEdit::readOnly (qdoc)" }
+      - { js: placeholder-text, native: placeholderText, provenance: "QPlainTextEdit::placeholderText (qdoc)" }
+      - { js: line-wrap-mode, native: lineWrapMode, provenance: "QPlainTextEdit::lineWrapMode (qdoc)" }
+      - { js: tab-changes-focus, native: tabChangesFocus, provenance: "QPlainTextEdit::tabChangesFocus (qdoc)" }
+      - { js: overwrite-mode, native: overwriteMode, provenance: "QPlainTextEdit::overwriteMode (qdoc)" }
+      - { js: word-wrap-mode, native: wordWrapMode, provenance: "QPlainTextEdit::wordWrapMode (qdoc)" }
+      - { js: undo-redo-enabled, native: undoRedoEnabled, provenance: "QPlainTextEdit::undoRedoEnabled (qdoc)" }
+      - { js: maximum-block-count, native: maximumBlockCount, provenance: "QPlainTextEdit::maximumBlockCount (qdoc)" }
+      - { js: cursor-width, native: cursorWidth, provenance: "QPlainTextEdit::cursorWidth (qdoc)" }
+      - { js: tab-stop-distance, native: tabStopDistance, provenance: "QPlainTextEdit::tabStopDistance (qdoc)" }
+      - { js: text-interaction-flags, native: textInteractionFlags, provenance: "QPlainTextEdit::textInteractionFlags (qdoc)" }
+      - { js: document-title, native: documentTitle, provenance: "QPlainTextEdit::documentTitle (qdoc)" }
     methods:
       - { js: appendPlainText, native: appendPlainText, params: [string], args: ["x"], provenance: "QPlainTextEdit::appendPlainText (qdoc)" }
       - { js: insertPlainText, native: insertPlainText, params: [string], args: ["x"], provenance: "QPlainTextEdit::insertPlainText (qdoc)" }
@@ -28,11 +28,11 @@ elements:
       - { js: centerCursor, native: centerCursor, provenance: "QPlainTextEdit::centerCursor (qdoc)" }
       - { js: ensureCursorVisible, native: ensureCursorVisible, provenance: "QPlainTextEdit::ensureCursorVisible (qdoc)" }
     bindings:
-      - name: plainText
+      - name: plain-text
         direction: two_way
-        property: plainText
+        property: plain-text
         type: { ref: string, nullable: false }
-        change: { signal: changed, role: any_change, value: prop }
+        change: { signal: text-changed, role: any_change, value: prop }
         write: { natively_normalizes: false }
         echo:
           strategy: host_suppressed
@@ -43,25 +43,25 @@ elements:
         provenance: "QPlainTextEdit::textChanged() has no args, so the value is read from the property (docs/notes/fork-bindings.md 6)"
     signals:
       - { js: key-press, synthetic: key_press, provenance: "X2 sync key-press (docs/notes/x2-sync-frame.md)" }
-      - js: changed
+      - js: text-changed
         native: textChanged
         connect: "textChanged()"
         args: []
         trigger: '$w->setPlainText(QStringLiteral("v") + QString::number($i))'
         provenance: "QPlainTextEdit::textChanged() (qdoc)"
-      - js: selectionChanged
+      - js: selection-changed
         native: selectionChanged
         connect: "selectionChanged()"
         args: []
         trigger: 'Q_EMIT $w->selectionChanged()'
         provenance: "QPlainTextEdit::selectionChanged() (qdoc)"
-      - js: cursorPositionChanged
+      - js: cursor-position-changed
         native: cursorPositionChanged
         connect: "cursorPositionChanged()"
         args: []
         trigger: 'Q_EMIT $w->cursorPositionChanged()'
         provenance: "QPlainTextEdit::cursorPositionChanged() (qdoc)"
-      - js: blockCountChanged
+      - js: block-count-changed
         native: blockCountChanged
         connect: "blockCountChanged(int)"
         args: [{ name: newBlockCount, type: i32 }]

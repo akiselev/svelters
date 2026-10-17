@@ -135,7 +135,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:DropControllerMotion:prop:contains-pointer",
       "invocation": "reflected",
-      "js_name": "containsPointer",
+      "js_name": "contains-pointer",
       "name": "contains-pointer",
       "notify": {
         "explicit": false,
@@ -211,7 +211,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:DropControllerMotion:prop:is-pointer",
       "invocation": "reflected",
-      "js_name": "isPointer",
+      "js_name": "is-pointer",
       "name": "is-pointer",
       "notify": {
         "explicit": false,

@@ -544,7 +544,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellView:prop:cell-area",
       "invocation": "reflected",
-      "js_name": "cellArea",
+      "js_name": "cell-area",
       "name": "cell-area",
       "notify": {
         "explicit": false,
@@ -584,7 +584,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellView:prop:cell-area-context",
       "invocation": "reflected",
-      "js_name": "cellAreaContext",
+      "js_name": "cell-area-context",
       "name": "cell-area-context",
       "notify": {
         "explicit": false,
@@ -624,7 +624,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellView:prop:draw-sensitive",
       "invocation": "reflected",
-      "js_name": "drawSensitive",
+      "js_name": "draw-sensitive",
       "name": "draw-sensitive",
       "notify": {
         "explicit": true,
@@ -664,7 +664,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellView:prop:fit-model",
       "invocation": "reflected",
-      "js_name": "fitModel",
+      "js_name": "fit-model",
       "name": "fit-model",
       "notify": {
         "explicit": true,

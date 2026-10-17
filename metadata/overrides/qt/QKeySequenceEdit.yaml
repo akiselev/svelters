@@ -1,13 +1,13 @@
 elements:
-  - tag: keysequenceedit
+  - tag: key-sequence-edit
     construct: { class: QKeySequenceEdit }
     props:
-      - { js: keySequence, native: keySequence, provenance: "QKeySequenceEdit::keySequence (qdoc)" }
-      - { js: clearButtonEnabled, native: clearButtonEnabled, provenance: "QKeySequenceEdit::clearButtonEnabled (qdoc)" }
+      - { js: key-sequence, native: keySequence, provenance: "QKeySequenceEdit::keySequence (qdoc)" }
+      - { js: clear-button-enabled, native: clearButtonEnabled, provenance: "QKeySequenceEdit::clearButtonEnabled (qdoc)" }
     methods:
       - { js: clear, native: clear, provenance: "QKeySequenceEdit::clear (qdoc)" }
     signals:
-      - js: editingFinished
+      - js: editing-finished
         native: editingFinished
         connect: "editingFinished()"
         args: []

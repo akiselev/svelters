@@ -1881,7 +1881,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:activates-default",
       "invocation": "reflected",
-      "js_name": "activatesDefault",
+      "js_name": "activates-default",
       "name": "activates-default",
       "notify": {
         "explicit": true,
@@ -2044,7 +2044,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:enable-emoji-completion",
       "invocation": "reflected",
-      "js_name": "enableEmojiCompletion",
+      "js_name": "enable-emoji-completion",
       "name": "enable-emoji-completion",
       "notify": {
         "explicit": true,
@@ -2084,7 +2084,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:extra-menu",
       "invocation": "reflected",
-      "js_name": "extraMenu",
+      "js_name": "extra-menu",
       "name": "extra-menu",
       "notify": {
         "explicit": true,
@@ -2129,7 +2129,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:has-frame",
       "invocation": "reflected",
-      "js_name": "hasFrame",
+      "js_name": "has-frame",
       "name": "has-frame",
       "notify": {
         "explicit": true,
@@ -2169,7 +2169,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:im-module",
       "invocation": "reflected",
-      "js_name": "imModule",
+      "js_name": "im-module",
       "name": "im-module",
       "notify": {
         "explicit": true,
@@ -2209,7 +2209,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-hints",
       "invocation": "reflected",
-      "js_name": "inputHints",
+      "js_name": "input-hints",
       "name": "input-hints",
       "notify": {
         "explicit": true,
@@ -2254,7 +2254,7 @@
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-purpose",
       "invocation": "reflected",
-      "js_name": "inputPurpose",
+      "js_name": "input-purpose",
       "name": "input-purpose",
       "notify": {
         "explicit": true,
@@ -2294,7 +2294,7 @@
       "default": 42,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:invisible-char",
       "invocation": "reflected",
-      "js_name": "invisibleChar",
+      "js_name": "invisible-char",
       "name": "invisible-char",
       "notify": {
         "explicit": true,
@@ -2334,7 +2334,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:invisible-char-set",
       "invocation": "reflected",
-      "js_name": "invisibleCharSet",
+      "js_name": "invisible-char-set",
       "name": "invisible-char-set",
       "notify": {
         "explicit": false,
@@ -2378,7 +2378,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:max-length",
       "invocation": "reflected",
-      "js_name": "maxLength",
+      "js_name": "max-length",
       "name": "max-length",
       "notify": {
         "explicit": true,
@@ -2421,7 +2421,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:menu-entry-icon-primary-text",
       "invocation": "reflected",
-      "js_name": "menuEntryIconPrimaryText",
+      "js_name": "menu-entry-icon-primary-text",
       "name": "menu-entry-icon-primary-text",
       "notify": {
         "explicit": true,
@@ -2462,7 +2462,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:menu-entry-icon-secondary-text",
       "invocation": "reflected",
-      "js_name": "menuEntryIconSecondaryText",
+      "js_name": "menu-entry-icon-secondary-text",
       "name": "menu-entry-icon-secondary-text",
       "notify": {
         "explicit": true,
@@ -2508,7 +2508,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:overwrite-mode",
       "invocation": "reflected",
-      "js_name": "overwriteMode",
+      "js_name": "overwrite-mode",
       "name": "overwrite-mode",
       "notify": {
         "explicit": true,
@@ -2546,16 +2546,14 @@
         "set": "gtk_entry_set_placeholder_text"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkEntry:placeholder-text (Gtk 4 docs); P prop, JS name 'placeholder'"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:placeholder-text",
       "invocation": "reflected",
-      "js_name": "placeholder",
+      "js_name": "placeholder-text",
       "name": "placeholder-text",
       "notify": {
         "explicit": true,
@@ -2595,7 +2593,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-activatable",
       "invocation": "reflected",
-      "js_name": "primaryIconActivatable",
+      "js_name": "primary-icon-activatable",
       "name": "primary-icon-activatable",
       "notify": {
         "explicit": true,
@@ -2635,7 +2633,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-gicon",
       "invocation": "reflected",
-      "js_name": "primaryIconGicon",
+      "js_name": "primary-icon-gicon",
       "name": "primary-icon-gicon",
       "notify": {
         "explicit": true,
@@ -2675,7 +2673,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-name",
       "invocation": "reflected",
-      "js_name": "primaryIconName",
+      "js_name": "primary-icon-name",
       "name": "primary-icon-name",
       "notify": {
         "explicit": true,
@@ -2715,7 +2713,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-paintable",
       "invocation": "reflected",
-      "js_name": "primaryIconPaintable",
+      "js_name": "primary-icon-paintable",
       "name": "primary-icon-paintable",
       "notify": {
         "explicit": true,
@@ -2755,7 +2753,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-sensitive",
       "invocation": "reflected",
-      "js_name": "primaryIconSensitive",
+      "js_name": "primary-icon-sensitive",
       "name": "primary-icon-sensitive",
       "notify": {
         "explicit": true,
@@ -2795,7 +2793,7 @@
       "default": "empty",
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-storage-type",
       "invocation": "reflected",
-      "js_name": "primaryIconStorageType",
+      "js_name": "primary-icon-storage-type",
       "name": "primary-icon-storage-type",
       "notify": {
         "explicit": false,
@@ -2833,7 +2831,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-tooltip-markup",
       "invocation": "reflected",
-      "js_name": "primaryIconTooltipMarkup",
+      "js_name": "primary-icon-tooltip-markup",
       "name": "primary-icon-tooltip-markup",
       "notify": {
         "explicit": true,
@@ -2873,7 +2871,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-tooltip-text",
       "invocation": "reflected",
-      "js_name": "primaryIconTooltipText",
+      "js_name": "primary-icon-tooltip-text",
       "name": "primary-icon-tooltip-text",
       "notify": {
         "explicit": true,
@@ -2913,7 +2911,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:progress-fraction",
       "invocation": "reflected",
-      "js_name": "progressFraction",
+      "js_name": "progress-fraction",
       "name": "progress-fraction",
       "notify": {
         "explicit": true,
@@ -2956,7 +2954,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:progress-pulse-step",
       "invocation": "reflected",
-      "js_name": "progressPulseStep",
+      "js_name": "progress-pulse-step",
       "name": "progress-pulse-step",
       "notify": {
         "explicit": true,
@@ -2999,7 +2997,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:scroll-offset",
       "invocation": "reflected",
-      "js_name": "scrollOffset",
+      "js_name": "scroll-offset",
       "name": "scroll-offset",
       "notify": {
         "explicit": true,
@@ -3041,7 +3039,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-activatable",
       "invocation": "reflected",
-      "js_name": "secondaryIconActivatable",
+      "js_name": "secondary-icon-activatable",
       "name": "secondary-icon-activatable",
       "notify": {
         "explicit": true,
@@ -3081,7 +3079,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-gicon",
       "invocation": "reflected",
-      "js_name": "secondaryIconGicon",
+      "js_name": "secondary-icon-gicon",
       "name": "secondary-icon-gicon",
       "notify": {
         "explicit": true,
@@ -3121,7 +3119,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-name",
       "invocation": "reflected",
-      "js_name": "secondaryIconName",
+      "js_name": "secondary-icon-name",
       "name": "secondary-icon-name",
       "notify": {
         "explicit": true,
@@ -3161,7 +3159,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-paintable",
       "invocation": "reflected",
-      "js_name": "secondaryIconPaintable",
+      "js_name": "secondary-icon-paintable",
       "name": "secondary-icon-paintable",
       "notify": {
         "explicit": true,
@@ -3201,7 +3199,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-sensitive",
       "invocation": "reflected",
-      "js_name": "secondaryIconSensitive",
+      "js_name": "secondary-icon-sensitive",
       "name": "secondary-icon-sensitive",
       "notify": {
         "explicit": true,
@@ -3241,7 +3239,7 @@
       "default": "empty",
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-storage-type",
       "invocation": "reflected",
-      "js_name": "secondaryIconStorageType",
+      "js_name": "secondary-icon-storage-type",
       "name": "secondary-icon-storage-type",
       "notify": {
         "explicit": false,
@@ -3279,7 +3277,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-tooltip-markup",
       "invocation": "reflected",
-      "js_name": "secondaryIconTooltipMarkup",
+      "js_name": "secondary-icon-tooltip-markup",
       "name": "secondary-icon-tooltip-markup",
       "notify": {
         "explicit": true,
@@ -3319,7 +3317,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-tooltip-text",
       "invocation": "reflected",
-      "js_name": "secondaryIconTooltipText",
+      "js_name": "secondary-icon-tooltip-text",
       "name": "secondary-icon-tooltip-text",
       "notify": {
         "explicit": true,
@@ -3359,7 +3357,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:show-emoji-icon",
       "invocation": "reflected",
-      "js_name": "showEmojiIcon",
+      "js_name": "show-emoji-icon",
       "name": "show-emoji-icon",
       "notify": {
         "explicit": true,
@@ -3439,7 +3437,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:text-length",
       "invocation": "reflected",
-      "js_name": "textLength",
+      "js_name": "text-length",
       "name": "text-length",
       "notify": {
         "explicit": false,
@@ -3480,7 +3478,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:truncate-multiline",
       "invocation": "reflected",
-      "js_name": "truncateMultiline",
+      "js_name": "truncate-multiline",
       "name": "truncate-multiline",
       "notify": {
         "explicit": true,

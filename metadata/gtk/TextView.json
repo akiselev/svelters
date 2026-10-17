@@ -114,7 +114,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "textview"
+    "tag": "text-view"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:InputPurpose",
@@ -2275,7 +2275,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:accepts-tab",
       "invocation": "reflected",
-      "js_name": "acceptsTab",
+      "js_name": "accepts-tab",
       "name": "accepts-tab",
       "notify": {
         "explicit": true,
@@ -2315,7 +2315,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:bottom-margin",
       "invocation": "reflected",
-      "js_name": "bottomMargin",
+      "js_name": "bottom-margin",
       "name": "bottom-margin",
       "notify": {
         "explicit": true,
@@ -2402,7 +2402,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:cursor-visible",
       "invocation": "reflected",
-      "js_name": "cursorVisible",
+      "js_name": "cursor-visible",
       "name": "cursor-visible",
       "notify": {
         "explicit": true,
@@ -2487,7 +2487,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:extra-menu",
       "invocation": "reflected",
-      "js_name": "extraMenu",
+      "js_name": "extra-menu",
       "name": "extra-menu",
       "notify": {
         "explicit": true,
@@ -2527,7 +2527,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:im-module",
       "invocation": "reflected",
-      "js_name": "imModule",
+      "js_name": "im-module",
       "name": "im-module",
       "notify": {
         "explicit": false,
@@ -2609,7 +2609,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:input-hints",
       "invocation": "reflected",
-      "js_name": "inputHints",
+      "js_name": "input-hints",
       "name": "input-hints",
       "notify": {
         "explicit": true,
@@ -2649,7 +2649,7 @@
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:input-purpose",
       "invocation": "reflected",
-      "js_name": "inputPurpose",
+      "js_name": "input-purpose",
       "name": "input-purpose",
       "notify": {
         "explicit": true,
@@ -2739,7 +2739,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:left-margin",
       "invocation": "reflected",
-      "js_name": "leftMargin",
+      "js_name": "left-margin",
       "name": "left-margin",
       "notify": {
         "explicit": true,
@@ -2867,7 +2867,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:pixels-above-lines",
       "invocation": "reflected",
-      "js_name": "pixelsAboveLines",
+      "js_name": "pixels-above-lines",
       "name": "pixels-above-lines",
       "notify": {
         "explicit": true,
@@ -2910,7 +2910,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:pixels-below-lines",
       "invocation": "reflected",
-      "js_name": "pixelsBelowLines",
+      "js_name": "pixels-below-lines",
       "name": "pixels-below-lines",
       "notify": {
         "explicit": true,
@@ -2953,7 +2953,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:pixels-inside-wrap",
       "invocation": "reflected",
-      "js_name": "pixelsInsideWrap",
+      "js_name": "pixels-inside-wrap",
       "name": "pixels-inside-wrap",
       "notify": {
         "explicit": true,
@@ -2996,7 +2996,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:right-margin",
       "invocation": "reflected",
-      "js_name": "rightMargin",
+      "js_name": "right-margin",
       "name": "right-margin",
       "notify": {
         "explicit": true,
@@ -3083,7 +3083,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:top-margin",
       "invocation": "reflected",
-      "js_name": "topMargin",
+      "js_name": "top-margin",
       "name": "top-margin",
       "notify": {
         "explicit": true,
@@ -3131,7 +3131,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:wrap-mode",
       "invocation": "reflected",
-      "js_name": "wrapMode",
+      "js_name": "wrap-mode",
       "name": "wrap-mode",
       "notify": {
         "explicit": true,
@@ -3178,7 +3178,6 @@
           "echo_suppress",
           "id",
           "invocation",
-          "js_name",
           "new",
           "notify",
           "range",

@@ -75,7 +75,7 @@ fn hd(name: &str) -> svl_handle {
 }
 
 fn present(win: svl_handle) {
-    let k = id(SVL_KIND, 0, "window");
+    let k = id(SVL_KIND, 0, "main-window");
     let m = id(SVL_METHOD, k, "present");
     assert_eq!(unsafe { (be().call)(be().self_, win, m, std::ptr::null(), 0, std::ptr::null_mut()) }, 0, "{}", err());
 }
@@ -120,17 +120,17 @@ fn run_steps(steps: Vec<Step>) {
     }
 }
 
-/// window > box > [label, button, checkbox]; shown. Starts from an empty stylesheet.
+/// main-window > box-layout > [label, push-button, check-box]; shown. Starts from an empty stylesheet.
 fn build() {
     style(SVL_STYLE_SHEET, 0, None);
-    let win = create("window");
-    let bx = create("box");
+    let win = create("main-window");
+    let bx = create("box-layout");
     let label = create("label");
-    let button = create("button");
-    let check = create("checkbox");
-    set_str(label, "label", "label", "some text");
-    set_str(button, "button", "label", "go");
-    set_str(check, "checkbox", "label", "check");
+    let button = create("push-button");
+    let check = create("check-box");
+    set_str(label, "label", "text", "some text");
+    set_str(button, "push-button", "text", "go");
+    set_str(check, "check-box", "text", "check");
     insert(bx, label);
     insert(bx, button);
     insert(bx, check);
@@ -210,13 +210,13 @@ fn state_step_1() {
 
 fn state_step_2() {
     assert_eq!(pixel_hex(hd("check"), 1, 1), "111111");
-    set_bool(hd("check"), "checkbox", "checked", true);
+    set_bool(hd("check"), "check-box", "checked", true);
 }
 
 fn state_step_3() {
     assert_eq!(pixel_hex(hd("check"), 1, 1), "222222", ":checked applies without a manual re-polish");
-    set_bool(hd("check"), "checkbox", "checked", false);
-    set_bool(hd("check"), "checkbox", "enabled", false);
+    set_bool(hd("check"), "check-box", "checked", false);
+    set_bool(hd("check"), "check-box", "enabled", false);
 }
 
 fn state_step_4() {

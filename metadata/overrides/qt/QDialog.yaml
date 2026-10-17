@@ -3,7 +3,7 @@
 inherit:
   props:
     - { js: modal, native: modal, provenance: "QDialog::modal Q_PROPERTY (qdoc)" }
-    - { js: sizeGripEnabled, native: sizeGripEnabled, provenance: "QDialog::sizeGripEnabled (qdoc)" }
+    - { js: size-grip-enabled, native: sizeGripEnabled, provenance: "QDialog::sizeGripEnabled (qdoc)" }
   signals:
     - { js: accepted, native: accepted, connect: "accepted()", args: [], trigger: "static_cast<QDialog*>($w)->accept()", expect_args: [], provenance: "QDialog::accepted() (qdoc)" }
     - { js: rejected, native: rejected, connect: "rejected()", args: [], trigger: "static_cast<QDialog*>($w)->reject()", expect_args: [], provenance: "QDialog::rejected() (qdoc)" }
@@ -21,7 +21,7 @@ elements:
       composite:
         layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
     props:
-      - { js: title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); GTK/window vocabulary" }
+      - { js: window-title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); GTK/window vocabulary" }
     children:
       policy: layout_managed
       default_slot: children

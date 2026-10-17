@@ -16,7 +16,7 @@
 <window title="Destructuring">
   <box orientation="vertical" spacing="4">
     <label>{left}{right} size={size} area={area} perimeter={perimeter} tags={tags.join(',')}</label>
-    <button onclick={swap}>Swap</button>
-    <button onclick={grow}>Grow</button>
+    <button onclicked={swap}>Swap</button>
+    <button onclicked={grow}>Grow</button>
   </box>
 </window>

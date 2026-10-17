@@ -891,7 +891,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:enable-rubberband",
       "invocation": "reflected",
-      "js_name": "enableRubberband",
+      "js_name": "enable-rubberband",
       "name": "enable-rubberband",
       "notify": {
         "explicit": true,
@@ -931,7 +931,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:header-factory",
       "invocation": "reflected",
-      "js_name": "headerFactory",
+      "js_name": "header-factory",
       "name": "header-factory",
       "notify": {
         "explicit": true,
@@ -1052,7 +1052,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:row-factory",
       "invocation": "reflected",
-      "js_name": "rowFactory",
+      "js_name": "row-factory",
       "name": "row-factory",
       "notify": {
         "explicit": true,
@@ -1093,7 +1093,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:show-column-separators",
       "invocation": "reflected",
-      "js_name": "showColumnSeparators",
+      "js_name": "show-column-separators",
       "name": "show-column-separators",
       "notify": {
         "explicit": true,
@@ -1133,7 +1133,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:show-row-separators",
       "invocation": "reflected",
-      "js_name": "showRowSeparators",
+      "js_name": "show-row-separators",
       "name": "show-row-separators",
       "notify": {
         "explicit": true,
@@ -1173,7 +1173,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:single-click-activate",
       "invocation": "reflected",
-      "js_name": "singleClickActivate",
+      "js_name": "single-click-activate",
       "name": "single-click-activate",
       "notify": {
         "explicit": true,
@@ -1252,7 +1252,7 @@
       "default": "all",
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:tab-behavior",
       "invocation": "reflected",
-      "js_name": "tabBehavior",
+      "js_name": "tab-behavior",
       "name": "tab-behavior",
       "notify": {
         "explicit": true,

@@ -15,7 +15,6 @@ properties:
     provenance: "GtkTextView:justification (Gtk 4 docs)"
   - id: "svelters-api:v1:type:gtk:Gtk:TextView:prop:text"
     name: text
-    js_name: text
     new: true
     type: {ref: string, nullable: false, native: "gchar*", gtype: gchararray}
     access: {read: true, write: true, construct: false, construct_only: false}

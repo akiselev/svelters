@@ -23,8 +23,8 @@ insert #1 #6 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 call #6 present []
-create aboutdialog #8
-set #8 programName "Dialogs"
+create about-dialog #8
+set #8 program-name "Dialogs"
 event #4 clicked []
 remove #1 #6
 set #3 label "settings closed"

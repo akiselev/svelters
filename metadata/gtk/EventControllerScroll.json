@@ -53,7 +53,7 @@
   ],
   "element": {
     "origin": "manual",
-    "tag": "scrollcontroller"
+    "tag": "event-controller-scroll"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags"

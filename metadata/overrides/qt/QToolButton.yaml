@@ -1,11 +1,11 @@
 elements:
-  - tag: toolbutton
+  - tag: tool-button
     construct: { class: QToolButton }
     exclude: [checked]   # not checkable by default
     props:
-      - { js: autoRaise, native: autoRaise, provenance: "QToolButton::autoRaise (qdoc)" }
-      - { js: toolButtonStyle, native: toolButtonStyle, provenance: "QToolButton::toolButtonStyle (qdoc)" }
-      - { js: arrowType, native: arrowType, provenance: "QToolButton::arrowType (qdoc)" }
-      - { js: popupMode, native: popupMode, provenance: "QToolButton::popupMode (qdoc)" }
+      - { js: auto-raise, native: autoRaise, provenance: "QToolButton::autoRaise (qdoc)" }
+      - { js: tool-button-style, native: toolButtonStyle, provenance: "QToolButton::toolButtonStyle (qdoc)" }
+      - { js: arrow-type, native: arrowType, provenance: "QToolButton::arrowType (qdoc)" }
+      - { js: popup-mode, native: popupMode, provenance: "QToolButton::popupMode (qdoc)" }
     methods:
       - { js: setMenu, native: setMenu, params: ["object<QMenu>"], provenance: "QToolButton::setMenu(QMenu*) (qdoc); the button does not take ownership" }

@@ -744,7 +744,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:allow-async",
       "invocation": "reflected",
-      "js_name": "allowAsync",
+      "js_name": "allow-async",
       "name": "allow-async",
       "notify": {
         "explicit": true,
@@ -784,7 +784,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:current-page",
       "invocation": "reflected",
-      "js_name": "currentPage",
+      "js_name": "current-page",
       "name": "current-page",
       "notify": {
         "explicit": true,
@@ -827,7 +827,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:custom-tab-label",
       "invocation": "reflected",
-      "js_name": "customTabLabel",
+      "js_name": "custom-tab-label",
       "name": "custom-tab-label",
       "notify": {
         "explicit": false,
@@ -866,7 +866,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:default-page-setup",
       "invocation": "reflected",
-      "js_name": "defaultPageSetup",
+      "js_name": "default-page-setup",
       "name": "default-page-setup",
       "notify": {
         "explicit": false,
@@ -905,7 +905,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:embed-page-setup",
       "invocation": "reflected",
-      "js_name": "embedPageSetup",
+      "js_name": "embed-page-setup",
       "name": "embed-page-setup",
       "notify": {
         "explicit": true,
@@ -945,7 +945,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:export-filename",
       "invocation": "reflected",
-      "js_name": "exportFilename",
+      "js_name": "export-filename",
       "name": "export-filename",
       "notify": {
         "explicit": false,
@@ -984,7 +984,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:has-selection",
       "invocation": "reflected",
-      "js_name": "hasSelection",
+      "js_name": "has-selection",
       "name": "has-selection",
       "notify": {
         "explicit": true,
@@ -1024,7 +1024,7 @@
       "default": "",
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:job-name",
       "invocation": "reflected",
-      "js_name": "jobName",
+      "js_name": "job-name",
       "name": "job-name",
       "notify": {
         "explicit": false,
@@ -1063,7 +1063,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:n-pages",
       "invocation": "reflected",
-      "js_name": "nPages",
+      "js_name": "n-pages",
       "name": "n-pages",
       "notify": {
         "explicit": true,
@@ -1106,7 +1106,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:n-pages-to-print",
       "invocation": "reflected",
-      "js_name": "nPagesToPrint",
+      "js_name": "n-pages-to-print",
       "name": "n-pages-to-print",
       "notify": {
         "explicit": true,
@@ -1148,7 +1148,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:print-settings",
       "invocation": "reflected",
-      "js_name": "printSettings",
+      "js_name": "print-settings",
       "name": "print-settings",
       "notify": {
         "explicit": false,
@@ -1187,7 +1187,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:show-progress",
       "invocation": "reflected",
-      "js_name": "showProgress",
+      "js_name": "show-progress",
       "name": "show-progress",
       "notify": {
         "explicit": true,
@@ -1266,7 +1266,7 @@
       "default": "",
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:status-string",
       "invocation": "reflected",
-      "js_name": "statusString",
+      "js_name": "status-string",
       "name": "status-string",
       "notify": {
         "explicit": false,
@@ -1304,7 +1304,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:support-selection",
       "invocation": "reflected",
-      "js_name": "supportSelection",
+      "js_name": "support-selection",
       "name": "support-selection",
       "notify": {
         "explicit": true,
@@ -1344,7 +1344,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:track-print-status",
       "invocation": "reflected",
-      "js_name": "trackPrintStatus",
+      "js_name": "track-print-status",
       "name": "track-print-status",
       "notify": {
         "explicit": true,
@@ -1424,7 +1424,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:use-full-page",
       "invocation": "reflected",
-      "js_name": "useFullPage",
+      "js_name": "use-full-page",
       "name": "use-full-page",
       "notify": {
         "explicit": true,

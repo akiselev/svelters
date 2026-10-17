@@ -13,25 +13,25 @@
     // programmatic writes after mount: must not come back as change events
     plain = 'plain text';
     rich = 'rich text';
-    // The document behind a text edit is a borrowed handle of its own kind (textdocument).
+    // The document behind a text edit is a borrowed handle of its own kind (text-document).
     const doc = rich_edit.call('document');
     if (doc) {
-      doc.setProp('undoRedoEnabled', true);
+      doc.setProp('undo-redo-enabled', true);
       doc.call('setPlainText', 'one\ntwo');
-      blocks = doc.getProp('blockCount');
+      blocks = doc.getProp('block-count');
     }
   });
 </script>
 
-<box orientation="vertical" spacing="4">
-  <entry text="Password" echoMode="password" clearButtonEnabled={true} maxLength={20} onreturnPressed={() => returns++} />
-  <label label="returnPressed: {returns}" />
-  <label label="<a href='x'>link</a> word wrap" textFormat="rich-text" wordWrap={true} margin={2} onlinkActivated={() => links++} />
-  <plaintextedit bind:plainText={plain} placeholderText="Plain" lineWrapMode="no-wrap" maximumHeight={50} onchanged={() => echoPlain++} />
-  <label label="echo plainText: {echoPlain}" />
-  <textedit bind:plainText={rich} acceptRichText={true} placeholderText="Rich" maximumHeight={50} onchanged={() => echoRich++} />
-  <label label="echo plainText (rich): {echoRich}" />
-  <label label="document blocks: {blocks}" />
-  <textbrowser bind:this={rich_edit} openLinks={false} maximumHeight={40} />
-  <keysequenceedit keySequence="Ctrl+K" clearButtonEnabled={true} />
-</box>
+<box-layout direction="top-to-bottom" spacing="4">
+  <line-edit text="Password" echo-mode="password" clear-button-enabled={true} max-length={20} onreturn-pressed={() => returns++} />
+  <label text="return-pressed: {returns}" />
+  <label text="<a href='x'>link</a> word wrap" text-format="rich-text" word-wrap={true} margin={2} onlink-activated={() => links++} />
+  <plain-text-edit bind:plain-text={plain} placeholder-text="Plain" line-wrap-mode="no-wrap" maximum-height={50} ontext-changed={() => echoPlain++} />
+  <label text="echo plain-text: {echoPlain}" />
+  <text-edit bind:plain-text={rich} accept-rich-text={true} placeholder-text="Rich" maximum-height={50} ontext-changed={() => echoRich++} />
+  <label text="echo plain-text (rich): {echoRich}" />
+  <label text="document blocks: {blocks}" />
+  <text-browser bind:this={rich_edit} open-links={false} maximum-height={40} />
+  <key-sequence-edit key-sequence="Ctrl+K" clear-button-enabled={true} />
+</box-layout>

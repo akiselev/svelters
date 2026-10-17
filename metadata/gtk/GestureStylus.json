@@ -244,7 +244,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:GestureStylus:prop:stylus-only",
       "invocation": "reflected",
-      "js_name": "stylusOnly",
+      "js_name": "stylus-only",
       "name": "stylus-only",
       "notify": {
         "explicit": true,

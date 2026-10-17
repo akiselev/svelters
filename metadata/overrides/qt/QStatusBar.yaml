@@ -3,12 +3,12 @@
 # generator tracks membership by isAncestorOf (A1-GAPS G13). removeWidget only hides the widget and
 # keeps it parented, so remove also unparents it.
 elements:
-  - tag: statusbar
+  - tag: status-bar
     construct: { class: QStatusBar }
     props:
-      - { js: sizeGripEnabled, native: sizeGripEnabled, provenance: "QStatusBar::sizeGripEnabled (qdoc)" }
+      - { js: size-grip-enabled, native: sizeGripEnabled, provenance: "QStatusBar::sizeGripEnabled (qdoc)" }
     signals:
-      - js: messageChanged
+      - js: message-changed
         native: messageChanged
         connect: "messageChanged(QString)"
         args: [{ name: message, type: string }]

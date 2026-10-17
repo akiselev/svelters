@@ -8,8 +8,8 @@
 <window title="bind:text">
   <box orientation="vertical" spacing="6">
     <entry bind:text={name} onchanged={() => changes++} />
-    <button onclick={() => (name = 'Bob')}>Set Bob</button>
-    <button onclick={() => (name = name.toUpperCase())}>Upper</button>
+    <button onclicked={() => (name = 'Bob')}>Set Bob</button>
+    <button onclicked={() => (name = name.toUpperCase())}>Upper</button>
     <label>Hello {name}</label>
     <label>changes: {changes}</label>
   </box>

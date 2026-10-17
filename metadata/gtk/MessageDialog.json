@@ -642,7 +642,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:message-area",
       "invocation": "reflected",
-      "js_name": "messageArea",
+      "js_name": "message-area",
       "name": "message-area",
       "notify": {
         "explicit": false,
@@ -680,7 +680,7 @@
       "default": "info",
       "id": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:message-type",
       "invocation": "reflected",
-      "js_name": "messageType",
+      "js_name": "message-type",
       "name": "message-type",
       "notify": {
         "explicit": true,
@@ -721,7 +721,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:secondary-text",
       "invocation": "reflected",
-      "js_name": "secondaryText",
+      "js_name": "secondary-text",
       "name": "secondary-text",
       "notify": {
         "explicit": false,
@@ -760,7 +760,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:secondary-use-markup",
       "invocation": "reflected",
-      "js_name": "secondaryUseMarkup",
+      "js_name": "secondary-use-markup",
       "name": "secondary-use-markup",
       "notify": {
         "explicit": true,
@@ -839,7 +839,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:use-markup",
       "invocation": "reflected",
-      "js_name": "useMarkup",
+      "js_name": "use-markup",
       "name": "use-markup",
       "notify": {
         "explicit": true,

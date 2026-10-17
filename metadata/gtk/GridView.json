@@ -618,7 +618,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:enable-rubberband",
       "invocation": "reflected",
-      "js_name": "enableRubberband",
+      "js_name": "enable-rubberband",
       "name": "enable-rubberband",
       "notify": {
         "explicit": true,
@@ -698,7 +698,7 @@
       "default": 7,
       "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:max-columns",
       "invocation": "reflected",
-      "js_name": "maxColumns",
+      "js_name": "max-columns",
       "name": "max-columns",
       "notify": {
         "explicit": true,
@@ -741,7 +741,7 @@
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:min-columns",
       "invocation": "reflected",
-      "js_name": "minColumns",
+      "js_name": "min-columns",
       "name": "min-columns",
       "notify": {
         "explicit": true,
@@ -824,7 +824,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:single-click-activate",
       "invocation": "reflected",
-      "js_name": "singleClickActivate",
+      "js_name": "single-click-activate",
       "name": "single-click-activate",
       "notify": {
         "explicit": true,
@@ -864,7 +864,7 @@
       "default": "all",
       "id": "svelters-api:v1:type:gtk:Gtk:GridView:prop:tab-behavior",
       "invocation": "reflected",
-      "js_name": "tabBehavior",
+      "js_name": "tab-behavior",
       "name": "tab-behavior",
       "notify": {
         "explicit": true,

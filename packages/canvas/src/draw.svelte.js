@@ -8,7 +8,7 @@ function sizeOf(a, b) {
 
 /**
  * An attachment for `<canvas>` (GTK: the drawing area; Qt: the canvas element) that draws with a
- * Canvas2D-like context: `<canvas contentWidth={200} contentHeight={100} {@attach draw((ctx, size) => { ... })} />`.
+ * Canvas2D-like context: `<canvas content-width={200} content-height={100} {@attach draw((ctx, size) => { ... })} />`.
  *
  * `fn(ctx, {width, height})` records into `ctx`; the list is sent as one value and replayed natively. It
  * runs in an effect: reactive state it reads invalidates the drawing and redraws it, and so does a resize

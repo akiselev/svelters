@@ -1,5 +1,5 @@
 //! X2 end to end on Qt: the real host runs a JS bundle whose handlers decide sync signals
-//! (`close-request`, an entry's `key-press`) and use `requestAnimationFrame`. Key presses and
+//! (`close`, a line edit's `key-press`) and use `requestAnimationFrame`. Key presses and
 //! window closes are native events (`hooks::type_text`, `hooks::close`). Needs a display
 //! (xvfb-run) and the main thread, so no libtest harness.
 
@@ -11,7 +11,7 @@ use svelters_abi::BackendRef;
 use svelters_host::{Host, HostConfig};
 
 const WIN: u64 = 1;
-const ENTRY: u64 = 3;
+const LINE_EDIT: u64 = 3;
 
 #[derive(Default)]
 struct Seen {
@@ -34,7 +34,7 @@ fn body() {
     // Keys: `a` is consumed, `b` undecided, `c` throws, `d` closes the window from inside the handler.
     hooks::run_later(300, Box::new(|| {
         for t in ["a", "b", "c", "d"] {
-            hooks::type_text(ENTRY, t).unwrap();
+            hooks::type_text(LINE_EDIT, t).unwrap();
         }
     }));
     let s = seen.clone();
@@ -42,7 +42,7 @@ fn body() {
     hooks::run_later(700, Box::new(move || {
         let _ = hooks::close(WIN); // vetoed: close() reports false
         s.borrow_mut().toplevels_after_veto = hooks::toplevel_count();
-        hooks::type_text(ENTRY, "e").unwrap();
+        hooks::type_text(LINE_EDIT, "e").unwrap();
         s.borrow_mut().dump_before_close = hooks::dump(WIN);
     }));
     hooks::run_later(900, Box::new(|| {
@@ -57,10 +57,10 @@ fn body() {
     let errs: Vec<String> = host.take_errors().into_iter().map(|e| e.message).collect();
     let st = seen.borrow();
     let dump = &st.dump_before_close;
-    // `a` never reached the entry, the others replaced its selection each time.
+    // `a` never reached the line edit, the others replaced its selection each time.
     assert!(dump.contains("\"class\":\"QLineEdit\",\"text\":\"e\""), "{dump}");
     assert!(
-        dump.contains("key a|key b|key c|key d|async close-request deferred=true|close veto=true|key e"),
+        dump.contains("key a|key b|key c|key d|async close deferred=true|close veto=true|key e"),
         "handlers ran in order; the close raised inside a handler came back late with deferred=true: {dump}"
     );
     assert!(!dump.contains("cancelled frame ran"), "{dump}");

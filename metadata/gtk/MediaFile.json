@@ -366,7 +366,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MediaFile:prop:input-stream",
       "invocation": "reflected",
-      "js_name": "inputStream",
+      "js_name": "input-stream",
       "name": "input-stream",
       "notify": {
         "explicit": true,

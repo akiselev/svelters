@@ -370,7 +370,7 @@
       "default": 2147483647,
       "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide:prop:max-height",
       "invocation": "reflected",
-      "js_name": "maxHeight",
+      "js_name": "max-height",
       "name": "max-height",
       "notify": {
         "explicit": true,
@@ -413,7 +413,7 @@
       "default": 2147483647,
       "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide:prop:max-width",
       "invocation": "reflected",
-      "js_name": "maxWidth",
+      "js_name": "max-width",
       "name": "max-width",
       "notify": {
         "explicit": true,
@@ -456,7 +456,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide:prop:min-height",
       "invocation": "reflected",
-      "js_name": "minHeight",
+      "js_name": "min-height",
       "name": "min-height",
       "notify": {
         "explicit": true,
@@ -499,7 +499,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide:prop:min-width",
       "invocation": "reflected",
-      "js_name": "minWidth",
+      "js_name": "min-width",
       "name": "min-width",
       "notify": {
         "explicit": true,
@@ -581,7 +581,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide:prop:nat-height",
       "invocation": "reflected",
-      "js_name": "natHeight",
+      "js_name": "nat-height",
       "name": "nat-height",
       "notify": {
         "explicit": true,
@@ -624,7 +624,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide:prop:nat-width",
       "invocation": "reflected",
-      "js_name": "natWidth",
+      "js_name": "nat-width",
       "name": "nat-width",
       "notify": {
         "explicit": true,

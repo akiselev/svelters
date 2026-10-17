@@ -104,7 +104,7 @@
           },
           {
             "default": null,
-            "name": "iconName",
+            "name": "icon-name",
             "origin": "manual",
             "property": "icon-name",
             "provenance": [
@@ -125,7 +125,7 @@
           },
           {
             "default": false,
-            "name": "needsAttention",
+            "name": "needs-attention",
             "origin": "manual",
             "property": "needs-attention",
             "provenance": [
@@ -146,7 +146,7 @@
           },
           {
             "default": false,
-            "name": "useUnderline",
+            "name": "use-underline",
             "origin": "manual",
             "property": "use-underline",
             "provenance": [
@@ -1050,7 +1050,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:interpolate-size",
       "invocation": "reflected",
-      "js_name": "interpolateSize",
+      "js_name": "interpolate-size",
       "name": "interpolate-size",
       "notify": {
         "explicit": true,
@@ -1133,7 +1133,7 @@
       "default": 200,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-duration",
       "invocation": "reflected",
-      "js_name": "transitionDuration",
+      "js_name": "transition-duration",
       "name": "transition-duration",
       "notify": {
         "explicit": true,
@@ -1176,7 +1176,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-running",
       "invocation": "reflected",
-      "js_name": "transitionRunning",
+      "js_name": "transition-running",
       "name": "transition-running",
       "notify": {
         "explicit": false,
@@ -1219,7 +1219,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-type",
       "invocation": "reflected",
-      "js_name": "transitionType",
+      "js_name": "transition-type",
       "name": "transition-type",
       "notify": {
         "explicit": true,
@@ -1309,7 +1309,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child",
       "invocation": "reflected",
-      "js_name": "visibleChild",
+      "js_name": "visible-child",
       "name": "visible-child",
       "notify": {
         "explicit": true,
@@ -1349,7 +1349,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child-name",
       "invocation": "reflected",
-      "js_name": "visibleChildName",
+      "js_name": "visible-child-name",
       "name": "visible-child-name",
       "notify": {
         "explicit": true,

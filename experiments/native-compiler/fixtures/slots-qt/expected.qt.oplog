@@ -1,17 +1,17 @@
-create window #1
-set #1 title "Main window"
-create box #2
-set #2 orientation "vertical"
+create main-window #1
+set #1 window-title "Main window"
+create box-layout #2
+set #2 direction "top-to-bottom"
 create label #3
-set #3 label "Clicked 0 times"
+set #3 text "Clicked 0 times"
 insert #2 #3 before=end slot=default
-create button #4
+create push-button #4
 listen #4 clicked on
-set #4 label "Click"
+set #4 text "Click"
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
-create statusbar #5
+create status-bar #5
 insert #1 #5 before=end slot=statusbar
 call #1 present []
 event #4 clicked []
-set #3 label "Clicked 1 times"
+set #3 text "Clicked 1 times"

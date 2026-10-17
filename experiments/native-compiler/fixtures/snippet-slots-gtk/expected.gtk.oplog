@@ -1,6 +1,6 @@
 create window #1
 set #1 title "Slots"
-create headerbar #2
+create header-bar #2
 create button #3
 listen #3 clicked on
 set #3 label "Add"
@@ -33,7 +33,7 @@ destroy #4
 destroy #5
 destroy #2
 event #8 clicked []
-create headerbar #9
+create header-bar #9
 create button #10
 listen #10 clicked on
 set #10 label "Add"

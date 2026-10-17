@@ -3,15 +3,15 @@
 # Child policy follows uic's QMainWindow mapping; ownership is cross-checked against the PySide
 # typesystem replace_child entries and the probes in docs/notes/scripts/qt_slot_ownership_probe.py.
 elements:
-  - tag: window
+  - tag: main-window
     construct: { class: QMainWindow }
     props:
-      - { js: title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); P prop" }
-      - { js: documentMode, native: documentMode, provenance: "QMainWindow::documentMode (qdoc)" }
+      - { js: window-title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); P prop" }
+      - { js: document-mode, native: documentMode, provenance: "QMainWindow::documentMode (qdoc)" }
       - { js: animated, native: animated, provenance: "QMainWindow::animated (qdoc)" }
-      - { js: dockNestingEnabled, native: dockNestingEnabled, provenance: "QMainWindow::dockNestingEnabled (qdoc)" }
-      - { js: tabShape, native: tabShape, provenance: "QMainWindow::tabShape (qdoc); enum typed by the S1 value model (ABI v3)" }
-      - { js: toolButtonStyle, native: toolButtonStyle, provenance: "QMainWindow::toolButtonStyle (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: dock-nesting-enabled, native: dockNestingEnabled, provenance: "QMainWindow::dockNestingEnabled (qdoc)" }
+      - { js: tab-shape, native: tabShape, provenance: "QMainWindow::tabShape (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: tool-button-style, native: toolButtonStyle, provenance: "QMainWindow::toolButtonStyle (qdoc); enum typed by the S1 value model (ABI v3)" }
     methods:
       - { js: show, native: show, provenance: "QWidget::show() slot (qdoc)" }
       - { js: present, native: show, provenance: "GTK name for show(); P host op call present" }
@@ -21,7 +21,7 @@ elements:
       # Synthetic: the backend vetoes a native close while this is listened to and posts the
       # event (React Native's onRequestClose). Without a listener the window is destroyed and
       # reported as closed.
-      - { js: close-request, synthetic: close_request, provenance: "ABI v2 window close (plans/architecture/backend-abi.md); QCloseEvent via event filter" }
+      - { js: close, synthetic: close_request, provenance: "ABI v2 window close (plans/architecture/backend-abi.md); QCloseEvent via event filter" }
     children:
       policy: named_slots
       default_slot: central
@@ -85,7 +85,7 @@ elements:
           provenance: [{ origin: typesystem, ref: replace_child }, { origin: probe, ref: qt_slot_ownership_probe.py }]
         # Toolbars and dock widgets (X7). QMainWindow has no indexOf/count for them, so the slots are
         # append-only (membership by isAncestorOf, A1-GAPS G13) and the placement is a child attribute
-        # (X3): `<toolbar parent:area="left" parent:breakBefore={true}>`, `<dockwidget parent:area="right">`.
+        # (X3): `<toolbar parent:area="left" parent:tool-bar-break={true}>`, `<dockwidget parent:area="right">`.
         # removeToolBar / removeDockWidget hide the widget and keep it parented, so remove also unparents it.
         - name: toolbars
           content: widget
@@ -110,7 +110,7 @@ elements:
               get: { native: "QMainWindow::toolBarArea(QToolBar*) const", args: [child] }
               expect: "$p->toolBarArea(static_cast<QToolBar *>($w)) == Qt::LeftToolBarArea"
               provenance: "QMainWindow::addToolBar(Qt::ToolBarArea, QToolBar*) moves a toolbar the window already manages; toolBarArea(QToolBar*) (qdoc); X3 child attribute"
-            - name: breakBefore
+            - name: tool-bar-break
               type: bool
               default: false
               samples: [true, false]

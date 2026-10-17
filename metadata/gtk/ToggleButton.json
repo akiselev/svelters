@@ -136,7 +136,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "togglebutton"
+    "tag": "toggle-button"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ToggleButton",
@@ -503,8 +503,7 @@
       },
       "annotated": {
         "fields": [
-          "echo_suppress",
-          "js_name"
+          "echo_suppress"
         ],
         "origin": "manual",
         "provenance": "GtkToggleButton:active (Gtk 4 docs)"

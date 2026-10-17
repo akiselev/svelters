@@ -28,29 +28,29 @@
 </script>
 
 <box orientation="vertical" spacing="4">
-  <label label="Label: markup, wrap, selectable" useMarkup={true} wrap={true} selectable={true}
-    justify="center" xalign={0.5} lines={2} maxWidthChars={40}
+  <label label="Label: markup, wrap, selectable" use-markup={true} wrap={true} selectable={true}
+    justify="center" xalign={0.5} lines={2} max-width-chars={40}
     onactivate-link={(e) => { link = 'link'; e.preventDefault(); }} />
   <label label="link handler: {link}" />
-  <entry bind:text={entry} placeholder="entry" visibility={true} maxLength={20} hasFrame={true}
-    inputPurpose="free-form" activatesDefault={false} overwriteMode={false}
+  <entry bind:text={entry} placeholder-text="entry" visibility={true} max-length={20} has-frame={true}
+    input-purpose="free-form" activates-default={false} overwrite-mode={false}
     onchanged={() => eEntry++} onactivate={() => activated++} />
   <label label="echo text: {eEntry}" />
   <label label="activate events: {activated}" />
-  <passwordentry bind:text={pass} placeholder="password" showPeekIcon={true}
+  <password-entry bind:text={pass} placeholder-text="password" show-peek-icon={true}
     onchanged={() => ePass++} />
   <label label="echo password: {ePass}" />
-  <searchentry bind:text={search} placeholder="search" searchDelay={100}
+  <search-entry bind:text={search} placeholder-text="search" search-delay={100}
     onchanged={() => eSearch++} onsearch-changed={() => searched++} />
   <label label="echo search: {eSearch}" />
   <label label="search-changed events: {searched}" />
-  <text bind:text={text} placeholder="text" maxLength={30} onchanged={() => eText++} />
+  <text bind:text={text} placeholder-text="text" max-length={30} onchanged={() => eText++} />
   <label label="echo plain text: {eText}" />
-  <editablelabel bind:editing={editing} {...editingEvents} />
+  <editable-label bind:editing={editing} {...editingEvents} />
   <label label="echo editing: {eEditing}" />
-  <inscription text="inscription" minLines={1} natChars={20} />
-  <shortcutlabel accelerator="<Control>q" />
-  <textview bind:text={() => view, (v) => { view = v; eView++; }} editable={true} wrapMode="word" monospace={true} cursorVisible={true}
-    leftMargin={4} topMargin={4} justification="left" vexpand={true} />
+  <inscription text="inscription" min-lines={1} nat-chars={20} />
+  <shortcut-label accelerator="<Control>q" />
+  <text-view bind:text={() => view, (v) => { view = v; eView++; }} editable={true} wrap-mode="word" monospace={true} cursor-visible={true}
+    left-margin={4} top-margin={4} justification="left" vexpand={true} />
   <label label="echo text view: {eView}" />
 </box>

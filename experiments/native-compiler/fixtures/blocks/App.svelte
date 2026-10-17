@@ -34,9 +34,9 @@
     {#await 42 then v}
       <label>sync {v}</label>
     {/await}
-    <button onclick={() => { id++; ok = !ok; }}>Next</button>
-    <button onclick={() => (promise = load(id, id % 2 === 0))}>Reload</button>
-    <button onclick={() => { load(0, false, 50); promise = load(id, false, 5); promise = Promise.resolve('instant'); }}>Instant</button>
-    <button onclick={() => items[0].qty++}>Qty</button>
+    <button onclicked={() => { id++; ok = !ok; }}>Next</button>
+    <button onclicked={() => (promise = load(id, id % 2 === 0))}>Reload</button>
+    <button onclicked={() => { load(0, false, 50); promise = load(id, false, 5); promise = Promise.resolve('instant'); }}>Instant</button>
+    <button onclicked={() => items[0].qty++}>Qty</button>
   </box>
 </window>

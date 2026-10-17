@@ -31,25 +31,25 @@
 <window title="Lists stress">
   <box orientation="vertical" spacing="4">
     <box orientation="horizontal" spacing="4">
-      <button onclick={() => fill(1000)}>fill1k</button>
-      <button onclick={() => fill(10000)}>fill10k</button>
-      <button onclick={() => fill(100000)}>fill100k</button>
-      <button onclick={append}>append</button>
-      <button onclick={prepend}>prepend</button>
-      <button onclick={removeFirst}>removeFirst</button>
-      <button onclick={removeMiddle}>removeMiddle</button>
+      <button onclicked={() => fill(1000)}>fill1k</button>
+      <button onclicked={() => fill(10000)}>fill10k</button>
+      <button onclicked={() => fill(100000)}>fill100k</button>
+      <button onclicked={append}>append</button>
+      <button onclicked={prepend}>prepend</button>
+      <button onclicked={removeFirst}>removeFirst</button>
+      <button onclicked={removeMiddle}>removeMiddle</button>
     </box>
     <box orientation="horizontal" spacing="4">
-      <button onclick={reverse}>reverse</button>
-      <button onclick={rename}>rename</button>
-      <button onclick={sortDesc}>sortDesc</button>
-      <button onclick={odd}>odd</button>
-      <button onclick={clear}>clear</button>
-      <button onclick={moveFirstToEnd}>moveFirst</button>
-      <button onclick={() => list?.scrollTo(items.length - 1)}>scrollEnd</button>
-      <button onclick={() => list?.scrollTo(0)}>scrollStart</button>
-      <button onclick={() => list?.scrollTo(Math.floor(items.length / 2))}>scrollMid</button>
-      <button onclick={() => (show = !show)}>toggle</button>
+      <button onclicked={reverse}>reverse</button>
+      <button onclicked={rename}>rename</button>
+      <button onclicked={sortDesc}>sortDesc</button>
+      <button onclicked={odd}>odd</button>
+      <button onclicked={clear}>clear</button>
+      <button onclicked={moveFirstToEnd}>moveFirst</button>
+      <button onclicked={() => list?.scrollTo(items.length - 1)}>scrollEnd</button>
+      <button onclicked={() => list?.scrollTo(0)}>scrollStart</button>
+      <button onclicked={() => list?.scrollTo(Math.floor(items.length / 2))}>scrollMid</button>
+      <button onclicked={() => (show = !show)}>toggle</button>
     </box>
     <label>{`items=${items.length} selected=${selected} activated=${activated}`}</label>
     {#if show}
@@ -59,7 +59,7 @@
       key={(it) => it.id}
       bind:selected
       vexpand={true}
-      minHeight={300}
+      min-height={300}
       onactivate={(item, pos) => (activated = `${pos}:${item.id}`)}
     >
       {#snippet row(item, index)}

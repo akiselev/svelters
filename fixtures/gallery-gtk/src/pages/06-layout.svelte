@@ -18,32 +18,32 @@
     <label parent:name="one" parent:title="One" label="stack child one" />
     <label parent:name="two" parent:title="Two" label="stack child two" />
   </stack>
-  <stackswitcher />
-  <stacksidebar />
+  <stack-switcher />
+  <stack-sidebar />
   <notebook bind:page={page} show-tabs={true} show-border={true} tab-pos="top" scrollable={false} {...{ 'onnotify::page': () => { if (settled) pageEchoes++; else settled = true; } }}>
-    <label parent:tabLabel="First" label="page one" />
-    <label parent:tabLabel="Second" parent:reorderable={true} label="page two" />
-    <label parent:tabLabel="Third" label="page three" />
+    <label parent:tab-label="First" label="page one" />
+    <label parent:tab-label="Second" parent:reorderable={true} label="page two" />
+    <label parent:tab-label="Third" label="page three" />
   </notebook>
   <label label="echo page: {pageEchoes}" />
-  <flowbox selection-mode="single" min-children-per-line={2} max-children-per-line={4} homogeneous={true} column-spacing={4} row-spacing={4} onchild-activated={() => picked++} onselected-children-changed={() => picked++}>
+  <flow-box selection-mode="single" min-children-per-line={2} max-children-per-line={4} homogeneous={true} column-spacing={4} row-spacing={4} onchild-activated={() => picked++} onselected-children-changed={() => picked++}>
     <label label="flow a" />
     <label label="flow b" />
     <label label="flow c" />
-  </flowbox>
-  <listbox selection-mode="single" show-separators={true} activate-on-single-click={true} onrow-activated={() => rows++} onrow-selected={() => rows++}>
+  </flow-box>
+  <list-box selection-mode="single" show-separators={true} activate-on-single-click={true} onrow-activated={() => rows++} onrow-selected={() => rows++}>
     <label label="row one" />
     <label label="row two" />
-  </listbox>
-  <actionbar revealed={true}>
+  </list-box>
+  <action-bar revealed={true}>
     <label label="start" />
     <label data-slot="center" label="center" />
     <label data-slot="end" label="end" />
-  </actionbar>
+  </action-bar>
   <grid row-spacing={2} column-spacing={2} row-homogeneous={false} column-homogeneous={false}>
     <label parent:column={0} parent:row={0} label="cell 0,0" />
     <label parent:column={1} parent:row={0} label="cell 1,0" />
-    <label parent:column={0} parent:row={1} parent:columnSpan={2} label="spans two columns" />
+    <label parent:column={0} parent:row={1} parent:column-span={2} label="spans two columns" />
   </grid>
   <fixed>
     <label parent:x={10} parent:y={4} label="fixed at 10,4" />

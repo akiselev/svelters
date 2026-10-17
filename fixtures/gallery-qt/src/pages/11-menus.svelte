@@ -1,7 +1,9 @@
-<!-- kinds: Menubar Menu Action Toolbar Contextmenu Menuseparator -->
+<!-- kinds: QMenuBar QMenu QAction QToolBar -->
 <script>
   // Menus and actions (X4): one declarative tree becomes native menus. Items insert, remove and
   // reorder reactively; checked states are bound; programmatic writes after mount must not echo.
+  // A <menu> inside a widget that holds no menu items is that widget's context menu; separators are
+  // actions with separator={true}.
   let log = $state('');
   let autosave = $state(false);
   let small = $state(false);
@@ -18,46 +20,46 @@
   const add = (s) => (log += s + ' ');
 </script>
 
-<box orientation="vertical" spacing="6">
-  <menubar>
-    <menu label="File">
-      <action label="Open" icon="document-open" shortcut="Ctrl+O" enabled={openEnabled} onactivate={() => add('open')} />
-      <action label="Autosave" checkable bind:checked={autosave} ontoggled={() => echoAutosave++} />
-      <menuseparator />
-      <menu label="Recent">
+<box-layout direction="top-to-bottom" spacing="6">
+  <menu-bar>
+    <menu title="File">
+      <action text="Open" icon="document-open" shortcut="Ctrl+O" enabled={openEnabled} ontriggered={() => add('open')} />
+      <action text="Autosave" checkable bind:checked={autosave} ontoggled={() => echoAutosave++} />
+      <action separator={true} />
+      <menu title="Recent">
         {#each recent as r (r)}
-          <action label={r} onactivate={() => add(r)} />
+          <action text={r} ontriggered={() => add(r)} />
         {/each}
       </menu>
       {#if extra}
-        <action label="Extra item" />
+        <action text="Extra item" />
       {/if}
-      <action label="Quit" shortcut="Ctrl+Q" onactivate={() => add('quit')} />
+      <action text="Quit" shortcut="Ctrl+Q" ontriggered={() => add('quit')} />
     </menu>
-    <menu label="Size">
-      <action label="Small" group="size" bind:checked={small} ontoggled={() => echoSize++} />
-      <action label="Large" group="size" bind:checked={large} ontoggled={() => echoSize++} />
+    <menu title="Size">
+      <action text="Small" group="size" bind:checked={small} ontoggled={() => echoSize++} />
+      <action text="Large" group="size" bind:checked={large} ontoggled={() => echoSize++} />
     </menu>
-  </menubar>
-  <toolbar>
-    <action icon="edit-copy" label="Copy" onactivate={() => add('copy')} />
-    <menuseparator />
-    <action icon="format-text-bold" label="Bold" checkable />
-  </toolbar>
-  <box orientation="horizontal" spacing="6">
-    <button label="Reverse recent" onclick={() => (recent = [...recent].reverse())} />
-    <button label="Drop first recent" onclick={() => (recent = recent.slice(1))} />
-    <button label="Toggle extra item" onclick={() => (extra = !extra)} />
-    <button label="Toggle Open enabled" onclick={() => (openEnabled = !openEnabled)} />
-  </box>
-  <label label="log: {log}" />
-  <label label="autosave: {autosave}, small: {small}, large: {large}" />
-  <label label="echo autosave: {echoAutosave}" />
-  <label label="echo size: {echoSize}" />
-  <button label="Right click for a context menu">
-    <contextmenu>
-      <action label="Paste" onactivate={() => add('paste')} />
-      <action label="Select all" onactivate={() => add('select-all')} />
-    </contextmenu>
-  </button>
-</box>
+  </menu-bar>
+  <tool-bar>
+    <action icon="edit-copy" text="Copy" ontriggered={() => add('copy')} />
+    <action separator={true} />
+    <action icon="format-text-bold" text="Bold" checkable />
+  </tool-bar>
+  <box-layout direction="left-to-right" spacing="6">
+    <push-button text="Reverse recent" onclicked={() => (recent = [...recent].reverse())} />
+    <push-button text="Drop first recent" onclicked={() => (recent = recent.slice(1))} />
+    <push-button text="Toggle extra item" onclicked={() => (extra = !extra)} />
+    <push-button text="Toggle Open enabled" onclicked={() => (openEnabled = !openEnabled)} />
+  </box-layout>
+  <label text="log: {log}" />
+  <label text="autosave: {autosave}, small: {small}, large: {large}" />
+  <label text="echo autosave: {echoAutosave}" />
+  <label text="echo size: {echoSize}" />
+  <push-button text="Right click for a context menu">
+    <menu>
+      <action text="Paste" ontriggered={() => add('paste')} />
+      <action text="Select all" ontriggered={() => add('select-all')} />
+    </menu>
+  </push-button>
+</box-layout>

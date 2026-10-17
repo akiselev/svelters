@@ -1,6 +1,5 @@
 properties:
   - name: page
-    js_name: page
     echo_suppress: ["notify::page", switch-page]
     setup: 'let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..8 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); }'
     sample: 7
@@ -50,7 +49,7 @@ bindings:
     provenance: "set_current_page emits switch-page and notify::page only on change (Gtk 4 docs)"
 # GtkNotebook pages. Tab label text, menu label and the page flags are properties of the child's
 # GtkNotebookPage (X3 child attributes). Reordering tabs by hand is the user's `reorderable` choice.
-# Svelte: <notebook><label parent:tabLabel="One">x</label></notebook>
+# Svelte: <notebook><label parent:tab-label="One">x</label></notebook>
 children:
   policy: pages
   default_slot: pages
@@ -64,7 +63,7 @@ children:
       default: {kind: none}
       on_remove: empty
       attrs:
-        - name: tabLabel
+        - name: tab-label
           type: string
           default: ""
           samples: ["Tab one", "Tab two"]
@@ -72,7 +71,7 @@ children:
           get: {native: "GtkNotebook::get_tab_label_text(GtkWidget*)", args: [child]}
           expect: 'pw.downcast_ref::<gtk::Notebook>().unwrap().tab_label_text(&w).as_deref() == Some("Tab one")'
           provenance: [{origin: gir, ref: "gtk_notebook_set_tab_label_text"}, {origin: runtime, ref: "the GtkNotebookPage:tab-label property only stores a string; it does not create the visible tab label (GTK 4.22)"}]
-        - name: menuLabel
+        - name: menu-label
           type: string
           default: ""
           samples: ["Menu one", "Menu two"]
@@ -95,14 +94,14 @@ children:
           property: detachable
           expect: 'pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_detachable(&w)'
           provenance: [{origin: gir, ref: "GtkNotebookPage:detachable"}, {origin: gir, ref: "gtk_notebook_get_tab_detachable"}]
-        - name: tabExpand
+        - name: tab-expand
           type: bool
           default: false
           samples: [true, false]
           via: {native: "GtkNotebook::get_page(GtkWidget*)"}
           property: tab-expand
           provenance: [{origin: gir, ref: "GtkNotebookPage:tab-expand"}]
-        - name: tabFill
+        - name: tab-fill
           type: bool
           default: true
           samples: [false, true]

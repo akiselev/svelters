@@ -17,5 +17,5 @@
   <label label="Hello {name}" />
   <entry bind:text={name} onchanged={() => echoes++} />
   <label label="echo text: {echoes}" />
-  <button label="Clicked {clicks} times" onclick={() => clicks++} />
+  <button label="Clicked {clicks} times" onclicked={() => clicks++} />
 </box>

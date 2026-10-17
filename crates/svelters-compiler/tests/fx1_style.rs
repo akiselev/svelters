@@ -26,8 +26,10 @@ const RULES: &str = "<style>\n  .row { spacing: 8px; }\n  #a { spacing: 5px; }\n
 
 #[test]
 fn nullish_style_directive_falls_back_to_the_rules_then_the_default() {
-    let src = format!("<script>let g = $state();</script>\n<window><box><box class=\"row\" style:spacing={{g}}></box><box style:spacing={{g}}></box></box></window>\n{RULES}");
     for b in ["gtk", "qt"] {
+        // each toolkit's native names: GTK window/box, Qt main-window/box-layout
+        let (w, x) = if b == "gtk" { ("window", "box") } else { ("main-window", "box-layout") };
+        let src = format!("<script>let g = $state();</script>\n<{w}><{x}><{x} class=\"row\" style:spacing={{g}}></{x}><{x} style:spacing={{g}}></{x}></{x}></{w}>\n{RULES}");
         let out = js(b, &src);
         // with a matching rule: the rule's value
         assert!(out.contains(r#"$n.setter_value("#) && out.contains(r#"g) ?? (8)"#), "{b}:\n{out}");

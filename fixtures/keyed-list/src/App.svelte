@@ -21,19 +21,19 @@
 <window title="Keyed list">
   <box orientation="vertical" spacing="6">
     <box orientation="horizontal" spacing="6">
-      <entry placeholder="New item" text={draft} onchanged={(arg) => (draft = arg?.detail ?? arg)} />
-      <button onclick={add}>Add</button>
-      <button onclick={reverse}>Reverse</button>
+      <entry placeholder-text="New item" text={draft} onchanged={(arg) => (draft = arg?.detail ?? arg)} />
+      <button onclicked={add}>Add</button>
+      <button onclicked={reverse}>Reverse</button>
     </box>
-    <scrolledwindow>
+    <scrolled-window>
       <box orientation="vertical" spacing="2">
         {#each rows as row (row.id)}
           <box orientation="horizontal" spacing="6">
             <label>{row.text}</label>
-            <button onclick={() => remove(row.id)}>Remove</button>
+            <button onclicked={() => remove(row.id)}>Remove</button>
           </box>
         {/each}
       </box>
-    </scrolledwindow>
+    </scrolled-window>
   </box>
 </window>

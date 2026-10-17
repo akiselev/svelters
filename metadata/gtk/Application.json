@@ -452,7 +452,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Application:prop:active-window",
       "invocation": "reflected",
-      "js_name": "activeWindow",
+      "js_name": "active-window",
       "name": "active-window",
       "notify": {
         "explicit": false,
@@ -530,7 +530,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Application:prop:register-session",
       "invocation": "reflected",
-      "js_name": "registerSession",
+      "js_name": "register-session",
       "name": "register-session",
       "notify": {
         "explicit": false,
@@ -570,7 +570,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Application:prop:screensaver-active",
       "invocation": "reflected",
-      "js_name": "screensaverActive",
+      "js_name": "screensaver-active",
       "name": "screensaver-active",
       "notify": {
         "explicit": false,

@@ -1,16 +1,16 @@
 elements:
-  - tag: button
+  - tag: push-button
     construct: { class: QPushButton }
     text_prop: text   # QAbstractButton::text (qdoc); text children fold into it
     exclude: [checked]   # not checkable by default: isChecked() stays false, so the inherited checked prop test cannot pass here
     props:
-      - { js: label, native: text, provenance: "QAbstractButton::text Q_PROPERTY (qdoc); P prop" }
+      - { js: text, native: text, provenance: "QAbstractButton::text Q_PROPERTY (qdoc); P prop" }
       - { js: icon, native: icon, provenance: "QPushButton::icon (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: iconSize, native: iconSize, provenance: "QPushButton::iconSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: icon-size, native: iconSize, provenance: "QPushButton::iconSize (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: shortcut, native: shortcut, provenance: "QPushButton::shortcut (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: checkable, native: checkable, provenance: "QPushButton::checkable (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: flat, native: flat, provenance: "QPushButton::flat (qdoc)" }
-      - { js: autoDefault, native: autoDefault, provenance: "QPushButton::autoDefault (qdoc)" }
+      - { js: auto-default, native: autoDefault, provenance: "QPushButton::autoDefault (qdoc)" }
       - { js: default, native: default, provenance: "QPushButton::default (qdoc)" }
     methods:
       - { js: click, native: click, provenance: "QAbstractButton::click() slot (qdoc)" }

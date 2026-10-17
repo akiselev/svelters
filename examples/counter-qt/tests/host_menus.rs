@@ -1,5 +1,5 @@
-//! X4 end to end on Qt: the real host runs the `fixtures/menus` Svelte bundle (a menubar with plain,
-//! check and radio items, a keyed submenu, a toolbar and a context menu). Actions are triggered the
+//! X4 end to end on Qt: the real host runs the `fixtures/menus-qt` Svelte bundle (a menu bar with plain,
+//! check and radio items, a keyed submenu, a tool bar and a context menu). Actions are triggered the
 //! way a click does, a shortcut goes through Qt's shortcut map, and the context menu opens from a
 //! real context-menu event; the app state, the label showing it and the native QActions are compared
 //! at each step. Needs a display (xvfb-run), the main thread (no libtest harness) and the built
@@ -23,7 +23,7 @@ fn main() {
 }
 
 fn body() {
-    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/menus/dist/app.js");
+    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/menus-qt/dist/app.js");
     if !bundle.exists() {
         eprintln!("skipped: {} is not built", bundle.display());
         return;

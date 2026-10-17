@@ -211,7 +211,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-name",
       "invocation": "reflected",
-      "js_name": "actionName",
+      "js_name": "action-name",
       "name": "action-name",
       "notify": {
         "explicit": false,
@@ -250,7 +250,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-target",
       "invocation": "reflected",
-      "js_name": "actionTarget",
+      "js_name": "action-target",
       "name": "action-target",
       "notify": {
         "explicit": false,

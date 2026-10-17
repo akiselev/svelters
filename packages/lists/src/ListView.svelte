@@ -9,7 +9,7 @@
     layout = 'list',
     selection = 'single',
     selected = $bindable(-1),
-    rowHeight = 32,
+    'row-height': rowHeight = 32,
     onactivate,
     ...rest
   } = $props();
@@ -55,11 +55,11 @@
   }
 </script>
 
-<virtuallist
+<virtual-list
   bind:this={view}
   {layout}
   {selection}
-  {rowHeight}
+  row-height={rowHeight}
   onsetup={(_e, r) => ctl.setup(r)}
   onbind={(_e, r, pos, id, gen) => ctl.bind(r, pos, id, gen)}
   onunbind={(_e, r, gen) => ctl.unbind(r, gen)}

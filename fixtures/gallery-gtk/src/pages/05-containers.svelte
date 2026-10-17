@@ -10,11 +10,11 @@
 </script>
 
 <box orientation="vertical" spacing="4">
-  <centerbox>
+  <center-box>
     <label data-slot="start" label="start" />
     <label data-slot="center" label="center" />
     <label data-slot="end" label="end" />
-  </centerbox>
+  </center-box>
   <paned position={120} wide-handle={true} resize-start-child={true} shrink-end-child={false} hexpand={true}>
     <label data-slot="start" label="paned start" />
     <label data-slot="end" label="paned end" />
@@ -29,18 +29,18 @@
   <revealer reveal-child={reveal} transition-type="slide-down" transition-duration={0}>
     <label label="revealed" />
   </revealer>
-  <aspectframe ratio={2.0} obey-child={false} xalign={0.5}>
+  <aspect-frame ratio={2.0} obey-child={false} xalign={0.5}>
     <label label="aspect" />
-  </aspectframe>
+  </aspect-frame>
   <overlay>
     <label label="overlay base" />
     <label data-slot="overlays" label="over" halign="end" valign="start" />
   </overlay>
-  <windowhandle><label label="window handle" /></windowhandle>
-  <scrolledwindow hscrollbar-policy="never" vscrollbar-policy="automatic" has-frame={true} min-content-width={200} min-content-height={40} propagate-natural-height={false}>
+  <window-handle><label label="window handle" /></window-handle>
+  <scrolled-window hscrollbar-policy="never" vscrollbar-policy="automatic" has-frame={true} min-content-width={200} min-content-height={40} propagate-natural-height={false}>
     <viewport><label label="viewport content" /></viewport>
-  </scrolledwindow>
-  <searchbar search-mode-enabled={true} show-close-button={true}>
-    <entry placeholder="search" />
-  </searchbar>
+  </scrolled-window>
+  <search-bar search-mode-enabled={true} show-close-button={true}>
+    <entry placeholder-text="search" />
+  </search-bar>
 </box>

@@ -1,15 +1,15 @@
 inherit:
   props:
     - { js: enabled, native: enabled, provenance: "QWidget::enabled (qdoc)" }
-    - { js: toolTip, native: toolTip, provenance: "QWidget::toolTip (qdoc)" }
-    - { js: statusTip, native: statusTip, provenance: "QWidget::statusTip (qdoc)" }
-    - { js: whatsThis, native: whatsThis, provenance: "QWidget::whatsThis (qdoc)" }
-    - { js: minimumWidth, native: minimumWidth, provenance: "QWidget::minimumWidth (qdoc)" }
-    - { js: minimumHeight, native: minimumHeight, provenance: "QWidget::minimumHeight (qdoc)" }
-    - { js: maximumWidth, native: maximumWidth, provenance: "QWidget::maximumWidth (qdoc)" }
-    - { js: maximumHeight, native: maximumHeight, provenance: "QWidget::maximumHeight (qdoc)" }
-    - { js: styleSheet, native: styleSheet, provenance: "QWidget::styleSheet (qdoc)" }
-    - { js: accessibleName, native: accessibleName, provenance: "QWidget::accessibleName (qdoc)" }
+    - { js: tool-tip, native: toolTip, provenance: "QWidget::toolTip (qdoc)" }
+    - { js: status-tip, native: statusTip, provenance: "QWidget::statusTip (qdoc)" }
+    - { js: whats-this, native: whatsThis, provenance: "QWidget::whatsThis (qdoc)" }
+    - { js: minimum-width, native: minimumWidth, provenance: "QWidget::minimumWidth (qdoc)" }
+    - { js: minimum-height, native: minimumHeight, provenance: "QWidget::minimumHeight (qdoc)" }
+    - { js: maximum-width, native: maximumWidth, provenance: "QWidget::maximumWidth (qdoc)" }
+    - { js: maximum-height, native: maximumHeight, provenance: "QWidget::maximumHeight (qdoc)" }
+    - { js: style-sheet, native: styleSheet, provenance: "QWidget::styleSheet (qdoc)" }
+    - { js: accessible-name, native: accessibleName, provenance: "QWidget::accessibleName (qdoc)" }
   # X8 event families: synthetic signals raised by an event filter (backend.cpp.in, "event families"). Payloads are v3
   # values: position/size records ({x, y}, {width, height}), integer masks for buttons and modifiers (Qt enum values).
   # key-release, mouse-*, wheel and context-menu are sync signals: `e.preventDefault()` consumes the event before the
@@ -21,7 +21,7 @@ inherit:
     - { js: mouse-press, synthetic: mouse_press, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonPress) via event filter" }
     - { js: mouse-release, synthetic: mouse_release, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonRelease) via event filter" }
     - { js: mouse-move, synthetic: mouse_move, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseMove) via event filter" }
-    - { js: double-click, synthetic: mouse_double_click, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonDblClick) via event filter" }
+    - { js: mouse-double-click, synthetic: mouse_double_click, args: [{ name: position, type: Point }, { name: button, type: int }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QMouseEvent (MouseButtonDblClick) via event filter" }
     - { js: wheel, synthetic: wheel, args: [{ name: position, type: Point }, { name: angleDelta, type: Point }, { name: buttons, type: int }, { name: modifiers, type: int }], provenance: "X8: QWheelEvent via event filter" }
     - { js: focus-in, synthetic: focus_in, args: [{ name: reason, type: int }], provenance: "X8: QFocusEvent (FocusIn) via event filter" }
     - { js: focus-out, synthetic: focus_out, args: [{ name: reason, type: int }], provenance: "X8: QFocusEvent (FocusOut) via event filter" }
@@ -39,32 +39,34 @@ inherit:
 # Slot annotations follow docs/notes/signals-and-slots-semantics.md section 2.5. Extensions used here:
 # `then` (extra steps after an op), `receiver: child` (receiver), `index_of`, and `list.item`.
 elements:
-  - tag: box
+  - tag: box-layout
     construct:
       class: QWidget
       composite:
         layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
     props:
-      - js: orientation
+      - js: direction
         target: layout
         type: enum
         getter: direction
         setter: setDirection
         values:
-          horizontal: QBoxLayout::LeftToRight
-          vertical: QBoxLayout::TopToBottom
-        provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
+          left-to-right: QBoxLayout::LeftToRight
+          right-to-left: QBoxLayout::RightToLeft
+          top-to-bottom: QBoxLayout::TopToBottom
+          bottom-to-top: QBoxLayout::BottomToTop
+        provenance: "QBoxLayout::direction (qdoc)"
       - { js: spacing, target: layout, native: spacing, provenance: "QLayout::spacing Q_PROPERTY (qdoc); P prop" }
       # Typed props (value model, ABI v3): records, enums, strings and flags share one converter set.
       - { js: geometry, native: geometry, provenance: "QWidget::geometry (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumSize, native: minimumSize, provenance: "QWidget::minimumSize (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: maximumSize, native: maximumSize, provenance: "QWidget::maximumSize (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: sizeIncrement, native: sizeIncrement, provenance: "QWidget::sizeIncrement (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum-size, native: minimumSize, provenance: "QWidget::minimumSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum-size, native: maximumSize, provenance: "QWidget::maximumSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: size-increment, native: sizeIncrement, provenance: "QWidget::sizeIncrement (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: pos, native: pos, provenance: "QWidget::pos (qdoc); typed by the S1 value model (ABI v3)" }          # read-only: no setter
       - { js: size, native: size, provenance: "QWidget::size (qdoc); typed by the S1 value model (ABI v3)" }        # read-only: use resizeTo()
-      - { js: contentsMargins, target: layout, native: contentsMargins, provenance: "QWidget::contentsMargins (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: focusPolicy, native: focusPolicy, provenance: "QWidget::focusPolicy (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: toolTip, native: toolTip, provenance: "QWidget::toolTip (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: contents-margins, target: layout, native: contentsMargins, provenance: "QWidget::contentsMargins (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: focus-policy, native: focusPolicy, provenance: "QWidget::focusPolicy (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tool-tip, native: toolTip, provenance: "QWidget::toolTip (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: enabled, native: enabled, provenance: "QWidget::enabled (qdoc); typed by the S1 value model (ABI v3)" }
     methods:
       - { js: saveGeometry, native: saveGeometry, provenance: "QWidget::saveGeometry (qdoc); typed by the S1 value model (ABI v3)" }
@@ -99,7 +101,7 @@ elements:
               get: { native: "QBoxLayout::stretch(int) const", args: [child_index] }
               expect: "qobject_cast<QBoxLayout *>($p->layout())->stretch(qobject_cast<QBoxLayout *>($p->layout())->indexOf($w)) == 1"
               provenance: "QBoxLayout::setStretch(int, int) (qdoc); X3 child attribute"
-            - name: align
+            - name: alignment
               type: enum
               values:
                 none: "Qt::Alignment()"
@@ -136,10 +138,10 @@ elements:
           provenance: [{ origin: uic, ref: "layout/item" }, { origin: typesystem, ref: addownership-1 }, { origin: probe, ref: qt_slot_ownership_probe.py }]
 
   # Element `grid`: a plain QWidget carrying a QGridLayout (X3). Position is not order: `cells` is unordered and
-  # each child is placed by its `parent:column` / `parent:row` / `parent:columnSpan` / `parent:rowSpan` attributes.
+  # each child is placed by its `parent:column` / `parent:row` / `parent:column-span` / `parent:row-span` attributes.
   # QGridLayout fixes the cell when the widget is added, so changing an attribute removes and re-adds the widget
   # with all four current values (`readd`). A child is inserted at row 0, column 0, spanning one cell.
-  - tag: grid
+  - tag: grid-layout
     construct:
       class: QWidget
       composite:
@@ -163,7 +165,7 @@ elements:
               type: i32
               default: 0
               samples: [2, 5]
-              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, value, attr.rowSpan, attr.columnSpan], readd: true }
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, value, attr.row-span, attr.column-span], readd: true }
               get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 2 }
               expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return c == 2; }()"
               provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
@@ -171,23 +173,23 @@ elements:
               type: i32
               default: 0
               samples: [3, 1]
-              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, value, attr.column, attr.rowSpan, attr.columnSpan], readd: true }
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, value, attr.column, attr.row-span, attr.column-span], readd: true }
               get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 1 }
               expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return r == 3; }()"
               provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
-            - name: columnSpan
+            - name: column-span
               type: i32
               default: 1
               samples: [2, 3]
-              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, attr.column, attr.rowSpan, value], readd: true }
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, attr.column, attr.row-span, value], readd: true }
               get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 4 }
               expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return cs == 2; }()"
               provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
-            - name: rowSpan
+            - name: row-span
               type: i32
               default: 1
               samples: [2, 4]
-              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, attr.column, value, attr.columnSpan], readd: true }
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, attr.column, value, attr.column-span], readd: true }
               get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 3 }
               expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return rs == 2; }()"
               provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"

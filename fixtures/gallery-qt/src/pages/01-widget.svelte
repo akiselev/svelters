@@ -1,6 +1,6 @@
 <!-- kinds: QWidget QPushButton QLineEdit QLabel -->
 <script>
-  // Base-class facts (enabled, toolTip, size limits) shown on existing elements.
+  // Base-class facts (enabled, tool-tip, size limits) shown on existing elements.
   let enabled = $state(true);
   let clicks = $state(0);
   $effect(() => {
@@ -8,10 +8,10 @@
   });
 </script>
 
-<box orientation="vertical" spacing="6">
-  <label label="QWidget base props" />
-  <button label="Disabled by enabled={false}" enabled={enabled} toolTip="Tooltip on a button" onclick={() => clicks++} />
-  <button label="Enabled, min width 200" enabled={true} toolTip="Sized button" minimumWidth={200} maximumWidth={300} />
-  <entry text="Entry with tooltip" toolTip="Tooltip on an entry" maximumWidth={260} />
-  <label label="clicks: {clicks}" toolTip="Tooltip on a label" />
-</box>
+<box-layout direction="top-to-bottom" spacing="6">
+  <label text="QWidget base props" />
+  <push-button text="Disabled by enabled={false}" enabled={enabled} tool-tip="Tooltip on a button" onclicked={() => clicks++} />
+  <push-button text="Enabled, min width 200" enabled={true} tool-tip="Sized button" minimum-width={200} maximum-width={300} />
+  <line-edit text="Line edit with tooltip" tool-tip="Tooltip on a line edit" maximum-width={260} />
+  <label text="clicks: {clicks}" tool-tip="Tooltip on a label" />
+</box-layout>

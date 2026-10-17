@@ -54,7 +54,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "fontdialogbutton"
+    "tag": "font-dialog-button"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:FontLevel"
@@ -612,7 +612,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-desc",
       "invocation": "reflected",
-      "js_name": "fontDesc",
+      "js_name": "font-desc",
       "name": "font-desc",
       "notify": {
         "explicit": true,
@@ -653,7 +653,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-features",
       "invocation": "reflected",
-      "js_name": "fontFeatures",
+      "js_name": "font-features",
       "name": "font-features",
       "notify": {
         "explicit": true,
@@ -785,7 +785,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-font",
       "invocation": "reflected",
-      "js_name": "useFont",
+      "js_name": "use-font",
       "name": "use-font",
       "notify": {
         "explicit": true,
@@ -830,7 +830,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-size",
       "invocation": "reflected",
-      "js_name": "useSize",
+      "js_name": "use-size",
       "name": "use-size",
       "notify": {
         "explicit": true,

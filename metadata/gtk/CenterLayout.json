@@ -345,7 +345,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CenterLayout:prop:shrink-center-last",
       "invocation": "reflected",
-      "js_name": "shrinkCenterLast",
+      "js_name": "shrink-center-last",
       "name": "shrink-center-last",
       "notify": {
         "explicit": true,

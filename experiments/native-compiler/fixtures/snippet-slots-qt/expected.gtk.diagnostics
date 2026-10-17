@@ -1,3 +1,4 @@
 [plugin svelters-native-compiler] experiments/native-compiler/fixtures/snippet-slots-qt/App.svelte:12:3
-unknown_element (gtk): <statusbar> is not an element of the gtk backend (help: did you mean one of `searchbar`, `headerbar`, `scrollbar`?)
-  App.svelte:17:6: unknown_element: <menubar> is not an element of the gtk backend
+unknown_element (gtk): <status-bar> is not an element of the gtk backend (help: did you mean one of `search-bar`, `header-bar`?)
+  App.svelte:17:6: unknown_element: <menu-bar> is not an element of the gtk backend
+  App.svelte:19:4: unknown_element: <box-layout> is not an element of the gtk backend

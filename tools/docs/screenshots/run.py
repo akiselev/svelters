@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate one PNG per element kind per toolkit, headless.
 
-  python3 tools/docs/screenshots/run.py [--toolkit gtk|qt|all] [--only TAG]
+  python3 tools/docs/screenshots/run.py [--toolkit gtk|qt|all] [--only TAG[,TAG]]
                                         [--jobs N<=4] [--force] [--out DIR]
 
 Re-execs itself under xvfb-run when DISPLAY is unset. Each kind is rendered
@@ -79,7 +79,7 @@ def read_json(path, default):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--toolkit", choices=("gtk", "qt", "all"), default="all")
-    ap.add_argument("--only", help="render only this tag")
+    ap.add_argument("--only", help="render only these tags (comma-separated)")
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -116,7 +116,7 @@ def main():
             keys.append(key)
             digest = kind_hash(info, listing["toolkit"])
             png = out / tk / (tag + ".png")
-            if args.only and args.only != tag:
+            if args.only and tag not in args.only.split(","):
                 # untouched this run: keep prior outcome
                 if key in old_failed and not png.exists():
                     failed[key] = old_failed[key]

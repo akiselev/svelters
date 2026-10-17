@@ -1,6 +1,5 @@
 properties:
   - name: placeholder-text
-    js_name: placeholder
     provenance: "GtkSearchEntry:placeholder-text (Gtk 4 docs)"
   - name: search-delay
     provenance: "GtkSearchEntry:search-delay (Gtk 4 docs)"

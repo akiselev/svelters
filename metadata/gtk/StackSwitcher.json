@@ -46,7 +46,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "stackswitcher"
+    "tag": "stack-switcher"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:StackSwitcher",

@@ -183,7 +183,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PadController:prop:action-group",
       "invocation": "reflected",
-      "js_name": "actionGroup",
+      "js_name": "action-group",
       "name": "action-group",
       "notify": {
         "explicit": false,

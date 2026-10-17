@@ -54,7 +54,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "colordialogbutton"
+    "tag": "color-dialog-button"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton",

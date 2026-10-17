@@ -41,21 +41,21 @@ children:
           via: {native: "GtkStack::get_page(GtkWidget*)"}
           property: title
           provenance: [{origin: gir, ref: "GtkStackPage:title"}]
-        - name: iconName
+        - name: icon-name
           type: string
           default: null
           samples: ["document-new", "edit-copy"]
           via: {native: "GtkStack::get_page(GtkWidget*)"}
           property: icon-name
           provenance: [{origin: gir, ref: "GtkStackPage:icon-name"}]
-        - name: needsAttention
+        - name: needs-attention
           type: bool
           default: false
           samples: [true, false]
           via: {native: "GtkStack::get_page(GtkWidget*)"}
           property: needs-attention
           provenance: [{origin: gir, ref: "GtkStackPage:needs-attention"}]
-        - name: useUnderline
+        - name: use-underline
           type: bool
           default: false
           samples: [true, false]

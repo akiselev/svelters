@@ -1,6 +1,6 @@
-// Menus and actions (X4, gap G7): the portable elements both toolkits provide. Hand-written, because
-// the GTK kinds have no GIR class (crates/svelters-gtk/src/backend/menus.rs) and the Qt ones are
-// generated from QAction.yaml / QMenu.yaml / QMenuBar.yaml / QToolBar.yaml; both agree on these names.
+// Menus and actions (X4, gap G7) on GTK. Hand-written, because the GTK kinds have no GIR class
+// (crates/svelters-gtk/src/backend/menus.rs). Qt's menus are real classes with native names
+// (QAction `action`, QMenu `menu`, QMenuBar `menu-bar`, QToolBar `tool-bar`), typed in qt.d.ts.
 import type { GtkWidgetProps } from './gtk';
 
 type SvlHandler = (event?: any) => void;
@@ -11,7 +11,7 @@ export interface ActionProps {
   label?: string;
   /** Theme icon name. */
   icon?: string;
-  /** `Ctrl+O`, `Ctrl+Shift+P`, `F5`, `Alt+Left`. Active while the action's root (menubar, toolbar, menubutton) is in a window. */
+  /** `Ctrl+O`, `Ctrl+Shift+P`, `F5`, `Alt+Left`. Active while the action's root (menu-bar, tool-bar, menu-button) is in a window. */
   shortcut?: string;
   tooltip?: string;
   enabled?: boolean;
@@ -27,18 +27,18 @@ export interface ActionProps {
   ontoggled?: (checked: boolean) => void;
 }
 
-/** `<menu>`: a submenu inside a menu or menubar, or the popup menu of a `menubutton` (as its child). */
+/** `<menu>`: a submenu inside a menu or menu-bar, or the popup menu of a `menu-button` (as its child). */
 export interface MenuProps {
   label?: string;
   icon?: string;
   enabled?: boolean;
 }
 
-/** `<menubar>` and `<toolbar>` are widgets: place them in a vertical `box`. Their children are `action`, `menuseparator` and `menu`. */
+/** `<menu-bar>` and `<tool-bar>` are widgets: place them in a vertical `box`. Their children are `action`, `menu-separator` and `menu`. */
 export interface MenuBarProps extends GtkWidgetProps {}
 export interface ToolBarProps extends GtkWidgetProps {}
 
-/** `<contextmenu>` attaches to its parent widget and opens on the secondary click. */
+/** `<context-menu>` attaches to its parent widget and opens on the secondary click. */
 export interface ContextMenuProps {
   label?: string;
 }
@@ -46,8 +46,8 @@ export interface ContextMenuProps {
 export interface MenuElements {
   action: ActionProps;
   menu: MenuProps;
-  menubar: MenuBarProps;
-  menuseparator: { visible?: boolean };
-  toolbar: ToolBarProps;
-  contextmenu: ContextMenuProps;
+  'menu-bar': MenuBarProps;
+  'menu-separator': { visible?: boolean };
+  'tool-bar': ToolBarProps;
+  'context-menu': ContextMenuProps;
 }

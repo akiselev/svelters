@@ -778,7 +778,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:current-page",
       "invocation": "reflected",
-      "js_name": "currentPage",
+      "js_name": "current-page",
       "name": "current-page",
       "notify": {
         "explicit": false,
@@ -820,7 +820,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:embed-page-setup",
       "invocation": "reflected",
-      "js_name": "embedPageSetup",
+      "js_name": "embed-page-setup",
       "name": "embed-page-setup",
       "notify": {
         "explicit": false,
@@ -859,7 +859,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:has-selection",
       "invocation": "reflected",
-      "js_name": "hasSelection",
+      "js_name": "has-selection",
       "name": "has-selection",
       "notify": {
         "explicit": false,
@@ -898,7 +898,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:manual-capabilities",
       "invocation": "reflected",
-      "js_name": "manualCapabilities",
+      "js_name": "manual-capabilities",
       "name": "manual-capabilities",
       "notify": {
         "explicit": false,
@@ -937,7 +937,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:page-setup",
       "invocation": "reflected",
-      "js_name": "pageSetup",
+      "js_name": "page-setup",
       "name": "page-setup",
       "notify": {
         "explicit": false,
@@ -976,7 +976,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:print-settings",
       "invocation": "reflected",
-      "js_name": "printSettings",
+      "js_name": "print-settings",
       "name": "print-settings",
       "notify": {
         "explicit": false,
@@ -1015,7 +1015,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:selected-printer",
       "invocation": "reflected",
-      "js_name": "selectedPrinter",
+      "js_name": "selected-printer",
       "name": "selected-printer",
       "notify": {
         "explicit": false,
@@ -1053,7 +1053,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:support-selection",
       "invocation": "reflected",
-      "js_name": "supportSelection",
+      "js_name": "support-selection",
       "name": "support-selection",
       "notify": {
         "explicit": false,

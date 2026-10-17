@@ -1543,7 +1543,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:extra-menu",
       "invocation": "reflected",
-      "js_name": "extraMenu",
+      "js_name": "extra-menu",
       "name": "extra-menu",
       "notify": {
         "explicit": true,
@@ -1626,9 +1626,7 @@
         "set": "gtk_label_set_label"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkLabel:label (Gtk 4 docs); P prop"
       },
@@ -1727,7 +1725,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:max-width-chars",
       "invocation": "reflected",
-      "js_name": "maxWidthChars",
+      "js_name": "max-width-chars",
       "name": "max-width-chars",
       "notify": {
         "explicit": true,
@@ -1770,7 +1768,7 @@
       "default": 16777215,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-keyval",
       "invocation": "reflected",
-      "js_name": "mnemonicKeyval",
+      "js_name": "mnemonic-keyval",
       "name": "mnemonic-keyval",
       "notify": {
         "explicit": false,
@@ -1811,7 +1809,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-widget",
       "invocation": "reflected",
-      "js_name": "mnemonicWidget",
+      "js_name": "mnemonic-widget",
       "name": "mnemonic-widget",
       "notify": {
         "explicit": true,
@@ -1851,7 +1849,7 @@
       "default": "inherit",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:natural-wrap-mode",
       "invocation": "reflected",
-      "js_name": "naturalWrapMode",
+      "js_name": "natural-wrap-mode",
       "name": "natural-wrap-mode",
       "notify": {
         "explicit": true,
@@ -1937,7 +1935,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:single-line-mode",
       "invocation": "reflected",
-      "js_name": "singleLineMode",
+      "js_name": "single-line-mode",
       "name": "single-line-mode",
       "notify": {
         "explicit": true,
@@ -2023,7 +2021,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-markup",
       "invocation": "reflected",
-      "js_name": "useMarkup",
+      "js_name": "use-markup",
       "name": "use-markup",
       "notify": {
         "explicit": true,
@@ -2068,7 +2066,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-underline",
       "invocation": "reflected",
-      "js_name": "useUnderline",
+      "js_name": "use-underline",
       "name": "use-underline",
       "notify": {
         "explicit": true,
@@ -2108,7 +2106,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:width-chars",
       "invocation": "reflected",
-      "js_name": "widthChars",
+      "js_name": "width-chars",
       "name": "width-chars",
       "notify": {
         "explicit": true,
@@ -2201,7 +2199,7 @@
       "default": "word",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap-mode",
       "invocation": "reflected",
-      "js_name": "wrapMode",
+      "js_name": "wrap-mode",
       "name": "wrap-mode",
       "notify": {
         "explicit": true,

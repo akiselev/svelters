@@ -413,7 +413,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryBuffer:prop:max-length",
       "invocation": "reflected",
-      "js_name": "maxLength",
+      "js_name": "max-length",
       "name": "max-length",
       "notify": {
         "explicit": true,

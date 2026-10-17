@@ -13,9 +13,9 @@
   });
 </script>
 
-<box orientation="vertical" spacing="6">
-  <label label="Hello {name}" />
-  <entry bind:text={name} onchanged={() => echoes++} />
-  <label label="echo text: {echoes}" />
-  <button label="Clicked {clicks} times" onclick={() => clicks++} />
-</box>
+<box-layout direction="top-to-bottom" spacing="6">
+  <label text="Hello {name}" />
+  <line-edit bind:text={name} ontext-changed={() => echoes++} />
+  <label text="echo text: {echoes}" />
+  <push-button text="Clicked {clicks} times" onclicked={() => clicks++} />
+</box-layout>

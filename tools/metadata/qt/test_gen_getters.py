@@ -54,9 +54,9 @@ class GetterTable(unittest.TestCase):
 
     def test_borrowed_kind_skips_composite_elements(self):
         text = gen_cpp.emit_getters(self.m)
-        # `box` is a plain QWidget with a layout: a borrowed QWidget must not become a `box`.
-        self.assertNotIn('"QWidget")) return K_box', text)
-        self.assertIn('"QLineEdit")) return K_entry', text)
+        # `box-layout` is a plain QWidget with a layout: a borrowed QWidget must not become a `box-layout`.
+        self.assertNotIn('"QWidget")) return K_box_layout', text)
+        self.assertIn('"QLineEdit")) return K_line_edit', text)
 
 
 if __name__ == "__main__":

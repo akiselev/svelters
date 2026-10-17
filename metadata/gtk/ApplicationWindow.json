@@ -55,7 +55,7 @@
   ],
   "element": {
     "origin": "manual",
-    "tag": "window"
+    "tag": "application-window"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow",
@@ -503,7 +503,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:prop:show-menubar",
       "invocation": "reflected",
-      "js_name": "showMenubar",
+      "js_name": "show-menubar",
       "name": "show-menubar",
       "notify": {
         "explicit": true,

@@ -1,11 +1,11 @@
 elements:
-  - tag: textbrowser
+  - tag: text-browser
     construct: { class: QTextBrowser }
     props:
-      - { js: openExternalLinks, native: openExternalLinks, provenance: "QTextBrowser::openExternalLinks (qdoc)" }
-      - { js: openLinks, native: openLinks, provenance: "QTextBrowser::openLinks (qdoc)" }
+      - { js: open-external-links, native: openExternalLinks, provenance: "QTextBrowser::openExternalLinks (qdoc)" }
+      - { js: open-links, native: openLinks, provenance: "QTextBrowser::openLinks (qdoc)" }
       - { js: source, native: source, provenance: "QTextBrowser::source (qdoc)" }
-      - { js: sourceType, native: sourceType, provenance: "QTextBrowser::sourceType (qdoc)" }
+      - { js: source-type, native: sourceType, provenance: "QTextBrowser::sourceType (qdoc)" }
     methods:
       - { js: home, native: home, provenance: "QTextBrowser::home (qdoc)" }
       - { js: reload, native: reload, provenance: "QTextBrowser::reload (qdoc)" }
@@ -13,13 +13,13 @@ elements:
       - { js: forward, native: forward, provenance: "QTextBrowser::forward (qdoc)" }
       - { js: clearHistory, native: clearHistory, provenance: "QTextBrowser::clearHistory (qdoc)" }
     signals:
-      - js: historyChanged
+      - js: history-changed
         native: historyChanged
         connect: "historyChanged()"
         args: []
         trigger: 'Q_EMIT $w->historyChanged()'
         provenance: "QTextBrowser::historyChanged() (qdoc)"
-      - js: backwardAvailable
+      - js: backward-available
         native: backwardAvailable
         connect: "backwardAvailable(bool)"
         args: [{ name: available, type: bool }]

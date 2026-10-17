@@ -154,7 +154,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewSorter:prop:primary-sort-column",
       "invocation": "reflected",
-      "js_name": "primarySortColumn",
+      "js_name": "primary-sort-column",
       "name": "primary-sort-column",
       "notify": {
         "explicit": false,
@@ -193,7 +193,7 @@
       "default": "ascending",
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewSorter:prop:primary-sort-order",
       "invocation": "reflected",
-      "js_name": "primarySortOrder",
+      "js_name": "primary-sort-order",
       "name": "primary-sort-order",
       "notify": {
         "explicit": false,

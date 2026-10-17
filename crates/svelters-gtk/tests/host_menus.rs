@@ -100,7 +100,7 @@ fn the_menus_fixture_drives_native_menus_both_ways() {
                 let copy = w.iter().filter_map(|x| x.downcast_ref::<gtk::Button>()).find(|x| x.icon_name().as_deref() == Some("edit-copy")).unwrap().clone();
                 copy.emit_clicked();
                 // The shortcut controller's action runs the same action as the menu item.
-                let bar = b.menu_find("menubar", "").unwrap();
+                let bar = b.menu_find("menu-bar", "").unwrap();
                 let bw = b.object(bar).unwrap().downcast::<gtk::Widget>().unwrap();
                 let ctrl = bw.observe_controllers().iter::<glib::Object>().filter_map(|c| c.ok()).find_map(|c| c.downcast::<gtk::ShortcutController>().ok()).unwrap();
                 let quit_sc = (0..ctrl.n_items()).filter_map(|i| ctrl.item(i).and_downcast::<gtk::Shortcut>()).find(|s| s.trigger().unwrap().to_str().as_str() == "<Control>q").unwrap();

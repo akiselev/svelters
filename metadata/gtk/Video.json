@@ -698,7 +698,7 @@
       "default": "disabled",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:graphics-offload",
       "invocation": "reflected",
-      "js_name": "graphicsOffload",
+      "js_name": "graphics-offload",
       "name": "graphics-offload",
       "notify": {
         "explicit": true,
@@ -779,7 +779,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:media-stream",
       "invocation": "reflected",
-      "js_name": "mediaStream",
+      "js_name": "media-stream",
       "name": "media-stream",
       "notify": {
         "explicit": true,

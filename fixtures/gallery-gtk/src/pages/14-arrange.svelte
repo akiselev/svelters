@@ -25,17 +25,17 @@
 <box orientation="vertical" spacing={6}>
   <label>rows: {rows.map((r) => r.item.name).join(' ')}</label>
   <box orientation="horizontal" spacing={6}>
-    <button label={desc ? 'ascending' : 'descending'} onclick={() => (desc = !desc)} />
-    <button label={onlyFruit ? 'all' : 'only fruit'} onclick={() => (onlyFruit = !onlyFruit)} />
+    <button label={desc ? 'ascending' : 'descending'} onclicked={() => (desc = !desc)} />
+    <button label={onlyFruit ? 'all' : 'only fruit'} onclicked={() => (onlyFruit = !onlyFruit)} />
   </box>
-  <listbox selectionMode="none">
+  <list-box selection-mode="none">
     {#each rows as r (r.item.name)}
       <label parent:header={r.header}>{r.item.name}</label>
     {/each}
-  </listbox>
-  <flowbox maxChildrenPerLine={5}>
+  </list-box>
+  <flow-box max-children-per-line={5}>
     {#each rows as r (r.item.name)}
       <label>{r.item.name}</label>
     {/each}
-  </flowbox>
+  </flow-box>
 </box>

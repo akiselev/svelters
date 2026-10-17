@@ -2,10 +2,10 @@
 # (QWidget::insertAction/removeAction, glue in menus.hpp.in; see QMenu.yaml). Place it in a vertical `box` like any widget.
 # nativeMenuBar was dropped: it cannot be enabled on the xcb test platform (setNativeMenuBar(true) reads back false).
 elements:
-  - tag: menubar
+  - tag: menu-bar
     construct: { class: QMenuBar }
     props:
-      - { js: defaultUp, native: defaultUp, provenance: "QMenuBar::defaultUp (qdoc)" }
+      - { js: default-up, native: defaultUp, provenance: "QMenuBar::defaultUp (qdoc)" }
     methods:
       - { js: clear, native: clear, provenance: "QMenuBar::clear() (qdoc)" }
     children:

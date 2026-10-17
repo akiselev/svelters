@@ -153,7 +153,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:OverlayLayoutChild:prop:clip-overlay",
       "invocation": "reflected",
-      "js_name": "clipOverlay",
+      "js_name": "clip-overlay",
       "name": "clip-overlay",
       "notify": {
         "explicit": true,

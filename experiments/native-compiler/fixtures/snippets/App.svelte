@@ -29,9 +29,9 @@
       {@render row(item, i)}
     {/each}
     <Card {...extra} body={fancy ? bold : plain} value={n}>
-      <button onclick={() => (fancy = !fancy)}>Swap</button>
-      <button onclick={() => n++}>More</button>
+      <button onclicked={() => (fancy = !fancy)}>Swap</button>
+      <button onclicked={() => n++}>More</button>
     </Card>
-    <button onclick={() => items.unshift('z')}>Add</button>
+    <button onclicked={() => items.unshift('z')}>Add</button>
   </box>
 </window>

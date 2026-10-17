@@ -2,26 +2,26 @@ inherit:
   props:
     - { js: minimum, native: minimum, provenance: "QAbstractSlider::minimum (qdoc)" }
     - { js: maximum, native: maximum, provenance: "QAbstractSlider::maximum (qdoc)" }
-    - { js: singleStep, native: singleStep, provenance: "QAbstractSlider::singleStep (qdoc)" }
-    - { js: pageStep, native: pageStep, provenance: "QAbstractSlider::pageStep (qdoc)" }
+    - { js: single-step, native: singleStep, provenance: "QAbstractSlider::singleStep (qdoc)" }
+    - { js: page-step, native: pageStep, provenance: "QAbstractSlider::pageStep (qdoc)" }
     - { js: tracking, native: tracking, provenance: "QAbstractSlider::tracking (qdoc)" }
-    - { js: invertedAppearance, native: invertedAppearance, provenance: "QAbstractSlider::invertedAppearance (qdoc)" }
+    - { js: inverted-appearance, native: invertedAppearance, provenance: "QAbstractSlider::invertedAppearance (qdoc)" }
     - { js: orientation, native: orientation, provenance: "QAbstractSlider::orientation (qdoc)" }
     - { js: value, native: value, suppress_signals: true, provenance: "QAbstractSlider::value (qdoc)" }
   signals:
-    - js: valueChanged
+    - js: value-changed
       native: valueChanged
       connect: "valueChanged(int)"
       args: [{ name: value, type: i32 }]
       trigger: "$w->setRange(0, 100); $w->setValue(($i + 1) * 3)"
       provenance: "valueChanged(int) (qdoc)"
-    - js: sliderMoved
+    - js: slider-moved
       native: sliderMoved
       connect: "sliderMoved(int)"
       args: [{ name: value, type: i32 }]
       trigger: "Q_EMIT $w->sliderMoved(($i + 1) * 3)"
       provenance: "sliderMoved(int) (qdoc)"
-    - js: rangeChanged
+    - js: range-changed
       native: rangeChanged
       connect: "rangeChanged(int,int)"
       args: [{ name: min, type: i32 }, { name: max, type: i32 }]

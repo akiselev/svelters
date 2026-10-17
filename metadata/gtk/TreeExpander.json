@@ -526,7 +526,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeExpander:prop:hide-expander",
       "invocation": "reflected",
-      "js_name": "hideExpander",
+      "js_name": "hide-expander",
       "name": "hide-expander",
       "notify": {
         "explicit": true,
@@ -567,7 +567,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeExpander:prop:indent-for-depth",
       "invocation": "reflected",
-      "js_name": "indentForDepth",
+      "js_name": "indent-for-depth",
       "name": "indent-for-depth",
       "notify": {
         "explicit": true,
@@ -608,7 +608,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeExpander:prop:indent-for-icon",
       "invocation": "reflected",
-      "js_name": "indentForIcon",
+      "js_name": "indent-for-icon",
       "name": "indent-for-icon",
       "notify": {
         "explicit": true,
@@ -688,7 +688,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeExpander:prop:list-row",
       "invocation": "reflected",
-      "js_name": "listRow",
+      "js_name": "list-row",
       "name": "list-row",
       "notify": {
         "explicit": true,

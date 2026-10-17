@@ -1,7 +1,7 @@
 <script>
   // Qt widget gallery: a sidebar of family pages (src/pages/*.svelte, sorted by file name) and
   // the selected page on the right. Handle layout is fixed so screenshot tests can click a page:
-  // window #1, outer box #2, sidebar box #3, sidebar button i = #(4 + i). Keep the sidebar first.
+  // main-window #1, outer box-layout #2, sidebar box-layout #3, sidebar push-button i = #(4 + i). Keep the sidebar first.
   // Only annotated Qt props exist.
   const modules = import.meta.glob('./pages/*.svelte', { eager: true });
   const pages = Object.keys(modules)
@@ -17,18 +17,18 @@
   const Page = $derived(pages[current].component);
 </script>
 
-<window title="svelters gallery (Qt)" bind:this={win}>
-  <box orientation="horizontal" spacing="12">
-    <box orientation="vertical" spacing="4">
+<main-window window-title="svelters gallery (Qt)" bind:this={win}>
+  <box-layout direction="left-to-right" spacing="12">
+    <box-layout direction="top-to-bottom" spacing="4">
       {#each pages as p, i}
-        <button label={title(p.name)} onclick={() => (current = i)} />
+        <push-button text={title(p.name)} onclicked={() => (current = i)} />
       {/each}
-    </box>
-    <scrolledwindow>
-      <box orientation="vertical" spacing="8">
-        <label label={title(pages[current].name)} />
+    </box-layout>
+    <scroll-area>
+      <box-layout direction="top-to-bottom" spacing="8">
+        <label text={title(pages[current].name)} />
         <Page />
-      </box>
-    </scrolledwindow>
-  </box>
-</window>
+      </box-layout>
+    </scroll-area>
+  </box-layout>
+</main-window>

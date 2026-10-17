@@ -1,42 +1,41 @@
-create window #1
-set #1 title "Classes"
-create box #2
+create main-window #1
+set #1 window-title "Classes"
+create box-layout #2
 set #2 spacing 8
-set #2 orientation "horizontal"
-create button #3
-set #3 minimumHeight 36
-set #3 label "Save"
+set #2 direction "left-to-right"
+create push-button #3
+set #3 minimum-height 36
+set #3 text "Save"
 insert #2 #3 before=end slot=default
-create button #4
-set #4 label "Other"
+create push-button #4
+set #4 text "Other"
 insert #2 #4 before=end slot=default
-create button #5
+create push-button #5
 listen #5 clicked on
-set #5 label "Mode"
+set #5 text "Mode"
 insert #2 #5 before=end slot=default
-create button #6
+create push-button #6
 listen #6 clicked on
-set #6 label "Dense"
+set #6 text "Dense"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 style sheet "*" null
-style scheme "light" 0
-style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style scheme "light" 9
 style #2 classes "toolbar"
 style #3 classes "primary"
 style #4 classes "big"
 event #5 clicked []
-set #3 minimumHeight 0
-set #4 minimumHeight 36
+set #3 minimum-height 0
+set #4 minimum-height 36
 style #3 classes "plain"
 style #4 classes "big primary"
 event #6 clicked []
 set #2 spacing 2
-set #4 minimumHeight 20
+set #4 minimum-height 20
 style #2 classes "toolbar dense"
 style #4 classes "big primary dense"
 event #5 clicked []
-set #3 minimumHeight 36
+set #3 minimum-height 36
 style #3 classes "primary"
 style #4 classes "big dense"

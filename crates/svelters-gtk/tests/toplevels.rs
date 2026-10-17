@@ -15,7 +15,7 @@ fn a_toplevel_child_is_transient_for_the_window_of_its_parent() {
         let h = Harness::new();
         let win = h.create("window");
         let bx = h.create("box");
-        let about = h.create("aboutdialog");
+        let about = h.create("about-dialog");
         h.insert(win, bx, None, None).unwrap();
         // under a plain widget: the window that contains it
         h.insert(bx, about, None, None).unwrap();
@@ -39,7 +39,7 @@ fn a_window_cannot_be_transient_for_itself_and_the_parent_must_be_in_a_window() 
         let h = Harness::new();
         let win = h.create("window");
         let loose = h.create("box");
-        let about = h.create("aboutdialog");
+        let about = h.create("about-dialog");
         assert!(h.insert(win, win, None, None).is_err());
         assert!(h.insert(loose, about, None, None).unwrap_err().contains("not inside a window"));
         h.destroy(about);
@@ -54,7 +54,7 @@ fn a_closed_parent_takes_its_transient_dialogs_with_it() {
     on_gtk(|| {
         let h = Harness::new();
         let win = h.create("window");
-        let about = h.create("aboutdialog");
+        let about = h.create("about-dialog");
         h.insert(win, about, None, None).unwrap();
         h.call(win, "present").unwrap();
         h.set_bool(about, "modal", true).unwrap();
@@ -75,7 +75,7 @@ fn a_dialog_closed_on_its_own_is_reported_closed() {
     on_gtk(|| {
         let h = Harness::new();
         let win = h.create("window");
-        let about = h.create("aboutdialog");
+        let about = h.create("about-dialog");
         h.insert(win, about, None, None).unwrap();
         h.call(win, "present").unwrap();
         h.call(about, "present").unwrap();

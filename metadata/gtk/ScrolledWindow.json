@@ -129,7 +129,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "scrolledwindow"
+    "tag": "scrolled-window"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:CornerType",
@@ -1112,7 +1112,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:has-frame",
       "invocation": "reflected",
-      "js_name": "hasFrame",
+      "js_name": "has-frame",
       "name": "has-frame",
       "notify": {
         "explicit": true,
@@ -1157,7 +1157,7 @@
       "default": "automatic",
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:hscrollbar-policy",
       "invocation": "reflected",
-      "js_name": "hscrollbarPolicy",
+      "js_name": "hscrollbar-policy",
       "name": "hscrollbar-policy",
       "notify": {
         "explicit": true,
@@ -1202,7 +1202,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:kinetic-scrolling",
       "invocation": "reflected",
-      "js_name": "kineticScrolling",
+      "js_name": "kinetic-scrolling",
       "name": "kinetic-scrolling",
       "notify": {
         "explicit": true,
@@ -1247,7 +1247,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:max-content-height",
       "invocation": "reflected",
-      "js_name": "maxContentHeight",
+      "js_name": "max-content-height",
       "name": "max-content-height",
       "notify": {
         "explicit": true,
@@ -1295,7 +1295,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:max-content-width",
       "invocation": "reflected",
-      "js_name": "maxContentWidth",
+      "js_name": "max-content-width",
       "name": "max-content-width",
       "notify": {
         "explicit": true,
@@ -1343,7 +1343,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:min-content-height",
       "invocation": "reflected",
-      "js_name": "minContentHeight",
+      "js_name": "min-content-height",
       "name": "min-content-height",
       "notify": {
         "explicit": true,
@@ -1391,7 +1391,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:min-content-width",
       "invocation": "reflected",
-      "js_name": "minContentWidth",
+      "js_name": "min-content-width",
       "name": "min-content-width",
       "notify": {
         "explicit": true,
@@ -1439,7 +1439,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:overlay-scrolling",
       "invocation": "reflected",
-      "js_name": "overlayScrolling",
+      "js_name": "overlay-scrolling",
       "name": "overlay-scrolling",
       "notify": {
         "explicit": true,
@@ -1484,7 +1484,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:propagate-natural-height",
       "invocation": "reflected",
-      "js_name": "propagateNaturalHeight",
+      "js_name": "propagate-natural-height",
       "name": "propagate-natural-height",
       "notify": {
         "explicit": true,
@@ -1529,7 +1529,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:propagate-natural-width",
       "invocation": "reflected",
-      "js_name": "propagateNaturalWidth",
+      "js_name": "propagate-natural-width",
       "name": "propagate-natural-width",
       "notify": {
         "explicit": true,
@@ -1615,7 +1615,7 @@
       "default": "automatic",
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:vscrollbar-policy",
       "invocation": "reflected",
-      "js_name": "vscrollbarPolicy",
+      "js_name": "vscrollbar-policy",
       "name": "vscrollbar-policy",
       "notify": {
         "explicit": true,
@@ -1655,7 +1655,7 @@
       "default": "top-left",
       "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:window-placement",
       "invocation": "reflected",
-      "js_name": "windowPlacement",
+      "js_name": "window-placement",
       "name": "window-placement",
       "notify": {
         "explicit": true,

@@ -1,6 +1,5 @@
 properties:
   - name: spinning
-    js_name: spinning
     echo_suppress: ["notify::spinning"]
     provenance: "GtkSpinner:spinning (Gtk 4 docs)"
 signals:

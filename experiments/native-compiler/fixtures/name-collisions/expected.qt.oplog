@@ -1,9 +1,9 @@
-create window #1
-set #1 title "Names x"
-create button #2
+create main-window #1
+set #1 window-title "Names x"
+create push-button #2
 listen #2 clicked on
-set #2 label "n1 = 1"
+set #2 text "n1 = 1"
 insert #1 #2 before=end slot=default
 call #1 present []
 event #2 clicked []
-set #2 label "n1 = 2"
+set #2 text "n1 = 2"

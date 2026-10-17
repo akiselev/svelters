@@ -146,7 +146,7 @@ gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover
 fn gtk_08_dialogs_toplevels() {
     let dump = run_page_clicks("gtk", "08-dialogs", &["GtkAboutDialog"], &[], "-toplevels", &[]);
     assert_eq!(toplevel_flags(&dump, "GtkAboutDialog"), vec![(true, true, true)], "about dialog: modal, transient, visible");
-    let mut windows = toplevel_flags(&dump, "GtkApplicationWindow");
+    let mut windows = toplevel_flags(&dump, "GtkWindow");
     windows.sort();
     assert_eq!(windows, vec![(false, false, true), (false, true, true)], "main window, then the tool window (modeless, transient, visible)");
 }

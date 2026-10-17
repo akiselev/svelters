@@ -21,7 +21,7 @@
 <window title="Main">
   <box orientation="vertical" spacing="8">
     <label>{open ? 'child open' : `child closed (${reason})`}</label>
-    <button onclick={toggle}>Toggle child</button>
+    <button onclicked={toggle}>Toggle child</button>
   </box>
 </window>
 

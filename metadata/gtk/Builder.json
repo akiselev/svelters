@@ -762,7 +762,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Builder:prop:current-object",
       "invocation": "reflected",
-      "js_name": "currentObject",
+      "js_name": "current-object",
       "name": "current-object",
       "notify": {
         "explicit": false,
@@ -841,7 +841,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Builder:prop:translation-domain",
       "invocation": "reflected",
-      "js_name": "translationDomain",
+      "js_name": "translation-domain",
       "name": "translation-domain",
       "notify": {
         "explicit": false,

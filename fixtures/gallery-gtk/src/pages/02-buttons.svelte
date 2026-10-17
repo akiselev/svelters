@@ -19,12 +19,12 @@
 <box orientation="vertical" spacing="6">
   <box orientation="horizontal" spacing="6">
     <button label="Clicked {clicks}" has-frame={true} use-underline={false} onclicked={() => clicks++} />
-    <togglebutton label="Toggle {toggled}" bind:active={toggled} ontoggled={() => toggledEchoes++} />
+    <toggle-button label="Toggle {toggled}" bind:active={toggled} ontoggled={() => toggledEchoes++} />
     <label label="echo toggle: {toggledEchoes}" />
   </box>
   <box orientation="horizontal" spacing="6">
-    <checkbutton label="Check {checked}" bind:active={checked} ontoggled={() => checkedEchoes++} />
-    <checkbutton label="Mixed" inconsistent={true} />
+    <check-button label="Check {checked}" bind:active={checked} ontoggled={() => checkedEchoes++} />
+    <check-button label="Mixed" inconsistent={true} />
     <label label="echo check: {checkedEchoes}" />
   </box>
   <box orientation="horizontal" spacing="6">
@@ -32,16 +32,16 @@
     <label label="echo switch: {switchEchoes}" />
   </box>
   <box orientation="horizontal" spacing="6">
-    <linkbutton uri="https://example.org" label="Link" onactivate-link={() => { linkEvents++; }} />
-    <lockbutton />
-    <menubutton label="Menu" direction="down" always-show-arrow={true}>
+    <link-button uri="https://example.org" label="Link" onactivate-link={() => { linkEvents++; }} />
+    <lock-button />
+    <menu-button label="Menu" direction="down" always-show-arrow={true}>
       <popover autohide={true}>
         <label label="popover content" />
       </popover>
-    </menubutton>
+    </menu-button>
   </box>
   <box orientation="horizontal" spacing="6">
-    <scalebutton />
-    <volumebutton />
+    <scale-button />
+    <volume-button />
   </box>
 </box>

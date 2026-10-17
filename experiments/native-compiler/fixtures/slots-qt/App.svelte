@@ -5,10 +5,10 @@
   let n = $state(0);
 </script>
 
-<window title="Main window">
-  <box orientation="vertical">
+<main-window window-title="Main window">
+  <box-layout direction="top-to-bottom">
     <label>Clicked {n} times</label>
-    <button onclick={() => n++}>Click</button>
-  </box>
-  <statusbar />
-</window>
+    <push-button onclicked={() => n++}>Click</push-button>
+  </box-layout>
+  <status-bar />
+</main-window>

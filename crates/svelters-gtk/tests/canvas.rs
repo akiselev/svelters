@@ -87,10 +87,10 @@ fn the_draw_func_replays_ops_set_through_the_backend_and_follows_updates() {
     on_gtk(|| {
         let mut h = Harness::new();
         let win = h.create("window");
-        let da = h.create("drawingarea");
+        let da = h.create("drawing-area");
         h.set_str(da, "ops", r##"[["fillStyle","#ff0000"],["fillRect",0,0,100,100]]"##).unwrap();
-        h.set_value(da, "contentWidth", &svelters_abi::Value::I64(40)).unwrap();
-        h.set_value(da, "contentHeight", &svelters_abi::Value::I64(30)).unwrap();
+        h.set_value(da, "content-width", &svelters_abi::Value::I64(40)).unwrap();
+        h.set_value(da, "content-height", &svelters_abi::Value::I64(30)).unwrap();
         h.insert(win, da, None, None).unwrap();
         h.call(win, "present").unwrap();
         pump(150);

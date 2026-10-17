@@ -56,7 +56,7 @@ Elements are native kinds (`window`, `box`, `label`, `button`, `entry`, ...), no
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `onclick={f}`, `onclicked={f}`, `onclose-request={f}` | works | `click` maps to `clicked`, `change` to `changed`; other names pass through. See [Events](/guides/events/). |
+| `onclicked={f}`, `onclose-request={f}`, `ontext-changed={f}` | works | `on` plus the native signal name in kebab case. There are no DOM-style aliases (`onclick`, `onchange`). See [Events](/guides/events/). |
 | `on:event` directive | forbidden | `incompatible_with_custom_renderer`, in legacy and runes components. |
 | `on<name>capture` | works | The capture flag reaches the renderer. Native capture-phase listening needs the `listen` flags ABI change (planned). |
 | Other modifiers (`once`, `passive`, `self`, `stopPropagation`, ...) | needs `@svelters/events` | **planned**: `prevent`, `stop`, `once` helpers; `listen` with flags. |

@@ -90,7 +90,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "searchentry"
+    "tag": "search-entry"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:InputPurpose",
@@ -587,7 +587,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:activates-default",
       "invocation": "reflected",
-      "js_name": "activatesDefault",
+      "js_name": "activates-default",
       "name": "activates-default",
       "notify": {
         "explicit": true,
@@ -627,7 +627,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:input-hints",
       "invocation": "reflected",
-      "js_name": "inputHints",
+      "js_name": "input-hints",
       "name": "input-hints",
       "notify": {
         "explicit": true,
@@ -668,7 +668,7 @@
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:input-purpose",
       "invocation": "reflected",
-      "js_name": "inputPurpose",
+      "js_name": "input-purpose",
       "name": "input-purpose",
       "notify": {
         "explicit": true,
@@ -709,7 +709,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:key-capture-widget",
       "invocation": "reflected",
-      "js_name": "keyCaptureWidget",
+      "js_name": "key-capture-widget",
       "name": "key-capture-widget",
       "notify": {
         "explicit": true,
@@ -749,16 +749,14 @@
         "set": "gtk_search_entry_set_placeholder_text"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkSearchEntry:placeholder-text (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:placeholder-text",
       "invocation": "reflected",
-      "js_name": "placeholder",
+      "js_name": "placeholder-text",
       "name": "placeholder-text",
       "notify": {
         "explicit": false,
@@ -802,7 +800,7 @@
       "default": 150,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:search-delay",
       "invocation": "reflected",
-      "js_name": "searchDelay",
+      "js_name": "search-delay",
       "name": "search-delay",
       "notify": {
         "explicit": true,

@@ -360,7 +360,7 @@
       "default": "same-native",
       "id": "svelters-api:v1:type:gtk:Gtk:EventController:prop:propagation-limit",
       "invocation": "reflected",
-      "js_name": "propagationLimit",
+      "js_name": "propagation-limit",
       "name": "propagation-limit",
       "notify": {
         "explicit": true,
@@ -400,7 +400,7 @@
       "default": "bubble",
       "id": "svelters-api:v1:type:gtk:Gtk:EventController:prop:propagation-phase",
       "invocation": "reflected",
-      "js_name": "propagationPhase",
+      "js_name": "propagation-phase",
       "name": "propagation-phase",
       "notify": {
         "explicit": true,

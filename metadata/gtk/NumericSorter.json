@@ -219,7 +219,7 @@
       "default": "ascending",
       "id": "svelters-api:v1:type:gtk:Gtk:NumericSorter:prop:sort-order",
       "invocation": "reflected",
-      "js_name": "sortOrder",
+      "js_name": "sort-order",
       "name": "sort-order",
       "notify": {
         "explicit": true,

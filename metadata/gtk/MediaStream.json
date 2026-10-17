@@ -977,7 +977,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MediaStream:prop:has-audio",
       "invocation": "reflected",
-      "js_name": "hasAudio",
+      "js_name": "has-audio",
       "name": "has-audio",
       "notify": {
         "explicit": true,
@@ -1016,7 +1016,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MediaStream:prop:has-video",
       "invocation": "reflected",
-      "js_name": "hasVideo",
+      "js_name": "has-video",
       "name": "has-video",
       "notify": {
         "explicit": true,

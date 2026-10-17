@@ -117,7 +117,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "levelbar"
+    "tag": "level-bar"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:LevelBarMode"
@@ -691,7 +691,7 @@
       "default": 1.0,
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:max-value",
       "invocation": "reflected",
-      "js_name": "maxValue",
+      "js_name": "max-value",
       "name": "max-value",
       "notify": {
         "explicit": true,
@@ -739,7 +739,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:min-value",
       "invocation": "reflected",
-      "js_name": "minValue",
+      "js_name": "min-value",
       "name": "min-value",
       "notify": {
         "explicit": true,

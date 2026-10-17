@@ -304,7 +304,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:ListHeader:prop:n-items",
       "invocation": "reflected",
-      "js_name": "nItems",
+      "js_name": "n-items",
       "name": "n-items",
       "notify": {
         "explicit": true,

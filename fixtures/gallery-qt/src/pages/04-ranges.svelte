@@ -21,17 +21,17 @@
   });
 </script>
 
-<box orientation="vertical" spacing="4">
-  <slider orientation="horizontal" minimum={0} maximum={100} tickPosition="ticks-below" tickInterval={10} bind:value={level} onvalueChanged={() => echoSlider++} />
-  <label label="echo slider: {echoSlider}" />
-  <dial notchesVisible={true} wrapping={false} maximumHeight={70} bind:value={angle} onvalueChanged={() => echoDial++} />
-  <label label="echo dial: {echoDial}" />
-  <scrollbar orientation="horizontal" bind:value={scroll} onvalueChanged={() => echoScroll++} />
-  <label label="echo scroll: {echoScroll}" />
-  <spinbox minimum={0} maximum={20} prefix="n=" suffix=" items" bind:value={count} onvalueChanged={() => echoSpin++} />
-  <label label="echo spin: {echoSpin}" />
-  <doublespinbox minimum={0} maximum={10} decimals={2} singleStep={0.5} bind:value={ratio} onvalueChanged={() => echoDouble++} />
-  <label label="echo double: {echoDouble}" />
-  <progressbar minimum={0} maximum={100} value={level} format="%p%" textVisible={true} />
-  <lcdnumber digitCount={4} intValue={count} />
-</box>
+<box-layout direction="top-to-bottom" spacing="4">
+  <slider orientation="horizontal" minimum={0} maximum={100} tick-position="ticks-below" tick-interval={10} bind:value={level} onvalue-changed={() => echoSlider++} />
+  <label text="echo slider: {echoSlider}" />
+  <dial notches-visible={true} wrapping={false} maximum-height={70} bind:value={angle} onvalue-changed={() => echoDial++} />
+  <label text="echo dial: {echoDial}" />
+  <scroll-bar orientation="horizontal" bind:value={scroll} onvalue-changed={() => echoScroll++} />
+  <label text="echo scroll: {echoScroll}" />
+  <spin-box minimum={0} maximum={20} prefix="n=" suffix=" items" bind:value={count} onvalue-changed={() => echoSpin++} />
+  <label text="echo spin: {echoSpin}" />
+  <double-spin-box minimum={0} maximum={10} decimals={2} single-step={0.5} bind:value={ratio} onvalue-changed={() => echoDouble++} />
+  <label text="echo double: {echoDouble}" />
+  <progress-bar minimum={0} maximum={100} value={level} format="%p%" text-visible={true} />
+  <lcd-number digit-count={4} int-value={count} />
+</box-layout>

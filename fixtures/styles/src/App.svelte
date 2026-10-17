@@ -9,15 +9,15 @@
 <window title="Styles" class="app">
   <box orientation="vertical" spacing="8" class="card">
     <label class="title" class:big={on} style:color={on ? '#c01c28' : null}>Styled</label>
-    <button class="primary" class:active={on} id="toggle" onclick={() => (on = !on)}>Toggle</button>
-    <entry class="field" placeholder="type here" />
+    <button class="primary" class:active={on} id="toggle" onclicked={() => (on = !on)}>Toggle</button>
+    <entry class="field" placeholder-text="type here" />
     <button
-      onclick={() => {
+      onclicked={() => {
         dark = !dark;
         setColorScheme(dark ? 'dark' : 'light');
       }}>Theme</button>
     <button
-      onclick={() => {
+      onclicked={() => {
         flips++;
         setTokens({ '--sv-accent': flips % 2 ? '#26a269' : '#e5a50a' });
       }}>Accent</button>

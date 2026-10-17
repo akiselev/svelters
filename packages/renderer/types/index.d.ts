@@ -35,9 +35,22 @@ type WithBindings<E> = {
     (K extends ToplevelTag ? ToplevelAttrs : unknown);
 };
 
+type NativeElements = WithBindings<GtkElements & MenuElements>;
+type HtmlNamedProps = NativeElements['button'] &
+  NativeElements['image'] &
+  NativeElements['label'] &
+  NativeElements['menu'] &
+  NativeElements['picture'] &
+  NativeElements['switch'] &
+  NativeElements['text'] &
+  NativeElements['video'];
+
 declare global {
   namespace svelteHTML {
     // GTK's property tables are the superset; Qt apps check against `QtElementDescriptors`.
     interface IntrinsicElements extends WithBindings<GtkElements & MenuElements> {}
+    // Tags that are also HTML elements keep svelte-check's own HTML entry, which `extends` above
+    // cannot override; it merges this interface into each of them, so their native props go here.
+    interface HTMLAttributes<T extends EventTarget = any> extends HtmlNamedProps {}
   }
 }
